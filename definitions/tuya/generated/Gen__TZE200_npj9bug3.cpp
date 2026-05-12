@@ -1,0 +1,71 @@
+// SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+// SPDX-License-Identifier: Apache-2.0
+// Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE200_npj9bug3).
+#include "definitions/tuya/_shared.hpp"
+#include "definitions/tuya/extend.hpp"
+namespace zhc::devices::tuya {
+namespace {
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_npj9bug3_temperature_unit_dp9[] = {
+    { 0, "celsius" },
+    { 1, "fahrenheit" },
+};
+
+constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE200_npj9bug3[] = {
+    { 106, "dry", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 5, "temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 109, "humidity", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 3, "soil_moisture", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 15, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 9, "temperature_unit", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_npj9bug3_temperature_unit_dp9, sizeof(kEnum__TZE200_npj9bug3_temperature_unit_dp9)/sizeof(kEnum__TZE200_npj9bug3_temperature_unit_dp9[0]) },
+    { 104, "temperature_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 105, "humidity_calibration", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 102, "soil_calibration", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 111, "temperature_sampling", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 112, "soil_sampling", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 110, "soil_warning", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+};
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE200_npj9bug3{ kEntries__TZE200_npj9bug3, 12 };
+constexpr FzConverter kFzDp__TZE200_npj9bug3{
+    .family            = FrameFamily::TuyaDp,
+    .cluster           = "manuSpecificTuya",
+    .type_mask         = type_bit(MessageType::Command),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .tuya_fn = &::zhc::tuya::fz_tuya_datapoints },
+    .user_config       = &kMap__TZE200_npj9bug3,
+};
+const FzConverter* const kFz__TZE200_npj9bug3[] = {
+    &::zhc::tuya::kFzTuyaMcuSyncTime,
+    &kFzDp__TZE200_npj9bug3,
+};
+constexpr TzConverter kTzDp__TZE200_npj9bug3{
+    .key         = nullptr,                // wildcard — claims any mapped key
+    .cluster     = "manuSpecificTuya",
+    .cluster_id  = 0xEF00,
+    .command_id  = 0x00,
+    .fn          = &::zhc::tuya::tz_tuya_datapoints,
+    .user_config = &kMap__TZE200_npj9bug3,
+};
+const TzConverter* const kTz__TZE200_npj9bug3[] = { &kTzDp__TZE200_npj9bug3 };
+constexpr const char* kM__TZE200_npj9bug3[] = { "TS0601" };
+constexpr const char* kN__TZE200_npj9bug3[] = { "_TZE200_npj9bug3" };
+}  // namespace
+extern const PreparedDefinition kDefGen__TZE200_npj9bug3{
+    .zigbee_models=kM__TZE200_npj9bug3,.zigbee_models_count=1,
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kN__TZE200_npj9bug3,.manufacturer_names_count=1,
+    .model="TS0601__TZE200_npj9bug3",.vendor="Tuya",
+    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .white_labels=nullptr,.white_labels_count=0,
+    .from_zigbee=kFz__TZE200_npj9bug3,
+    .from_zigbee_count=sizeof(kFz__TZE200_npj9bug3)/sizeof(kFz__TZE200_npj9bug3[0]),
+    .to_zigbee=kTz__TZE200_npj9bug3,
+    .to_zigbee_count=sizeof(kTz__TZE200_npj9bug3)/sizeof(kTz__TZE200_npj9bug3[0]),
+    .configure=::zhc::tuya::extend::tuya_base_configure(),
+    .on_event=nullptr };
+}  // namespace zhc::devices::tuya

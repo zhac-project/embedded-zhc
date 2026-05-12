@@ -1,0 +1,17 @@
+{
+  "model": "WSDCGQ11LM",
+  "manufacturer": "LUMI",
+  "scenario": "temperature-25.48",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0402",
+    "endpoint": 1,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18010A000029F409"
+  },
+  "expected": {
+    "temperature": 25.48
+  }
+}

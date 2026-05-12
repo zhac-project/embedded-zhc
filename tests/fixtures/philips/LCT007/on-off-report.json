@@ -1,0 +1,17 @@
+{
+  "model": "LCT007",
+  "manufacturer": "Philips",
+  "scenario": "on-off-report",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0006",
+    "endpoint": 11,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "180A0A00001001"
+  },
+  "expected": {
+    "state": true
+  }
+}

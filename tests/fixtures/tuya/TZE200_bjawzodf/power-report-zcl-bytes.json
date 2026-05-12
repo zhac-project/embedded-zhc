@@ -1,0 +1,20 @@
+{
+  "model": "TS0601_plug_bjawzodf",
+  "manufacturer": "Tuya",
+  "manufacturer_name": "_TZE200_bjawzodf",
+  "scenario": "power-report-zcl-bytes",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0xEF00",
+    "endpoint": 1,
+    "type": "Command",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "09CA020001010100010112020004000007D01302000400000912"
+  },
+  "expected": {
+    "state": true,
+    "current": 2.0,
+    "voltage": 232.2
+  }
+}

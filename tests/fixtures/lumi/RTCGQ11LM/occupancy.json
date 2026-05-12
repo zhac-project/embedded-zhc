@@ -1,0 +1,17 @@
+{
+  "model": "RTCGQ11LM",
+  "manufacturer": "LUMI",
+  "scenario": "occupancy",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0406",
+    "endpoint": 1,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18010A00001801"
+  },
+  "expected": {
+    "occupancy": true
+  }
+}

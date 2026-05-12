@@ -1,0 +1,46 @@
+// SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+// SPDX-License-Identifier: Apache-2.0
+// Tier 1: Orvibo DTZ09039.
+// Downlight (Q series)
+// z2m-source: orvibo.ts #DTZ09039.
+#include "definitions/_generic/_shared.hpp"
+
+namespace zhc::devices::orvibo {
+namespace {
+const FzConverter* const kFz_DTZ09039[] = {
+    &::zhc::generic::kFzOnOff,
+    &::zhc::generic::kFzBrightness,
+};
+const TzConverter* const kTz_DTZ09039[] = {
+    &::zhc::generic::kTzOnOff,
+    &::zhc::generic::kTzBrightness,
+};
+constexpr const char* kModels_DTZ09039[] = { "1a20628504bf48c88ed698fe96b7867c" };
+
+}  // namespace
+
+
+constexpr Expose kAutoExposes[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+
+constexpr BindingSpec kAutoBindings[] = {
+    {1, 0x0006},
+    {1, 0x0008},
+};
+
+extern const PreparedDefinition kDef_DTZ09039{
+    .zigbee_models=kModels_DTZ09039, .zigbee_models_count=sizeof(kModels_DTZ09039)/sizeof(kModels_DTZ09039[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .model="DTZ09039", .vendor="Orvibo",
+    .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
+    .white_labels=nullptr, .white_labels_count=0,
+    .from_zigbee=kFz_DTZ09039, .from_zigbee_count=sizeof(kFz_DTZ09039)/sizeof(kFz_DTZ09039[0]),
+    .to_zigbee=kTz_DTZ09039, .to_zigbee_count=sizeof(kTz_DTZ09039)/sizeof(kTz_DTZ09039[0]),
+    .configure=nullptr, .on_event=nullptr,
+    .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+};
+
+}  // namespace zhc::devices::orvibo

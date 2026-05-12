@@ -1,0 +1,17 @@
+{
+  "model": "TS0601__TZE200_mby4kbtq",
+  "manufacturer": "Tuya",
+  "manufacturer_name": "_TZE200_mby4kbtq",
+  "scenario": "gas-report",
+  "prior_state": {},
+  "dp_frame": {
+    "dps": [
+      { "dp": 2,  "type": 2, "value_hex": "000000F5" },
+      { "dp": 11, "type": 1, "value_hex": "00" }
+    ]
+  },
+  "expected": {
+    "gas_value": 24.5,
+    "fault_alarm": false
+  }
+}

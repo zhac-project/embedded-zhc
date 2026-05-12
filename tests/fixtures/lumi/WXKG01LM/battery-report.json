@@ -1,0 +1,20 @@
+{
+  "model": "WXKG01LM",
+  "manufacturer": "LUMI",
+  "scenario": "battery-report",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0000",
+    "endpoint": 1,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "180A0A01FF420B0121A80B03281D04211200"
+  },
+  "expected": {
+    "voltage": 2984,
+    "battery": 89,
+    "device_temperature": 29,
+    "power_outage_count": 18
+  }
+}

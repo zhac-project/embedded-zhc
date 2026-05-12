@@ -1,0 +1,19 @@
+{
+  "model": "TS0601_plug_bjawzodf",
+  "manufacturer": "Tuya",
+  "manufacturer_name": "_TZE200_bjawzodf",
+  "scenario": "power-report",
+  "prior_state": {},
+  "dp_frame": {
+    "dps": [
+      { "dp": 1,  "type": 1, "value_hex": "01" },
+      { "dp": 18, "type": 2, "value_hex": "000007D0" },
+      { "dp": 19, "type": 2, "value_hex": "00000912" }
+    ]
+  },
+  "expected": {
+    "state": true,
+    "current": 2.0,
+    "voltage": 232.2
+  }
+}

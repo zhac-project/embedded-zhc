@@ -1,0 +1,143 @@
+// SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+// SPDX-License-Identifier: Apache-2.0
+// Auto-generated from z2m devices/moes.ts (fingerprint TS0601 / _TZE284_rlytpmij).
+#include "definitions/tuya/_shared.hpp"
+#include "definitions/tuya/extend.hpp"
+namespace zhc::devices::moes {
+namespace {
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_rlytpmij_preset_dp2[] = {
+    { 0, "auto" },
+    { 1, "manual" },
+    { 2, "eco" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_rlytpmij_backlight_brightness_dp3[] = {
+    { 0, "off" },
+    { 1, "low" },
+    { 2, "medium" },
+    { 3, "high" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_rlytpmij_sensor_dp32[] = {
+    { 0, "internal" },
+    { 1, "external" },
+    { 2, "both" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_rlytpmij_temperature_scale_dp46[] = {
+    { 0, "celsius" },
+    { 1, "fahrenheit" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_rlytpmij_running_state_dp47[] = {
+    { 0, "heat" },
+    { 1, "idle" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_rlytpmij_valve_state_dp47[] = {
+    { 0, "OPEN" },
+    { 1, "CLOSED" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_rlytpmij_program_mode_dp104[] = {
+    { 0, "off" },
+    { 1, "weekend" },
+    { 2, "single_break" },
+    { 3, "no_day_off" },
+};
+
+constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_rlytpmij[] = {
+    { 2, "preset", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_rlytpmij_preset_dp2, sizeof(kEnum__TZE284_rlytpmij_preset_dp2)/sizeof(kEnum__TZE284_rlytpmij_preset_dp2[0]) },
+    { 3, "backlight_brightness", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_rlytpmij_backlight_brightness_dp3, sizeof(kEnum__TZE284_rlytpmij_backlight_brightness_dp3)/sizeof(kEnum__TZE284_rlytpmij_backlight_brightness_dp3[0]) },
+    { 19, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 28, "factory_reset", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 32, "sensor", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_rlytpmij_sensor_dp32, sizeof(kEnum__TZE284_rlytpmij_sensor_dp32)/sizeof(kEnum__TZE284_rlytpmij_sensor_dp32[0]) },
+    { 39, "child_lock", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 46, "temperature_scale", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_rlytpmij_temperature_scale_dp46, sizeof(kEnum__TZE284_rlytpmij_temperature_scale_dp46)/sizeof(kEnum__TZE284_rlytpmij_temperature_scale_dp46[0]) },
+    { 47, "running_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_rlytpmij_running_state_dp47, sizeof(kEnum__TZE284_rlytpmij_running_state_dp47)/sizeof(kEnum__TZE284_rlytpmij_running_state_dp47[0]) },
+    { 47, "valve_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_rlytpmij_valve_state_dp47, sizeof(kEnum__TZE284_rlytpmij_valve_state_dp47)/sizeof(kEnum__TZE284_rlytpmij_valve_state_dp47[0]) },
+    { 117, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 101, "floor_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 104, "program_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_rlytpmij_program_mode_dp104, sizeof(kEnum__TZE284_rlytpmij_program_mode_dp104)/sizeof(kEnum__TZE284_rlytpmij_program_mode_dp104[0]) },
+    { 106, "deadzone_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 107, "eco_temperature", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 111, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 114, "max_temperature_limit", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 116, "min_temperature_limit", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+};
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_rlytpmij{ kEntries__TZE284_rlytpmij, 17 };
+constexpr FzConverter kFzDp__TZE284_rlytpmij{
+    .family            = FrameFamily::TuyaDp,
+    .cluster           = "manuSpecificTuya",
+    .type_mask         = type_bit(MessageType::Command),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .tuya_fn = &::zhc::tuya::fz_tuya_datapoints },
+    .user_config       = &kMap__TZE284_rlytpmij,
+};
+const FzConverter* const kFz__TZE284_rlytpmij[] = {
+    &::zhc::tuya::kFzTuyaMcuSyncTime,
+    &kFzDp__TZE284_rlytpmij,
+};
+constexpr TzConverter kTzDp__TZE284_rlytpmij{
+    .key         = nullptr,                // wildcard — claims any mapped key
+    .cluster     = "manuSpecificTuya",
+    .cluster_id  = 0xEF00,
+    .command_id  = 0x00,
+    .fn          = &::zhc::tuya::tz_tuya_datapoints,
+    .user_config = &kMap__TZE284_rlytpmij,
+};
+const TzConverter* const kTz__TZE284_rlytpmij[] = { &kTzDp__TZE284_rlytpmij };
+constexpr const char* kM__TZE284_rlytpmij[] = { "TS0601" };
+constexpr const char* kN__TZE284_rlytpmij[] = { "_TZE284_rlytpmij" };
+}  // namespace
+
+// --- auto-generated by emit_expose_bindings.py ---
+constexpr Expose kAutoExposes[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"preset", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight_brightness", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"factory_reset", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"sensor", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"temperature_scale", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"running_state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"valve_state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"floor_temperature", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"program_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"deadzone_temperature", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"max_temperature_limit", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"min_temperature_limit", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+};
+
+constexpr BindingSpec kAutoBindings[] = {
+    {1, 0xEF00},
+};
+// --- end auto-generated block ---
+
+extern const PreparedDefinition kDefMoes__TZE284_rlytpmij{
+    .zigbee_models=kM__TZE284_rlytpmij,.zigbee_models_count=1,
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kN__TZE284_rlytpmij,.manufacturer_names_count=1,
+    .model="TS0601__TZE284_rlytpmij",.vendor="Moes",
+    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
+    .white_labels=nullptr,.white_labels_count=0,
+    .from_zigbee=kFz__TZE284_rlytpmij,
+    .from_zigbee_count=sizeof(kFz__TZE284_rlytpmij)/sizeof(kFz__TZE284_rlytpmij[0]),
+    .to_zigbee=kTz__TZE284_rlytpmij,
+    .to_zigbee_count=sizeof(kTz__TZE284_rlytpmij)/sizeof(kTz__TZE284_rlytpmij[0]),
+    .configure=::zhc::tuya::extend::tuya_base_configure(),
+    .on_event=nullptr,
+.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+};
+}  // namespace zhc::devices::moes

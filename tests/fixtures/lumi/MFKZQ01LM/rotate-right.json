@@ -1,0 +1,19 @@
+{
+  "model": "MFKZQ01LM",
+  "manufacturer": "Xiaomi",
+  "scenario": "rotate-right-40deg",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x000C",
+    "endpoint": 3,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18010A55003900002042"
+  },
+  "expected": {
+    "action": "rotate_right",
+    "angle": 40.0,
+    "action_angle": 40.0
+  }
+}

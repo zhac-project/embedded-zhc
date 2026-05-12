@@ -1,0 +1,18 @@
+{
+  "model": "TS0601_soil",
+  "manufacturer": "Tuya",
+  "manufacturer_name": "_TZE200_5f7xqvkh",
+  "scenario": "tuya-dp-soil-moisture-42",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0xEF00",
+    "endpoint": 1,
+    "type": "Command",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "0901020001030200040000002A"
+  },
+  "expected": {
+    "soil_moisture": 42
+  }
+}

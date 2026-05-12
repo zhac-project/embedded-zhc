@@ -1,0 +1,17 @@
+{
+  "model": "MFKZQ01LM",
+  "manufacturer": "Xiaomi",
+  "scenario": "shake",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0012",
+    "endpoint": 2,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18060A5500210000"
+  },
+  "expected": {
+    "action": "shake"
+  }
+}

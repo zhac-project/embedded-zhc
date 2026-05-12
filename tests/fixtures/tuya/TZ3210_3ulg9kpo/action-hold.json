@@ -1,0 +1,17 @@
+{
+  "model": "TS0021__TZ3210_3ulg9kpo",
+  "manufacturer": "Tuya",
+  "manufacturer_name": "_TZ3210_3ulg9kpo",
+  "scenario": "button1-hold",
+  "prior_state": {},
+  "dp_frame": {
+    "dps": [
+      { "dp": 1,  "type": 4, "value_hex": "02" },
+      { "dp": 10, "type": 2, "value_hex": "00000055" }
+    ]
+  },
+  "expected": {
+    "action": "button_1_hold",
+    "battery": 85
+  }
+}

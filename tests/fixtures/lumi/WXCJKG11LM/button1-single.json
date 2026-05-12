@@ -1,0 +1,17 @@
+{
+  "model": "WXCJKG11LM",
+  "manufacturer": "Xiaomi",
+  "scenario": "button-1-single",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0012",
+    "endpoint": 1,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18010A5500210100"
+  },
+  "expected": {
+    "action": "button_1_single"
+  }
+}

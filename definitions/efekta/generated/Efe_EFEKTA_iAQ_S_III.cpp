@@ -1,0 +1,129 @@
+// SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+// SPDX-License-Identifier: Apache-2.0
+// Tier 1: Efekta EFEKTA_iAQ_S_III — auto-generated.
+// Air Quality Monitor, CO2, VOC, outdoor temperature and humidity, date and time
+// z2m-source: efekta.ts #EFEKTA_iAQ_S_III.
+#include "definitions/_generic/_shared.hpp"
+
+namespace zhc::devices::efekta {
+namespace {
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_night_on_backlight{ "night_on_backlight", 0x0405, 0x20, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_night_on_backlight{
+    .key="night_on_backlight", .cluster="msIlluminanceMeasurement",
+    .cluster_id=0x0400, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_night_on_backlight };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_night_off_backlight{ "night_off_backlight", 0x0406, 0x20, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_night_off_backlight{
+    .key="night_off_backlight", .cluster="msIlluminanceMeasurement",
+    .cluster_id=0x0400, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_night_off_backlight };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_temperature_offset{ "temperature_offset", 0x0210, 0x29, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_temperature_offset{
+    .key="temperature_offset", .cluster="msTemperatureMeasurement",
+    .cluster_id=0x0402, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_temperature_offset };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_humidity_offset{ "humidity_offset", 0x0210, 0x29, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_humidity_offset{
+    .key="humidity_offset", .cluster="msRelativeHumidity",
+    .cluster_id=0x0405, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_humidity_offset };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_set_altitude{ "set_altitude", 0x0205, 0x21, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_set_altitude{
+    .key="set_altitude", .cluster="msCO2",
+    .cluster_id=0x040D, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_set_altitude };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_manual_forced_recalibration{ "manual_forced_recalibration", 0x0207, 0x21, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_manual_forced_recalibration{
+    .key="manual_forced_recalibration", .cluster="msCO2",
+    .cluster_id=0x040D, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_manual_forced_recalibration };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_high_co2{ "high_co2", 0x0221, 0x21, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_high_co2{
+    .key="high_co2", .cluster="msCO2",
+    .cluster_id=0x040D, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_high_co2 };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_low_co2{ "low_co2", 0x0222, 0x21, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_low_co2{
+    .key="low_co2", .cluster="msCO2",
+    .cluster_id=0x040D, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_low_co2 };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_high_voc{ "high_voc", 0x0221, 0x21, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_high_voc{
+    .key="high_voc", .cluster="genAnalogInput",
+    .cluster_id=0x000C, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_high_voc };
+constexpr ::zhc::generic::ZclWriteSpec kWriteSpec_EFEKTA_iAQ_S_III_low_voc{ "low_voc", 0x0222, 0x21, 0, nullptr, 0 };
+constexpr TzConverter kTzWrite_EFEKTA_iAQ_S_III_low_voc{
+    .key="low_voc", .cluster="genAnalogInput",
+    .cluster_id=0x000C, .command_id=0x02,
+    .fn=::zhc::generic::tz_zcl_write_attr,
+    .user_config=&kWriteSpec_EFEKTA_iAQ_S_III_low_voc };
+
+const TzConverter* const kTz_EFEKTA_iAQ_S_III[] = {
+    &kTzWrite_EFEKTA_iAQ_S_III_night_on_backlight,
+    &kTzWrite_EFEKTA_iAQ_S_III_night_off_backlight,
+    &kTzWrite_EFEKTA_iAQ_S_III_temperature_offset,
+    &kTzWrite_EFEKTA_iAQ_S_III_humidity_offset,
+    &kTzWrite_EFEKTA_iAQ_S_III_set_altitude,
+    &kTzWrite_EFEKTA_iAQ_S_III_manual_forced_recalibration,
+    &kTzWrite_EFEKTA_iAQ_S_III_high_co2,
+    &kTzWrite_EFEKTA_iAQ_S_III_low_co2,
+    &kTzWrite_EFEKTA_iAQ_S_III_high_voc,
+    &kTzWrite_EFEKTA_iAQ_S_III_low_voc,
+};
+constexpr const char* kModels_EFEKTA_iAQ_S_III[] = { "EFEKTA_iAQ_S_III" };
+
+}  // namespace
+
+
+namespace {
+// TODO(parity-efekta): no shared FzConverter for: co2
+const FzConverter* const kFz_min_EFEKTA_iAQ_S_III[] = {
+    &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzOnOff,
+    &::zhc::generic::kFzHumidity,
+    &::zhc::generic::kFzIlluminance,
+    &::zhc::generic::kFzTemperature,
+};
+constexpr Expose kExp_min_EFEKTA_iAQ_S_III[] = {
+    { "state",   ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
+    { "battery", ExposeType::Numeric, ::zhc::Access::State,    "%",  nullptr, nullptr, 0 },
+    { "voltage", ExposeType::Numeric, ::zhc::Access::State,    "mV", nullptr, nullptr, 0 },
+    {"co2", ExposeType::Numeric, Access::State, "ppm", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+};
+constexpr BindingSpec kBind_min_EFEKTA_iAQ_S_III[] = {
+    { 1, 0x0001 },
+    { 1, 0x0006 },
+    { 1, 0x0400 },
+    { 1, 0x0402 },
+    { 1, 0x0405 },
+    { 1, 0x040D },
+};
+}
+extern const PreparedDefinition kDef_EFEKTA_iAQ_S_III{
+    .zigbee_models=kModels_EFEKTA_iAQ_S_III, .zigbee_models_count=sizeof(kModels_EFEKTA_iAQ_S_III)/sizeof(kModels_EFEKTA_iAQ_S_III[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .model="EFEKTA_iAQ_S_III", .vendor="Efekta",
+    .meta=nullptr, .exposes=kExp_min_EFEKTA_iAQ_S_III, .exposes_count=sizeof(kExp_min_EFEKTA_iAQ_S_III)/sizeof(kExp_min_EFEKTA_iAQ_S_III[0]),
+    .white_labels=nullptr, .white_labels_count=0,
+    .from_zigbee=kFz_min_EFEKTA_iAQ_S_III, .from_zigbee_count=sizeof(kFz_min_EFEKTA_iAQ_S_III)/sizeof(kFz_min_EFEKTA_iAQ_S_III[0]),
+    .to_zigbee=kTz_EFEKTA_iAQ_S_III, .to_zigbee_count=sizeof(kTz_EFEKTA_iAQ_S_III)/sizeof(kTz_EFEKTA_iAQ_S_III[0]),
+    .configure=nullptr, .on_event=nullptr,
+    .bindings                 = kBind_min_EFEKTA_iAQ_S_III,
+    .bindings_count           = sizeof(kBind_min_EFEKTA_iAQ_S_III)/sizeof(kBind_min_EFEKTA_iAQ_S_III[0]),
+};
+
+}  // namespace zhc::devices::efekta

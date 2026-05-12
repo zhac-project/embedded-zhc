@@ -1,0 +1,18 @@
+{
+  "model": "TS0601__TZE204_upagmta9",
+  "manufacturer": "Tuya",
+  "manufacturer_name": "_TZE204_upagmta9",
+  "scenario": "tuya-dp-temperature-25.4",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0xEF00",
+    "endpoint": 1,
+    "type": "Command",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "090102000101020004000000FE"
+  },
+  "expected": {
+    "temperature": 25.4
+  }
+}

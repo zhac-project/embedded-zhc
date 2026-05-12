@@ -1,0 +1,17 @@
+{
+  "model": "TS0207__TZ3210_p68kms0l",
+  "manufacturer": "Tuya",
+  "manufacturer_name": "_TZ3210_p68kms0l",
+  "scenario": "cleaning-reminder-inverse",
+  "prior_state": {},
+  "dp_frame": {
+    "dps": [
+      { "dp": 104, "type": 1, "value_hex": "00" },
+      { "dp": 4,   "type": 2, "value_hex": "00000064" }
+    ]
+  },
+  "expected": {
+    "cleaning_reminder": true,
+    "battery": 100
+  }
+}

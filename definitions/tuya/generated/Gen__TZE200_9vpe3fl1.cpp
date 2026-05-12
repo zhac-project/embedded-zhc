@@ -1,0 +1,76 @@
+// SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+// SPDX-License-Identifier: Apache-2.0
+// Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE200_9vpe3fl1).
+#include "definitions/tuya/_shared.hpp"
+#include "definitions/tuya/extend.hpp"
+namespace zhc::devices::tuya {
+namespace {
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_9vpe3fl1_state_dp1[] = {
+    { 0, "OPEN" },
+    { 1, "STOP" },
+    { 2, "CLOSE" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_9vpe3fl1_reverse_direction_dp5[] = {
+    { 0, "forward" },
+    { 1, "back" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_9vpe3fl1_motor_working_mode_dp106[] = {
+    { 0, "continuous" },
+    { 1, "intermittently" },
+};
+
+constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE200_9vpe3fl1[] = {
+    { 1, "state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_9vpe3fl1_state_dp1, sizeof(kEnum__TZE200_9vpe3fl1_state_dp1)/sizeof(kEnum__TZE200_9vpe3fl1_state_dp1[0]) },
+    { 2, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
+    { 3, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
+    { 5, "reverse_direction", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_9vpe3fl1_reverse_direction_dp5, sizeof(kEnum__TZE200_9vpe3fl1_reverse_direction_dp5)/sizeof(kEnum__TZE200_9vpe3fl1_reverse_direction_dp5[0]) },
+    { 12, "motor_fault", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 106, "motor_working_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_9vpe3fl1_motor_working_mode_dp106, sizeof(kEnum__TZE200_9vpe3fl1_motor_working_mode_dp106)/sizeof(kEnum__TZE200_9vpe3fl1_motor_working_mode_dp106[0]) },
+};
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE200_9vpe3fl1{ kEntries__TZE200_9vpe3fl1, 6 };
+constexpr FzConverter kFzDp__TZE200_9vpe3fl1{
+    .family            = FrameFamily::TuyaDp,
+    .cluster           = "manuSpecificTuya",
+    .type_mask         = type_bit(MessageType::Command),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .tuya_fn = &::zhc::tuya::fz_tuya_datapoints },
+    .user_config       = &kMap__TZE200_9vpe3fl1,
+};
+const FzConverter* const kFz__TZE200_9vpe3fl1[] = {
+    &::zhc::tuya::kFzTuyaMcuSyncTime,
+    &kFzDp__TZE200_9vpe3fl1,
+};
+constexpr TzConverter kTzDp__TZE200_9vpe3fl1{
+    .key         = nullptr,                // wildcard — claims any mapped key
+    .cluster     = "manuSpecificTuya",
+    .cluster_id  = 0xEF00,
+    .command_id  = 0x00,
+    .fn          = &::zhc::tuya::tz_tuya_datapoints,
+    .user_config = &kMap__TZE200_9vpe3fl1,
+};
+const TzConverter* const kTz__TZE200_9vpe3fl1[] = { &kTzDp__TZE200_9vpe3fl1 };
+constexpr const char* kM__TZE200_9vpe3fl1[] = { "TS0601" };
+constexpr const char* kN__TZE200_9vpe3fl1[] = { "_TZE200_9vpe3fl1" };
+}  // namespace
+extern const PreparedDefinition kDefGen__TZE200_9vpe3fl1{
+    .zigbee_models=kM__TZE200_9vpe3fl1,.zigbee_models_count=1,
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kN__TZE200_9vpe3fl1,.manufacturer_names_count=1,
+    .model="TS0601__TZE200_9vpe3fl1",.vendor="Tuya",
+    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .white_labels=nullptr,.white_labels_count=0,
+    .from_zigbee=kFz__TZE200_9vpe3fl1,
+    .from_zigbee_count=sizeof(kFz__TZE200_9vpe3fl1)/sizeof(kFz__TZE200_9vpe3fl1[0]),
+    .to_zigbee=kTz__TZE200_9vpe3fl1,
+    .to_zigbee_count=sizeof(kTz__TZE200_9vpe3fl1)/sizeof(kTz__TZE200_9vpe3fl1[0]),
+    .configure=::zhc::tuya::extend::tuya_base_configure(),
+    .on_event=nullptr };
+}  // namespace zhc::devices::tuya

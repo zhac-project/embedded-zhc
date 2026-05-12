@@ -1,0 +1,36 @@
+embedded-zhc — ZHAC Home Coordinator device library
+Copyright © 2025–2026 Evgenij Cjura and project contributors.
+
+Licensed under the Apache License, Version 2.0. See `LICENSE` and
+`LICENSES/Apache-2.0.txt`.
+
+================================================================================
+Derived works — zigbee-herdsman-converters (z2m)
+================================================================================
+
+Device-definition ports in `definitions/**` are adapted from the
+zigbee-herdsman-converters project:
+
+    Copyright © Koen Kanters and contributors
+    Licensed under the MIT License
+    Upstream: https://github.com/Koenkk/zigbee-herdsman-converters
+
+The MIT License permits redistribution under different terms when
+combined with compatible licensed material. The adapted ports in this
+repository are redistributed under the Apache License 2.0. The
+original MIT copyright notice continues to apply to the upstream
+material.
+
+Each ported definition file retains its relationship to an upstream
+z2m entry via a `// z2m-source:` comment pointing at the vendor.ts
+file and model identifier it was derived from.
+
+================================================================================
+Trademarks
+================================================================================
+
+"ZHAC" and associated names, logos, and marks are the exclusive
+property of the project maintainer. The Apache-2.0 license governing
+this library DOES NOT grant any right to use these names or marks.
+Forks and derivative works must choose different product names and
+branding.

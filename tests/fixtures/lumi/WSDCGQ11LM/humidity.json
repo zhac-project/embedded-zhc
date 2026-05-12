@@ -1,0 +1,17 @@
+{
+  "model": "WSDCGQ11LM",
+  "manufacturer": "LUMI",
+  "scenario": "humidity-48.28",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0405",
+    "endpoint": 1,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18020A000021DC12"
+  },
+  "expected": {
+    "humidity": 48.28
+  }
+}

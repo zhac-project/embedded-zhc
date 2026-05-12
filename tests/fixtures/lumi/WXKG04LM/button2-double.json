@@ -1,0 +1,17 @@
+{
+  "model": "WXKG04LM",
+  "manufacturer": "Xiaomi",
+  "scenario": "button-2-double",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0012",
+    "endpoint": 2,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18050A5500210200"
+  },
+  "expected": {
+    "action": "button_2_double"
+  }
+}

@@ -1,0 +1,921 @@
+# SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+# SPDX-License-Identifier: Apache-2.0
+cmake_minimum_required(VERSION 3.20)
+project(zhc_core CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Core library is currently header-only. Later tasks add sources under
+# src/zcl/, src/runtime/, and definitions/ and switch this to STATIC.
+add_library(zhc_core INTERFACE)
+target_include_directories(zhc_core INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+# Warnings-as-errors enforced from day one. Easier to keep clean than
+# to retrofit once hundreds of definitions have landed.
+target_compile_options(zhc_core INTERFACE
+    $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall -Wextra -Wpedantic -Werror>
+    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+)
+
+add_library(zhc_parser STATIC
+    src/zcl/header.cpp
+    src/zcl/foundation.cpp
+    src/zcl/decoder.cpp
+    src/zcl/tuya_dp.cpp
+)
+target_link_libraries(zhc_parser PUBLIC zhc_core)
+
+add_library(zhc_runtime STATIC
+    src/runtime/dispatch.cpp
+    src/runtime/definition_runtime.cpp
+)
+target_link_libraries(zhc_runtime PUBLIC zhc_core)
+
+add_library(zhc_definitions OBJECT
+    definitions/_generic/_shared.cpp
+    definitions/lumi/_shared.cpp
+    definitions/lumi/registry.cpp
+    definitions/tuya/_shared.cpp
+    definitions/tuya/registry.cpp
+    definitions/tuya/TZE200_bjawzodf.cpp
+    definitions/tuya/TZE200_0nmiizme.cpp
+    definitions/tuya/TZE200_cjbofhxw.cpp
+    definitions/tuya/TZE200_sos.cpp
+    definitions/tuya/TZE200_temp.cpp
+    definitions/tuya/TZE200_waterleak.cpp
+    definitions/tuya/TZE200_door.cpp
+    definitions/tuya/TZE200_smoke.cpp
+    definitions/tuya/TZE200_co2.cpp
+    definitions/tuya/TZE200_motion.cpp
+    definitions/tuya/TZE200_alarm.cpp
+    definitions/tuya/TZE200_plug_metering.cpp
+    definitions/tuya/TZE200_switch_3gang.cpp
+    definitions/tuya/TZE200_trv.cpp
+    definitions/tuya/TZE200_radar.cpp
+    definitions/tuya/TS0001.cpp
+    definitions/tuya/gq8b1uv.cpp
+    definitions/tuya/U86KWF_ZPSJ.cpp
+    definitions/tuya/U86KCJ_ZP.cpp
+    definitions/tuya/TT001ZAV20.cpp
+    definitions/tuya/SNTZ009.cpp
+    definitions/tuya/SNTZ007.cpp
+    definitions/tuya/SM0212.cpp
+    definitions/tuya/SM0202.cpp
+    definitions/tuya/SM0001.cpp
+    definitions/tuya/RH3040.cpp
+    definitions/tuya/EPJ_ZB.cpp
+    definitions/tuya/E220_KR4N0Z0_HA.cpp
+    definitions/tuya/D3_DPWK_TY.cpp
+    definitions/tuya/TS0002.cpp
+    definitions/tuya/TS0011.cpp
+    definitions/tuya/TS011F.cpp
+    definitions/tuya/TS0501B.cpp
+    definitions/tuya/TS110E.cpp
+    definitions/tuya/TZE200_vzekyi4c.cpp
+    definitions/tuya/TZE200_co_alarm.cpp
+    definitions/tuya/TZE200_illuminance.cpp
+    definitions/tuya/TZE200_formaldehyde.cpp
+    definitions/tuya/TZE200_voc.cpp
+    definitions/tuya/TZE200_contact2.cpp
+    definitions/tuya/TZE200_smoke2.cpp
+    definitions/tuya/TZE200_vibration.cpp
+    definitions/tuya/TZE200_airquality.cpp
+    definitions/tuya/TZE200_pm25.cpp
+    definitions/tuya/TZE200_switch_countdown.cpp
+    definitions/tuya/TZE200_switch_2gang.cpp
+    definitions/tuya/TZE200_switch_4gang.cpp
+    definitions/tuya/TZE204_plug.cpp
+    definitions/tuya/TZE200_scene_4btn.cpp
+    definitions/tuya/TZE200_thermostat.cpp
+    definitions/tuya/TZE200_trv_v2.cpp
+    definitions/tuya/TZE200_fancoil.cpp
+    definitions/tuya/TZE200_radar_v2.cpp
+    definitions/tuya/TZE204_radar.cpp
+    definitions/tuya/TS0043.cpp
+    definitions/tuya/TS0044.cpp
+    definitions/tuya/TS004F.cpp
+    definitions/tuya/TS0202.cpp
+    definitions/tuya/TS0205.cpp
+    definitions/tuya/TZE200_pir_illum.cpp
+    definitions/tuya/TZE200_th_slim.cpp
+    definitions/tuya/TZE200_presence_zone.cpp
+    definitions/tuya/TZE200_door2.cpp
+    definitions/tuya/TZE200_gas.cpp
+    definitions/tuya/TZE200_volume_alarm.cpp
+    definitions/tuya/TZE200_smoke3.cpp
+    definitions/tuya/TZE200_window.cpp
+    definitions/tuya/TZE200_co2_alarm.cpp
+    definitions/tuya/TZE200_flood.cpp
+    definitions/tuya/TZE200_switch_2g_cd.cpp
+    definitions/tuya/TZE200_dimmer.cpp
+    definitions/tuya/TZE200_relay_power.cpp
+    definitions/tuya/TZE200_outdoor_plug.cpp
+    definitions/tuya/TZE200_garage.cpp
+    definitions/tuya/TS0003.cpp
+    definitions/tuya/TS0004.cpp
+    definitions/tuya/TS0012.cpp
+    definitions/tuya/TS0013.cpp
+    definitions/tuya/TS0121.cpp
+    definitions/tuya/TS130F.cpp
+    definitions/tuya/TZE200_cover.cpp
+    definitions/tuya/TS0222.cpp
+    definitions/tuya/TS0211.cpp
+    definitions/tuya/TS0210.cpp
+    definitions/tuya/TZE200_soil.cpp
+    definitions/tuya/TZE200_rain.cpp
+    definitions/tuya/TZE200_pressure.cpp
+    definitions/tuya/TZE200_air_pressure.cpp
+    definitions/tuya/TZE200_uv.cpp
+    definitions/tuya/TZE200_battery_mon.cpp
+    definitions/tuya/TZE200_accel.cpp
+    definitions/tuya/TZE200_flow.cpp
+    definitions/tuya/TZE200_switch_6gang.cpp
+    definitions/tuya/TZE200_multi_outlet.cpp
+    definitions/tuya/TZE200_pir_switch.cpp
+    definitions/tuya/TZE200_ir_blaster.cpp
+    definitions/tuya/TZE200_touch_panel.cpp
+    definitions/tuya/TZE200_underfloor.cpp
+    definitions/tuya/TZE200_floor_thermo.cpp
+    definitions/tuya/TZE200_pool_thermo.cpp
+    definitions/tuya/TZE200_hvac.cpp
+    definitions/tuya/TZE200_ceiling_radar.cpp
+    definitions/tuya/TZE200_ble_radar.cpp
+    definitions/tuya/TZE204_hires_radar.cpp
+    definitions/tuya/TS0042.cpp
+    definitions/tuya/TS0215A.cpp
+    definitions/tuya/TZE200_rgbww.cpp
+    definitions/tuya/TS0041.cpp
+    definitions/tuya/TZE200_pet_feeder.cpp
+    definitions/tuya/TZE200_fall.cpp
+    definitions/tuya/TZE200_sleep.cpp
+    definitions/tuya/TZE200_motion_lux.cpp
+    definitions/tuya/TZE200_contact_t1.cpp
+    definitions/tuya/TZE200_light_sensor.cpp
+    definitions/tuya/TZE200_radar_v5.cpp
+    definitions/tuya/TZE200_noise.cpp
+    definitions/tuya/TZE200_presence_th.cpp
+    definitions/tuya/TZE200_relay_1g.cpp
+    definitions/tuya/TZE200_outdoor_switch.cpp
+    definitions/tuya/TZE200_dc_switch.cpp
+    definitions/tuya/TZE200_scenario.cpp
+    definitions/tuya/TZE200_timer_switch.cpp
+    definitions/tuya/TZE200_floor_ctrl.cpp
+    definitions/tuya/TZE200_trv_bt.cpp
+    definitions/tuya/TZE200_thermostat_v3.cpp
+    definitions/tuya/TZE200_ac_remote.cpp
+    definitions/tuya/TZE200_fan_speed.cpp
+    definitions/tuya/TZE200_roller_shade.cpp
+    definitions/tuya/TZE200_tilt_blinds.cpp
+    definitions/tuya/TZE200_motor_curtain.cpp
+    definitions/tuya/TZE200_dual_curtain.cpp
+    definitions/tuya/TZE200_siren.cpp
+    definitions/tuya/TZE200_lock.cpp
+    definitions/tuya/TS0203.cpp
+    definitions/tuya/TZE200_freezer.cpp
+    definitions/tuya/TZE200_clamp.cpp
+    definitions/tuya/TZE200_soil_th.cpp
+    definitions/tuya/TZE200_greenhouse.cpp
+    definitions/tuya/TZE200_car_pres.cpp
+    definitions/tuya/TZE200_wall_airq.cpp
+    definitions/tuya/TZE200_body.cpp
+    definitions/tuya/TZE200_vanadium.cpp
+    definitions/tuya/TZE200_scene_2g.cpp
+    definitions/tuya/TZE200_switch_3g_cd.cpp
+    definitions/tuya/TZE200_dual_dimmer.cpp
+    definitions/tuya/TZE200_rf_ctrl.cpp
+    definitions/tuya/TZE200_usb_sw.cpp
+    definitions/tuya/TZE200_water_boiler.cpp
+    definitions/tuya/TZE200_ir_heater.cpp
+    definitions/tuya/TZE200_fan_thermo.cpp
+    definitions/tuya/TZE200_dehumid.cpp
+    definitions/tuya/TZE200_evap_cool.cpp
+    definitions/tuya/TZE200_proj_screen.cpp
+    definitions/tuya/TZE200_garage_opener.cpp
+    definitions/tuya/TZE200_vent.cpp
+    definitions/tuya/TZE200_tubular_motor.cpp
+    definitions/tuya/TZE200_doorbell.cpp
+    definitions/tuya/TS004A.cpp
+    definitions/tuya/TZE200_sprinkler.cpp
+    definitions/tuya/TZE200_hcho_co2.cpp
+    definitions/tuya/TZE200_multi_gas.cpp
+    definitions/tuya/TZE200_radon.cpp
+    definitions/tuya/TZE200_mailbox.cpp
+    definitions/tuya/TZE200_wind.cpp
+    definitions/tuya/TZE200_snow.cpp
+    definitions/tuya/TZE200_light_curtain.cpp
+    definitions/tuya/TZE200_1g_usb_cd.cpp
+    definitions/tuya/TZE200_4g_bl.cpp
+    definitions/tuya/TZE200_smart_breaker.cpp
+    definitions/tuya/TZE200_din_relay.cpp
+    definitions/tuya/TZE200_neutral_relay.cpp
+    definitions/tuya/TZE200_heated_mat.cpp
+    definitions/tuya/TZE200_swamp.cpp
+    definitions/tuya/TZE200_ceiling_fan.cpp
+    definitions/tuya/TZE200_towel_warmer.cpp
+    definitions/tuya/TZE200_garden_timer.cpp
+    definitions/tuya/TZE200_soil_ec.cpp
+    definitions/tuya/TZE200_solar.cpp
+    definitions/tuya/TZE200_ph.cpp
+    definitions/tuya/TS0045.cpp
+    definitions/tuya/TS110F.cpp
+    definitions/tuya/TZE200_ev_charger.cpp
+    definitions/tuya/TS0204.cpp
+    definitions/tuya/TS0206.cpp
+    definitions/tuya/TZE200_rgb_strip.cpp
+    definitions/tuya/TZE200_night_light.cpp
+    definitions/tuya/TZE200_mood_light.cpp
+    definitions/tuya/TZE200_panel_light.cpp
+    definitions/tuya/TZE200_star_light.cpp
+    definitions/tuya/TZE200_scale.cpp
+    definitions/tuya/TZE200_glass.cpp
+    definitions/tuya/TZE200_air_filter.cpp
+    definitions/tuya/TZE200_uv_lamp.cpp
+    definitions/tuya/TZE200_sleep_v2.cpp
+    definitions/tuya/TZE200_scada.cpp
+    definitions/tuya/TZE200_tank.cpp
+    definitions/tuya/TZE200_conveyor.cpp
+    definitions/tuya/TZE200_pressure_vessel.cpp
+    definitions/tuya/TZE200_motor_vib.cpp
+    definitions/tuya/TZE200_washer.cpp
+    definitions/tuya/TZE200_kettle.cpp
+    definitions/tuya/TZE200_rice_cooker.cpp
+    definitions/tuya/TZE200_robot_vac.cpp
+    definitions/tuya/TZE200_air_fryer.cpp
+    definitions/tuya/TS0014.cpp
+    definitions/tuya/TS0505A.cpp
+    definitions/tuya/TS0505B.cpp
+    definitions/tuya/TS0503A.cpp
+    definitions/tuya/TS0502A.cpp
+    definitions/tuya/TZE200_alcohol.cpp
+    definitions/tuya/TZE200_orp.cpp
+    definitions/tuya/TZE200_tds.cpp
+    definitions/tuya/TZE200_leaf.cpp
+    definitions/tuya/TZE200_bme680.cpp
+    definitions/tuya/TZE200_anemometer.cpp
+    definitions/tuya/TZE200_light_uv.cpp
+    definitions/tuya/TZE200_fp.cpp
+    definitions/tuya/TZE200_5g_scene.cpp
+    definitions/tuya/TZE200_load_relay.cpp
+    definitions/tuya/TZE200_socket_v3.cpp
+    definitions/tuya/TZE200_panel_6g.cpp
+    definitions/tuya/TZE200_wall_heater.cpp
+    definitions/tuya/TZE200_humidifier.cpp
+    definitions/tuya/TZE200_dishwasher.cpp
+    definitions/tuya/TZE200_fridge.cpp
+    definitions/tuya/TZE200_coffee.cpp
+    definitions/tuya/TZE200_outdoor_siren.cpp
+    definitions/tuya/TZE200_gate.cpp
+    definitions/tuya/TZE200_street_light.cpp
+    definitions/tuya/TS000F.cpp
+    definitions/tuya/TS0101.cpp
+    definitions/tuya/TS0501A.cpp
+    definitions/tuya/TS0504A.cpp
+    definitions/tuya/TS030F.cpp
+    definitions/tuya/TS0218.cpp
+    definitions/tuya/TS0219.cpp
+    definitions/tuya/TS0111.cpp
+    definitions/tuya/TZE200_dust.cpp
+    definitions/tuya/TZE200_purifier.cpp
+    definitions/tuya/TZE200_emeter.cpp
+    definitions/tuya/TZE200_gas_det.cpp
+    definitions/tuya/TZE200_fan_dim.cpp
+    definitions/tuya/TZE200_water_heater.cpp
+    definitions/tuya/TZE200_shutter_ctrl.cpp
+    definitions/tuya/TZE200_zone_heat.cpp
+    definitions/tuya/TZE200_2g_relay.cpp
+    definitions/tuya/TZE200_6g_relay.cpp
+    definitions/tuya/TZE200_oled_thermo.cpp
+    definitions/tuya/TZE200_digital_scale.cpp
+    definitions/tuya/TZE200_water_timer.cpp
+    definitions/tuya/TZE200_4key_pad.cpp
+    definitions/tuya/TZE200_solar_inv.cpp
+    definitions/tuya/TZE200_batt_tester.cpp
+    definitions/tuya/TZE200_solenoid.cpp
+    definitions/tuya/TZE204_thermostat_v4.cpp
+    definitions/tuya/TZE200_hvac_v2.cpp
+    definitions/tuya/TS0503B.cpp
+    definitions/tuya/TS0502B.cpp
+    definitions/tuya/TS0504B.cpp
+    definitions/tuya/TZE200_aao6qtcs.cpp
+    definitions/tuya/TZE200_bqcqqjpb.cpp
+    definitions/tuya/TZE200_c88teujp.cpp
+    definitions/tuya/TZE200_cpmgn2cf.cpp
+    definitions/tuya/TZE200_dsjszp0x.cpp
+    definitions/tuya/TZE200_bq5c8xfe.cpp
+    definitions/tuya/TZE200_e3oitdyu.cpp
+    definitions/tuya/TZE200_g1o5lwkd.cpp
+    definitions/tuya/TZE200_tz32mtia.cpp
+    definitions/tuya/TZE200_bxeedvvy.cpp
+    definitions/tuya/TZE200_cwnjrr72.cpp
+    definitions/tuya/TZE200_husqqvux.cpp
+    definitions/tuya/TZE200_4hbc6bwa.cpp
+    definitions/tuya/TZE200_gz8j3tva.cpp
+    definitions/tuya/TZE200_e4cfv1l0.cpp
+    definitions/tuya/TZE200_5d3vhjro.cpp
+    definitions/tuya/TZE200_1hwjutgo.cpp
+    definitions/tuya/TZE200_mraovvmm.cpp
+    definitions/tuya/TZE200_8nyaanzb.cpp
+    definitions/tuya/TZE200_rmjr4ufz.cpp
+    definitions/tuya/TZE200_ar0slwnd.cpp
+    definitions/tuya/TZE200_cf1sl3tj.cpp
+    definitions/tuya/TZE200_nueqqe6k.cpp
+    definitions/tuya/TZE200_zpzndjez.cpp
+    definitions/tuya/TZE200_68nvbio9.cpp
+    definitions/lumi/WXKG01LM.cpp
+    definitions/lumi/WXKG11LM.cpp
+    definitions/lumi/RTCGQ11LM.cpp
+    definitions/lumi/ZNCZ02LM.cpp
+    definitions/lumi/MCCGQ01LM.cpp
+    definitions/lumi/LGZCDD01LM.cpp
+    definitions/lumi/QBKG11LM.cpp
+    definitions/lumi/WXKG03LM.cpp
+    definitions/lumi/PS_S04D.cpp
+    definitions/lumi/UT_A01E.cpp
+    definitions/lumi/WT_A03E.cpp
+    definitions/lumi/WS_K03E.cpp
+    definitions/lumi/TH_S04D.cpp
+    definitions/lumi/WS_K02E.cpp
+    definitions/lumi/WS_K04E.cpp
+    definitions/lumi/WS_K05E.cpp
+    definitions/lumi/KD_R01D.cpp
+    definitions/lumi/DS_K02D_DS_K02E.cpp
+    definitions/lumi/WS_K08D.cpp
+    definitions/lumi/T2_E27_CCT.cpp
+    definitions/lumi/T2_E27.cpp
+    definitions/lumi/WS_K07E.cpp
+    definitions/lumi/VC_X01D.cpp
+    definitions/lumi/CL_L02D.cpp
+    definitions/lumi/WS_K01D.cpp
+    definitions/lumi/ZNQBKG45LM.cpp
+    definitions/lumi/ZNQBKG44LM.cpp
+    definitions/lumi/ZNQBKG43LM.cpp
+    definitions/lumi/ZNQBKG42LM.cpp
+    definitions/lumi/ZNQBKG41LM.cpp
+    definitions/lumi/ZNQBKG40LM.cpp
+    definitions/lumi/ZNQBKG39LM.cpp
+    definitions/lumi/ZNQBKG38LM.cpp
+    definitions/lumi/ZNCWWSQ01LM.cpp
+    definitions/lumi/SRTS_A01.cpp
+    definitions/lumi/WXKG17LM.cpp
+    definitions/lumi/QBCZ14LM.cpp
+    definitions/lumi/QBCZ15LM.cpp
+    definitions/lumi/VOCKQJK11LM.cpp
+    definitions/lumi/QBKG39LM.cpp
+    definitions/lumi/QBKG38LM.cpp
+    definitions/lumi/ZNCJMB14LM.cpp
+    definitions/lumi/SSWQD03LM.cpp
+    definitions/lumi/ZNDDQDQ13LM.cpp
+    definitions/lumi/ZNDDQDQ12LM.cpp
+    definitions/lumi/ZNDDQDQ11LM.cpp
+    definitions/lumi/HLQDQ01LM.cpp
+    definitions/lumi/ZNTGMK12LM.cpp
+    definitions/lumi/TDL01LM.cpp
+    definitions/lumi/LLKZMK12LM.cpp
+    definitions/lumi/LLKZMK11LM.cpp
+    definitions/lumi/ZNCLDJ01LM.cpp
+    definitions/lumi/ZNGZDJ16LM.cpp
+    definitions/lumi/ZNGZDJ11LM.cpp
+    definitions/lumi/JTQJ_BF_01LM_BW.cpp
+    definitions/lumi/ZNQBCZ11LM.cpp
+    definitions/lumi/FP1E.cpp
+    definitions/lumi/QBKG20LM.cpp
+    definitions/lumi/QBKG19LM.cpp
+    definitions/lumi/QBKG18LM.cpp
+    definitions/lumi/QBKG17LM.cpp
+    definitions/lumi/QBKG26LM.cpp
+    definitions/lumi/QBKG28LM.cpp
+    definitions/lumi/QBKG27LM.cpp
+    definitions/lumi/WS_USC02.cpp
+    definitions/lumi/WS_USC01.cpp
+    definitions/lumi/LGYCDD01LM.cpp
+    definitions/lumi/JWDL001A.cpp
+    definitions/lumi/JWSP001A.cpp
+    definitions/lumi/KQJCMB11LM.cpp
+    definitions/lumi/WXKG04LM.cpp
+    definitions/lumi/ZNCZ15LM.cpp
+    definitions/lumi/RTCGQ12LM.cpp
+    definitions/lumi/RTCGQ13LM.cpp
+    definitions/lumi/RTCGQ14LM.cpp
+    definitions/lumi/MCCGQ11LM.cpp
+    definitions/lumi/WXKG02LM.cpp
+    definitions/lumi/WXKG12LM.cpp
+    definitions/lumi/WSDCGQ11LM.cpp
+    definitions/lumi/DJT11LM.cpp
+    definitions/lumi/RTCGQ01LM.cpp
+    definitions/lumi/MCCGQ14LM.cpp
+    definitions/lumi/WXKG06LM.cpp
+    definitions/lumi/WXKG07LM.cpp
+    definitions/lumi/WXKG13LM.cpp
+    definitions/lumi/WSDCGQ01LM.cpp
+    definitions/lumi/SJCGQ11LM.cpp
+    definitions/lumi/JTYJGD01LM.cpp
+    definitions/lumi/WXKG14LM.cpp
+    definitions/lumi/WXKG16LM.cpp
+    definitions/lumi/WXKG20LM.cpp
+    definitions/lumi/RTCGQ15LM.cpp
+    definitions/lumi/MCCGQ13LM.cpp
+    definitions/lumi/WSDCGQ12LM.cpp
+    definitions/lumi/SJCGQ12LM.cpp
+    definitions/lumi/JYGZ01AQ.cpp
+    definitions/lumi/WXKG15LM.cpp
+    definitions/lumi/WXKG18LM.cpp
+    definitions/lumi/WXKG19LM.cpp
+    definitions/lumi/WXKG21LM.cpp
+    definitions/lumi/DJT12LM.cpp
+    definitions/lumi/RTCGQ16LM.cpp
+    definitions/lumi/MCCGQ12LM.cpp
+    definitions/lumi/GZCGQ01LM.cpp
+    definitions/lumi/RTCGQ21LM.cpp
+    definitions/lumi/RTCGQ22LM.cpp
+    definitions/lumi/MCCGQ16LM.cpp
+    definitions/lumi/MCCGQ17LM.cpp
+    definitions/lumi/WXKG22LM.cpp
+    definitions/lumi/WXKG23LM.cpp
+    definitions/lumi/WSDCGQ21LM.cpp
+    definitions/lumi/DJT21LM.cpp
+    definitions/lumi/RTCGQ23LM.cpp
+    definitions/lumi/MCCGQ18LM.cpp
+    definitions/lumi/MCCGQ19LM.cpp
+    definitions/lumi/WXKG24LM.cpp
+    definitions/lumi/WXKG25LM.cpp
+    definitions/lumi/WXKG26LM.cpp
+    definitions/lumi/JYGZ02AQ.cpp
+    definitions/lumi/GZCGQ02LM.cpp
+    definitions/lumi/WXCJKG11LM.cpp
+    definitions/lumi/WXCJKG12LM.cpp
+    definitions/lumi/WXCJKG13LM.cpp
+    definitions/lumi/RTCGQ24LM.cpp
+    definitions/lumi/RTCGQ25LM.cpp
+    definitions/lumi/MCCGQ20LM.cpp
+    definitions/lumi/SJCGQ13LM.cpp
+    definitions/lumi/DJT31LM.cpp
+    definitions/lumi/RTCGQ26LM.cpp
+    definitions/lumi/RTCGQ27LM.cpp
+    definitions/lumi/RTCGQ28LM.cpp
+    definitions/lumi/RTCGQ31LM.cpp
+    definitions/lumi/RTCGQ32LM.cpp
+    definitions/lumi/MCCGQ21LM.cpp
+    definitions/lumi/MCCGQ22LM.cpp
+    definitions/lumi/MCCGQ23LM.cpp
+    definitions/lumi/MCCGQ24LM.cpp
+    definitions/lumi/WXKG27LM.cpp
+    definitions/lumi/WXKG28LM.cpp
+    definitions/lumi/WXKG29LM.cpp
+    definitions/lumi/WXKG30LM.cpp
+    definitions/lumi/WXKG31LM.cpp
+    definitions/lumi/WSDCGQ22LM.cpp
+    definitions/lumi/WSDCGQ23LM.cpp
+    definitions/lumi/WSDCGQ24LM.cpp
+    definitions/lumi/GZCGQ11LM.cpp
+    definitions/lumi/SJCGQ14LM.cpp
+    definitions/lumi/SJCGQ15LM.cpp
+    definitions/lumi/JYGZ03AQ.cpp
+    definitions/lumi/JTBZ01AQ.cpp
+    definitions/lumi/DJT41LM.cpp
+    definitions/lumi/DJT51LM.cpp
+    definitions/lumi/QBKG04LM.cpp
+    definitions/lumi/QBKG10LM.cpp
+    definitions/lumi/QBKG21LM.cpp
+    definitions/lumi/QBKG23LM.cpp
+    definitions/lumi/SSM_U01.cpp
+    definitions/lumi/WS_EUK01.cpp
+    definitions/lumi/QBKG32LM.cpp
+    definitions/lumi/QBKG33LM.cpp
+    definitions/lumi/ZNQBKG11LM.cpp
+    definitions/lumi/ZNQBKG12LM.cpp
+    definitions/lumi/QBKG03LM.cpp
+    definitions/lumi/QBKG12LM.cpp
+    definitions/lumi/QBKG22LM.cpp
+    definitions/lumi/QBKG24LM.cpp
+    definitions/lumi/QBKG25LM.cpp
+    definitions/lumi/SSM_U02.cpp
+    definitions/lumi/WS_EUK03.cpp
+    definitions/lumi/QBKG34LM.cpp
+    definitions/lumi/ZNQBKG13LM.cpp
+    definitions/lumi/ZNQBKG14LM.cpp
+    definitions/lumi/QBKG29LM.cpp
+    definitions/lumi/QBKG30LM.cpp
+    definitions/lumi/QBKG31LM.cpp
+    definitions/lumi/WS_EUK04.cpp
+    definitions/lumi/QBKG35LM.cpp
+    definitions/lumi/QBKG40LM.cpp
+    definitions/lumi/QBKG41LM.cpp
+    definitions/lumi/ZNQBKG15LM.cpp
+    definitions/lumi/ZNQBKG16LM.cpp
+    definitions/lumi/ZNQBKG17LM.cpp
+    definitions/lumi/ZNLDP12LM.cpp
+    definitions/lumi/ZNLDP13LM.cpp
+    definitions/lumi/ZNLDP14LM.cpp
+    definitions/lumi/ZNLDP15LM.cpp
+    definitions/lumi/ZNLDP16LM.cpp
+    definitions/lumi/ZNLDP17LM.cpp
+    definitions/lumi/ZNLDP18LM.cpp
+    definitions/lumi/ZNLDP19LM.cpp
+    definitions/lumi/ZNLDP20LM.cpp
+    definitions/lumi/ZNLDP21LM.cpp
+    definitions/lumi/ZNLDP22LM.cpp
+    definitions/lumi/ZNLDP23LM.cpp
+    definitions/lumi/ZNLDP24LM.cpp
+    definitions/lumi/ZNLDP25LM.cpp
+    definitions/lumi/ZNLDP26LM.cpp
+    definitions/lumi/ZNLDP27LM.cpp
+    definitions/lumi/ZNLDP28LM.cpp
+    definitions/lumi/ZNLDP29LM.cpp
+    definitions/lumi/ZNLDP30LM.cpp
+    definitions/lumi/ZNLDP31LM.cpp
+    definitions/lumi/ZNXNKG01LM.cpp
+    definitions/lumi/ZNXNKG02LM.cpp
+    definitions/lumi/ZNXNKG03LM.cpp
+    definitions/lumi/ZNXNKG04LM.cpp
+    definitions/lumi/ZNXNKG05LM.cpp
+    definitions/lumi/ZNCZ03LM.cpp
+    definitions/lumi/ZNCZ04LM.cpp
+    definitions/lumi/ZNCZ11LM.cpp
+    definitions/lumi/ZNCZ12LM.cpp
+    definitions/lumi/ZNCZ14LM.cpp
+    definitions/lumi/SP_EUC01.cpp
+    definitions/lumi/WP_P01D.cpp
+    definitions/lumi/QBCZ11LM.cpp
+    definitions/lumi/QBCZ12LM.cpp
+    definitions/lumi/QBCZ13LM.cpp
+    definitions/lumi/ZNMCPZ01LM.cpp
+    definitions/lumi/ZNMCPZ02LM.cpp
+    definitions/lumi/SP_EUC02.cpp
+    definitions/lumi/WP_P02D.cpp
+    definitions/lumi/WP_P03D.cpp
+    definitions/lumi/MFKZQ01LM.cpp
+    definitions/lumi/CTPR01.cpp
+    definitions/lumi/ZNCLDJ11LM.cpp
+    definitions/lumi/ZNCLDJ12LM.cpp
+    definitions/lumi/ZNCLDJ14LM.cpp
+    definitions/lumi/ZNCLBL01LM.cpp
+    definitions/lumi/ZNMS11LM.cpp
+    definitions/lumi/ZNMS12LM.cpp
+    definitions/lumi/ZNMS13LM.cpp
+    definitions/lumi/RTCZCGQ11LM.cpp
+    definitions/lumi/RTCZCGQ12LM.cpp
+    definitions/lumi/ZNQPKG01LM.cpp
+    definitions/lumi/SP_PDC01.cpp
+    definitions/lumi/WRDZG01LM.cpp
+    definitions/lumi/ZNCLDJ15LM.cpp
+    definitions/lumi/SRSCM01.cpp
+    definitions/lumi/ZNXJKG01LM.cpp
+    definitions/lumi/ZNWXKG01LM.cpp
+    definitions/lumi/SP_WP01.cpp
+    definitions/lumi/WGLZ00LM.cpp
+)
+target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)
+# Device cpps rely on zero-initialisation of unused PreparedDefinition
+# fields (Tuya-side discriminators, expose arrays, etc). Silence the
+# missing-field warning here only — core/runtime code still sees it.
+target_compile_options(zhc_definitions PRIVATE
+    $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wno-missing-field-initializers>
+)
+
+# Auto-generated Tuya device cpps (produced by tools/generate_tuya_ports.py
+# against z2m's devices/tuya.ts). These are placeholder stubs — the DP
+# ones are inert until a human fills in the map. CONFIGURE_DEPENDS means
+# CMake picks up new generated files on re-configure without touching
+# the hand-maintained list.
+file(GLOB TUYA_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/tuya/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE ${TUYA_GENERATED_SRCS})
+
+# Moes registry + generated cpps (Tuya OEM rebrand — thin wrappers).
+file(GLOB MOES_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/moes/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/moes/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE ${MOES_GENERATED_SRCS})
+
+# Zosung IR runtime — shared state machine for chunked IR file
+# transfer (clusters 0xED00 / 0xE004). Used by Moes UFO-R11 family
+# and Tuya/Zosung IR clones. Header-only API, single shared cpp.
+file(GLOB ZOSUNG_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/zosung/*.cpp)
+target_sources(zhc_definitions PRIVATE ${ZOSUNG_SRCS})
+
+# Philips Hue registry + generated cpps. Generator lives in
+# tools/generate_philips_ports.py; every entry pulls in the shared
+# generic on-off + brightness + color-temp converters.
+file(GLOB PHILIPS_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/philips/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/philips/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE ${PHILIPS_GENERATED_SRCS})
+
+# Sonoff / Itead / eWeLink registry + generated cpps. Generator in
+# tools/generate_sonoff_ports.py lowers `m.onOff/battery/light/
+# commandsOnOff` into stock generic converters.
+file(GLOB SONOFF_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/sonoff/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/sonoff/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE ${SONOFF_GENERATED_SRCS})
+
+# Heiman + Saswell registries.
+file(GLOB HEIMAN_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/heiman/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/heiman/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE ${HEIMAN_GENERATED_SRCS})
+
+file(GLOB SASWELL_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/saswell/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/saswell/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE ${SASWELL_GENERATED_SRCS})
+
+# Efekta — air-quality / CO2 / PM / soil sensors (modernExtend only).
+file(GLOB EFEKTA_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/efekta/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/efekta/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE ${EFEKTA_GENERATED_SRCS})
+
+# Schneider Electric — Wiser / Clipsal / Merten devices.
+file(GLOB SCHNEIDER_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/schneider/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/schneider/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE ${SCHNEIDER_GENERATED_SRCS})
+
+# Tier A — Ikea / Innr / Gledopto (lighting-dominated).
+file(GLOB IKEA_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/ikea/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/ikea/generated/*.cpp)
+file(GLOB INNR_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/innr/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/innr/generated/*.cpp)
+file(GLOB GLEDOPTO_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/gledopto/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/gledopto/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE
+     ${IKEA_GENERATED_SRCS}
+     ${INNR_GENERATED_SRCS}
+     ${GLEDOPTO_GENERATED_SRCS})
+
+# Tier B — Sunricher / Namron / Ledvance / Osram / Adeo.
+file(GLOB SUNRICHER_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/sunricher/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/sunricher/generated/*.cpp)
+file(GLOB NAMRON_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/namron/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/namron/generated/*.cpp)
+file(GLOB LEDVANCE_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/ledvance/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/ledvance/generated/*.cpp)
+file(GLOB OSRAM_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/osram/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/osram/generated/*.cpp)
+file(GLOB ADEO_GENERATED_SRCS CONFIGURE_DEPENDS
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/adeo/*.cpp
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/adeo/generated/*.cpp)
+target_sources(zhc_definitions PRIVATE
+     ${SUNRICHER_GENERATED_SRCS}
+     ${NAMRON_GENERATED_SRCS}
+     ${LEDVANCE_GENERATED_SRCS}
+     ${OSRAM_GENERATED_SRCS}
+     ${ADEO_GENERATED_SRCS})
+
+# Tier C — 13 mid-size vendors (30–45 devices each).
+foreach(TC_V IN ITEMS legrand shinasystem third_reality robb paulmann
+                       orvibo slacky_diy nue_3a muller_licht develco
+                       iluminize hive feibit)
+    file(GLOB TC_SRCS CONFIGURE_DEPENDS
+         ${CMAKE_CURRENT_SOURCE_DIR}/definitions/${TC_V}/*.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/definitions/${TC_V}/generated/*.cpp)
+    target_sources(zhc_definitions PRIVATE ${TC_SRCS})
+endforeach()
+
+# Tier D — 18 mid-small vendors (~18–30 devices each).
+foreach(TD_V IN ITEMS yale sengled smartthings yokis zemismart ewelink
+                       candeo sylvania sinope qa lincukoo bitron
+                       aurora_lighting immax bosch shelly owon adurosmart)
+    file(GLOB TD_SRCS CONFIGURE_DEPENDS
+         ${CMAKE_CURRENT_SOURCE_DIR}/definitions/${TD_V}/*.cpp
+         ${CMAKE_CURRENT_SOURCE_DIR}/definitions/${TD_V}/generated/*.cpp)
+    target_sources(zhc_definitions PRIVATE ${TD_SRCS})
+endforeach()
+
+# Tier E — 323 long-tail vendors (auto-generated, aggregator-driven).
+file(GLOB TIER_E_AGG
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/_tier_e/*.cpp)
+target_sources(zhc_definitions PRIVATE ${TIER_E_AGG})
+file(GLOB TIER_E_VENDOR_DIRS
+     LIST_DIRECTORIES true
+     ${CMAKE_CURRENT_SOURCE_DIR}/definitions/*)
+foreach(TE_DIR IN LISTS TIER_E_VENDOR_DIRS)
+    if(IS_DIRECTORY ${TE_DIR})
+        get_filename_component(TE_NAME ${TE_DIR} NAME)
+        # Skip already-wired dirs from Tiers 0-D + internal scaffolding.
+        set(SKIP_NAMES _generic _tier_e
+            lumi tuya moes philips sonoff heiman saswell efekta schneider
+            ikea innr gledopto sunricher namron ledvance osram adeo
+            legrand shinasystem third_reality robb paulmann orvibo slacky_diy
+            nue_3a muller_licht develco iluminize hive feibit
+            yale sengled smartthings yokis zemismart ewelink candeo sylvania
+            sinope qa lincukoo bitron aurora_lighting immax bosch shelly
+            owon adurosmart)
+        list(FIND SKIP_NAMES ${TE_NAME} _found)
+        if(_found EQUAL -1)
+            file(GLOB _TE_SRCS CONFIGURE_DEPENDS
+                 ${TE_DIR}/*.cpp ${TE_DIR}/generated/*.cpp)
+            target_sources(zhc_definitions PRIVATE ${_TE_SRCS})
+        endif()
+    endif()
+endforeach()
+
+add_executable(zhc_tests tests/test_main.cpp)
+target_link_libraries(zhc_tests PRIVATE zhc_core)
+
+add_executable(zhc_parser_tests tests/test_foundation.cpp)
+target_link_libraries(zhc_parser_tests PRIVATE zhc_parser)
+
+add_executable(zhc_decoder_tests tests/test_decoder.cpp)
+target_link_libraries(zhc_decoder_tests PRIVATE zhc_parser)
+
+add_executable(zhc_fixture_runner tools/fixture_runner.cpp)
+target_include_directories(zhc_fixture_runner PRIVATE tools)
+target_link_libraries(zhc_fixture_runner PRIVATE zhc_definitions)
+
+add_executable(zhc_dispatch_tests tests/test_dispatch.cpp)
+target_link_libraries(zhc_dispatch_tests PRIVATE zhc_runtime)
+
+add_executable(zhc_config_steps_tests tests/test_config_steps.cpp)
+target_link_libraries(zhc_config_steps_tests PRIVATE zhc_runtime)
+
+add_executable(zhc_matcher_tests tests/test_definition_runtime.cpp)
+target_link_libraries(zhc_matcher_tests PRIVATE zhc_runtime)
+
+add_executable(zhc_timer_tests tests/test_timer.cpp)
+target_link_libraries(zhc_timer_tests PRIVATE zhc_core)
+
+add_executable(zhc_wxkg01lm_tests tests/test_wxkg01lm.cpp)
+target_link_libraries(zhc_wxkg01lm_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_rtcgq11lm_tests tests/test_rtcgq11lm.cpp)
+target_link_libraries(zhc_rtcgq11lm_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_generic_tests tests/test_generic.cpp)
+target_link_libraries(zhc_generic_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_modern_extend_tests tests/test_modern_extend.cpp)
+target_link_libraries(zhc_modern_extend_tests PRIVATE zhc_runtime zhc_parser)
+
+add_executable(zhc_lumi_specific_tests tests/test_lumi_specific.cpp)
+target_link_libraries(zhc_lumi_specific_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_wxkg11lm_tests tests/test_wxkg11lm.cpp)
+target_link_libraries(zhc_wxkg11lm_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_zncz02lm_tests tests/test_zncz02lm.cpp)
+target_link_libraries(zhc_zncz02lm_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_lumi_shared_extra_tests tests/test_lumi_shared_extra.cpp)
+target_link_libraries(zhc_lumi_shared_extra_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_lgzcdd01lm_tests tests/test_lgzcdd01lm.cpp)
+target_link_libraries(zhc_lgzcdd01lm_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_lumi_factories_tests tests/test_lumi_factories.cpp)
+target_link_libraries(zhc_lumi_factories_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_lumi_extend_tests tests/test_lumi_extend.cpp)
+target_link_libraries(zhc_lumi_extend_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_wave_a_tests tests/test_wave_a.cpp)
+target_link_libraries(zhc_wave_a_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_wave_b_tests tests/test_wave_b.cpp)
+target_link_libraries(zhc_wave_b_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_wave_c_tests tests/test_wave_c.cpp)
+target_link_libraries(zhc_wave_c_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_wave_d_tests tests/test_wave_d.cpp)
+target_link_libraries(zhc_wave_d_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_wave_e_tests tests/test_wave_e.cpp)
+target_link_libraries(zhc_wave_e_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_lumi_registry_tests tests/test_lumi_registry.cpp)
+target_link_libraries(zhc_lumi_registry_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_matcher_tests tests/test_tuya_matcher.cpp)
+target_link_libraries(zhc_tuya_matcher_tests PRIVATE zhc_runtime)
+
+add_executable(zhc_tuya_dp_tests tests/test_tuya_dp.cpp)
+target_link_libraries(zhc_tuya_dp_tests PRIVATE zhc_parser)
+
+add_executable(zhc_tuya_mcu_sync_time_tests tests/test_tuya_mcu_sync_time.cpp)
+target_link_libraries(zhc_tuya_mcu_sync_time_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_datapoints_tests tests/test_tuya_datapoints.cpp)
+target_link_libraries(zhc_tuya_datapoints_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_base_device_tests tests/test_tuya_base_device.cpp)
+target_link_libraries(zhc_tuya_base_device_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_extend_tests tests/test_tuya_extend.cpp)
+target_link_libraries(zhc_tuya_extend_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_dp_helpers_tests tests/test_tuya_dp_helpers.cpp)
+target_link_libraries(zhc_tuya_dp_helpers_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_factories_tests tests/test_tuya_factories.cpp)
+target_link_libraries(zhc_tuya_factories_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_devices_tests tests/test_tuya_devices.cpp)
+target_link_libraries(zhc_tuya_devices_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tz_generic_tests tests/test_tz_generic.cpp)
+target_link_libraries(zhc_tz_generic_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_color_tests tests/test_color.cpp)
+target_link_libraries(zhc_color_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_tz_tests tests/test_tuya_tz.cpp)
+target_link_libraries(zhc_tuya_tz_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_diy_range_extender_tests tests/test_diy_range_extender.cpp)
+target_link_libraries(zhc_diy_range_extender_tests PRIVATE zhc_definitions)
+
+# Behavioural-parity fixture tests for devices wired in the 2026-04-25
+# MOES parity sweep. See tests/README.md for the pattern.
+add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
+target_link_libraries(zhc_moes_bht002_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_moes_zht_sr_tests tests/test_moes_zht_sr.cpp)
+target_link_libraries(zhc_moes_zht_sr_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_zosung_ir_tests tests/test_zosung_ir.cpp)
+target_link_libraries(zhc_zosung_ir_tests PRIVATE zhc_definitions)
+
+enable_testing()
+add_test(NAME zhc_tests           COMMAND zhc_tests)
+add_test(NAME zhc_parser_tests    COMMAND zhc_parser_tests)
+add_test(NAME zhc_decoder_tests   COMMAND zhc_decoder_tests)
+add_test(NAME zhc_dispatch_tests  COMMAND zhc_dispatch_tests)
+add_test(NAME zhc_config_steps_tests COMMAND zhc_config_steps_tests)
+add_test(NAME zhc_matcher_tests   COMMAND zhc_matcher_tests)
+add_test(NAME zhc_timer_tests     COMMAND zhc_timer_tests)
+add_test(NAME zhc_wxkg01lm_tests  COMMAND zhc_wxkg01lm_tests)
+add_test(NAME zhc_rtcgq11lm_tests COMMAND zhc_rtcgq11lm_tests)
+add_test(NAME zhc_generic_tests   COMMAND zhc_generic_tests)
+add_test(NAME zhc_modern_extend_tests COMMAND zhc_modern_extend_tests)
+add_test(NAME zhc_lumi_specific_tests COMMAND zhc_lumi_specific_tests)
+add_test(NAME zhc_wxkg11lm_tests      COMMAND zhc_wxkg11lm_tests)
+add_test(NAME zhc_zncz02lm_tests      COMMAND zhc_zncz02lm_tests)
+add_test(NAME zhc_lumi_shared_extra_tests COMMAND zhc_lumi_shared_extra_tests)
+add_test(NAME zhc_lgzcdd01lm_tests    COMMAND zhc_lgzcdd01lm_tests)
+add_test(NAME zhc_lumi_factories_tests COMMAND zhc_lumi_factories_tests)
+add_test(NAME zhc_lumi_extend_tests   COMMAND zhc_lumi_extend_tests)
+add_test(NAME zhc_wave_a_tests        COMMAND zhc_wave_a_tests)
+add_test(NAME zhc_wave_b_tests        COMMAND zhc_wave_b_tests)
+add_test(NAME zhc_wave_c_tests        COMMAND zhc_wave_c_tests)
+add_test(NAME zhc_wave_d_tests        COMMAND zhc_wave_d_tests)
+add_test(NAME zhc_wave_e_tests        COMMAND zhc_wave_e_tests)
+add_test(NAME zhc_lumi_registry_tests COMMAND zhc_lumi_registry_tests)
+add_test(NAME zhc_tuya_matcher_tests  COMMAND zhc_tuya_matcher_tests)
+add_test(NAME zhc_tuya_dp_tests       COMMAND zhc_tuya_dp_tests)
+add_test(NAME zhc_tuya_mcu_sync_time_tests COMMAND zhc_tuya_mcu_sync_time_tests)
+add_test(NAME zhc_tuya_datapoints_tests    COMMAND zhc_tuya_datapoints_tests)
+add_test(NAME zhc_tuya_base_device_tests   COMMAND zhc_tuya_base_device_tests)
+add_test(NAME zhc_tuya_extend_tests        COMMAND zhc_tuya_extend_tests)
+add_test(NAME zhc_tuya_dp_helpers_tests    COMMAND zhc_tuya_dp_helpers_tests)
+add_test(NAME zhc_tuya_factories_tests     COMMAND zhc_tuya_factories_tests)
+add_test(NAME zhc_tuya_devices_tests       COMMAND zhc_tuya_devices_tests)
+add_test(NAME zhc_tz_generic_tests          COMMAND zhc_tz_generic_tests)
+add_test(NAME zhc_color_tests               COMMAND zhc_color_tests)
+add_test(NAME zhc_tuya_tz_tests             COMMAND zhc_tuya_tz_tests)
+add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
+add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
+add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
+add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)
+add_test(NAME zhc_fixtures
+         COMMAND zhc_fixture_runner
+                 ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
+
+# Fingerprint-collision audit: fails when a Tuya (model+manu) or
+# plain (model) bucket has two cpps claiming the same key AND the
+# registry's first pick has fewer wired axes than another candidate
+# of the SAME vendor. Cross-vendor collisions (legitimate whitelabel
+# overlaps) are informational.
+add_test(NAME zhc_collision_audit
+         COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/tools/audit_collisions.py)
+
+# Tier-comment guard: every device cpp under definitions/<vendor>/
+# (excluding shared + registry scaffolding) must carry a
+# `// Tier [123]` marker so reviewers see coverage shape at a glance.
+add_test(NAME zhc_tier_check
+         COMMAND bash -c
+            "set -euo pipefail; missing=0; \
+             for f in $(find ${CMAKE_CURRENT_SOURCE_DIR}/definitions \
+                            -maxdepth 2 -name '*.cpp' \
+                            -not -name 'registry.cpp' \
+                            -not -name '_shared.cpp'); do \
+               if ! grep -qE 'Tier [123]' \"$f\"; then \
+                 echo \"tier-comment missing: $f\" >&2; \
+                 missing=$((missing + 1)); \
+               fi; \
+             done; \
+             exit $missing")

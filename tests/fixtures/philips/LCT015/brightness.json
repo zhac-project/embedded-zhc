@@ -1,0 +1,17 @@
+{
+  "model": "LCT015",
+  "manufacturer": "Philips",
+  "scenario": "brightness-ramp-to-200",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0008",
+    "endpoint": 11,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "180A0A000020C8"
+  },
+  "expected": {
+    "brightness": 200
+  }
+}

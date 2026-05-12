@@ -1,0 +1,18 @@
+{
+  "model": "TS0601__TZE204_d7lpruvi",
+  "manufacturer": "Tuya",
+  "manufacturer_name": "_TZE204_d7lpruvi",
+  "scenario": "tuya-dp-humidity-60",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0xEF00",
+    "endpoint": 1,
+    "type": "Command",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "0901020001020200040000003C"
+  },
+  "expected": {
+    "humidity": 60
+  }
+}

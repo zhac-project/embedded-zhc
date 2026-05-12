@@ -1,0 +1,19 @@
+{
+  "model": "CTP-R01",
+  "manufacturer": "Xiaomi",
+  "scenario": "flip90-from1-to5 (val=68)",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0012",
+    "endpoint": 2,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18020A5500214400"
+  },
+  "expected": {
+    "action": "flip90",
+    "side": 5,
+    "action_from_side": 1
+  }
+}

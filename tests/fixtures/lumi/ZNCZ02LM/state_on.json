@@ -1,0 +1,17 @@
+{
+  "model": "ZNCZ02LM",
+  "manufacturer": "LUMI",
+  "scenario": "state-on",
+  "prior_state": {},
+  "frame": {
+    "cluster": "0x0006",
+    "endpoint": 1,
+    "type": "AttributeReport",
+    "direction": "server_to_client",
+    "manufacturer_specific": false,
+    "hex": "18010A00001001"
+  },
+  "expected": {
+    "state": true
+  }
+}
