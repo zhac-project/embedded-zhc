@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_ZM25R1[] = {
+    {"Zemismart","ZM25R3"},
+};
 extern const PreparedDefinition kDef_ZM25R1{
     .zigbee_models=kModels_ZM25R1, .zigbee_models_count=sizeof(kModels_ZM25R1)/sizeof(kModels_ZM25R1[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_ZM25R1, .manufacturer_names_count=sizeof(kManus_ZM25R1)/sizeof(kManus_ZM25R1[0]),
     .model="ZM25R1", .vendor="Zemismart",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ZM25R1, .white_labels_count=sizeof(kWhiteLabels_ZM25R1)/sizeof(kWhiteLabels_ZM25R1[0]),
     .from_zigbee=kFz_ZM25R1, .from_zigbee_count=sizeof(kFz_ZM25R1)/sizeof(kFz_ZM25R1[0]),
     .to_zigbee=kTz_ZM25R1, .to_zigbee_count=sizeof(kTz_ZM25R1)/sizeof(kTz_ZM25R1[0]),
     .configure=nullptr, .on_event=nullptr,

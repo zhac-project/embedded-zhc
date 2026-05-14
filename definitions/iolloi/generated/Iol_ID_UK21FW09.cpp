@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_ID_UK21FW09[] = {
+    {"Iolloi","ID-EU20FW09"},
+};
 extern const PreparedDefinition kDef_ID_UK21FW09{
     .zigbee_models=kModels_ID_UK21FW09, .zigbee_models_count=sizeof(kModels_ID_UK21FW09)/sizeof(kModels_ID_UK21FW09[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="ID-UK21FW09", .vendor="Iolloi",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ID_UK21FW09, .white_labels_count=sizeof(kWhiteLabels_ID_UK21FW09)/sizeof(kWhiteLabels_ID_UK21FW09[0]),
     .from_zigbee=kFz_ID_UK21FW09, .from_zigbee_count=sizeof(kFz_ID_UK21FW09)/sizeof(kFz_ID_UK21FW09[0]),
     .to_zigbee=kTz_ID_UK21FW09, .to_zigbee_count=sizeof(kTz_ID_UK21FW09)/sizeof(kTz_ID_UK21FW09[0]),
     .configure=nullptr, .on_event=nullptr,

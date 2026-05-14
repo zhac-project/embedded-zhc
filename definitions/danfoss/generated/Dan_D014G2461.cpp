@@ -81,13 +81,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_D014G2461[] = {
+    {"Danfoss","014G2463"},
+    {"Hive","UK7004240"},
+    {"Popp","701721"},
+};
 extern const PreparedDefinition kDef_D014G2461{
     .zigbee_models=kModels_D014G2461, .zigbee_models_count=sizeof(kModels_D014G2461)/sizeof(kModels_D014G2461[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="014G2461", .vendor="Danfoss",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D014G2461, .white_labels_count=sizeof(kWhiteLabels_D014G2461)/sizeof(kWhiteLabels_D014G2461[0]),
     .from_zigbee=kFz_D014G2461, .from_zigbee_count=sizeof(kFz_D014G2461)/sizeof(kFz_D014G2461[0]),
     .to_zigbee=kTz_D014G2461, .to_zigbee_count=sizeof(kTz_D014G2461)/sizeof(kTz_D014G2461[0]),
     .configure=nullptr, .on_event=nullptr,

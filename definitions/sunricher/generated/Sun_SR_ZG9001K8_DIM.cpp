@@ -62,13 +62,17 @@ constexpr ::zhc::EndpointLabel kEndpoints_SR_ZG9001K8_DIM[] = { {"1", 1}, {"2", 
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_SR_ZG9001K8_DIM[] = {
+    {"Sunricher","SR-ZG9001NK8-DIM"},
+};
 extern const PreparedDefinition kDef_SR_ZG9001K8_DIM{
     .zigbee_models=kModels_SR_ZG9001K8_DIM, .zigbee_models_count=sizeof(kModels_SR_ZG9001K8_DIM)/sizeof(kModels_SR_ZG9001K8_DIM[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SR-ZG9001K8-DIM", .vendor="Sunricher",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SR_ZG9001K8_DIM, .white_labels_count=sizeof(kWhiteLabels_SR_ZG9001K8_DIM)/sizeof(kWhiteLabels_SR_ZG9001K8_DIM[0]),
     .from_zigbee=kFz_SR_ZG9001K8_DIM, .from_zigbee_count=sizeof(kFz_SR_ZG9001K8_DIM)/sizeof(kFz_SR_ZG9001K8_DIM[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

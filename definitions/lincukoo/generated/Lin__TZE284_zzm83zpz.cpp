@@ -83,7 +83,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefLin__TZE284_zzm83zpz{
-    .zigbee_models=kM__TZE284_zzm83zpz,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE284_zzm83zpz,.zigbee_models_count=sizeof(kM__TZE284_zzm83zpz)/sizeof(kM__TZE284_zzm83zpz[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_zzm83zpz,.manufacturer_names_count=1,
     .model="R12LM-Z11T",.vendor="Lincukoo",

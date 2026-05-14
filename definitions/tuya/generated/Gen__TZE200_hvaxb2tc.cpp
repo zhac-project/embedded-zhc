@@ -65,13 +65,18 @@ const TzConverter* const kTz__TZE200_hvaxb2tc[] = { &kTzDp__TZE200_hvaxb2tc };
 constexpr const char* kM__TZE200_hvaxb2tc[] = { "TS0601" };
 constexpr const char* kN__TZE200_hvaxb2tc[] = { "_TZE200_hvaxb2tc" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_hvaxb2tc[] = {
+    {"AVATTO","ME167_1"},
+    {"AVATTO","TRV06_1b"},
+};
 extern const PreparedDefinition kDefGen__TZE200_hvaxb2tc{
     .zigbee_models=kM__TZE200_hvaxb2tc,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_hvaxb2tc,.manufacturer_names_count=1,
     .model="TS0601__TZE200_hvaxb2tc",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_hvaxb2tc, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_hvaxb2tc)/sizeof(kWhiteLabels_Gen_TZE200_hvaxb2tc[0]),
     .from_zigbee=kFz__TZE200_hvaxb2tc,
     .from_zigbee_count=sizeof(kFz__TZE200_hvaxb2tc)/sizeof(kFz__TZE200_hvaxb2tc[0]),
     .to_zigbee=kTz__TZE200_hvaxb2tc,

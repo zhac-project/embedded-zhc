@@ -32,13 +32,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_D3RCB01057Z[] = {
+    {"Third Reality","3RCB02070Z"},
+    {"Third Reality","3RCB1095Z"},
+};
 extern const PreparedDefinition kDef_D3RCB01057Z{
     .zigbee_models=kModels_D3RCB01057Z, .zigbee_models_count=sizeof(kModels_D3RCB01057Z)/sizeof(kModels_D3RCB01057Z[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="3RCB01057Z", .vendor="ThirdReality",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D3RCB01057Z, .white_labels_count=sizeof(kWhiteLabels_D3RCB01057Z)/sizeof(kWhiteLabels_D3RCB01057Z[0]),
     .from_zigbee=kFz_D3RCB01057Z, .from_zigbee_count=sizeof(kFz_D3RCB01057Z)/sizeof(kFz_D3RCB01057Z[0]),
     .to_zigbee=kTz_D3RCB01057Z, .to_zigbee_count=sizeof(kTz_D3RCB01057Z)/sizeof(kTz_D3RCB01057Z[0]),
     .configure=nullptr, .on_event=nullptr,

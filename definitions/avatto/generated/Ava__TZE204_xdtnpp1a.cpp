@@ -7,9 +7,10 @@
 namespace zhc::devices::avatto {
 namespace {
 
-constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_xdtnpp1a_running_state_dp49[] = {
-    { 1, "heat" },
-    { 0, "idle" },
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_xdtnpp1a_running_state_dp3[] = {
+    // z2m: tuya.valueConverterBasic.lookup({idle: 1, heat: 0})
+    { 1, "idle" },
+    { 0, "heat" },
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_xdtnpp1a_system_mode_dp49[] = {
@@ -27,9 +28,9 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_xdtnpp1a_preset_dp2[] = {
 };
 
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_xdtnpp1a[] = {
-    { 49, "running_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_xdtnpp1a_running_state_dp49, sizeof(kEnum__TZE204_xdtnpp1a_running_state_dp49)/sizeof(kEnum__TZE204_xdtnpp1a_running_state_dp49[0]) },
     { 49, "system_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_xdtnpp1a_system_mode_dp49, sizeof(kEnum__TZE204_xdtnpp1a_system_mode_dp49)/sizeof(kEnum__TZE204_xdtnpp1a_system_mode_dp49[0]) },
     { 2, "preset", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_xdtnpp1a_preset_dp2, sizeof(kEnum__TZE204_xdtnpp1a_preset_dp2)/sizeof(kEnum__TZE204_xdtnpp1a_preset_dp2[0]) },
+    { 3, "running_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_xdtnpp1a_running_state_dp3, sizeof(kEnum__TZE204_xdtnpp1a_running_state_dp3)/sizeof(kEnum__TZE204_xdtnpp1a_running_state_dp3[0]) },
     { 4, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 5, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 6, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },

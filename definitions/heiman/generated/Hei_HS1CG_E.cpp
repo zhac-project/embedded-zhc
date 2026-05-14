@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_HS1CG_E[] = {
+    {"Piri","HSIO18008"},
+};
 extern const PreparedDefinition kDef_HS1CG_E{
     .zigbee_models=kModels_HS1CG_E, .zigbee_models_count=sizeof(kModels_HS1CG_E)/sizeof(kModels_HS1CG_E[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="HS1CG-E", .vendor="Heiman",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_HS1CG_E, .white_labels_count=sizeof(kWhiteLabels_HS1CG_E)/sizeof(kWhiteLabels_HS1CG_E[0]),
     .from_zigbee=kFz_HS1CG_E, .from_zigbee_count=sizeof(kFz_HS1CG_E)/sizeof(kFz_HS1CG_E[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

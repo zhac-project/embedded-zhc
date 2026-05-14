@@ -13,6 +13,7 @@ const FzConverter* const kFz_TO_Q_SYS_JZT[] = {
 };
 
 constexpr const char* kModels_TO_Q_SYS_JZT[] = { "TS0601" };
+constexpr const char* kManus_TO_Q_SYS_JZT[] = { "_TZE284_6ocnqlhn" };
 
 }  // namespace
 
@@ -34,7 +35,7 @@ constexpr BindingSpec kAutoBindings[] = {
 extern const PreparedDefinition kDef_TO_Q_SYS_JZT{
     .zigbee_models=kModels_TO_Q_SYS_JZT, .zigbee_models_count=sizeof(kModels_TO_Q_SYS_JZT)/sizeof(kModels_TO_Q_SYS_JZT[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus_TO_Q_SYS_JZT, .manufacturer_names_count=sizeof(kManus_TO_Q_SYS_JZT)/sizeof(kManus_TO_Q_SYS_JZT[0]),
     .model="TO-Q-SYS-JZT", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,

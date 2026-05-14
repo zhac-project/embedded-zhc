@@ -64,7 +64,7 @@ extern const PreparedDefinition kDefGen__TZE200_wqashyqo{
     .zigbee_models=kM__TZE200_wqashyqo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wqashyqo,.manufacturer_names_count=1,
-    .model="TS0601__TZE200_wqashyqo",.vendor="Tuya",
+    .model="ZG-303Z",.vendor="HOBEIAN",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_wqashyqo,

@@ -39,13 +39,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_FC600[] = {
+    {"Salus Controls","FC600NH"},
+};
 extern const PreparedDefinition kDef_FC600{
     .zigbee_models=kModels_FC600, .zigbee_models_count=sizeof(kModels_FC600)/sizeof(kModels_FC600[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="FC600", .vendor="SalusControls",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_FC600, .white_labels_count=sizeof(kWhiteLabels_FC600)/sizeof(kWhiteLabels_FC600[0]),
     .from_zigbee=kFz_FC600, .from_zigbee_count=sizeof(kFz_FC600)/sizeof(kFz_FC600[0]),
     .to_zigbee=kTz_FC600, .to_zigbee_count=sizeof(kTz_FC600)/sizeof(kTz_FC600[0]),
     .configure=nullptr, .on_event=nullptr,

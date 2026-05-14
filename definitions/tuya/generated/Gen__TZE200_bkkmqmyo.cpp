@@ -47,13 +47,18 @@ const TzConverter* const kTz__TZE200_bkkmqmyo[] = { &kTzDp__TZE200_bkkmqmyo };
 constexpr const char* kM__TZE200_bkkmqmyo[] = { "TS0601" };
 constexpr const char* kN__TZE200_bkkmqmyo[] = { "_TZE200_bkkmqmyo" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_bkkmqmyo[] = {
+    {"Hiking","DDS238-2"},
+    {"Tuya","RC-MCB"},
+};
 extern const PreparedDefinition kDefGen__TZE200_bkkmqmyo{
     .zigbee_models=kM__TZE200_bkkmqmyo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_bkkmqmyo,.manufacturer_names_count=1,
     .model="TS0601__TZE200_bkkmqmyo",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_bkkmqmyo, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_bkkmqmyo)/sizeof(kWhiteLabels_Gen_TZE200_bkkmqmyo[0]),
     .from_zigbee=kFz__TZE200_bkkmqmyo,
     .from_zigbee_count=sizeof(kFz__TZE200_bkkmqmyo)/sizeof(kFz__TZE200_bkkmqmyo[0]),
     .to_zigbee=kTz__TZE200_bkkmqmyo,

@@ -41,13 +41,17 @@ const TzConverter* const kTz__TZE284_4cqhd2ha[] = { &kTzDp__TZE284_4cqhd2ha };
 constexpr const char* kM__TZE284_4cqhd2ha[] = { "TS0601" };
 constexpr const char* kN__TZE284_4cqhd2ha[] = { "_TZE284_4cqhd2ha" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE284_4cqhd2ha[] = {
+    {"Conecto","COZIGVS"},
+};
 extern const PreparedDefinition kDefGen__TZE284_4cqhd2ha{
     .zigbee_models=kM__TZE284_4cqhd2ha,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_4cqhd2ha,.manufacturer_names_count=1,
     .model="TS0601__TZE284_4cqhd2ha",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE284_4cqhd2ha, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_4cqhd2ha)/sizeof(kWhiteLabels_Gen_TZE284_4cqhd2ha[0]),
     .from_zigbee=kFz__TZE284_4cqhd2ha,
     .from_zigbee_count=sizeof(kFz__TZE284_4cqhd2ha)/sizeof(kFz__TZE284_4cqhd2ha[0]),
     .to_zigbee=kTz__TZE284_4cqhd2ha,

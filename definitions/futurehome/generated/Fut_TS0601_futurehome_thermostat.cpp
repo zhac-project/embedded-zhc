@@ -88,13 +88,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TS0601_futurehome_thermostat[] = {
+    {"Futurehome","Co020"},
+};
 extern const PreparedDefinition kDef_TS0601_futurehome_thermostat{
     .zigbee_models=kModels, .zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus, .manufacturer_names_count=sizeof(kManus)/sizeof(kManus[0]),
     .model="TS0601_futurehome_thermostat", .vendor="Futurehome",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_TS0601_futurehome_thermostat, .white_labels_count=sizeof(kWhiteLabels_TS0601_futurehome_thermostat)/sizeof(kWhiteLabels_TS0601_futurehome_thermostat[0]),
     .from_zigbee=FX::fz_list, .from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list, .to_zigbee_count=FX::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,

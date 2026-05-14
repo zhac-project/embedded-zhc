@@ -42,13 +42,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_ERS_10TZBVB_AA[] = {
+    {"Loginovo","ZG-101ZL"},
+};
 extern const PreparedDefinition kDef_ERS_10TZBVB_AA{
     .zigbee_models=kModels_ERS_10TZBVB_AA, .zigbee_models_count=sizeof(kModels_ERS_10TZBVB_AA)/sizeof(kModels_ERS_10TZBVB_AA[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_ERS_10TZBVB_AA, .manufacturer_names_count=sizeof(kManus_ERS_10TZBVB_AA)/sizeof(kManus_ERS_10TZBVB_AA[0]),
     .model="ERS-10TZBVB-AA", .vendor="Moes",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ERS_10TZBVB_AA, .white_labels_count=sizeof(kWhiteLabels_ERS_10TZBVB_AA)/sizeof(kWhiteLabels_ERS_10TZBVB_AA[0]),
     .from_zigbee=kFz_ERS_10TZBVB_AA, .from_zigbee_count=sizeof(kFz_ERS_10TZBVB_AA)/sizeof(kFz_ERS_10TZBVB_AA[0]),
     .to_zigbee=kTz_ERS_10TZBVB_AA, .to_zigbee_count=sizeof(kTz_ERS_10TZBVB_AA)/sizeof(kTz_ERS_10TZBVB_AA[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,

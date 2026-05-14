@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SNTZ007[] = {
+    {"BlitzWolf","BW-IS2"},
+};
 extern const PreparedDefinition kDefSNTZ007{
     .zigbee_models=kModels_SNTZ007, .zigbee_models_count=sizeof(kModels_SNTZ007)/sizeof(kModels_SNTZ007[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SNTZ007", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SNTZ007, .white_labels_count=sizeof(kWhiteLabels_SNTZ007)/sizeof(kWhiteLabels_SNTZ007[0]),
     .from_zigbee=kFz_SNTZ007, .from_zigbee_count=sizeof(kFz_SNTZ007)/sizeof(kFz_SNTZ007[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

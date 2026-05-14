@@ -60,13 +60,18 @@ const TzConverter* const kTz__TZE200_p6vz3wzt[] = { &kTzDp__TZE200_p6vz3wzt };
 constexpr const char* kM__TZE200_p6vz3wzt[] = { "TS0601" };
 constexpr const char* kN__TZE200_p6vz3wzt[] = { "_TZE200_p6vz3wzt" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_p6vz3wzt[] = {
+    {"Homeetec","37022483"},
+    {"BSEED","_TZE284_uqfph8ah"},
+};
 extern const PreparedDefinition kDefGen__TZE200_p6vz3wzt{
     .zigbee_models=kM__TZE200_p6vz3wzt,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_p6vz3wzt,.manufacturer_names_count=1,
     .model="TS0601__TZE200_p6vz3wzt",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_p6vz3wzt, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_p6vz3wzt)/sizeof(kWhiteLabels_Gen_TZE200_p6vz3wzt[0]),
     .from_zigbee=kFz__TZE200_p6vz3wzt,
     .from_zigbee_count=sizeof(kFz__TZE200_p6vz3wzt)/sizeof(kFz__TZE200_p6vz3wzt[0]),
     .to_zigbee=kTz__TZE200_p6vz3wzt,

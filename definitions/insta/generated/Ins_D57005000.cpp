@@ -34,7 +34,7 @@ const FzConverter* const kFz_D57005000[] = {
 const TzConverter* const kTz_D57005000[] = {
     &::zhc::generic::kTzOnOff,
 };
-constexpr const char* kModels_D57005000[] = { "NEXENTRO Switching Actuator", "57005000", "Generic UP Device" };
+constexpr const char* kModels_D57005000[] = { "NEXENTRO Switching Actuator", "57005000" };
 
 constexpr Expose kAutoExposes[] = {
     {"state",  ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},

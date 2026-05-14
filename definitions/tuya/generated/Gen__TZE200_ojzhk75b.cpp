@@ -64,13 +64,34 @@ const TzConverter* const kTz__TZE200_ojzhk75b[] = { &kTzDp__TZE200_ojzhk75b };
 constexpr const char* kM__TZE200_ojzhk75b[] = { "TS0601" };
 constexpr const char* kN__TZE200_ojzhk75b[] = { "_TZE200_ojzhk75b" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_ojzhk75b[] = {
+    {"Moes","ZS-SR-EUD-1"},
+    {"Moes","MS-105Z"},
+    {"Mercator Ikuü","SSWM-DIMZ"},
+    {"Zemismart","ZN2S-US1-SD"},
+    {"Mercator Ikuü","SSWRM-ZB"},
+    {"Lonsonho","EDM-1ZBB-EU"},
+    {"ION Industries","ID200W-ZIGB"},
+    {"ION Industries","90.500.090"},
+    {"ION Industries","90.500.040"},
+    {"Lerlink","X706U"},
+    {"Moes","ZS-EUD_1gang"},
+    {"Larkkey","ZSTY-SM-1DMZG-EU"},
+    {"Earda","EDM-1ZAA-EU"},
+    {"Earda","EDM-1ZAB-EU"},
+    {"Earda","EDM-1ZBA-EU"},
+    {"Mercator Ikuü","SSWD01"},
+    {"Moes","ZS-USD"},
+    {"Moes","EDM-1ZBB-EU"},
+};
 extern const PreparedDefinition kDefGen__TZE200_ojzhk75b{
     .zigbee_models=kM__TZE200_ojzhk75b,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_ojzhk75b,.manufacturer_names_count=1,
     .model="TS0601__TZE200_ojzhk75b",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_ojzhk75b, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_ojzhk75b)/sizeof(kWhiteLabels_Gen_TZE200_ojzhk75b[0]),
     .from_zigbee=kFz__TZE200_ojzhk75b,
     .from_zigbee_count=sizeof(kFz__TZE200_ojzhk75b)/sizeof(kFz__TZE200_ojzhk75b[0]),
     .to_zigbee=kTz__TZE200_ojzhk75b,

@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_PAT04_A[] = {
+    {"Evology","PAT04-A"},
+};
 extern const PreparedDefinition kDef_PAT04_A{
     .zigbee_models=kModels_PAT04_A, .zigbee_models_count=sizeof(kModels_PAT04_A)/sizeof(kModels_PAT04_A[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="PAT04-A", .vendor="Philio",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_PAT04_A, .white_labels_count=sizeof(kWhiteLabels_PAT04_A)/sizeof(kWhiteLabels_PAT04_A[0]),
     .from_zigbee=kFz_PAT04_A, .from_zigbee_count=sizeof(kFz_PAT04_A)/sizeof(kFz_PAT04_A[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

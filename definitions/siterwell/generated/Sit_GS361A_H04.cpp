@@ -30,13 +30,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_GS361A_H04[] = {
+    {"Brennenstuhl","HT CZ 01"},
+};
 extern const PreparedDefinition kDef_GS361A_H04{
     .zigbee_models=kModels_GS361A_H04, .zigbee_models_count=sizeof(kModels_GS361A_H04)/sizeof(kModels_GS361A_H04[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_GS361A_H04, .manufacturer_names_count=sizeof(kManus_GS361A_H04)/sizeof(kManus_GS361A_H04[0]),
     .model="GS361A-H04", .vendor="Siterwell",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_GS361A_H04, .white_labels_count=sizeof(kWhiteLabels_GS361A_H04)/sizeof(kWhiteLabels_GS361A_H04[0]),
     .from_zigbee=kFz_GS361A_H04, .from_zigbee_count=sizeof(kFz_GS361A_H04)/sizeof(kFz_GS361A_H04[0]),
     .to_zigbee=kTz_GS361A_H04, .to_zigbee_count=sizeof(kTz_GS361A_H04)/sizeof(kTz_GS361A_H04[0]),
     .configure=nullptr, .on_event=nullptr,

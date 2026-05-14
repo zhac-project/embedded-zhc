@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_CZF02[] = {
+    {"Sygonix","SY-6811314"},
+};
 extern const PreparedDefinition kDef_CZF02{
     .zigbee_models=kModels_CZF02, .zigbee_models_count=sizeof(kModels_CZF02)/sizeof(kModels_CZF02[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_CZF02, .manufacturer_names_count=sizeof(kManus_CZF02)/sizeof(kManus_CZF02[0]),
     .model="CZF02", .vendor="Lincukoo",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_CZF02, .white_labels_count=sizeof(kWhiteLabels_CZF02)/sizeof(kWhiteLabels_CZF02[0]),
     .from_zigbee=kFz_CZF02, .from_zigbee_count=sizeof(kFz_CZF02)/sizeof(kFz_CZF02[0]),
     .to_zigbee=kTz_CZF02, .to_zigbee_count=sizeof(kTz_CZF02)/sizeof(kTz_CZF02[0]),
     .configure=nullptr, .on_event=nullptr,

@@ -36,13 +36,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_D412171[] = {
+    {"BTicino","FC80CC"},
+};
 extern const PreparedDefinition kDef_D412171{
     .zigbee_models=kModels_D412171, .zigbee_models_count=sizeof(kModels_D412171)/sizeof(kModels_D412171[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="412171", .vendor="Legrand",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D412171, .white_labels_count=sizeof(kWhiteLabels_D412171)/sizeof(kWhiteLabels_D412171[0]),
     .from_zigbee=kFz_D412171, .from_zigbee_count=sizeof(kFz_D412171)/sizeof(kFz_D412171[0]),
     .to_zigbee=kTz_D412171, .to_zigbee_count=sizeof(kTz_D412171)/sizeof(kTz_D412171[0]),
     .configure=nullptr, .on_event=nullptr,

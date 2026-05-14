@@ -106,13 +106,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_Neo_TZE284_z7a2jmyy[] = {
+    {"Nous","L14"},
+    {"NEO","NAS-WV05B2"},
+    {"NEO","NAS-WV05B2-L"},
+};
 extern const PreparedDefinition kDefNeo__TZE284_z7a2jmyy{
-    .zigbee_models=kM__TZE284_z7a2jmyy,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE284_z7a2jmyy,.zigbee_models_count=sizeof(kM__TZE284_z7a2jmyy)/sizeof(kM__TZE284_z7a2jmyy[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_z7a2jmyy,.manufacturer_names_count=1,
     .model="NAS-WV03B",.vendor="Neo",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Neo_TZE284_z7a2jmyy, .white_labels_count=sizeof(kWhiteLabels_Neo_TZE284_z7a2jmyy)/sizeof(kWhiteLabels_Neo_TZE284_z7a2jmyy[0]),
     .from_zigbee=kFz__TZE284_z7a2jmyy,
     .from_zigbee_count=sizeof(kFz__TZE284_z7a2jmyy)/sizeof(kFz__TZE284_z7a2jmyy[0]),
     .to_zigbee=kTz__TZE284_z7a2jmyy,

@@ -40,13 +40,19 @@ const TzConverter* const kTz__TZE204_zenj4lxv[] = { &kTzDp__TZE204_zenj4lxv };
 constexpr const char* kM__TZE204_zenj4lxv[] = { "TS0601" };
 constexpr const char* kN__TZE204_zenj4lxv[] = { "_TZE204_zenj4lxv" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_zenj4lxv[] = {
+    {"Moes","ZS-SR-EUD-2"},
+    {"Moes","ZS-EUD_2gang"},
+    {"Moes","MS-105B"},
+};
 extern const PreparedDefinition kDefGen__TZE204_zenj4lxv{
     .zigbee_models=kM__TZE204_zenj4lxv,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_zenj4lxv,.manufacturer_names_count=1,
     .model="TS0601__TZE204_zenj4lxv",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_zenj4lxv, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_zenj4lxv)/sizeof(kWhiteLabels_Gen_TZE204_zenj4lxv[0]),
     .from_zigbee=kFz__TZE204_zenj4lxv,
     .from_zigbee_count=sizeof(kFz__TZE204_zenj4lxv)/sizeof(kFz__TZE204_zenj4lxv[0]),
     .to_zigbee=kTz__TZE204_zenj4lxv,

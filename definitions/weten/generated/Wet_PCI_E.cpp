@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_PCI_E[] = {
+    {"Weten","Tuya PRO"},
+};
 extern const PreparedDefinition kDef_PCI_E{
     .zigbee_models=kModels_PCI_E, .zigbee_models_count=sizeof(kModels_PCI_E)/sizeof(kModels_PCI_E[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_PCI_E, .manufacturer_names_count=sizeof(kManus_PCI_E)/sizeof(kManus_PCI_E[0]),
     .model="PCI E", .vendor="Weten",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_PCI_E, .white_labels_count=sizeof(kWhiteLabels_PCI_E)/sizeof(kWhiteLabels_PCI_E[0]),
     .from_zigbee=kFz_PCI_E, .from_zigbee_count=sizeof(kFz_PCI_E)/sizeof(kFz_PCI_E[0]),
     .to_zigbee=kTz_PCI_E, .to_zigbee_count=sizeof(kTz_PCI_E)/sizeof(kTz_PCI_E[0]),
     .configure=nullptr, .on_event=nullptr,

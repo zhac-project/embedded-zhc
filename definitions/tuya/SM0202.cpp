@@ -32,13 +32,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SM0202[] = {
+    {"Cleverio","SS200"},
+    {"Marmitek","SM0202_1"},
+};
 extern const PreparedDefinition kDefSM0202{
     .zigbee_models=kModels_SM0202, .zigbee_models_count=sizeof(kModels_SM0202)/sizeof(kModels_SM0202[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SM0202", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SM0202, .white_labels_count=sizeof(kWhiteLabels_SM0202)/sizeof(kWhiteLabels_SM0202[0]),
     .from_zigbee=kFz_SM0202, .from_zigbee_count=sizeof(kFz_SM0202)/sizeof(kFz_SM0202[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

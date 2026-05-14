@@ -65,7 +65,7 @@ constexpr BindingSpec kAutoBindings[] = {
 
 
 extern const PreparedDefinition kDefWSDCGQ21LM{
-    .zigbee_models = kModels, .zigbee_models_count = 1,
+    .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
     .model = "WSDCGQ21LM", .vendor = "Xiaomi",
     .meta = &kTagMap,
     .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),

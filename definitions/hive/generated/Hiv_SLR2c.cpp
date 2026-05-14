@@ -30,13 +30,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SLR2c[] = {
+    {"Hive","SLR2d"},
+};
 extern const PreparedDefinition kDef_SLR2c{
     .zigbee_models=kModels_SLR2c, .zigbee_models_count=sizeof(kModels_SLR2c)/sizeof(kModels_SLR2c[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SLR2c", .vendor="Hive",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SLR2c, .white_labels_count=sizeof(kWhiteLabels_SLR2c)/sizeof(kWhiteLabels_SLR2c[0]),
     .from_zigbee=kFz_SLR2c, .from_zigbee_count=sizeof(kFz_SLR2c)/sizeof(kFz_SLR2c[0]),
     .to_zigbee=kTz_SLR2c, .to_zigbee_count=sizeof(kTz_SLR2c)/sizeof(kTz_SLR2c[0]),
     .configure=nullptr, .on_event=nullptr,

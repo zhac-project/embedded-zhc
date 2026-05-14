@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TS0111_valve[] = {
+    {"Tuya","SM-AW713Z"},
+};
 extern const PreparedDefinition kDef_TS0111_valve{
     .zigbee_models=kModels_TS0111_valve, .zigbee_models_count=sizeof(kModels_TS0111_valve)/sizeof(kModels_TS0111_valve[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_TS0111_valve, .manufacturer_names_count=sizeof(kManus_TS0111_valve)/sizeof(kManus_TS0111_valve[0]),
     .model="TS0111_valve", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_TS0111_valve, .white_labels_count=sizeof(kWhiteLabels_TS0111_valve)/sizeof(kWhiteLabels_TS0111_valve[0]),
     .from_zigbee=kFz_TS0111_valve, .from_zigbee_count=sizeof(kFz_TS0111_valve)/sizeof(kFz_TS0111_valve[0]),
     .to_zigbee=kTz_TS0111_valve, .to_zigbee_count=sizeof(kTz_TS0111_valve)/sizeof(kTz_TS0111_valve[0]),
     .configure=nullptr, .on_event=nullptr,

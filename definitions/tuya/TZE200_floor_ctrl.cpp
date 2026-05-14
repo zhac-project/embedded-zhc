@@ -26,11 +26,16 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TZE200_floor_ctrl[] = {
+    {"Beok","TGR85-ZB"},
+    {"AVATTO","ZWT-100-16A"},
+};
 extern const PreparedDefinition kDefTZE200_floor_ctrl{
     .zigbee_models=kM,.zigbee_models_count=1,.manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN,.manufacturer_names_count=1,.model="TS0601_floor_ctrl",
     .vendor="Tuya",.meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_TZE200_floor_ctrl, .white_labels_count=sizeof(kWhiteLabels_TZE200_floor_ctrl)/sizeof(kWhiteLabels_TZE200_floor_ctrl[0]),
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr,

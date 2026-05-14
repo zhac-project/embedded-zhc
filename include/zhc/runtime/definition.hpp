@@ -261,6 +261,16 @@ struct PreparedDefinition {
     // on a non-1 endpoint. Default 0 = no override (caller's dst_ep
     // wins, preserving single-EP behaviour for most ports).
     std::uint8_t         default_endpoint = 0;
+
+    // ZCL Basic 0x0007 powerSource override (z2m `m.forcePowerSource`).
+    // Some `_TZ3000_*` and similar devices misreport their power source
+    // on Basic. When non-zero, the interview path skips the cluster
+    // read and uses this value directly. Spec values:
+    //   0x01 Mains (single phase), 0x02 Mains (3 phase), 0x03 Battery,
+    //   0x04 DC, 0x05 Emergency mains constantly powered,
+    //   0x06 Emergency mains and transfer switch.
+    // Default 0 = no override → trust the cluster read.
+    std::uint8_t         power_source_override = 0;
 };
 
 }  // namespace zhc

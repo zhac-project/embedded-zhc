@@ -14,13 +14,18 @@ constexpr const char* kModels_AB3257001NJ[] = { "Plug 01" };
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_AB3257001NJ[] = {
+    {"LEDVANCE","AB3257001NJ"},
+    {"LEDVANCE","AC03360"},
+};
 extern const PreparedDefinition kDef_AB3257001NJ{
     .zigbee_models=kModels_AB3257001NJ, .zigbee_models_count=sizeof(kModels_AB3257001NJ)/sizeof(kModels_AB3257001NJ[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="AB3257001NJ", .vendor="Osram",
     .meta=nullptr, .exposes=kExposesOsramOnOff, .exposes_count=kExposesOsramOnOffCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_AB3257001NJ, .white_labels_count=sizeof(kWhiteLabels_AB3257001NJ)/sizeof(kWhiteLabels_AB3257001NJ[0]),
     .from_zigbee=kFzOsramOnOff, .from_zigbee_count=kFzOsramOnOffCount,
     .to_zigbee=kTzOsramOnOff, .to_zigbee_count=kTzOsramOnOffCount,
     .configure=nullptr, .on_event=nullptr,

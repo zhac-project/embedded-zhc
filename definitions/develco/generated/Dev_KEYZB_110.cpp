@@ -37,13 +37,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_KEYZB_110[] = {
+    {"Frient","KEPZB-110"},
+};
 extern const PreparedDefinition kDef_KEYZB_110{
     .zigbee_models=kModels_KEYZB_110, .zigbee_models_count=sizeof(kModels_KEYZB_110)/sizeof(kModels_KEYZB_110[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="KEYZB-110", .vendor="Develco",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_KEYZB_110, .white_labels_count=sizeof(kWhiteLabels_KEYZB_110)/sizeof(kWhiteLabels_KEYZB_110[0]),
     .from_zigbee=kFz_KEYZB_110, .from_zigbee_count=sizeof(kFz_KEYZB_110)/sizeof(kFz_KEYZB_110[0]),
     .to_zigbee=kTz_KEYZB_110, .to_zigbee_count=sizeof(kTz_KEYZB_110)/sizeof(kTz_KEYZB_110[0]),
     .configure=nullptr, .on_event=nullptr,

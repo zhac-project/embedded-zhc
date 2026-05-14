@@ -11,6 +11,7 @@ namespace {
 
 
 constexpr const char* kModels_TZ_ZT01_GA4[] = { "TS0601" };
+constexpr const char* kManus_TZ_ZT01_GA4[] = { "_TZE284_8se38w3c" };
 
 }  // namespace
 
@@ -29,7 +30,7 @@ constexpr BindingSpec kBind_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4[] = { { 1, 0x0001 },
 extern const PreparedDefinition kDef_TZ_ZT01_GA4{
     .zigbee_models=kModels_TZ_ZT01_GA4, .zigbee_models_count=sizeof(kModels_TZ_ZT01_GA4)/sizeof(kModels_TZ_ZT01_GA4[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus_TZ_ZT01_GA4, .manufacturer_names_count=sizeof(kManus_TZ_ZT01_GA4)/sizeof(kManus_TZ_ZT01_GA4[0]),
     .model="TZ-ZT01_GA4", .vendor="Tuya",
     .meta=nullptr, .exposes=kExp_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4, .exposes_count=sizeof(kExp_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4)/sizeof(kExp_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4[0]),
     .white_labels=nullptr, .white_labels_count=0,

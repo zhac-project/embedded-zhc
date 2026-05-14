@@ -1453,6 +1453,61 @@ extern const TzConverter kTzPowerOnBehavior1{
     .user_config = nullptr,
 };
 
+// ── genOnOff onWithTimedOff (cmd 0x42) — countdown setter ────────────
+//
+// z2m-source: lib/tuya.ts tuyaTz.on_off_countdown.
+// Body per ZCL spec: ctrlbits(1) + ontime(2 LE) + offwaittime(2 LE).
+// z2m mirrors `ontime` into `offwaittime` per Tuya doc.
+
+namespace {
+
+bool tz_on_with_timed_off(std::string_view key, const Value& input,
+                            const TzConverter&,
+                            const PreparedDefinition&, RuntimeContext&,
+                            std::span<std::uint8_t> out_frame,
+                            std::size_t& out_size) {
+    out_size = 0;
+    if (key != "countdown") return false;
+
+    // Range 0..43200s (12h). 0 cancels a running countdown.
+    std::uint32_t seconds = 0;
+    if (input.type == ValueType::Uint) {
+        seconds = static_cast<std::uint32_t>(input.u);
+    } else if (input.type == ValueType::Int) {
+        if (input.i < 0) return false;
+        seconds = static_cast<std::uint32_t>(input.i);
+    } else {
+        return false;
+    }
+    if (seconds > 43200) return false;
+
+    if (out_frame.size() < 8) return false;
+    // FC=0x11 (cluster-specific cmd + disable-default-response). TSN
+    // patched by adapter. CmdID=0x42.
+    const std::uint16_t t = static_cast<std::uint16_t>(seconds);
+    out_frame[0] = 0x11;
+    out_frame[1] = 0;
+    out_frame[2] = 0x42;
+    out_frame[3] = 0x00;                                   // ctrlbits
+    out_frame[4] = static_cast<std::uint8_t>(t & 0xFF);    // ontime LE
+    out_frame[5] = static_cast<std::uint8_t>((t >> 8) & 0xFF);
+    out_frame[6] = static_cast<std::uint8_t>(t & 0xFF);    // offwaittime LE
+    out_frame[7] = static_cast<std::uint8_t>((t >> 8) & 0xFF);
+    out_size = 8;
+    return true;
+}
+
+}  // namespace
+
+extern const TzConverter kTzOnWithTimedOff{
+    .key         = "countdown",
+    .cluster     = "genOnOff",
+    .cluster_id  = 0x0006,
+    .command_id  = 0x42,        // onWithTimedOff
+    .fn          = tz_on_with_timed_off,
+    .user_config = nullptr,
+};
+
 // ── eWeLink action (SNZB-01 family) ──────────────────────────────────
 
 namespace {

@@ -42,13 +42,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_E_Ctrl[] = {
+    {"Imhotep Creation","RSS E-Ctrl"},
+    {"Imhotep Creation","RPH E-Ctrl"},
+};
 extern const PreparedDefinition kDef_E_Ctrl{
     .zigbee_models=kModels_E_Ctrl, .zigbee_models_count=sizeof(kModels_E_Ctrl)/sizeof(kModels_E_Ctrl[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="E-Ctrl", .vendor="Imhotepcreation",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_E_Ctrl, .white_labels_count=sizeof(kWhiteLabels_E_Ctrl)/sizeof(kWhiteLabels_E_Ctrl[0]),
     .from_zigbee=kFz_E_Ctrl, .from_zigbee_count=sizeof(kFz_E_Ctrl)/sizeof(kFz_E_Ctrl[0]),
     .to_zigbee=kTz_E_Ctrl, .to_zigbee_count=sizeof(kTz_E_Ctrl)/sizeof(kTz_E_Ctrl[0]),
     .configure=nullptr, .on_event=nullptr,

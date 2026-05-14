@@ -19,12 +19,28 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TS0044[] = {
+    {"Moes","ZT-SR-EU4"},
+    {"Tuya","TS0044_1"},
+    {"iHseno","_TZ3000_mh9px7cq"},
+    {"iHseno","TS0044_5tqxpine"},
+    {"Tuya","TM-YKQ004"},
+    {"HOBEIAN","ZG-101ZS"},
+    {"Moes","XH-SY-04Z"},
+    {"LoraTap","SS6400ZB"},
+    {"Zemismart","ZMR4_1"},
+    {"Lonsonho","TS0044"},
+    {"Haozee","ESW-OZAA-EU"},
+    {"Moes","ZT-SY-EU-G-4S-WH-MS"},
+    {"Nedis","ZBWS40WT"},
+};
 extern const PreparedDefinition kDefTS0044{
     .zigbee_models=kModels,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,.manufacturer_names=nullptr,.manufacturer_names_count=0,
     .model="TS0044",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_TS0044, .white_labels_count=sizeof(kWhiteLabels_TS0044)/sizeof(kWhiteLabels_TS0044[0]),
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

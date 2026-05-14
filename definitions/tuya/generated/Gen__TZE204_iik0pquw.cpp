@@ -42,13 +42,24 @@ const TzConverter* const kTz__TZE204_iik0pquw[] = { &kTzDp__TZE204_iik0pquw };
 constexpr const char* kM__TZE204_iik0pquw[] = { "TS0601" };
 constexpr const char* kN__TZE204_iik0pquw[] = { "_TZE204_iik0pquw" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_iik0pquw[] = {
+    {"ZYXH","TY-04Z"},
+    {"AVATTO","WSMD-4"},
+    {"AVATTO","ZWSMD-4"},
+    {"Tuya","MG-ZG04W"},
+    {"Norklmes","MKS-CM-W5"},
+    {"Somgoms","ZSQB-SMB-ZB"},
+    {"Moes","WS-EUB1-ZG"},
+    {"AVATTO","ZGB-WS-EU"},
+};
 extern const PreparedDefinition kDefGen__TZE204_iik0pquw{
     .zigbee_models=kM__TZE204_iik0pquw,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_iik0pquw,.manufacturer_names_count=1,
     .model="TS0601__TZE204_iik0pquw",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_iik0pquw, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_iik0pquw)/sizeof(kWhiteLabels_Gen_TZE204_iik0pquw[0]),
     .from_zigbee=kFz__TZE204_iik0pquw,
     .from_zigbee_count=sizeof(kFz__TZE204_iik0pquw)/sizeof(kFz__TZE204_iik0pquw[0]),
     .to_zigbee=kTz__TZE204_iik0pquw,

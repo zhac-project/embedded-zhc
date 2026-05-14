@@ -31,13 +31,17 @@ constexpr Expose kExp_min_TS0601__TZE200_wfxuhoea_Gen__TZE200_wfxuhoea[] = {
 };
 constexpr BindingSpec kBind_min_TS0601__TZE200_wfxuhoea_Gen__TZE200_wfxuhoea[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_wfxuhoea[] = {
+    {"LoraTap","GDC311ZBQ1"},
+};
 extern const PreparedDefinition kDefGen__TZE200_wfxuhoea{
     .zigbee_models=kMGen__TZE200_wfxuhoea,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNGen__TZE200_wfxuhoea,.manufacturer_names_count=1,
     .model="TS0601__TZE200_wfxuhoea",.vendor="Tuya",
     .meta=nullptr,.exposes=kExp_min_TS0601__TZE200_wfxuhoea_Gen__TZE200_wfxuhoea, .exposes_count=sizeof(kExp_min_TS0601__TZE200_wfxuhoea_Gen__TZE200_wfxuhoea)/sizeof(kExp_min_TS0601__TZE200_wfxuhoea_Gen__TZE200_wfxuhoea[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_wfxuhoea, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_wfxuhoea)/sizeof(kWhiteLabels_Gen_TZE200_wfxuhoea[0]),
     .from_zigbee=kFz_min_TS0601__TZE200_wfxuhoea_Gen__TZE200_wfxuhoea, .from_zigbee_count=sizeof(kFz_min_TS0601__TZE200_wfxuhoea_Gen__TZE200_wfxuhoea)/sizeof(kFz_min_TS0601__TZE200_wfxuhoea_Gen__TZE200_wfxuhoea[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

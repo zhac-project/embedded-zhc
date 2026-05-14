@@ -27,9 +27,13 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_ZNLDP13LM[] = {
+    {"Aqara","LEDLBT1-L01"},
+};
 extern const PreparedDefinition kDefZNLDP13LM{
-    .zigbee_models=kModels,.zigbee_models_count=3,.model="ZNLDP13LM",.vendor="Xiaomi",
-    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),.white_labels=nullptr,.white_labels_count=0,
+    .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),.model="ZNLDP13LM",.vendor="Xiaomi",
+    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),.white_labels=kWhiteLabels_ZNLDP13LM, .white_labels_count=sizeof(kWhiteLabels_ZNLDP13LM)/sizeof(kWhiteLabels_ZNLDP13LM[0]),
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=nullptr,.on_event=nullptr,

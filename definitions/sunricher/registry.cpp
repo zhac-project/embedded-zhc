@@ -47,7 +47,6 @@ extern const PreparedDefinition kDef_SR_ZG9095B;
 extern const PreparedDefinition kDef_SR_ZG9098A_Light;
 extern const PreparedDefinition kDef_SR_ZG9098A_Win;
 extern const PreparedDefinition kDef_SR_ZG9100A_S;
-extern const PreparedDefinition kDef_SR_ZG9101CS;
 extern const PreparedDefinition kDef_SR_ZG9101SAC_HP2;
 extern const PreparedDefinition kDef_SR_ZG9101SAC_HP_CLN;
 extern const PreparedDefinition kDef_SR_ZG9101SAC_HP_SWITCH_2CH;
@@ -122,7 +121,6 @@ const PreparedDefinition* const kSunricherRegistry[] = {
     &kDef_SR_ZG9098A_Light,
     &kDef_SR_ZG9098A_Win,
     &kDef_SR_ZG9100A_S,
-    &kDef_SR_ZG9101CS,
     &kDef_SR_ZG9101SAC_HP2,
     &kDef_SR_ZG9101SAC_HP_CLN,
     &kDef_SR_ZG9101SAC_HP_SWITCH_2CH,

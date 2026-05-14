@@ -75,7 +75,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end ---
 
 extern const PreparedDefinition kDefLin__TZE284_ajhu0zqb{
-    .zigbee_models=kM__TZE284_ajhu0zqb,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE284_ajhu0zqb,.zigbee_models_count=sizeof(kM__TZE284_ajhu0zqb)/sizeof(kM__TZE284_ajhu0zqb[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_ajhu0zqb,.manufacturer_names_count=1,
     .model="SZW08",.vendor="Lincukoo",

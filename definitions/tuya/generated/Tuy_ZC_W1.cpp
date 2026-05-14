@@ -12,6 +12,7 @@ const FzConverter* const kFz_ZC_W1[] = {
 };
 
 constexpr const char* kModels_ZC_W1[] = { "TS0203" };
+constexpr const char* kManus_ZC_W1[] = { "Zbeacon" };
 
 }  // namespace
 
@@ -30,7 +31,7 @@ constexpr BindingSpec kAutoBindings[] = {
 extern const PreparedDefinition kDef_ZC_W1{
     .zigbee_models=kModels_ZC_W1, .zigbee_models_count=sizeof(kModels_ZC_W1)/sizeof(kModels_ZC_W1[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus_ZC_W1, .manufacturer_names_count=sizeof(kManus_ZC_W1)/sizeof(kManus_ZC_W1[0]),
     .model="ZC-W1", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,

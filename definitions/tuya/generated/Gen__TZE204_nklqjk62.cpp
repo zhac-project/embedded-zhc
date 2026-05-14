@@ -31,13 +31,18 @@ constexpr Expose kExp_min_TS0601__TZE204_nklqjk62_Gen__TZE204_nklqjk62[] = {
 };
 constexpr BindingSpec kBind_min_TS0601__TZE204_nklqjk62_Gen__TZE204_nklqjk62[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_nklqjk62[] = {
+    {"MatSee Plus","PJ-ZGD01"},
+    {"Moes","ZM-102-M"},
+};
 extern const PreparedDefinition kDefGen__TZE204_nklqjk62{
     .zigbee_models=kMGen__TZE204_nklqjk62,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNGen__TZE204_nklqjk62,.manufacturer_names_count=1,
     .model="TS0601__TZE204_nklqjk62",.vendor="Tuya",
     .meta=nullptr,.exposes=kExp_min_TS0601__TZE204_nklqjk62_Gen__TZE204_nklqjk62, .exposes_count=sizeof(kExp_min_TS0601__TZE204_nklqjk62_Gen__TZE204_nklqjk62)/sizeof(kExp_min_TS0601__TZE204_nklqjk62_Gen__TZE204_nklqjk62[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_nklqjk62, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_nklqjk62)/sizeof(kWhiteLabels_Gen_TZE204_nklqjk62[0]),
     .from_zigbee=kFz_min_TS0601__TZE204_nklqjk62_Gen__TZE204_nklqjk62, .from_zigbee_count=sizeof(kFz_min_TS0601__TZE204_nklqjk62_Gen__TZE204_nklqjk62)/sizeof(kFz_min_TS0601__TZE204_nklqjk62_Gen__TZE204_nklqjk62[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

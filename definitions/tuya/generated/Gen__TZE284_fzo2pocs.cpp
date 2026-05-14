@@ -60,13 +60,19 @@ const TzConverter* const kTz__TZE284_fzo2pocs[] = { &kTzDp__TZE284_fzo2pocs };
 constexpr const char* kM__TZE284_fzo2pocs[] = { "TS0601" };
 constexpr const char* kN__TZE284_fzo2pocs[] = { "_TZE284_fzo2pocs" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE284_fzo2pocs[] = {
+    {"Lilistore","TS0601_lilistore"},
+    {"Zemismart","ZM90E-DT250N/A400"},
+    {"Nova Digital","CMR-1"},
+};
 extern const PreparedDefinition kDefGen__TZE284_fzo2pocs{
     .zigbee_models=kM__TZE284_fzo2pocs,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_fzo2pocs,.manufacturer_names_count=1,
     .model="TS0601__TZE284_fzo2pocs",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE284_fzo2pocs, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_fzo2pocs)/sizeof(kWhiteLabels_Gen_TZE284_fzo2pocs[0]),
     .from_zigbee=kFz__TZE284_fzo2pocs,
     .from_zigbee_count=sizeof(kFz__TZE284_fzo2pocs)/sizeof(kFz__TZE284_fzo2pocs[0]),
     .to_zigbee=kTz__TZE284_fzo2pocs,

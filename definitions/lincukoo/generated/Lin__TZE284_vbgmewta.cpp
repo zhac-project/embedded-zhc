@@ -75,13 +75,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_Lin_TZE284_vbgmewta[] = {
+    {"Lincukoo","W10-Z10T"},
+};
 extern const PreparedDefinition kDefLin__TZE284_vbgmewta{
-    .zigbee_models=kM__TZE284_vbgmewta,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE284_vbgmewta,.zigbee_models_count=sizeof(kM__TZE284_vbgmewta)/sizeof(kM__TZE284_vbgmewta[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_vbgmewta,.manufacturer_names_count=1,
     .model="W04-Z10T",.vendor="Lincukoo",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Lin_TZE284_vbgmewta, .white_labels_count=sizeof(kWhiteLabels_Lin_TZE284_vbgmewta)/sizeof(kWhiteLabels_Lin_TZE284_vbgmewta[0]),
     .from_zigbee=kFz__TZE284_vbgmewta,
     .from_zigbee_count=sizeof(kFz__TZE284_vbgmewta)/sizeof(kFz__TZE284_vbgmewta[0]),
     .to_zigbee=kTz__TZE284_vbgmewta,

@@ -42,13 +42,17 @@ const TzConverter* const kTz__TZE200_abatw3kj[] = { &kTzDp__TZE200_abatw3kj };
 constexpr const char* kM__TZE200_abatw3kj[] = { "TS0601" };
 constexpr const char* kN__TZE200_abatw3kj[] = { "_TZE200_abatw3kj" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_abatw3kj[] = {
+    {"RTX","TS0601_RTX_DIN"},
+};
 extern const PreparedDefinition kDefGen__TZE200_abatw3kj{
     .zigbee_models=kM__TZE200_abatw3kj,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_abatw3kj,.manufacturer_names_count=1,
     .model="TS0601__TZE200_abatw3kj",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_abatw3kj, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_abatw3kj)/sizeof(kWhiteLabels_Gen_TZE200_abatw3kj[0]),
     .from_zigbee=kFz__TZE200_abatw3kj,
     .from_zigbee_count=sizeof(kFz__TZE200_abatw3kj)/sizeof(kFz__TZE200_abatw3kj[0]),
     .to_zigbee=kTz__TZE200_abatw3kj,

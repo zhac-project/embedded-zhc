@@ -64,13 +64,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_Zem_TZE200_wdfurkoa[] = {
+    {"Zemismart","ZM25R3"},
+};
 extern const PreparedDefinition kDefZem__TZE200_wdfurkoa{
-    .zigbee_models=kM__TZE200_wdfurkoa,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE200_wdfurkoa,.zigbee_models_count=sizeof(kM__TZE200_wdfurkoa)/sizeof(kM__TZE200_wdfurkoa[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wdfurkoa,.manufacturer_names_count=1,
     .model="ZM25R1",.vendor="Zemismart",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Zem_TZE200_wdfurkoa, .white_labels_count=sizeof(kWhiteLabels_Zem_TZE200_wdfurkoa)/sizeof(kWhiteLabels_Zem_TZE200_wdfurkoa[0]),
     .from_zigbee=kFz__TZE200_wdfurkoa,
     .from_zigbee_count=sizeof(kFz__TZE200_wdfurkoa)/sizeof(kFz__TZE200_wdfurkoa[0]),
     .to_zigbee=kTz__TZE200_wdfurkoa,

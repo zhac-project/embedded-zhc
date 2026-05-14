@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_ZC_HM[] = {
+    {"Heiman","HS-720ES"},
+};
 extern const PreparedDefinition kDef_ZC_HM{
     .zigbee_models=kModels_ZC_HM, .zigbee_models_count=sizeof(kModels_ZC_HM)/sizeof(kModels_ZC_HM[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_ZC_HM, .manufacturer_names_count=sizeof(kManus_ZC_HM)/sizeof(kManus_ZC_HM[0]),
     .model="ZC-HM", .vendor="Moes",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ZC_HM, .white_labels_count=sizeof(kWhiteLabels_ZC_HM)/sizeof(kWhiteLabels_ZC_HM[0]),
     .from_zigbee=kFz_ZC_HM, .from_zigbee_count=sizeof(kFz_ZC_HM)/sizeof(kFz_ZC_HM[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

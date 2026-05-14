@@ -56,13 +56,17 @@ const TzConverter* const kTz__TZE200_wbhaespm[] = { &kTzDp__TZE200_wbhaespm };
 constexpr const char* kM__TZE200_wbhaespm[] = { "TS0601" };
 constexpr const char* kN__TZE200_wbhaespm[] = { "_TZE200_wbhaespm" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_wbhaespm[] = {
+    {"SUTON","STB3L-125/ZJ"},
+};
 extern const PreparedDefinition kDefGen__TZE200_wbhaespm{
     .zigbee_models=kM__TZE200_wbhaespm,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wbhaespm,.manufacturer_names_count=1,
     .model="TS0601__TZE200_wbhaespm",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_wbhaespm, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_wbhaespm)/sizeof(kWhiteLabels_Gen_TZE200_wbhaespm[0]),
     .from_zigbee=kFz__TZE200_wbhaespm,
     .from_zigbee_count=sizeof(kFz__TZE200_wbhaespm)/sizeof(kFz__TZE200_wbhaespm[0]),
     .to_zigbee=kTz__TZE200_wbhaespm,

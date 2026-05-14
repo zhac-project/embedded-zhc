@@ -11,6 +11,17 @@ namespace {
 constexpr const char* kModels_GL_C_008P[] = { "GL-C-008P", "C-ZB-LC20v2-RGBCCT" };
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_GL_C_008P[] = {
+    {"Gledopto","GL-C-008P_mini"},
+    {"Gledopto","GL-C-001P"},
+    {"Gledopto","GL-C-002P"},
+    {"Gledopto","GL-C-011P"},
+    {"Gledopto","GL-C-201P"},
+    {"Gledopto","GL-C-202P"},
+    {"Gledopto","GL-C-204P"},
+    {"Gledopto","GL-C-301P"},
+};
 extern const PreparedDefinition kDef_GL_C_008P{
     .zigbee_models=kModels_GL_C_008P,
     .zigbee_models_count=sizeof(kModels_GL_C_008P)/sizeof(kModels_GL_C_008P[0]),
@@ -19,7 +30,7 @@ extern const PreparedDefinition kDef_GL_C_008P{
     .model="GL-C-008P", .vendor="Gledopto",
     .meta=nullptr,
     .exposes=kExposesGledoptoColorCTLight, .exposes_count=kExposesGledoptoColorCTLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_GL_C_008P, .white_labels_count=sizeof(kWhiteLabels_GL_C_008P)/sizeof(kWhiteLabels_GL_C_008P[0]),
     .from_zigbee=kFzGledoptoColorCTLight, .from_zigbee_count=kFzGledoptoColorCTLightCount,
     .to_zigbee=kTzGledoptoColorCTLight,   .to_zigbee_count=kTzGledoptoColorCTLightCount,
     .configure=nullptr, .on_event=nullptr,

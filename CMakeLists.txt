@@ -44,10 +44,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_bjawzodf.cpp
     definitions/tuya/TZE200_0nmiizme.cpp
     definitions/tuya/TZE200_cjbofhxw.cpp
-    definitions/tuya/TZE200_sos.cpp
     definitions/tuya/TZE200_temp.cpp
-    definitions/tuya/TZE200_waterleak.cpp
-    definitions/tuya/TZE200_door.cpp
     definitions/tuya/TZE200_smoke.cpp
     definitions/tuya/TZE200_co2.cpp
     definitions/tuya/TZE200_motion.cpp
@@ -80,7 +77,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_illuminance.cpp
     definitions/tuya/TZE200_formaldehyde.cpp
     definitions/tuya/TZE200_voc.cpp
-    definitions/tuya/TZE200_contact2.cpp
     definitions/tuya/TZE200_smoke2.cpp
     definitions/tuya/TZE200_vibration.cpp
     definitions/tuya/TZE200_airquality.cpp
@@ -108,7 +104,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_volume_alarm.cpp
     definitions/tuya/TZE200_smoke3.cpp
     definitions/tuya/TZE200_window.cpp
-    definitions/tuya/TZE200_co2_alarm.cpp
     definitions/tuya/TZE200_flood.cpp
     definitions/tuya/TZE200_switch_2g_cd.cpp
     definitions/tuya/TZE200_dimmer.cpp
@@ -143,7 +138,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_pool_thermo.cpp
     definitions/tuya/TZE200_hvac.cpp
     definitions/tuya/TZE200_ceiling_radar.cpp
-    definitions/tuya/TZE200_ble_radar.cpp
     definitions/tuya/TZE204_hires_radar.cpp
     definitions/tuya/TS0042.cpp
     definitions/tuya/TS0215A.cpp
@@ -160,7 +154,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_presence_th.cpp
     definitions/tuya/TZE200_relay_1g.cpp
     definitions/tuya/TZE200_outdoor_switch.cpp
-    definitions/tuya/TZE200_dc_switch.cpp
     definitions/tuya/TZE200_scenario.cpp
     definitions/tuya/TZE200_timer_switch.cpp
     definitions/tuya/TZE200_floor_ctrl.cpp
@@ -175,7 +168,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_siren.cpp
     definitions/tuya/TZE200_lock.cpp
     definitions/tuya/TS0203.cpp
-    definitions/tuya/TZE200_freezer.cpp
     definitions/tuya/TZE200_clamp.cpp
     definitions/tuya/TZE200_soil_th.cpp
     definitions/tuya/TZE200_greenhouse.cpp
@@ -423,7 +415,7 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/JYGZ01AQ.cpp
     definitions/lumi/WXKG15LM.cpp
     definitions/lumi/WXKG18LM.cpp
-    definitions/lumi/WXKG19LM.cpp
+
     definitions/lumi/WXKG21LM.cpp
     definitions/lumi/DJT12LM.cpp
     definitions/lumi/RTCGQ16LM.cpp
@@ -437,14 +429,12 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/WXKG23LM.cpp
     definitions/lumi/WSDCGQ21LM.cpp
     definitions/lumi/DJT21LM.cpp
-    definitions/lumi/RTCGQ23LM.cpp
+
     definitions/lumi/MCCGQ18LM.cpp
     definitions/lumi/MCCGQ19LM.cpp
     definitions/lumi/WXKG24LM.cpp
     definitions/lumi/WXKG25LM.cpp
     definitions/lumi/WXKG26LM.cpp
-    definitions/lumi/JYGZ02AQ.cpp
-    definitions/lumi/GZCGQ02LM.cpp
     definitions/lumi/WXCJKG11LM.cpp
     definitions/lumi/WXCJKG12LM.cpp
     definitions/lumi/WXCJKG13LM.cpp
@@ -477,8 +467,8 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/JTBZ01AQ.cpp
     definitions/lumi/DJT41LM.cpp
     definitions/lumi/DJT51LM.cpp
+    definitions/lumi/DWZTCGQ11LM.cpp
     definitions/lumi/QBKG04LM.cpp
-    definitions/lumi/QBKG10LM.cpp
     definitions/lumi/QBKG21LM.cpp
     definitions/lumi/QBKG23LM.cpp
     definitions/lumi/SSM_U01.cpp
@@ -510,7 +500,6 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNLDP12LM.cpp
     definitions/lumi/ZNLDP13LM.cpp
     definitions/lumi/ZNLDP14LM.cpp
-    definitions/lumi/ZNLDP15LM.cpp
     definitions/lumi/ZNLDP16LM.cpp
     definitions/lumi/ZNLDP17LM.cpp
     definitions/lumi/ZNLDP18LM.cpp
@@ -524,7 +513,6 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNLDP26LM.cpp
     definitions/lumi/ZNLDP27LM.cpp
     definitions/lumi/ZNLDP28LM.cpp
-    definitions/lumi/ZNLDP29LM.cpp
     definitions/lumi/ZNLDP30LM.cpp
     definitions/lumi/ZNLDP31LM.cpp
     definitions/lumi/ZNXNKG01LM.cpp
@@ -540,7 +528,6 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/SP_EUC01.cpp
     definitions/lumi/WP_P01D.cpp
     definitions/lumi/QBCZ11LM.cpp
-    definitions/lumi/QBCZ12LM.cpp
     definitions/lumi/QBCZ13LM.cpp
     definitions/lumi/ZNMCPZ01LM.cpp
     definitions/lumi/ZNMCPZ02LM.cpp
@@ -560,7 +547,6 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/RTCZCGQ12LM.cpp
     definitions/lumi/ZNQPKG01LM.cpp
     definitions/lumi/SP_PDC01.cpp
-    definitions/lumi/WRDZG01LM.cpp
     definitions/lumi/ZNCLDJ15LM.cpp
     definitions/lumi/SRSCM01.cpp
     definitions/lumi/ZNXJKG01LM.cpp

@@ -57,13 +57,18 @@ const TzConverter* const kTz__TZE204_bql5khqx[] = { &kTzDp__TZE204_bql5khqx };
 constexpr const char* kM__TZE204_bql5khqx[] = { "TS0601" };
 constexpr const char* kN__TZE204_bql5khqx[] = { "_TZE204_bql5khqx" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_bql5khqx[] = {
+    {"Coswall","X99-G-kbFan-1g-ZG-LN-11"},
+    {"Zemismart","ZN2S-RS1E-FL / ZN2S-US1U-FL"},
+};
 extern const PreparedDefinition kDefGen__TZE204_bql5khqx{
     .zigbee_models=kM__TZE204_bql5khqx,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_bql5khqx,.manufacturer_names_count=1,
     .model="TS0601__TZE204_bql5khqx",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_bql5khqx, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_bql5khqx)/sizeof(kWhiteLabels_Gen_TZE204_bql5khqx[0]),
     .from_zigbee=kFz__TZE204_bql5khqx,
     .from_zigbee_count=sizeof(kFz__TZE204_bql5khqx)/sizeof(kFz__TZE204_bql5khqx[0]),
     .to_zigbee=kTz__TZE204_bql5khqx,

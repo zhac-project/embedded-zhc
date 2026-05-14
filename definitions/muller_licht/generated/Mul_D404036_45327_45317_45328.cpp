@@ -14,13 +14,18 @@ constexpr const char* kModels_D404036_45327_45317_45328[] = { "tint-ExtendedColo
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_D404036_45327_45317_45328[] = {
+    {"Müller Licht","404026"},
+    {"Müller Licht","404075"},
+};
 extern const PreparedDefinition kDef_D404036_45327_45317_45328{
     .zigbee_models=kModels_D404036_45327_45317_45328, .zigbee_models_count=sizeof(kModels_D404036_45327_45317_45328)/sizeof(kModels_D404036_45327_45317_45328[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="404036/45327/45317/45328", .vendor="MullerLicht",
     .meta=nullptr, .exposes=kExposesMullerLichtColorCTLight, .exposes_count=kExposesMullerLichtColorCTLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D404036_45327_45317_45328, .white_labels_count=sizeof(kWhiteLabels_D404036_45327_45317_45328)/sizeof(kWhiteLabels_D404036_45327_45317_45328[0]),
     .from_zigbee=kFzMullerLichtColorCTLight, .from_zigbee_count=kFzMullerLichtColorCTLightCount,
     .to_zigbee=kTzMullerLichtColorCTLight, .to_zigbee_count=kTzMullerLichtColorCTLightCount,
     .configure=nullptr, .on_event=nullptr,

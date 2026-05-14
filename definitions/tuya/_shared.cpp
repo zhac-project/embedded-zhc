@@ -51,14 +51,6 @@ extern const FzConverter kFzTuyaMcuSyncTime{
 
 namespace {
 
-const TuyaDpMapEntry* lookup_entry(const TuyaDatapointMap& map,
-                                     std::uint8_t dp_id) {
-    for (std::uint8_t i = 0; i < map.count; ++i) {
-        if (map.entries[i].dp_id == dp_id) return &map.entries[i];
-    }
-    return nullptr;
-}
-
 bool emit_from_entry(const TuyaDpMapEntry& e,
                       const Value& raw,
                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
@@ -116,10 +108,17 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
             return true;
         }
         default:
-            // Schedule day: 4 × [h, m, t*2]. Emit formatted string.
-            if ((e.flags & kTuyaDpFlagScheduleDay) &&
-                raw.type == ValueType::BytesRef &&
-                raw.bytes.size() >= 12) {
+            // Schedule day: 4 × [h, m, t*2]. Some devices reuse the same DP
+            // for schedule frames and a short non-schedule value (e.g. TRV26
+            // DP17 carries either open_window_time or schedule_monday). Use
+            // content shape to disambiguate: a schedule-day entry MUST see a
+            // 12+ byte BytesRef payload, otherwise it has to abstain so the
+            // sibling non-schedule entry on the same DP can claim the value.
+            if (e.flags & kTuyaDpFlagScheduleDay) {
+                if (raw.type != ValueType::BytesRef ||
+                    raw.bytes.size() < 12) {
+                    return false;
+                }
                 static char scratch[4][64];
                 static std::uint8_t head = 0;
                 char* dst = scratch[head];
@@ -154,13 +153,23 @@ bool fz_tuya_datapoints(std::span<const TuyaDpRecord> dps,
 
     bool emitted = false;
     for (const auto& rec : dps) {
-        const auto* entry = lookup_entry(*map, rec.dp_id);
-        if (!entry) continue;                     // silent-drop unknown DP
-
         Value val{};
-        if (!decode_tuya_dp(rec, val)) continue;  // malformed — skip
-
-        if (emit_from_entry(*entry, val, out)) emitted = true;
+        bool decoded = false;
+        // Multiple entries may share a dp_id (intentional fan-out, e.g.
+        // TRV60 DP36 = frost_protection + scale_protection, or content-
+        // disjoint pairs like TRV26 DP17 = open_window_time + schedule_monday).
+        // Decode the wire payload once, then fire every matching entry —
+        // emit_from_entry will return false for entries whose decoder
+        // doesn't match the payload shape so they abstain.
+        for (std::uint8_t i = 0; i < map->count; ++i) {
+            const auto& entry = map->entries[i];
+            if (entry.dp_id != rec.dp_id) continue;
+            if (!decoded) {
+                if (!decode_tuya_dp(rec, val)) break;  // malformed — skip DP
+                decoded = true;
+            }
+            if (emit_from_entry(entry, val, out)) emitted = true;
+        }
     }
     return emitted;
 }
@@ -601,6 +610,34 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecChildLock{
     "child_lock", 0x8000, 0x10, 0, nullptr, 0,
 };
 
+// manuSpecificTuya3 (0xE001) switchType: ENUM8 attr 0xD030.
+constexpr ::zhc::generic::ZclWriteLookup kSwitchTypeLut[] = {
+    {"toggle", 0}, {"state", 1}, {"momentary", 2},
+};
+constexpr ::zhc::generic::ZclWriteSpec kSpecTuyaSwitchType{
+    "switch_type", 0xD030, 0x30, 0, kSwitchTypeLut, 3,
+};
+
+// fz: manuSpecificTuya3 (0xE001) attr 0xD030 (53296) attribute report
+// → emit `switch_type` as StringRef. Mirrors the tuyaTz lookup
+// (toggle=0/state=1/momentary=2).
+bool fz_tuya_switch_type(const DecodedMessage& msg, const FzConverter&,
+                          const PreparedDefinition&, RuntimeContext&,
+                          FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("53296");  // 0xD030
+    if (!v || v->type != ValueType::Uint) return false;
+    const char* label = nullptr;
+    switch (v->u) {
+        case 0: label = "toggle"; break;
+        case 1: label = "state"; break;
+        case 2: label = "momentary"; break;
+        default: return false;
+    }
+    Value o{}; o.type = ValueType::StringRef; o.str = label;
+    out.put("switch_type", o);
+    return true;
+}
+
 }  // namespace
 
 #define ZHC_TUYA_TZ(var, spec_ref, key_str)                           \
@@ -617,5 +654,30 @@ ZHC_TUYA_TZ(kTzTuyaOperationMode,   kSpecOperationMode,   "operation_mode")
 ZHC_TUYA_TZ(kTzTuyaIndicatorMode,   kSpecIndicatorMode,   "indicator_mode")
 ZHC_TUYA_TZ(kTzTuyaChildLock,       kSpecChildLock,       "child_lock")
 #undef ZHC_TUYA_TZ
+
+// manuSpecificTuya3 (cluster 0xE001) switchType write.
+extern const TzConverter kTzTuyaSwitchType{
+    .key         = "switch_type",
+    .cluster     = "manuSpecificTuya2",     // ZHC name; upstream Tuya3
+    .cluster_id  = 0xE001,
+    .command_id  = 0x02,                    // Write Attributes
+    .fn          = &::zhc::generic::tz_zcl_write_attr,
+    .user_config = &kSpecTuyaSwitchType,
+};
+
+extern const FzConverter kFzTuyaSwitchType{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "manuSpecificTuya2",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_tuya_switch_type },
+    .user_config       = nullptr,
+};
 
 }  // namespace zhc::tuya

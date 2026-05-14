@@ -188,7 +188,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefEng__TZE204_ca3i8m8p{
-    .zigbee_models=kM__TZE204_ca3i8m8p,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE204_ca3i8m8p,.zigbee_models_count=sizeof(kM__TZE204_ca3i8m8p)/sizeof(kM__TZE204_ca3i8m8p[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_ca3i8m8p,.manufacturer_names_count=1,
     .model="EONE-230W",.vendor="Engo",

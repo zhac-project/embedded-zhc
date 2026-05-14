@@ -26,13 +26,17 @@ constexpr Expose kExp_min_WSD500A_Tuy_WSD500A[] = {
 };
 constexpr BindingSpec kBind_min_WSD500A_Tuy_WSD500A[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_WSD500A[] = {
+    {"Tuya","TH02Z"},
+};
 extern const PreparedDefinition kDef_WSD500A{
     .zigbee_models=kModels_WSD500A, .zigbee_models_count=sizeof(kModels_WSD500A)/sizeof(kModels_WSD500A[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_WSD500A, .manufacturer_names_count=sizeof(kManus_WSD500A)/sizeof(kManus_WSD500A[0]),
     .model="WSD500A", .vendor="Tuya",
     .meta=nullptr, .exposes=kExp_min_WSD500A_Tuy_WSD500A, .exposes_count=sizeof(kExp_min_WSD500A_Tuy_WSD500A)/sizeof(kExp_min_WSD500A_Tuy_WSD500A[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_WSD500A, .white_labels_count=sizeof(kWhiteLabels_WSD500A)/sizeof(kWhiteLabels_WSD500A[0]),
     .from_zigbee=kFz_min_WSD500A_Tuy_WSD500A, .from_zigbee_count=sizeof(kFz_min_WSD500A_Tuy_WSD500A)/sizeof(kFz_min_WSD500A_Tuy_WSD500A[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

@@ -97,7 +97,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefMaz__TZE204_k6rdmisz{
-    .zigbee_models=kM__TZE204_k6rdmisz,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE204_k6rdmisz,.zigbee_models_count=sizeof(kM__TZE204_k6rdmisz)/sizeof(kM__TZE204_k6rdmisz[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_k6rdmisz,.manufacturer_names_count=1,
     .model="TR-M2Z",.vendor="Mazda",

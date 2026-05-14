@@ -16,6 +16,10 @@ constexpr const char* kModels_EBF_RGB_Zm[] = { "EBF_RGB_Zm" };
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_EBF_RGB_Zm[] = {
+    {"EGLO","900566"},
+};
 extern const PreparedDefinition kDef_EBF_RGB_Zm{
     .zigbee_models=kModels_EBF_RGB_Zm,
     .zigbee_models_count=sizeof(kModels_EBF_RGB_Zm)/sizeof(kModels_EBF_RGB_Zm[0]),
@@ -24,7 +28,7 @@ extern const PreparedDefinition kDef_EBF_RGB_Zm{
     .model="EBF_RGB_Zm", .vendor="Awox",
     .meta=nullptr,
     .exposes=kExposesAwoxColorCTLight, .exposes_count=kExposesAwoxColorCTLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_EBF_RGB_Zm, .white_labels_count=sizeof(kWhiteLabels_EBF_RGB_Zm)/sizeof(kWhiteLabels_EBF_RGB_Zm[0]),
     .from_zigbee=kFzAwoxColorCTLight, .from_zigbee_count=kFzAwoxColorCTLightCount,
     .to_zigbee=kTzAwoxColorCTLight, .to_zigbee_count=kTzAwoxColorCTLightCount,
     .configure=nullptr, .on_event=nullptr,

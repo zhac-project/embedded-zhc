@@ -47,13 +47,21 @@ const TzConverter* const kTz__TZE200_86nbew0j[] = { &kTzDp__TZE200_86nbew0j };
 constexpr const char* kM__TZE200_86nbew0j[] = { "TS0601" };
 constexpr const char* kN__TZE200_86nbew0j[] = { "_TZE200_86nbew0j" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_86nbew0j[] = {
+    {"Ltech","TY-12-100-400-W1Z"},
+    {"Ltech","TY-75-24-G2Z2"},
+    {"Lifud","LF-AAZ012-0400-42"},
+    {"Lifud","LF-GAZ150A6250-24"},
+    {"Lifud","LF-GAZ150B6250-24"},
+};
 extern const PreparedDefinition kDefGen__TZE200_86nbew0j{
     .zigbee_models=kM__TZE200_86nbew0j,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_86nbew0j,.manufacturer_names_count=1,
     .model="TS0601__TZE200_86nbew0j",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_86nbew0j, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_86nbew0j)/sizeof(kWhiteLabels_Gen_TZE200_86nbew0j[0]),
     .from_zigbee=kFz__TZE200_86nbew0j,
     .from_zigbee_count=sizeof(kFz__TZE200_86nbew0j)/sizeof(kFz__TZE200_86nbew0j[0]),
     .to_zigbee=kTz__TZE200_86nbew0j,

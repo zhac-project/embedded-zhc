@@ -46,13 +46,17 @@ const TzConverter* const kTz__TZE204_iadro9bf[] = { &kTzDp__TZE204_iadro9bf };
 constexpr const char* kM__TZE204_iadro9bf[] = { "TS0601" };
 constexpr const char* kN__TZE204_iadro9bf[] = { "_TZE204_iadro9bf" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_iadro9bf[] = {
+    {"iHseno","TY_24G_Sensor_V2"},
+};
 extern const PreparedDefinition kDefGen__TZE204_iadro9bf{
     .zigbee_models=kM__TZE204_iadro9bf,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_iadro9bf,.manufacturer_names_count=1,
     .model="TS0601__TZE204_iadro9bf",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_iadro9bf, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_iadro9bf)/sizeof(kWhiteLabels_Gen_TZE204_iadro9bf[0]),
     .from_zigbee=kFz__TZE204_iadro9bf,
     .from_zigbee_count=sizeof(kFz__TZE204_iadro9bf)/sizeof(kFz__TZE204_iadro9bf[0]),
     .to_zigbee=kTz__TZE204_iadro9bf,

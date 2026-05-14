@@ -65,13 +65,23 @@ const TzConverter* const kTz__TZE200_suxywabt[] = { &kTzDp__TZE200_suxywabt };
 constexpr const char* kM__TZE200_suxywabt[] = { "TS0601" };
 constexpr const char* kN__TZE200_suxywabt[] = { "_TZE200_suxywabt" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_suxywabt[] = {
+    {"AVATTO","ME167"},
+    {"AVATTO","ME168_1"},
+    {"AVATTO","TRV06_1"},
+    {"EARU","TRV06"},
+    {"AVATTO","AVATTO_TRV06"},
+    {"THALEOS","TRV06-AT"},
+    {"Echos","Eco-4160"},
+};
 extern const PreparedDefinition kDefGen__TZE200_suxywabt{
     .zigbee_models=kM__TZE200_suxywabt,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_suxywabt,.manufacturer_names_count=1,
     .model="TS0601__TZE200_suxywabt",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_suxywabt, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_suxywabt)/sizeof(kWhiteLabels_Gen_TZE200_suxywabt[0]),
     .from_zigbee=kFz__TZE200_suxywabt,
     .from_zigbee_count=sizeof(kFz__TZE200_suxywabt)/sizeof(kFz__TZE200_suxywabt[0]),
     .to_zigbee=kTz__TZE200_suxywabt,

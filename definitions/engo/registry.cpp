@@ -17,6 +17,14 @@ extern const PreparedDefinition kDefEng__TZE204_djurk6p5;
 extern const PreparedDefinition kDefEng__TZE204_glk6viwg;
 extern const PreparedDefinition kDefEng__TZE204_lnxdk2ch;
 
+extern const PreparedDefinition kDef_E40;
+extern const PreparedDefinition kDef_EONE_BATB;
+extern const PreparedDefinition kDef_EONE;
+extern const PreparedDefinition kDef_E25_BATB;
+extern const PreparedDefinition kDef_EONE_230W;
+extern const PreparedDefinition kDef_ECB62_ZB;
+extern const PreparedDefinition kDef_E25_230;
+
 const PreparedDefinition* const kEngoRegistry[] = {
     &kDefEng__TZE200_awnadkan,
     &kDefEng__TZE200_gtouvmvl,
@@ -28,6 +36,13 @@ const PreparedDefinition* const kEngoRegistry[] = {
     &kDefEng__TZE204_djurk6p5,
     &kDefEng__TZE204_glk6viwg,
     &kDefEng__TZE204_lnxdk2ch,
+    &kDef_E40,
+    &kDef_EONE_BATB,
+    &kDef_EONE,
+    &kDef_E25_BATB,
+    &kDef_EONE_230W,
+    &kDef_ECB62_ZB,
+    &kDef_E25_230,
 };
 const std::size_t kEngoRegistryCount = sizeof(kEngoRegistry) / sizeof(kEngoRegistry[0]);
 

@@ -15,6 +15,7 @@ const TzConverter* const kTz_TLSR82xx_2btn_remote[] = {
     &::zhc::generic::kTzOnOff,
 };
 constexpr const char* kModels_TLSR82xx_2btn_remote[] = { "TLSR82xx" };
+constexpr const char* kManus_TLSR82xx_2btn_remote[] = { "TELINK" };
 
 }  // namespace
 
@@ -35,7 +36,7 @@ constexpr BindingSpec kAutoBindings[] = {
 extern const PreparedDefinition kDef_TLSR82xx_2btn_remote{
     .zigbee_models=kModels_TLSR82xx_2btn_remote, .zigbee_models_count=sizeof(kModels_TLSR82xx_2btn_remote)/sizeof(kModels_TLSR82xx_2btn_remote[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus_TLSR82xx_2btn_remote, .manufacturer_names_count=sizeof(kManus_TLSR82xx_2btn_remote)/sizeof(kManus_TLSR82xx_2btn_remote[0]),
     .model="TLSR82xx_2btn_remote", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,

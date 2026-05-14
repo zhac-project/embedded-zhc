@@ -31,7 +31,7 @@ constexpr Expose kExp_min_TS1201__TZ3290_ot6ewjvmejq5ekhl_Moes__TZ3290_ot6ewjvme
 constexpr BindingSpec kBind_min_TS1201__TZ3290_ot6ewjvmejq5ekhl_Moes__TZ3290_ot6ewjvmejq5ekh[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
 extern const PreparedDefinition kDefMoes__TZ3290_ot6ewjvmejq5ekhl{
-    .zigbee_models=kMMoes__TZ3290_ot6ewjvmejq5ekhl,.zigbee_models_count=1,
+    .zigbee_models=kMMoes__TZ3290_ot6ewjvmejq5ekhl,.zigbee_models_count=sizeof(kMMoes__TZ3290_ot6ewjvmejq5ekhl)/sizeof(kMMoes__TZ3290_ot6ewjvmejq5ekhl[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNMoes__TZ3290_ot6ewjvmejq5ekhl,.manufacturer_names_count=1,
     .model="TS1201__TZ3290_ot6ewjvmejq5ekhl",.vendor="Moes",

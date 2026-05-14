@@ -71,7 +71,7 @@ const TzConverter* const kTz[] = {
     &::zhc::lumi::kTzLumiLedDisabledNight,
 };
 
-constexpr const char* kZigbeeModels[] = { "lumi.plug.macn01", "lumi.plug.mmeu01" };
+constexpr const char* kZigbeeModels[] = { "lumi.plug.macn01" };
 
 // Bindings + reporting setup run at device join via run_configure.
 // Matches z2m's `configure(device, coordinatorEndpoint)` for this
@@ -118,8 +118,7 @@ constexpr Expose kExposes[] = {
 }  // namespace
 
 extern const PreparedDefinition kDefZNCZ15LM{
-    .zigbee_models       = kZigbeeModels,
-    .zigbee_models_count=2,
+    .zigbee_models=kZigbeeModels,.zigbee_models_count=sizeof(kZigbeeModels)/sizeof(kZigbeeModels[0]),
     .manufacturer_name_prefix = nullptr,
     .manufacturer_names       = nullptr,
     .manufacturer_names_count = 0,

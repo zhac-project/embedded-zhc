@@ -56,13 +56,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_UFO_R11[] = {
+    {"Tuya","iH-F8260"},
+};
 extern const PreparedDefinition kDef_UFO_R11{
     .zigbee_models=kModels_UFO_R11, .zigbee_models_count=sizeof(kModels_UFO_R11)/sizeof(kModels_UFO_R11[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_UFO_R11, .manufacturer_names_count=sizeof(kManus_UFO_R11)/sizeof(kManus_UFO_R11[0]),
     .model="UFO-R11", .vendor="Moes",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_UFO_R11, .white_labels_count=sizeof(kWhiteLabels_UFO_R11)/sizeof(kWhiteLabels_UFO_R11[0]),
     .from_zigbee=kFz_UFO_R11, .from_zigbee_count=sizeof(kFz_UFO_R11)/sizeof(kFz_UFO_R11[0]),
     .to_zigbee=kTz_UFO_R11,   .to_zigbee_count=sizeof(kTz_UFO_R11)/sizeof(kTz_UFO_R11[0]),
     .configure=nullptr, .on_event=nullptr,

@@ -79,13 +79,17 @@ const TzConverter* const kTz__TZE284_pglpvdar[] = { &kTzDp__TZE284_pglpvdar };
 constexpr const char* kM__TZE284_pglpvdar[] = { "TS0601" };
 constexpr const char* kN__TZE284_pglpvdar[] = { "_TZE284_pglpvdar" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE284_pglpvdar[] = {
+    {"Tongou","TOSA1-01WXJAT2A"},
+};
 extern const PreparedDefinition kDefGen__TZE284_pglpvdar{
     .zigbee_models=kM__TZE284_pglpvdar,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_pglpvdar,.manufacturer_names_count=1,
     .model="TS0601__TZE284_pglpvdar",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE284_pglpvdar, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_pglpvdar)/sizeof(kWhiteLabels_Gen_TZE284_pglpvdar[0]),
     .from_zigbee=kFz__TZE284_pglpvdar,
     .from_zigbee_count=sizeof(kFz__TZE284_pglpvdar)/sizeof(kFz__TZE284_pglpvdar[0]),
     .to_zigbee=kTz__TZE284_pglpvdar,

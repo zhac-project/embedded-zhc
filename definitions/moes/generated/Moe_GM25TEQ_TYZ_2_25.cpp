@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_GM25TEQ_TYZ_2_25[] = {
+    {"Tuya","GM35TEQ-TYZ-2/25"},
+};
 extern const PreparedDefinition kDef_GM25TEQ_TYZ_2_25{
     .zigbee_models=kModels_GM25TEQ_TYZ_2_25, .zigbee_models_count=sizeof(kModels_GM25TEQ_TYZ_2_25)/sizeof(kModels_GM25TEQ_TYZ_2_25[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_GM25TEQ_TYZ_2_25, .manufacturer_names_count=sizeof(kManus_GM25TEQ_TYZ_2_25)/sizeof(kManus_GM25TEQ_TYZ_2_25[0]),
     .model="GM25TEQ-TYZ-2/25", .vendor="Moes",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_GM25TEQ_TYZ_2_25, .white_labels_count=sizeof(kWhiteLabels_GM25TEQ_TYZ_2_25)/sizeof(kWhiteLabels_GM25TEQ_TYZ_2_25[0]),
     .from_zigbee=kFz_GM25TEQ_TYZ_2_25, .from_zigbee_count=sizeof(kFz_GM25TEQ_TYZ_2_25)/sizeof(kFz_GM25TEQ_TYZ_2_25[0]),
     .to_zigbee=kTz_GM25TEQ_TYZ_2_25, .to_zigbee_count=sizeof(kTz_GM25TEQ_TYZ_2_25)/sizeof(kTz_GM25TEQ_TYZ_2_25[0]),
     .configure=nullptr, .on_event=nullptr,

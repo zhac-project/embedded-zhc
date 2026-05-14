@@ -41,13 +41,17 @@ const TzConverter* const kTz__TZE200_8ply8mjj[] = { &kTzDp__TZE200_8ply8mjj };
 constexpr const char* kM__TZE200_8ply8mjj[] = { "TS0601" };
 constexpr const char* kN__TZE200_8ply8mjj[] = { "_TZE200_8ply8mjj" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_8ply8mjj[] = {
+    {"Conecto","COZIGVS"},
+};
 extern const PreparedDefinition kDefGen__TZE200_8ply8mjj{
     .zigbee_models=kM__TZE200_8ply8mjj,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_8ply8mjj,.manufacturer_names_count=1,
     .model="TS0601__TZE200_8ply8mjj",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_8ply8mjj, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_8ply8mjj)/sizeof(kWhiteLabels_Gen_TZE200_8ply8mjj[0]),
     .from_zigbee=kFz__TZE200_8ply8mjj,
     .from_zigbee_count=sizeof(kFz__TZE200_8ply8mjj)/sizeof(kFz__TZE200_8ply8mjj[0]),
     .to_zigbee=kTz__TZE200_8ply8mjj,

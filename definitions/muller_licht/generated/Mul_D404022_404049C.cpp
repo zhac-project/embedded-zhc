@@ -53,13 +53,17 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0300},
 };
 
+
+constexpr WhiteLabel kWhiteLabels_D404022_404049C[] = {
+    {"Müller Licht","404049D"},
+};
 extern const PreparedDefinition kDef_D404022_404049C{
     .zigbee_models=kModels_D404022_404049C, .zigbee_models_count=sizeof(kModels_D404022_404049C)/sizeof(kModels_D404022_404049C[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_D404022_404049C, .manufacturer_names_count=sizeof(kManus_D404022_404049C)/sizeof(kManus_D404022_404049C[0]),
     .model="404022/404049C", .vendor="MullerLicht",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D404022_404049C, .white_labels_count=sizeof(kWhiteLabels_D404022_404049C)/sizeof(kWhiteLabels_D404022_404049C[0]),
     .from_zigbee=kFz_D404022_404049C, .from_zigbee_count=sizeof(kFz_D404022_404049C)/sizeof(kFz_D404022_404049C[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

@@ -85,7 +85,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefMoes__TZE200_ydkqbmpt{
-    .zigbee_models=kM__TZE200_ydkqbmpt,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE200_ydkqbmpt,.zigbee_models_count=sizeof(kM__TZE200_ydkqbmpt)/sizeof(kM__TZE200_ydkqbmpt[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_ydkqbmpt,.manufacturer_names_count=1,
     .model="TS0601__TZE200_ydkqbmpt",.vendor="Moes",

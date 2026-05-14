@@ -18,7 +18,7 @@ const TzConverter* const kTz_C202[] = {
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzPowerOnBehavior1
 };
-constexpr const char* kModels_C202[] = { "C202", "Candeo Zigbee Dimmer" };
+constexpr const char* kModels_C202[] = { "C202" };
 
 constexpr Expose kAutoExposes[] = {
     {"state",             ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},

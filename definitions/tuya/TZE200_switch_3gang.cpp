@@ -28,12 +28,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TZE200_switch_3gang[] = {
+    {"Norklmes","MKS-CM-W5"},
+    {"Somgoms","ZSQB-SMB-ZB"},
+    {"Moes","WS-EUB1-ZG"},
+    {"AVATTO","ZGB-WS-EU"},
+};
 extern const PreparedDefinition kDefTZE200_switch_3gang{
     .zigbee_models=kModels,.zigbee_models_count=2,
     .manufacturer_name_prefix=nullptr,.manufacturer_names=kManu,.manufacturer_names_count=1,
     .model="TS0601_switch_3gang",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_TZE200_switch_3gang, .white_labels_count=sizeof(kWhiteLabels_TZE200_switch_3gang)/sizeof(kWhiteLabels_TZE200_switch_3gang[0]),
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr,

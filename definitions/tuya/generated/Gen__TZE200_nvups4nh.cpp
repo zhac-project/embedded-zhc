@@ -42,13 +42,17 @@ const TzConverter* const kTz__TZE200_nvups4nh[] = { &kTzDp__TZE200_nvups4nh };
 constexpr const char* kM__TZE200_nvups4nh[] = { "TS0601" };
 constexpr const char* kN__TZE200_nvups4nh[] = { "_TZE200_nvups4nh" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_nvups4nh[] = {
+    {"Aubess","1005005194831629"},
+};
 extern const PreparedDefinition kDefGen__TZE200_nvups4nh{
     .zigbee_models=kM__TZE200_nvups4nh,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_nvups4nh,.manufacturer_names_count=1,
     .model="TS0601__TZE200_nvups4nh",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_nvups4nh, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_nvups4nh)/sizeof(kWhiteLabels_Gen_TZE200_nvups4nh[0]),
     .from_zigbee=kFz__TZE200_nvups4nh,
     .from_zigbee_count=sizeof(kFz__TZE200_nvups4nh)/sizeof(kFz__TZE200_nvups4nh[0]),
     .to_zigbee=kTz__TZE200_nvups4nh,

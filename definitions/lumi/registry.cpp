@@ -18,6 +18,7 @@ extern const PreparedDefinition kDefWS_K04E;
 extern const PreparedDefinition kDefWS_K05E;
 extern const PreparedDefinition kDefKD_R01D;
 extern const PreparedDefinition kDefDS_K02D_DS_K02E;
+extern const PreparedDefinition kDefDWZTCGQ11LM;
 extern const PreparedDefinition kDefWS_K08D;
 extern const PreparedDefinition kDefT2_E27_CCT;
 extern const PreparedDefinition kDefT2_E27;
@@ -79,12 +80,10 @@ extern const PreparedDefinition kDefDJT31LM;
 extern const PreparedDefinition kDefDJT41LM;
 extern const PreparedDefinition kDefDJT51LM;
 extern const PreparedDefinition kDefGZCGQ01LM;
-extern const PreparedDefinition kDefGZCGQ02LM;
 extern const PreparedDefinition kDefGZCGQ11LM;
 extern const PreparedDefinition kDefJTBZ01AQ;
 extern const PreparedDefinition kDefJTYJGD01LM;
 extern const PreparedDefinition kDefJYGZ01AQ;
-extern const PreparedDefinition kDefJYGZ02AQ;
 extern const PreparedDefinition kDefJYGZ03AQ;
 extern const PreparedDefinition kDefLGZCDD01LM;
 extern const PreparedDefinition kDefMCCGQ01LM;
@@ -103,11 +102,9 @@ extern const PreparedDefinition kDefMCCGQ23LM;
 extern const PreparedDefinition kDefMCCGQ24LM;
 extern const PreparedDefinition kDefMFKZQ01LM;
 extern const PreparedDefinition kDefQBCZ11LM;
-extern const PreparedDefinition kDefQBCZ12LM;
 extern const PreparedDefinition kDefQBCZ13LM;
 extern const PreparedDefinition kDefQBKG03LM;
 extern const PreparedDefinition kDefQBKG04LM;
-extern const PreparedDefinition kDefQBKG10LM;
 extern const PreparedDefinition kDefQBKG11LM;
 extern const PreparedDefinition kDefQBKG12LM;
 extern const PreparedDefinition kDefQBKG21LM;
@@ -133,7 +130,6 @@ extern const PreparedDefinition kDefRTCGQ15LM;
 extern const PreparedDefinition kDefRTCGQ16LM;
 extern const PreparedDefinition kDefRTCGQ21LM;
 extern const PreparedDefinition kDefRTCGQ22LM;
-extern const PreparedDefinition kDefRTCGQ23LM;
 extern const PreparedDefinition kDefRTCGQ24LM;
 extern const PreparedDefinition kDefRTCGQ25LM;
 extern const PreparedDefinition kDefRTCGQ26LM;
@@ -159,7 +155,6 @@ extern const PreparedDefinition kDefWGLZ00LM;
 extern const PreparedDefinition kDefWPP01D;
 extern const PreparedDefinition kDefWPP02D;
 extern const PreparedDefinition kDefWPP03D;
-extern const PreparedDefinition kDefWRDZG01LM;
 extern const PreparedDefinition kDefWSDCGQ01LM;
 extern const PreparedDefinition kDefWSDCGQ11LM;
 extern const PreparedDefinition kDefWSDCGQ12LM;
@@ -186,7 +181,6 @@ extern const PreparedDefinition kDefWXKG14LM;
 extern const PreparedDefinition kDefWXKG15LM;
 extern const PreparedDefinition kDefWXKG16LM;
 extern const PreparedDefinition kDefWXKG18LM;
-extern const PreparedDefinition kDefWXKG19LM;
 extern const PreparedDefinition kDefWXKG20LM;
 extern const PreparedDefinition kDefWXKG21LM;
 extern const PreparedDefinition kDefWXKG22LM;
@@ -214,7 +208,6 @@ extern const PreparedDefinition kDefZNCZ15LM;
 extern const PreparedDefinition kDefZNLDP12LM;
 extern const PreparedDefinition kDefZNLDP13LM;
 extern const PreparedDefinition kDefZNLDP14LM;
-extern const PreparedDefinition kDefZNLDP15LM;
 extern const PreparedDefinition kDefZNLDP16LM;
 extern const PreparedDefinition kDefZNLDP17LM;
 extern const PreparedDefinition kDefZNLDP18LM;
@@ -228,7 +221,6 @@ extern const PreparedDefinition kDefZNLDP25LM;
 extern const PreparedDefinition kDefZNLDP26LM;
 extern const PreparedDefinition kDefZNLDP27LM;
 extern const PreparedDefinition kDefZNLDP28LM;
-extern const PreparedDefinition kDefZNLDP29LM;
 extern const PreparedDefinition kDefZNLDP30LM;
 extern const PreparedDefinition kDefZNLDP31LM;
 extern const PreparedDefinition kDefZNMCPZ01LM;
@@ -260,13 +252,12 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefDJT31LM,
     &kDefDJT41LM,
     &kDefDJT51LM,
+    &kDefDWZTCGQ11LM,
     &kDefGZCGQ01LM,
-    &kDefGZCGQ02LM,
     &kDefGZCGQ11LM,
     &kDefJTBZ01AQ,
     &kDefJTYJGD01LM,
     &kDefJYGZ01AQ,
-    &kDefJYGZ02AQ,
     &kDefJYGZ03AQ,
     &kDefLGZCDD01LM,
     &kDefMCCGQ01LM,
@@ -285,11 +276,9 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefMCCGQ24LM,
     &kDefMFKZQ01LM,
     &kDefQBCZ11LM,
-    &kDefQBCZ12LM,
     &kDefQBCZ13LM,
     &kDefQBKG03LM,
     &kDefQBKG04LM,
-    &kDefQBKG10LM,
     &kDefQBKG11LM,
     &kDefQBKG12LM,
     &kDefQBKG21LM,
@@ -315,7 +304,6 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefRTCGQ16LM,
     &kDefRTCGQ21LM,
     &kDefRTCGQ22LM,
-    &kDefRTCGQ23LM,
     &kDefRTCGQ24LM,
     &kDefRTCGQ25LM,
     &kDefRTCGQ26LM,
@@ -341,7 +329,6 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefWPP01D,
     &kDefWPP02D,
     &kDefWPP03D,
-    &kDefWRDZG01LM,
     &kDefWSDCGQ01LM,
     &kDefWSDCGQ11LM,
     &kDefWSDCGQ12LM,
@@ -368,7 +355,6 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefWXKG15LM,
     &kDefWXKG16LM,
     &kDefWXKG18LM,
-    &kDefWXKG19LM,
     &kDefWXKG20LM,
     &kDefWXKG21LM,
     &kDefWXKG22LM,
@@ -396,7 +382,6 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefZNLDP12LM,
     &kDefZNLDP13LM,
     &kDefZNLDP14LM,
-    &kDefZNLDP15LM,
     &kDefZNLDP16LM,
     &kDefZNLDP17LM,
     &kDefZNLDP18LM,
@@ -410,7 +395,6 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefZNLDP26LM,
     &kDefZNLDP27LM,
     &kDefZNLDP28LM,
-    &kDefZNLDP29LM,
     &kDefZNLDP30LM,
     &kDefZNLDP31LM,
     &kDefZNMCPZ01LM,

@@ -12,6 +12,7 @@ const FzConverter* const kFz_HY607W_3A[] = {
 };
 
 constexpr const char* kModels_HY607W_3A[] = { "TS0601" };
+constexpr const char* kManus_HY607W_3A[] = { "_TZE200_khah2lkr" };
 
 }  // namespace
 
@@ -31,7 +32,7 @@ constexpr BindingSpec kAutoBindings[] = {
 extern const PreparedDefinition kDef_HY607W_3A{
     .zigbee_models=kModels_HY607W_3A, .zigbee_models_count=sizeof(kModels_HY607W_3A)/sizeof(kModels_HY607W_3A[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus_HY607W_3A, .manufacturer_names_count=sizeof(kManus_HY607W_3A)/sizeof(kManus_HY607W_3A[0]),
     .model="HY607W-3A", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,

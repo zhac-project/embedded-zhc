@@ -30,13 +30,22 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SEA801_Zigbee_SEA802_Zigbee[] = {
+    {"HiHome","WZB-TRVL"},
+    {"Hama","00176592"},
+    {"Maginon","WT-1"},
+    {"RTX","ZB-RT1"},
+    {"SETTI+","TRV001"},
+    {"Royal Thermo","RTE 77.001B"},
+};
 extern const PreparedDefinition kDef_SEA801_Zigbee_SEA802_Zigbee{
     .zigbee_models=kModels_SEA801_Zigbee_SEA802_Zigbee, .zigbee_models_count=sizeof(kModels_SEA801_Zigbee_SEA802_Zigbee)/sizeof(kModels_SEA801_Zigbee_SEA802_Zigbee[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_SEA801_Zigbee_SEA802_Zigbee, .manufacturer_names_count=sizeof(kManus_SEA801_Zigbee_SEA802_Zigbee)/sizeof(kManus_SEA801_Zigbee_SEA802_Zigbee[0]),
     .model="SEA801-Zigbee/SEA802-Zigbee", .vendor="Saswell",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SEA801_Zigbee_SEA802_Zigbee, .white_labels_count=sizeof(kWhiteLabels_SEA801_Zigbee_SEA802_Zigbee)/sizeof(kWhiteLabels_SEA801_Zigbee_SEA802_Zigbee[0]),
     .from_zigbee=kFz_SEA801_Zigbee_SEA802_Zigbee, .from_zigbee_count=sizeof(kFz_SEA801_Zigbee_SEA802_Zigbee)/sizeof(kFz_SEA801_Zigbee_SEA802_Zigbee[0]),
     .to_zigbee=kTz_SEA801_Zigbee_SEA802_Zigbee, .to_zigbee_count=sizeof(kTz_SEA801_Zigbee_SEA802_Zigbee)/sizeof(kTz_SEA801_Zigbee_SEA802_Zigbee[0]),
     .configure=nullptr, .on_event=nullptr,

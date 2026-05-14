@@ -42,13 +42,17 @@ const TzConverter* const kTz__TZE200_lsanae15[] = { &kTzDp__TZE200_lsanae15 };
 constexpr const char* kM__TZE200_lsanae15[] = { "TS0601" };
 constexpr const char* kN__TZE200_lsanae15[] = { "_TZE200_lsanae15" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_lsanae15[] = {
+    {"MatSee Plus","DAC2161C"},
+};
 extern const PreparedDefinition kDefGen__TZE200_lsanae15{
     .zigbee_models=kM__TZE200_lsanae15,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_lsanae15,.manufacturer_names_count=1,
     .model="TS0601__TZE200_lsanae15",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_lsanae15, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_lsanae15)/sizeof(kWhiteLabels_Gen_TZE200_lsanae15[0]),
     .from_zigbee=kFz__TZE200_lsanae15,
     .from_zigbee_count=sizeof(kFz__TZE200_lsanae15)/sizeof(kFz__TZE200_lsanae15[0]),
     .to_zigbee=kTz__TZE200_lsanae15,

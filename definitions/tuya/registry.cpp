@@ -19,9 +19,6 @@ extern const PreparedDefinition kDefE220_KR4N0Z0_HA;
 extern const PreparedDefinition kDefD3_DPWK_TY;
 
 extern const PreparedDefinition kDefGen_CK_BL702_AL_01_7008_Z102LG01_1_;
-extern const PreparedDefinition kDefGen_CK_BL702_AL_01_7009_Z102LG03_1_;
-extern const PreparedDefinition kDefGen_CK_BL702_AL_01_7009_Z102LG04_1_;
-extern const PreparedDefinition kDefGen_CK_BL702_AL_01_7009_Z102LG04_2_;
 extern const PreparedDefinition kDefGen_TS0006;
 extern const PreparedDefinition kDefGen_TS0026;
 extern const PreparedDefinition kDefGen_TS0041A;
@@ -43,7 +40,6 @@ extern const PreparedDefinition kDefGen_ZG_102Z;
 extern const PreparedDefinition kDefGen_ZG_102ZL;
 extern const PreparedDefinition kDefGen_ZG_102ZM;
 extern const PreparedDefinition kDefGen_ZG_103Z;
-extern const PreparedDefinition kDefGen_ZG_106Z;
 extern const PreparedDefinition kDefGen_ZG_204Z;
 extern const PreparedDefinition kDefGen_ZG_204ZE;
 extern const PreparedDefinition kDefGen_ZG_204ZH;
@@ -58,7 +54,6 @@ extern const PreparedDefinition kDefGen_ZG_222Z;
 extern const PreparedDefinition kDefGen_ZG_223Z;
 extern const PreparedDefinition kDefGen_ZG_225Z;
 extern const PreparedDefinition kDefGen_ZG_226Z;
-extern const PreparedDefinition kDefGen_ZG_227Z;
 extern const PreparedDefinition kDefGen_ZG_227ZL;
 extern const PreparedDefinition kDefGen_ZG_228Z;
 extern const PreparedDefinition kDefGen_ZG_229Z;
@@ -68,7 +63,6 @@ extern const PreparedDefinition kDefGen_ZG_302Z2;
 extern const PreparedDefinition kDefGen_ZG_302Z3;
 extern const PreparedDefinition kDefGen_ZG_302ZL;
 extern const PreparedDefinition kDefGen_ZG_302ZM;
-extern const PreparedDefinition kDefGen_ZG_303Z;
 extern const PreparedDefinition kDefGen_ZG_305Z;
 extern const PreparedDefinition kDefGen__TZ3000_01gpyda5;
 extern const PreparedDefinition kDefGen__TZ3000_0dumfk2z;
@@ -490,20 +484,17 @@ extern const PreparedDefinition kDefGen__TZE200_0zaf1cr8;
 extern const PreparedDefinition kDefGen__TZE200_1agwnems;
 extern const PreparedDefinition kDefGen__TZE200_1drr8tab;
 extern const PreparedDefinition kDefGen__TZE200_1fuxihti;
-extern const PreparedDefinition kDefGen__TZE200_1ibpyhdc;
 extern const PreparedDefinition kDefGen__TZE200_2atgpdho;
 extern const PreparedDefinition kDefGen__TZE200_2dpplnsn;
 extern const PreparedDefinition kDefGen__TZE200_2hf7x9n3;
 extern const PreparedDefinition kDefGen__TZE200_2imwyigp;
 extern const PreparedDefinition kDefGen__TZE200_2m38mh6k;
 extern const PreparedDefinition kDefGen__TZE200_2odrmqwq;
-extern const PreparedDefinition kDefGen__TZE200_2pddnnrk;
 extern const PreparedDefinition kDefGen__TZE200_2se8efxh;
 extern const PreparedDefinition kDefGen__TZE200_2vfxweng;
 extern const PreparedDefinition kDefGen__TZE200_3ejwxpmu;
 extern const PreparedDefinition kDefGen__TZE200_3p5ydos3;
 extern const PreparedDefinition kDefGen__TZE200_3t91nb6k;
-extern const PreparedDefinition kDefGen__TZE200_3xfjp0ag;
 extern const PreparedDefinition kDefGen__TZE200_3ylew7b4;
 extern const PreparedDefinition kDefGen__TZE200_44af8vyi;
 extern const PreparedDefinition kDefGen__TZE200_4eeyebrt;
@@ -539,18 +530,14 @@ extern const PreparedDefinition kDefGen__TZE200_9xfjixap;
 extern const PreparedDefinition kDefGen__TZE200_9yapgbuv;
 extern const PreparedDefinition kDefGen__TZE200_a0syesf5;
 extern const PreparedDefinition kDefGen__TZE200_a4bpgplm;
-extern const PreparedDefinition kDefGen__TZE200_a8sdabtg;
 extern const PreparedDefinition kDefGen__TZE200_a8z0g46u;
 extern const PreparedDefinition kDefGen__TZE200_abatw3kj;
-extern const PreparedDefinition kDefGen__TZE200_afycb3cg;
-extern const PreparedDefinition kDefGen__TZE200_ahpcyzth;
 extern const PreparedDefinition kDefGen__TZE200_aj0oxo1i;
 extern const PreparedDefinition kDefGen__TZE200_atpwqgml;
 extern const PreparedDefinition kDefGen__TZE200_ax8a8ahx;
 extern const PreparedDefinition kDefGen__TZE200_axgvo9jh;
 extern const PreparedDefinition kDefGen__TZE200_b2u1drdv;
 extern const PreparedDefinition kDefGen__TZE200_ba69l9ol;
-extern const PreparedDefinition kDefGen__TZE200_bfmfhxra;
 extern const PreparedDefinition kDefGen__TZE200_bkkmqmyo;
 extern const PreparedDefinition kDefGen__TZE200_blfcpsxz;
 extern const PreparedDefinition kDefGen__TZE200_bvrlmajk;
@@ -564,7 +551,6 @@ extern const PreparedDefinition kDefGen__TZE200_ckud7u2l;
 extern const PreparedDefinition kDefGen__TZE200_clm4gdw4;
 extern const PreparedDefinition kDefGen__TZE200_clrdrnya;
 extern const PreparedDefinition kDefGen__TZE200_cpbo62rn;
-extern const PreparedDefinition kDefGen__TZE200_cqtamhh5;
 extern const PreparedDefinition kDefGen__TZE200_crq3r3la;
 extern const PreparedDefinition kDefGen__TZE200_ctq0k47x;
 extern const PreparedDefinition kDefGen__TZE200_d2zfgtij;
@@ -573,12 +559,10 @@ extern const PreparedDefinition kDefGen__TZE200_d7lpruvi;
 extern const PreparedDefinition kDefGen__TZE200_d9mzkhoq;
 extern const PreparedDefinition kDefGen__TZE200_dcnsggv;
 extern const PreparedDefinition kDefGen__TZE200_dcnsggvz;
-extern const PreparedDefinition kDefGen__TZE200_df04ghrb;
 extern const PreparedDefinition kDefGen__TZE200_dfxkcots;
 extern const PreparedDefinition kDefGen__TZE200_dhke3p9w;
 extern const PreparedDefinition kDefGen__TZE200_di3tfv5b;
 extern const PreparedDefinition kDefGen__TZE200_dikb3dp6;
-extern const PreparedDefinition kDefGen__TZE200_dikkika5;
 extern const PreparedDefinition kDefGen__TZE200_dnz6yvl2;
 extern const PreparedDefinition kDefGen__TZE200_do5qy8zo;
 extern const PreparedDefinition kDefGen__TZE200_dq1mfjug;
@@ -592,7 +576,6 @@ extern const PreparedDefinition kDefGen__TZE200_ebwgzdqq;
 extern const PreparedDefinition kDefGen__TZE200_edl8pz1k;
 extern const PreparedDefinition kDefGen__TZE200_eegnwoyw;
 extern const PreparedDefinition kDefGen__TZE200_eevqq1uv;
-extern const PreparedDefinition kDefGen__TZE200_ehhrv2e3;
 extern const PreparedDefinition kDefGen__TZE200_emxxanvi;
 extern const PreparedDefinition kDefGen__TZE200_en3wvcbx;
 extern const PreparedDefinition kDefGen__TZE200_eo6xhfbo;
@@ -613,20 +596,16 @@ extern const PreparedDefinition kDefGen__TZE200_gaj531w3;
 extern const PreparedDefinition kDefGen__TZE200_gbagoilo;
 extern const PreparedDefinition kDefGen__TZE200_ggev5fsl;
 extern const PreparedDefinition kDefGen__TZE200_ghynnvos;
-extern const PreparedDefinition kDefGen__TZE200_gjldowol;
 extern const PreparedDefinition kDefGen__TZE200_gkfbdvyx;
 extern const PreparedDefinition kDefGen__TZE200_gne0e6mk;
 extern const PreparedDefinition kDefGen__TZE200_gnw1rril;
 extern const PreparedDefinition kDefGen__TZE200_go3tvswy;
 extern const PreparedDefinition kDefGen__TZE200_gomuk3dc;
-extern const PreparedDefinition kDefGen__TZE200_grgol3xp;
 extern const PreparedDefinition kDefGen__TZE200_gwkapsoq;
 extern const PreparedDefinition kDefGen__TZE200_h2rctifa;
 extern const PreparedDefinition kDefGen__TZE200_ha0vwoew;
 extern const PreparedDefinition kDefGen__TZE200_hbnfokum;
-extern const PreparedDefinition kDefGen__TZE200_hdih4foa;
 extern const PreparedDefinition kDefGen__TZE200_hewlydpz;
-extern const PreparedDefinition kDefGen__TZE200_hggxgsjj;
 extern const PreparedDefinition kDefGen__TZE200_hkdl5fmv;
 extern const PreparedDefinition kDefGen__TZE200_hmqzfqml;
 extern const PreparedDefinition kDefGen__TZE200_hojryzzd;
@@ -635,9 +614,7 @@ extern const PreparedDefinition kDefGen__TZE200_hsgrhjpf;
 extern const PreparedDefinition kDefGen__TZE200_hue3yfsn;
 extern const PreparedDefinition kDefGen__TZE200_hvaxb2tc;
 extern const PreparedDefinition kDefGen__TZE200_hyhl5y36;
-extern const PreparedDefinition kDefGen__TZE200_iba1ckek;
 extern const PreparedDefinition kDefGen__TZE200_icka1clh;
-extern const PreparedDefinition kDefGen__TZE200_ijey4q29;
 extern const PreparedDefinition kDefGen__TZE200_io0zdqh1;
 extern const PreparedDefinition kDefGen__TZE200_ioxkjvuz;
 extern const PreparedDefinition kDefGen__TZE200_ip2akl4w;
@@ -645,26 +622,18 @@ extern const PreparedDefinition kDefGen__TZE200_iq4ygaai;
 extern const PreparedDefinition kDefGen__TZE200_iuk8kupi;
 extern const PreparedDefinition kDefGen__TZE200_iwn0gpzz;
 extern const PreparedDefinition kDefGen__TZE200_j7sgd8po;
-extern const PreparedDefinition kDefGen__TZE200_jfw0a4aa;
 extern const PreparedDefinition kDefGen__TZE200_ji1gn7rw;
 extern const PreparedDefinition kDefGen__TZE200_jkbljri7;
 extern const PreparedDefinition kDefGen__TZE200_jkfbph7l;
 extern const PreparedDefinition kDefGen__TZE200_js3mgbjb;
-extern const PreparedDefinition kDefGen__TZE200_jsaqgakf;
 extern const PreparedDefinition kDefGen__TZE200_jt50ea5d;
 extern const PreparedDefinition kDefGen__TZE200_juzago6i;
 extern const PreparedDefinition kDefGen__TZE200_jva8ink8;
 extern const PreparedDefinition kDefGen__TZE200_jwsjbxjs;
-extern const PreparedDefinition kDefGen__TZE200_jxyhl4eq;
 extern const PreparedDefinition kDefGen__TZE200_k1tumq4t;
 extern const PreparedDefinition kDefGen__TZE200_k6jhsr0q;
-extern const PreparedDefinition kDefGen__TZE200_ka8l86iu;
-extern const PreparedDefinition kDefGen__TZE200_kccdzaeo;
 extern const PreparedDefinition kDefGen__TZE200_kds0pmmv;
-extern const PreparedDefinition kDefGen__TZE200_kf2hbko4;
 extern const PreparedDefinition kDefGen__TZE200_khx7nnka;
-extern const PreparedDefinition kDefGen__TZE200_khzbklyh;
-extern const PreparedDefinition kDefGen__TZE200_kijxnb8q;
 extern const PreparedDefinition kDefGen__TZE200_kltffuzl;
 extern const PreparedDefinition kDefGen__TZE200_kvpwq8z7;
 extern const PreparedDefinition kDefGen__TZE200_kyfqmmyl;
@@ -672,12 +641,10 @@ extern const PreparedDefinition kDefGen__TZE200_kzm5w4iz;
 extern const PreparedDefinition kDefGen__TZE200_la2c2uo9;
 extern const PreparedDefinition kDefGen__TZE200_lawxy9e2;
 extern const PreparedDefinition kDefGen__TZE200_leaqthqq;
-extern const PreparedDefinition kDefGen__TZE200_lhqtjwax;
 extern const PreparedDefinition kDefGen__TZE200_lhzapfg9;
 extern const PreparedDefinition kDefGen__TZE200_libht6ua;
 extern const PreparedDefinition kDefGen__TZE200_lllliz3p;
 extern const PreparedDefinition kDefGen__TZE200_llm0epxg;
-extern const PreparedDefinition kDefGen__TZE200_llvwkkde;
 extern const PreparedDefinition kDefGen__TZE200_lnbfnyxd;
 extern const PreparedDefinition kDefGen__TZE200_lpwgshtl;
 extern const PreparedDefinition kDefGen__TZE200_lsanae15;
@@ -695,12 +662,10 @@ extern const PreparedDefinition kDefGen__TZE200_mwvfvw8g;
 extern const PreparedDefinition kDefGen__TZE200_mx6u6l4y;
 extern const PreparedDefinition kDefGen__TZE200_myd45weu;
 extern const PreparedDefinition kDefGen__TZE200_n1aauwb4;
-extern const PreparedDefinition kDefGen__TZE200_na5qlzow;
 extern const PreparedDefinition kDefGen__TZE200_nkjintbl;
 extern const PreparedDefinition kDefGen__TZE200_nklqjk62;
 extern const PreparedDefinition kDefGen__TZE200_nkoabg8w;
 extern const PreparedDefinition kDefGen__TZE200_nogaemzt;
-extern const PreparedDefinition kDefGen__TZE200_nojsjtj2;
 extern const PreparedDefinition kDefGen__TZE200_npj9bug3;
 extern const PreparedDefinition kDefGen__TZE200_nslr42tt;
 extern const PreparedDefinition kDefGen__TZE200_ntcy3xu1;
@@ -721,7 +686,6 @@ extern const PreparedDefinition kDefGen__TZE200_p0gzbqct;
 extern const PreparedDefinition kDefGen__TZE200_p2qzzazi;
 extern const PreparedDefinition kDefGen__TZE200_p6fuhvez;
 extern const PreparedDefinition kDefGen__TZE200_p6vz3wzt;
-extern const PreparedDefinition kDefGen__TZE200_p9zbdqgs;
 extern const PreparedDefinition kDefGen__TZE200_pbo8cj0z;
 extern const PreparedDefinition kDefGen__TZE200_pk0sfzvr;
 extern const PreparedDefinition kDefGen__TZE200_pl31aqf5;
@@ -733,9 +697,7 @@ extern const PreparedDefinition kDefGen__TZE200_qasjif9e;
 extern const PreparedDefinition kDefGen__TZE200_qcasmfan;
 extern const PreparedDefinition kDefGen__TZE200_qhlxve78;
 extern const PreparedDefinition kDefGen__TZE200_qjp4ynvi;
-extern const PreparedDefinition kDefGen__TZE200_qoy0ekbd;
 extern const PreparedDefinition kDefGen__TZE200_qq9mpfhw;
-extern const PreparedDefinition kDefGen__TZE200_qxyh4r7g;
 extern const PreparedDefinition kDefGen__TZE200_qyflbnbj;
 extern const PreparedDefinition kDefGen__TZE200_qyss8gjy;
 extern const PreparedDefinition kDefGen__TZE200_qzaing2g;
@@ -745,7 +707,6 @@ extern const PreparedDefinition kDefGen__TZE200_raz9qavg;
 extern const PreparedDefinition kDefGen__TZE200_rbbx5mfq;
 extern const PreparedDefinition kDefGen__TZE200_rccxox8p;
 extern const PreparedDefinition kDefGen__TZE200_rhblgy0z;
-extern const PreparedDefinition kDefGen__TZE200_rhgsbacq;
 extern const PreparedDefinition kDefGen__TZE200_rk1wojce;
 extern const PreparedDefinition kDefGen__TZE200_rks0sgb7;
 extern const PreparedDefinition kDefGen__TZE200_rmymn92d;
@@ -758,8 +719,6 @@ extern const PreparedDefinition kDefGen__TZE200_rxntag7i;
 extern const PreparedDefinition kDefGen__TZE200_rxq4iti9;
 extern const PreparedDefinition kDefGen__TZE200_s1xgth2u;
 extern const PreparedDefinition kDefGen__TZE200_s4sa1mcx;
-extern const PreparedDefinition kDefGen__TZE200_s6hzw8g2;
-extern const PreparedDefinition kDefGen__TZE200_s7rsrtbg;
 extern const PreparedDefinition kDefGen__TZE200_sbyx0lm6;
 extern const PreparedDefinition kDefGen__TZE200_seq9cm6u;
 extern const PreparedDefinition kDefGen__TZE200_sfqyhvpv;
@@ -772,19 +731,13 @@ extern const PreparedDefinition kDefGen__TZE200_t3xd7l44;
 extern const PreparedDefinition kDefGen__TZE200_t5p1vj8r;
 extern const PreparedDefinition kDefGen__TZE200_tbgecldg;
 extern const PreparedDefinition kDefGen__TZE200_tgeqdjgk;
-extern const PreparedDefinition kDefGen__TZE200_tmszbtzq;
-extern const PreparedDefinition kDefGen__TZE200_toeldckg;
 extern const PreparedDefinition kDefGen__TZE200_tsxpl0d0;
-extern const PreparedDefinition kDefGen__TZE200_ttcovulf;
 extern const PreparedDefinition kDefGen__TZE200_tvrvdj6o;
-extern const PreparedDefinition kDefGen__TZE200_tyffvoij;
 extern const PreparedDefinition kDefGen__TZE200_u319yc66;
-extern const PreparedDefinition kDefGen__TZE200_u6x1zyv2;
 extern const PreparedDefinition kDefGen__TZE200_ubgdwsnr;
 extern const PreparedDefinition kDefGen__TZE200_udank5zs;
 extern const PreparedDefinition kDefGen__TZE200_uebojraa;
 extern const PreparedDefinition kDefGen__TZE200_ugekduaj;
-extern const PreparedDefinition kDefGen__TZE200_uli8wasj;
 extern const PreparedDefinition kDefGen__TZE200_upagmta9;
 extern const PreparedDefinition kDefGen__TZE200_utkemkbs;
 extern const PreparedDefinition kDefGen__TZE200_ux5v4dbd;
@@ -799,15 +752,11 @@ extern const PreparedDefinition kDefGen__TZE200_viy9ihs7;
 extern const PreparedDefinition kDefGen__TZE200_vizxbhco;
 extern const PreparedDefinition kDefGen__TZE200_vm1gyrso;
 extern const PreparedDefinition kDefGen__TZE200_vmcgja59;
-extern const PreparedDefinition kDefGen__TZE200_vrcfo4i0;
 extern const PreparedDefinition kDefGen__TZE200_vrfecyku;
-extern const PreparedDefinition kDefGen__TZE200_vs0skpuc;
 extern const PreparedDefinition kDefGen__TZE200_vucankjx;
-extern const PreparedDefinition kDefGen__TZE200_vuqzj1ej;
 extern const PreparedDefinition kDefGen__TZE200_vuwtqx0t;
 extern const PreparedDefinition kDefGen__TZE200_vvmbj46n;
 extern const PreparedDefinition kDefGen__TZE200_vzqtvljm;
-extern const PreparedDefinition kDefGen__TZE200_w0ap83qu;
 extern const PreparedDefinition kDefGen__TZE200_w4cryh2i;
 extern const PreparedDefinition kDefGen__TZE200_w6n8jeuu;
 extern const PreparedDefinition kDefGen__TZE200_wbhaespm;
@@ -825,26 +774,20 @@ extern const PreparedDefinition kDefGen__TZE200_wukb7rhc;
 extern const PreparedDefinition kDefGen__TZE200_wunufsil;
 extern const PreparedDefinition kDefGen__TZE200_wv90ladg;
 extern const PreparedDefinition kDefGen__TZE200_wvovwe9h;
-extern const PreparedDefinition kDefGen__TZE200_wzk0x7fq;
 extern const PreparedDefinition kDefGen__TZE200_x8diwkqb;
 extern const PreparedDefinition kDefGen__TZE200_x8fp01wi;
 extern const PreparedDefinition kDefGen__TZE200_x9axofse;
 extern const PreparedDefinition kDefGen__TZE200_xaabybja;
 extern const PreparedDefinition kDefGen__TZE200_xby0s3ta;
-extern const PreparedDefinition kDefGen__TZE200_xlnzk169;
 extern const PreparedDefinition kDefGen__TZE200_xpq2rzhq;
 extern const PreparedDefinition kDefGen__TZE200_xpvamyfz;
 extern const PreparedDefinition kDefGen__TZE200_xu4a5rhj;
 extern const PreparedDefinition kDefGen__TZE200_xuzcvlku;
-extern const PreparedDefinition kDefGen__TZE200_y8jijhba;
-extern const PreparedDefinition kDefGen__TZE200_yflzeeqj;
 extern const PreparedDefinition kDefGen__TZE200_yh7aoahi;
 extern const PreparedDefinition kDefGen__TZE200_yi4jtqq1;
 extern const PreparedDefinition kDefGen__TZE200_yia0p3tr;
 extern const PreparedDefinition kDefGen__TZE200_yjjdcqsq;
-extern const PreparedDefinition kDefGen__TZE200_yjryxpot;
 extern const PreparedDefinition kDefGen__TZE200_ykgar0ow;
-extern const PreparedDefinition kDefGen__TZE200_ykglasuj;
 extern const PreparedDefinition kDefGen__TZE200_yojqa8xn;
 extern const PreparedDefinition kDefGen__TZE200_ypprdwsl;
 extern const PreparedDefinition kDefGen__TZE200_yqgbrdyo;
@@ -855,7 +798,6 @@ extern const PreparedDefinition kDefGen__TZE200_yvx5lh6k;
 extern const PreparedDefinition kDefGen__TZE200_ywdxldoj;
 extern const PreparedDefinition kDefGen__TZE200_ywe90lt0;
 extern const PreparedDefinition kDefGen__TZE200_z1tyspqw;
-extern const PreparedDefinition kDefGen__TZE200_zbfmvj13;
 extern const PreparedDefinition kDefGen__TZE200_zl1kmjqx;
 extern const PreparedDefinition kDefGen__TZE200_znlqjmih;
 extern const PreparedDefinition kDefGen__TZE200_znzs7yaw;
@@ -1303,6 +1245,7 @@ extern const PreparedDefinition kDefTS0501A;
 extern const PreparedDefinition kDefTS0501B;
 extern const PreparedDefinition kDefTS0502A;
 extern const PreparedDefinition kDefTS0502B;
+extern const PreparedDefinition kDefTS0502B_v2;
 extern const PreparedDefinition kDefTS0503A;
 extern const PreparedDefinition kDefTS0503B;
 extern const PreparedDefinition kDefTS0504A;
@@ -1338,7 +1281,6 @@ extern const PreparedDefinition kDefTZE200_ar0slwnd;
 extern const PreparedDefinition kDefTZE200_batt_tester;
 extern const PreparedDefinition kDefTZE200_battery_mon;
 extern const PreparedDefinition kDefTZE200_bjawzodf;
-extern const PreparedDefinition kDefTZE200_ble_radar;
 extern const PreparedDefinition kDefTZE200_bme680;
 extern const PreparedDefinition kDefTZE200_body;
 extern const PreparedDefinition kDefTZE200_bq5c8xfe;
@@ -1352,22 +1294,18 @@ extern const PreparedDefinition kDefTZE200_cf1sl3tj;
 extern const PreparedDefinition kDefTZE200_cjbofhxw;
 extern const PreparedDefinition kDefTZE200_clamp;
 extern const PreparedDefinition kDefTZE200_co2;
-extern const PreparedDefinition kDefTZE200_co2_alarm;
 extern const PreparedDefinition kDefTZE200_co_alarm;
 extern const PreparedDefinition kDefTZE200_coffee;
-extern const PreparedDefinition kDefTZE200_contact2;
 extern const PreparedDefinition kDefTZE200_contact_t1;
 extern const PreparedDefinition kDefTZE200_conveyor;
 extern const PreparedDefinition kDefTZE200_cover;
 extern const PreparedDefinition kDefTZE200_cpmgn2cf;
 extern const PreparedDefinition kDefTZE200_cwnjrr72;
-extern const PreparedDefinition kDefTZE200_dc_switch;
 extern const PreparedDefinition kDefTZE200_dehumid;
 extern const PreparedDefinition kDefTZE200_digital_scale;
 extern const PreparedDefinition kDefTZE200_dimmer;
 extern const PreparedDefinition kDefTZE200_din_relay;
 extern const PreparedDefinition kDefTZE200_dishwasher;
-extern const PreparedDefinition kDefTZE200_door;
 extern const PreparedDefinition kDefTZE200_door2;
 extern const PreparedDefinition kDefTZE200_doorbell;
 extern const PreparedDefinition kDefTZE200_dsjszp0x;
@@ -1390,7 +1328,6 @@ extern const PreparedDefinition kDefTZE200_floor_thermo;
 extern const PreparedDefinition kDefTZE200_flow;
 extern const PreparedDefinition kDefTZE200_formaldehyde;
 extern const PreparedDefinition kDefTZE200_fp;
-extern const PreparedDefinition kDefTZE200_freezer;
 extern const PreparedDefinition kDefTZE200_fridge;
 extern const PreparedDefinition kDefTZE200_g1o5lwkd;
 extern const PreparedDefinition kDefTZE200_garage;
@@ -1486,7 +1423,6 @@ extern const PreparedDefinition kDefTZE200_soil_th;
 extern const PreparedDefinition kDefTZE200_solar;
 extern const PreparedDefinition kDefTZE200_solar_inv;
 extern const PreparedDefinition kDefTZE200_solenoid;
-extern const PreparedDefinition kDefTZE200_sos;
 extern const PreparedDefinition kDefTZE200_sprinkler;
 extern const PreparedDefinition kDefTZE200_star_light;
 extern const PreparedDefinition kDefTZE200_street_light;
@@ -1529,7 +1465,6 @@ extern const PreparedDefinition kDefTZE200_washer;
 extern const PreparedDefinition kDefTZE200_water_boiler;
 extern const PreparedDefinition kDefTZE200_water_heater;
 extern const PreparedDefinition kDefTZE200_water_timer;
-extern const PreparedDefinition kDefTZE200_waterleak;
 extern const PreparedDefinition kDefTZE200_wind;
 extern const PreparedDefinition kDefTZE200_window;
 extern const PreparedDefinition kDefTZE200_zone_heat;
@@ -1539,11 +1474,45 @@ extern const PreparedDefinition kDefTZE204_plug;
 extern const PreparedDefinition kDefTZE204_radar;
 extern const PreparedDefinition kDefTZE204_thermostat_v4;
 
+
+// Phase TB enrollment (24 z2m models whose cpps existed but were
+// never registered — recovered by the audit sweep on 2026-05-13).
+extern const PreparedDefinition kDef_CK_BL702_AL_01;
+extern const PreparedDefinition kDef_CSP043;
+extern const PreparedDefinition kDef_DHT0001;
+extern const PreparedDefinition kDef_HY607W_3A;
+extern const PreparedDefinition kDef_SM0201;
+extern const PreparedDefinition kDef_TLSR82xx_2btn_remote;
+extern const PreparedDefinition kDef_TO_Q_SYS_JZT;
+extern const PreparedDefinition kDef_TS0108;
+extern const PreparedDefinition kDef_TS0111_valve;
+extern const PreparedDefinition kDef_TS011F_plug_3;
+extern const PreparedDefinition kDef_TS0202_3;
+extern const PreparedDefinition kDef_TS0501B_dimmer;
+extern const PreparedDefinition kDef_TS0501B_dimmer_2;
+extern const PreparedDefinition kDef_TYONOFFTS;
+extern const PreparedDefinition kDef_TZ_ZT01_GA4;
+extern const PreparedDefinition kDef_ZC_W1;
+extern const PreparedDefinition kDef_ZG_101K;
+extern const PreparedDefinition kDef_ZG_102MV;
+extern const PreparedDefinition kDef_ZG_103V;
+extern const PreparedDefinition kDef_ZG_104PLV;
+extern const PreparedDefinition kDef_ZG_105NTH;
+extern const PreparedDefinition kDef_ZG_301A;
+extern const PreparedDefinition kDef_ZS_SF00;
+extern const PreparedDefinition kDef__TZ3000_mw1pqqqt;
+
+extern const PreparedDefinition kDef_HD_T1000;  // Phase TC port
+
+
+// Phase TD enroll — TS0201 variants previously dead.
+extern const PreparedDefinition kDef_WSD500A;
+extern const PreparedDefinition kDef_IH_K009;
+extern const PreparedDefinition kDef_LCZ030;
+extern const PreparedDefinition kDef_KCTW1Z;
+
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_CK_BL702_AL_01_7008_Z102LG01_1_,
-    &kDefGen_CK_BL702_AL_01_7009_Z102LG03_1_,
-    &kDefGen_CK_BL702_AL_01_7009_Z102LG04_1_,
-    &kDefGen_CK_BL702_AL_01_7009_Z102LG04_2_,
     &kDefGen_TS0006,
     &kDefGen_TS0026,
     &kDefGen_TS0041A,
@@ -1565,7 +1534,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_102ZL,
     &kDefGen_ZG_102ZM,
     &kDefGen_ZG_103Z,
-    &kDefGen_ZG_106Z,
     &kDefGen_ZG_204Z,
     &kDefGen_ZG_204ZE,
     &kDefGen_ZG_204ZH,
@@ -1580,7 +1548,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_223Z,
     &kDefGen_ZG_225Z,
     &kDefGen_ZG_226Z,
-    &kDefGen_ZG_227Z,
     &kDefGen_ZG_227ZL,
     &kDefGen_ZG_228Z,
     &kDefGen_ZG_229Z,
@@ -1590,7 +1557,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_302Z3,
     &kDefGen_ZG_302ZL,
     &kDefGen_ZG_302ZM,
-    &kDefGen_ZG_303Z,
     &kDefGen_ZG_305Z,
     &kDefGen__TZ3000_01gpyda5,
     &kDefGen__TZ3000_0dumfk2z,
@@ -2012,20 +1978,17 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_1agwnems,
     &kDefGen__TZE200_1drr8tab,
     &kDefGen__TZE200_1fuxihti,
-    &kDefGen__TZE200_1ibpyhdc,
     &kDefGen__TZE200_2atgpdho,
     &kDefGen__TZE200_2dpplnsn,
     &kDefGen__TZE200_2hf7x9n3,
     &kDefGen__TZE200_2imwyigp,
     &kDefGen__TZE200_2m38mh6k,
     &kDefGen__TZE200_2odrmqwq,
-    &kDefGen__TZE200_2pddnnrk,
     &kDefGen__TZE200_2se8efxh,
     &kDefGen__TZE200_2vfxweng,
     &kDefGen__TZE200_3ejwxpmu,
     &kDefGen__TZE200_3p5ydos3,
     &kDefGen__TZE200_3t91nb6k,
-    &kDefGen__TZE200_3xfjp0ag,
     &kDefGen__TZE200_3ylew7b4,
     &kDefGen__TZE200_44af8vyi,
     &kDefGen__TZE200_4eeyebrt,
@@ -2061,18 +2024,14 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_9yapgbuv,
     &kDefGen__TZE200_a0syesf5,
     &kDefGen__TZE200_a4bpgplm,
-    &kDefGen__TZE200_a8sdabtg,
     &kDefGen__TZE200_a8z0g46u,
     &kDefGen__TZE200_abatw3kj,
-    &kDefGen__TZE200_afycb3cg,
-    &kDefGen__TZE200_ahpcyzth,
     &kDefGen__TZE200_aj0oxo1i,
     &kDefGen__TZE200_atpwqgml,
     &kDefGen__TZE200_ax8a8ahx,
     &kDefGen__TZE200_axgvo9jh,
     &kDefGen__TZE200_b2u1drdv,
     &kDefGen__TZE200_ba69l9ol,
-    &kDefGen__TZE200_bfmfhxra,
     &kDefGen__TZE200_bkkmqmyo,
     &kDefGen__TZE200_blfcpsxz,
     &kDefGen__TZE200_bvrlmajk,
@@ -2086,7 +2045,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_clm4gdw4,
     &kDefGen__TZE200_clrdrnya,
     &kDefGen__TZE200_cpbo62rn,
-    &kDefGen__TZE200_cqtamhh5,
     &kDefGen__TZE200_crq3r3la,
     &kDefGen__TZE200_ctq0k47x,
     &kDefGen__TZE200_d2zfgtij,
@@ -2095,12 +2053,10 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_d9mzkhoq,
     &kDefGen__TZE200_dcnsggv,
     &kDefGen__TZE200_dcnsggvz,
-    &kDefGen__TZE200_df04ghrb,
     &kDefGen__TZE200_dfxkcots,
     &kDefGen__TZE200_dhke3p9w,
     &kDefGen__TZE200_di3tfv5b,
     &kDefGen__TZE200_dikb3dp6,
-    &kDefGen__TZE200_dikkika5,
     &kDefGen__TZE200_dnz6yvl2,
     &kDefGen__TZE200_do5qy8zo,
     &kDefGen__TZE200_dq1mfjug,
@@ -2114,7 +2070,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_edl8pz1k,
     &kDefGen__TZE200_eegnwoyw,
     &kDefGen__TZE200_eevqq1uv,
-    &kDefGen__TZE200_ehhrv2e3,
     &kDefGen__TZE200_emxxanvi,
     &kDefGen__TZE200_en3wvcbx,
     &kDefGen__TZE200_eo6xhfbo,
@@ -2135,20 +2090,16 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_gbagoilo,
     &kDefGen__TZE200_ggev5fsl,
     &kDefGen__TZE200_ghynnvos,
-    &kDefGen__TZE200_gjldowol,
     &kDefGen__TZE200_gkfbdvyx,
     &kDefGen__TZE200_gne0e6mk,
     &kDefGen__TZE200_gnw1rril,
     &kDefGen__TZE200_go3tvswy,
     &kDefGen__TZE200_gomuk3dc,
-    &kDefGen__TZE200_grgol3xp,
     &kDefGen__TZE200_gwkapsoq,
     &kDefGen__TZE200_h2rctifa,
     &kDefGen__TZE200_ha0vwoew,
     &kDefGen__TZE200_hbnfokum,
-    &kDefGen__TZE200_hdih4foa,
     &kDefGen__TZE200_hewlydpz,
-    &kDefGen__TZE200_hggxgsjj,
     &kDefGen__TZE200_hkdl5fmv,
     &kDefGen__TZE200_hmqzfqml,
     &kDefGen__TZE200_hojryzzd,
@@ -2157,9 +2108,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_hue3yfsn,
     &kDefGen__TZE200_hvaxb2tc,
     &kDefGen__TZE200_hyhl5y36,
-    &kDefGen__TZE200_iba1ckek,
     &kDefGen__TZE200_icka1clh,
-    &kDefGen__TZE200_ijey4q29,
     &kDefGen__TZE200_io0zdqh1,
     &kDefGen__TZE200_ioxkjvuz,
     &kDefGen__TZE200_ip2akl4w,
@@ -2167,26 +2116,18 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_iuk8kupi,
     &kDefGen__TZE200_iwn0gpzz,
     &kDefGen__TZE200_j7sgd8po,
-    &kDefGen__TZE200_jfw0a4aa,
     &kDefGen__TZE200_ji1gn7rw,
     &kDefGen__TZE200_jkbljri7,
     &kDefGen__TZE200_jkfbph7l,
     &kDefGen__TZE200_js3mgbjb,
-    &kDefGen__TZE200_jsaqgakf,
     &kDefGen__TZE200_jt50ea5d,
     &kDefGen__TZE200_juzago6i,
     &kDefGen__TZE200_jva8ink8,
     &kDefGen__TZE200_jwsjbxjs,
-    &kDefGen__TZE200_jxyhl4eq,
     &kDefGen__TZE200_k1tumq4t,
     &kDefGen__TZE200_k6jhsr0q,
-    &kDefGen__TZE200_ka8l86iu,
-    &kDefGen__TZE200_kccdzaeo,
     &kDefGen__TZE200_kds0pmmv,
-    &kDefGen__TZE200_kf2hbko4,
     &kDefGen__TZE200_khx7nnka,
-    &kDefGen__TZE200_khzbklyh,
-    &kDefGen__TZE200_kijxnb8q,
     &kDefGen__TZE200_kltffuzl,
     &kDefGen__TZE200_kvpwq8z7,
     &kDefGen__TZE200_kyfqmmyl,
@@ -2194,12 +2135,10 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_la2c2uo9,
     &kDefGen__TZE200_lawxy9e2,
     &kDefGen__TZE200_leaqthqq,
-    &kDefGen__TZE200_lhqtjwax,
     &kDefGen__TZE200_lhzapfg9,
     &kDefGen__TZE200_libht6ua,
     &kDefGen__TZE200_lllliz3p,
     &kDefGen__TZE200_llm0epxg,
-    &kDefGen__TZE200_llvwkkde,
     &kDefGen__TZE200_lnbfnyxd,
     &kDefGen__TZE200_lpwgshtl,
     &kDefGen__TZE200_lsanae15,
@@ -2217,12 +2156,10 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_mx6u6l4y,
     &kDefGen__TZE200_myd45weu,
     &kDefGen__TZE200_n1aauwb4,
-    &kDefGen__TZE200_na5qlzow,
     &kDefGen__TZE200_nkjintbl,
     &kDefGen__TZE200_nklqjk62,
     &kDefGen__TZE200_nkoabg8w,
     &kDefGen__TZE200_nogaemzt,
-    &kDefGen__TZE200_nojsjtj2,
     &kDefGen__TZE200_npj9bug3,
     &kDefGen__TZE200_nslr42tt,
     &kDefGen__TZE200_ntcy3xu1,
@@ -2243,7 +2180,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_p2qzzazi,
     &kDefGen__TZE200_p6fuhvez,
     &kDefGen__TZE200_p6vz3wzt,
-    &kDefGen__TZE200_p9zbdqgs,
     &kDefGen__TZE200_pbo8cj0z,
     &kDefGen__TZE200_pk0sfzvr,
     &kDefGen__TZE200_pl31aqf5,
@@ -2255,9 +2191,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_qcasmfan,
     &kDefGen__TZE200_qhlxve78,
     &kDefGen__TZE200_qjp4ynvi,
-    &kDefGen__TZE200_qoy0ekbd,
     &kDefGen__TZE200_qq9mpfhw,
-    &kDefGen__TZE200_qxyh4r7g,
     &kDefGen__TZE200_qyflbnbj,
     &kDefGen__TZE200_qyss8gjy,
     &kDefGen__TZE200_qzaing2g,
@@ -2267,7 +2201,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_rbbx5mfq,
     &kDefGen__TZE200_rccxox8p,
     &kDefGen__TZE200_rhblgy0z,
-    &kDefGen__TZE200_rhgsbacq,
     &kDefGen__TZE200_rk1wojce,
     &kDefGen__TZE200_rks0sgb7,
     &kDefGen__TZE200_rmymn92d,
@@ -2280,8 +2213,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_rxq4iti9,
     &kDefGen__TZE200_s1xgth2u,
     &kDefGen__TZE200_s4sa1mcx,
-    &kDefGen__TZE200_s6hzw8g2,
-    &kDefGen__TZE200_s7rsrtbg,
     &kDefGen__TZE200_sbyx0lm6,
     &kDefGen__TZE200_seq9cm6u,
     &kDefGen__TZE200_sfqyhvpv,
@@ -2294,19 +2225,13 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_t5p1vj8r,
     &kDefGen__TZE200_tbgecldg,
     &kDefGen__TZE200_tgeqdjgk,
-    &kDefGen__TZE200_tmszbtzq,
-    &kDefGen__TZE200_toeldckg,
     &kDefGen__TZE200_tsxpl0d0,
-    &kDefGen__TZE200_ttcovulf,
     &kDefGen__TZE200_tvrvdj6o,
-    &kDefGen__TZE200_tyffvoij,
     &kDefGen__TZE200_u319yc66,
-    &kDefGen__TZE200_u6x1zyv2,
     &kDefGen__TZE200_ubgdwsnr,
     &kDefGen__TZE200_udank5zs,
     &kDefGen__TZE200_uebojraa,
     &kDefGen__TZE200_ugekduaj,
-    &kDefGen__TZE200_uli8wasj,
     &kDefGen__TZE200_upagmta9,
     &kDefGen__TZE200_utkemkbs,
     &kDefGen__TZE200_ux5v4dbd,
@@ -2321,15 +2246,11 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_vizxbhco,
     &kDefGen__TZE200_vm1gyrso,
     &kDefGen__TZE200_vmcgja59,
-    &kDefGen__TZE200_vrcfo4i0,
     &kDefGen__TZE200_vrfecyku,
-    &kDefGen__TZE200_vs0skpuc,
     &kDefGen__TZE200_vucankjx,
-    &kDefGen__TZE200_vuqzj1ej,
     &kDefGen__TZE200_vuwtqx0t,
     &kDefGen__TZE200_vvmbj46n,
     &kDefGen__TZE200_vzqtvljm,
-    &kDefGen__TZE200_w0ap83qu,
     &kDefGen__TZE200_w4cryh2i,
     &kDefGen__TZE200_w6n8jeuu,
     &kDefGen__TZE200_wbhaespm,
@@ -2347,26 +2268,20 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_wunufsil,
     &kDefGen__TZE200_wv90ladg,
     &kDefGen__TZE200_wvovwe9h,
-    &kDefGen__TZE200_wzk0x7fq,
     &kDefGen__TZE200_x8diwkqb,
     &kDefGen__TZE200_x8fp01wi,
     &kDefGen__TZE200_x9axofse,
     &kDefGen__TZE200_xaabybja,
     &kDefGen__TZE200_xby0s3ta,
-    &kDefGen__TZE200_xlnzk169,
     &kDefGen__TZE200_xpq2rzhq,
     &kDefGen__TZE200_xpvamyfz,
     &kDefGen__TZE200_xu4a5rhj,
     &kDefGen__TZE200_xuzcvlku,
-    &kDefGen__TZE200_y8jijhba,
-    &kDefGen__TZE200_yflzeeqj,
     &kDefGen__TZE200_yh7aoahi,
     &kDefGen__TZE200_yi4jtqq1,
     &kDefGen__TZE200_yia0p3tr,
     &kDefGen__TZE200_yjjdcqsq,
-    &kDefGen__TZE200_yjryxpot,
     &kDefGen__TZE200_ykgar0ow,
-    &kDefGen__TZE200_ykglasuj,
     &kDefGen__TZE200_yojqa8xn,
     &kDefGen__TZE200_ypprdwsl,
     &kDefGen__TZE200_yqgbrdyo,
@@ -2377,7 +2292,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_ywdxldoj,
     &kDefGen__TZE200_ywe90lt0,
     &kDefGen__TZE200_z1tyspqw,
-    &kDefGen__TZE200_zbfmvj13,
     &kDefGen__TZE200_zl1kmjqx,
     &kDefGen__TZE200_znlqjmih,
     &kDefGen__TZE200_znzs7yaw,
@@ -2825,6 +2739,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTS0501B,
     &kDefTS0502A,
     &kDefTS0502B,
+    &kDefTS0502B_v2,
     &kDefTS0503A,
     &kDefTS0503B,
     &kDefTS0504A,
@@ -2860,7 +2775,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_batt_tester,
     &kDefTZE200_battery_mon,
     &kDefTZE200_bjawzodf,
-    &kDefTZE200_ble_radar,
     &kDefTZE200_bme680,
     &kDefTZE200_body,
     &kDefTZE200_bq5c8xfe,
@@ -2874,22 +2788,18 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_cjbofhxw,
     &kDefTZE200_clamp,
     &kDefTZE200_co2,
-    &kDefTZE200_co2_alarm,
     &kDefTZE200_co_alarm,
     &kDefTZE200_coffee,
-    &kDefTZE200_contact2,
     &kDefTZE200_contact_t1,
     &kDefTZE200_conveyor,
     &kDefTZE200_cover,
     &kDefTZE200_cpmgn2cf,
     &kDefTZE200_cwnjrr72,
-    &kDefTZE200_dc_switch,
     &kDefTZE200_dehumid,
     &kDefTZE200_digital_scale,
     &kDefTZE200_dimmer,
     &kDefTZE200_din_relay,
     &kDefTZE200_dishwasher,
-    &kDefTZE200_door,
     &kDefTZE200_door2,
     &kDefTZE200_doorbell,
     &kDefTZE200_dsjszp0x,
@@ -2912,7 +2822,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_flow,
     &kDefTZE200_formaldehyde,
     &kDefTZE200_fp,
-    &kDefTZE200_freezer,
     &kDefTZE200_fridge,
     &kDefTZE200_g1o5lwkd,
     &kDefTZE200_garage,
@@ -3008,7 +2917,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_solar,
     &kDefTZE200_solar_inv,
     &kDefTZE200_solenoid,
-    &kDefTZE200_sos,
     &kDefTZE200_sprinkler,
     &kDefTZE200_star_light,
     &kDefTZE200_street_light,
@@ -3051,7 +2959,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_water_boiler,
     &kDefTZE200_water_heater,
     &kDefTZE200_water_timer,
-    &kDefTZE200_waterleak,
     &kDefTZE200_wind,
     &kDefTZE200_window,
     &kDefTZE200_zone_heat,
@@ -3073,8 +2980,38 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefU86KCJ_ZP,
     &kDefU86KWF_ZPSJ,
     &kDefgq8b1uv,
+    &kDef_CK_BL702_AL_01,
+    &kDef_CSP043,
+    &kDef_DHT0001,
+    &kDef_HD_T1000,
+    &kDef_HY607W_3A,
+    &kDef_SM0201,
+    &kDef_TLSR82xx_2btn_remote,
+    &kDef_TO_Q_SYS_JZT,
+    &kDef_TS0108,
+    &kDef_TS0111_valve,
+    &kDef_TS011F_plug_3,
+    &kDef_TS0202_3,
+    &kDef_TS0501B_dimmer,
+    &kDef_TS0501B_dimmer_2,
+    &kDef_TYONOFFTS,
+    &kDef_TZ_ZT01_GA4,
+    &kDef_ZC_W1,
+    &kDef_ZG_101K,
+    &kDef_ZG_102MV,
+    &kDef_ZG_103V,
+    &kDef_ZG_104PLV,
+    &kDef_ZG_105NTH,
+    &kDef_ZG_301A,
+    &kDef_ZS_SF00,
+    &kDef__TZ3000_mw1pqqqt,
+    &kDef_WSD500A,
+    &kDef_IH_K009,
+    &kDef_LCZ030,
+    &kDef_KCTW1Z,
 };
 
-extern const std::size_t kTuyaRegistryCount = 1517;
+extern const std::size_t kTuyaRegistryCount =
+    sizeof(kTuyaRegistry) / sizeof(kTuyaRegistry[0]);
 
 }  // namespace zhc::devices::tuya

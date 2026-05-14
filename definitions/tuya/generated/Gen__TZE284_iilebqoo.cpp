@@ -55,13 +55,17 @@ const TzConverter* const kTz__TZE284_iilebqoo[] = { &kTzDp__TZE284_iilebqoo };
 constexpr const char* kM__TZE284_iilebqoo[] = { "TS0601" };
 constexpr const char* kN__TZE284_iilebqoo[] = { "_TZE284_iilebqoo" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE284_iilebqoo[] = {
+    {"Nova Digital","ZVL-DUAL"},
+};
 extern const PreparedDefinition kDefGen__TZE284_iilebqoo{
     .zigbee_models=kM__TZE284_iilebqoo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_iilebqoo,.manufacturer_names_count=1,
     .model="TS0601__TZE284_iilebqoo",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE284_iilebqoo, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_iilebqoo)/sizeof(kWhiteLabels_Gen_TZE284_iilebqoo[0]),
     .from_zigbee=kFz__TZE284_iilebqoo,
     .from_zigbee_count=sizeof(kFz__TZE284_iilebqoo)/sizeof(kFz__TZE284_iilebqoo[0]),
     .to_zigbee=kTz__TZE284_iilebqoo,

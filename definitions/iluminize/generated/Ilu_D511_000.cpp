@@ -16,6 +16,10 @@ constexpr const char* kModels_D511_000[] = { "HK-ZD-RGBCCT-A", "511.000" };
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_D511_000[] = {
+    {"Sunricher","HK-ZD-RGBCCT-A"},
+};
 extern const PreparedDefinition kDef_D511_000{
     .zigbee_models=kModels_D511_000,
     .zigbee_models_count=sizeof(kModels_D511_000)/sizeof(kModels_D511_000[0]),
@@ -24,7 +28,7 @@ extern const PreparedDefinition kDef_D511_000{
     .model="511.000", .vendor="Iluminize",
     .meta=nullptr,
     .exposes=kExposesIluColorCTLight, .exposes_count=kExposesIluColorCTLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D511_000, .white_labels_count=sizeof(kWhiteLabels_D511_000)/sizeof(kWhiteLabels_D511_000[0]),
     .from_zigbee=kFzIluColorCTLight, .from_zigbee_count=kFzIluColorCTLightCount,
     .to_zigbee=kTzIluColorCTLight, .to_zigbee_count=kTzIluColorCTLightCount,
     .configure=nullptr, .on_event=nullptr,

@@ -83,7 +83,7 @@ constexpr Expose kExp_BHT_002[] = {
 constexpr BindingSpec kBindings_BHT_002[] = { {1, 0xEF00} };
 }  // namespace
 extern const PreparedDefinition kDefMoes__TZE200_ye5jkfsb{
-    .zigbee_models=kM_BHT_002, .zigbee_models_count=1,
+    .zigbee_models=kM_BHT_002,.zigbee_models_count=sizeof(kM_BHT_002)/sizeof(kM_BHT_002[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN_BHT_002, .manufacturer_names_count=1,
     .model="TS0601__TZE200_ye5jkfsb", .vendor="Moes",

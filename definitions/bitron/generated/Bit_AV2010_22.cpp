@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0500},
 };
 
+
+constexpr WhiteLabel kWhiteLabels_AV2010_22[] = {
+    {"ClimaxTechnology","IR-9ZBS-SL"},
+};
 extern const PreparedDefinition kDef_AV2010_22{
     .zigbee_models=kModels_AV2010_22, .zigbee_models_count=sizeof(kModels_AV2010_22)/sizeof(kModels_AV2010_22[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="AV2010/22", .vendor="Bitron",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_AV2010_22, .white_labels_count=sizeof(kWhiteLabels_AV2010_22)/sizeof(kWhiteLabels_AV2010_22[0]),
     .from_zigbee=kFz_AV2010_22, .from_zigbee_count=sizeof(kFz_AV2010_22)/sizeof(kFz_AV2010_22[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

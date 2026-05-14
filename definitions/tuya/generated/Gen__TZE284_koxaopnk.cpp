@@ -47,13 +47,18 @@ const TzConverter* const kTz__TZE284_koxaopnk[] = { &kTzDp__TZE284_koxaopnk };
 constexpr const char* kM__TZE284_koxaopnk[] = { "TS0601" };
 constexpr const char* kN__TZE284_koxaopnk[] = { "_TZE284_koxaopnk" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE284_koxaopnk[] = {
+    {"Nova Digital","ZC-GM42"},
+    {"Moes","ZC-LS02"},
+};
 extern const PreparedDefinition kDefGen__TZE284_koxaopnk{
     .zigbee_models=kM__TZE284_koxaopnk,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_koxaopnk,.manufacturer_names_count=1,
     .model="TS0601__TZE284_koxaopnk",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE284_koxaopnk, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_koxaopnk)/sizeof(kWhiteLabels_Gen_TZE284_koxaopnk[0]),
     .from_zigbee=kFz__TZE284_koxaopnk,
     .from_zigbee_count=sizeof(kFz__TZE284_koxaopnk)/sizeof(kFz__TZE284_koxaopnk[0]),
     .to_zigbee=kTz__TZE284_koxaopnk,

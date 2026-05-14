@@ -34,7 +34,6 @@ extern const PreparedDefinition kDef_SQM300Z6;
 extern const PreparedDefinition kDef_SQM300ZC4;
 extern const PreparedDefinition kDef_TCM_300Z;
 extern const PreparedDefinition kDef_WCM_300Z;
-extern const PreparedDefinition kDef_CSM_300ZB;
 extern const PreparedDefinition kDef_CSM_300ZB_V2;
 extern const PreparedDefinition kDef_DMS_300ZB;
 extern const PreparedDefinition kDef_DSM_300ZB;
@@ -77,7 +76,6 @@ const PreparedDefinition* const kShinasystemRegistry[] = {
     &kDef_SQM300ZC4,
     &kDef_TCM_300Z,
     &kDef_WCM_300Z,
-    &kDef_CSM_300ZB,
     &kDef_CSM_300ZB_V2,
     &kDef_DMS_300ZB,
     &kDef_DSM_300ZB,

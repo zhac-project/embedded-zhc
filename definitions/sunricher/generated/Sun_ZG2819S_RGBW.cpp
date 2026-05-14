@@ -55,13 +55,17 @@ constexpr ::zhc::EndpointLabel kEndpoints_ZG2819S_RGBW[] = { {"ep1", 1}, {"ep2",
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_ZG2819S_RGBW[] = {
+    {"Iluminize","511.344"},
+};
 extern const PreparedDefinition kDef_ZG2819S_RGBW{
     .zigbee_models=kModels_ZG2819S_RGBW, .zigbee_models_count=sizeof(kModels_ZG2819S_RGBW)/sizeof(kModels_ZG2819S_RGBW[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="ZG2819S-RGBW", .vendor="Sunricher",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ZG2819S_RGBW, .white_labels_count=sizeof(kWhiteLabels_ZG2819S_RGBW)/sizeof(kWhiteLabels_ZG2819S_RGBW[0]),
     .from_zigbee=kFz_ZG2819S_RGBW, .from_zigbee_count=sizeof(kFz_ZG2819S_RGBW)/sizeof(kFz_ZG2819S_RGBW[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

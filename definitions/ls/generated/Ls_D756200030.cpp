@@ -4,7 +4,7 @@
 // Mec Driver module 4-channel Zigbee (12V)
 // z2m-source: ls.ts #756200030.
 //
-// z2m fingerprint match: modelID="Mec Driver module" + softwareBuildID
+// z2m fingerprint match: modelID= + softwareBuildID
 //   in {"3.12.25-026", "4.09.03-027"}. ZHC matches on modelID alone;
 //   the same modelID is also used by 756200027 (1-channel), so the
 //   4-channel binding/expose surface lands as a strict superset and

@@ -9,8 +9,6 @@ namespace zhc::devices::osram {
 extern const PreparedDefinition kDef_AC0251100NJ_AC0251600NJ_AC0251700NJ;
 extern const PreparedDefinition kDef_D4052899930377;
 extern const PreparedDefinition kDef_D4058075816459;
-extern const PreparedDefinition kDef_D4062172044776_2;
-extern const PreparedDefinition kDef_D4062172044776_4;
 extern const PreparedDefinition kDef_AC01353010G;
 extern const PreparedDefinition kDef_AA68199;
 extern const PreparedDefinition kDef_AA69697;
@@ -46,7 +44,6 @@ extern const PreparedDefinition kDef_D4058075816718;
 extern const PreparedDefinition kDef_D4058075816732;
 extern const PreparedDefinition kDef_D4058075816794;
 extern const PreparedDefinition kDef_D4062172044776_1;
-extern const PreparedDefinition kDef_D4062172044776_3;
 extern const PreparedDefinition kDef_D595UGR22;
 extern const PreparedDefinition kDef_D71150;
 extern const PreparedDefinition kDef_D73699;
@@ -58,8 +55,6 @@ const PreparedDefinition* const kOsramRegistry[] = {
     &kDef_AC0251100NJ_AC0251600NJ_AC0251700NJ,
     &kDef_D4052899930377,
     &kDef_D4058075816459,
-    &kDef_D4062172044776_2,
-    &kDef_D4062172044776_4,
     &kDef_AC01353010G,
     &kDef_AA68199,
     &kDef_AA69697,
@@ -95,7 +90,6 @@ const PreparedDefinition* const kOsramRegistry[] = {
     &kDef_D4058075816732,
     &kDef_D4058075816794,
     &kDef_D4062172044776_1,
-    &kDef_D4062172044776_3,
     &kDef_D595UGR22,
     &kDef_D71150,
     &kDef_D73699,

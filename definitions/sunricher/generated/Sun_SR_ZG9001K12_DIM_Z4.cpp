@@ -43,13 +43,17 @@ constexpr BindingSpec kAutoBindings[] = {
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_SR_ZG9001K12_DIM_Z4[] = {
+    {"RGB Genie","ZGRC-KEY-013"},
+};
 extern const PreparedDefinition kDef_SR_ZG9001K12_DIM_Z4{
     .zigbee_models=kModels_SR_ZG9001K12_DIM_Z4, .zigbee_models_count=sizeof(kModels_SR_ZG9001K12_DIM_Z4)/sizeof(kModels_SR_ZG9001K12_DIM_Z4[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SR-ZG9001K12-DIM-Z4", .vendor="Sunricher",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SR_ZG9001K12_DIM_Z4, .white_labels_count=sizeof(kWhiteLabels_SR_ZG9001K12_DIM_Z4)/sizeof(kWhiteLabels_SR_ZG9001K12_DIM_Z4[0]),
     .from_zigbee=kFz_SR_ZG9001K12_DIM_Z4, .from_zigbee_count=sizeof(kFz_SR_ZG9001K12_DIM_Z4)/sizeof(kFz_SR_ZG9001K12_DIM_Z4[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

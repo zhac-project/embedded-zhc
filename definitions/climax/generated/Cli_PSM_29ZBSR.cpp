@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_PSM_29ZBSR[] = {
+    {"Blaupunkt","PSM-S1"},
+};
 extern const PreparedDefinition kDef_PSM_29ZBSR{
     .zigbee_models=kModels_PSM_29ZBSR, .zigbee_models_count=sizeof(kModels_PSM_29ZBSR)/sizeof(kModels_PSM_29ZBSR[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="PSM-29ZBSR", .vendor="Climax",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_PSM_29ZBSR, .white_labels_count=sizeof(kWhiteLabels_PSM_29ZBSR)/sizeof(kWhiteLabels_PSM_29ZBSR[0]),
     .from_zigbee=kFz_PSM_29ZBSR, .from_zigbee_count=sizeof(kFz_PSM_29ZBSR)/sizeof(kFz_PSM_29ZBSR[0]),
     .to_zigbee=kTz_PSM_29ZBSR, .to_zigbee_count=sizeof(kTz_PSM_29ZBSR)/sizeof(kTz_PSM_29ZBSR[0]),
     .configure=nullptr, .on_event=nullptr,

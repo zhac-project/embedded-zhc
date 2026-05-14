@@ -63,7 +63,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefZem__TZE284_6hrnp30w{
-    .zigbee_models=kM__TZE284_6hrnp30w,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE284_6hrnp30w,.zigbee_models_count=sizeof(kM__TZE284_6hrnp30w)/sizeof(kM__TZE284_6hrnp30w[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_6hrnp30w,.manufacturer_names_count=1,
     .model="ZMP1",.vendor="Zemismart",

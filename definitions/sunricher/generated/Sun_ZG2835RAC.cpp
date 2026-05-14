@@ -36,13 +36,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_ZG2835RAC[] = {
+    {"YPHIX","50208695"},
+    {"Samotech","SM311"},
+};
 extern const PreparedDefinition kDef_ZG2835RAC{
     .zigbee_models=kModels_ZG2835RAC, .zigbee_models_count=sizeof(kModels_ZG2835RAC)/sizeof(kModels_ZG2835RAC[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="ZG2835RAC", .vendor="Sunricher",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ZG2835RAC, .white_labels_count=sizeof(kWhiteLabels_ZG2835RAC)/sizeof(kWhiteLabels_ZG2835RAC[0]),
     .from_zigbee=kFz_ZG2835RAC, .from_zigbee_count=sizeof(kFz_ZG2835RAC)/sizeof(kFz_ZG2835RAC[0]),
     .to_zigbee=kTz_ZG2835RAC, .to_zigbee_count=sizeof(kTz_ZG2835RAC)/sizeof(kTz_ZG2835RAC[0]),
     .configure=nullptr, .on_event=nullptr,

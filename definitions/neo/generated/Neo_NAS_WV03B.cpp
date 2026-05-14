@@ -28,13 +28,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_NAS_WV03B[] = {
+    {"Nous","L14"},
+    {"NEO","NAS-WV05B2"},
+    {"NEO","NAS-WV05B2-L"},
+};
 extern const PreparedDefinition kDef_NAS_WV03B{
     .zigbee_models=kModels_NAS_WV03B, .zigbee_models_count=sizeof(kModels_NAS_WV03B)/sizeof(kModels_NAS_WV03B[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_NAS_WV03B, .manufacturer_names_count=sizeof(kManus_NAS_WV03B)/sizeof(kManus_NAS_WV03B[0]),
     .model="NAS-WV03B", .vendor="Neo",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_NAS_WV03B, .white_labels_count=sizeof(kWhiteLabels_NAS_WV03B)/sizeof(kWhiteLabels_NAS_WV03B[0]),
     .from_zigbee=kFz_NAS_WV03B, .from_zigbee_count=sizeof(kFz_NAS_WV03B)/sizeof(kFz_NAS_WV03B[0]),
     .to_zigbee=kTz_NAS_WV03B, .to_zigbee_count=sizeof(kTz_NAS_WV03B)/sizeof(kTz_NAS_WV03B[0]),
     .configure=nullptr, .on_event=nullptr,

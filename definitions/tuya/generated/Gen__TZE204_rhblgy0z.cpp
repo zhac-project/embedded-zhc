@@ -43,13 +43,17 @@ const TzConverter* const kTz__TZE204_rhblgy0z[] = { &kTzDp__TZE204_rhblgy0z };
 constexpr const char* kM__TZE204_rhblgy0z[] = { "TS0601" };
 constexpr const char* kN__TZE204_rhblgy0z[] = { "_TZE204_rhblgy0z" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_rhblgy0z[] = {
+    {"XOCA","DAC2161C"},
+};
 extern const PreparedDefinition kDefGen__TZE204_rhblgy0z{
     .zigbee_models=kM__TZE204_rhblgy0z,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_rhblgy0z,.manufacturer_names_count=1,
     .model="TS0601__TZE204_rhblgy0z",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_rhblgy0z, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_rhblgy0z)/sizeof(kWhiteLabels_Gen_TZE204_rhblgy0z[0]),
     .from_zigbee=kFz__TZE204_rhblgy0z,
     .from_zigbee_count=sizeof(kFz__TZE204_rhblgy0z)/sizeof(kFz__TZE204_rhblgy0z[0]),
     .to_zigbee=kTz__TZE204_rhblgy0z,

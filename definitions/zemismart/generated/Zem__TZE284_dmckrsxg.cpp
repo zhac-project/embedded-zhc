@@ -70,7 +70,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefZem__TZE284_dmckrsxg{
-    .zigbee_models=kM__TZE284_dmckrsxg,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE284_dmckrsxg,.zigbee_models_count=sizeof(kM__TZE284_dmckrsxg)/sizeof(kM__TZE284_dmckrsxg[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_dmckrsxg,.manufacturer_names_count=1,
     .model="ZMS-206EU-2",.vendor="Zemismart",

@@ -64,13 +64,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_Zem_TZE284_6fopvb6v[] = {
+    {"Zemismart","ZM25R3"},
+};
 extern const PreparedDefinition kDefZem__TZE284_6fopvb6v{
-    .zigbee_models=kM__TZE284_6fopvb6v,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE284_6fopvb6v,.zigbee_models_count=sizeof(kM__TZE284_6fopvb6v)/sizeof(kM__TZE284_6fopvb6v[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_6fopvb6v,.manufacturer_names_count=1,
     .model="ZM25R1",.vendor="Zemismart",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Zem_TZE284_6fopvb6v, .white_labels_count=sizeof(kWhiteLabels_Zem_TZE284_6fopvb6v)/sizeof(kWhiteLabels_Zem_TZE284_6fopvb6v[0]),
     .from_zigbee=kFz__TZE284_6fopvb6v,
     .from_zigbee_count=sizeof(kFz__TZE284_6fopvb6v)/sizeof(kFz__TZE284_6fopvb6v[0]),
     .to_zigbee=kTz__TZE284_6fopvb6v,

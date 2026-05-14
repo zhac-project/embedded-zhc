@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_mTouch_Dim[] = {
+    {"CTM Lyng","CTM_DimmerPille"},
+};
 extern const PreparedDefinition kDef_mTouch_Dim{
     .zigbee_models=kModels_mTouch_Dim, .zigbee_models_count=sizeof(kModels_mTouch_Dim)/sizeof(kModels_mTouch_Dim[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="mTouch_Dim", .vendor="Ctm",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_mTouch_Dim, .white_labels_count=sizeof(kWhiteLabels_mTouch_Dim)/sizeof(kWhiteLabels_mTouch_Dim[0]),
     .from_zigbee=kFz_mTouch_Dim, .from_zigbee_count=sizeof(kFz_mTouch_Dim)/sizeof(kFz_mTouch_Dim[0]),
     .to_zigbee=kTz_mTouch_Dim, .to_zigbee_count=sizeof(kTz_mTouch_Dim)/sizeof(kTz_mTouch_Dim[0]),
     .configure=nullptr, .on_event=nullptr,

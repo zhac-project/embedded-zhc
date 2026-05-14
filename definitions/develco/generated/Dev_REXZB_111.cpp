@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_REXZB_111[] = {
+    {"Frient","REXZB-111"},
+};
 extern const PreparedDefinition kDef_REXZB_111{
     .zigbee_models=kModels_REXZB_111, .zigbee_models_count=sizeof(kModels_REXZB_111)/sizeof(kModels_REXZB_111[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="REXZB-111", .vendor="Develco",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_REXZB_111, .white_labels_count=sizeof(kWhiteLabels_REXZB_111)/sizeof(kWhiteLabels_REXZB_111[0]),
     .from_zigbee=kFz_REXZB_111, .from_zigbee_count=sizeof(kFz_REXZB_111)/sizeof(kFz_REXZB_111[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

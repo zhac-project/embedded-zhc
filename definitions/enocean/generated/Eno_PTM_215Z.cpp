@@ -28,13 +28,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_PTM_215Z[] = {
+    {"Sunricher","SR-ZGP2801K4-FOH-E"},
+    {"Sunricher","SR-ZG2833PAC"},
+    {"LED-Trading","9125"},
+};
 extern const PreparedDefinition kDef_PTM_215Z{
     .zigbee_models=kModels_PTM_215Z, .zigbee_models_count=sizeof(kModels_PTM_215Z)/sizeof(kModels_PTM_215Z[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="PTM 215Z", .vendor="Enocean",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_PTM_215Z, .white_labels_count=sizeof(kWhiteLabels_PTM_215Z)/sizeof(kWhiteLabels_PTM_215Z[0]),
     .from_zigbee=kFz_PTM_215Z, .from_zigbee_count=sizeof(kFz_PTM_215Z)/sizeof(kFz_PTM_215Z[0]),
     .to_zigbee=kTz_PTM_215Z, .to_zigbee_count=sizeof(kTz_PTM_215Z)/sizeof(kTz_PTM_215Z[0]),
     .configure=nullptr, .on_event=nullptr,

@@ -31,13 +31,17 @@ constexpr Expose kExp_min_TS0601__TZE200_qq9mpfhw_Gen__TZE200_qq9mpfhw[] = {
 };
 constexpr BindingSpec kBind_min_TS0601__TZE200_qq9mpfhw_Gen__TZE200_qq9mpfhw[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_qq9mpfhw[] = {
+    {"NEO","NAS-WS02B0"},
+};
 extern const PreparedDefinition kDefGen__TZE200_qq9mpfhw{
     .zigbee_models=kMGen__TZE200_qq9mpfhw,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNGen__TZE200_qq9mpfhw,.manufacturer_names_count=1,
     .model="TS0601__TZE200_qq9mpfhw",.vendor="Tuya",
     .meta=nullptr,.exposes=kExp_min_TS0601__TZE200_qq9mpfhw_Gen__TZE200_qq9mpfhw, .exposes_count=sizeof(kExp_min_TS0601__TZE200_qq9mpfhw_Gen__TZE200_qq9mpfhw)/sizeof(kExp_min_TS0601__TZE200_qq9mpfhw_Gen__TZE200_qq9mpfhw[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_qq9mpfhw, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_qq9mpfhw)/sizeof(kWhiteLabels_Gen_TZE200_qq9mpfhw[0]),
     .from_zigbee=kFz_min_TS0601__TZE200_qq9mpfhw_Gen__TZE200_qq9mpfhw, .from_zigbee_count=sizeof(kFz_min_TS0601__TZE200_qq9mpfhw_Gen__TZE200_qq9mpfhw)/sizeof(kFz_min_TS0601__TZE200_qq9mpfhw_Gen__TZE200_qq9mpfhw[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

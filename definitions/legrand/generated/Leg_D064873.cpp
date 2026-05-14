@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_D064873[] = {
+    {"BTicino","LN4570CWI"},
+};
 extern const PreparedDefinition kDef_D064873{
     .zigbee_models=kModels_D064873, .zigbee_models_count=sizeof(kModels_D064873)/sizeof(kModels_D064873[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="064873", .vendor="Legrand",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D064873, .white_labels_count=sizeof(kWhiteLabels_D064873)/sizeof(kWhiteLabels_D064873[0]),
     .from_zigbee=kFz_D064873, .from_zigbee_count=sizeof(kFz_D064873)/sizeof(kFz_D064873[0]),
     .to_zigbee=kTz_D064873, .to_zigbee_count=sizeof(kTz_D064873)/sizeof(kTz_D064873[0]),
     .configure=nullptr, .on_event=nullptr,

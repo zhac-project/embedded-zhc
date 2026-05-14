@@ -25,11 +25,20 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TZE200_flood[] = {
+    {"Tuya","ZTH01"},
+    {"Tuya","SZTH02"},
+    {"Tuya","ZTH02"},
+    {"Tuya","ZTH05"},
+    {"Tuya","ZTH08-E"},
+    {"Tuya","ZTH08"},
+};
 extern const PreparedDefinition kDefTZE200_flood{
     .zigbee_models=kM,.zigbee_models_count=1,.manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN,.manufacturer_names_count=1,.model="TS0601_flood",
     .vendor="Tuya",.meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_TZE200_flood, .white_labels_count=sizeof(kWhiteLabels_TZE200_flood)/sizeof(kWhiteLabels_TZE200_flood[0]),
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr,

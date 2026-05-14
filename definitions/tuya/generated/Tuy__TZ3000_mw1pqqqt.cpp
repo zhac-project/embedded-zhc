@@ -14,6 +14,7 @@ const TzConverter* const kTz__TZ3000_mw1pqqqt[] = {
     &::zhc::generic::kTzOnOff,
 };
 constexpr const char* kModels__TZ3000_mw1pqqqt[] = { "TS0003" };
+constexpr const char* kManus__TZ3000_mw1pqqqt[] = { "_TZ3000_mw1pqqqt" };
 
 }  // namespace
 
@@ -31,7 +32,7 @@ constexpr BindingSpec kAutoBindings[] = {
 extern const PreparedDefinition kDef__TZ3000_mw1pqqqt{
     .zigbee_models=kModels__TZ3000_mw1pqqqt, .zigbee_models_count=sizeof(kModels__TZ3000_mw1pqqqt)/sizeof(kModels__TZ3000_mw1pqqqt[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus__TZ3000_mw1pqqqt, .manufacturer_names_count=sizeof(kManus__TZ3000_mw1pqqqt)/sizeof(kManus__TZ3000_mw1pqqqt[0]),
     .model="_TZ3000_mw1pqqqt", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,

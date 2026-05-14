@@ -55,7 +55,7 @@ const FzConverter* const kFz_D57004000[] = {
     &::zhc::generic::kFzCommandCoverClose,
     &::zhc::generic::kFzCommandCoverStop,
 };
-constexpr const char* kModels_D57004000[] = { "NEXENTRO Pushbutton Interface", "57004000", "Generic UP Device" };
+constexpr const char* kModels_D57004000[] = { "NEXENTRO Pushbutton Interface", "57004000" };
 
 constexpr Expose kAutoExposes[] = {
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},

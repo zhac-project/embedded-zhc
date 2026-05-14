@@ -85,7 +85,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefFut__TZE204_e5hpkc6d{
-    .zigbee_models=kM__TZE204_e5hpkc6d,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE204_e5hpkc6d,.zigbee_models_count=sizeof(kM__TZE204_e5hpkc6d)/sizeof(kM__TZE204_e5hpkc6d[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr,.manufacturer_names_count=0,
     .model="TS0601__TZE204_e5hpkc6d",.vendor="Futurehome",

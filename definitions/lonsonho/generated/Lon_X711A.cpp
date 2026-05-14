@@ -28,13 +28,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_X711A[] = {
+    {"Moes","WS-EUB1-ZG"},
+    {"Moes","ZTS-EUB1"},
+};
 extern const PreparedDefinition kDef_X711A{
     .zigbee_models=kModels_X711A, .zigbee_models_count=sizeof(kModels_X711A)/sizeof(kModels_X711A[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_X711A, .manufacturer_names_count=sizeof(kManus_X711A)/sizeof(kManus_X711A[0]),
     .model="X711A", .vendor="Lonsonho",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_X711A, .white_labels_count=sizeof(kWhiteLabels_X711A)/sizeof(kWhiteLabels_X711A[0]),
     .from_zigbee=kFz_X711A, .from_zigbee_count=sizeof(kFz_X711A)/sizeof(kFz_X711A[0]),
     .to_zigbee=kTz_X711A, .to_zigbee_count=sizeof(kTz_X711A)/sizeof(kTz_X711A[0]),
     .configure=nullptr, .on_event=nullptr,

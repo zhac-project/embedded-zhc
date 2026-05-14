@@ -115,7 +115,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefTec__TZE204_r7brscr6{
-    .zigbee_models=kM__TZE204_r7brscr6,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE204_r7brscr6,.zigbee_models_count=sizeof(kM__TZE204_r7brscr6)/sizeof(kM__TZE204_r7brscr6[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_r7brscr6,.manufacturer_names_count=1,
     .model="VNTH-T2_v1",.vendor="Tech",

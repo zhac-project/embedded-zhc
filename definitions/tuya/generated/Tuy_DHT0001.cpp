@@ -26,13 +26,17 @@ constexpr Expose kExp_min_DHT0001_Tuy_DHT0001[] = {
 };
 constexpr BindingSpec kBind_min_DHT0001_Tuy_DHT0001[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_DHT0001[] = {
+    {"Excellux","DHTA001"},
+};
 extern const PreparedDefinition kDef_DHT0001{
     .zigbee_models=kModels_DHT0001, .zigbee_models_count=sizeof(kModels_DHT0001)/sizeof(kModels_DHT0001[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_DHT0001, .manufacturer_names_count=sizeof(kManus_DHT0001)/sizeof(kManus_DHT0001[0]),
     .model="DHT0001", .vendor="Tuya",
     .meta=nullptr, .exposes=kExp_min_DHT0001_Tuy_DHT0001, .exposes_count=sizeof(kExp_min_DHT0001_Tuy_DHT0001)/sizeof(kExp_min_DHT0001_Tuy_DHT0001[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_DHT0001, .white_labels_count=sizeof(kWhiteLabels_DHT0001)/sizeof(kWhiteLabels_DHT0001[0]),
     .from_zigbee=kFz_min_DHT0001_Tuy_DHT0001, .from_zigbee_count=sizeof(kFz_min_DHT0001_Tuy_DHT0001)/sizeof(kFz_min_DHT0001_Tuy_DHT0001[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

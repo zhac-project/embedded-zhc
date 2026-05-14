@@ -12,7 +12,7 @@ const FzConverter* const kFz_SNZB_04[] = {
     &::zhc::generic::kFzBattery,
 };
 
-constexpr const char* kModels_SNZB_04[] = { "DS01", "SNZB-04", "CK-TLSR8656-SS5-01(7003)", "TH01" };
+constexpr const char* kModels_SNZB_04[] = { "DS01", "SNZB-04", "CK-TLSR8656-SS5-01(7003)" };
 
 }  // namespace
 
@@ -29,13 +29,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SNZB_04[] = {
+    {"eWeLink","RHK06"},
+    {"eWeLink","SNZB-04_eWeLink"},
+    {"eWeLink","CK-TLSR8656-SS5-01(7003)"},
+};
 extern const PreparedDefinition kDef_SNZB_04{
     .zigbee_models=kModels_SNZB_04, .zigbee_models_count=sizeof(kModels_SNZB_04)/sizeof(kModels_SNZB_04[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SNZB-04", .vendor="Sonoff",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SNZB_04, .white_labels_count=sizeof(kWhiteLabels_SNZB_04)/sizeof(kWhiteLabels_SNZB_04[0]),
     .from_zigbee=kFz_SNZB_04, .from_zigbee_count=sizeof(kFz_SNZB_04)/sizeof(kFz_SNZB_04[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

@@ -70,7 +70,7 @@ constexpr Expose kExp_ZTS_EU[] = {
 constexpr BindingSpec kBindings_ZTS_EU[] = { {1, 0xEF00} };
 }  // namespace
 extern const PreparedDefinition kDefMoes__TZE200_tviaymwx{
-    .zigbee_models=kM_ZTS_EU, .zigbee_models_count=1,
+    .zigbee_models=kM_ZTS_EU,.zigbee_models_count=sizeof(kM_ZTS_EU)/sizeof(kM_ZTS_EU[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN_ZTS_EU, .manufacturer_names_count=1,
     .model="TS0601__TZE200_tviaymwx", .vendor="Moes",

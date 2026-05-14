@@ -11,13 +11,17 @@ namespace {
 constexpr const char* kModels_D984_42[] = { "98442", "98443" };
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_D984_42[] = {
+    {"Paulmann","984.43"},
+};
 extern const PreparedDefinition kDef_D984_42{
     .zigbee_models=kModels_D984_42, .zigbee_models_count=sizeof(kModels_D984_42)/sizeof(kModels_D984_42[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="984.42", .vendor="Paulmann",
     .meta=nullptr, .exposes=kExposesPaulmannCTLight, .exposes_count=kExposesPaulmannCTLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D984_42, .white_labels_count=sizeof(kWhiteLabels_D984_42)/sizeof(kWhiteLabels_D984_42[0]),
     .from_zigbee=kFzPaulmannCTLight, .from_zigbee_count=kFzPaulmannCTLightCount,
     .to_zigbee=kTzPaulmannCTLight, .to_zigbee_count=kTzPaulmannCTLightCount,
     .configure=nullptr, .on_event=nullptr,

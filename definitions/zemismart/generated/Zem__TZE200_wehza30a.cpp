@@ -64,7 +64,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefZem__TZE200_wehza30a{
-    .zigbee_models=kM__TZE200_wehza30a,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE200_wehza30a,.zigbee_models_count=sizeof(kM__TZE200_wehza30a)/sizeof(kM__TZE200_wehza30a[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wehza30a,.manufacturer_names_count=1,
     .model="ZM25RX-08/30",.vendor="Zemismart",

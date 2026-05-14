@@ -33,7 +33,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefWPP02D{
-    .zigbee_models=kModels,.zigbee_models_count=1,.model="WP-P02D",.vendor="Xiaomi",
+    .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),.model="WP-P02D",.vendor="Xiaomi",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),.white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,

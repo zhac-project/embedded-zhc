@@ -27,12 +27,20 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TS0502A[] = {
+    {"Lidl","HG06492B/HG08130B"},
+    {"Lidl","HG06492A/HG08130A"},
+    {"Lidl","HG06492C/HG08130C/HG09154C"},
+    {"Lidl","14147206L"},
+    {"Lidl","14153905L"},
+};
 extern const PreparedDefinition kDefTS0502A{
     .zigbee_models=kModels,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,.manufacturer_names=nullptr,.manufacturer_names_count=0,
     .model="TS0502A",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_TS0502A, .white_labels_count=sizeof(kWhiteLabels_TS0502A)/sizeof(kWhiteLabels_TS0502A[0]),
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,

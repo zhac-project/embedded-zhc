@@ -51,6 +51,18 @@ extern const PreparedDefinition kDef_ZM_AM02_cover;
 extern const PreparedDefinition kDef_ZM_CSW032_D;
 extern const PreparedDefinition kDef_ZM_RM02;
 
+extern const PreparedDefinition kDef_ZMS_208US_2;
+extern const PreparedDefinition kDef_ZMS_208US_3;
+extern const PreparedDefinition kDef_ZMP1;
+extern const PreparedDefinition kDef_ZMS_206EU_2;
+extern const PreparedDefinition kDef_ZM25RX_08_30;
+extern const PreparedDefinition kDef_ZM16B;
+extern const PreparedDefinition kDef_ZN_USC1U_HT;
+extern const PreparedDefinition kDef_ZM25R1;
+extern const PreparedDefinition kDef_ZMS_206US_4;
+extern const PreparedDefinition kDef_ZMS_206EU_3;
+extern const PreparedDefinition kDef_ZMS_206US_1;
+
 const PreparedDefinition* const kZemismartRegistry[] = {
     &kDefZem__TZE200_1vxgqfba,
     &kDefZem__TZE200_7eue9vhc,
@@ -96,6 +108,17 @@ const PreparedDefinition* const kZemismartRegistry[] = {
     &kDef_ZM_AM02_cover,
     &kDef_ZM_CSW032_D,
     &kDef_ZM_RM02,
+    &kDef_ZMS_208US_2,
+    &kDef_ZMS_208US_3,
+    &kDef_ZMP1,
+    &kDef_ZMS_206EU_2,
+    &kDef_ZM25RX_08_30,
+    &kDef_ZM16B,
+    &kDef_ZN_USC1U_HT,
+    &kDef_ZM25R1,
+    &kDef_ZMS_206US_4,
+    &kDef_ZMS_206EU_3,
+    &kDef_ZMS_206US_1,
 };
 const std::size_t kZemismartRegistryCount = sizeof(kZemismartRegistry) / sizeof(kZemismartRegistry[0]);
 

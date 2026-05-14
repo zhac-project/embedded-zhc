@@ -193,13 +193,17 @@ constexpr BindingSpec kBindings_ZB003_X[] = {
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_ZB003_X[] = {
+    {"EFK","is-thpl-zb"},
+};
 extern const PreparedDefinition kDef_ZB003_X{
     .zigbee_models=kModels_ZB003_X, .zigbee_models_count=sizeof(kModels_ZB003_X)/sizeof(kModels_ZB003_X[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_ZB003_X, .manufacturer_names_count=sizeof(kManus_ZB003_X)/sizeof(kManus_ZB003_X[0]),
     .model="ZB003-X", .vendor="Fantem",
     .meta=nullptr, .exposes=kExposes_ZB003_X, .exposes_count=sizeof(kExposes_ZB003_X)/sizeof(kExposes_ZB003_X[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ZB003_X, .white_labels_count=sizeof(kWhiteLabels_ZB003_X)/sizeof(kWhiteLabels_ZB003_X[0]),
     .from_zigbee=kFz_ZB003_X, .from_zigbee_count=sizeof(kFz_ZB003_X)/sizeof(kFz_ZB003_X[0]),
     .to_zigbee=kTz_ZB003_X,   .to_zigbee_count=sizeof(kTz_ZB003_X)/sizeof(kTz_ZB003_X[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,

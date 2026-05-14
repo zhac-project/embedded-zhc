@@ -15,6 +15,11 @@ extern const PreparedDefinition kDef_E5;
 extern const PreparedDefinition kDef_E6;
 extern const PreparedDefinition kDef_SZ_T04;
 
+extern const PreparedDefinition kDef_E12;
+extern const PreparedDefinition kDef_E13;
+extern const PreparedDefinition kDef_D5Z;
+extern const PreparedDefinition kDef_E9;
+
 const PreparedDefinition* const kNousRegistry[] = {
     &kDefNou__TZE204_qvxrkeif,
     &kDefNou__TZE204_t9ffmdin,
@@ -24,6 +29,10 @@ const PreparedDefinition* const kNousRegistry[] = {
     &kDef_E5,
     &kDef_E6,
     &kDef_SZ_T04,
+    &kDef_E12,
+    &kDef_E13,
+    &kDef_D5Z,
+    &kDef_E9,
 };
 const std::size_t kNousRegistryCount = sizeof(kNousRegistry) / sizeof(kNousRegistry[0]);
 

@@ -197,4 +197,15 @@ extern const TzConverter kTzTuyaOperationMode;     // attr 0x8004 enum
 extern const TzConverter kTzTuyaIndicatorMode;     // attr 0x8001 enum
 extern const TzConverter kTzTuyaChildLock;         // attr 0x8000 bool
 
+// ── manuSpecificTuya3 cluster (ID 0xE001, ZHC name "manuSpecificTuya2") ──
+//
+// Used by Tuya `tuyaOnOff({switchType: true})` and friends. Attributes:
+//   0xD010 powerOnBehavior  (ENUM8)
+//   0xD020 switchMode       (ENUM8)
+//   0xD030 switchType       (ENUM8: 0=toggle, 1=state, 2=momentary)
+//
+// z2m-source: lib/tuya.ts tuyaFz.switch_type / tuyaTz.switch_type.
+extern const FzConverter kFzTuyaSwitchType;
+extern const TzConverter kTzTuyaSwitchType;
+
 }  // namespace zhc::tuya

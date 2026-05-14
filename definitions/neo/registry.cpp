@@ -23,6 +23,16 @@ extern const PreparedDefinition kDefNeo__TZE284_rzrrjkz2;
 extern const PreparedDefinition kDefNeo__TZE284_uab532m0;
 extern const PreparedDefinition kDefNeo__TZE284_z7a2jmyy;
 
+extern const PreparedDefinition kDef_NAS_PS10B2;
+extern const PreparedDefinition kDef_NAS_WV03B2;
+extern const PreparedDefinition kDef_NAS_AB02B0;
+extern const PreparedDefinition kDef_NAS_WV03B;
+extern const PreparedDefinition kDef_NAS_AB06B2;
+extern const PreparedDefinition kDef_NAS_STH02B2;
+extern const PreparedDefinition kDef_NAS_TH07B2;
+extern const PreparedDefinition kDef_NAS_PD07;
+extern const PreparedDefinition kDef_NAS_AB02B2;
+
 const PreparedDefinition* const kNeoRegistry[] = {
     &kDefNeo__TZE200_nlrfgpny,
     &kDefNeo__TZE204_1youk3hj,
@@ -40,6 +50,15 @@ const PreparedDefinition* const kNeoRegistry[] = {
     &kDefNeo__TZE284_rzrrjkz2,
     &kDefNeo__TZE284_uab532m0,
     &kDefNeo__TZE284_z7a2jmyy,
+    &kDef_NAS_PS10B2,
+    &kDef_NAS_WV03B2,
+    &kDef_NAS_AB02B0,
+    &kDef_NAS_WV03B,
+    &kDef_NAS_AB06B2,
+    &kDef_NAS_STH02B2,
+    &kDef_NAS_TH07B2,
+    &kDef_NAS_PD07,
+    &kDef_NAS_AB02B2,
 };
 const std::size_t kNeoRegistryCount = sizeof(kNeoRegistry) / sizeof(kNeoRegistry[0]);
 

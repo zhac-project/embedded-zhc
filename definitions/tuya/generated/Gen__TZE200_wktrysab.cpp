@@ -46,13 +46,17 @@ const TzConverter* const kTz__TZE200_wktrysab[] = { &kTzDp__TZE200_wktrysab };
 constexpr const char* kM__TZE200_wktrysab[] = { "TS0601" };
 constexpr const char* kN__TZE200_wktrysab[] = { "_TZE200_wktrysab" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_wktrysab[] = {
+    {"Nova Digital","ZTS-8W-B"},
+};
 extern const PreparedDefinition kDefGen__TZE200_wktrysab{
     .zigbee_models=kM__TZE200_wktrysab,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wktrysab,.manufacturer_names_count=1,
     .model="TS0601__TZE200_wktrysab",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_wktrysab, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_wktrysab)/sizeof(kWhiteLabels_Gen_TZE200_wktrysab[0]),
     .from_zigbee=kFz__TZE200_wktrysab,
     .from_zigbee_count=sizeof(kFz__TZE200_wktrysab)/sizeof(kFz__TZE200_wktrysab[0]),
     .to_zigbee=kTz__TZE200_wktrysab,

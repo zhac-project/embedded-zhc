@@ -34,13 +34,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SMSZB_120[] = {
+    {"Frient","94430"},
+    {"Cavius","2103"},
+};
 extern const PreparedDefinition kDef_SMSZB_120{
     .zigbee_models=kModels_SMSZB_120, .zigbee_models_count=sizeof(kModels_SMSZB_120)/sizeof(kModels_SMSZB_120[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SMSZB-120", .vendor="Develco",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SMSZB_120, .white_labels_count=sizeof(kWhiteLabels_SMSZB_120)/sizeof(kWhiteLabels_SMSZB_120[0]),
     .from_zigbee=kFz_SMSZB_120, .from_zigbee_count=sizeof(kFz_SMSZB_120)/sizeof(kFz_SMSZB_120[0]),
     .to_zigbee=kTz_SMSZB_120, .to_zigbee_count=sizeof(kTz_SMSZB_120)/sizeof(kTz_SMSZB_120[0]),
     .configure=nullptr, .on_event=nullptr,

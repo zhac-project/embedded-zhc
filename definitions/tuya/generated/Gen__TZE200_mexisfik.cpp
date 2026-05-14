@@ -42,13 +42,24 @@ const TzConverter* const kTz__TZE200_mexisfik[] = { &kTzDp__TZE200_mexisfik };
 constexpr const char* kM__TZE200_mexisfik[] = { "TS0601" };
 constexpr const char* kN__TZE200_mexisfik[] = { "_TZE200_mexisfik" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_mexisfik[] = {
+    {"ZYXH","TY-04Z"},
+    {"AVATTO","WSMD-4"},
+    {"AVATTO","ZWSMD-4"},
+    {"Tuya","MG-ZG04W"},
+    {"Norklmes","MKS-CM-W5"},
+    {"Somgoms","ZSQB-SMB-ZB"},
+    {"Moes","WS-EUB1-ZG"},
+    {"AVATTO","ZGB-WS-EU"},
+};
 extern const PreparedDefinition kDefGen__TZE200_mexisfik{
     .zigbee_models=kM__TZE200_mexisfik,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_mexisfik,.manufacturer_names_count=1,
     .model="TS0601__TZE200_mexisfik",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_mexisfik, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_mexisfik)/sizeof(kWhiteLabels_Gen_TZE200_mexisfik[0]),
     .from_zigbee=kFz__TZE200_mexisfik,
     .from_zigbee_count=sizeof(kFz__TZE200_mexisfik)/sizeof(kFz__TZE200_mexisfik[0]),
     .to_zigbee=kTz__TZE200_mexisfik,

@@ -29,13 +29,20 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SNZB_03[] = {
+    {"eWeLink","RHK09"},
+    {"eWeLink","SQ510A"},
+    {"eWeLink","SNZB-03_eWeLink"},
+    {"eWeLink","CK-TLSR8656-SS5-01(7002)"},
+};
 extern const PreparedDefinition kDef_SNZB_03{
     .zigbee_models=kModels_SNZB_03, .zigbee_models_count=sizeof(kModels_SNZB_03)/sizeof(kModels_SNZB_03[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SNZB-03", .vendor="Sonoff",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SNZB_03, .white_labels_count=sizeof(kWhiteLabels_SNZB_03)/sizeof(kWhiteLabels_SNZB_03[0]),
     .from_zigbee=kFz_SNZB_03, .from_zigbee_count=sizeof(kFz_SNZB_03)/sizeof(kFz_SNZB_03[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

@@ -46,8 +46,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefLGZCDD01LM{
-    .zigbee_models       = kZigbeeModels,
-    .zigbee_models_count = 1,
+    .zigbee_models=kZigbeeModels,.zigbee_models_count=sizeof(kZigbeeModels)/sizeof(kZigbeeModels[0]),
     .model               = "LGZCDD01LM",
     .vendor              = "Xiaomi",
     .meta                = nullptr,

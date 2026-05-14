@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SRP_ZG9105_CV[] = {
+    {"LongLife LED","3986"},
+};
 extern const PreparedDefinition kDef_SRP_ZG9105_CV{
     .zigbee_models=kModels_SRP_ZG9105_CV, .zigbee_models_count=sizeof(kModels_SRP_ZG9105_CV)/sizeof(kModels_SRP_ZG9105_CV[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SRP-ZG9105-CV", .vendor="Sunricher",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SRP_ZG9105_CV, .white_labels_count=sizeof(kWhiteLabels_SRP_ZG9105_CV)/sizeof(kWhiteLabels_SRP_ZG9105_CV[0]),
     .from_zigbee=kFz_SRP_ZG9105_CV, .from_zigbee_count=sizeof(kFz_SRP_ZG9105_CV)/sizeof(kFz_SRP_ZG9105_CV[0]),
     .to_zigbee=kTz_SRP_ZG9105_CV, .to_zigbee_count=sizeof(kTz_SRP_ZG9105_CV)/sizeof(kTz_SRP_ZG9105_CV[0]),
     .configure=nullptr, .on_event=nullptr,

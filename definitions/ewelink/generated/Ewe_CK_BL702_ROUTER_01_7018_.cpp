@@ -17,13 +17,17 @@ constexpr const char* kManus_CK_BL702_ROUTER_01_7018_[] = {
 };
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_CK_BL702_ROUTER_01_7018[] = {
+    {"HOBEIAN","ZG-807Z"},
+};
 extern const PreparedDefinition kDef_CK_BL702_ROUTER_01_7018_{
     .zigbee_models=kModels_CK_BL702_ROUTER_01_7018_, .zigbee_models_count=sizeof(kModels_CK_BL702_ROUTER_01_7018_)/sizeof(kModels_CK_BL702_ROUTER_01_7018_[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_CK_BL702_ROUTER_01_7018_, .manufacturer_names_count=sizeof(kManus_CK_BL702_ROUTER_01_7018_)/sizeof(kManus_CK_BL702_ROUTER_01_7018_[0]),
     .model="CK-BL702-ROUTER-01(7018)", .vendor="Ewelink",
     .meta=nullptr, .exposes=nullptr, .exposes_count=0,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_CK_BL702_ROUTER_01_7018, .white_labels_count=sizeof(kWhiteLabels_CK_BL702_ROUTER_01_7018)/sizeof(kWhiteLabels_CK_BL702_ROUTER_01_7018[0]),
     .from_zigbee=nullptr, .from_zigbee_count=0,
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

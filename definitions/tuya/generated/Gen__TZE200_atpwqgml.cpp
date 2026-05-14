@@ -31,13 +31,17 @@ constexpr Expose kExp_min_TS0601__TZE200_atpwqgml_Gen__TZE200_atpwqgml[] = {
 };
 constexpr BindingSpec kBind_min_TS0601__TZE200_atpwqgml_Gen__TZE200_atpwqgml[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_atpwqgml[] = {
+    {"Nova Digital","WS-US-ZB"},
+};
 extern const PreparedDefinition kDefGen__TZE200_atpwqgml{
     .zigbee_models=kMGen__TZE200_atpwqgml,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNGen__TZE200_atpwqgml,.manufacturer_names_count=1,
     .model="TS0601__TZE200_atpwqgml",.vendor="Tuya",
     .meta=nullptr,.exposes=kExp_min_TS0601__TZE200_atpwqgml_Gen__TZE200_atpwqgml, .exposes_count=sizeof(kExp_min_TS0601__TZE200_atpwqgml_Gen__TZE200_atpwqgml)/sizeof(kExp_min_TS0601__TZE200_atpwqgml_Gen__TZE200_atpwqgml[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_atpwqgml, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_atpwqgml)/sizeof(kWhiteLabels_Gen_TZE200_atpwqgml[0]),
     .from_zigbee=kFz_min_TS0601__TZE200_atpwqgml_Gen__TZE200_atpwqgml, .from_zigbee_count=sizeof(kFz_min_TS0601__TZE200_atpwqgml_Gen__TZE200_atpwqgml)/sizeof(kFz_min_TS0601__TZE200_atpwqgml_Gen__TZE200_atpwqgml[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

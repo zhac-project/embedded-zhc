@@ -47,13 +47,18 @@ const TzConverter* const kTz__TZE284_clm4gdw4[] = { &kTzDp__TZE284_clm4gdw4 };
 constexpr const char* kM__TZE284_clm4gdw4[] = { "TS0601" };
 constexpr const char* kN__TZE284_clm4gdw4[] = { "_TZE284_clm4gdw4" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE284_clm4gdw4[] = {
+    {"Nova Digital","ZC-GM42"},
+    {"Moes","ZC-LS02"},
+};
 extern const PreparedDefinition kDefGen__TZE284_clm4gdw4{
     .zigbee_models=kM__TZE284_clm4gdw4,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_clm4gdw4,.manufacturer_names_count=1,
     .model="TS0601__TZE284_clm4gdw4",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE284_clm4gdw4, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_clm4gdw4)/sizeof(kWhiteLabels_Gen_TZE284_clm4gdw4[0]),
     .from_zigbee=kFz__TZE284_clm4gdw4,
     .from_zigbee_count=sizeof(kFz__TZE284_clm4gdw4)/sizeof(kFz__TZE284_clm4gdw4[0]),
     .to_zigbee=kTz__TZE284_clm4gdw4,

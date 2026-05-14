@@ -34,13 +34,17 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0008},
 };
 
+
+constexpr WhiteLabel kWhiteLabels_ROB_200_009_0[] = {
+    {"Sunricher","SR-ZG9001K2-DIM"},
+};
 extern const PreparedDefinition kDef_ROB_200_009_0{
     .zigbee_models=kModels_ROB_200_009_0, .zigbee_models_count=sizeof(kModels_ROB_200_009_0)/sizeof(kModels_ROB_200_009_0[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="ROB_200-009-0", .vendor="Robb",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ROB_200_009_0, .white_labels_count=sizeof(kWhiteLabels_ROB_200_009_0)/sizeof(kWhiteLabels_ROB_200_009_0[0]),
     .from_zigbee=kFz_ROB_200_009_0, .from_zigbee_count=sizeof(kFz_ROB_200_009_0)/sizeof(kFz_ROB_200_009_0[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

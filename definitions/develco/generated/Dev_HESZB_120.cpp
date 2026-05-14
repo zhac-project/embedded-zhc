@@ -34,13 +34,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_HESZB_120[] = {
+    {"Frient","94431"},
+};
 extern const PreparedDefinition kDef_HESZB_120{
     .zigbee_models=kModels_HESZB_120, .zigbee_models_count=sizeof(kModels_HESZB_120)/sizeof(kModels_HESZB_120[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="HESZB-120", .vendor="Develco",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_HESZB_120, .white_labels_count=sizeof(kWhiteLabels_HESZB_120)/sizeof(kWhiteLabels_HESZB_120[0]),
     .from_zigbee=kFz_HESZB_120, .from_zigbee_count=sizeof(kFz_HESZB_120)/sizeof(kFz_HESZB_120[0]),
     .to_zigbee=kTz_HESZB_120, .to_zigbee_count=sizeof(kTz_HESZB_120)/sizeof(kTz_HESZB_120[0]),
     .configure=nullptr, .on_event=nullptr,

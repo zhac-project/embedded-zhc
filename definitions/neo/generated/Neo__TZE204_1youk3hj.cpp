@@ -83,7 +83,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefNeo__TZE204_1youk3hj{
-    .zigbee_models=kM__TZE204_1youk3hj,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE204_1youk3hj,.zigbee_models_count=sizeof(kM__TZE204_1youk3hj)/sizeof(kM__TZE204_1youk3hj[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_1youk3hj,.manufacturer_names_count=1,
     .model="NAS-PS10B2",.vendor="Neo",

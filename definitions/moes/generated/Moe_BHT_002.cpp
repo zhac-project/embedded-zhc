@@ -106,13 +106,17 @@ constexpr Expose kExp_BHT_002[] = {
 constexpr BindingSpec kBind_BHT_002[] = { { 1, 0xEF00 } };
 
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_BHT_002[] = {
+    {"Moes","BHT-002/BHT-006"},
+};
 extern const PreparedDefinition kDef_BHT_002{
     .zigbee_models=kModels_BHT_002, .zigbee_models_count=sizeof(kModels_BHT_002)/sizeof(kModels_BHT_002[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_BHT_002, .manufacturer_names_count=sizeof(kManus_BHT_002)/sizeof(kManus_BHT_002[0]),
     .model="BHT-002", .vendor="Moes",
     .meta=nullptr, .exposes=kExp_BHT_002, .exposes_count=sizeof(kExp_BHT_002)/sizeof(kExp_BHT_002[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_BHT_002, .white_labels_count=sizeof(kWhiteLabels_BHT_002)/sizeof(kWhiteLabels_BHT_002[0]),
     .from_zigbee=kFz_BHT_002, .from_zigbee_count=sizeof(kFz_BHT_002)/sizeof(kFz_BHT_002[0]),
     .to_zigbee=kTz_BHT_002, .to_zigbee_count=sizeof(kTz_BHT_002)/sizeof(kTz_BHT_002[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,

@@ -41,7 +41,7 @@ constexpr const char* kM__TZ3210_5rta89nj[] = { "TS0601" };
 constexpr const char* kN__TZ3210_5rta89nj[] = { "_TZ3210_5rta89nj" };
 }  // namespace
 extern const PreparedDefinition kDefGen__TZ3210_5rta89nj{
-    .zigbee_models=kM__TZ3210_5rta89nj,.zigbee_models_count=1,
+    .zigbee_models=kM__TZ3210_5rta89nj,.zigbee_models_count=sizeof(kM__TZ3210_5rta89nj)/sizeof(kM__TZ3210_5rta89nj[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZ3210_5rta89nj,.manufacturer_names_count=1,
     .model="TS0601__TZ3210_5rta89nj",.vendor="Tuya",

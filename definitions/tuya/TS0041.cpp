@@ -18,12 +18,22 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TS0041[] = {
+    {"Tuya","SH-SC07"},
+    {"Tuya","MINI-ZSB"},
+    {"Nous","LZ4"},
+    {"Marmitek","Push_LE"},
+    {"Smart9","S9TSZGB"},
+    {"Lonsonho","TS0041"},
+    {"Benexmart","ZM-sui1"},
+};
 extern const PreparedDefinition kDefTS0041{
     .zigbee_models=kModels,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,.manufacturer_names=nullptr,.manufacturer_names_count=0,
     .model="TS0041",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_TS0041, .white_labels_count=sizeof(kWhiteLabels_TS0041)/sizeof(kWhiteLabels_TS0041[0]),
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

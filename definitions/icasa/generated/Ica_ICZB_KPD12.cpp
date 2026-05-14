@@ -34,6 +34,10 @@ constexpr const char* kModels_ICZB_KPD12[] = { "ICZB-KPD12" };
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_ICZB_KPD12[] = {
+    {"Sunricher","SR-ZG9001K2-DIM"},
+};
 extern const PreparedDefinition kDef_ICZB_KPD12{
     .zigbee_models=kModels_ICZB_KPD12,
     .zigbee_models_count=sizeof(kModels_ICZB_KPD12)/sizeof(kModels_ICZB_KPD12[0]),
@@ -43,7 +47,7 @@ extern const PreparedDefinition kDef_ICZB_KPD12{
     .meta=nullptr,
     .exposes=kExposes_ICZB_KPD12,
     .exposes_count=sizeof(kExposes_ICZB_KPD12)/sizeof(kExposes_ICZB_KPD12[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ICZB_KPD12, .white_labels_count=sizeof(kWhiteLabels_ICZB_KPD12)/sizeof(kWhiteLabels_ICZB_KPD12[0]),
     .from_zigbee=kFz_ICZB_KPD12,
     .from_zigbee_count=sizeof(kFz_ICZB_KPD12)/sizeof(kFz_ICZB_KPD12[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,

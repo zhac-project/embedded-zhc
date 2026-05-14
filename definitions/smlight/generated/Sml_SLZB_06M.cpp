@@ -28,13 +28,27 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SLZB_06M[] = {
+    {"SMLIGHT","SLZB-06"},
+    {"SMLIGHT","SLZB-06P7"},
+    {"SMLIGHT","SLZB-06p10"},
+    {"SMLIGHT","SLZB-07"},
+    {"SMLIGHT","SLZB-07P10"},
+    {"SMLIGHT","SLZB-07P7"},
+    {"SMLIGHT","SLZB-0xp7"},
+    {"SMLIGHT","SLZB-07Mg24"},
+    {"SMLIGHT","SLZB-06Mg24"},
+    {"SMLIGHT","SLZB-06Mg26"},
+    {"SMLIGHT","SLZB-MR3"},
+};
 extern const PreparedDefinition kDef_SLZB_06M{
     .zigbee_models=kModels_SLZB_06M, .zigbee_models_count=sizeof(kModels_SLZB_06M)/sizeof(kModels_SLZB_06M[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SLZB-06M", .vendor="Smlight",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SLZB_06M, .white_labels_count=sizeof(kWhiteLabels_SLZB_06M)/sizeof(kWhiteLabels_SLZB_06M[0]),
     .from_zigbee=kFz_SLZB_06M, .from_zigbee_count=sizeof(kFz_SLZB_06M)/sizeof(kFz_SLZB_06M[0]),
     .to_zigbee=kTz_SLZB_06M, .to_zigbee_count=sizeof(kTz_SLZB_06M)/sizeof(kTz_SLZB_06M[0]),
     .configure=nullptr, .on_event=nullptr,

@@ -40,7 +40,7 @@ constexpr Expose kExp_min_TS011F__TZ3000_cymsnfvf_Moes__TZ3000_cymsnfvf[] = {
 constexpr BindingSpec kBind_min_TS011F__TZ3000_cymsnfvf_Moes__TZ3000_cymsnfvf[] = { { 1, 0x0006 } };
 }  // namespace
 extern const PreparedDefinition kDefMoes__TZ3000_cymsnfvf{
-    .zigbee_models=kMMoes__TZ3000_cymsnfvf,.zigbee_models_count=1,
+    .zigbee_models=kMMoes__TZ3000_cymsnfvf,.zigbee_models_count=sizeof(kMMoes__TZ3000_cymsnfvf)/sizeof(kMMoes__TZ3000_cymsnfvf[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNMoes__TZ3000_cymsnfvf,.manufacturer_names_count=1,
     .model="TS011F__TZ3000_cymsnfvf",.vendor="Moes",

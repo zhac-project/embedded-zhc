@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_MOSZB_153[] = {
+    {"Frient","MOSZB-153"},
+};
 extern const PreparedDefinition kDef_MOSZB_153{
     .zigbee_models=kModels_MOSZB_153, .zigbee_models_count=sizeof(kModels_MOSZB_153)/sizeof(kModels_MOSZB_153[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="MOSZB-153", .vendor="Develco",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_MOSZB_153, .white_labels_count=sizeof(kWhiteLabels_MOSZB_153)/sizeof(kWhiteLabels_MOSZB_153[0]),
     .from_zigbee=kFz_MOSZB_153, .from_zigbee_count=sizeof(kFz_MOSZB_153)/sizeof(kFz_MOSZB_153[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

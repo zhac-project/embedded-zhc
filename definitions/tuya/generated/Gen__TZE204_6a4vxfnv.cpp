@@ -64,13 +64,17 @@ const TzConverter* const kTz__TZE204_6a4vxfnv[] = { &kTzDp__TZE204_6a4vxfnv };
 constexpr const char* kM__TZE204_6a4vxfnv[] = { "TS0601" };
 constexpr const char* kN__TZE204_6a4vxfnv[] = { "_TZE204_6a4vxfnv" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_6a4vxfnv[] = {
+    {"ELECTSMART","EST-120Z"},
+};
 extern const PreparedDefinition kDefGen__TZE204_6a4vxfnv{
     .zigbee_models=kM__TZE204_6a4vxfnv,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_6a4vxfnv,.manufacturer_names_count=1,
     .model="TS0601__TZE204_6a4vxfnv",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_6a4vxfnv, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_6a4vxfnv)/sizeof(kWhiteLabels_Gen_TZE204_6a4vxfnv[0]),
     .from_zigbee=kFz__TZE204_6a4vxfnv,
     .from_zigbee_count=sizeof(kFz__TZE204_6a4vxfnv)/sizeof(kFz__TZE204_6a4vxfnv[0]),
     .to_zigbee=kTz__TZE204_6a4vxfnv,

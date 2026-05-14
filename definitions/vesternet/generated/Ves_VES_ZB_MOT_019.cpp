@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end ---
 
+
+constexpr WhiteLabel kWhiteLabels_VES_ZB_MOT_019[] = {
+    {"Sunricher","SR-ZG9080A"},
+};
 extern const PreparedDefinition kDef_VES_ZB_MOT_019{
     .zigbee_models=kModels_VES_ZB_MOT_019, .zigbee_models_count=sizeof(kModels_VES_ZB_MOT_019)/sizeof(kModels_VES_ZB_MOT_019[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="VES-ZB-MOT-019", .vendor="Vesternet",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_VES_ZB_MOT_019, .white_labels_count=sizeof(kWhiteLabels_VES_ZB_MOT_019)/sizeof(kWhiteLabels_VES_ZB_MOT_019[0]),
     .from_zigbee=kFz_VES_ZB_MOT_019, .from_zigbee_count=sizeof(kFz_VES_ZB_MOT_019)/sizeof(kFz_VES_ZB_MOT_019[0]),
     .to_zigbee=kTz_VES_ZB_MOT_019, .to_zigbee_count=sizeof(kTz_VES_ZB_MOT_019)/sizeof(kTz_VES_ZB_MOT_019[0]),
     .configure=nullptr, .on_event=nullptr,

@@ -60,13 +60,17 @@ const TzConverter* const kTz__TZE200_0hg58wyk[] = { &kTzDp__TZE200_0hg58wyk };
 constexpr const char* kM__TZE200_0hg58wyk[] = { "TS0601" };
 constexpr const char* kN__TZE200_0hg58wyk[] = { "_TZE200_0hg58wyk" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_0hg58wyk[] = {
+    {"S366","Cloud Even"},
+};
 extern const PreparedDefinition kDefGen__TZE200_0hg58wyk{
     .zigbee_models=kM__TZE200_0hg58wyk,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_0hg58wyk,.manufacturer_names_count=1,
     .model="TS0601__TZE200_0hg58wyk",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_0hg58wyk, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_0hg58wyk)/sizeof(kWhiteLabels_Gen_TZE200_0hg58wyk[0]),
     .from_zigbee=kFz__TZE200_0hg58wyk,
     .from_zigbee_count=sizeof(kFz__TZE200_0hg58wyk)/sizeof(kFz__TZE200_0hg58wyk[0]),
     .to_zigbee=kTz__TZE200_0hg58wyk,

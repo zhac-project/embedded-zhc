@@ -58,13 +58,22 @@ const TzConverter* const kTz__TZE204_wskr3up8[] = { &kTzDp__TZE204_wskr3up8 };
 constexpr const char* kM__TZE204_wskr3up8[] = { "TS0601" };
 constexpr const char* kN__TZE204_wskr3up8[] = { "_TZE204_wskr3up8" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_wskr3up8[] = {
+    {"Mercator Ikuü","SSW06G"},
+    {"Nova Digital","NTZB-04-W-B"},
+    {"Nova Digital","SYZB-6W"},
+    {"Nova Digital","FZB-6"},
+    {"Nova Digital","SA-6"},
+    {"Ekaza","EKAT-T3074-6WZ"},
+};
 extern const PreparedDefinition kDefGen__TZE204_wskr3up8{
     .zigbee_models=kM__TZE204_wskr3up8,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_wskr3up8,.manufacturer_names_count=1,
     .model="TS0601__TZE204_wskr3up8",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_wskr3up8, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_wskr3up8)/sizeof(kWhiteLabels_Gen_TZE204_wskr3up8[0]),
     .from_zigbee=kFz__TZE204_wskr3up8,
     .from_zigbee_count=sizeof(kFz__TZE204_wskr3up8)/sizeof(kFz__TZE204_wskr3up8[0]),
     .to_zigbee=kTz__TZE204_wskr3up8,

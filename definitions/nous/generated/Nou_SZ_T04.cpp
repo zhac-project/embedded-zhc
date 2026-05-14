@@ -37,13 +37,17 @@ constexpr BindingSpec kBind_SZ_T04[] = {
 };
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_SZ_T04[] = {
+    {"Tuya","TH01Z"},
+};
 extern const PreparedDefinition kDef_SZ_T04{
     .zigbee_models=kModels_SZ_T04, .zigbee_models_count=sizeof(kModels_SZ_T04)/sizeof(kModels_SZ_T04[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_SZ_T04, .manufacturer_names_count=sizeof(kManus_SZ_T04)/sizeof(kManus_SZ_T04[0]),
     .model="SZ-T04", .vendor="Nous",
     .meta=nullptr, .exposes=kExp_SZ_T04, .exposes_count=sizeof(kExp_SZ_T04)/sizeof(kExp_SZ_T04[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SZ_T04, .white_labels_count=sizeof(kWhiteLabels_SZ_T04)/sizeof(kWhiteLabels_SZ_T04[0]),
     .from_zigbee=kFz_SZ_T04, .from_zigbee_count=sizeof(kFz_SZ_T04)/sizeof(kFz_SZ_T04[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

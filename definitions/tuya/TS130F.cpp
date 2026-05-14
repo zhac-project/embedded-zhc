@@ -21,12 +21,27 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TS130F[] = {
+    {"BSEED","EC-GL86ZPCRS31"},
+    {"BSEED","S-PC86ZPCS11B"},
+    {"Danor","SK-Z802C-US"},
+    {"LoraTap","SC500ZB"},
+    {"LoraTap","SC500ZB-v4"},
+    {"Nous","B4Z"},
+    {"Nous","L12Z"},
+    {"Zemismart","ZN-LC1E"},
+    {"Girier","TS130F_GIRIER"},
+    {"Zemismart","TS130F_ZEMISMART"},
+    {"QA","QACZ1"},
+    {"LoraTap","SC400"},
+};
 extern const PreparedDefinition kDefTS130F{
     .zigbee_models=kModels,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,.manufacturer_names=nullptr,.manufacturer_names_count=0,
     .model="TS130F",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_TS130F, .white_labels_count=sizeof(kWhiteLabels_TS130F)/sizeof(kWhiteLabels_TS130F[0]),
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,

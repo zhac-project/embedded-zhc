@@ -36,13 +36,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_HS2SK[] = {
+    {"Schneider Electric","CCTFR6500"},
+};
 extern const PreparedDefinition kDef_HS2SK{
     .zigbee_models=kModels_HS2SK, .zigbee_models_count=sizeof(kModels_HS2SK)/sizeof(kModels_HS2SK[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="HS2SK", .vendor="Heiman",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_HS2SK, .white_labels_count=sizeof(kWhiteLabels_HS2SK)/sizeof(kWhiteLabels_HS2SK[0]),
     .from_zigbee=kFz_HS2SK, .from_zigbee_count=sizeof(kFz_HS2SK)/sizeof(kFz_HS2SK[0]),
     .to_zigbee=kTz_HS2SK, .to_zigbee_count=sizeof(kTz_HS2SK)/sizeof(kTz_HS2SK[0]),
     .configure=nullptr, .on_event=nullptr,

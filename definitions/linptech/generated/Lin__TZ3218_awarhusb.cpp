@@ -10,7 +10,7 @@ constexpr const char* kM__TZ3218_awarhusb[] = { "__NEUTERED__TZ3218_awarhusb" };
 }  // namespace
 
 extern const PreparedDefinition kDefLin__TZ3218_awarhusb{
-    .zigbee_models=kM__TZ3218_awarhusb,.zigbee_models_count=1,
+    .zigbee_models=kM__TZ3218_awarhusb,.zigbee_models_count=sizeof(kM__TZ3218_awarhusb)/sizeof(kM__TZ3218_awarhusb[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr,.manufacturer_names_count=0,
     .model="TS0225__TZ3218_awarhusb",.vendor="Linptech",

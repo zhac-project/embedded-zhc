@@ -7,6 +7,18 @@
 namespace zhc::devices::avatto {
 namespace {
 
+// z2m wraps DP102 in an IIFE that also publishes `state` on read ("OFF"
+// when 0, else "ON"). We don't mirror that side-publish here — the
+// rules engine / shadow can derive on/off from DP1 `state` directly.
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_udaucpdi_switch_on_time_dp102[] = {
+    { 0, "off" },
+    { 1, "30 minutes" },
+    { 2, "60 minutes" },
+    { 3, "90 minutes" },
+    { 4, "120 minutes" },
+    { 5, "on" },
+};
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_udaucpdi[] = {
     { 1, "state", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 20, "energy", ::zhc::TuyaDpType::Numeric, 1000, nullptr, 0, 0 },
@@ -14,8 +26,13 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_udaucpdi[] = {
     { 22, "power", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 23, "voltage", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 101, "ac_frequency", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 102, "switch_on_time", ::zhc::TuyaDpType::Enum, 1,
+        kEnum__TZE284_udaucpdi_switch_on_time_dp102,
+        sizeof(kEnum__TZE284_udaucpdi_switch_on_time_dp102)/sizeof(kEnum__TZE284_udaucpdi_switch_on_time_dp102[0]), 0 },
+    { 103, "countdown", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 104, "total_switch_on_time", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_udaucpdi{ kEntries__TZE284_udaucpdi, 6 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_udaucpdi{ kEntries__TZE284_udaucpdi, 9 };
 constexpr FzConverter kFzDp__TZE284_udaucpdi{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",
@@ -55,6 +72,9 @@ constexpr Expose kAutoExposes[] = {
     {"power", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"ac_frequency", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"switch_on_time", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"countdown", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0},
+    {"total_switch_on_time", ExposeType::Numeric, Access::State, "min", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

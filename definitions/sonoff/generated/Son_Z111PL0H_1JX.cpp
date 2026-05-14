@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_Z111PL0H_1JX[] = {
+    {"Woolley","SA-028-1"},
+};
 extern const PreparedDefinition kDef_Z111PL0H_1JX{
     .zigbee_models=kModels_Z111PL0H_1JX, .zigbee_models_count=sizeof(kModels_Z111PL0H_1JX)/sizeof(kModels_Z111PL0H_1JX[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="Z111PL0H-1JX", .vendor="Sonoff",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_Z111PL0H_1JX, .white_labels_count=sizeof(kWhiteLabels_Z111PL0H_1JX)/sizeof(kWhiteLabels_Z111PL0H_1JX[0]),
     .from_zigbee=kFz_Z111PL0H_1JX, .from_zigbee_count=sizeof(kFz_Z111PL0H_1JX)/sizeof(kFz_Z111PL0H_1JX[0]),
     .to_zigbee=kTz_Z111PL0H_1JX, .to_zigbee_count=sizeof(kTz_Z111PL0H_1JX)/sizeof(kTz_Z111PL0H_1JX[0]),
     .configure=nullptr, .on_event=nullptr,

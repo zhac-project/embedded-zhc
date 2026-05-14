@@ -56,13 +56,17 @@ const TzConverter* const kTz__TZ3210_dse8ogfy[] = { &kTzDp__TZ3210_dse8ogfy };
 constexpr const char* kM__TZ3210_dse8ogfy[] = { "TS0001" };
 constexpr const char* kN__TZ3210_dse8ogfy[] = { "_TZ3210_dse8ogfy" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZ3210_dse8ogfy[] = {
+    {"Adaprox","TS0001_fingerbot_1"},
+};
 extern const PreparedDefinition kDefGen__TZ3210_dse8ogfy{
     .zigbee_models=kM__TZ3210_dse8ogfy,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZ3210_dse8ogfy,.manufacturer_names_count=1,
     .model="TS0001__TZ3210_dse8ogfy",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZ3210_dse8ogfy, .white_labels_count=sizeof(kWhiteLabels_Gen_TZ3210_dse8ogfy)/sizeof(kWhiteLabels_Gen_TZ3210_dse8ogfy[0]),
     .from_zigbee=kFz__TZ3210_dse8ogfy,
     .from_zigbee_count=sizeof(kFz__TZ3210_dse8ogfy)/sizeof(kFz__TZ3210_dse8ogfy[0]),
     .to_zigbee=kTz__TZ3210_dse8ogfy,

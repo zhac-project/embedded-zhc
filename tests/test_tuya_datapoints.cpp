@@ -142,10 +142,94 @@ static void test_no_user_config_returns_false() {
         std::span<const TuyaDpRecord>(recs, 1), msg, cvt, def, ctx, out));
 }
 
+// Multiple TuyaDpMapEntry rows can share a dp_id when the device reports
+// several semantic fields off one wire DP (e.g. TRV60 DP36 carries both
+// frost_protection and scale_protection). All matching entries must fire.
+static void test_multi_row_fanout_same_dp() {
+    static constexpr tuya::TuyaDpMapEntry kEntries[] = {
+        { 36, "frost_protection", TuyaDpType::Bool, 1, nullptr, 0 },
+        { 36, "scale_protection", TuyaDpType::Bool, 1, nullptr, 0 },
+    };
+    static constexpr tuya::TuyaDatapointMap kMap{ kEntries, 2 };
+    FzConverter cvt = tuya::kFzTuyaDatapoints;
+    cvt.user_config = &kMap;
+
+    const TuyaDpRecord recs[] = {
+        { 36, 0x01, std::span<const std::uint8_t>(bool_on, 1) },
+    };
+    FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    DecodedMessage msg{};
+    PreparedDefinition def{};
+    RuntimeContext ctx{};
+
+    assert(tuya::fz_tuya_datapoints(
+        std::span<const TuyaDpRecord>(recs, 1), msg, cvt, def, ctx, out));
+
+    const Value* a = out.find("frost_protection");
+    const Value* b = out.find("scale_protection");
+    assert(a && a->type == ValueType::Bool && a->b == true);
+    assert(b && b->type == ValueType::Bool && b->b == true);
+}
+
+// Some devices reuse a single DP for two content-disjoint payloads — TRV26
+// DP17 carries either open_window_time (4-byte numeric) or schedule_monday
+// (12-byte schedule frame). emit_from_entry must abstain on shape mismatch
+// so the sibling entry can claim the value.
+static void test_schedule_overlap_content_disjoint() {
+    static constexpr tuya::TuyaDpMapEntry kEntries[] = {
+        { 17, "open_window_time", TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+        { 17, "schedule_monday",  TuyaDpType::Raw,     1, nullptr, 0,
+            tuya::kTuyaDpFlagScheduleDay },
+    };
+    static constexpr tuya::TuyaDatapointMap kMap{ kEntries, 2 };
+    FzConverter cvt = tuya::kFzTuyaDatapoints;
+    cvt.user_config = &kMap;
+
+    // A: short numeric frame — only open_window_time should emit.
+    {
+        const TuyaDpRecord recs[] = {
+            { 17, 0x02, std::span<const std::uint8_t>(num_2000, 4) },
+        };
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        DecodedMessage msg{};
+        PreparedDefinition def{};
+        RuntimeContext ctx{};
+        assert(tuya::fz_tuya_datapoints(
+            std::span<const TuyaDpRecord>(recs, 1), msg, cvt, def, ctx, out));
+        const Value* o = out.find("open_window_time");
+        assert(o && o->type == ValueType::Int && o->i == 2000);
+        assert(out.find("schedule_monday") == nullptr);
+    }
+
+    // B: 12-byte schedule-day frame — only schedule_monday should emit.
+    {
+        const std::uint8_t sched12[] = {
+            6,  0, 43,   // 06:00 / 21.5
+            17, 20, 52,  // 17:20 / 26.0
+            20, 0, 42,   // 20:00 / 21.0
+            24, 0, 36,   // 24:00 / 18.0
+        };
+        const TuyaDpRecord recs[] = {
+            { 17, 0x00, std::span<const std::uint8_t>(sched12, sizeof(sched12)) },
+        };
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        DecodedMessage msg{};
+        PreparedDefinition def{};
+        RuntimeContext ctx{};
+        assert(tuya::fz_tuya_datapoints(
+            std::span<const TuyaDpRecord>(recs, 1), msg, cvt, def, ctx, out));
+        const Value* s = out.find("schedule_monday");
+        assert(s && s->type == ValueType::StringRef);
+        assert(out.find("open_window_time") == nullptr);
+    }
+}
+
 int main() {
     test_pure_dp_plug();
     test_unknown_dp_silently_dropped();
     test_enum_lookup();
     test_no_user_config_returns_false();
+    test_multi_row_fanout_same_dp();
+    test_schedule_overlap_content_disjoint();
     return 0;
 }

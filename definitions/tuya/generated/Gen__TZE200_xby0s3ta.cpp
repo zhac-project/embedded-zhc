@@ -31,13 +31,25 @@ constexpr Expose kExp_min_TS0601__TZE200_xby0s3ta_Gen__TZE200_xby0s3ta[] = {
 };
 constexpr BindingSpec kBind_min_TS0601__TZE200_xby0s3ta_Gen__TZE200_xby0s3ta[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_xby0s3ta[] = {
+    {"Immax","07732L"},
+    {"Emos","P5630S"},
+    {"THALEOS","HY368"},
+    {"Moes","HY368"},
+    {"Moes","HY369RT"},
+    {"SHOJZJ","378RT"},
+    {"Silvercrest","TVR01"},
+    {"Immax","07732B"},
+    {"Evolveo","Heat M30"},
+};
 extern const PreparedDefinition kDefGen__TZE200_xby0s3ta{
     .zigbee_models=kMGen__TZE200_xby0s3ta,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNGen__TZE200_xby0s3ta,.manufacturer_names_count=1,
     .model="TS0601__TZE200_xby0s3ta",.vendor="Tuya",
     .meta=nullptr,.exposes=kExp_min_TS0601__TZE200_xby0s3ta_Gen__TZE200_xby0s3ta, .exposes_count=sizeof(kExp_min_TS0601__TZE200_xby0s3ta_Gen__TZE200_xby0s3ta)/sizeof(kExp_min_TS0601__TZE200_xby0s3ta_Gen__TZE200_xby0s3ta[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_xby0s3ta, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_xby0s3ta)/sizeof(kWhiteLabels_Gen_TZE200_xby0s3ta[0]),
     .from_zigbee=kFz_min_TS0601__TZE200_xby0s3ta_Gen__TZE200_xby0s3ta, .from_zigbee_count=sizeof(kFz_min_TS0601__TZE200_xby0s3ta_Gen__TZE200_xby0s3ta)/sizeof(kFz_min_TS0601__TZE200_xby0s3ta_Gen__TZE200_xby0s3ta[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

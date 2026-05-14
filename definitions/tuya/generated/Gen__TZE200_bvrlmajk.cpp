@@ -79,13 +79,18 @@ const TzConverter* const kTz__TZE200_bvrlmajk[] = { &kTzDp__TZE200_bvrlmajk };
 constexpr const char* kM__TZE200_bvrlmajk[] = { "TS0601" };
 constexpr const char* kN__TZE200_bvrlmajk[] = { "_TZE200_bvrlmajk" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_bvrlmajk[] = {
+    {"id3","GTZ06"},
+    {"AVATTO","TRV07"},
+};
 extern const PreparedDefinition kDefGen__TZE200_bvrlmajk{
     .zigbee_models=kM__TZE200_bvrlmajk,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_bvrlmajk,.manufacturer_names_count=1,
     .model="TS0601__TZE200_bvrlmajk",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_bvrlmajk, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_bvrlmajk)/sizeof(kWhiteLabels_Gen_TZE200_bvrlmajk[0]),
     .from_zigbee=kFz__TZE200_bvrlmajk,
     .from_zigbee_count=sizeof(kFz__TZE200_bvrlmajk)/sizeof(kFz__TZE200_bvrlmajk[0]),
     .to_zigbee=kTz__TZE200_bvrlmajk,

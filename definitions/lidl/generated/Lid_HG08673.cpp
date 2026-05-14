@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_HG08673[] = {
+    {"Lidl","HG08673-BS"},
+};
 extern const PreparedDefinition kDef_HG08673{
     .zigbee_models=kModels_HG08673, .zigbee_models_count=sizeof(kModels_HG08673)/sizeof(kModels_HG08673[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_HG08673, .manufacturer_names_count=sizeof(kManus_HG08673)/sizeof(kManus_HG08673[0]),
     .model="HG08673", .vendor="Lidl",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_HG08673, .white_labels_count=sizeof(kWhiteLabels_HG08673)/sizeof(kWhiteLabels_HG08673[0]),
     .from_zigbee=kFz_HG08673, .from_zigbee_count=sizeof(kFz_HG08673)/sizeof(kFz_HG08673[0]),
     .to_zigbee=kTz_HG08673, .to_zigbee_count=sizeof(kTz_HG08673)/sizeof(kTz_HG08673[0]),
     .configure=nullptr, .on_event=nullptr,

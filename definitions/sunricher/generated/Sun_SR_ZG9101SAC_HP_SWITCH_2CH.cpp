@@ -34,13 +34,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SR_ZG9101SAC_HP_SWITCH_2CH[] = {
+    {"LED-Trading","UP-SA-9127D"},
+};
 extern const PreparedDefinition kDef_SR_ZG9101SAC_HP_SWITCH_2CH{
     .zigbee_models=kModels_SR_ZG9101SAC_HP_SWITCH_2CH, .zigbee_models_count=sizeof(kModels_SR_ZG9101SAC_HP_SWITCH_2CH)/sizeof(kModels_SR_ZG9101SAC_HP_SWITCH_2CH[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SR-ZG9101SAC-HP-SWITCH-2CH", .vendor="Sunricher",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SR_ZG9101SAC_HP_SWITCH_2CH, .white_labels_count=sizeof(kWhiteLabels_SR_ZG9101SAC_HP_SWITCH_2CH)/sizeof(kWhiteLabels_SR_ZG9101SAC_HP_SWITCH_2CH[0]),
     .from_zigbee=kFz_SR_ZG9101SAC_HP_SWITCH_2CH, .from_zigbee_count=sizeof(kFz_SR_ZG9101SAC_HP_SWITCH_2CH)/sizeof(kFz_SR_ZG9101SAC_HP_SWITCH_2CH[0]),
     .to_zigbee=kTz_SR_ZG9101SAC_HP_SWITCH_2CH, .to_zigbee_count=sizeof(kTz_SR_ZG9101SAC_HP_SWITCH_2CH)/sizeof(kTz_SR_ZG9101SAC_HP_SWITCH_2CH[0]),
     .configure=nullptr, .on_event=nullptr,

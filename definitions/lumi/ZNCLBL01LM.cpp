@@ -25,9 +25,14 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 
+
+constexpr WhiteLabel kWhiteLabels_ZNCLBL01LM[] = {
+    {"Aqara","CM-M01"},
+    {"Aqara","CM-M01R"},
+};
 extern const PreparedDefinition kDefZNCLBL01LM{
-    .zigbee_models=kModels,.zigbee_models_count=2,.model="ZNCLBL01LM",.vendor="Xiaomi",
-    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),.white_labels=nullptr,.white_labels_count=0,
+    .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),.model="ZNCLBL01LM",.vendor="Xiaomi",
+    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),.white_labels=kWhiteLabels_ZNCLBL01LM, .white_labels_count=sizeof(kWhiteLabels_ZNCLBL01LM)/sizeof(kWhiteLabels_ZNCLBL01LM[0]),
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

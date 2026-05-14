@@ -592,6 +592,12 @@ extern const PreparedDefinition kDef_D929004611201;
 extern const PreparedDefinition kDef_LP_CF_7904008_EU;
 extern const PreparedDefinition kDef_LWG004;
 
+
+// Phase coverage: enroll 3 model-named cpps that existed on disk.
+extern const PreparedDefinition kDef_D929004611002;
+extern const PreparedDefinition kDef_D929004582001;
+extern const PreparedDefinition kDef_D8718696743133;
+
 const PreparedDefinition* const kPhilipsRegistry[] = {
     &kDef_D046677476816,
     &kDef_D046677551780,
@@ -1178,6 +1184,9 @@ const PreparedDefinition* const kPhilipsRegistry[] = {
     &kDef_D9290030675,
     &kDef_D9290035639,
     &kDef_RDM005,
+    &kDef_D929004611002,
+    &kDef_D929004582001,
+    &kDef_D8718696743133,
 };
 const std::size_t kPhilipsRegistryCount =
     sizeof(kPhilipsRegistry) / sizeof(kPhilipsRegistry[0]);

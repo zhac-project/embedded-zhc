@@ -43,13 +43,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SBBT_104CUS[] = {
+    {"Shelly","SBBT-004CEU"},
+    {"Shelly","SBBT-104CEU"},
+};
 extern const PreparedDefinition kDef_SBBT_104CUS{
     .zigbee_models=kModels_SBBT_104CUS, .zigbee_models_count=sizeof(kModels_SBBT_104CUS)/sizeof(kModels_SBBT_104CUS[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SBBT-104CUS", .vendor="Shelly",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SBBT_104CUS, .white_labels_count=sizeof(kWhiteLabels_SBBT_104CUS)/sizeof(kWhiteLabels_SBBT_104CUS[0]),
     .from_zigbee=kFz_SBBT_104CUS, .from_zigbee_count=sizeof(kFz_SBBT_104CUS)/sizeof(kFz_SBBT_104CUS[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

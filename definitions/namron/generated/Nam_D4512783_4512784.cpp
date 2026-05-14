@@ -42,13 +42,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_D4512783_4512784[] = {
+    {"Namron","4566702"},
+};
 extern const PreparedDefinition kDef_D4512783_4512784{
     .zigbee_models=kModels_D4512783_4512784, .zigbee_models_count=sizeof(kModels_D4512783_4512784)/sizeof(kModels_D4512783_4512784[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="4512783/4512784", .vendor="Namron",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D4512783_4512784, .white_labels_count=sizeof(kWhiteLabels_D4512783_4512784)/sizeof(kWhiteLabels_D4512783_4512784[0]),
     .from_zigbee=kFz_D4512783_4512784, .from_zigbee_count=sizeof(kFz_D4512783_4512784)/sizeof(kFz_D4512783_4512784[0]),
     .to_zigbee=kTz_D4512783_4512784, .to_zigbee_count=sizeof(kTz_D4512783_4512784)/sizeof(kTz_D4512783_4512784[0]),
     .configure=nullptr, .on_event=nullptr,

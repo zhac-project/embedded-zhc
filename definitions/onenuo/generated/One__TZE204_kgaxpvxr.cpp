@@ -63,7 +63,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefOne__TZE204_kgaxpvxr{
-    .zigbee_models=kM__TZE204_kgaxpvxr,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE204_kgaxpvxr,.zigbee_models_count=sizeof(kM__TZE204_kgaxpvxr)/sizeof(kM__TZE204_kgaxpvxr[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_kgaxpvxr,.manufacturer_names_count=1,
     .model="TS0601__TZE204_kgaxpvxr",.vendor="Onenuo",

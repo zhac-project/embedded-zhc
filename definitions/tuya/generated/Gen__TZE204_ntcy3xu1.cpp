@@ -41,13 +41,17 @@ const TzConverter* const kTz__TZE204_ntcy3xu1[] = { &kTzDp__TZE204_ntcy3xu1 };
 constexpr const char* kM__TZE204_ntcy3xu1[] = { "TS0601" };
 constexpr const char* kN__TZE204_ntcy3xu1[] = { "_TZE204_ntcy3xu1" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_ntcy3xu1[] = {
+    {"Nous","E8"},
+};
 extern const PreparedDefinition kDefGen__TZE204_ntcy3xu1{
     .zigbee_models=kM__TZE204_ntcy3xu1,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_ntcy3xu1,.manufacturer_names_count=1,
     .model="TS0601__TZE204_ntcy3xu1",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_ntcy3xu1, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_ntcy3xu1)/sizeof(kWhiteLabels_Gen_TZE204_ntcy3xu1[0]),
     .from_zigbee=kFz__TZE204_ntcy3xu1,
     .from_zigbee_count=sizeof(kFz__TZE204_ntcy3xu1)/sizeof(kFz__TZE204_ntcy3xu1[0]),
     .to_zigbee=kTz__TZE204_ntcy3xu1,

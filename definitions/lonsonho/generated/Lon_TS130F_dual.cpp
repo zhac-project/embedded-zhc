@@ -42,13 +42,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TS130F_dual[] = {
+    {"Girier","TS130F_GIRIER_DUAL"},
+};
 extern const PreparedDefinition kDef_TS130F_dual{
     .zigbee_models=kModels_TS130F_dual, .zigbee_models_count=sizeof(kModels_TS130F_dual)/sizeof(kModels_TS130F_dual[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_TS130F_dual, .manufacturer_names_count=sizeof(kManus_TS130F_dual)/sizeof(kManus_TS130F_dual[0]),
     .model="TS130F_dual", .vendor="Lonsonho",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_TS130F_dual, .white_labels_count=sizeof(kWhiteLabels_TS130F_dual)/sizeof(kWhiteLabels_TS130F_dual[0]),
     .from_zigbee=kFz_TS130F_dual, .from_zigbee_count=sizeof(kFz_TS130F_dual)/sizeof(kFz_TS130F_dual[0]),
     .to_zigbee=kTz_TS130F_dual, .to_zigbee_count=sizeof(kTz_TS130F_dual)/sizeof(kTz_TS130F_dual[0]),
     .configure=nullptr, .on_event=nullptr,

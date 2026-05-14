@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_D50208702[] = {
+    {"Yphix","50208702"},
+};
 extern const PreparedDefinition kDef_D50208702{
     .zigbee_models=kModels_D50208702, .zigbee_models_count=sizeof(kModels_D50208702)/sizeof(kModels_D50208702[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="50208702", .vendor="Sunricher",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D50208702, .white_labels_count=sizeof(kWhiteLabels_D50208702)/sizeof(kWhiteLabels_D50208702[0]),
     .from_zigbee=kFz_D50208702, .from_zigbee_count=sizeof(kFz_D50208702)/sizeof(kFz_D50208702[0]),
     .to_zigbee=kTz_D50208702, .to_zigbee_count=sizeof(kTz_D50208702)/sizeof(kTz_D50208702[0]),
     .configure=nullptr, .on_event=nullptr,

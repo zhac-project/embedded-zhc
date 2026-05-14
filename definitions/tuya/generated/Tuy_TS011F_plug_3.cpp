@@ -14,6 +14,7 @@ const TzConverter* const kTz_TS011F_plug_3[] = {
     &::zhc::generic::kTzOnOff,
 };
 constexpr const char* kModels_TS011F_plug_3[] = { "TS011F" };
+constexpr const char* kManus_TS011F_plug_3[] = { "_TZ3000_2uollq9d", "_TZ3000_cehuw1lw" };
 
 }  // namespace
 
@@ -28,13 +29,22 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TS011F_plug_3[] = {
+    {"BSEED","TS011F_plug_3_1"},
+    {"Nous","A6Z_polling"},
+    {"VIKEFON","TS011F"},
+    {"BlitzWolf","BW-SHP15"},
+    {"AVATTO","MIUCOT10Z"},
+    {"NEO","PLUG-001SPB2"},
+};
 extern const PreparedDefinition kDef_TS011F_plug_3{
     .zigbee_models=kModels_TS011F_plug_3, .zigbee_models_count=sizeof(kModels_TS011F_plug_3)/sizeof(kModels_TS011F_plug_3[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus_TS011F_plug_3, .manufacturer_names_count=sizeof(kManus_TS011F_plug_3)/sizeof(kManus_TS011F_plug_3[0]),
     .model="TS011F_plug_3", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_TS011F_plug_3, .white_labels_count=sizeof(kWhiteLabels_TS011F_plug_3)/sizeof(kWhiteLabels_TS011F_plug_3[0]),
     .from_zigbee=kFz_TS011F_plug_3, .from_zigbee_count=sizeof(kFz_TS011F_plug_3)/sizeof(kFz_TS011F_plug_3[0]),
     .to_zigbee=kTz_TS011F_plug_3, .to_zigbee_count=sizeof(kTz_TS011F_plug_3)/sizeof(kTz_TS011F_plug_3[0]),
     .configure=nullptr, .on_event=nullptr,

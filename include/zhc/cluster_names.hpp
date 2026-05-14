@@ -70,7 +70,13 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         case 0x0B05: return "haDiagnostic";
 
         // Vendor-specific
-        case 0xE001: return "manuSpecificTuya2";  // Tuya 2 — distinct from 0xEF00 manuSpecificTuya
+        // 0xE001 is upstream herdsman's "manuSpecificTuya3"
+        // (attributes: powerOnBehavior 0xD010, switchMode 0xD020,
+        //  switchType 0xD030). The "Tuya2" string is a historical
+        // misnomer in ZHC kept for binary-compat with the linptech
+        // port. Upstream "Tuya2" sits at 0xE002 and is not currently
+        // mapped here.
+        case 0xE001: return "manuSpecificTuya2";  // (upstream: manuSpecificTuya3)
         case 0xE004: return "zosungIRControl";    // Tuya/Moes UFO-R11 — IR learn/control
         case 0xED00: return "zosungIRTransmit";   // Tuya/Moes UFO-R11 — chunked IR file transfer
         case 0xEF00: return "manuSpecificTuya";

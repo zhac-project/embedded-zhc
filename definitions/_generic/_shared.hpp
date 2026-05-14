@@ -285,6 +285,16 @@ extern const FzConverter kFzIasVibrationAlarm;
 extern const FzConverter kFzPowerOnBehavior1;
 extern const TzConverter kTzPowerOnBehavior1;
 
+// ── genOnOff onWithTimedOff (cmd 0x42) — "countdown" setter ──────────
+//
+// z2m-source: lib/tuya.ts tuyaTz.on_off_countdown.
+// Tuya switches/plugs reuse the ZCL onWithTimedOff command in a non-
+// standard way: the device turns on for `ontime` seconds, then off.
+// Range 0..43200s (12h); 0 cancels a running countdown. Body is the
+// ZCL spec layout: ctrlbits(1) + ontime(2 LE) + offwaittime(2 LE).
+// z2m mirrors `ontime` into `offwaittime` per Tuya doc guidance.
+extern const TzConverter kTzOnWithTimedOff;
+
 // ── Sonoff / eWeLink button action (SNZB-01 family) ──────────────────
 //
 // z2m-source: fromZigbee.ts `fz.ewelink_action`. genOnOff command

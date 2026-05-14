@@ -115,13 +115,17 @@ constexpr Expose kExp_BRT_100[] = {
 
 constexpr BindingSpec kBind_BRT_100[] = { {1, 0xEF00} };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_BRT_100_TRV[] = {
+    {"Sibling","Powerswitch-ZK(W)"},
+};
 extern const PreparedDefinition kDef_BRT_100_TRV{
     .zigbee_models=kModels_BRT_100, .zigbee_models_count=sizeof(kModels_BRT_100)/sizeof(kModels_BRT_100[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_BRT_100, .manufacturer_names_count=sizeof(kManus_BRT_100)/sizeof(kManus_BRT_100[0]),
     .model="BRT-100-TRV", .vendor="Moes",
     .meta=nullptr, .exposes=kExp_BRT_100, .exposes_count=sizeof(kExp_BRT_100)/sizeof(kExp_BRT_100[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_BRT_100_TRV, .white_labels_count=sizeof(kWhiteLabels_BRT_100_TRV)/sizeof(kWhiteLabels_BRT_100_TRV[0]),
     .from_zigbee=kFz_BRT_100, .from_zigbee_count=sizeof(kFz_BRT_100)/sizeof(kFz_BRT_100[0]),
     .to_zigbee=kTz_BRT_100, .to_zigbee_count=sizeof(kTz_BRT_100)/sizeof(kTz_BRT_100[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,

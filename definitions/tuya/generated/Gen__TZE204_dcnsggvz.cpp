@@ -64,13 +64,17 @@ const TzConverter* const kTz__TZE204_dcnsggvz[] = { &kTzDp__TZE204_dcnsggvz };
 constexpr const char* kM__TZE204_dcnsggvz[] = { "TS0601" };
 constexpr const char* kN__TZE204_dcnsggvz[] = { "_TZE204_dcnsggvz" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_dcnsggvz[] = {
+    {"Moes","MS-105-M"},
+};
 extern const PreparedDefinition kDefGen__TZE204_dcnsggvz{
     .zigbee_models=kM__TZE204_dcnsggvz,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_dcnsggvz,.manufacturer_names_count=1,
     .model="TS0601__TZE204_dcnsggvz",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_dcnsggvz, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_dcnsggvz)/sizeof(kWhiteLabels_Gen_TZE204_dcnsggvz[0]),
     .from_zigbee=kFz__TZE204_dcnsggvz,
     .from_zigbee_count=sizeof(kFz__TZE204_dcnsggvz)/sizeof(kFz__TZE204_dcnsggvz[0]),
     .to_zigbee=kTz__TZE204_dcnsggvz,

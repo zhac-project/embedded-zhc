@@ -95,13 +95,19 @@ const TzConverter* const kTz__TZE204_432zhuwe[] = { &kTzDp__TZE204_432zhuwe };
 constexpr const char* kM__TZE204_432zhuwe[] = { "TS0601" };
 constexpr const char* kN__TZE204_432zhuwe[] = { "_TZE204_432zhuwe" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_432zhuwe[] = {
+    {"Tongou","TOWSMR1-40A-AC"},
+    {"Tongou","TOWSMR1-40A-A"},
+    {"Tongou","TOWSMR1-20A-AC"},
+};
 extern const PreparedDefinition kDefGen__TZE204_432zhuwe{
     .zigbee_models=kM__TZE204_432zhuwe,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_432zhuwe,.manufacturer_names_count=1,
     .model="TS0601__TZE204_432zhuwe",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_432zhuwe, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_432zhuwe)/sizeof(kWhiteLabels_Gen_TZE204_432zhuwe[0]),
     .from_zigbee=kFz__TZE204_432zhuwe,
     .from_zigbee_count=sizeof(kFz__TZE204_432zhuwe)/sizeof(kFz__TZE204_432zhuwe[0]),
     .to_zigbee=kTz__TZE204_432zhuwe,

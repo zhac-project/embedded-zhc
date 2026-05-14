@@ -34,13 +34,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SNZB_05[] = {
+    {"eWeLink","CK-TLSR8656-SS5-01(7019)"},
+};
 extern const PreparedDefinition kDef_SNZB_05{
     .zigbee_models=kModels_SNZB_05, .zigbee_models_count=sizeof(kModels_SNZB_05)/sizeof(kModels_SNZB_05[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="SNZB-05", .vendor="Ewelink",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SNZB_05, .white_labels_count=sizeof(kWhiteLabels_SNZB_05)/sizeof(kWhiteLabels_SNZB_05[0]),
     .from_zigbee=kFz_SNZB_05, .from_zigbee_count=sizeof(kFz_SNZB_05)/sizeof(kFz_SNZB_05[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

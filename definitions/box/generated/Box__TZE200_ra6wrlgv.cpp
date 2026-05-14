@@ -79,7 +79,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end hand-tuned block ---
 
 extern const PreparedDefinition kDefBox__TZE200_ra6wrlgv{
-    .zigbee_models=kM__TZE200_ra6wrlgv,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE200_ra6wrlgv,.zigbee_models_count=sizeof(kM__TZE200_ra6wrlgv)/sizeof(kM__TZE200_ra6wrlgv[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_ra6wrlgv,.manufacturer_names_count=1,
     .model="ERC2206-Z",.vendor="BOX",

@@ -32,13 +32,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_NHMOTION_UNIDIM_1[] = {
+    {"ELKO","EKO06984"},
+    {"ELKO","EKO06985"},
+    {"ELKO","EKO06986"},
+};
 extern const PreparedDefinition kDef_NHMOTION_UNIDIM_1{
     .zigbee_models=kModels_NHMOTION_UNIDIM_1, .zigbee_models_count=sizeof(kModels_NHMOTION_UNIDIM_1)/sizeof(kModels_NHMOTION_UNIDIM_1[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="NHMOTION/UNIDIM/1", .vendor="Schneider",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_NHMOTION_UNIDIM_1, .white_labels_count=sizeof(kWhiteLabels_NHMOTION_UNIDIM_1)/sizeof(kWhiteLabels_NHMOTION_UNIDIM_1[0]),
     .from_zigbee=kFz_NHMOTION_UNIDIM_1, .from_zigbee_count=sizeof(kFz_NHMOTION_UNIDIM_1)/sizeof(kFz_NHMOTION_UNIDIM_1[0]),
     .to_zigbee=kTz_NHMOTION_UNIDIM_1, .to_zigbee_count=sizeof(kTz_NHMOTION_UNIDIM_1)/sizeof(kTz_NHMOTION_UNIDIM_1[0]),
     .configure=nullptr, .on_event=nullptr,

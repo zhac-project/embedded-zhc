@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_CK_BL702_MSW_01_7010[] = {
+    {"Mumubiz","CZV20"},
+};
 extern const PreparedDefinition kDef_CK_BL702_MSW_01_7010_{
     .zigbee_models=kModels_CK_BL702_MSW_01_7010_, .zigbee_models_count=sizeof(kModels_CK_BL702_MSW_01_7010_)/sizeof(kModels_CK_BL702_MSW_01_7010_[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="CK-BL702-MSW-01(7010)", .vendor="Ewelink",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_CK_BL702_MSW_01_7010, .white_labels_count=sizeof(kWhiteLabels_CK_BL702_MSW_01_7010)/sizeof(kWhiteLabels_CK_BL702_MSW_01_7010[0]),
     .from_zigbee=kFz_CK_BL702_MSW_01_7010_, .from_zigbee_count=sizeof(kFz_CK_BL702_MSW_01_7010_)/sizeof(kFz_CK_BL702_MSW_01_7010_[0]),
     .to_zigbee=kTz_CK_BL702_MSW_01_7010_, .to_zigbee_count=sizeof(kTz_CK_BL702_MSW_01_7010_)/sizeof(kTz_CK_BL702_MSW_01_7010_[0]),
     .configure=nullptr, .on_event=nullptr,

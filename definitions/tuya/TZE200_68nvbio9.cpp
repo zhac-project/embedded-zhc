@@ -24,10 +24,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_TZE200_68nvbio9[] = {
+    {"Zemismart","ZM16EL-03/33"},
+    {"Zemismart","ZM25EL"},
+    {"Zemismart","ZM85EL-2Z"},
+    {"Hiladuo","B09M3R35GC"},
+    {"Tuya","MYQ-RM25-1.3/25-BZ"},
+    {"Shaman","25EB-1/30-TYZ"},
+};
 extern const PreparedDefinition kDefTZE200_68nvbio9{
     .zigbee_models=kM,.zigbee_models_count=1,.manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN,.manufacturer_names_count=1,.model="TS0601_68nvbio9",.vendor="Tuya",
-    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),.white_labels=nullptr,.white_labels_count=0,
+    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),.white_labels=kWhiteLabels_TZE200_68nvbio9, .white_labels_count=sizeof(kWhiteLabels_TZE200_68nvbio9)/sizeof(kWhiteLabels_TZE200_68nvbio9[0]),
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr,

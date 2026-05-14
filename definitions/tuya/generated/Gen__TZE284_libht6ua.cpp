@@ -75,13 +75,17 @@ const TzConverter* const kTz__TZE284_libht6ua[] = { &kTzDp__TZE284_libht6ua };
 constexpr const char* kM__TZE284_libht6ua[] = { "TS0601" };
 constexpr const char* kN__TZE284_libht6ua[] = { "_TZE284_libht6ua" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE284_libht6ua[] = {
+    {"Tuya","LY-108"},
+};
 extern const PreparedDefinition kDefGen__TZE284_libht6ua{
     .zigbee_models=kM__TZE284_libht6ua,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_libht6ua,.manufacturer_names_count=1,
     .model="TS0601__TZE284_libht6ua",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE284_libht6ua, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_libht6ua)/sizeof(kWhiteLabels_Gen_TZE284_libht6ua[0]),
     .from_zigbee=kFz__TZE284_libht6ua,
     .from_zigbee_count=sizeof(kFz__TZE284_libht6ua)/sizeof(kFz__TZE284_libht6ua[0]),
     .to_zigbee=kTz__TZE284_libht6ua,

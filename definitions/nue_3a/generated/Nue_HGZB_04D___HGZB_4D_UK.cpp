@@ -32,13 +32,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_HGZB_04D__HGZB_4D_UK[] = {
+    {"Sunricher","SR-ZG9001K8-DIM"},
+};
 extern const PreparedDefinition kDef_HGZB_04D___HGZB_4D_UK{
     .zigbee_models=kModels_HGZB_04D___HGZB_4D_UK, .zigbee_models_count=sizeof(kModels_HGZB_04D___HGZB_4D_UK)/sizeof(kModels_HGZB_04D___HGZB_4D_UK[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="HGZB-04D / HGZB-4D-UK", .vendor="Nue3a",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_HGZB_04D__HGZB_4D_UK, .white_labels_count=sizeof(kWhiteLabels_HGZB_04D__HGZB_4D_UK)/sizeof(kWhiteLabels_HGZB_04D__HGZB_4D_UK[0]),
     .from_zigbee=kFz_HGZB_04D___HGZB_4D_UK, .from_zigbee_count=sizeof(kFz_HGZB_04D___HGZB_4D_UK)/sizeof(kFz_HGZB_04D___HGZB_4D_UK[0]),
     .to_zigbee=kTz_HGZB_04D___HGZB_4D_UK, .to_zigbee_count=sizeof(kTz_HGZB_04D___HGZB_4D_UK)/sizeof(kTz_HGZB_04D___HGZB_4D_UK[0]),
     .configure=nullptr, .on_event=nullptr,

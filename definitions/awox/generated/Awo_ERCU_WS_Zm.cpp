@@ -28,13 +28,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_ERCU_WS_Zm[] = {
+    {"EGLO","900116"},
+};
 extern const PreparedDefinition kDef_ERCU_WS_Zm{
     .zigbee_models=kModels_ERCU_WS_Zm, .zigbee_models_count=sizeof(kModels_ERCU_WS_Zm)/sizeof(kModels_ERCU_WS_Zm[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="ERCU_WS_Zm", .vendor="Awox",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_ERCU_WS_Zm, .white_labels_count=sizeof(kWhiteLabels_ERCU_WS_Zm)/sizeof(kWhiteLabels_ERCU_WS_Zm[0]),
     .from_zigbee=kFz_ERCU_WS_Zm, .from_zigbee_count=sizeof(kFz_ERCU_WS_Zm)/sizeof(kFz_ERCU_WS_Zm[0]),
     .to_zigbee=kTz_ERCU_WS_Zm, .to_zigbee_count=sizeof(kTz_ERCU_WS_Zm)/sizeof(kTz_ERCU_WS_Zm[0]),
     .configure=nullptr, .on_event=nullptr,

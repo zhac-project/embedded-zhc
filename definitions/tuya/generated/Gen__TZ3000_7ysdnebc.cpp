@@ -31,13 +31,17 @@ constexpr Expose kExp_min_TS1101__TZ3000_7ysdnebc_Gen__TZ3000_7ysdnebc[] = {
 };
 constexpr BindingSpec kBind_min_TS1101__TZ3000_7ysdnebc_Gen__TZ3000_7ysdnebc[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZ3000_7ysdnebc[] = {
+    {"OXT","SWTZ25"},
+};
 extern const PreparedDefinition kDefGen__TZ3000_7ysdnebc{
     .zigbee_models=kMGen__TZ3000_7ysdnebc,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNGen__TZ3000_7ysdnebc,.manufacturer_names_count=1,
     .model="TS1101__TZ3000_7ysdnebc",.vendor="Tuya",
     .meta=nullptr,.exposes=kExp_min_TS1101__TZ3000_7ysdnebc_Gen__TZ3000_7ysdnebc, .exposes_count=sizeof(kExp_min_TS1101__TZ3000_7ysdnebc_Gen__TZ3000_7ysdnebc)/sizeof(kExp_min_TS1101__TZ3000_7ysdnebc_Gen__TZ3000_7ysdnebc[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZ3000_7ysdnebc, .white_labels_count=sizeof(kWhiteLabels_Gen_TZ3000_7ysdnebc)/sizeof(kWhiteLabels_Gen_TZ3000_7ysdnebc[0]),
     .from_zigbee=kFz_min_TS1101__TZ3000_7ysdnebc_Gen__TZ3000_7ysdnebc, .from_zigbee_count=sizeof(kFz_min_TS1101__TZ3000_7ysdnebc_Gen__TZ3000_7ysdnebc)/sizeof(kFz_min_TS1101__TZ3000_7ysdnebc_Gen__TZ3000_7ysdnebc[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

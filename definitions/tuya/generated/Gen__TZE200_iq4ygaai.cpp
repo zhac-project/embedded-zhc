@@ -40,13 +40,17 @@ const TzConverter* const kTz__TZE200_iq4ygaai[] = { &kTzDp__TZE200_iq4ygaai };
 constexpr const char* kM__TZE200_iq4ygaai[] = { "TS0201" };
 constexpr const char* kN__TZE200_iq4ygaai[] = { "_TZE200_iq4ygaai" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE200_iq4ygaai[] = {
+    {"OWON","THS317-ET-EY"},
+};
 extern const PreparedDefinition kDefGen__TZE200_iq4ygaai{
     .zigbee_models=kM__TZE200_iq4ygaai,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_iq4ygaai,.manufacturer_names_count=1,
     .model="TS0201__TZE200_iq4ygaai",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE200_iq4ygaai, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_iq4ygaai)/sizeof(kWhiteLabels_Gen_TZE200_iq4ygaai[0]),
     .from_zigbee=kFz__TZE200_iq4ygaai,
     .from_zigbee_count=sizeof(kFz__TZE200_iq4ygaai)/sizeof(kFz__TZE200_iq4ygaai[0]),
     .to_zigbee=kTz__TZE200_iq4ygaai,

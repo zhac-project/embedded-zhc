@@ -54,13 +54,17 @@ const TzConverter* const kTz__TZE204_myd45weu[] = { &kTzDp__TZE204_myd45weu };
 constexpr const char* kM__TZE204_myd45weu[] = { "TS0601" };
 constexpr const char* kN__TZE204_myd45weu[] = { "_TZE204_myd45weu" };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_myd45weu[] = {
+    {"Tuya","QT-07S"},
+};
 extern const PreparedDefinition kDefGen__TZE204_myd45weu{
     .zigbee_models=kM__TZE204_myd45weu,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_myd45weu,.manufacturer_names_count=1,
     .model="TS0601__TZE204_myd45weu",.vendor="Tuya",
     .meta=nullptr,.exposes=nullptr,.exposes_count=0,
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_myd45weu, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_myd45weu)/sizeof(kWhiteLabels_Gen_TZE204_myd45weu[0]),
     .from_zigbee=kFz__TZE204_myd45weu,
     .from_zigbee_count=sizeof(kFz__TZE204_myd45weu)/sizeof(kFz__TZE204_myd45weu[0]),
     .to_zigbee=kTz__TZE204_myd45weu,

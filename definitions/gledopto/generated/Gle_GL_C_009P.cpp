@@ -11,6 +11,10 @@ namespace {
 constexpr const char* kModels_GL_C_009P[] = { "GL-C-009P" };
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_GL_C_009P[] = {
+    {"Gledopto","GL-C-009P_mini"},
+};
 extern const PreparedDefinition kDef_GL_C_009P{
     .zigbee_models=kModels_GL_C_009P,
     .zigbee_models_count=sizeof(kModels_GL_C_009P)/sizeof(kModels_GL_C_009P[0]),
@@ -19,7 +23,7 @@ extern const PreparedDefinition kDef_GL_C_009P{
     .model="GL-C-009P", .vendor="Gledopto",
     .meta=nullptr,
     .exposes=kExposesGledoptoLight, .exposes_count=kExposesGledoptoLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_GL_C_009P, .white_labels_count=sizeof(kWhiteLabels_GL_C_009P)/sizeof(kWhiteLabels_GL_C_009P[0]),
     .from_zigbee=kFzGledoptoLight, .from_zigbee_count=kFzGledoptoLightCount,
     .to_zigbee=kTzGledoptoLight,   .to_zigbee_count=kTzGledoptoLightCount,
     .configure=nullptr, .on_event=nullptr,

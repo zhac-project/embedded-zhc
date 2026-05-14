@@ -11,6 +11,7 @@ namespace {
 
 
 constexpr const char* kModels_ZS_SF00[] = { "Arteco" };
+constexpr const char* kManus_ZS_SF00[] = { "A89G12C" };
 
 }  // namespace
 
@@ -29,7 +30,7 @@ constexpr BindingSpec kBind_min_ZS_SF00_Tuy_ZS_SF00[] = { { 1, 0x0001 }, { 1, 0x
 extern const PreparedDefinition kDef_ZS_SF00{
     .zigbee_models=kModels_ZS_SF00, .zigbee_models_count=sizeof(kModels_ZS_SF00)/sizeof(kModels_ZS_SF00[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus_ZS_SF00, .manufacturer_names_count=sizeof(kManus_ZS_SF00)/sizeof(kManus_ZS_SF00[0]),
     .model="ZS-SF00", .vendor="Tuya",
     .meta=nullptr, .exposes=kExp_min_ZS_SF00_Tuy_ZS_SF00, .exposes_count=sizeof(kExp_min_ZS_SF00_Tuy_ZS_SF00)/sizeof(kExp_min_ZS_SF00_Tuy_ZS_SF00[0]),
     .white_labels=nullptr, .white_labels_count=0,

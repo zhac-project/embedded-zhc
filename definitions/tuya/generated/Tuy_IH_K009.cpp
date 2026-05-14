@@ -27,13 +27,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_IH_K009[] = {
+    {"Tuya","RSH-HS06_1"},
+};
 extern const PreparedDefinition kDef_IH_K009{
     .zigbee_models=kModels_IH_K009, .zigbee_models_count=sizeof(kModels_IH_K009)/sizeof(kModels_IH_K009[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_IH_K009, .manufacturer_names_count=sizeof(kManus_IH_K009)/sizeof(kManus_IH_K009[0]),
     .model="IH-K009", .vendor="Tuya",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_IH_K009, .white_labels_count=sizeof(kWhiteLabels_IH_K009)/sizeof(kWhiteLabels_IH_K009[0]),
     .from_zigbee=kFz_IH_K009, .from_zigbee_count=sizeof(kFz_IH_K009)/sizeof(kFz_IH_K009[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

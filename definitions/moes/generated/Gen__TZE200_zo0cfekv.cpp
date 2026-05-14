@@ -85,7 +85,7 @@ constexpr const char* kM__TZE200_zo0cfekv[] = { "TS0601" };
 constexpr const char* kN__TZE200_zo0cfekv[] = { "_TZE200_zo0cfekv" };
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_zo0cfekv{
-    .zigbee_models=kM__TZE200_zo0cfekv,.zigbee_models_count=1,
+    .zigbee_models=kM__TZE200_zo0cfekv,.zigbee_models_count=sizeof(kM__TZE200_zo0cfekv)/sizeof(kM__TZE200_zo0cfekv[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_zo0cfekv,.manufacturer_names_count=1,
     .model="TS0601__TZE200_zo0cfekv",.vendor="Tuya",

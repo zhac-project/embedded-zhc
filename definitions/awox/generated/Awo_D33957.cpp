@@ -14,6 +14,10 @@ constexpr const char* kModels_D33957[] = { "TLSR82xx" };
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_D33957[] = {
+    {"EGLO","12239"},
+};
 extern const PreparedDefinition kDef_D33957{
     .zigbee_models=kModels_D33957, .zigbee_models_count=sizeof(kModels_D33957)/sizeof(kModels_D33957[0]),
     .manufacturer_name_prefix=nullptr,
@@ -21,7 +25,7 @@ extern const PreparedDefinition kDef_D33957{
     .model="33957", .vendor="Awox",
     .meta=nullptr,
     .exposes=kExposesAwoxCTLight, .exposes_count=kExposesAwoxCTLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_D33957, .white_labels_count=sizeof(kWhiteLabels_D33957)/sizeof(kWhiteLabels_D33957[0]),
     .from_zigbee=kFzAwoxCTLight, .from_zigbee_count=kFzAwoxCTLightCount,
     .to_zigbee=kTzAwoxCTLight, .to_zigbee_count=kTzAwoxCTLightCount,
     .configure=nullptr, .on_event=nullptr,

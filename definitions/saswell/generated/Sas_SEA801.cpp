@@ -109,6 +109,15 @@ constexpr BindingSpec kBindings_SEA801[] = {
 
 }  // namespace
 
+
+constexpr WhiteLabel kWhiteLabels_SEA801[] = {
+    {"HiHome","WZB-TRVL"},
+    {"Hama","00176592"},
+    {"Maginon","WT-1"},
+    {"RTX","ZB-RT1"},
+    {"SETTI+","TRV001"},
+    {"Royal Thermo","RTE 77.001B"},
+};
 extern const PreparedDefinition kDef_SEA801{
     .zigbee_models=kModels_SEA801, .zigbee_models_count=sizeof(kModels_SEA801)/sizeof(kModels_SEA801[0]),
     .manufacturer_name_prefix=nullptr,
@@ -117,7 +126,7 @@ extern const PreparedDefinition kDef_SEA801{
     .model="SEA801-Zigbee/SEA802-Zigbee", .vendor="Saswell",
     .meta=nullptr,
     .exposes=kExposes_SEA801, .exposes_count=sizeof(kExposes_SEA801)/sizeof(kExposes_SEA801[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SEA801, .white_labels_count=sizeof(kWhiteLabels_SEA801)/sizeof(kWhiteLabels_SEA801[0]),
     .from_zigbee=kFz_SEA801, .from_zigbee_count=sizeof(kFz_SEA801)/sizeof(kFz_SEA801[0]),
     .to_zigbee=kTz_SEA801,   .to_zigbee_count=sizeof(kTz_SEA801)/sizeof(kTz_SEA801[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,

@@ -26,7 +26,7 @@ struct QBKG11_Endpoints {
 
 using FX = ::zhc::lumi::factory::LumiOnOff<QBKG11_Endpoints>;
 
-constexpr const char* kZigbeeModels[] = { "lumi.ctrl_ln1", "lumi.ctrl_ln1.aq1", "lumi.ctrl_ln2.aq1" };
+constexpr const char* kZigbeeModels[] = { "lumi.ctrl_ln1", "lumi.ctrl_ln1.aq1" };
 
 }  // namespace
 
@@ -47,8 +47,7 @@ constexpr BindingSpec kAutoBindings[] = {
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefQBKG11LM{
-    .zigbee_models       = kZigbeeModels,
-    .zigbee_models_count=3,
+    .zigbee_models=kZigbeeModels,.zigbee_models_count=sizeof(kZigbeeModels)/sizeof(kZigbeeModels[0]),
     .model               = "QBKG11LM",
     .vendor              = "Xiaomi",
     .meta                = nullptr,

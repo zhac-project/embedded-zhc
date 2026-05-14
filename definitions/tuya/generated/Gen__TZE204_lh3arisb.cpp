@@ -31,13 +31,40 @@ constexpr Expose kExp_min_TS0601__TZE204_lh3arisb_Gen__TZE204_lh3arisb[] = {
 };
 constexpr BindingSpec kBind_min_TS0601__TZE204_lh3arisb_Gen__TZE204_lh3arisb[] = { { 1, 0x0001 }, { 1, 0x0006 } };
 }  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE204_lh3arisb[] = {
+    {"Yushun","YS-MT750L"},
+    {"Shenzhen Golden Security Technology","GM46"},
+    {"Roximo","CRTZ01"},
+    {"Somgoms","ZSTY-SM-1DMZG-US-W_1"},
+    {"HUARUI","CMD900LE"},
+    {"Novato","WPK"},
+    {"Zemismart","ZMS1-TYZ"},
+    {"Trublockout","TB25-DC-10/25Z"},
+    {"Yushun","YS-MT750"},
+    {"Zemismart","ZM79E-DT"},
+    {"Binthen","BCM100D"},
+    {"Binthen","CV01A"},
+    {"Zemismart","M515EGB"},
+    {"Oz Smart Things","ZM85EL-1Z"},
+    {"Tuya","M515EGZT"},
+    {"Tuya","DT82LEMA-1.2N"},
+    {"Tuya","ZD82TN"},
+    {"Larkkey","ZSTY-SM-1SRZG-EU"},
+    {"Zemismart","AM43"},
+    {"Zemismart","M2805EGBZTN"},
+    {"Zemismart","BCM500DS-TYZ"},
+    {"A-OK","AM25"},
+    {"Alutech","AM/R-Sm"},
+    {"Quoya","AT8510-TY"},
+};
 extern const PreparedDefinition kDefGen__TZE204_lh3arisb{
     .zigbee_models=kMGen__TZE204_lh3arisb,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kNGen__TZE204_lh3arisb,.manufacturer_names_count=1,
     .model="TS0601__TZE204_lh3arisb",.vendor="Tuya",
     .meta=nullptr,.exposes=kExp_min_TS0601__TZE204_lh3arisb_Gen__TZE204_lh3arisb, .exposes_count=sizeof(kExp_min_TS0601__TZE204_lh3arisb_Gen__TZE204_lh3arisb)/sizeof(kExp_min_TS0601__TZE204_lh3arisb_Gen__TZE204_lh3arisb[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWhiteLabels_Gen_TZE204_lh3arisb, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_lh3arisb)/sizeof(kWhiteLabels_Gen_TZE204_lh3arisb[0]),
     .from_zigbee=kFz_min_TS0601__TZE204_lh3arisb_Gen__TZE204_lh3arisb, .from_zigbee_count=sizeof(kFz_min_TS0601__TZE204_lh3arisb_Gen__TZE204_lh3arisb)/sizeof(kFz_min_TS0601__TZE204_lh3arisb_Gen__TZE204_lh3arisb[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,

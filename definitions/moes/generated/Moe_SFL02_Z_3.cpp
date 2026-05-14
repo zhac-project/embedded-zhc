@@ -30,13 +30,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_SFL02_Z_3[] = {
+    {"Nova Digital","TPZ-3"},
+};
 extern const PreparedDefinition kDef_SFL02_Z_3{
     .zigbee_models=kModels_SFL02_Z_3, .zigbee_models_count=sizeof(kModels_SFL02_Z_3)/sizeof(kModels_SFL02_Z_3[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_SFL02_Z_3, .manufacturer_names_count=sizeof(kManus_SFL02_Z_3)/sizeof(kManus_SFL02_Z_3[0]),
     .model="SFL02-Z-3", .vendor="Moes",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_SFL02_Z_3, .white_labels_count=sizeof(kWhiteLabels_SFL02_Z_3)/sizeof(kWhiteLabels_SFL02_Z_3[0]),
     .from_zigbee=kFz_SFL02_Z_3, .from_zigbee_count=sizeof(kFz_SFL02_Z_3)/sizeof(kFz_SFL02_Z_3[0]),
     .to_zigbee=kTz_SFL02_Z_3, .to_zigbee_count=sizeof(kTz_SFL02_Z_3)/sizeof(kTz_SFL02_Z_3[0]),
     .configure=nullptr, .on_event=nullptr,

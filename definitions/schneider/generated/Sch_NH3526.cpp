@@ -28,13 +28,21 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+
+constexpr WhiteLabel kWhiteLabels_NH3526[] = {
+    {"Elko","EKO06988"},
+    {"Elko","EKO06989"},
+    {"Elko","EKO06990"},
+    {"Elko","EKO06991"},
+    {"LK","545D6306"},
+};
 extern const PreparedDefinition kDef_NH3526{
     .zigbee_models=kModels_NH3526, .zigbee_models_count=sizeof(kModels_NH3526)/sizeof(kModels_NH3526[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="NH3526", .vendor="Schneider",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_NH3526, .white_labels_count=sizeof(kWhiteLabels_NH3526)/sizeof(kWhiteLabels_NH3526[0]),
     .from_zigbee=kFz_NH3526, .from_zigbee_count=sizeof(kFz_NH3526)/sizeof(kFz_NH3526[0]),
     .to_zigbee=kTz_NH3526, .to_zigbee_count=sizeof(kTz_NH3526)/sizeof(kTz_NH3526[0]),
     .configure=nullptr, .on_event=nullptr,
