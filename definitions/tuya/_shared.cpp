@@ -279,18 +279,187 @@ bool fz_tuya_operation_mode(const DecodedMessage& msg,
     return decode_enum_attr(msg, kOperationModeCfg, out);
 }
 
-bool fz_tuya_on_off_action(const DecodedMessage& msg,
-                             const FzConverter&,
-                             const PreparedDefinition&,
-                             RuntimeContext&,
-                             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    const char* label = nullptr;
-    switch (msg.command_id) {
-        case 0x00: label = "off";    break;
-        case 0x01: label = "on";     break;
-        case 0x02: label = "toggle"; break;
-        default:   return false;
+// ── Unified Tuya action converter ──────────────────────────────────────
+//
+// One decode path covering every cmd a Tuya scene switch, button remote
+// or bound controller can send on cluster genOnOff:
+//
+//   cmd 0x00 / 0x01 / 0x02 — off / on / toggle (bound-controller frames)
+//   cmd 0xFD `tuyaAction`  — byte 0/1/2 → single / double / hold
+//   cmd 0xFC `tuyaAction2` — byte 0/1   → rotate_right / rotate_left
+//
+// Output format is selected by `TuyaActionConfig::prefix_with_endpoint`,
+// stored in `FzConverter::user_config`:
+//
+//   flat   — emit `"single"`, `"off"`, `"rotate_right"`, … (no prefix)
+//   per-ep — emit `"1_single"`, `"2_off"`, `"3_rotate_right"`, …
+//
+// Two pre-baked converter symbols are exported (`kFzTuyaActionFlat`,
+// `kFzTuyaActionPerEp`). Three legacy symbols
+// (`kFzTuyaOnOffAction`, `kFzTuyaMultiAction`, `kFzTuyaButtonAction`)
+// are kept as separate FzConverter objects pointing at the same
+// underlying function with the historically-correct config so existing
+// auto-generated device files compile unchanged.
+
+namespace {
+
+enum class ActKind : std::uint8_t {
+    Off = 0, On, Toggle, Single, Double, Hold, RotateRight, RotateLeft,
+    Count
+};
+
+constexpr const char* const kBareLabels[
+    static_cast<std::size_t>(ActKind::Count)] = {
+    "off", "on", "toggle", "single", "double", "hold",
+    "rotate_right", "rotate_left",
+};
+
+// Indexed by [src_endpoint - 1][ActKind]. 8 endpoints × 8 kinds.
+// Static rodata, ~512 B; the strings outlive any FixedPayload that
+// borrows them via Value::StringRef.
+constexpr const char* const kEpLabels[8][
+    static_cast<std::size_t>(ActKind::Count)] = {
+    {"1_off","1_on","1_toggle","1_single","1_double","1_hold","1_rotate_right","1_rotate_left"},
+    {"2_off","2_on","2_toggle","2_single","2_double","2_hold","2_rotate_right","2_rotate_left"},
+    {"3_off","3_on","3_toggle","3_single","3_double","3_hold","3_rotate_right","3_rotate_left"},
+    {"4_off","4_on","4_toggle","4_single","4_double","4_hold","4_rotate_right","4_rotate_left"},
+    {"5_off","5_on","5_toggle","5_single","5_double","5_hold","5_rotate_right","5_rotate_left"},
+    {"6_off","6_on","6_toggle","6_single","6_double","6_hold","6_rotate_right","6_rotate_left"},
+    {"7_off","7_on","7_toggle","7_single","7_double","7_hold","7_rotate_right","7_rotate_left"},
+    {"8_off","8_on","8_toggle","8_single","8_double","8_hold","8_rotate_right","8_rotate_left"},
+};
+
+struct TuyaActionConfig {
+    bool prefix_with_endpoint;
+};
+
+constexpr TuyaActionConfig kCfgActFlat  { /*prefix=*/false };
+constexpr TuyaActionConfig kCfgActPerEp { /*prefix=*/true  };
+
+// ── Retransmit dedup ──────────────────────────────────────────────
+//
+// Tuya scene-switch buttons retransmit each press 2-3× with the SAME
+// transaction-sequence byte. Without dedup, rules fire 2-3× per press.
+// z2m solves this with `utils.hasAlreadyProcessedMessage` keyed on
+// `(ieee, tsn)` inside an ~500 ms window. We mirror the shape but key
+// on `RuntimeContext::device_index` (cheaper than IEEE, already in
+// the dispatch context) with an 800 ms window — Tuya retx are spaced
+// further apart than typical Zigbee retries.
+//
+// 8-slot LRU. Most homes have a single button being pressed at a time;
+// 8 covers simultaneous presses across the network with headroom. When
+// the table fills, oldest-by-timestamp gets evicted. Single-threaded
+// dispatch task makes the static-state lock-free safe.
+//
+// `device_index == 0` short-circuits dedup: it's the default-constructed
+// value used by host tests / synthetic frames where no real device is
+// behind the message. Production paths always assign a positive index.
+
+constexpr std::size_t   kDedupSlots    = 8;
+constexpr std::uint32_t kDedupWindowMs = 800;
+
+struct DedupSlot {
+    std::uint16_t device_index;   // 0 = empty
+    std::uint8_t  last_tsn;
+    std::uint32_t last_ms;
+};
+
+DedupSlot s_action_dedup[kDedupSlots]{};
+
+bool is_action_retransmit(std::uint16_t dev_idx,
+                           std::uint8_t  tsn,
+                           std::uint32_t now_ms) {
+    if (dev_idx == 0) return false;
+    std::size_t lru_idx = 0;
+    std::uint32_t lru_ts = 0xFFFFFFFFu;
+    for (std::size_t i = 0; i < kDedupSlots; ++i) {
+        auto& s = s_action_dedup[i];
+        if (s.device_index == dev_idx) {
+            const std::uint32_t age = now_ms - s.last_ms;
+            if (s.last_tsn == tsn && age < kDedupWindowMs) {
+                // Refresh timestamp so a stuck retx burst stays
+                // suppressed even past the initial window.
+                s.last_ms = now_ms;
+                return true;
+            }
+            s.last_tsn = tsn;
+            s.last_ms  = now_ms;
+            return false;
+        }
+        if (s.last_ms <= lru_ts) {
+            lru_ts  = s.last_ms;
+            lru_idx = i;
+        }
     }
+    s_action_dedup[lru_idx] = { dev_idx, tsn, now_ms };
+    return false;
+}
+
+}  // namespace
+
+// Test-only: clears the dedup cache so fixture tests are independent.
+// Not declared in the header — tests forward-declare with extern "C++".
+void reset_action_dedup_cache_for_test() {
+    for (auto& s : s_action_dedup) s = {};
+}
+
+bool fz_tuya_action(const DecodedMessage& msg, const FzConverter& self,
+                     const PreparedDefinition&,
+                     RuntimeContext& ctx,
+                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const auto* cfg =
+        reinterpret_cast<const TuyaActionConfig*>(self.user_config);
+    if (!cfg) return false;
+
+    // Dedup retx before any decode work — same (device, tsn) within
+    // window returns "matched but no output", so the dispatcher won't
+    // log it as unhandled and the rules engine sees no `action` field.
+    if (is_action_retransmit(ctx.device_index,
+                              msg.transaction_sequence,
+                              ctx.now())) {
+        return true;
+    }
+
+    ActKind kind;
+    switch (msg.command_id) {
+        case 0x00: kind = ActKind::Off;    break;
+        case 0x01: kind = ActKind::On;     break;
+        case 0x02: kind = ActKind::Toggle; break;
+        case 0xFD:
+        case 0xFC: {
+            // Skip ZCL header: 3 bytes (fc,tsn,cmd) + 2 for manu-code.
+            const std::size_t hdr = msg.manufacturer_specific ? 5 : 3;
+            if (msg.raw_data.size() < hdr + 1) return false;
+            const std::uint8_t value = msg.raw_data[hdr];
+            if (msg.command_id == 0xFD) {
+                switch (value) {
+                    case 0: kind = ActKind::Single; break;
+                    case 1: kind = ActKind::Double; break;
+                    case 2: kind = ActKind::Hold;   break;
+                    default: return false;
+                }
+            } else {  // 0xFC tuyaAction2 — rotary remotes
+                switch (value) {
+                    case 0: kind = ActKind::RotateRight; break;
+                    case 1: kind = ActKind::RotateLeft;  break;
+                    default: return false;
+                }
+            }
+            break;
+        }
+        default: return false;
+    }
+
+    const auto idx = static_cast<std::size_t>(kind);
+    const char* label = nullptr;
+    if (cfg->prefix_with_endpoint) {
+        const std::uint8_t ep = msg.src_endpoint;
+        if (ep < 1 || ep > 8) return false;
+        label = kEpLabels[ep - 1][idx];
+    } else {
+        label = kBareLabels[idx];
+    }
+
     Value v{}; v.type = ValueType::StringRef; v.str = label;
     out.put("action", v);
     return true;
@@ -316,19 +485,34 @@ ZHC_TUYA_ATTR_CVT(kFzTuyaPowerOnBehavior, "genOnOff", fz_tuya_power_on_behavior)
 ZHC_TUYA_ATTR_CVT(kFzTuyaIndicatorMode,   "genOnOff", fz_tuya_indicator_mode);
 ZHC_TUYA_ATTR_CVT(kFzTuyaOperationMode,   "genOnOff", fz_tuya_operation_mode);
 
-extern const FzConverter kFzTuyaOnOffAction{
-    .family            = FrameFamily::Zcl,
-    .cluster           = "genOnOff",
-    .type_mask         = type_bit(MessageType::Command),
-    .command_id        = WILDCARD_CMD_ID,
-    .attr_id           = WILDCARD_ATTR_ID,
-    .endpoint          = WILDCARD_ENDPOINT,
-    .frame_flags_mask  = 0,
-    .frame_flags_value = 0,
-    .direction         = Direction::ServerToClient,
-    .fn                = { .zcl_fn = fz_tuya_on_off_action },
-    .user_config       = nullptr,
-};
+#define ZHC_TUYA_ACTION_CVT(var, cfg_ptr)                                 \
+    extern const FzConverter var{                                          \
+        .family            = FrameFamily::Zcl,                             \
+        .cluster           = "genOnOff",                                   \
+        .type_mask         = type_bit(MessageType::Command),               \
+        .command_id        = WILDCARD_CMD_ID,                              \
+        .attr_id           = WILDCARD_ATTR_ID,                             \
+        .endpoint          = WILDCARD_ENDPOINT,                            \
+        .frame_flags_mask  = 0,                                            \
+        .frame_flags_value = 0,                                            \
+        .direction         = Direction::ClientToServer,                    \
+        .fn                = { .zcl_fn = fz_tuya_action },                 \
+        .user_config       = cfg_ptr,                                      \
+    }
+
+// Canonical names — preferred for new defs.
+ZHC_TUYA_ACTION_CVT(kFzTuyaActionFlat,   &kCfgActFlat);
+ZHC_TUYA_ACTION_CVT(kFzTuyaActionPerEp,  &kCfgActPerEp);
+
+// Legacy names — kept as separate FzConverter instances pointing at the
+// same unified function with the config each name historically implied:
+//   kFzTuyaOnOffAction  was bare on/off/toggle  → flat
+//   kFzTuyaMultiAction  was bare single/double  → flat
+//   kFzTuyaButtonAction was "<ep>_<click>"      → per-ep
+// Auto-generated device files still reference these by name.
+ZHC_TUYA_ACTION_CVT(kFzTuyaOnOffAction,  &kCfgActFlat);
+ZHC_TUYA_ACTION_CVT(kFzTuyaMultiAction,  &kCfgActFlat);
+ZHC_TUYA_ACTION_CVT(kFzTuyaButtonAction, &kCfgActPerEp);
 
 bool fz_tuya_switch_scene(const DecodedMessage& msg,
                            const FzConverter&,
@@ -360,54 +544,6 @@ extern const FzConverter kFzTuyaSwitchScene{
     .frame_flags_value = 0,
     .direction         = Direction::ClientToServer,
     .fn                = { .zcl_fn = fz_tuya_switch_scene },
-    .user_config       = nullptr,
-};
-
-bool fz_tuya_multi_action(const DecodedMessage& msg,
-                            const FzConverter&,
-                            const PreparedDefinition&,
-                            RuntimeContext&,
-                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    // The cmd_id filter lives here (not in the selector) so one
-    // converter handles both `tuyaAction` and `tuyaAction2` without
-    // duplicating the descriptor.
-    if (msg.command_id != 0xFD && msg.command_id != 0xFC) return false;
-
-    const std::size_t hdr = msg.manufacturer_specific ? 5 : 3;
-    if (msg.raw_data.size() < hdr + 1) return false;
-    const std::uint8_t value = msg.raw_data[hdr];
-
-    const char* label = nullptr;
-    if (msg.command_id == 0xFD) {
-        switch (value) {
-            case 0: label = "single"; break;
-            case 1: label = "double"; break;
-            case 2: label = "hold";   break;
-        }
-    } else {  // 0xFC tuyaAction2
-        switch (value) {
-            case 0: label = "rotate_right"; break;
-            case 1: label = "rotate_left";  break;
-        }
-    }
-    if (!label) return false;   // unmapped value — fall through
-
-    Value v{}; v.type = ValueType::StringRef; v.str = label;
-    out.put("action", v);
-    return true;
-}
-
-extern const FzConverter kFzTuyaMultiAction{
-    .family            = FrameFamily::Zcl,
-    .cluster           = "genOnOff",
-    .type_mask         = type_bit(MessageType::Command),
-    .command_id        = WILDCARD_CMD_ID,   // filtered inside fn (0xFD + 0xFC)
-    .attr_id           = WILDCARD_ATTR_ID,
-    .endpoint          = WILDCARD_ENDPOINT,
-    .frame_flags_mask  = 0,
-    .frame_flags_value = 0,
-    .direction         = Direction::ClientToServer,
-    .fn                = { .zcl_fn = fz_tuya_multi_action },
     .user_config       = nullptr,
 };
 

@@ -5,7 +5,13 @@
 #include "definitions/tuya/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaOnOffAction };
+// TS004F is rotary-capable (4 buttons + clockwise/counter-clockwise wheel).
+// In event-mode it emits cmd 0xFD `tuyaAction` (single/double/hold) and
+// cmd 0xFC `tuyaAction2` (rotate_right/rotate_left). kFzTuyaMultiAction
+// handles both. Bare action string (no endpoint prefix) — TS004F surfaces
+// all buttons on EP1 so per-button differentiation needs a different
+// mechanism (separate ticket).
+const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaMultiAction };
 constexpr const char* kModels[] = { "TS004F" };
 }
 

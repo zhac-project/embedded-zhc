@@ -5,7 +5,11 @@
 #include "definitions/tuya/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaOnOffAction };
+// kFzTuyaButtonAction handles cmd 0xFD (commandTuyaAction). The previous
+// kFzTuyaOnOffAction only mapped 0x00/0x01/0x02 (on/off/toggle), so real
+// presses (cmd 0xFD payload 0/1/2 = single/double/hold per src_endpoint)
+// fell through with "(no match)" and shadow stayed empty.
+const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaButtonAction };
 constexpr const char* kModels[] = { "TS0044" };
 }
 

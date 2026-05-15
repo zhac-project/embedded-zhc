@@ -121,15 +121,60 @@ bool fz_tuya_operation_mode(const DecodedMessage& msg,
                               FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 extern const FzConverter kFzTuyaOperationMode;
 
-bool fz_tuya_on_off_action(const DecodedMessage& msg,
-                             const FzConverter& self,
-                             const PreparedDefinition& def,
-                             RuntimeContext& ctx,
-                             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
-extern const FzConverter kFzTuyaOnOffAction;
+// ── Unified Tuya action converter ──────────────────────────────────
+//
+// One decoder for every cmd a Tuya scene switch / button remote / bound
+// controller can send on cluster genOnOff:
+//
+//   cmd 0x00 / 0x01 / 0x02 — off / on / toggle (bound-controller mode)
+//   cmd 0xFD `tuyaAction`  — byte → "single" / "double" / "hold"
+//   cmd 0xFC `tuyaAction2` — byte → "rotate_right" / "rotate_left"
+//
+// Two pre-baked converters with different output formats:
+//
+//   kFzTuyaActionFlat  — emits bare `"single"`, `"off"`, `"rotate_right"`,
+//                         … . Use for single-endpoint devices: TS0041,
+//                         TS0041A, TS004F rotaries, bound on/off remotes.
+//
+//   kFzTuyaActionPerEp — emits `"1_single"`, `"2_off"`, `"3_rotate_right"`,
+//                         … keyed by src_endpoint. Use for multi-button
+//                         scene switches: TS0042, TS0043, TS0044, TS0045.
+//
+// Three legacy symbols kept for back-compat with auto-generated device
+// files (they reference these by name). All three are independent
+// FzConverter instances pointing at the same unified decode function:
+//
+//   kFzTuyaOnOffAction  ≡ kFzTuyaActionFlat   (was on/off/toggle only)
+//   kFzTuyaMultiAction  ≡ kFzTuyaActionFlat   (was 0xFD+0xFC only)
+//   kFzTuyaButtonAction ≡ kFzTuyaActionPerEp  (was 0xFD only)
+//
+// Net change vs legacy code:
+//   - kFzTuyaOnOffAction now also handles 0xFD / 0xFC (free fix for
+//     scene switches that the generator wrongly bound to it).
+//   - Direction switched from ServerToClient to ClientToServer to match
+//     actual Tuya wire frames (real devices send fc bit 3 = 0).
+//
+// z2m-sources: lib/tuya.ts `fz.on_off_action`, `fz.multi_action`.
+//
+// New code MUST use the canonical names. The legacy names are kept
+// only to spare the ~70 auto-generated files from touch-and-regen
+// churn; the `zhc_legacy_tuya_action_guard` CMake test pins the
+// usage count so new occurrences fail CI.
 
-// Decode the Tuya-private `tuyaAction` command (genOnOff cmd 0xFD):
-// body = { value:u8, data:buffer }. Emits
+// Canonical — preferred.
+extern const FzConverter kFzTuyaActionFlat;
+extern const FzConverter kFzTuyaActionPerEp;
+
+// LEGACY: prefer kFzTuyaActionFlat. Same configured behaviour.
+extern const FzConverter kFzTuyaOnOffAction;
+// LEGACY: prefer kFzTuyaActionFlat. Same configured behaviour.
+extern const FzConverter kFzTuyaMultiAction;
+// LEGACY: prefer kFzTuyaActionPerEp. Same configured behaviour.
+extern const FzConverter kFzTuyaButtonAction;
+
+// Decode the Tuya-private `tuyaAction` command (genOnOff cmd 0xFD) as a
+// scene selector (distinct from the action converters above):
+//   body = { value:u8, data:buffer }
 //   action       = "switch_scene"
 //   action_scene = value
 // z2m-source: lib/tuya.ts `fz.switch_scene`.
@@ -139,22 +184,6 @@ bool fz_tuya_switch_scene(const DecodedMessage& msg,
                            RuntimeContext& ctx,
                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 extern const FzConverter kFzTuyaSwitchScene;
-
-// Tuya multi-action decoder — handles BOTH custom genOnOff commands
-// used by smart-knob / scene-remote TS004F family:
-//   cmd 0xFD `tuyaAction`   body { value:u8 } → "single"/"double"/"hold"
-//   cmd 0xFC `tuyaAction2`  body { value:u8 } → "rotate_right"/"rotate_left"
-// Emits a single `action` string. Registered with
-// `command_id = WILDCARD_CMD_ID`; the function filters by
-// `msg.command_id` internally so unrelated commands fall through.
-//
-// z2m-source: lib/tuya.ts `fz.multi_action`.
-bool fz_tuya_multi_action(const DecodedMessage& msg,
-                            const FzConverter& self,
-                            const PreparedDefinition& def,
-                            RuntimeContext& ctx,
-                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
-extern const FzConverter kFzTuyaMultiAction;
 
 extern const FzConverter kFzIgnoreTuyaSetTime;
 

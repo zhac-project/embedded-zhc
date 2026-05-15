@@ -4,7 +4,10 @@
 #include "definitions/tuya/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaOnOffAction };
+// Single-button device: cmd 0xFD payload 0/1/2 → bare "single"/"double"/
+// "hold" (matches z2m action enum). kFzTuyaMultiAction handles 0xFD
+// (and 0xFC for rotaries — harmless here, button-only).
+const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaMultiAction };
 constexpr const char* kModels[] = { "TS0041" };
 }
 

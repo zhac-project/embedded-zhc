@@ -4,9 +4,12 @@
 #include "definitions/tuya/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
+// Single-button device: cmd 0xFD payload 0/1/2 → bare action string
+// matching z2m enum ["single","double","hold"]. Keeps kFzTuyaMcuSyncTime
+// for the MCU sync-time hook (cluster 0xEF00 cmd 0x24).
 const FzConverter* const kFzGen_TS0041A[] = {
     &::zhc::tuya::kFzTuyaMcuSyncTime,
-    &::zhc::tuya::kFzTuyaOnOffAction,
+    &::zhc::tuya::kFzTuyaMultiAction,
 };
 constexpr const char* kModelsGen_TS0041A[] = { "TS0041A" };
 }

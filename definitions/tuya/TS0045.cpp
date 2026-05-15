@@ -4,7 +4,9 @@
 #include "definitions/tuya/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaOnOffAction };
+// 5-button device: cmd 0xFD payload 0/1/2 + src_endpoint 1..5 →
+// "1_single".."5_hold". Same wire shape as the rest of the TS004X family.
+const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaButtonAction };
 constexpr const char* kModels[] = { "TS0045" };
 }
 

@@ -836,6 +836,16 @@ target_link_libraries(zhc_moes_zht_sr_tests PRIVATE zhc_definitions)
 add_executable(zhc_zosung_ir_tests tests/test_zosung_ir.cpp)
 target_link_libraries(zhc_zosung_ir_tests PRIVATE zhc_definitions)
 
+# Behavioural-parity fixtures locking wire frames captured on real
+# hardware after a generator miss was hand-corrected. Regressions in
+# either the definition or shared converter (kFzTuyaButtonAction,
+# kFzIasMotionAlarm) will surface here before they reach the device.
+add_executable(zhc_zg_204z_tests tests/test_zg_204z.cpp)
+target_link_libraries(zhc_zg_204z_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_ts0044_tests tests/test_ts0044.cpp)
+target_link_libraries(zhc_ts0044_tests PRIVATE zhc_definitions)
+
 enable_testing()
 add_test(NAME zhc_tests           COMMAND zhc_tests)
 add_test(NAME zhc_parser_tests    COMMAND zhc_parser_tests)
@@ -877,6 +887,8 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)
+add_test(NAME zhc_zg_204z_tests             COMMAND zhc_zg_204z_tests)
+add_test(NAME zhc_ts0044_tests              COMMAND zhc_ts0044_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
@@ -888,6 +900,14 @@ add_test(NAME zhc_fixtures
 # overlaps) are informational.
 add_test(NAME zhc_collision_audit
          COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/tools/audit_collisions.py)
+
+# Legacy Tuya action-name guard: pins kFzTuya{OnOff,Multi,Button}Action
+# usage to its 2026-05-15 baseline. New uses (or growth in an existing
+# file) fail; reductions are always allowed. Drains as the generator is
+# updated to emit canonical kFzTuyaAction{Flat,PerEp} names.
+add_test(NAME zhc_legacy_tuya_action_guard
+         COMMAND python3
+            ${CMAKE_CURRENT_SOURCE_DIR}/tools/lint_no_new_legacy_tuya_action.py)
 
 # Tier-comment guard: every device cpp under definitions/<vendor>/
 # (excluding shared + registry scaffolding) must carry a

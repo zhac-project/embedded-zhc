@@ -5,7 +5,9 @@
 #include "definitions/tuya/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaOnOffAction };
+// 3-button device: cmd 0xFD payload 0/1/2 + src_endpoint 1..3 →
+// "1_single".."3_hold" matching z2m action enum.
+const FzConverter* const kFz[] = { &::zhc::tuya::kFzTuyaButtonAction };
 constexpr const char* kModels[] = { "TS0043" };
 }
 
