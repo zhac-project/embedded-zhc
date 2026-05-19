@@ -128,19 +128,19 @@ int decode_value(std::span<const std::uint8_t> data,
         out.bytes = data.subspan(1, len);
         return 1 + len;
     }
-    // Long octet / char string: 2-byte length.
+    // Long octet / char string: 2-byte length. Both stored as BytesRef:
+    // the raw radio buffer is length-prefixed with no trailing NUL, so a
+    // StringRef pointer would tempt callers into running strlen/strcmp
+    // off the end of the string into adjacent frame bytes. ValueType::
+    // StringRef is reserved for converter-constructed literal C strings.
     if (type == 0x43 || type == 0x44) {
         if (data.size() < 2) return -1;
         const std::uint16_t len =
             static_cast<std::uint16_t>(data[0]) |
             (static_cast<std::uint16_t>(data[1]) << 8);
         if (data.size() < static_cast<std::size_t>(len) + 2) return -1;
-        out.type = (type == 0x43) ? ValueType::BytesRef : ValueType::StringRef;
-        if (type == 0x43) {
-            out.bytes = data.subspan(2, len);
-        } else {
-            out.str = reinterpret_cast<const char*>(data.data() + 2);
-        }
+        out.type  = ValueType::BytesRef;
+        out.bytes = data.subspan(2, len);
         return 2 + len;
     }
     return -1;
@@ -171,16 +171,20 @@ bool parse_report_attributes(std::span<const std::uint8_t> payload,
         Value v{};
         const int consumed = decode_value(value_span, type, v);
         if (consumed < 0) return false;
+        // Advance before any skip so we keep walking the frame.
+        pos += 3 + static_cast<std::size_t>(consumed);
 
         const char* key = lookup_key(attr_id, known);
         if (!key) {
             key = format_decimal_key(attr_id, key_scratch,
                                       scratch_cap, scratch_offset);
-            if (!key) return false;  // scratch exhausted
+            // Scratch exhausted — drop this single unknown attr, keep
+            // walking. Earlier C-2 behaviour returned `false` here and
+            // the adapter discarded every already-decoded attr, which
+            // silently lost state on Aqara/Lumi multi-attr reports.
+            if (!key) continue;
         }
         if (!out.put(key, v)) return false;  // payload full
-
-        pos += 3 + static_cast<std::size_t>(consumed);
     }
     return pos == payload.size();
 }
@@ -209,16 +213,17 @@ bool parse_read_attr_response(std::span<const std::uint8_t> payload,
         Value v{};
         const int consumed = decode_value(value_span, type, v);
         if (consumed < 0) return false;
+        pos += static_cast<std::size_t>(consumed);
 
         const char* key = lookup_key(attr_id, known);
         if (!key) {
             key = format_decimal_key(attr_id, key_scratch,
                                       scratch_cap, scratch_offset);
-            if (!key) return false;
+            // See parse_report_attributes — drop only the unknown attr,
+            // not the whole frame (C-2).
+            if (!key) continue;
         }
         if (!out.put(key, v)) return false;
-
-        pos += static_cast<std::size_t>(consumed);
     }
     return pos == payload.size();
 }
@@ -263,7 +268,12 @@ bool parse_tuya_dp_stream(std::span<const std::uint8_t> payload,
             static_cast<std::uint16_t>(payload[pos + 3]);     // big-endian
         pos += 4;
         if (pos + len > payload.size()) return false;
-        if (count >= out_records.size()) return false;
+        if (count >= out_records.size()) {
+            // Out of slots: report success with `count == capacity` so
+            // the caller still sees the DPs already decoded. Previous
+            // `return false` discarded every valid DP in the frame.
+            return true;
+        }
         out_records[count++] = TuyaDpRecord{
             dp_id, dp_t, payload.subspan(pos, len),
         };

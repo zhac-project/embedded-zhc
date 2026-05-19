@@ -116,9 +116,9 @@ void test_read_then_cmd_then_wait() {
     static constexpr std::uint8_t body[]  = { 0x01, 0x02, 0x03 };
 
     ConfigStep steps[] = {
-        { ConfigStepOp::Read, 1, 0x0000, 0,    0, attrs, sizeof(attrs), 1000 },
-        { ConfigStepOp::Cmd,  1, 0x0006, 0x42, 0, body,  sizeof(body),  1000 },
-        { ConfigStepOp::Wait, 0, 0,      0,    0, nullptr, 0,            50   },
+        { ConfigStepOp::Read, 1, 0x0000, 0,    0, attrs, sizeof(attrs), 0, 0 },
+        { ConfigStepOp::Cmd,  1, 0x0006, 0x42, 0, body,  sizeof(body),  0, 0 },
+        { ConfigStepOp::Wait, 0, 0,      0,    0, nullptr, 0,           50, 0 },
     };
     auto def = make_def(steps, 3);
     auto ctx = make_ctx();
@@ -143,7 +143,7 @@ void test_read_then_cmd_then_wait() {
 void test_endpoint_zero_coerces_to_1() {
     reset_state();
     ConfigStep steps[] = {
-        { ConfigStepOp::Cmd, 0, 0x0006, 0x10, 0, nullptr, 0, 0 },
+        { ConfigStepOp::Cmd, 0, 0x0006, 0x10, 0, nullptr, 0, 0, 0 },
     };
     auto def = make_def(steps, 1);
     auto ctx = make_ctx();
@@ -158,8 +158,8 @@ void test_endpoint_zero_coerces_to_1() {
 void test_first_fail_aborts() {
     reset_state();
     ConfigStep steps[] = {
-        { ConfigStepOp::Cmd, 1, 0x0006, 0x10, 0, nullptr, 0, 0 },
-        { ConfigStepOp::Cmd, 1, 0x0006, 0x11, 0, nullptr, 0, 0 },
+        { ConfigStepOp::Cmd, 1, 0x0006, 0x10, 0, nullptr, 0, 0, 0 },
+        { ConfigStepOp::Cmd, 1, 0x0006, 0x11, 0, nullptr, 0, 0, 0 },
     };
     auto def = make_def(steps, 2);
     auto ctx = make_ctx();
@@ -176,7 +176,7 @@ void test_callback_ok() {
     reset_state();
     const ConfigCallbackFn cbs[] = { &mock_callback_ok };
     ConfigStep steps[] = {
-        { ConfigStepOp::Callback, 3, 0, /*idx=*/0, 0, nullptr, 0, 0 },
+        { ConfigStepOp::Callback, 3, 0, /*idx=*/0, 0, nullptr, 0, 0, 0 },
     };
     auto def = make_def(steps, 1, cbs, 1);
     auto ctx = make_ctx();
@@ -191,7 +191,7 @@ void test_callback_bad_index() {
     reset_state();
     const ConfigCallbackFn cbs[] = { &mock_callback_ok };
     ConfigStep steps[] = {
-        { ConfigStepOp::Callback, 1, 0, /*idx=*/2, 0, nullptr, 0, 0 },
+        { ConfigStepOp::Callback, 1, 0, /*idx=*/2, 0, nullptr, 0, 0, 0 },
     };
     auto def = make_def(steps, 1, cbs, 1);
     auto ctx = make_ctx();
@@ -205,7 +205,7 @@ void test_callback_bad_index() {
 void test_missing_hook_fails() {
     reset_state();
     ConfigStep steps[] = {
-        { ConfigStepOp::Read, 1, 0x0000, 0, 0, nullptr, 0, 0 },
+        { ConfigStepOp::Read, 1, 0x0000, 0, 0, nullptr, 0, 0, 0 },
     };
     auto def = make_def(steps, 1);
     auto ctx = make_ctx(false);   // no hooks wired
@@ -220,7 +220,7 @@ void test_missing_hook_fails() {
 void test_wait_without_sleep_hook() {
     reset_state();
     ConfigStep steps[] = {
-        { ConfigStepOp::Wait, 0, 0, 0, 0, nullptr, 0, 25 },
+        { ConfigStepOp::Wait, 0, 0, 0, 0, nullptr, 0, 25, 0 },
     };
     auto def = make_def(steps, 1);
     auto ctx = make_ctx(false);   // no hooks wired

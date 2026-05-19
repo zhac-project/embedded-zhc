@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 #include "zhc/platform.hpp"
 #include "zhc/runtime/definition.hpp"
@@ -91,12 +92,35 @@ struct RuntimeContext {
 
     // Multi-endpoint suffix arena. Used by `dispatch_from_zigbee` to
     // build per-EP-suffixed keys (e.g. `state_l2`) for devices whose
-    // PreparedDefinition opts in via `endpoint_map`. The arena keeps
-    // emitted-key strings alive for the lifetime of the returned
-    // `DispatchResult`. `ep_scratch_used` is reset implicitly because
-    // RuntimeContext is constructed fresh per inbound dispatch.
+    // PreparedDefinition opts in via `endpoint_map`. Also reused by
+    // converters that need to back a `Value::StringRef` with storage
+    // that outlives the converter call but doesn't survive past the
+    // dispatch — via `alloc_str()` below. The arena keeps emitted-key
+    // strings alive for the lifetime of the returned `DispatchResult`.
+    // `ep_scratch_used` is reset implicitly because RuntimeContext is
+    // constructed fresh per inbound dispatch.
     char                  ep_scratch[256]{};
     std::uint16_t         ep_scratch_used = 0;
+
+    // Copy `len` bytes from `src` into the per-dispatch arena and NUL-
+    // terminate. Returns a stable C-string pointer valid until the
+    // RuntimeContext goes out of scope (end of dispatch). Returns null
+    // when the arena would overflow — callers must check before stashing
+    // the result into a `Value::StringRef`. Per-dispatch lifetime means
+    // bursts within one frame are safe (unlike the previous static ring
+    // buffer which a 4th frame would overwrite); cross-dispatch refs
+    // would dangle, but converters never retain pointers past return.
+    const char* alloc_str(const char* src, std::size_t len) {
+        if (!src) return nullptr;
+        const std::size_t need = len + 1;  // +'\0'
+        if (ep_scratch_used + need > sizeof(ep_scratch)) return nullptr;
+        char* p = ep_scratch + ep_scratch_used;
+        std::memcpy(p, src, len);
+        p[len] = '\0';
+        ep_scratch_used =
+            static_cast<std::uint16_t>(ep_scratch_used + need);
+        return p;
+    }
 
     DeviceRuntimeState* device_state() {
         return (store && store_get) ? store_get(store, device_index) : nullptr;

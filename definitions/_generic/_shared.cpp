@@ -10,6 +10,8 @@
 #include <cstdio>
 #include <cstring>
 
+#include "zhc/runtime/dispatch.hpp"   // RuntimeContext::alloc_str
+
 namespace zhc::generic {
 
 // ── fz_on_off ───────────────────────────────────────────────────────
@@ -1043,7 +1045,7 @@ constexpr const char* kArmModeLut[] = {
 };
 
 bool fz_ias_ace_arm(const DecodedMessage& msg, const FzConverter&,
-                     const PreparedDefinition&, RuntimeContext&,
+                     const PreparedDefinition&, RuntimeContext& ctx,
                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     if (msg.raw_body.size() < 2) return false;
     const std::uint8_t arm_mode = msg.raw_body[0];
@@ -1055,20 +1057,19 @@ bool fz_ias_ace_arm(const DecodedMessage& msg, const FzConverter&,
             ? kArmModeLut[arm_mode] : "unknown";
     out.put("action", a);
 
-    // PIN code: copy into a static ring buffer so the StringRef stays
-    // valid for the dispatch's lifetime. 16 chars cap matches the
-    // longest realistic ZCL ssIasAce code length.
-    static char code_ring[3][16];
-    static unsigned code_ring_idx = 0;
-    auto& slot = code_ring[code_ring_idx++ % 3];
-    const std::size_t n = code_len < (sizeof(slot) - 1) ? code_len
-                                                         : (sizeof(slot) - 1);
-    for (std::size_t i = 0; i < n; ++i) {
-        slot[i] = static_cast<char>(msg.raw_body[2 + i]);
+    // PIN code: copy into the per-dispatch arena so the StringRef
+    // remains valid through the merge. Cap at 16 chars to match the
+    // longest realistic ZCL ssIasAce code length; failure to allocate
+    // (arena full) drops the field rather than dangling. The previous
+    // 3-slot static ring could be clobbered by a 4th panel within the
+    // same dispatch.
+    const std::size_t kCodeCap = 15;   // +1 NUL fits in alloc_str
+    const std::size_t n = code_len < kCodeCap ? code_len : kCodeCap;
+    if (const char* s =
+            ctx.alloc_str(reinterpret_cast<const char*>(msg.raw_body.data() + 2), n)) {
+        Value c{}; c.type = ValueType::StringRef; c.str = s;
+        out.put("action_code", c);
     }
-    slot[n] = '\0';
-    Value c{}; c.type = ValueType::StringRef; c.str = slot;
-    out.put("action_code", c);
 
     Value z{}; z.type = ValueType::Uint;
     z.u = msg.raw_body[2 + code_len];
@@ -1310,16 +1311,21 @@ bool fz_cmd_color_loop_set(const DecodedMessage& msg, const FzConverter&,
 }
 
 bool fz_tint_scene(const DecodedMessage& msg, const FzConverter&,
-                     const PreparedDefinition&, RuntimeContext&,
+                     const PreparedDefinition&, RuntimeContext& ctx,
                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     // genBasic.write of attr 0x4005 — z2m emits action = "scene_<n>".
     const Value* v = msg.payload.find("16389");
     if (!v || v->type != ValueType::Uint) return false;
-    static char ring[3][24];
-    static unsigned ring_idx = 0;
-    auto& slot = ring[ring_idx++ % 3];
-    std::snprintf(slot, sizeof(slot), "scene_%u", static_cast<unsigned>(v->u));
-    Value a{}; a.type = ValueType::StringRef; a.str = slot;
+    char tmp[24];
+    const int n = std::snprintf(tmp, sizeof(tmp), "scene_%u",
+                                  static_cast<unsigned>(v->u));
+    if (n <= 0) return false;
+    const std::size_t slen =
+        static_cast<std::size_t>(n) >= sizeof(tmp) ? sizeof(tmp) - 1
+                                                    : static_cast<std::size_t>(n);
+    const char* s = ctx.alloc_str(tmp, slen);
+    if (!s) return false;
+    Value a{}; a.type = ValueType::StringRef; a.str = s;
     out.put("action", a);
     return true;
 }
@@ -2178,7 +2184,15 @@ extern const TzConverter kTzLock{
 // Accepts the two most common thermostat keys and encodes a standard
 // ZCL writeAttributes (cmd 0x02) frame:
 //   "occupied_heating_setpoint" / "current_heating_setpoint"
-//        → attr 0x0012, int16 (raw * 100)
+//        → attr 0x0012, int16, wire is 0.01 °C units.
+//        UNIT CONTRACT: caller supplies degrees Celsius (Float OR Int).
+//          - Float 21.5 → wire 2150 (21.50 °C)
+//          - Int   21   → wire 2100 (21.00 °C)
+//          - Uint  21   → wire 2100 (21.00 °C)
+//        This DIFFERS from `kTzMinHeatSetpointLimit` and friends, which
+//        accept already-scaled deci-°C int (1500 = 15.00 °C) via the
+//        generic `tz_zcl_write_attr` path. Watch the unit when wiring
+//        a Lua rule against either family.
 //   "system_mode"   → attr 0x001C, enum8 (off=0/auto=1/cool=3/heat=4)
 bool tz_thermostat(std::string_view key, const Value& input,
                     const TzConverter&,
@@ -2196,6 +2210,8 @@ bool tz_thermostat(std::string_view key, const Value& input,
         attr_id = 0x0012;
         attr_type = 0x29;  // int16
         vlen = 2;
+        // x100 scaling lives here only (caller supplies °C, wire is
+        // deci-°C). See unit-contract header comment above.
         std::int32_t raw;
         if (input.type == ValueType::Int)   raw = static_cast<std::int32_t>(input.i * 100);
         else if (input.type == ValueType::Uint)  raw = static_cast<std::int32_t>(input.u * 100);
@@ -2494,6 +2510,61 @@ extern const FzConverter kFzIasZone{
     .frame_flags_value = 0,
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_ias_zone },
+    .user_config       = nullptr,
+};
+
+// ── fz_ias_zone_config (sensitivity + keep_time) ────────────────────
+//
+// Tuya PIR family (ZG-204Z / IH012-RT01 / ZMS-102 / …) configures
+// sensitivity + PIR keep-time via two ssIasZone attributes:
+//
+//   attr 0x0013 currentZoneSensitivityLevel (ENUM8): 0=low / 1=medium / 2=high
+//   attr 0xF001 (61441, manuSpec, ENUM8):            0=30s / 1=60s / 2=120s
+//
+// Mirrors z2m `fz.ZM35HQ_attr`. The decoder runs the dispatcher with an
+// empty AttrKeyEntry table so attr ids surface as decimal-string keys
+// in `msg.payload` (`"19"` and `"61441"`). Both keys are independent;
+// either or both may be present in a single AttributeReport / ReadResponse.
+//
+// Output uses StringRef so the SPA's enum picker can render the values
+// directly; the matching TZ uses `tz_zcl_write_attr` with a string
+// lookup table for symmetry.
+
+bool fz_ias_zone_config(const DecodedMessage& msg,
+                         const FzConverter&,
+                         const PreparedDefinition&,
+                         RuntimeContext&,
+                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool emitted = false;
+    if (const Value* v = msg.payload.find("19");
+        v && v->type == ValueType::Uint && v->u < 3) {
+        static const char* const kSens[3] = { "low", "medium", "high" };
+        Value o{}; o.type = ValueType::StringRef; o.str = kSens[v->u];
+        out.put("sensitivity", o);
+        emitted = true;
+    }
+    if (const Value* v = msg.payload.find("61441");
+        v && v->type == ValueType::Uint && v->u < 3) {
+        static const char* const kKeep[3] = { "30", "60", "120" };
+        Value o{}; o.type = ValueType::StringRef; o.str = kKeep[v->u];
+        out.put("keep_time", o);
+        emitted = true;
+    }
+    return emitted;
+}
+
+extern const FzConverter kFzIasZoneConfig{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "ssIasZone",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_ias_zone_config },
     .user_config       = nullptr,
 };
 
@@ -3053,7 +3124,10 @@ extern const FzConverter kFzOccupancy{
 // Closes z2m tz.thermostat_min_heat_setpoint_limit /
 // max_heat_setpoint_limit / min_cool_setpoint_limit /
 // max_cool_setpoint_limit. Attributes are INT16 in 0.01 °C units;
-// callers pass the already-scaled int (e.g. 1500 = 15.00 °C).
+// UNIT CONTRACT: caller passes the already-scaled int (e.g. 1500 =
+// 15.00 °C). DIFFERENT from `tz_thermostat` which takes °C and scales
+// internally — see the unit-contract block on tz_thermostat for the
+// rationale (limits go through the generic write-attr path).
 
 namespace {
 constexpr ZclWriteSpec kSpecMinHeatSetpointLimit{

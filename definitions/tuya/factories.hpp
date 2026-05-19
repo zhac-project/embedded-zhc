@@ -28,6 +28,17 @@
 
 namespace zhc::tuya::factory {
 
+// Observable kind tag carried on each factory output. The two factory
+// templates below (`TuyaOnOff`, `TuyaLight`) are structurally identical
+// today — the type-identity distinction the doc-comment claimed is
+// invisible at runtime. Exposing `kind` lets downstream code (adapter
+// `configureReporting` paths, future bundle pickers) discriminate
+// without resorting to template-type comparisons.
+enum class DeviceKind : std::uint8_t {
+    Switch = 0,
+    Light  = 1,
+};
+
 namespace detail {
 
 template <typename CfgT>
@@ -52,6 +63,7 @@ struct BoundFz {
 // `tuyaOnOff<Cfg>` — simple-switch bundle. mcuSyncTime + DP map.
 template <typename CfgT>
 struct TuyaOnOff {
+    static constexpr DeviceKind kind = DeviceKind::Switch;
     static constexpr std::array<const FzConverter*, 2> fz_array{{
         &kFzTuyaMcuSyncTime,
         &detail::BoundFz<CfgT>::converter,
@@ -63,11 +75,13 @@ struct TuyaOnOff {
     static constexpr std::uint8_t tz_count = 0;
 };
 
-// `tuyaLight<Cfg>` — same bundle shape. Distinct template so the
-// adapter can distinguish light vs switch by type identity when
-// picking canonical `configureReporting` paths.
+// `tuyaLight<Cfg>` — same bundle shape as `TuyaOnOff`. The runtime
+// payload is identical; `kind` is the only observable distinction so
+// adapter code can pick light- vs switch-specific `configureReporting`
+// paths without inspecting the template type itself.
 template <typename CfgT>
 struct TuyaLight {
+    static constexpr DeviceKind kind = DeviceKind::Light;
     static constexpr std::array<const FzConverter*, 2> fz_array{{
         &kFzTuyaMcuSyncTime,
         &detail::BoundFz<CfgT>::converter,

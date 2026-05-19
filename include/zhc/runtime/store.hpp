@@ -14,10 +14,19 @@ namespace zhc {
 // converters need (button timing, counters). Arbitrary per-converter
 // state uses `scratch` — interpret the bytes in a struct local to the
 // converter.
+//
+// `tuya_action_*` slots back fz_tuya_action retransmit dedup, kept
+// per-device so concurrent button presses on different devices can't
+// suppress each other and so host fixtures can't see stale state from
+// prior tests (the previous implementation kept an 8-slot global LRU
+// keyed on device_index which was test-order sensitive).
 struct DeviceRuntimeState {
     std::uint32_t counter{0};          // generic counter (test scaffold)
     std::uint32_t press_start_ms{0};
     std::uint32_t hold_start_ms{0};
+    std::uint32_t tuya_action_last_ms{0};
+    std::uint8_t  tuya_action_last_tsn{0};
+    bool          tuya_action_seen{false};   // false = no prior frame
     std::array<std::uint8_t, 32> scratch{};
 };
 

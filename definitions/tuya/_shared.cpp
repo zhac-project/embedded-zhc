@@ -53,6 +53,7 @@ namespace {
 
 bool emit_from_entry(const TuyaDpMapEntry& e,
                       const Value& raw,
+                      RuntimeContext& ctx,
                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     switch (e.type) {
         case TuyaDpType::Enum: {
@@ -119,19 +120,28 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
                     raw.bytes.size() < 12) {
                     return false;
                 }
-                static char scratch[4][64];
-                static std::uint8_t head = 0;
-                char* dst = scratch[head];
-                head = (head + 1) % 4;
+                // Per-dispatch arena: a 4-period TRV schedule arriving
+                // as four back-to-back DP frames previously overwrote
+                // earlier slots in a 4-entry static ring. Per-dispatch
+                // lifetime is the right shape — the StringRef only
+                // needs to outlive the DispatchResult merge.
+                char tmp[64];
                 const auto* b = raw.bytes.data();
-                std::snprintf(dst, sizeof(scratch[0]),
+                const int n = std::snprintf(tmp, sizeof(tmp),
                     "%02u:%02u/%.1f %02u:%02u/%.1f "
                     "%02u:%02u/%.1f %02u:%02u/%.1f",
                     b[0], b[1], b[2] / 2.0,
                     b[3], b[4], b[5] / 2.0,
                     b[6], b[7], b[8] / 2.0,
                     b[9], b[10], b[11] / 2.0);
-                Value v{}; v.type = ValueType::StringRef; v.str = dst;
+                if (n <= 0) return false;
+                const std::size_t slen =
+                    static_cast<std::size_t>(n) >= sizeof(tmp)
+                        ? sizeof(tmp) - 1
+                        : static_cast<std::size_t>(n);
+                const char* s = ctx.alloc_str(tmp, slen);
+                if (!s) return false;
+                Value v{}; v.type = ValueType::StringRef; v.str = s;
                 out.put(e.out_key, v);
                 return true;
             }
@@ -146,7 +156,7 @@ bool fz_tuya_datapoints(std::span<const TuyaDpRecord> dps,
                          const DecodedMessage&,
                          const FzConverter& self,
                          const PreparedDefinition&,
-                         RuntimeContext&,
+                         RuntimeContext& ctx,
                          FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     const auto* map = static_cast<const TuyaDatapointMap*>(self.user_config);
     if (!map || !map->entries || map->count == 0) return false;
@@ -168,7 +178,7 @@ bool fz_tuya_datapoints(std::span<const TuyaDpRecord> dps,
                 if (!decode_tuya_dp(rec, val)) break;  // malformed — skip DP
                 decoded = true;
             }
-            if (emit_from_entry(entry, val, out)) emitted = true;
+            if (emit_from_entry(entry, val, ctx, out)) emitted = true;
         }
     }
     return emitted;
@@ -202,16 +212,13 @@ struct EnumAttrConfig {
 bool decode_enum_attr(const DecodedMessage& msg,
                       const EnumAttrConfig& cfg,
                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // Match foundation.cpp's `format_decimal_key` shape exactly — if
+    // the parser ever changes how it stringifies unknown attr ids,
+    // both sites move together. 5 digits + NUL fits a u16 worst case.
     char buf[8];
-    int  n = 0;
-    std::uint16_t v = cfg.attr_id;
-    if (v == 0) buf[n++] = '0';
-    else {
-        char tmp[8]; int t = 0;
-        while (v > 0 && t < 7) { tmp[t++] = '0' + (v % 10); v /= 10; }
-        while (t > 0) buf[n++] = tmp[--t];
-    }
-    buf[n] = '\0';
+    const int n = std::snprintf(buf, sizeof(buf), "%u",
+                                  static_cast<unsigned>(cfg.attr_id));
+    if (n <= 0 || static_cast<std::size_t>(n) >= sizeof(buf)) return false;
 
     const Value* found = msg.payload.find(buf);
     if (!found) return false;
@@ -288,6 +295,9 @@ bool fz_tuya_operation_mode(const DecodedMessage& msg,
 //   cmd 0xFD `tuyaAction`  — byte 0/1/2 → single / double / hold
 //   cmd 0xFC `tuyaAction2` — byte 0/1   → rotate_right / rotate_left
 //
+// MUTUALLY EXCLUSIVE with `fz_tuya_switch_scene` (which also matches
+// cmd 0xFD on genOnOff). Pick one or the other per device, never both.
+//
 // Output format is selected by `TuyaActionConfig::prefix_with_endpoint`,
 // stored in `FzConverter::user_config`:
 //
@@ -342,66 +352,46 @@ constexpr TuyaActionConfig kCfgActPerEp { /*prefix=*/true  };
 // transaction-sequence byte. Without dedup, rules fire 2-3× per press.
 // z2m solves this with `utils.hasAlreadyProcessedMessage` keyed on
 // `(ieee, tsn)` inside an ~500 ms window. We mirror the shape but key
-// on `RuntimeContext::device_index` (cheaper than IEEE, already in
-// the dispatch context) with an 800 ms window — Tuya retx are spaced
-// further apart than typical Zigbee retries.
+// on `RuntimeContext::device_index` with an 800 ms window — Tuya retx
+// spacing exceeds typical Zigbee retry intervals.
 //
-// 8-slot LRU. Most homes have a single button being pressed at a time;
-// 8 covers simultaneous presses across the network with headroom. When
-// the table fills, oldest-by-timestamp gets evicted. Single-threaded
-// dispatch task makes the static-state lock-free safe.
-//
-// `device_index == 0` short-circuits dedup: it's the default-constructed
-// value used by host tests / synthetic frames where no real device is
-// behind the message. Production paths always assign a positive index.
+// State lives on `DeviceRuntimeState` so each device has its own slot
+// (no cross-device interference, no test-order coupling). Devices
+// without a backing store (host fixtures with no RuntimeStore wired)
+// skip dedup and surface every frame — same fallback as `device_index
+// == 0` (synthetic test frames).
 
-constexpr std::size_t   kDedupSlots    = 8;
 constexpr std::uint32_t kDedupWindowMs = 800;
 
-struct DedupSlot {
-    std::uint16_t device_index;   // 0 = empty
-    std::uint8_t  last_tsn;
-    std::uint32_t last_ms;
-};
-
-DedupSlot s_action_dedup[kDedupSlots]{};
-
-bool is_action_retransmit(std::uint16_t dev_idx,
-                           std::uint8_t  tsn,
-                           std::uint32_t now_ms) {
-    if (dev_idx == 0) return false;
-    std::size_t lru_idx = 0;
-    std::uint32_t lru_ts = 0xFFFFFFFFu;
-    for (std::size_t i = 0; i < kDedupSlots; ++i) {
-        auto& s = s_action_dedup[i];
-        if (s.device_index == dev_idx) {
-            const std::uint32_t age = now_ms - s.last_ms;
-            if (s.last_tsn == tsn && age < kDedupWindowMs) {
-                // Refresh timestamp so a stuck retx burst stays
-                // suppressed even past the initial window.
-                s.last_ms = now_ms;
-                return true;
-            }
-            s.last_tsn = tsn;
-            s.last_ms  = now_ms;
-            return false;
-        }
-        if (s.last_ms <= lru_ts) {
-            lru_ts  = s.last_ms;
-            lru_idx = i;
+bool is_action_retransmit(RuntimeContext& ctx,
+                           std::uint8_t   tsn,
+                           std::uint32_t  now_ms) {
+    if (ctx.device_index == 0) return false;
+    DeviceRuntimeState* st = ctx.device_state();
+    if (!st) return false;
+    if (st->tuya_action_seen) {
+        const std::uint32_t age = now_ms - st->tuya_action_last_ms;
+        if (st->tuya_action_last_tsn == tsn && age < kDedupWindowMs) {
+            // Refresh timestamp so a stuck retx burst stays suppressed
+            // even past the initial window.
+            st->tuya_action_last_ms = now_ms;
+            return true;
         }
     }
-    s_action_dedup[lru_idx] = { dev_idx, tsn, now_ms };
+    st->tuya_action_last_tsn = tsn;
+    st->tuya_action_last_ms  = now_ms;
+    st->tuya_action_seen     = true;
     return false;
 }
 
 }  // namespace
 
-// Test-only: clears the dedup cache so fixture tests are independent.
-// Not declared in the header — tests forward-declare with extern "C++".
-void reset_action_dedup_cache_for_test() {
-    for (auto& s : s_action_dedup) s = {};
-}
+// Test-only: per-device state lives on DeviceRuntimeState which the
+// test harness already resets between cases — this hook stays as a
+// no-op so existing test_ts0044.cpp forward declarations keep
+// compiling. Once those tests are updated to call DeviceRuntimeState
+// reset directly, this can be removed.
+void reset_action_dedup_cache_for_test() {}
 
 bool fz_tuya_action(const DecodedMessage& msg, const FzConverter& self,
                      const PreparedDefinition&,
@@ -414,7 +404,7 @@ bool fz_tuya_action(const DecodedMessage& msg, const FzConverter& self,
     // Dedup retx before any decode work — same (device, tsn) within
     // window returns "matched but no output", so the dispatcher won't
     // log it as unhandled and the rules engine sees no `action` field.
-    if (is_action_retransmit(ctx.device_index,
+    if (is_action_retransmit(ctx,
                               msg.transaction_sequence,
                               ctx.now())) {
         return true;
@@ -514,6 +504,12 @@ ZHC_TUYA_ACTION_CVT(kFzTuyaOnOffAction,  &kCfgActFlat);
 ZHC_TUYA_ACTION_CVT(kFzTuyaMultiAction,  &kCfgActFlat);
 ZHC_TUYA_ACTION_CVT(kFzTuyaButtonAction, &kCfgActPerEp);
 
+// MUTUALLY EXCLUSIVE with `fz_tuya_action` (which also matches cmd
+// 0xFD on genOnOff). Wire only one of these per device:
+//   * scene pickers (e.g. TS0601 scene switches) → `kFzTuyaSwitchScene`
+//   * button presses (single/double/hold) → `kFzTuyaAction*`
+// Wiring both produces conflicting `action` keys (last-writer-wins via
+// the dispatcher merge, but the device's intent is ambiguous).
 bool fz_tuya_switch_scene(const DecodedMessage& msg,
                            const FzConverter&,
                            const PreparedDefinition&,

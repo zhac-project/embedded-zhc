@@ -123,10 +123,13 @@ const PreparedDefinition* find_definition(
     // `zigbeeModel: ["0yu2xgi"]` + `fingerprint: [TS0601 + _TZE200_…]`).
     // When the incoming model matches a non-"TS0601" zigbeeModel but
     // the manu fails Pass 1, accept the def — z2m behaves the same.
+    // Manufacturer check still enforced so two defs sharing the same
+    // non-TS0601 model with different mfgs don't collide.
     for (const auto* def : registry) {
         if (!def || !is_tuya_styled(*def)) continue;
         if (!has_exact_model(*def, model_id)) continue;
         if (std::strcmp(model_id, "TS0601") == 0) continue;
+        if (!has_manufacturer_match(*def, manufacturer_name)) continue;
         return def;
     }
 

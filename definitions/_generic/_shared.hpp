@@ -406,6 +406,13 @@ extern const FzConverter kFzMetering;
 extern const FzConverter kFzElectricalMeasurement;
 extern const FzConverter kFzThermostat;
 extern const FzConverter kFzIasZone;
+// ssIasZone attr reports: 0x0013 currentZoneSensitivityLevel (ENUM8)
+// → `sensitivity` ("low"/"medium"/"high"); 0xF001 (61441, ENUM8)
+// → `keep_time` ("30"/"60"/"120"). Mirrors z2m `fz.ZM35HQ_attr`. Use
+// alongside the device's motion-alarm converter (kFzIasMotionAlarm)
+// — both can fire on the same frame, decoder uses empty AttrKeyEntry
+// span so keys land as decimal strings.
+extern const FzConverter kFzIasZoneConfig;
 extern const FzConverter kFzFanMode;
 extern const FzConverter kFzLock;
 
@@ -509,6 +516,11 @@ extern const TzConverter kTzLock;
 // hvacThermostat (0x0201) writeAttributes — supports
 // occupied/current_heating_setpoint (attr 0x0012) + system_mode
 // (0x001C). Additional attrs via per-device `tz_zcl_write_attr`.
+// UNIT CONTRACT for the setpoint keys: input is degrees Celsius
+// (Float/Int/Uint). x100 scaling to deci-°C wire format happens inside
+// the encoder. Contrast with `kTzMinHeatSetpointLimit` & co. below,
+// which take pre-scaled deci-°C — picking the wrong family from a
+// Lua rule yields a setpoint 100x off.
 extern const TzConverter kTzThermostat;
 
 // Data-driven ZCL writeAttributes encoder. Handles both standard
@@ -591,7 +603,10 @@ extern const TzConverter kTzIasWdMaxDuration;
 extern const FzConverter kFzOccupancy;
 
 // hvacThermostat setpoint-limit attribute writes (INT16, 0.01 °C).
-// Caller supplies the already-scaled int (e.g. 1500 = 15.00 °C).
+// UNIT CONTRACT: caller supplies the already-scaled int (e.g.
+// 1500 = 15.00 °C). DIFFERENT from `kTzThermostat` setpoints above —
+// see that block for the rationale (limits go through the generic
+// write-attr path with no per-attr scaling).
 extern const TzConverter kTzMinHeatSetpointLimit;   // attr 0x0015
 extern const TzConverter kTzMaxHeatSetpointLimit;   // attr 0x0016
 extern const TzConverter kTzMinCoolSetpointLimit;   // attr 0x0017

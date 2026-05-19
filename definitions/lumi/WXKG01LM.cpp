@@ -71,7 +71,7 @@ constexpr ConfigStep kConfigSteps[] = {
         /*flags*/      0,
         /*payload*/    kReadFF01,
         /*payload_len*/sizeof(kReadFF01),
-        /*wait_ms*/    1500,
+        /*wait_ms*/    0,        // wait_ms only honoured for ConfigStepOp::Wait
         /*manu_code*/  0x115F,
     },
 };

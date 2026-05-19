@@ -107,9 +107,12 @@ struct FixedPayload {
     }
 };
 
-static_assert(ZHC_FIXED_PAYLOAD_CAP <= 255,
-              "FixedPayload.count is uint8_t; lower ZHC_FIXED_PAYLOAD_CAP "
-              "or widen count");
+// Strict bound: at 255, `for (uint8_t i = 0; i < count; ++i)` never
+// terminates because `++i` wraps. The runtime walkers below sit one
+// off the cap, so reserve one slot.
+static_assert(ZHC_FIXED_PAYLOAD_CAP < 255,
+              "FixedPayload.count + loop iterators are uint8_t; lower "
+              "ZHC_FIXED_PAYLOAD_CAP below 255 or widen count");
 
 // ── WhiteLabel ──────────────────────────────────────────────────────
 // Alternate (vendor, model) labels for the same physical device — sold

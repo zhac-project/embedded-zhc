@@ -224,6 +224,11 @@ bool run_configure(const PreparedDefinition& def, RuntimeContext& ctx) {
                                        r.max_interval,
                                        r.reportable_change,
                                        r.manufacturer_code)) {
+                // `kReportFlagOptional` lets a per-report failure stay
+                // local — the rest of the report set + config_steps
+                // still run. Mandatory failures still abort so quirky
+                // mains-powered devices don't end up half-configured.
+                if (r.flags & kReportFlagOptional) continue;
                 ok = false;
                 break;
             }
@@ -237,6 +242,12 @@ bool run_configure(const PreparedDefinition& def, RuntimeContext& ctx) {
         for (std::uint8_t i = 0; i < def.config_steps_count; ++i) {
             const ConfigStep& s = def.config_steps[i];
             const std::uint8_t ep = s.endpoint ? s.endpoint : 1;
+            // Per-step timeout is NOT implemented in v1. Take a local
+            // copy of `wait_ms` so Wait sees the device-supplied value
+            // but Read/Cmd/Callback always see zero — keeps the contract
+            // unambiguous if future device cpps mis-set the field.
+            std::uint16_t step_wait_ms =
+                (s.op == ConfigStepOp::Wait) ? s.wait_ms : 0;
             bool step_ok = true;
 
             switch (s.op) {
@@ -271,7 +282,7 @@ bool run_configure(const PreparedDefinition& def, RuntimeContext& ctx) {
                     }
                     break;
                 case ConfigStepOp::Wait:
-                    if (ctx.configure_sleep) ctx.configure_sleep(s.wait_ms);
+                    if (ctx.configure_sleep) ctx.configure_sleep(step_wait_ms);
                     step_ok = true;
                     break;
             }
@@ -280,7 +291,10 @@ bool run_configure(const PreparedDefinition& def, RuntimeContext& ctx) {
         }
     }
 
-    if (def.configure) def.configure(ctx.device_index, ctx);
+    // Legacy `def.configure` only runs when the declarative phases
+    // succeeded. Devices in the transition period (config_steps + legacy
+    // hook) would otherwise double-configure on every transport failure.
+    if (ok && def.configure) def.configure(ctx.device_index, ctx);
     return ok;
 }
 

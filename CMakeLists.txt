@@ -15,10 +15,13 @@ target_include_directories(zhc_core INTERFACE
 )
 
 # Warnings-as-errors enforced from day one. Easier to keep clean than
-# to retrofit once hundreds of definitions have landed.
+# to retrofit once hundreds of definitions have landed. Wrapped in
+# BUILD_INTERFACE so downstream consumers (firmware, host tooling) are
+# not forced to inherit -Werror — only this tree's own build trips on
+# warnings.
 target_compile_options(zhc_core INTERFACE
-    $<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall -Wextra -Wpedantic -Werror>
-    $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+    $<BUILD_INTERFACE:$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall -Wextra -Wpedantic -Werror>>
+    $<BUILD_INTERFACE:$<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>>
 )
 
 add_library(zhc_parser STATIC

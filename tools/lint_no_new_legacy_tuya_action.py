@@ -129,6 +129,11 @@ def scan() -> dict[str, int]:
                 continue
             full = os.path.join(dirpath, fn)
             rel = os.path.relpath(full, DEF_ROOT)
+            # SHARED_EXEMPT + BASELINE keys are forward-slash relative
+            # paths. On Windows CI, relpath emits backslashes so the
+            # set lookup misses and shared-cpp legacy uses would trip
+            # the guard. Normalise once.
+            rel = rel.replace(os.sep, '/')
             if rel in SHARED_EXEMPT:
                 continue
             with open(full, encoding='utf-8') as fh:

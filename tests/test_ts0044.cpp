@@ -25,6 +25,7 @@
 
 #include "zhc/types.hpp"
 #include "zhc/runtime/dispatch.hpp"
+#include "zhc/runtime/store.hpp"
 #include "zhc/zcl/decoder.hpp"
 
 using namespace zhc;
@@ -33,11 +34,25 @@ namespace zhc::devices::tuya {
 extern const PreparedDefinition kDefTS0044;
 }  // namespace zhc::devices::tuya
 
-// Test-only hook from tuya/_shared.cpp — clears the per-converter
-// retransmit dedup cache so each test case starts fresh.
+// Test-only hook from tuya/_shared.cpp — kept for source compatibility
+// since H-2 moved dedup state onto `DeviceRuntimeState`. The reset call
+// is now satisfied by zeroing the test's local RuntimeStore each test.
 namespace zhc::tuya {
 void reset_action_dedup_cache_for_test();
 }
+
+namespace {
+// Shared per-test store so the dispatcher can find a DeviceRuntimeState
+// for non-zero device_index (where the dedup cache lives).
+zhc::RuntimeStore<128> g_test_store{};
+
+// Zero every slot so each test case starts with a fresh dedup state.
+// Replaces the old `reset_action_dedup_cache_for_test()` call (which
+// is now a no-op because the cache lives per-device on the store).
+void reset_test_dedup() {
+    g_test_store = {};
+}
+}  // namespace
 
 namespace {
 
@@ -81,6 +96,11 @@ DispatchResult dispatch_press(std::uint8_t src_ep, std::uint8_t click,
     msg.cluster = "genOnOff";
     RuntimeContext ctx{};
     ctx.device_index = dev_idx;
+    // Wire the test store so DeviceRuntimeState (where H-2 moved dedup
+    // state) is reachable. dev_idx == 0 callers still bypass dedup by
+    // design, store wiring or not.
+    ctx.store     = &g_test_store;
+    ctx.store_get = &decltype(g_test_store)::get;
     return dispatch_from_zigbee(msg, {}, devices::tuya::kDefTS0044, raw, ctx);
 }
 
@@ -196,7 +216,7 @@ static void test_unknown_cmd_does_not_match() {
 
 // Same (device, tsn) → first fires, second is suppressed.
 static void test_retx_with_same_tsn_dedups() {
-    zhc::tuya::reset_action_dedup_cache_for_test();
+    reset_test_dedup();
     auto r1 = dispatch_press(/*ep=*/1, /*click=*/0,
                               /*tsn=*/0x40, /*dev_idx=*/42);
     expect_action(r1, "1_single");
@@ -209,7 +229,7 @@ static void test_retx_with_same_tsn_dedups() {
 
 // Different tsn under the same device → both fire (legitimate next press).
 static void test_distinct_tsn_both_fire() {
-    zhc::tuya::reset_action_dedup_cache_for_test();
+    reset_test_dedup();
     auto r1 = dispatch_press(/*ep=*/2, /*click=*/1,
                               /*tsn=*/0x10, /*dev_idx=*/77);
     expect_action(r1, "2_double");
@@ -222,7 +242,7 @@ static void test_distinct_tsn_both_fire() {
 // Same tsn but different device_index → both fire (two devices happen
 // to share a tsn; dedup must NOT cross devices).
 static void test_distinct_device_both_fire() {
-    zhc::tuya::reset_action_dedup_cache_for_test();
+    reset_test_dedup();
     auto r1 = dispatch_press(/*ep=*/1, /*click=*/0,
                               /*tsn=*/0x55, /*dev_idx=*/10);
     expect_action(r1, "1_single");
@@ -236,7 +256,7 @@ static void test_distinct_device_both_fire() {
 // the existing "all combinations" test that reuses tsn 0x0C across
 // 12 calls keeps working. Lock that contract.
 static void test_zero_device_index_skips_dedup() {
-    zhc::tuya::reset_action_dedup_cache_for_test();
+    reset_test_dedup();
     auto r1 = dispatch_press(/*ep=*/4, /*click=*/2,
                               /*tsn=*/0xAA, /*dev_idx=*/0);
     expect_action(r1, "4_hold");

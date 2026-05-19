@@ -81,6 +81,14 @@ struct EndpointLabel {
 // `endpoint.configureReporting(cluster, [{attribute, minReportInterval,
 // maxReportInterval, reportableChange}])`. `manufacturer_code` is
 // non-zero only for manu-specific reports (Philips, Lumi 0xFCC0).
+// `flags` bits:
+//   kReportFlagOptional — failure of this specific report does NOT
+//     abort `run_configure`. Default 0 = mandatory (matches z2m).
+//     Use for redundant / quirky-firmware reports where the device
+//     may legitimately reject the spec (e.g. cheap Tuya clones
+//     refusing Configure Reporting on certain manuf-spec attrs).
+inline constexpr std::uint8_t kReportFlagOptional = 0x01;
+
 struct ReportingSpec {
     std::uint8_t  endpoint;
     std::uint16_t cluster_id;
@@ -90,6 +98,7 @@ struct ReportingSpec {
     std::uint16_t max_interval;
     std::uint32_t reportable_change;   // encoded per data type
     std::uint16_t manufacturer_code;   // 0 = not manu-specific
+    std::uint8_t  flags = 0;           // see kReportFlag* above
 };
 using OnEventFn   = void (*)(std::uint16_t device_index, EventId event_id,
                               RuntimeContext& ctx);
@@ -124,7 +133,10 @@ struct ConfigStep {
     std::uint8_t   flags;          // see kStepFlag* above
     const std::uint8_t* payload;   // Read: attr-id list; Cmd: command body
     std::uint8_t   payload_len;
-    std::uint16_t  wait_ms;        // Wait: sleep ms; Read/Cmd: optional timeout
+    // Sleep duration in ms for Wait ops only. Not consumed by the
+    // dispatcher for Read/Cmd/Callback — leave zero on those steps; the
+    // walker force-zeros it before any platform hook fires.
+    std::uint16_t  wait_ms;
     // ZCL manufacturer code for Read/Cmd. 0 = profile-wide frame (default).
     // When non-zero the platform sets FC bit 2 (manu-specific) and inserts
     // the LE manu code between FC and TSN per ZCL spec.
