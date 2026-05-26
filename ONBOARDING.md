@@ -130,8 +130,9 @@ Firmware repos pull `embedded-zhc` via CMake `FetchContent` at a
 pinned tag, overridable with `EMBEDDED_ZHC_PATH`:
 
 ```bash
-cd zhac-main-core
-EMBEDDED_ZHC_PATH=$HOME/webapp/zhac/embedded-zhc idf.py build
+export ZHAC_PATH=${ZHAC_PATH:-$HOME/zhac}   # dir holding the cloned ZHAC repos
+cd "$ZHAC_PATH/zhac-main-core"
+EMBEDDED_ZHC_PATH=$ZHAC_PATH/embedded-zhc idf.py build
 ```
 
 `embedded-zhc` is **not** an ESP Component Manager component — it
