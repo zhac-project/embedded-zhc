@@ -5,6 +5,7 @@
 // and a non-empty zigbee_models list. Proves the bulk-port pipeline
 // wired correctly without a per-device test.
 
+// (dropped — no generated def in definitions/lumi: GZCGQ02LM, JYGZ02AQ, RTCGQ23LM, WXKG19LM)
 #include <cassert>
 #include <cstring>
 
@@ -37,7 +38,6 @@ extern const PreparedDefinition kDefSJCGQ12LM;
 extern const PreparedDefinition kDefJYGZ01AQ;
 extern const PreparedDefinition kDefWXKG15LM;
 extern const PreparedDefinition kDefWXKG18LM;
-extern const PreparedDefinition kDefWXKG19LM;
 extern const PreparedDefinition kDefWXKG21LM;
 extern const PreparedDefinition kDefDJT12LM;
 extern const PreparedDefinition kDefRTCGQ16LM;
@@ -51,14 +51,11 @@ extern const PreparedDefinition kDefWXKG22LM;
 extern const PreparedDefinition kDefWXKG23LM;
 extern const PreparedDefinition kDefWSDCGQ21LM;
 extern const PreparedDefinition kDefDJT21LM;
-extern const PreparedDefinition kDefRTCGQ23LM;
 extern const PreparedDefinition kDefMCCGQ18LM;
 extern const PreparedDefinition kDefMCCGQ19LM;
 extern const PreparedDefinition kDefWXKG24LM;
 extern const PreparedDefinition kDefWXKG25LM;
 extern const PreparedDefinition kDefWXKG26LM;
-extern const PreparedDefinition kDefJYGZ02AQ;
-extern const PreparedDefinition kDefGZCGQ02LM;
 extern const PreparedDefinition kDefWXCJKG11LM;
 extern const PreparedDefinition kDefWXCJKG12LM;
 extern const PreparedDefinition kDefWXCJKG13LM;
@@ -126,7 +123,6 @@ const Row kRows[] = {
     { &devices::lumi::kDefJYGZ01AQ,   "JYGZ01AQ"   },
     { &devices::lumi::kDefWXKG15LM,   "WXKG15LM"   },
     { &devices::lumi::kDefWXKG18LM,   "WXKG18LM"   },
-    { &devices::lumi::kDefWXKG19LM,   "WXKG19LM"   },
     { &devices::lumi::kDefWXKG21LM,   "WXKG21LM"   },
     { &devices::lumi::kDefDJT12LM,    "DJT12LM"    },
     { &devices::lumi::kDefRTCGQ16LM,  "RTCGQ16LM"  },
@@ -140,14 +136,11 @@ const Row kRows[] = {
     { &devices::lumi::kDefWXKG23LM,   "WXKG23LM"   },
     { &devices::lumi::kDefWSDCGQ21LM, "WSDCGQ21LM" },
     { &devices::lumi::kDefDJT21LM,    "DJT21LM"    },
-    { &devices::lumi::kDefRTCGQ23LM,  "RTCGQ23LM"  },
     { &devices::lumi::kDefMCCGQ18LM,  "MCCGQ18LM"  },
     { &devices::lumi::kDefMCCGQ19LM,  "MCCGQ19LM"  },
     { &devices::lumi::kDefWXKG24LM,   "WXKG24LM"   },
     { &devices::lumi::kDefWXKG25LM,   "WXKG25LM"   },
     { &devices::lumi::kDefWXKG26LM,   "WXKG26LM"   },
-    { &devices::lumi::kDefJYGZ02AQ,   "JYGZ02AQ"   },
-    { &devices::lumi::kDefGZCGQ02LM,  "GZCGQ02LM"  },
     { &devices::lumi::kDefWXCJKG11LM, "WXCJKG11LM" },
     { &devices::lumi::kDefWXCJKG12LM, "WXCJKG12LM" },
     { &devices::lumi::kDefWXCJKG13LM, "WXCJKG13LM" },

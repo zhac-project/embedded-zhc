@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Wave C smoke — 25 Lumi lights through factory::LumiLight.
+// Tier 2: Wave C smoke — 23 Lumi lights through factory::LumiLight.
+// (dropped — no generated def in definitions/lumi: ZNLDP15LM, ZNLDP29LM)
 #include <cassert>
 #include <cstring>
 #include "zhc/runtime/definition.hpp"
@@ -9,7 +10,6 @@ namespace zhc::devices::lumi {
 extern const PreparedDefinition kDefZNLDP12LM;
 extern const PreparedDefinition kDefZNLDP13LM;
 extern const PreparedDefinition kDefZNLDP14LM;
-extern const PreparedDefinition kDefZNLDP15LM;
 extern const PreparedDefinition kDefZNLDP16LM;
 extern const PreparedDefinition kDefZNLDP17LM;
 extern const PreparedDefinition kDefZNLDP18LM;
@@ -23,7 +23,6 @@ extern const PreparedDefinition kDefZNLDP25LM;
 extern const PreparedDefinition kDefZNLDP26LM;
 extern const PreparedDefinition kDefZNLDP27LM;
 extern const PreparedDefinition kDefZNLDP28LM;
-extern const PreparedDefinition kDefZNLDP29LM;
 extern const PreparedDefinition kDefZNLDP30LM;
 extern const PreparedDefinition kDefZNLDP31LM;
 extern const PreparedDefinition kDefZNXNKG01LM;
@@ -41,7 +40,6 @@ const Row kRows[] = {
     { &devices::lumi::kDefZNLDP12LM, "ZNLDP12LM", 3 },
     { &devices::lumi::kDefZNLDP13LM, "ZNLDP13LM", 3 },
     { &devices::lumi::kDefZNLDP14LM, "ZNLDP14LM", 3 },
-    { &devices::lumi::kDefZNLDP15LM, "ZNLDP15LM", 3 },
     { &devices::lumi::kDefZNLDP16LM, "ZNLDP16LM", 3 },
     { &devices::lumi::kDefZNLDP17LM, "ZNLDP17LM", 3 },
     { &devices::lumi::kDefZNLDP18LM, "ZNLDP18LM", 3 },
@@ -55,7 +53,6 @@ const Row kRows[] = {
     { &devices::lumi::kDefZNLDP26LM, "ZNLDP26LM", 3 },
     { &devices::lumi::kDefZNLDP27LM, "ZNLDP27LM", 3 },
     { &devices::lumi::kDefZNLDP28LM, "ZNLDP28LM", 3 },
-    { &devices::lumi::kDefZNLDP29LM, "ZNLDP29LM", 3 },
     { &devices::lumi::kDefZNLDP30LM, "ZNLDP30LM", 3 },
     { &devices::lumi::kDefZNLDP31LM, "ZNLDP31LM", 3 },
     { &devices::lumi::kDefZNXNKG01LM,"ZNXNKG01LM",2 },

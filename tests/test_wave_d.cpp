@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Wave D smoke — 15 plugs through factory::LumiPower.
+// Tier 2: Wave D smoke — 14 plugs through factory::LumiPower.
+// (QBCZ12LM dropped — no generated def in definitions/lumi; codes run 11,13,14,15.)
 #include <cassert>
 #include <cstring>
 #include "zhc/runtime/definition.hpp"
@@ -14,7 +15,6 @@ extern const PreparedDefinition kDefZNCZ14LM;
 extern const PreparedDefinition kDefSPEUC01;
 extern const PreparedDefinition kDefWPP01D;
 extern const PreparedDefinition kDefQBCZ11LM;
-extern const PreparedDefinition kDefQBCZ12LM;
 extern const PreparedDefinition kDefQBCZ13LM;
 extern const PreparedDefinition kDefZNMCPZ01LM;
 extern const PreparedDefinition kDefZNMCPZ02LM;
@@ -36,7 +36,6 @@ const Row kRows[] = {
     { &devices::lumi::kDefSPEUC01,    "SP-EUC01"   },
     { &devices::lumi::kDefWPP01D,     "WP-P01D"    },
     { &devices::lumi::kDefQBCZ11LM,   "QBCZ11LM"   },
-    { &devices::lumi::kDefQBCZ12LM,   "QBCZ12LM"   },
     { &devices::lumi::kDefQBCZ13LM,   "QBCZ13LM"   },
     { &devices::lumi::kDefZNMCPZ01LM, "ZNMCPZ01LM" },
     { &devices::lumi::kDefZNMCPZ02LM, "ZNMCPZ02LM" },

@@ -5,6 +5,7 @@
 // `DeviceEndpointLabels` map is wired into the LumiOnOff factory and
 // the PreparedDefinition carries the expected converter pair.
 
+// (dropped — no generated def in definitions/lumi: QBKG10LM)
 #include <cassert>
 #include <cstring>
 
@@ -12,7 +13,6 @@
 
 namespace zhc::devices::lumi {
 extern const PreparedDefinition kDefQBKG04LM;
-extern const PreparedDefinition kDefQBKG10LM;
 extern const PreparedDefinition kDefQBKG21LM;
 extern const PreparedDefinition kDefQBKG23LM;
 extern const PreparedDefinition kDefSSMU01;
@@ -49,7 +49,6 @@ namespace {
 struct Row { const PreparedDefinition* def; const char* model; };
 const Row kRows[] = {
     { &devices::lumi::kDefQBKG04LM,  "QBKG04LM"  },
-    { &devices::lumi::kDefQBKG10LM,  "QBKG10LM"  },
     { &devices::lumi::kDefQBKG21LM,  "QBKG21LM"  },
     { &devices::lumi::kDefQBKG23LM,  "QBKG23LM"  },
     { &devices::lumi::kDefSSMU01,    "SSM-U01"   },

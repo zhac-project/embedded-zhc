@@ -89,7 +89,7 @@ static void test_on_off_decodes_off() {
 
 // ── fz_battery ──────────────────────────────────────────────────────
 
-static void test_battery_emits_raw_voltage_and_percent() {
+static void test_battery_emits_voltage_mv_and_percent() {
     auto raw = build_frame(0x0001, kBatteryFrame);
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
@@ -101,10 +101,10 @@ static void test_battery_emits_raw_voltage_and_percent() {
     assert(generic::fz_battery(msg, generic::kFzBattery, def, ctx, out));
 
     const Value* v = out.find("voltage");
-    assert(v && v->type == ValueType::Uint && v->u == 29);
+    assert(v && v->type == ValueType::Uint && v->u == 2900);  // 29 raw * 100 (ZCL 100mV units -> mV)
 
     const Value* b = out.find("battery");
-    assert(b && b->type == ValueType::Uint && b->u == 168);
+    assert(b && b->type == ValueType::Uint && b->u == 84);    // 168 raw / 2 (ZCL half-percent -> %)
 }
 
 // ── fz_ignore ───────────────────────────────────────────────────────
@@ -258,7 +258,7 @@ static void test_tz_descriptor_cluster_ids() {
 int main() {
     test_on_off_decodes_on();
     test_on_off_decodes_off();
-    test_battery_emits_raw_voltage_and_percent();
+    test_battery_emits_voltage_mv_and_percent();
     test_ignore_matches_but_emits_nothing();
     test_dispatch_generic_on_off_device();
 

@@ -1,8 +1,9 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 3: Wave E smoke — 20 outliers. Structural checks only; many
+// Tier 3: Wave E smoke — 19 outliers. Structural checks only; many
 // devices expose only lumi_basic until v2 adds IAS / manu-specific
 // cluster paths.
+// (WRDZG01LM dropped — no generated def in definitions/lumi.)
 #include <cassert>
 #include <cstring>
 #include "zhc/runtime/definition.hpp"
@@ -21,7 +22,6 @@ extern const PreparedDefinition kDefRTCZCGQ11LM;
 extern const PreparedDefinition kDefRTCZCGQ12LM;
 extern const PreparedDefinition kDefZNQPKG01LM;
 extern const PreparedDefinition kDefSPPDC01;
-extern const PreparedDefinition kDefWRDZG01LM;
 extern const PreparedDefinition kDefZNCLDJ15LM;
 extern const PreparedDefinition kDefSRSCM01;
 extern const PreparedDefinition kDefZNXJKG01LM;
@@ -48,7 +48,6 @@ const Row kRows[] = {
     { &devices::lumi::kDefRTCZCGQ12LM, "RTCZCGQ12LM"},
     { &devices::lumi::kDefZNQPKG01LM,  "ZNQPKG01LM" },
     { &devices::lumi::kDefSPPDC01,     "SP-PDC01"   },
-    { &devices::lumi::kDefWRDZG01LM,   "WRDZG01LM"  },
     { &devices::lumi::kDefZNCLDJ15LM,  "ZNCLDJ15LM" },
     { &devices::lumi::kDefSRSCM01,     "SRSC-M01"   },
     { &devices::lumi::kDefZNXJKG01LM,  "ZNXJKG01LM" },
