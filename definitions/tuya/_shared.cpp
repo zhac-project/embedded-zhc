@@ -619,6 +619,7 @@ bool encode_numeric(const TuyaDpMapEntry& e, const Value& in,
         if      (d > 1) raw = raw * d;                            // reverse fz divide
         else if (d < 0) raw = raw / static_cast<std::int64_t>(-d); // reverse fz multiply
     }
+    if (e.flags & kTuyaDpFlagInvertPosition) raw = 100 - raw;     // reverse fz `100 - raw`
     const std::int32_t v = static_cast<std::int32_t>(raw);
     out_val[0] = static_cast<std::uint8_t>((v >> 24) & 0xFF);
     out_val[1] = static_cast<std::uint8_t>((v >> 16) & 0xFF);

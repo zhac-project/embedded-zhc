@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 #include "zhc/runtime/dispatch.hpp"
 
+#include <cstdint>
+#include <cstdio>
 #include <cstring>
 
 namespace zhc {
@@ -141,6 +143,46 @@ void rewrite_keys_with_endpoint(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& merged,
     }
 }
 
+// Fallback: surface unmapped Tuya datapoints as `dp_<id>` so a device whose
+// matched def carries no DP map (placeholder / un-ported) still shows its raw
+// values instead of a silent no-match. Scalar DPs only (Bool/Int/Uint); raw
+// byte blobs and strings are skipped in v1. Fires from dispatch_from_zigbee
+// ONLY when no converter claimed the frame, so fully-ported devices — which
+// emit their mapped keys and set any_matched — are never affected.
+bool emit_unmapped_tuya_dps(std::span<const TuyaDpRecord> dps,
+                            RuntimeContext& ctx,
+                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool any = false;
+    for (const auto& rec : dps) {
+        Value v{};
+        // Tuya DP type byte: 0x01 Bool, 0x02 Numeric (s32 BE), 0x04 Enum (u8),
+        // 0x05 Bitmap (u8/u16/u32). Raw (0x00) / String (0x03) skipped in v1.
+        // Decoded inline (not via the zcl decode_tuya_dp) to keep the runtime
+        // layer free of a zcl-lib link dependency.
+        if (rec.dp_type == 0x01) {
+            if (rec.value.empty()) continue;
+            v.type = ValueType::Bool;
+            v.b = rec.value[rec.value.size() - 1] != 0;
+        } else if ((rec.dp_type == 0x02 || rec.dp_type == 0x04 ||
+                    rec.dp_type == 0x05) &&
+                   !rec.value.empty() && rec.value.size() <= 4) {
+            std::int64_t iv = 0;
+            for (const auto x : rec.value) iv = (iv << 8) | x;
+            v.type = ValueType::Int; v.i = iv;
+        } else {
+            continue;  // raw blob / string / malformed
+        }
+        char kb[12];
+        const int n = std::snprintf(kb, sizeof(kb), "dp_%u",
+                                    static_cast<unsigned>(rec.dp_id));
+        if (n <= 0 || static_cast<std::size_t>(n) >= sizeof(kb)) continue;
+        const char* key = ctx.alloc_str(kb, static_cast<std::size_t>(n));
+        if (!key) continue;
+        if (out.put(key, v)) any = true;
+    }
+    return any;
+}
+
 }  // namespace
 
 DispatchResult dispatch_from_zigbee(const DecodedMessage& msg,
@@ -173,6 +215,17 @@ DispatchResult dispatch_from_zigbee(const DecodedMessage& msg,
                 // merged full — bail early but don't drop what we have.
                 break;
             }
+        }
+    }
+
+    // No converter claimed this frame. If it carried Tuya datapoints, surface
+    // them as `dp_<id>` rather than dropping silently — un-ported / placeholder
+    // devices become diagnosable (and usable in rules) instead of invisible.
+    if (!result.any_matched && !tuya_dps.empty()) {
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> scratch{};
+        if (emit_unmapped_tuya_dps(tuya_dps, ctx, scratch)) {
+            result.any_matched = true;
+            merge_payload(scratch, result.merged);
         }
     }
 

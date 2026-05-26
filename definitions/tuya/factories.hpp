@@ -58,6 +58,20 @@ struct BoundFz {
     };
 };
 
+// Write-path counterpart: a TzConverter bound to the same DP map.
+// key=nullptr makes tz_tuya_datapoints claim any key the map lists.
+template <typename CfgT>
+struct BoundTz {
+    static constexpr TzConverter converter{
+        .key         = nullptr,
+        .cluster     = "manuSpecificTuya",
+        .cluster_id  = 0xEF00,
+        .command_id  = 0x00,
+        .fn          = &::zhc::tuya::tz_tuya_datapoints,
+        .user_config = &CfgT::dp_map,
+    };
+};
+
 }  // namespace detail
 
 // `tuyaOnOff<Cfg>` — simple-switch bundle. mcuSyncTime + DP map.
@@ -91,6 +105,29 @@ struct TuyaLight {
         static_cast<std::uint8_t>(fz_array.size());
     static constexpr const TzConverter* const* tz_list = nullptr;
     static constexpr std::uint8_t tz_count = 0;
+};
+
+// `TuyaRw<Cfg>` — read + write DP bundle: fz_tuya_datapoints (state) +
+// tz_tuya_datapoints (control) on the same map. For controllable DP devices
+// (switches, relays, thermostat setpoints). The device def must also expose
+// the writable key(s) with Access::StateSet for the adapter/UI to surface
+// control. NOTE: the write encode is host-tested, but on-device behaviour is
+// unverified without hardware.
+template <typename CfgT>
+struct TuyaRw {
+    static constexpr DeviceKind kind = DeviceKind::Switch;
+    static constexpr std::array<const FzConverter*, 2> fz_array{{
+        &kFzTuyaMcuSyncTime,
+        &detail::BoundFz<CfgT>::converter,
+    }};
+    static constexpr const FzConverter* const* fz_list = fz_array.data();
+    static constexpr std::uint8_t fz_count =
+        static_cast<std::uint8_t>(fz_array.size());
+    static constexpr std::array<const TzConverter*, 1> tz_array{{
+        &detail::BoundTz<CfgT>::converter,
+    }};
+    static constexpr const TzConverter* const* tz_list = tz_array.data();
+    static constexpr std::uint8_t tz_count = 1;
 };
 
 }  // namespace zhc::tuya::factory

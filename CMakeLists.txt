@@ -174,7 +174,34 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_clamp.cpp
     definitions/tuya/TZE200_soil_th.cpp
     definitions/tuya/TZE200_greenhouse.cpp
-    definitions/tuya/TZE200_car_pres.cpp
+    definitions/tuya/TS0601_air_house_keeper.cpp
+    definitions/tuya/TS0601_air_quality.cpp
+    definitions/tuya/TZE200_mja3fuja.cpp
+    definitions/tuya/TS0601_smoke_3.cpp
+    definitions/tuya/ZG_225Z.cpp
+    definitions/tuya/TS0601_switch_1g.cpp
+    definitions/tuya/TS0601_switch_2g.cpp
+    definitions/tuya/TS0601_switch_4g.cpp
+    definitions/tuya/TS0601_th_sensor_1.cpp
+    definitions/tuya/TS0601_th_sensor_zl.cpp
+    definitions/tuya/TS0601_illuminance.cpp
+    definitions/tuya/DCR_CO.cpp
+    definitions/tuya/TS0601_water_sensor.cpp
+    definitions/tuya/TS0601_nous_lcd_th.cpp
+    definitions/tuya/TS0601_ith_sensor.cpp
+    definitions/tuya/TS0601_hpsz.cpp
+    definitions/tuya/TM081.cpp
+    definitions/tuya/TS0601_vibration.cpp
+    definitions/tuya/TS0601_din.cpp
+    definitions/tuya/TS0601_tshps_radar.cpp
+    definitions/tuya/TS0601_zg205z.cpp
+    definitions/tuya/TS0601_switch_3g.cpp
+    definitions/tuya/TS0601_thermostat.cpp
+    definitions/tuya/TS0601_cover.cpp
+    definitions/tuya/TS0601_cover_inv.cpp
+    definitions/tuya/TS0601_garage.cpp
+    definitions/tuya/TS0601_garage_matsee.cpp
+    definitions/tuya/hoch_din.cpp
     definitions/tuya/TZE200_wall_airq.cpp
     definitions/tuya/TZE200_body.cpp
     definitions/tuya/TZE200_vanadium.cpp
@@ -804,6 +831,12 @@ target_link_libraries(zhc_tuya_datapoints_tests PRIVATE zhc_definitions)
 add_executable(zhc_tuya_base_device_tests tests/test_tuya_base_device.cpp)
 target_link_libraries(zhc_tuya_base_device_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_dwcarsat_tests tests/test_dwcarsat.cpp)
+target_link_libraries(zhc_dwcarsat_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_alarms_tests tests/test_tuya_alarms.cpp)
+target_link_libraries(zhc_tuya_alarms_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_tuya_extend_tests tests/test_tuya_extend.cpp)
 target_link_libraries(zhc_tuya_extend_tests PRIVATE zhc_definitions)
 
@@ -879,6 +912,8 @@ add_test(NAME zhc_tuya_dp_tests       COMMAND zhc_tuya_dp_tests)
 add_test(NAME zhc_tuya_mcu_sync_time_tests COMMAND zhc_tuya_mcu_sync_time_tests)
 add_test(NAME zhc_tuya_datapoints_tests    COMMAND zhc_tuya_datapoints_tests)
 add_test(NAME zhc_tuya_base_device_tests   COMMAND zhc_tuya_base_device_tests)
+add_test(NAME zhc_dwcarsat_tests           COMMAND zhc_dwcarsat_tests)
+add_test(NAME zhc_tuya_alarms_tests        COMMAND zhc_tuya_alarms_tests)
 add_test(NAME zhc_tuya_extend_tests        COMMAND zhc_tuya_extend_tests)
 add_test(NAME zhc_tuya_dp_helpers_tests    COMMAND zhc_tuya_dp_helpers_tests)
 add_test(NAME zhc_tuya_factories_tests     COMMAND zhc_tuya_factories_tests)

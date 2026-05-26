@@ -34,6 +34,21 @@ constexpr TuyaDpMapEntry binary(std::uint8_t dp_id, const char* key) {
     return { dp_id, key, TuyaDpType::Bool, 1, nullptr, 0 };
 }
 
+// `dpBinaryInv(dp_id, key)` — bool DP with inverted polarity, i.e. z2m's
+// `valueConverter.trueFalse0` (wire 0 => true). Sets kTuyaDpFlagInvertBool;
+// fz_tuya_datapoints flips the decoded bool. Used by alarm DPs (gas/smoke)
+// whose "detected" state reports as 0.
+constexpr TuyaDpMapEntry binary_inv(std::uint8_t dp_id, const char* key) {
+    return { dp_id, key, TuyaDpType::Bool, 1, nullptr, 0, kTuyaDpFlagInvertBool };
+}
+
+// `dpPositionInv(dp_id, key)` — cover-position Numeric DP whose firmware counts
+// opposite to z2m: decode emits `100 - raw`, encode sends `100 - value`
+// (kTuyaDpFlagInvertPosition). For covers in z2m `coverPositionInvert`.
+constexpr TuyaDpMapEntry position_inv(std::uint8_t dp_id, const char* key) {
+    return { dp_id, key, TuyaDpType::Numeric, 1, nullptr, 0, kTuyaDpFlagInvertPosition };
+}
+
 // `dpEnumLookup(dp_id, key, table, n)` — enum DP → string label.
 constexpr TuyaDpMapEntry enum_lookup(std::uint8_t dp_id,
                                       const char* key,
