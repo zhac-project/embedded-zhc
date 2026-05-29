@@ -963,3 +963,19 @@ add_test(NAME zhc_tier_check
                fi; \
              done; \
              exit $missing")
+
+# ── Fuzzing (FINDINGS.md F31) ──────────────────────────────────────────
+# OFF by default. Enable with clang:
+#   cmake -B build-fuzz -DZHC_FUZZ=ON \
+#         -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
+#   cmake --build build-fuzz --target zhc_fuzz_parsers
+# Fuzzes the ZCL/Tuya wire-frame walkers with libFuzzer + ASan + UBSan.
+option(ZHC_FUZZ "Build the libFuzzer parser harness (clang only)" OFF)
+if(ZHC_FUZZ)
+    add_executable(zhc_fuzz_parsers tests/fuzz/fuzz_parsers.cpp)
+    target_link_libraries(zhc_fuzz_parsers PRIVATE zhc_parser)
+    target_compile_options(zhc_fuzz_parsers PRIVATE
+        -g -O1 -fsanitize=fuzzer,address,undefined)
+    target_link_options(zhc_fuzz_parsers PRIVATE
+        -fsanitize=fuzzer,address,undefined)
+endif()

@@ -139,7 +139,11 @@ void rewrite_keys_with_endpoint(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& merged,
         // Otherwise the arena was full — preserve original key, drop
         // the suffix this once. Operator-visible: a key like `state`
         // appears unsuffixed instead of vanishing. Safer than the
-        // alternative.
+        // alternative. F41 (FINDINGS.md) KNOWN LIMIT: two endpoints can then
+        // collide on the same unsuffixed key (last-writer-wins in the merge).
+        // Proper fix = size ep_scratch to ZHC_FIXED_PAYLOAD_CAP × worst-case
+        // key length, but RuntimeContext is stack-allocated (zhc_adapter.cpp),
+        // so the dispatch task's stack budget must be checked on HW first.
     }
 }
 

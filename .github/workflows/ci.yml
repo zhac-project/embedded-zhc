@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Host CI for the embedded-zhc device library (FINDINGS.md F17 + F31):
+# warnings-as-errors build + ctest under ASan/UBSan, plus a libFuzzer smoke
+# run over the wire-frame parsers. NOTE: authored, not executed in the dev
+# sandbox (host toolchain broken there) — validate on first run.
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  host-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure / build / test (ASan + UBSan)
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-sanitize-recover=all"
+          cmake --build build -j"$(nproc)"
+          ctest --test-dir build --output-on-failure
+
+  fuzz-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang (libFuzzer)
+        run: sudo apt-get update && sudo apt-get install -y clang
+      - name: Build + smoke-run the parser fuzzer
+        run: |
+          cmake -B build-fuzz -DZHC_FUZZ=ON \
+            -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ .
+          cmake --build build-fuzz --target zhc_fuzz_parsers
+          ./build-fuzz/zhc_fuzz_parsers -max_total_time=60 -runs=500000

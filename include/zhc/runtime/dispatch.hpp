@@ -99,7 +99,14 @@ struct RuntimeContext {
     // strings alive for the lifetime of the returned `DispatchResult`.
     // `ep_scratch_used` is reset implicitly because RuntimeContext is
     // constructed fresh per inbound dispatch.
-    char                  ep_scratch[256]{};
+    // F41 (FINDINGS.md): 256 → 512. The per-endpoint suffixed keys + any
+    // alloc_str() StringRefs share this arena; 256 B could exhaust on a
+    // multi-endpoint device (24-key cap × ~15 B ≈ 360 B), forcing the
+    // unsuffixed-key collision in rewrite_keys_with_endpoint(). 512 B covers
+    // the realistic worst case. RuntimeContext is stack-allocated, so this
+    // adds 256 B to the decode task's frame — fits the 6–8 KB decode tasks;
+    // a larger bump (or moving the arena off-stack) needs HW stack profiling.
+    char                  ep_scratch[512]{};
     std::uint16_t         ep_scratch_used = 0;
 
     // Copy `len` bytes from `src` into the per-dispatch arena and NUL-

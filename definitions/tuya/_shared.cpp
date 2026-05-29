@@ -76,6 +76,10 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
             if (raw.type != ValueType::Int) return false;
             std::int64_t v_int = raw.i;
             if (e.flags & kTuyaDpFlagInvertPosition) {
+                // F30 (FINDINGS.md): clamp to [0,100] — a malformed cover
+                // position must not surface as a negative/garbage percent.
+                if (v_int < 0)   v_int = 0;
+                if (v_int > 100) v_int = 100;
                 v_int = 100 - v_int;
             }
             // Float divisor takes precedence (e.g. ZVG1 fl-oz → L
@@ -609,7 +613,13 @@ bool encode_numeric(const TuyaDpMapEntry& e, const Value& in,
         else if (in.type == ValueType::Int)   in_f = static_cast<float>(in.i);
         else if (in.type == ValueType::Uint)  in_f = static_cast<float>(in.u);
         else return false;
-        raw = static_cast<std::int64_t>(in_f * e.divisor_f + 0.5f);
+        // F30 (FINDINGS.md): guard the float→int conversion. A NaN or an
+        // out-of-range product would otherwise be UB / wrap on the cast.
+        const float prod = in_f * e.divisor_f + 0.5f;
+        if (prod != prod) return false;                       // NaN
+        if      (prod >= static_cast<float>(INT32_MAX)) raw = INT32_MAX;
+        else if (prod <= static_cast<float>(INT32_MIN)) raw = INT32_MIN;
+        else raw = static_cast<std::int64_t>(prod);
     } else {
         if      (in.type == ValueType::Int)   raw = in.i;
         else if (in.type == ValueType::Uint)  raw = static_cast<std::int64_t>(in.u);
@@ -619,7 +629,17 @@ bool encode_numeric(const TuyaDpMapEntry& e, const Value& in,
         if      (d > 1) raw = raw * d;                            // reverse fz divide
         else if (d < 0) raw = raw / static_cast<std::int64_t>(-d); // reverse fz multiply
     }
-    if (e.flags & kTuyaDpFlagInvertPosition) raw = 100 - raw;     // reverse fz `100 - raw`
+    if (e.flags & kTuyaDpFlagInvertPosition) {
+        // F30: position percent — clamp to [0,100] so a malformed input can't
+        // emit a garbage datapoint.
+        if (raw < 0)   raw = 0;
+        if (raw > 100) raw = 100;
+        raw = 100 - raw;                                         // reverse fz `100 - raw`
+    }
+    // F30: clamp to int32 range before narrowing — value × divisor would
+    // otherwise wrap and send a wrong datapoint to the device.
+    if      (raw > INT32_MAX) raw = INT32_MAX;
+    else if (raw < INT32_MIN) raw = INT32_MIN;
     const std::int32_t v = static_cast<std::int32_t>(raw);
     out_val[0] = static_cast<std::uint8_t>((v >> 24) & 0xFF);
     out_val[1] = static_cast<std::uint8_t>((v >> 16) & 0xFF);
