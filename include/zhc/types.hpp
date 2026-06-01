@@ -156,6 +156,15 @@ struct Expose {
     // aggregate initialisers without this member stay valid and
     // default to State.
     ExposeCategory category = ExposeCategory::State;
+    // Numeric bounds (for UI slider scaling + range validation). Default
+    // 0/0 means "unset" (value_max <= value_min): the exposes serializer
+    // then fills the standard attrs (brightness, color_temp, position, …)
+    // from `zhc::default_numeric_range`, so the ~6600 existing positional
+    // initialisers need no change. A generated or hand-ported def MAY set
+    // explicit bounds (additive — they override the name-based default).
+    std::int32_t value_min  = 0;
+    std::int32_t value_max  = 0;
+    std::int32_t value_step = 0;   // 0 = unspecified
 };
 
 // Decoded form of an inbound frame after the core parser runs. Members:
