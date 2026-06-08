@@ -269,18 +269,22 @@ extern const std::uint8_t         kReportsOnOff_4ep_count;
 //   haElectricalMeasurement 0x0B04 / activePower 0x050B s16 0x29
 //   seMetering 0x0702 / currentSummationDelivered 0x0000 u48 0x25
 //
-// Values mirror z2m's lib/reporting.ts exactly:
+// onOff + energy mirror z2m's lib/reporting.ts defaults; the V/I/P
+// reportable_change values mirror z2m's per-device `configure:` for
+// TS011F_plug_1 / TS0121_plug, which OVERRIDE the reporting.ts base
+// change of 1 with 5 / 50 / 10:
 //   onOff                 → payload("onOff", 0, HOUR, 0)   min=0  max=3600 rc=0
-//   rmsVoltage/rmsCurrent → payload(..., 5, HOUR, 1)       min=5  max=3600 rc=1
-//   activePower           → payload(..., 5, HOUR, 1)       min=5  max=3600 rc=1
+//   rmsVoltage            → configure: change 5            min=5  max=3600 rc=5
+//   rmsCurrent            → configure: change 50           min=5  max=3600 rc=50
+//   activePower           → configure: change 10           min=5  max=3600 rc=10
 //   currentSummDelivered  → payload(..., 5, HOUR, 257)     min=5  max=3600 rc=257
 // (ZCL data-type bytes per the lumi ZNCZ15LM metering-plug precedent.)
 //
 // Every reported cluster (0x0006, 0x0B04, 0x0702) must also be BOUND on EP1
 // in the consuming def — run_configure walks .bindings[]/.reports[] as
 // independent loops, so a report on an unbound endpoint has no route home.
-// z2m-source: lib/reporting.ts `onOff`/`rmsVoltage`/`rmsCurrent`/
-// `activePower`/`currentSummDelivered`.
+// z2m-source: lib/reporting.ts `onOff`/`currentSummDelivered` defaults +
+// tuya.ts `TS011F_plug_1`/`TS0121_plug` `configure:` V/I/P overrides.
 extern const ::zhc::ReportingSpec kReportsPlugVIPE_1ep[];
 extern const std::uint8_t         kReportsPlugVIPE_1ep_count;
 

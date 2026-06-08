@@ -65,19 +65,22 @@ const std::uint8_t kReportsOnOff_4ep_count =
 
 // ── kReportsPlugVIPE_1ep — onOff + electrical (V/I/P) + metering (energy) ──
 //
-// Single-endpoint smart-plug Configure-Reporting set. Mirrors z2m's
-// lib/reporting.ts values exactly for each attribute (see _shared.hpp for
-// the per-line z2m mapping). attr_type bytes: 0x10 bool, 0x21 u16,
-// 0x29 s16, 0x25 u48 — per the lumi ZNCZ15LM metering-plug precedent.
+// Single-endpoint smart-plug Configure-Reporting set. onOff + energy
+// mirror z2m's lib/reporting.ts defaults; the V/I/P reportable_change
+// values mirror z2m's per-device `configure:` for TS011F_plug_1 /
+// TS0121_plug, which OVERRIDE the reporting.ts base change of 1 with
+// 5 (rmsVoltage) / 50 (rmsCurrent) / 10 (activePower). attr_type bytes:
+// 0x10 bool, 0x21 u16, 0x29 s16, 0x25 u48 — per the lumi ZNCZ15LM
+// metering-plug precedent.
 const ::zhc::ReportingSpec kReportsPlugVIPE_1ep[] = {
     // genOnOff.onOff                        bool  payload("onOff",0,HOUR,0)
     { 1, 0x0006, 0x0000, 0x10, 0, 3600,   0, 0 },
-    // haElectricalMeasurement.rmsVoltage   u16   payload("rmsVoltage",5,HOUR,1)
-    { 1, 0x0B04, 0x0505, 0x21, 5, 3600,   1, 0 },
-    // haElectricalMeasurement.rmsCurrent   u16   payload("rmsCurrent",5,HOUR,1)
-    { 1, 0x0B04, 0x0508, 0x21, 5, 3600,   1, 0 },
-    // haElectricalMeasurement.activePower  s16   payload("activePower",5,HOUR,1)
-    { 1, 0x0B04, 0x050B, 0x29, 5, 3600,   1, 0 },
+    // haElectricalMeasurement.rmsVoltage   u16   configure: change 5
+    { 1, 0x0B04, 0x0505, 0x21, 5, 3600,   5, 0 },
+    // haElectricalMeasurement.rmsCurrent   u16   configure: change 50
+    { 1, 0x0B04, 0x0508, 0x21, 5, 3600,  50, 0 },
+    // haElectricalMeasurement.activePower  s16   configure: change 10
+    { 1, 0x0B04, 0x050B, 0x29, 5, 3600,  10, 0 },
     // seMetering.currentSummationDelivered u48   payload("currentSummDelivered",5,HOUR,257)
     { 1, 0x0702, 0x0000, 0x25, 5, 3600, 257, 0 },
 };

@@ -16,10 +16,14 @@
 //   activePower (haElectricalMeasurement 0x0B04 / 0x050B) — iff V/I/P exposed
 //   currentSummationDelivered (seMetering 0x0702 / 0x0000) — iff energy exposed
 //
-// Values mirror z2m's lib/reporting.ts EXACTLY:
+// onOff + energy mirror z2m's lib/reporting.ts defaults; the V/I/P
+// reportable_change values mirror z2m's per-device `configure:` for
+// TS011F_plug_1 / TS0121_plug, which OVERRIDE the reporting.ts base
+// change of 1 with 5 / 50 / 10:
 //   onOff                 payload("onOff", 0, HOUR, 0)         min=0 max=3600 rc=0
-//   rmsVoltage/rmsCurrent payload(..., 5, HOUR, 1)            min=5 max=3600 rc=1
-//   activePower           payload("activePower", 5, HOUR, 1)  min=5 max=3600 rc=1
+//   rmsVoltage            configure: change 5                 min=5 max=3600 rc=5
+//   rmsCurrent            configure: change 50                min=5 max=3600 rc=50
+//   activePower           configure: change 10                min=5 max=3600 rc=10
 //   currentSummDelivered  payload(..., 5, HOUR, 257)          min=5 max=3600 rc=257
 //
 // Additionally asserts each def BINDS every cluster it reports on EP1
@@ -111,31 +115,31 @@ void assert_onoff(const PreparedDefinition& def) {
 
 // Assert the three haElectricalMeasurement reports on EP1, z2m values.
 void assert_electrical(const PreparedDefinition& def) {
-    // rmsVoltage 0x0505 — u16, payload(...,5,HOUR,1).
+    // rmsVoltage 0x0505 — u16, configure: change 5.
     const ReportingSpec* v = find_report(def, 1, 0x0B04, 0x0505);
     assert(v != nullptr);
     assert(v->attr_type == 0x21);       // u16
     assert(v->min_interval == 5);
     assert(v->max_interval == 3600);
-    assert(v->reportable_change == 1);
+    assert(v->reportable_change == 5);
     assert(v->manufacturer_code == 0);
 
-    // rmsCurrent 0x0508 — u16, payload(...,5,HOUR,1).
+    // rmsCurrent 0x0508 — u16, configure: change 50.
     const ReportingSpec* c = find_report(def, 1, 0x0B04, 0x0508);
     assert(c != nullptr);
     assert(c->attr_type == 0x21);       // u16
     assert(c->min_interval == 5);
     assert(c->max_interval == 3600);
-    assert(c->reportable_change == 1);
+    assert(c->reportable_change == 50);
     assert(c->manufacturer_code == 0);
 
-    // activePower 0x050B — s16, payload(...,5,HOUR,1).
+    // activePower 0x050B — s16, configure: change 10.
     const ReportingSpec* p = find_report(def, 1, 0x0B04, 0x050B);
     assert(p != nullptr);
     assert(p->attr_type == 0x29);       // s16
     assert(p->min_interval == 5);
     assert(p->max_interval == 3600);
-    assert(p->reportable_change == 1);
+    assert(p->reportable_change == 10);
     assert(p->manufacturer_code == 0);
 }
 

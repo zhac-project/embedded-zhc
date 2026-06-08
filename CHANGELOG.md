@@ -30,10 +30,14 @@ across the ZHAC platform.
   + energy. Added the matching `.reports` on EP1: onOff (genOnOff 0x0006 /
   0x0000, bool), rmsVoltage (haElectricalMeasurement 0x0B04 / 0x0505, u16),
   rmsCurrent (0x0B04 / 0x0508, u16), activePower (0x0B04 / 0x050B, s16) and
-  currentSummationDelivered (seMetering 0x0702 / 0x0000, u48). Values mirror
-  z2m's `lib/reporting.ts` exactly — `onOff` (min=0, max=3600, change=0);
-  `rmsVoltage`/`rmsCurrent`/`activePower` (min=5, max=3600, change=1);
-  `currentSummDelivered` (min=5, max=3600, change=257). Both defs' bindings
+  currentSummationDelivered (seMetering 0x0702 / 0x0000, u48). `onOff` and
+  `currentSummDelivered` mirror z2m's `lib/reporting.ts` defaults — `onOff`
+  (min=0, max=3600, change=0); `currentSummDelivered` (min=5, max=3600,
+  change=257) — while the V/I/P reportable changes mirror z2m's per-device
+  `configure:` for `TS011F_plug_1`/`TS0121_plug`, which override the
+  reporting.ts base change of 1: `rmsVoltage` (min=5, max=3600, change=5);
+  `rmsCurrent` (min=5, max=3600, change=50); `activePower` (min=5, max=3600,
+  change=10). Both defs' bindings
   were extended from genOnOff-only to also bind haElectricalMeasurement
   (0x0B04) and seMetering (0x0702) on EP1, since `run_configure` walks
   `.bindings[]`/`.reports[]` independently — a report on an unbound cluster
