@@ -2,10 +2,30 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 1: Tuya TS0202 IAS motion sensor. IAS alarm v2.
 // z2m-source: tuya.ts #TS0202.
+//   fromZigbee: [fz.ias_occupancy_alarm_1, fz.battery,
+//                fz.ias_occupancy_alarm_1_report]
+//   exposes:    occupancy, battery_low, battery, battery_voltage, tamper
+//   configure:  (none) — see IAS-enroll note below.
+//
+// IAS Zone enrollment is GLOBAL: the coordinator stack auto-enrolls any
+// 0x0500 device reactively (writes attr 0x0010 IAS_CIE_Address + answers
+// ZoneEnrollRequest with ZoneEnrollResponse) in
+// zhac-components/components/zigbee_mgr/zigbee_mgr.cpp
+// (zcl_maybe_respond_ias_enroll). z2m itself ships NO `configure:` for
+// this device, so there is nothing to port and no per-def config_steps
+// are needed — the binding below is the only join-time setup. ZHC's
+// ConfigStepOp has no Write op precisely because IAS enroll never needs
+// one. The `_report` (attribute-report) decode path that z2m adds is not
+// expressible with the command-only fz_ias_typed primitive; ZHC decodes
+// the ZoneStatusChangeNotification command (the post-enroll mechanism)
+// via kFzIasMotionAlarm, matching the sibling Tuya IAS sensors.
 #include "definitions/_generic/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::generic::kFzIgnoreOccupancyReport };
+const FzConverter* const kFz[] = {
+    &::zhc::generic::kFzIasMotionAlarm,   // occupancy + tamper + battery_low
+    &::zhc::generic::kFzBattery,          // battery (%) + voltage (mV)
+};
 constexpr const char* kModels[] = { "TS0202", "WHD02" };
 }
 
@@ -13,11 +33,14 @@ constexpr const char* kModels[] = { "TS0202", "WHD02" };
 constexpr Expose kAutoExposes[] = {
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0500},
+    {1, 0x0001},   // genPowerCfg — battery reporting
+    {1, 0x0500},   // ssIasZone — IAS zone status notifications
 };
 // --- end auto-generated block ---
 

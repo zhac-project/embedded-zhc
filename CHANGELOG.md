@@ -10,6 +10,32 @@ across the ZHAC platform.
 
 ### Fixed
 
+- Tuya IAS sensor decode + bindings (Phase-2b Batch 4). The worklist
+  flagged `definitions/tuya/TS0202.cpp` (motion) and
+  `definitions/tuya/TS0203.cpp` (contact) as "missing configure", but the
+  real gap was a broken/absent IAS-status decoder — there is no z2m
+  `configure:` to port for either device, and IAS Zone enrollment is done
+  GLOBALLY by the coordinator stack
+  (`zhac-components/components/zigbee_mgr/zigbee_mgr.cpp`
+  `zcl_maybe_respond_ias_enroll`: writes attr 0x0010 IAS_CIE_Address +
+  answers ZoneEnrollRequest with ZoneEnrollResponse for any 0x0500
+  device), so no per-def config step is needed (and ZHC's `ConfigStepOp`
+  has no Write op precisely because IAS enroll never requires one).
+  TS0202 had `kFzIgnoreOccupancyReport` (which *ignored* occupancy) and no
+  IAS decoder, so motion was never reported; TS0203 had only `kFzBattery`,
+  no `contact` expose, and did not bind ssIasZone. Switched TS0202 to
+  `kFzIasMotionAlarm` + `kFzBattery` and TS0203 to `kFzIasContactAlarm` +
+  `kFzBattery` (z2m `fz.ias_occupancy_alarm_1` / `fz.ias_contact_alarm_1`
+  + `fz.battery`); added the missing `tamper`/`voltage`/`battery_low` +
+  (TS0203) `contact` exposes to match z2m; and bound both genPowerCfg
+  (0x0001, battery) and ssIasZone (0x0500) on each. Battery *reporting*
+  (`reports`) is intentionally NOT added — z2m removed
+  `batteryPercentageRemaining` for several Tuya IAS sensors ("devices fall
+  off network"). The z2m `_report` (attribute-report) decode path has no
+  ZHC equivalent (the `fz_ias_typed` primitive is command-only); ZHC
+  decodes the post-enroll ZoneStatusChangeNotification command, matching
+  the sibling Tuya IAS sensors (SM0202, RH3040).
+
 - Tuya soil-sensor temperature 10x scaling bug. The three soil parent defs
   (`definitions/tuya/TZE200_soil.cpp`, `TZE200_soil_ec.cpp`,
   `TZE200_soil_th.cpp`) decoded the temperature DP (dp 5) with the
