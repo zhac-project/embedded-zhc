@@ -38,6 +38,48 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0300},
 };
 
+// z2m TS0502B `configure:` — the tuyaLight extend (`configureReporting:
+// true`) binds + sets up reporting on genOnOff / genLevelCtrl /
+// lightingColorCtrl, then the device-level `configure` runs
+// `tuya.configureMagicPacket`. The binds are already declared in
+// `kAutoBindings`; what was missing is the reporting kick-off and the
+// magic packet, both of which ZHC drives as Read steps.
+//
+// `saveClusterAttributeKeyValue("lightingColorCtrl",{colorCapabilities:
+// 16})` from z2m primes herdsman's attribute cache so it stops asking
+// the device for colorCapabilities — that is a host-side cache write
+// with no over-air traffic, so there is nothing to port to a step.
+//
+// Magic-packet attrs (genBasic, cluster 0x0000), little-endian attr ids:
+//   manufacturerName(0x0004) zclVersion(0x0000) appVersion(0x0001)
+//   modelId(0x0005) powerSource(0x0007) 0xFFFE
+constexpr std::uint8_t kMagicAttrs_TS0502B[] = {
+    0x04, 0x00,  0x00, 0x00,  0x01, 0x00,
+    0x05, 0x00,  0x07, 0x00,  0xFE, 0xFF,
+};
+
+// Per-cluster reporting kick — a Read forces the light to start
+// streaming the attribute (z2m's `configureReporting`). onOff (0x0006
+// attr 0x0000), currentLevel (0x0008 attr 0x0000), colorTemperature
+// (0x0300 attr 0x0007).
+constexpr std::uint8_t kReadOnOff_TS0502B[] = { 0x00, 0x00 };
+constexpr std::uint8_t kReadLevel_TS0502B[] = { 0x00, 0x00 };
+constexpr std::uint8_t kReadColor_TS0502B[] = { 0x07, 0x00 };  // colorTemperature
+
+// Configure pipeline — settle, magic packet, then per-cluster reporting
+// reads. Mirrors the Kurvia CT-light port (`kConfig_ZBCL`).
+constexpr ConfigStep kConfigSteps_TS0502B[] = {
+    { ConfigStepOp::Wait, 0, 0,      0x00, 0, nullptr, 0, 300 },
+    { ConfigStepOp::Read, 1, 0x0000, 0x00, 0,
+      kMagicAttrs_TS0502B, sizeof(kMagicAttrs_TS0502B), 1500 },
+    { ConfigStepOp::Read, 1, 0x0006, 0x00, 0,
+      kReadOnOff_TS0502B, sizeof(kReadOnOff_TS0502B), 0 },
+    { ConfigStepOp::Read, 1, 0x0008, 0x00, 0,
+      kReadLevel_TS0502B, sizeof(kReadLevel_TS0502B), 0 },
+    { ConfigStepOp::Read, 1, 0x0300, 0x00, 0,
+      kReadColor_TS0502B, sizeof(kReadColor_TS0502B), 0 },
+};
+
 // z2m whiteLabel entries — UI metadata, runtime ignores. Manus from
 // the per-label tuya.whitelabel(...) calls are NOT folded into the
 // primary def's manus[] because the primary already matches any manu
@@ -68,6 +110,8 @@ extern const PreparedDefinition kDefTS0502B{
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
     .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .config_steps=kConfigSteps_TS0502B,
+    .config_steps_count=sizeof(kConfigSteps_TS0502B)/sizeof(kConfigSteps_TS0502B[0]),
 };
 
 extern const PreparedDefinition kDefTS0502B_v2{
@@ -84,5 +128,7 @@ extern const PreparedDefinition kDefTS0502B_v2{
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
     .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .config_steps=kConfigSteps_TS0502B,
+    .config_steps_count=sizeof(kConfigSteps_TS0502B)/sizeof(kConfigSteps_TS0502B[0]),
 };
 }

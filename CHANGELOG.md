@@ -20,6 +20,28 @@ across the ZHAC platform.
 
 ### Added
 
+- Tuya TS0502B CCT light (z2m `TS0502B`, incl. MiBoxer `_TZB210_lmqquxus`)
+  configure pipeline. The parent def `definitions/tuya/TS0502B.cpp` had
+  `config_steps=nullptr`; z2m's `TS0502B` runs a `configure:` (tuyaLight
+  `configureReporting: true` + `tuya.configureMagicPacket`). Ported to
+  `config_steps` on both registrations (`kDefTS0502B` + `kDefTS0502B_v2`):
+  a settle `Wait`, a genBasic (0x0000) magic-packet `Read`, and reporting
+  `Read`s on genOnOff (0x0006), genLevelCtrl (0x0008) and lightingColorCtrl
+  (0x0300). Binds were already declared in `bindings[]`. The z2m
+  `saveClusterAttributeKeyValue(colorCapabilities)` is a host-cache write
+  with no over-air traffic and has no step equivalent. Covered by
+  `tests/test_ts0502b_config.cpp`.
+
+- HOCH DIN-rail RCBO (z2m `TS0601_rcbo`, `_TZE200_hkdl5fmv`) write path.
+  The parent def `definitions/tuya/hoch_din.cpp` had `to_zigbee=nullptr`;
+  z2m uses `legacy.toZigbee.hoch_din`. Wired the four round-trippable
+  scalar DPs through the generic Tuya-DP writer (`tz_tuya_datapoints`,
+  manuSpecificTuya `0xEF00` cmd setData): `state` (DP1 bool), `child_lock`
+  (DP29 bool), `countdown_timer` (DP9 value) and `power_on_behavior`
+  (DP27 enum off/on/previous). z2m's momentary command DPs `trip` (DP116)
+  and `clear_device_data` (DP115) are intentionally omitted (no expose
+  state to round-trip). Covered by `tests/test_hoch_din_tz.cpp`.
+
 - Tuya TS004F smart knob (z2m `ERS-10TZBVK-AA`) full expose parity. New
   manu-specific override `definitions/tuya/TS004F_knob.cpp`
   (`kDef_TS004F_knob`) graduates the port out of the now-deleted generated

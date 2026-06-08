@@ -865,6 +865,12 @@ target_link_libraries(zhc_color_tests PRIVATE zhc_definitions)
 add_executable(zhc_tuya_tz_tests tests/test_tuya_tz.cpp)
 target_link_libraries(zhc_tuya_tz_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_ts0502b_config_tests tests/test_ts0502b_config.cpp)
+target_link_libraries(zhc_ts0502b_config_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_hoch_din_tz_tests tests/test_hoch_din_tz.cpp)
+target_link_libraries(zhc_hoch_din_tz_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_diy_range_extender_tests tests/test_diy_range_extender.cpp)
 target_link_libraries(zhc_diy_range_extender_tests PRIVATE zhc_definitions)
 
@@ -933,6 +939,8 @@ add_test(NAME zhc_tuya_devices_tests       COMMAND zhc_tuya_devices_tests)
 add_test(NAME zhc_tz_generic_tests          COMMAND zhc_tz_generic_tests)
 add_test(NAME zhc_color_tests               COMMAND zhc_color_tests)
 add_test(NAME zhc_tuya_tz_tests             COMMAND zhc_tuya_tz_tests)
+add_test(NAME zhc_ts0502b_config_tests      COMMAND zhc_ts0502b_config_tests)
+add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)

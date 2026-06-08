@@ -6,10 +6,19 @@
 // cannot express, so this is a hand-written fz that byte-slices them.
 // Core readings only — state, voltage, current, power, temperature, energy,
 // child_lock, countdown_timer. Threshold/leakage/fault config DPs (110-112,
-// 109, 26, 27) are skipped (complex multi-field, low value). READ-ONLY (the
-// relay/state DP1 is decoded but control/tz is not wired — mains breaker).
+// 109, 26) are skipped on the read side (complex multi-field, low value).
+//
+// WRITE path (z2m `legacy.toZigbee.hoch_din`): the four round-trippable
+// scalar DPs are wired through the generic Tuya-DP writer
+// (`tz_tuya_datapoints`, manuSpecificTuya 0xEF00 cmd setData):
+//   state(DP1, bool)  child_lock(DP29, bool)
+//   countdown_timer(DP9, value)  power_on_behavior(DP27, enum off/on/previous)
+// z2m's write-only command DPs `trip` (DP116 hochLocking) and
+// `clear_device_data` (DP115 hochClearEnergy) are momentary "do it now"
+// pulses with no expose state to round-trip and are intentionally omitted.
 // BEST-EFFORT, not hardware-verified.
 #include "definitions/tuya/_shared.hpp"
+#include "definitions/tuya/dp.hpp"
 #include "definitions/tuya/extend.hpp"
 #include "definitions/tuya/factories.hpp"
 #include <cstdint>
@@ -63,6 +72,36 @@ constexpr FzConverter kFzHoch{
     .user_config       = nullptr,
 };
 const FzConverter* const kFz[]={ &::zhc::tuya::kFzTuyaMcuSyncTime, &kFzHoch };
+
+// ── Write path ─────────────────────────────────────────────────────
+// z2m `lib/legacy.ts` `dataPoints.hochRelayStatus = 27` →
+// power_on_behavior with lookup {off:0, on:1, previous:2}.
+constexpr ::zhc::tuya::TuyaEnumEntry kPowerOnBehaviorLut[] = {
+    { 0, "off" }, { 1, "on" }, { 2, "previous" },
+};
+constexpr ::zhc::tuya::TuyaDpMapEntry kWriteEntries[] = {
+    ::zhc::tuya::dp::binary(1, "state"),                 // sendDataPointBool DP1
+    ::zhc::tuya::dp::numeric(9, "countdown_timer"),      // sendDataPointValue DP9
+    ::zhc::tuya::dp::binary(29, "child_lock"),           // sendDataPointBool DP29
+    ::zhc::tuya::dp::enum_lookup(27, "power_on_behavior",
+                                 kPowerOnBehaviorLut, 3),// sendDataPointEnum DP27
+};
+constexpr ::zhc::tuya::TuyaDatapointMap kWriteMap{ kWriteEntries,
+    sizeof(kWriteEntries) / sizeof(kWriteEntries[0]) };
+
+// manuSpecificTuya (0xEF00) cmd 0x00 setData. key=nullptr → claims any
+// key the map lists. Shares the generic encoder with every other
+// DP-stream Tuya device.
+constexpr TzConverter kTzHoch{
+    .key         = nullptr,
+    .cluster     = "manuSpecificTuya",
+    .cluster_id  = 0xEF00,
+    .command_id  = 0x00,
+    .fn          = &::zhc::tuya::tz_tuya_datapoints,
+    .user_config = &kWriteMap,
+};
+const TzConverter* const kTz[] = { &kTzHoch };
+
 constexpr const char* kM[]={"TS0601"};
 constexpr const char* kN[]={"_TZE200_hkdl5fmv"};
 }  // namespace
@@ -72,6 +111,6 @@ extern const PreparedDefinition kDefHochDin{
     .vendor="HOCH",.meta=nullptr,.exposes=nullptr,.exposes_count=0,
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz,.from_zigbee_count=2,
-    .to_zigbee=nullptr,.to_zigbee_count=0,
+    .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };
 }  // namespace zhc::devices::tuya
