@@ -20,6 +20,27 @@ across the ZHAC platform.
 
 ### Added
 
+- Tuya smart-plug attribute reporting + bindings (Phase-2b Batch 2).
+  The generic Tuya plug parents `TS011F` (`TS011F_plug_1`) and `TS0121`
+  (`TS0121_plug`) bound + decoded genOnOff, haElectricalMeasurement and
+  seMetering but had `reports=nullptr`, so no Configure Reporting was set
+  up. z2m's profile for both is
+  `tuya.modernExtend.tuyaOnOff({electricalMeasurements: true})` +
+  `electricityMeasurementPoll`, exposing state + voltage + current + power
+  + energy. Added the matching `.reports` on EP1: onOff (genOnOff 0x0006 /
+  0x0000, bool), rmsVoltage (haElectricalMeasurement 0x0B04 / 0x0505, u16),
+  rmsCurrent (0x0B04 / 0x0508, u16), activePower (0x0B04 / 0x050B, s16) and
+  currentSummationDelivered (seMetering 0x0702 / 0x0000, u48). Values mirror
+  z2m's `lib/reporting.ts` exactly — `onOff` (min=0, max=3600, change=0);
+  `rmsVoltage`/`rmsCurrent`/`activePower` (min=5, max=3600, change=1);
+  `currentSummDelivered` (min=5, max=3600, change=257). Both defs' bindings
+  were extended from genOnOff-only to also bind haElectricalMeasurement
+  (0x0B04) and seMetering (0x0702) on EP1, since `run_configure` walks
+  `.bindings[]`/`.reports[]` independently — a report on an unbound cluster
+  has no route to the coordinator. Shared array `kReportsPlugVIPE_1ep`
+  lives in `definitions/tuya/_shared.cpp` (decl in `_shared.hpp`). Covered
+  by `tests/test_tuya_plug_reports.cpp`.
+
 - Tuya switch family genOnOff attribute reporting (Phase-2b Batch 1).
   The nine generic Tuya switch parents — `TS0001`, `TS0002`, `TS0003`,
   `TS0004`, `TS0011`, `TS0012`, `TS0013`, `TS0014`, `TS000F` — already

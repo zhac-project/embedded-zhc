@@ -253,4 +253,35 @@ extern const std::uint8_t         kReportsOnOff_3ep_count;
 extern const ::zhc::ReportingSpec kReportsOnOff_4ep[];
 extern const std::uint8_t         kReportsOnOff_4ep_count;
 
+// ── kReportsPlugVIPE_1ep — single-endpoint metering-plug reporting ──
+//
+// Shared Configure-Reporting set for generic Tuya smart plugs that expose
+// state + voltage + current + power + energy (z2m's
+// `tuya.modernExtend.tuyaOnOff({electricalMeasurements: true})` +
+// `electricityMeasurementPoll`). Used by TS011F (`TS011F_plug_1`) and
+// TS0121 (`TS0121_plug`), both single-endpoint.
+//
+// Field order: { endpoint, cluster_id, attr_id, attr_type,
+//                min_s, max_s, change, mfg }. Five entries, EP1:
+//   genOnOff 0x0006 / onOff 0x0000              bool  0x10
+//   haElectricalMeasurement 0x0B04 / rmsVoltage 0x0505  u16 0x21
+//   haElectricalMeasurement 0x0B04 / rmsCurrent 0x0508  u16 0x21
+//   haElectricalMeasurement 0x0B04 / activePower 0x050B s16 0x29
+//   seMetering 0x0702 / currentSummationDelivered 0x0000 u48 0x25
+//
+// Values mirror z2m's lib/reporting.ts exactly:
+//   onOff                 → payload("onOff", 0, HOUR, 0)   min=0  max=3600 rc=0
+//   rmsVoltage/rmsCurrent → payload(..., 5, HOUR, 1)       min=5  max=3600 rc=1
+//   activePower           → payload(..., 5, HOUR, 1)       min=5  max=3600 rc=1
+//   currentSummDelivered  → payload(..., 5, HOUR, 257)     min=5  max=3600 rc=257
+// (ZCL data-type bytes per the lumi ZNCZ15LM metering-plug precedent.)
+//
+// Every reported cluster (0x0006, 0x0B04, 0x0702) must also be BOUND on EP1
+// in the consuming def — run_configure walks .bindings[]/.reports[] as
+// independent loops, so a report on an unbound endpoint has no route home.
+// z2m-source: lib/reporting.ts `onOff`/`rmsVoltage`/`rmsCurrent`/
+// `activePower`/`currentSummDelivered`.
+extern const ::zhc::ReportingSpec kReportsPlugVIPE_1ep[];
+extern const std::uint8_t         kReportsPlugVIPE_1ep_count;
+
 }  // namespace zhc::tuya

@@ -63,6 +63,27 @@ const ::zhc::ReportingSpec kReportsOnOff_4ep[] = {
 const std::uint8_t kReportsOnOff_4ep_count =
     static_cast<std::uint8_t>(sizeof(kReportsOnOff_4ep)/sizeof(kReportsOnOff_4ep[0]));
 
+// ── kReportsPlugVIPE_1ep — onOff + electrical (V/I/P) + metering (energy) ──
+//
+// Single-endpoint smart-plug Configure-Reporting set. Mirrors z2m's
+// lib/reporting.ts values exactly for each attribute (see _shared.hpp for
+// the per-line z2m mapping). attr_type bytes: 0x10 bool, 0x21 u16,
+// 0x29 s16, 0x25 u48 — per the lumi ZNCZ15LM metering-plug precedent.
+const ::zhc::ReportingSpec kReportsPlugVIPE_1ep[] = {
+    // genOnOff.onOff                        bool  payload("onOff",0,HOUR,0)
+    { 1, 0x0006, 0x0000, 0x10, 0, 3600,   0, 0 },
+    // haElectricalMeasurement.rmsVoltage   u16   payload("rmsVoltage",5,HOUR,1)
+    { 1, 0x0B04, 0x0505, 0x21, 5, 3600,   1, 0 },
+    // haElectricalMeasurement.rmsCurrent   u16   payload("rmsCurrent",5,HOUR,1)
+    { 1, 0x0B04, 0x0508, 0x21, 5, 3600,   1, 0 },
+    // haElectricalMeasurement.activePower  s16   payload("activePower",5,HOUR,1)
+    { 1, 0x0B04, 0x050B, 0x29, 5, 3600,   1, 0 },
+    // seMetering.currentSummationDelivered u48   payload("currentSummDelivered",5,HOUR,257)
+    { 1, 0x0702, 0x0000, 0x25, 5, 3600, 257, 0 },
+};
+const std::uint8_t kReportsPlugVIPE_1ep_count =
+    static_cast<std::uint8_t>(sizeof(kReportsPlugVIPE_1ep)/sizeof(kReportsPlugVIPE_1ep[0]));
+
 // Cluster-specific command ids on manuSpecificTuya (0xEF00).
 namespace {
 constexpr std::uint16_t kCmdMcuSyncTime = 0x24;

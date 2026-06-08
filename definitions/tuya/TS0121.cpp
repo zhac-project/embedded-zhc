@@ -4,6 +4,7 @@
 // z2m-source: tuya.ts #TS0121.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/lumi/_shared.hpp"
+#include "definitions/tuya/_shared.hpp"   // kReportsPlugVIPE_1ep
 namespace zhc::devices::tuya {
 namespace {
 constexpr ::zhc::lumi::LumiPowerCalibration kPower{1,1000,10};
@@ -35,6 +36,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+// Hand-written bindings (supersedes kAutoBindings): the auto block binds only
+// genOnOff, but this plug also decodes + reports haElectricalMeasurement
+// (0x0B04) and seMetering (0x0702). run_configure walks .bindings[]/.reports[]
+// independently, so every reported cluster must be bound on EP1 or its reports
+// have no route to the coordinator. z2m binds these clusters via tuyaOnOff.
+constexpr BindingSpec kBindings[] = {
+    {1, 0x0006},    // genOnOff
+    {1, 0x0B04},    // haElectricalMeasurement (voltage/current/power)
+    {1, 0x0702},    // seMetering (energy)
+};
+
 extern const PreparedDefinition kDefTS0121{
     .zigbee_models=kModels,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,.manufacturer_names=nullptr,.manufacturer_names_count=0,
@@ -44,6 +56,8 @@ extern const PreparedDefinition kDefTS0121{
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+.bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
+.reports=::zhc::tuya::kReportsPlugVIPE_1ep,
+.reports_count=::zhc::tuya::kReportsPlugVIPE_1ep_count,
 };
 }
