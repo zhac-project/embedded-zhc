@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 1: Tuya TS0012 dual wall switch. z2m-source: tuya.ts.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/tuya/_shared.hpp"   // kReportsOnOff_2ep
 namespace zhc::devices::tuya {
 namespace {
 const FzConverter* const kFz[] = { &::zhc::generic::kFzOnOff };
@@ -37,5 +38,7 @@ extern const PreparedDefinition kDefTS0012{
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m TS0012 configure: reporting.onOff(EP1)+reporting.onOff(EP2). 2-gang.
+    .reports=::zhc::tuya::kReportsOnOff_2ep,.reports_count=::zhc::tuya::kReportsOnOff_2ep_count,
 };
 }

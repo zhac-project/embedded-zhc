@@ -50,5 +50,7 @@ extern const PreparedDefinition kDefTS0001{
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m TS0001 configure: reporting.onOff(EP1). 1-gang.
+    .reports=::zhc::tuya::kReportsOnOff_1ep,.reports_count=::zhc::tuya::kReportsOnOff_1ep_count,
 };
 }

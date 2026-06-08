@@ -3,6 +3,7 @@
 // Tier 1: Tuya TS0004 4-gang on/off.
 // z2m-source: tuya.ts #TS0004.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/tuya/_shared.hpp"   // kReportsOnOff_4ep
 namespace zhc::devices::tuya {
 namespace {
 const FzConverter* const kFz[] = { &::zhc::generic::kFzOnOff };
@@ -38,5 +39,7 @@ extern const PreparedDefinition kDefTS0004{
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m TS0004 configure: reporting.onOff EP1..4. 4-gang.
+    .reports=::zhc::tuya::kReportsOnOff_4ep,.reports_count=::zhc::tuya::kReportsOnOff_4ep_count,
 };
 }

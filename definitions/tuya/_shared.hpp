@@ -237,4 +237,20 @@ extern const TzConverter kTzTuyaChildLock;         // attr 0x8000 bool
 extern const FzConverter kFzTuyaSwitchType;
 extern const TzConverter kTzTuyaSwitchType;
 
+// ── kReportsOnOff_Nep — genOnOff Configure-Reporting for switch gangs ──
+//
+// Shared onOff (cluster 0x0006, attr 0x0000, bool) ReportingSpec sets,
+// one per gang count (1..4 endpoints). Mirror z2m's `reporting.onOff`
+// (min=0, max=3600, change=0). Generic Tuya switch parents reference
+// the array matching their gang/endpoint count from `.reports`.
+// z2m-source: lib/reporting.ts `onOff`.
+extern const ::zhc::ReportingSpec kReportsOnOff_1ep[];
+extern const std::uint8_t         kReportsOnOff_1ep_count;
+extern const ::zhc::ReportingSpec kReportsOnOff_2ep[];
+extern const std::uint8_t         kReportsOnOff_2ep_count;
+extern const ::zhc::ReportingSpec kReportsOnOff_3ep[];
+extern const std::uint8_t         kReportsOnOff_3ep_count;
+extern const ::zhc::ReportingSpec kReportsOnOff_4ep[];
+extern const std::uint8_t         kReportsOnOff_4ep_count;
+
 }  // namespace zhc::tuya

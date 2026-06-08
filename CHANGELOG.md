@@ -20,6 +20,23 @@ across the ZHAC platform.
 
 ### Added
 
+- Tuya switch family genOnOff attribute reporting (Phase-2b Batch 1).
+  The nine generic Tuya switch parents — `TS0001`, `TS0002`, `TS0003`,
+  `TS0004`, `TS0011`, `TS0012`, `TS0013`, `TS0014`, `TS000F` — already
+  bound genOnOff via `kAutoBindings` but had `reports=nullptr`, so no
+  Configure Reporting was set up. z2m's `configure:` for each calls
+  `reporting.onOff(endpoint)` on every gang's endpoint. Added the
+  matching `.reports` per gang count: 1-gang (`TS0001`/`TS0011`/`TS000F`)
+  → EP1; 2-gang (`TS0002`/`TS0012`) → EP1+EP2; 3-gang (`TS0003`/`TS0013`)
+  → EP1..3; 4-gang (`TS0004`/`TS0014`) → EP1..4. Gang counts verified
+  against z2m `tuya.ts` endpoint maps, not the model number. Values
+  mirror z2m's `reporting.onOff` exactly (lib/reporting.ts:
+  `payload("onOff", 0, repInterval.HOUR, 0)` → min=0, max=3600,
+  reportableChange=0) on genOnOff cluster 0x0006 / onOff attr 0x0000
+  (bool, type 0x10). Shared arrays `kReportsOnOff_1ep..4ep` live in
+  `definitions/tuya/_shared.cpp` (decls in `_shared.hpp`); `.bindings`
+  were left untouched. Covered by `tests/test_tuya_switch_reports.cpp`.
+
 - Tuya TS0502B CCT light (z2m `TS0502B`, incl. MiBoxer `_TZB210_lmqquxus`)
   configure pipeline. The parent def `definitions/tuya/TS0502B.cpp` had
   `config_steps=nullptr`; z2m's `TS0502B` runs a `configure:` (tuyaLight

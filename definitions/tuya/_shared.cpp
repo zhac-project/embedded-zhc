@@ -16,6 +16,53 @@
 
 namespace zhc::tuya {
 
+// ── kReportsOnOff_Nep — genOnOff attribute reporting for switch gangs ──
+//
+// Mirrors z2m's `reporting.onOff(endpoint)` exactly. In
+// zigbee-herdsman-converters/src/lib/reporting.ts:
+//   onOff = payload("onOff", 0, repInterval.HOUR, 0)
+// i.e. minReportInterval=0, maxReportInterval=3600 (repInterval.HOUR),
+// reportableChange=0. (Note: change is 0, not 1 — z2m reports onOff on
+// any change with a 0..3600s window.)
+//
+// The generic Tuya switch parents already BIND genOnOff via kAutoBindings
+// but set up no Configure Reporting; z2m's `configure:` for these calls
+// `reporting.onOff` on each gang's endpoint. These arrays supply the
+// matching ReportingSpec set, one per gang count (1..4 endpoints).
+//
+// Field order: { endpoint, cluster_id, attr_id, attr_type,
+//                min_s, max_s, change, mfg }. attr_type 0x10 = bool.
+// genOnOff = cluster 0x0006, onOff attr = 0x0000.
+const ::zhc::ReportingSpec kReportsOnOff_1ep[] = {
+    { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+};
+const std::uint8_t kReportsOnOff_1ep_count =
+    static_cast<std::uint8_t>(sizeof(kReportsOnOff_1ep)/sizeof(kReportsOnOff_1ep[0]));
+
+const ::zhc::ReportingSpec kReportsOnOff_2ep[] = {
+    { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+    { 2, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+};
+const std::uint8_t kReportsOnOff_2ep_count =
+    static_cast<std::uint8_t>(sizeof(kReportsOnOff_2ep)/sizeof(kReportsOnOff_2ep[0]));
+
+const ::zhc::ReportingSpec kReportsOnOff_3ep[] = {
+    { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+    { 2, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+    { 3, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+};
+const std::uint8_t kReportsOnOff_3ep_count =
+    static_cast<std::uint8_t>(sizeof(kReportsOnOff_3ep)/sizeof(kReportsOnOff_3ep[0]));
+
+const ::zhc::ReportingSpec kReportsOnOff_4ep[] = {
+    { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+    { 2, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+    { 3, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+    { 4, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+};
+const std::uint8_t kReportsOnOff_4ep_count =
+    static_cast<std::uint8_t>(sizeof(kReportsOnOff_4ep)/sizeof(kReportsOnOff_4ep[0]));
+
 // Cluster-specific command ids on manuSpecificTuya (0xEF00).
 namespace {
 constexpr std::uint16_t kCmdMcuSyncTime = 0x24;

@@ -3,6 +3,7 @@
 // Tier 1: Tuya TS0003 3-gang on/off.
 // z2m-source: tuya.ts #TS0003.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/tuya/_shared.hpp"   // kReportsOnOff_3ep
 namespace zhc::devices::tuya {
 namespace {
 const FzConverter* const kFz[] = { &::zhc::generic::kFzOnOff };
@@ -36,5 +37,7 @@ extern const PreparedDefinition kDefTS0003{
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m TS0003 m.onOff(left/center/right): reporting.onOff EP1..3. 3-gang.
+    .reports=::zhc::tuya::kReportsOnOff_3ep,.reports_count=::zhc::tuya::kReportsOnOff_3ep_count,
 };
 }
