@@ -8,6 +8,16 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Fixed
+
+- Tuya soil-sensor temperature 10x scaling bug. The three soil parent defs
+  (`definitions/tuya/TZE200_soil.cpp`, `TZE200_soil_ec.cpp`,
+  `TZE200_soil_th.cpp`) decoded the temperature DP (dp 5) with the
+  `dp::temperature` default `/10`, but z2m's `TS0601_soil` family decodes it
+  as `tuya.valueConverter.raw` (`/1`) — a 10x error (a 25 C reading rendered
+  as 2.5 C). Switched all three to `dp::temperature(5, 1)` for z2m parity.
+  Covered by `tests/test_tze200_soil.cpp`.
+
 ### Added
 
 - Tuya TS004F smart knob (z2m `ERS-10TZBVK-AA`) full expose parity. New

@@ -835,6 +835,9 @@ target_link_libraries(zhc_tuya_datapoints_tests PRIVATE zhc_definitions)
 add_executable(zhc_tuya_base_device_tests tests/test_tuya_base_device.cpp)
 target_link_libraries(zhc_tuya_base_device_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_tze200_soil_tests tests/test_tze200_soil.cpp)
+target_link_libraries(zhc_tze200_soil_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_dwcarsat_tests tests/test_dwcarsat.cpp)
 target_link_libraries(zhc_dwcarsat_tests PRIVATE zhc_definitions)
 
@@ -920,6 +923,7 @@ add_test(NAME zhc_tuya_dp_tests       COMMAND zhc_tuya_dp_tests)
 add_test(NAME zhc_tuya_mcu_sync_time_tests COMMAND zhc_tuya_mcu_sync_time_tests)
 add_test(NAME zhc_tuya_datapoints_tests    COMMAND zhc_tuya_datapoints_tests)
 add_test(NAME zhc_tuya_base_device_tests   COMMAND zhc_tuya_base_device_tests)
+add_test(NAME zhc_tze200_soil_tests        COMMAND zhc_tze200_soil_tests)
 add_test(NAME zhc_dwcarsat_tests           COMMAND zhc_dwcarsat_tests)
 add_test(NAME zhc_tuya_alarms_tests        COMMAND zhc_tuya_alarms_tests)
 add_test(NAME zhc_tuya_extend_tests        COMMAND zhc_tuya_extend_tests)

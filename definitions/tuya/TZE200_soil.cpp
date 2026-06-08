@@ -8,7 +8,7 @@
 namespace zhc::devices::tuya {
 namespace {
 struct cfg { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
-    ::zhc::tuya::dp::temperature(5),
+    ::zhc::tuya::dp::temperature(5, 1),  // z2m TS0601_soil: dp5 = valueConverter.raw (/1)
     ::zhc::tuya::dp::numeric(3,"soil_moisture",1),
     ::zhc::tuya::dp::numeric(15,"battery",1)};
     static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{e,3}; };
