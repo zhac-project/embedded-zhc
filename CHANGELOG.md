@@ -20,6 +20,31 @@ across the ZHAC platform.
 
 ### Added
 
+- Tuya ZCL-light attribute reporting + bindings (Phase-2b Batch 3).
+  The generic standard-ZCL Tuya lights `TS110E` (dimmer), `TS0502A` (CCT),
+  `TS0505A` and `TS0505B` (RGB+CCT) bound genOnOff / genLevelCtrl
+  [/ lightingColorCtrl] and decoded onOff / brightness [/ color_temp] but
+  had `reports=nullptr`, so no Configure Reporting was set up. z2m's profile
+  is the tuyaLight extend wrapping `lib/modernExtend.ts` `light()` with
+  `configureReporting: true`. Added the matching `.reports` per capability:
+  onOff (genOnOff 0x0006 / 0x0000, bool) + currentLevel (genLevelCtrl
+  0x0008 / 0x0000, u8) for all four; colorTemperature (lightingColorCtrl
+  0x0300 / 0x0007, u16) for the CCT + RGB+CCT lights; currentX (0x0300 /
+  0x0003, u16) + currentY (0x0300 / 0x0004, u16) for the RGB+CCT lights.
+  Values mirror z2m exactly: `onOff` (min=0, max=3600, change=0) and
+  `currentLevel` (min=1, max=3600, change=1) and `colorTemperature` (min=0,
+  max=3600, change=1) from `lib/reporting.ts`; `currentX`/`currentY`
+  (min=10, max=65535, change=1) from `lib/modernExtend.ts` `light()`.
+  `colorMode` is intentionally NOT reported — z2m's `lib/light.ts` only
+  READS colorMode, it never enters the configureReporting *report* set
+  (this diverges from the IKEA `kReportsIkeaLight` template, which over-
+  reports colorMode). Shared arrays `kReportsDimmer_1ep` /
+  `kReportsLightCCT_1ep` / `kReportsLightRGBCCT_1ep` added to
+  `definitions/tuya/_shared.{hpp,cpp}`; each light's existing
+  `kAutoBindings` already binds every reported cluster on EP1, keeping
+  bindings/reports in lockstep. Covered by
+  `tests/test_tuya_light_reports.cpp`.
+
 - Tuya smart-plug attribute reporting + bindings (Phase-2b Batch 2).
   The generic Tuya plug parents `TS011F` (`TS011F_plug_1`) and `TS0121`
   (`TS0121_plug`) bound + decoded genOnOff, haElectricalMeasurement and

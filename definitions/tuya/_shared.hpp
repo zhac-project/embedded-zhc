@@ -288,4 +288,53 @@ extern const std::uint8_t         kReportsOnOff_4ep_count;
 extern const ::zhc::ReportingSpec kReportsPlugVIPE_1ep[];
 extern const std::uint8_t         kReportsPlugVIPE_1ep_count;
 
+// ── Generic ZCL-light Configure-Reporting sets (single-endpoint) ──────
+//
+// Shared reporting arrays for the standard-ZCL Tuya lights (genOnOff +
+// genLevelCtrl [+ lightingColorCtrl]) — the dimmer, CCT, and RGB+CCT
+// shapes. Field order: { endpoint, cluster_id, attr_id, attr_type,
+//                        min_s, max_s, change, mfg }.
+// attr_type byte: 0x10 = bool, 0x20 = u8, 0x21 = u16.
+//
+// Values mirror z2m EXACTLY. The reporting kicks for these lights come
+// from `lib/modernExtend.ts` `light()` (which the tuyaLight extend wraps
+// with `configureReporting: true`), routed through `lib/reporting.ts`:
+//   onOff            → reporting.ts `onOff`  payload("onOff",0,HOUR,0)
+//                      min=0  max=3600 change=0
+//   currentLevel     → reporting.ts `brightness`
+//                      payload("currentLevel",1,HOUR,1)  min=1 max=3600 change=1
+//   colorTemperature → reporting.ts `colorTemperature`
+//                      payload("colorTemperature",0,HOUR,1) min=0 max=3600 change=1
+//   currentX/currentY→ modernExtend.ts light() color block
+//                      {min:"10_SECONDS", max:"MAX", change:1}
+//                      min=10 max=65535 change=1
+//
+// NOTE on colorMode: z2m does NOT Configure-Report colorMode for these
+// lights — `lib/light.ts` only READS colorMode (it is pushed into the
+// magic-packet / configureReporting *read* set, never into the
+// configureReporting *report* set). So colorMode is intentionally
+// OMITTED here for z2m parity (this diverges from the IKEA template,
+// whose `kReportsIkeaLight` adds a colorMode report z2m never sends).
+//
+// Every reported cluster must also be BOUND on EP1 in the consuming def —
+// run_configure walks .bindings[]/.reports[] as INDEPENDENT loops, so a
+// report on an unbound cluster has no route home. genOnOff (0x0006) +
+// genLevelCtrl (0x0008) [+ lightingColorCtrl (0x0300)] are already in
+// each light's kAutoBindings.
+// z2m-source: lib/reporting.ts `onOff`/`brightness`/`colorTemperature` +
+// lib/modernExtend.ts `light()` currentX/currentY reporting config.
+
+// onOff + currentLevel — plain dimmers (no colour).
+extern const ::zhc::ReportingSpec kReportsDimmer_1ep[];
+extern const std::uint8_t         kReportsDimmer_1ep_count;
+
+// onOff + currentLevel + colorTemperature — tunable-white (CCT) lights.
+extern const ::zhc::ReportingSpec kReportsLightCCT_1ep[];
+extern const std::uint8_t         kReportsLightCCT_1ep_count;
+
+// onOff + currentLevel + colorTemperature + currentX + currentY —
+// full-colour RGB+CCT lights.
+extern const ::zhc::ReportingSpec kReportsLightRGBCCT_1ep[];
+extern const std::uint8_t         kReportsLightRGBCCT_1ep_count;
+
 }  // namespace zhc::tuya

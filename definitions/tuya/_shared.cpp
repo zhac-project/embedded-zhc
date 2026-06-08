@@ -904,4 +904,51 @@ extern const FzConverter kFzTuyaSwitchType{
     .user_config       = nullptr,
 };
 
+// ── Generic ZCL-light Configure-Reporting sets (single-endpoint) ──────
+//
+// Shared reporting arrays for standard-ZCL Tuya lights. Values mirror
+// z2m EXACTLY (see _shared.hpp for the full per-attribute provenance):
+//   onOff            reporting.ts `onOff`              min=0  max=3600 change=0
+//   currentLevel     reporting.ts `brightness`        min=1  max=3600 change=1
+//   colorTemperature reporting.ts `colorTemperature`  min=0  max=3600 change=1
+//   currentX/Y       modernExtend light() color block min=10 max=65535 change=1
+// colorMode is intentionally NOT reported (z2m only reads it).
+// Field order: { endpoint, cluster_id, attr_id, attr_type,
+//                min_s, max_s, change, mfg }.
+// genOnOff = 0x0006, genLevelCtrl = 0x0008, lightingColorCtrl = 0x0300.
+
+// onOff + currentLevel — plain dimmers (no colour).
+const ::zhc::ReportingSpec kReportsDimmer_1ep[] = {
+    // genOnOff       onOff             bool   0..3600s   change 0
+    { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+    // genLevelCtrl   currentLevel      u8     1..3600s   change 1
+    { 1, 0x0008, 0x0000, 0x20, 1, 3600, 1, 0 },
+};
+const std::uint8_t kReportsDimmer_1ep_count =
+    static_cast<std::uint8_t>(sizeof(kReportsDimmer_1ep)/sizeof(kReportsDimmer_1ep[0]));
+
+// onOff + currentLevel + colorTemperature — tunable-white (CCT) lights.
+const ::zhc::ReportingSpec kReportsLightCCT_1ep[] = {
+    { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
+    { 1, 0x0008, 0x0000, 0x20, 1, 3600, 1, 0 },
+    // lightingColorCtrl colorTemperature u16  0..3600s   change 1 (mired)
+    { 1, 0x0300, 0x0007, 0x21, 0, 3600, 1, 0 },
+};
+const std::uint8_t kReportsLightCCT_1ep_count =
+    static_cast<std::uint8_t>(sizeof(kReportsLightCCT_1ep)/sizeof(kReportsLightCCT_1ep[0]));
+
+// onOff + currentLevel + colorTemperature + currentX + currentY —
+// full-colour RGB+CCT lights.
+const ::zhc::ReportingSpec kReportsLightRGBCCT_1ep[] = {
+    { 1, 0x0006, 0x0000, 0x10, 0,  3600, 0, 0 },
+    { 1, 0x0008, 0x0000, 0x20, 1,  3600, 1, 0 },
+    { 1, 0x0300, 0x0007, 0x21, 0,  3600, 1, 0 },
+    // lightingColorCtrl currentX        u16   10..65535s change 1
+    { 1, 0x0300, 0x0003, 0x21, 10, 65535, 1, 0 },
+    // lightingColorCtrl currentY        u16   10..65535s change 1
+    { 1, 0x0300, 0x0004, 0x21, 10, 65535, 1, 0 },
+};
+const std::uint8_t kReportsLightRGBCCT_1ep_count =
+    static_cast<std::uint8_t>(sizeof(kReportsLightRGBCCT_1ep)/sizeof(kReportsLightRGBCCT_1ep[0]));
+
 }  // namespace zhc::tuya

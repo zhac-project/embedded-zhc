@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Tuya TS0505B RGBCCT light v2. z2m-source: tuya.ts.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/tuya/_shared.hpp"   // kReportsLightRGBCCT_1ep
 namespace zhc::devices::tuya {
 namespace {
 const FzConverter* const kFz[] = {
@@ -37,5 +38,12 @@ extern const PreparedDefinition kDefTS0505B{
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+// Phase-2b Batch 3: RGB+CCT reporting (onOff + currentLevel +
+// colorTemperature + currentX + currentY) mirroring z2m reporting.ts +
+// modernExtend light() color block. kAutoBindings already binds genOnOff
+// (0x0006) + genLevelCtrl (0x0008) + lightingColorCtrl (0x0300) on EP1,
+// covering every reported cluster.
+.reports=::zhc::tuya::kReportsLightRGBCCT_1ep,
+.reports_count=::zhc::tuya::kReportsLightRGBCCT_1ep_count,
 };
 }

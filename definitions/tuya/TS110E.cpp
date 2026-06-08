@@ -5,6 +5,7 @@
 // generic light for v1; per-model quirks land when fixtures arrive.
 // z2m-source: tuya.ts #TS110E.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/tuya/_shared.hpp"   // kReportsDimmer_1ep
 namespace zhc::devices::tuya {
 namespace {
 const FzConverter* const kFz[] = {
@@ -42,5 +43,10 @@ extern const PreparedDefinition kDefTS110E{
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+// Phase-2b Batch 3: dimmer reporting (onOff + currentLevel) mirroring z2m
+// reporting.ts onOff/brightness. kAutoBindings already binds genOnOff
+// (0x0006) + genLevelCtrl (0x0008) on EP1, covering both reported clusters.
+.reports=::zhc::tuya::kReportsDimmer_1ep,
+.reports_count=::zhc::tuya::kReportsDimmer_1ep_count,
 };
 }
