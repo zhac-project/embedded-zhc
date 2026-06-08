@@ -37,6 +37,21 @@ across the ZHAC platform.
   `definitions/tuya/_shared.cpp` (decls in `_shared.hpp`); `.bindings`
   were left untouched. Covered by `tests/test_tuya_switch_reports.cpp`.
 
+- Tuya multi-gang switch genOnOff bindings on every gang endpoint
+  (Phase-2b Batch 1b). Batch 1 added `.reports` on EP1..N of the multi-gang
+  switch defs, but those defs bound only EP1
+  (`kAutoBindings = {{1, 0x0006}}`). The firmware's `run_configure` walks
+  `.bindings[]` and `.reports[]` as **independent** loops (no implicit bind
+  on a report's endpoint), so the EP2..N attribute reports had no route to
+  the coordinator and were undeliverable. Extended `kAutoBindings` to bind
+  genOnOff (`0x0006`) on every gang endpoint, matching z2m which binds each
+  gang endpoint: 2-gang (`TS0002`/`TS0012`) → EP1+EP2; 3-gang
+  (`TS0003`/`TS0013`) → EP1..3; 4-gang (`TS0004`/`TS0014`) → EP1..4. The
+  single-gang defs (`TS0001`/`TS0011`/`TS000F`) were already correct and
+  are untouched. `tests/test_tuya_switch_reports.cpp` now also asserts an
+  onOff binding on every gang endpoint EP1..N (and none beyond), keeping
+  bindings and reports in lockstep so the gap can't regress.
+
 - Tuya TS0502B CCT light (z2m `TS0502B`, incl. MiBoxer `_TZB210_lmqquxus`)
   configure pipeline. The parent def `definitions/tuya/TS0502B.cpp` had
   `config_steps=nullptr`; z2m's `TS0502B` runs a `configure:` (tuyaLight
