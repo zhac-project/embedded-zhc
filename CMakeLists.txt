@@ -97,6 +97,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0043.cpp
     definitions/tuya/TS0044.cpp
     definitions/tuya/TS004F.cpp
+    definitions/tuya/TS004F_knob.cpp
     definitions/tuya/TS0202.cpp
     definitions/tuya/TS0205.cpp
     definitions/tuya/TZE200_pir_illum.cpp
@@ -885,6 +886,9 @@ target_link_libraries(zhc_zg_204z_tests PRIVATE zhc_definitions)
 add_executable(zhc_ts0044_tests tests/test_ts0044.cpp)
 target_link_libraries(zhc_ts0044_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_ts004f_knob_tests tests/test_ts004f_knob.cpp)
+target_link_libraries(zhc_ts004f_knob_tests PRIVATE zhc_definitions)
+
 enable_testing()
 add_test(NAME zhc_tests           COMMAND zhc_tests)
 add_test(NAME zhc_parser_tests    COMMAND zhc_parser_tests)
@@ -931,6 +935,7 @@ add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)
 add_test(NAME zhc_zg_204z_tests             COMMAND zhc_zg_204z_tests)
 add_test(NAME zhc_ts0044_tests              COMMAND zhc_ts0044_tests)
+add_test(NAME zhc_ts004f_knob_tests         COMMAND zhc_ts004f_knob_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

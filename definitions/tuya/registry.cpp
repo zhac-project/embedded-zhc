@@ -118,7 +118,9 @@ extern const PreparedDefinition kDefGen__TZ3000_9kbbfeho;
 extern const PreparedDefinition kDefGen__TZ3000_9r5jaajv;
 extern const PreparedDefinition kDefGen__TZ3000_aa5t61rh;
 extern const PreparedDefinition kDefGen__TZ3000_aaifmpuq;
-extern const PreparedDefinition kDefGen__TZ3000_abrsvsou;
+// TS004F smart knob (ERS-10TZBVK-AA): manu-specific override, graduated out
+// of generated/Gen__TZ3000_abrsvsou.cpp → definitions/tuya/TS004F_knob.cpp.
+extern const PreparedDefinition kDef_TS004F_knob;
 extern const PreparedDefinition kDefGen__TZ3000_afgzktgb;
 extern const PreparedDefinition kDefGen__TZ3000_aknpkt02;
 extern const PreparedDefinition kDefGen__TZ3000_akqdg6g7;
@@ -1541,7 +1543,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZ3000_9r5jaajv,
     &kDefGen__TZ3000_aa5t61rh,
     &kDefGen__TZ3000_aaifmpuq,
-    &kDefGen__TZ3000_abrsvsou,
+    &kDef_TS004F_knob,
     &kDefGen__TZ3000_afgzktgb,
     &kDefGen__TZ3000_aknpkt02,
     &kDefGen__TZ3000_akqdg6g7,

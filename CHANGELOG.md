@@ -8,6 +8,20 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Added
+
+- Tuya TS004F smart knob (z2m `ERS-10TZBVK-AA`) full expose parity. New
+  manu-specific override `definitions/tuya/TS004F_knob.cpp`
+  (`kDef_TS004F_knob`) graduates the port out of the now-deleted generated
+  hand-port `generated/Gen__TZ3000_abrsvsou.cpp` (edits there are
+  hook-blocked + sweep-overwritten). Adds `hue_move`/`hue_stop`
+  (+ `action_rate`) via `kFzCommandMoveHue`, and a read+write
+  `operation_mode` (command/event) expose via `kFzTuyaOperationMode` +
+  `kTzTuyaOperationMode` (genOnOff attr `0x8004`). `saturation_move` is
+  declared-only (z2m superset, no producer for this device). Covered by
+  `tests/test_ts004f_knob.cpp`. See
+  `extra/docs/TS004F_KNOB_PARITY_TICKET.md`.
+
 ### Tests
 
 - Host suite restored to green (48/48). Dropped 9 smoke-table rows across

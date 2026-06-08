@@ -1,27 +1,41 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Tuya TS004F smart knob family (ERS-10TZBVK-AA rebranded).
-// Tier 2 header freezes this file against `generate_simple_vendor_ports.py`.
-// The 8 manu names are also listed in
-// `tools/{extract_tuya_datapoints,generate_tuya_ports}.py::HAND_PORTED_MANUS`
-// so Tuya DP extract + fingerprint regen won't emit per-manu stubs.
+// Tier 2: Tuya TS004F smart knob (z2m ERS-10TZBVK-AA) — manu-specific override.
 //
-// Consolidated port covering the 8 `_TZ3000_*` manu variants z2m
-// groups under `ERS-10TZBVK-AA`. Lives under /generated/ because
-// `refresh-parity` owns the slot; re-running it would overwrite this
-// until the generator learns about the consolidated port.
+// Covers the 8 `_TZ3000_*` variants z2m groups under `ERS-10TZBVK-AA`.
+// Wins over the generic model-only `kDefTS004F` via manu disambiguation
+// (the registry's collision audit treats a model+manu match as the
+// disambiguator for a bare-model fallback).
 //
+// Supersedes the former generated hand-port
+// `generated/Gen__TZ3000_abrsvsou.cpp` (deleted). A manual override in the
+// parent vendor dir is hand-editable; files under `generated/` are blocked
+// by the tools hook and overwritten by the zhac-tools sweep. The 8 manu
+// names remain in `zhac-tools ::HAND_PORTED_MANUS`, so the generator keeps
+// skipping per-manu stubs for them.
+//
+// Full z2m expose parity — see extra/docs/TS004F_KNOB_PARITY_TICKET.md.
 // z2m-source: zigbee-herdsman-converters/src/devices/tuya.ts
 //             (ERS-10TZBVK-AA + ZG-101Z/D entries).
 //
-// Actions in this v1 port:
-//   - single / double / hold          (tuyaAction  cmd 0xFD)
-//   - rotate_right / rotate_left      (tuyaAction2 cmd 0xFC)
-//   - toggle                          (genOnOff    cmd 0x02)
+// Actions:
+//   - single / double / hold            (genOnOff cmd 0xFD tuyaAction)
+//   - rotate_right / rotate_left        (genOnOff cmd 0xFC tuyaAction2)
+//   - toggle                            (genOnOff cmd 0x02)
+//   - brightness_step_up/_down          (genLevelCtrl cmd 0x02)
+//   - color_temperature_step_up/_down   (lightingColorCtrl cmd 0x4C)
+//   - hue_move / hue_stop + action_rate (lightingColorCtrl cmd 0x01)
 //
-// Deferred (needs payload-parsing helpers not yet in zhc's shared lib):
-//   - brightness_step_up/_down, color_temperature_step_*,
-//     hue_move/stop, saturation_move.
+// operation_mode (command/event): read+write expose on genOnOff attr
+//   0x8004 — kFzTuyaOperationMode (report) + kTzTuyaOperationMode (write).
+//
+// Declared-only (z2m superset, no emitting converter for this device — the
+// same as z2m, which lists it in `e.action()` but wires no producer here):
+//   - saturation_move
+//
+// operation_mode is NOT force-written at configure time: `ConfigStepOp`
+// has no Write op; knobs default to event mode and the tz converter lets
+// the user switch from the UI. (Trade-off carried from the v1 hand-port.)
 
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
@@ -53,6 +67,14 @@ constexpr const char* kActions_TS004F_knob[] = {
     "brightness_step_down",
     "color_temperature_step_up",
     "color_temperature_step_down",
+    "hue_move",
+    "hue_stop",
+    "saturation_move",
+};
+
+constexpr const char* kOperationModes_TS004F_knob[] = {
+    "command",
+    "event",
 };
 
 constexpr Expose kExposes_TS004F_knob[] = {
@@ -64,18 +86,31 @@ constexpr Expose kExposes_TS004F_knob[] = {
       nullptr, nullptr, nullptr, 0 },
     { "action_transition_time", ExposeType::Numeric, Access::State,
       "s",     nullptr, nullptr, 0 },
+    { "action_rate",            ExposeType::Numeric, Access::State,
+      nullptr, nullptr, nullptr, 0 },
     { "battery", ExposeType::Numeric, Access::State,
       "%",  nullptr, nullptr, 0 },
     { "voltage", ExposeType::Numeric, Access::State,
       "mV", nullptr, nullptr, 0 },
+    { "operation_mode", ExposeType::Enum, Access::StateSet,
+      nullptr, "command = group control, event = clicks",
+      kOperationModes_TS004F_knob,
+      sizeof(kOperationModes_TS004F_knob)/sizeof(kOperationModes_TS004F_knob[0]),
+      ExposeCategory::Config },
 };
 
 const FzConverter* const kFz_TS004F_knob[] = {
-    &::zhc::tuya::kFzTuyaMultiAction,       // cmd 0xFD + 0xFC (event-mode rotate)
-    &::zhc::generic::kFzCommandToggle,      // genOnOff cmd 0x02
-    &::zhc::generic::kFzCommandStep,        // genLevelCtrl cmd 0x02 (cmd-mode brightness step)
-    &::zhc::generic::kFzCommandStepColorTemp, // lightingColorCtrl cmd 0x4C (cmd-mode rotate)
-    &::zhc::generic::kFzBattery,            // genPowerCfg 0x0020 + 0x0021
+    &::zhc::tuya::kFzTuyaActionFlat,          // genOnOff 0xFD/0xFC (+0x00-02) → single/double/hold/rotate/toggle
+    &::zhc::generic::kFzCommandToggle,        // genOnOff cmd 0x02 → toggle (explicit, z2m parity)
+    &::zhc::generic::kFzCommandStep,          // genLevelCtrl cmd 0x02 → brightness_step_up/_down
+    &::zhc::generic::kFzCommandStepColorTemp, // lightingColorCtrl cmd 0x4C → color_temperature_step_up/_down
+    &::zhc::generic::kFzCommandMoveHue,        // lightingColorCtrl cmd 0x01 → hue_move / hue_stop + action_rate
+    &::zhc::tuya::kFzTuyaOperationMode,        // genOnOff attr 0x8004 → operation_mode {command,event}
+    &::zhc::generic::kFzBattery,              // genPowerCfg 0x0020 + 0x0021
+};
+
+const TzConverter* const kTz_TS004F_knob[] = {
+    &::zhc::tuya::kTzTuyaOperationMode,        // genOnOff attr 0x8004 write — command/event
 };
 
 constexpr WhiteLabel kWhiteLabels_TS004F_knob[] = {
@@ -86,9 +121,9 @@ constexpr WhiteLabel kWhiteLabels_TS004F_knob[] = {
 
 constexpr BindingSpec kBindings_TS004F_knob[] = {
     { 1, 0x0001 },   // genPowerCfg — battery reports
-    { 1, 0x0006 },   // genOnOff — action events + operation-mode attr
+    { 1, 0x0006 },   // genOnOff — action events + operation_mode attr
     { 1, 0x0008 },   // genLevelCtrl — cmd-mode brightness step
-    { 1, 0x0300 },   // lightingColorCtrl — cmd-mode rotate (stepColorTemp)
+    { 1, 0x0300 },   // lightingColorCtrl — cmd-mode rotate (step/move-hue)
 };
 
 // Tuya magic-packet attrs (genBasic).
@@ -97,10 +132,7 @@ constexpr std::uint8_t kMagicAttrs_TS004F_knob[] = {
     0x05, 0x00,  0x07, 0x00,  0xFE, 0xFF,
 };
 
-// Configure pipeline — bind-settle then magic packet. The
-// operation_mode write (genOnOff attr 0x8004 = 1 "event") that z2m
-// runs needs a Write op in the step walker; most firmware shipments
-// default to event mode already, so rotations still emit without it.
+// Configure pipeline — bind-settle then magic packet.
 constexpr ConfigStep kConfigSteps_TS004F_knob[] = {
     { ConfigStepOp::Wait, 0, 0,      0,    0, nullptr, 0, 600 },
     { ConfigStepOp::Read, 1, 0x0000, 0x00, 0,
@@ -109,8 +141,7 @@ constexpr ConfigStep kConfigSteps_TS004F_knob[] = {
 
 }  // namespace
 
-// Name preserved so registry.cpp's extern declaration resolves.
-extern const PreparedDefinition kDefGen__TZ3000_abrsvsou{
+extern const PreparedDefinition kDef_TS004F_knob{
     .zigbee_models            = kModels_TS004F_knob,
     .zigbee_models_count      = sizeof(kModels_TS004F_knob)/sizeof(kModels_TS004F_knob[0]),
     .manufacturer_name_prefix = nullptr,
@@ -125,8 +156,8 @@ extern const PreparedDefinition kDefGen__TZ3000_abrsvsou{
     .white_labels_count       = sizeof(kWhiteLabels_TS004F_knob)/sizeof(kWhiteLabels_TS004F_knob[0]),
     .from_zigbee              = kFz_TS004F_knob,
     .from_zigbee_count        = sizeof(kFz_TS004F_knob)/sizeof(kFz_TS004F_knob[0]),
-    .to_zigbee                = nullptr,
-    .to_zigbee_count          = 0,
+    .to_zigbee                = kTz_TS004F_knob,
+    .to_zigbee_count          = sizeof(kTz_TS004F_knob)/sizeof(kTz_TS004F_knob[0]),
     .configure                = nullptr,
     .on_event                 = nullptr,
     .bindings                 = kBindings_TS004F_knob,
