@@ -8,6 +8,49 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Added
+
+- lumi (Aqara) switch/plug attribute reporting (parity Batch 1). A
+  parity worklist flagged 113 lumi defs as "missing configure": z2m sets
+  up attribute reporting in each SKU's
+  `configure(device, coordinatorEndpoint)`, but the ZHC lumi defs carried
+  `.reports = nullptr`. The dominant *in-tree-doable* z2m pattern for the
+  mains-powered relay family is a plain
+  `reporting.bind(genOnOff[, ...])` + `reporting.onOff(endpoint)` (some
+  add `deviceTemperature` / `currentSummDelivered`), which maps 1:1 onto a
+  `ReportingSpec[]` on `PreparedDefinition.reports` (the ZNCZ15LM /
+  ikea / Tuya-plug reporting mechanism). Added three shared reporting
+  templates in `definitions/lumi/_shared.{hpp,cpp}` mirroring z2m
+  lib/reporting.ts defaults exactly — `kReportsLumiOnOff`
+  (genOnOff.onOff: bool 0..3600s rc 0), `kReportsLumiOnOffDevTemp` (+
+  genDeviceTempCfg.currentTemperature: s16 300..3600s rc 1), and
+  `kReportsLumiOnOffEnergy` (+ seMetering.currentSummDelivered: u48
+  5..3600s rc 257) — and wired them into four parent defs that already
+  bound + decoded genOnOff but reported nothing: `SSM_U01.cpp` (onOff +
+  device-temperature; also extends its bindings with genDeviceTempCfg
+  0x0002 so the temp report has a route), `SSM_U02.cpp` (onOff),
+  `ZNCZ02LM.cpp` (onOff), `SP_EUC01.cpp` (onOff + energy). Per z2m,
+  V/I/P (rmsVoltage/rmsCurrent/activePower) reporting is intentionally
+  NOT added for these SKUs ("Voltage and current are not supported"),
+  and battery is not reported. New host test
+  `tests/test_lumi_switch_reports.cpp` asserts each def's reports against
+  the z2m values and keeps bindings/reports in lockstep.
+
+  NOT addressed by this batch (documented for follow-up): the most common
+  lumi `configure:` body across the worklist is a 0xFCC0 "event mode"
+  magic write — `endpoint.write("manuSpecificLumi", {mode: 1}, {disableResponse})`
+  (QBKG25/26/27/28/29LM, WS-USC01/02, WS-EUK01/03/04, and most generated
+  defs). ZHC's `ConfigStepOp` enum has no Write op (only Read / Cmd /
+  Callback / Wait), so this pattern is **infra-blocked** — it needs a ZCL
+  Write Attributes config step (and a `configure_write_fn`), the same
+  primitive gap that kept Tuya IAS off the config pipeline. The
+  read-only `configure:` bodies (`endpoint.read("genPowerCfg",
+  ["batteryVoltage"])` / manuSpecific attr reads) are battery-sensor
+  one-shot reads that z2m does NOT bind/report, and are not part of this
+  reporting batch. 51 of the 64 flagged devices carry both a parent and a
+  regen-owned `generated/` row; the generated reporting belongs in the
+  private `zhac-tools` generator, not hand-edits.
+
 ### Fixed
 
 - Tuya IAS sensor decode + bindings (Phase-2b Batch 4). The worklist

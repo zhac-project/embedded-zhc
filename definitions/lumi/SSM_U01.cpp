@@ -26,6 +26,19 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+// Hand-maintained binding superset (NOT regenerated). z2m SSM-U01
+// `configure` does `reporting.bind(genOnOff, genDeviceTempCfg)`, so we
+// extend the auto bindings ({genBasic 0x0000, genOnOff 0x0006}) with
+// genDeviceTempCfg (0x0002) to give the device-temperature report a
+// route to the coordinator. run_configure walks .bindings + .reports as
+// independent loops, so a report on cluster 0x0002 needs 0x0002 bound.
+// z2m-source: lumi.ts #SSM-U01 reporting.bind(genOnOff, genDeviceTempCfg).
+constexpr BindingSpec kBindings[] = {
+    {1, 0x0000},    // genBasic
+    {1, 0x0006},    // genOnOff
+    {1, 0x0002},    // genDeviceTempCfg
+};
+
 extern const PreparedDefinition kDefSSMU01{
     .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),.model="SSM-U01",.vendor="Xiaomi",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
@@ -33,6 +46,9 @@ extern const PreparedDefinition kDefSSMU01{
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
+    // z2m reporting.onOff + reporting.deviceTemperature.
+    .reports=::zhc::lumi::kReportsLumiOnOffDevTemp,
+    .reports_count=::zhc::lumi::kReportsLumiOnOffDevTempCount,
 };
 }

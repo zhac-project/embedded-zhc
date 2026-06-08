@@ -33,6 +33,10 @@ extern const PreparedDefinition kDefSSMU02{
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m SSM-U02 configure: reporting.bind(genOnOff) +
+    // reporting.onOff(endpoint) on endpoint 1 only.
+    .reports=::zhc::lumi::kReportsLumiOnOff,
+    .reports_count=::zhc::lumi::kReportsLumiOnOffCount,
 };
 }

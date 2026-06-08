@@ -1232,4 +1232,40 @@ ZHC_LUMI_ATTRREPORT_CONVERTER(kFzLumiDoorLockReport, "closuresDoorLock",
 
 #undef ZHC_LUMI_ATTRREPORT_CONVERTER
 
+// ── Shared attribute-reporting templates ───────────────────────────
+//
+// See _shared.hpp for the per-array z2m provenance. Field order:
+//   { endpoint, cluster_id, attr_id, attr_type, min_s, max_s,
+//     reportable_change, manufacturer_code }
+
+// reporting.onOff → genOnOff 0x0006 / onOff 0x0000, bool, 0..3600s, rc 0.
+const ReportingSpec kReportsLumiOnOff[] = {
+    {1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0},
+};
+const std::uint8_t kReportsLumiOnOffCount =
+    static_cast<std::uint8_t>(sizeof(kReportsLumiOnOff) /
+                              sizeof(kReportsLumiOnOff[0]));
+
+// reporting.onOff + reporting.deviceTemperature.
+//   genOnOff         0x0006 / 0x0000  bool  0..3600s   rc 0
+//   genDeviceTempCfg 0x0002 / 0x0000  s16   300..3600s rc 1
+const ReportingSpec kReportsLumiOnOffDevTemp[] = {
+    {1, 0x0006, 0x0000, 0x10,   0, 3600, 0, 0},
+    {1, 0x0002, 0x0000, 0x29, 300, 3600, 1, 0},
+};
+const std::uint8_t kReportsLumiOnOffDevTempCount =
+    static_cast<std::uint8_t>(sizeof(kReportsLumiOnOffDevTemp) /
+                              sizeof(kReportsLumiOnOffDevTemp[0]));
+
+// reporting.onOff + reporting.currentSummDelivered (energy only — no V/I/P).
+//   genOnOff   0x0006 / 0x0000  bool  0..3600s  rc 0
+//   seMetering 0x0702 / 0x0000  u48   5..3600s  rc 257
+const ReportingSpec kReportsLumiOnOffEnergy[] = {
+    {1, 0x0006, 0x0000, 0x10, 0, 3600,   0, 0},
+    {1, 0x0702, 0x0000, 0x25, 5, 3600, 257, 0},
+};
+const std::uint8_t kReportsLumiOnOffEnergyCount =
+    static_cast<std::uint8_t>(sizeof(kReportsLumiOnOffEnergy) /
+                              sizeof(kReportsLumiOnOffEnergy[0]));
+
 }  // namespace zhc::lumi

@@ -103,7 +103,12 @@ extern const PreparedDefinition kDefZNCZ02LM{
     .to_zigbee_count     = 0,
     .configure           = nullptr,
     .on_event            = nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m ZNCZ02LM configure: reporting.bind(genOnOff) +
+    // reporting.onOff(endpoint). (Power/energy decode but z2m does not
+    // configureReporting them for this SKU.)
+    .reports=::zhc::lumi::kReportsLumiOnOff,
+    .reports_count=::zhc::lumi::kReportsLumiOnOffCount,
 };
 
 }  // namespace zhc::devices::lumi

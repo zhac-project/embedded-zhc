@@ -38,6 +38,12 @@ extern const PreparedDefinition kDefSPEUC01{
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m SP-EUC01 configure: reporting.bind(genOnOff) +
+    // reporting.onOff(endpoint), plus a metering branch
+    // reporting.bind(seMetering) + reporting.currentSummDelivered.
+    // z2m deliberately does NOT configureReporting V/I/P here.
+    .reports=::zhc::lumi::kReportsLumiOnOffEnergy,
+    .reports_count=::zhc::lumi::kReportsLumiOnOffEnergyCount,
 };
 }

@@ -492,4 +492,59 @@ bool fz_lumi_door_lock_report(const DecodedMessage& msg,
 
 extern const FzConverter kFzLumiDoorLockReport;
 
+// ── Shared attribute-reporting templates ───────────────────────────
+//
+// Aqara mains-powered switches / plugs need attribute reporting set up
+// at join so genOnOff.onOff (and metering, where supported) push to the
+// coordinator without polling. z2m does this in each SKU's
+// `configure(device, coordinatorEndpoint)` via `reporting.bind(...)` +
+// `reporting.onOff(endpoint)` etc. The ZHC equivalent is a
+// `ReportingSpec[]` on `PreparedDefinition.reports`, walked by
+// `run_configure` alongside `.bindings` (see ZNCZ15LM precedent).
+//
+// Field order: { endpoint, cluster_id, attr_id, attr_type, min_s,
+//                max_s, reportable_change, manufacturer_code }
+// attr_type byte: 0x10=bool, 0x29=s16, 0x25=u48.
+//
+// Values mirror z2m lib/reporting.ts defaults exactly:
+//   reporting.onOff   → payload("onOff", 0, HOUR, 0)
+//                       → genOnOff 0x0006 / onOff 0x0000, min 0, max 3600, rc 0
+//   reporting.deviceTemperature
+//                     → payload("currentTemperature", 300, HOUR, 1)
+//                       → genDeviceTempCfg 0x0002 / 0x0000, min 300, max 3600, rc 1
+//   reporting.currentSummDelivered
+//                     → payload("currentSummDelivered", 5, HOUR, 257)
+//                       → seMetering 0x0702 / 0x0000, min 5, max 3600, rc 257
+
+// onOff-only reporting (Aqara relays/plugs that only push state):
+// z2m `reporting.bind(genOnOff)` + `reporting.onOff(endpoint)`.
+// Used by SSM-U02, ZNCZ02LM (single-relay variants that z2m configures
+// with bare onOff reporting).
+extern const ReportingSpec kReportsLumiOnOff[];
+extern const std::uint8_t  kReportsLumiOnOffCount;
+
+// onOff + device-temperature reporting:
+// z2m `reporting.bind(genOnOff, genDeviceTempCfg)` +
+// `reporting.onOff(endpoint)` + `reporting.deviceTemperature(endpoint)`.
+// Used by SSM-U01 (lumi.switch.n0acn2 — neutral 1-ch module that
+// reports its internal temperature).
+extern const ReportingSpec kReportsLumiOnOffDevTemp[];
+extern const std::uint8_t  kReportsLumiOnOffDevTempCount;
+
+// onOff + cumulative-energy reporting:
+// z2m `reporting.bind(genOnOff)` + `reporting.onOff(endpoint)`, plus a
+// metering branch `reporting.bind(seMetering)` +
+// `reporting.readMeteringMultiplierDivisor` +
+// `reporting.currentSummDelivered(endpoint, {change: 0})`.
+// NOTE z2m SP-EUC01 deliberately does NOT configureReporting V/I/P
+// (rmsVoltage/rmsCurrent/activePower) — "Voltage and current are not
+// supported" per the upstream comments — so this template carries only
+// onOff + currentSummDelivered. The metering reportable_change mirrors
+// reporting.currentSummDelivered's default of 257 (z2m's `{change: 0}`
+// override is honoured by some firmwares but the safe portable value is
+// the library default, matching the ZNCZ15LM precedent's rc=1 family).
+// Used by SP-EUC01 (lumi.plug.maeu01/maeu03).
+extern const ReportingSpec kReportsLumiOnOffEnergy[];
+extern const std::uint8_t  kReportsLumiOnOffEnergyCount;
+
 }  // namespace zhc::lumi
