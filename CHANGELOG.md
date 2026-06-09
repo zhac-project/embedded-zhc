@@ -10,6 +10,22 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Niko 552-80401 wireless motion sensor never reported `occupancy`** — found
+  by a z2m↔embedded-zhc parity pass over the Niko vendor. The generated def
+  lowered the generic `kFzIasZone` converter, which emits the neutral key
+  `alarm`, while the def's expose declared `occupancy` — so the IAS zone-status
+  motion flag never reached the shadow (dead key). z2m decodes it via
+  `fz.ias_occupancy_alarm_1`, emitting `occupancy`/`tamper`/`battery_low` from
+  zoneStatus bits 0/2/3. Re-wired to the typed generic `kFzIasMotionAlarm`
+  (semantic key `occupancy` + tamper + battery_low) and renamed the expose; the
+  def graduated from `generated/` to a Tier-2 parent. The other Niko suspect
+  classes were investigated and found already correct (552-72301 motor control
+  exposes lift-only `position` on closuresWindowCovering with z2m's
+  `coverInverted`+default-`invert_cover` net no-op matching the non-inverting
+  generic converter; 552-720X1/X2/X4 battery scene controllers decode genOnOff/
+  genLevelCtrl commands to `action`; 552-721X1/X2 mains switches and the
+  170-33505/552-80698/552-80699 metering plugs carry their full channel set).
+  Pinned by `tests/test_niko_parity.cpp`.
 - **Wirenboard WB-MSW-ZIGBEE v.3 / v.4 dropped their `occupancy` and `co2`
   channels** — found by a z2m↔embedded-zhc parity pass over the Wirenboard
   vendor. Both multi-sensor ports declared `occupancy` and `co2` exposes and

@@ -1115,6 +1115,16 @@ target_link_libraries(zhc_shinasystem_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_wirenboard_parity_tests tests/test_wirenboard_parity.cpp)
 target_link_libraries(zhc_wirenboard_parity_tests PRIVATE zhc_definitions)
 
+# Niko (Belgian wired Connected) family. The 552-80401 wireless motion
+# sensor lowered the generic kFzIasZone converter (bare key "alarm")
+# instead of the typed kFzIasMotionAlarm, leaving its "occupancy" expose
+# dead; graduated to a Tier-2 parent and re-wired. Regression guards also
+# pin the verified-correct cover (552-72301 lift-only position), scene
+# controller (552-720X2 action) and double switch (552-721X2 per-endpoint
+# on/off) decode shapes. See tests/README.md.
+add_executable(zhc_niko_parity_tests tests/test_niko_parity.cpp)
+target_link_libraries(zhc_niko_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1215,6 +1225,7 @@ add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
+add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)
