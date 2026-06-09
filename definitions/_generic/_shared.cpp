@@ -825,6 +825,22 @@ bool fz_temperature(const DecodedMessage& msg, const FzConverter&,
     return true;
 }
 
+// genDeviceTempCfg (0x0002) attr 0x0000 currentTemperature (s16, whole °C).
+// z2m `fz.device_temperature` returns the raw value unscaled.
+bool fz_device_temperature(const DecodedMessage& msg, const FzConverter&,
+                           const PreparedDefinition&, RuntimeContext&,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");   // attr 0x0000 currentTemperature
+    if (!v) return false;
+    std::int32_t raw = 0;
+    if (v->type == ValueType::Int)       raw = static_cast<std::int32_t>(v->i);
+    else if (v->type == ValueType::Uint) raw = static_cast<std::int32_t>(v->u);
+    else return false;
+    Value o{}; o.type = ValueType::Int; o.i = raw;
+    out.put("device_temperature", o);
+    return true;
+}
+
 bool fz_humidity(const DecodedMessage& msg, const FzConverter&,
                    const PreparedDefinition&, RuntimeContext&,
                    FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
@@ -909,6 +925,21 @@ extern const FzConverter kFzTemperature{
     .frame_flags_value = 0,
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_temperature },
+    .user_config       = nullptr,
+};
+
+extern const FzConverter kFzDeviceTemperature{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genDeviceTempCfg",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_device_temperature },
     .user_config       = nullptr,
 };
 

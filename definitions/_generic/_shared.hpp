@@ -197,6 +197,15 @@ extern const FzConverter kFzIlluminance;
 // z2m-source: modernExtend.ts `m.soilMoisture` (scale 100) / `fz.soil_moisture`.
 extern const FzConverter kFzSoilMoisture;
 
+// `genDeviceTempCfg` (cluster 0x0002) attr 0x0000 `currentTemperature`
+// (s16, 1 °C steps — already in whole degrees, NOT centi-degrees).
+//   device_temperature = raw  (Int, °C, no scaling)
+// Distinct from kFzTemperature (msTemperatureMeasurement 0x0402, /100).
+// Used by mains devices that report their own internal die temperature
+// (Dawon DNS PM-B540 plug, custom_devices_diy CC2538 router, …).
+// z2m-source: fromZigbee.ts `fz.device_temperature`.
+extern const FzConverter kFzDeviceTemperature;
+
 // `ssIasZone` (cluster 0x0500) commandStatusChangeNotification (cmd 0x00):
 // Payload = { zoneStatus:u16, extendedStatus:u8, zoneId:u8, delay:u16 }.
 // zoneStatus bit decoding:

@@ -22,6 +22,7 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         // General / ZCL foundation
         case 0x0000: return "genBasic";
         case 0x0001: return "genPowerCfg";
+        case 0x0002: return "genDeviceTempCfg";
         case 0x0003: return "genIdentify";
         case 0x0004: return "genGroups";
         case 0x0005: return "genScenes";

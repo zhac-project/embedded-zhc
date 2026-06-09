@@ -10,6 +10,25 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Dawon DNS PM-B540-ZB (16 A metering plug) — internal die-temperature
+  channel was dropped.** Alone among the Dawon metering plugs, the PM-B540
+  also reports its own temperature on `genDeviceTempCfg` (0x0002); z2m wires
+  `fz.device_temperature` + `e.device_temperature()` and binds the cluster,
+  but the auto-generated port carried only `kFzOnOff` + `kFzMetering`, so the
+  `device_temperature` value never surfaced. There was no generic decoder for
+  cluster 0x0002 at all. Added `0x0002 → "genDeviceTempCfg"` to the cluster
+  name table and a new generic `kFzDeviceTemperature` converter (attr 0x0000
+  `currentTemperature`, s16 whole °C, emitted unscaled — distinct from
+  `kFzTemperature`'s 0.01 °C `msTemperatureMeasurement` path), then graduated
+  `Daw_PM_B540_ZB.cpp` from `generated/` to a Tier-2 parent override wiring
+  the converter + `device_temperature` expose + 0x0002 bind. New fixture
+  `tests/test_dawon_dns_parity.cpp` pins the device_temperature decode
+  (positive + negative, no `temperature` leak), the seMetering energy/power
+  regression, and structural guards over the rest of the family (a sibling
+  PM-B530 plug that must *not* grow the channel, TH-110 temp/humidity, the
+  multi-gang endpoint_maps). The remaining Dawon devices were verified CLEAN
+  against z2m.
+
 - **Lonsonho X701A (1-gang switch with backlight) — one hardware variant
   never matched.** z2m fingerprints the device as
   `tuya.fingerprint("TS0001", ["_TZ3000_t3s9qmmg", "_TZ3000_ehgouyvu"])`,

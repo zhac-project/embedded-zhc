@@ -1356,6 +1356,16 @@ target_link_libraries(zhc_innr_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bituo_technik_parity_tests tests/test_bituo_technik_parity.cpp)
 target_link_libraries(zhc_bituo_technik_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Dawon DNS (Korean smart-plug / in-wall-switch)
+# family. The vendor is mostly clean (m.onOff switches, fz.metering plugs,
+# TH-110 temp/humidity, KB-HD100 ssIasZone card-holder). The one real gap
+# was PM-B540-ZB, which alone reports its die temperature on genDeviceTempCfg
+# (0x0002): z2m wires fz.device_temperature but the auto-port dropped it.
+# Added the generic kFzDeviceTemperature converter + 0x0002 cluster label
+# and graduated Daw_PM_B540_ZB.cpp to a Tier-2 override.
+add_executable(zhc_dawon_dns_parity_tests tests/test_dawon_dns_parity.cpp)
+target_link_libraries(zhc_dawon_dns_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Amina amina S EV Charger. Its AC metering rides
 # standard haElectricalMeasurement 0x0B04 via z2m's m.electricityMeter
 # (cluster:"electrical", acFrequency, threePhase) + a standalone
@@ -1642,6 +1652,7 @@ add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
 add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)
 add_test(NAME zhc_nous_parity_tests         COMMAND zhc_nous_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
+add_test(NAME zhc_dawon_dns_parity_tests    COMMAND zhc_dawon_dns_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
 add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)
