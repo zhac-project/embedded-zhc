@@ -1064,6 +1064,17 @@ target_link_libraries(zhc_namron_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_danfoss_parity_tests tests/test_danfoss_parity.cpp)
 target_link_libraries(zhc_danfoss_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Yandex (Alice) family: the YNDX-00526 contact and
+# YNDX-00527 leak sensors lowered the generic kFzIasZone (bare "alarm") against
+# a bare expose, the YNDX-00528 motion sensor exposed `occupancy` with no
+# decoder (claimed the generic helper was missing), and the YNDX-00518 TRV
+# decoded only genOnOff + battery and bound no hvacThermostat — the whole
+# thermostat surface was dead. All four graduated to Tier-2 parent overrides
+# wiring the typed kFzIasContactAlarm / kFzIasWaterLeakAlarm, kFzOccupancy, and
+# kFzThermostat + kTzThermostat (flat surface). See tests/README.md.
+add_executable(zhc_yandex_parity_tests tests/test_yandex_parity.cpp)
+target_link_libraries(zhc_yandex_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the CTM Lyng family: stove-guard IAS zone bits
 # (high_temperature/power_cut_off, was a dead `alarm`), water-leak bit
 # mapping (leak on bit 1, was bit 0), and the MBD motion detectors'
@@ -1302,6 +1313,7 @@ add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
 add_test(NAME zhc_third_reality_parity_tests COMMAND zhc_third_reality_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
+add_test(NAME zhc_yandex_parity_tests       COMMAND zhc_yandex_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)

@@ -10,6 +10,30 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Yandex (Alice) contact/leak/motion sensors and the TRV surfaced no
+  primary state** — found by a z2m↔embedded-zhc parity pass over the 13 Yandex
+  defs (the wireless buttons 00534/00535, gang switches 00531/00532, relays
+  00537/00538, dimmer 00530, cover 00591 and the temp/humidity/pressure sensor
+  00529 are at parity). Four defs were graduated from `generated/` to Tier-2
+  parent overrides: the **YNDX-00526 contact** and **YNDX-00527 leak** sensors
+  lowered the generic `kFzIasZone` (emits the bare key `alarm`) against a bare
+  `alarm` expose, so the door/leak state never reached the shadow — swapped to
+  the typed `kFzIasContactAlarm` / `kFzIasWaterLeakAlarm` (emit `contact` /
+  `water_leak`, matching z2m `m.iasZoneAlarm`). The **YNDX-00528 motion+
+  illuminance** sensor exposed `occupancy` but registered no decoder (a stale
+  comment claimed no generic helper existed); wired the now-present
+  `kFzOccupancy` (msOccupancySensing 0x0000) — the 0x0406 binding was already
+  declared. The **YNDX-00518 TRV** decoded only genOnOff + battery and bound no
+  hvacThermostat (0x0201), so the entire thermostat surface was missing; wired
+  the generic `kFzThermostat` (read) + `kTzThermostat` (write) and a flat
+  `local_temperature` / `current_heating_setpoint` / `system_mode` surface
+  (plus the existing Yandex `display_flip` write) and the 0x0201 binding.
+  `local_temperature_calibration`, `child_lock` and the manuSpecific
+  `calibrated` flag still need generic helpers and remain deferred. New parity
+  tests in `tests/test_yandex_parity.cpp` pin the semantic IAS keys (and the
+  absence of the bare `alarm`), the occupancy decode from msOccupancySensing,
+  and the TRV thermostat decode + 0x0201 binding.
+
 - **Orvibo CR11S8UZ + T40S6Z scene remotes emitted nothing on a button
   press** — found by a z2m↔embedded-zhc parity pass over the 38 Orvibo defs
   (the IAS sensors SN10ZW/SM10ZW/SM20/SW21/SW30 already use the typed

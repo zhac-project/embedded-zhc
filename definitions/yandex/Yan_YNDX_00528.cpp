@@ -1,17 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Yandex YNDX_00528 — auto-generated.
-// Motion and illuminance sensor
-// z2m-source: yandex.ts #YNDX_00528.
+// Tier 2: Yandex YNDX_00528 — graduated from generated/ (vendor-parity sweep).
+// Motion and illuminance sensor. z2m = m.occupancy() + m.illuminance() +
+// m.battery() (+ a sensitivity enum on msOccupancySensing 0xF000, manu 0x132F).
+// The generated def exposed `occupancy` but registered NO occupancy decoder
+// (the comment claimed no generic helper existed) — so the primary motion
+// state was a dead key. The generic kFzOccupancy (msOccupancySensing 0x0000,
+// z2m fz.occupancy equivalent) now exists; wire it. The 0x0406 binding is
+// already declared below.
+// z2m-source: yandex.ts #YNDX_00528 (m.occupancy()).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::yandex {
 namespace {
-// NOTE: no generic kFzOccupancy converter exists yet — z2m's `m.occupancy()`
-// reads msOccupancySensing attr 0x0000 directly. Until a generic helper
-// lands, the binding below ensures reports flow; decoding is BLOCKED.
-// See docs/YANDEX_PARITY.md.
 const FzConverter* const kFz_YNDX_00528[] = {
+    &::zhc::generic::kFzOccupancy,
     &::zhc::generic::kFzIlluminance,
     &::zhc::generic::kFzBattery,
 };
