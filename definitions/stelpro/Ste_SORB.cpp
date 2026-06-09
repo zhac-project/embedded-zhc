@@ -1,28 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: uses shared stelpro converters.
-// Stelpro ST218 — Ki convector, line-voltage thermostat.
-// White-label: SonomaStyle "Style Fan Heater".
-// z2m-source: stelpro.ts #ST218 (with SonomaStyle whiteLabel +
-// fzLocal.stelpro_thermostat + outdoor-temp manuSpec write at
-// mfgcode 0x1185).
+// Tier 2: uses shared stelpro converters. Graduated from generated/ to
+// wire keypad_lockout decode+write (z2m fz.hvac_user_interface +
+// tz.thermostat_keypad_lockout); the expose was declared StateSet but
+// neither converter was wired, so it was a dead attribute. (z2m exposes
+// no fan channel for this "fan heater" — just climate + keypad_lockout.)
+// Stelpro SORB — ORLÉANS fan heater. z2m-source: stelpro.ts #SORB
+// (fzLocal.stelpro_thermostat + fz.hvac_user_interface; NO outdoor-
+// temperature write tz, NO humidity).
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/stelpro/_shared.hpp"
 
 namespace zhc::devices::stelpro {
 namespace {
-const FzConverter* const kFz_ST218[] = {
+const FzConverter* const kFz_SORB[] = {
     &::zhc::stelpro::kFzStelproThermostat,
+    &::zhc::stelpro::kFzStelproKeypadLockout,
 };
-const TzConverter* const kTz_ST218[] = {
+const TzConverter* const kTz_SORB[] = {
     &::zhc::generic::kTzThermostat,
-    &::zhc::stelpro::kTzStelproOutdoorTemp,
+    &::zhc::stelpro::kTzStelproKeypadLockout,
 };
-constexpr const char* kModels_ST218[] = { "ST218", "SonomaStyle" };
-
-constexpr WhiteLabel kWhiteLabels_ST218[] = {
-    {"Stelpro", "SonomaStyle"},
-};
+constexpr const char* kModels_SORB[] = { "SORB" };
 
 }  // namespace
 
@@ -35,9 +34,6 @@ constexpr Expose kAutoExposes[] = {
     {"current_heating_setpoint",  ExposeType::Numeric, Access::State,    "\xC2\xB0""C", nullptr, nullptr, 0},
     {"system_mode",               ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_state",             ExposeType::Enum,    Access::State,    nullptr, nullptr, nullptr, 0},
-    {"outdoor_temperature_display", ExposeType::Numeric, Access::Set,    "\xC2\xB0""C",
-        "Outdoor temperature displayed on the thermostat", nullptr, 0,
-        ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -50,16 +46,15 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end hand-authored block ---
 
-extern const PreparedDefinition kDef_ST218{
-    .zigbee_models=kModels_ST218, .zigbee_models_count=sizeof(kModels_ST218)/sizeof(kModels_ST218[0]),
+extern const PreparedDefinition kDef_SORB{
+    .zigbee_models=kModels_SORB, .zigbee_models_count=sizeof(kModels_SORB)/sizeof(kModels_SORB[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="ST218", .vendor="Stelpro",
+    .model="SORB", .vendor="Stelpro",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=kWhiteLabels_ST218,
-    .white_labels_count=sizeof(kWhiteLabels_ST218)/sizeof(kWhiteLabels_ST218[0]),
-    .from_zigbee=kFz_ST218, .from_zigbee_count=sizeof(kFz_ST218)/sizeof(kFz_ST218[0]),
-    .to_zigbee=kTz_ST218, .to_zigbee_count=sizeof(kTz_ST218)/sizeof(kTz_ST218[0]),
+    .white_labels=nullptr, .white_labels_count=0,
+    .from_zigbee=kFz_SORB, .from_zigbee_count=sizeof(kFz_SORB)/sizeof(kFz_SORB[0]),
+    .to_zigbee=kTz_SORB, .to_zigbee_count=sizeof(kTz_SORB)/sizeof(kTz_SORB[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };

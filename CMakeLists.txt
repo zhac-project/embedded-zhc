@@ -1393,6 +1393,17 @@ target_link_libraries(zhc_niko_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_perenio_parity_tests tests/test_perenio_parity.cpp)
 target_link_libraries(zhc_perenio_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Stelpro (Quebec) line-voltage thermostat family.
+# All six defs (HT402/SMT402/SMT402AD/SORB/ST218/STZB402) declared the
+# keypad_lockout expose StateSet but wired neither decoder nor encoder
+# (z2m fz.hvac_user_interface + tz.thermostat_keypad_lockout on every
+# device) — a dead attribute. Graduated to parent overrides wiring the
+# new kFzStelproKeypadLockout / kTzStelproKeypadLockout. Guards the
+# pre-existing thermostat decode (Eco→auto, running_state from
+# pIHeatingDemand) and the outdoor-temp manuSpec write too.
+add_executable(zhc_stelpro_parity_tests tests/test_stelpro_parity.cpp)
+target_link_libraries(zhc_stelpro_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1519,6 +1530,7 @@ add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
 add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)
+add_test(NAME zhc_stelpro_parity_tests      COMMAND zhc_stelpro_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)

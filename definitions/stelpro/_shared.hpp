@@ -55,4 +55,21 @@ extern const TzConverter kTzStelproOutdoorTemp;
 //             `tz.stelpro_peak_demand_event_icon`.
 extern const TzConverter kTzStelproPeakDemandIcon;
 
+// hvacUserInterfaceCfg.keypadLockout decoder (cluster 0x0204 attr
+// 0x0001, ENUM8). Emits `keypad_lockout` as a raw uint — z2m maps the
+// value via `constants.keypadLockoutMode` but falls back to the raw
+// number for unknown codes, so the shadow carries the numeric mode.
+// Every stelpro def wires `fz.hvac_user_interface` in z2m.
+//
+// z2m-source: zigbee-herdsman-converters/src/converters/fromZigbee.ts
+//             `fz.hvac_user_interface`.
+extern const FzConverter kFzStelproKeypadLockout;
+
+// Tz: non-manu ENUM8 write of keypadLockout to hvacUserInterfaceCfg
+// (cluster 0x0204 attr 0x0001). Accepts key "keypad_lockout".
+//
+// z2m-source: zigbee-herdsman-converters/src/converters/toZigbee.ts
+//             `tz.thermostat_keypad_lockout`.
+extern const TzConverter kTzStelproKeypadLockout;
+
 }  // namespace zhc::stelpro

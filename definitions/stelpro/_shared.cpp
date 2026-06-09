@@ -141,6 +141,33 @@ bool tz_stelpro_outdoor_temp(std::string_view key,
         key, scaled, self, def, ctx, out_frame, out_size);
 }
 
+// fz_stelpro_keypad_lockout: hvacUserInterfaceCfg.keypadLockout is attr
+// 0x0001 (ENUM8). Mirrors z2m fz.hvac_user_interface — emit the raw
+// ENUM8 as a uint (z2m's constants.keypadLockoutMode lookup falls back
+// to the raw number for unknown codes anyway).
+bool fz_stelpro_keypad_lockout(const ::zhc::DecodedMessage& msg,
+                                const ::zhc::FzConverter&,
+                                const ::zhc::PreparedDefinition&,
+                                ::zhc::RuntimeContext&,
+                                ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const ::zhc::Value* v = msg.payload.find("1");  // 0x0001 keypadLockout
+    if (!v) return false;
+    ::zhc::Value o{};
+    o.type = ::zhc::ValueType::Uint;
+    if      (v->type == ::zhc::ValueType::Uint) o.u = v->u;
+    else if (v->type == ::zhc::ValueType::Int)  o.u = static_cast<std::uint64_t>(v->i);
+    else if (v->type == ::zhc::ValueType::Bool) o.u = v->b ? 1 : 0;
+    else return false;
+    out.put("keypad_lockout", o);
+    return true;
+}
+
+// keypad_lockout: non-manu ENUM8 write to hvacUserInterfaceCfg attr
+// 0x0001 (mfg=0). Mirrors z2m tz.thermostat_keypad_lockout.
+constexpr ::zhc::generic::ZclWriteSpec kSpecStelproKeypadLockout{
+    "keypad_lockout", 0x0001, 0x30, 0, nullptr, 0,
+};
+
 // peak_demand_icon: HT402 only. Standard manu-write to attr 0x4012
 // (u8) at mfgcode 0x1185. The TS calls this "stelpro_peak_demand_
 // event_icon" — encoded as a writeAttributes here for v1.
@@ -211,6 +238,30 @@ extern const ::zhc::TzConverter kTzStelproPeakDemandIcon{
     .command_id  = 0x02,
     .fn          = &::zhc::generic::tz_zcl_write_attr,
     .user_config = &kSpecStelproPeakDemandIcon,
+};
+
+extern const ::zhc::FzConverter kFzStelproKeypadLockout{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "hvacUserInterfaceCfg",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::AttributeReport) |
+                         ::zhc::type_bit(::zhc::MessageType::ReadResponse),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_stelpro_keypad_lockout },
+    .user_config       = nullptr,
+};
+
+extern const ::zhc::TzConverter kTzStelproKeypadLockout{
+    .key         = "keypad_lockout",
+    .cluster     = "hvacUserInterfaceCfg",
+    .cluster_id  = 0x0204,
+    .command_id  = 0x02,                 // writeAttributes
+    .fn          = &::zhc::generic::tz_zcl_write_attr,
+    .user_config = &kSpecStelproKeypadLockout,
 };
 
 }  // namespace zhc::stelpro

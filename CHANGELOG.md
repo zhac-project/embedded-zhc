@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Stelpro thermostat parity pass — `keypad_lockout` dead attribute fixed on
+  all 6 defs** (HT402, SMT402, SMT402AD, SORB, ST218, STZB402). Each declared
+  the `keypad_lockout` expose as `StateSet` (read + write) but wired neither a
+  decoder nor an encoder, while z2m wires `fz.hvac_user_interface` and
+  `tz.thermostat_keypad_lockout` on every Stelpro device — so the value never
+  decoded and could not be set. Added `kFzStelproKeypadLockout`
+  (`hvacUserInterfaceCfg` 0x0204 attr 0x0001 keypadLockout, ENUM8 →
+  `keypad_lockout`) and `kTzStelproKeypadLockout` (non-manu ENUM8 write of the
+  same attr) to `definitions/stelpro/_shared.{hpp,cpp}`, and graduated all six
+  defs from `generated/` to parent Tier-2 overrides to wire them. New fixture
+  `tests/test_stelpro_parity.cpp` pins keypad_lockout decode + write across all
+  six and guards the pre-existing thermostat decode (Eco(5)→`auto`,
+  `running_state` from pIHeatingDemand) and the outdoor-temp manuSpec write.
+
 - **Adeo (ENKI LEXMAN / LexMan) parity pass — 7 of 50 defs corrected** over a
   z2m↔embedded-zhc sweep. Adeo is otherwise a bounded-lighting vendor (the
   LDSENK*/ZBEK-*/LXEK-* bulbs are stock `m.light` and decode fine); every gap
