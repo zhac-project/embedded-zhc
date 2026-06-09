@@ -271,6 +271,11 @@ extern const FzConverter kFzIasWaterLeakAlarm;
 extern const FzConverter kFzIasSmokeAlarm;
 extern const FzConverter kFzIasCoAlarm;
 extern const FzConverter kFzIasVibrationAlarm;
+// Gas alarm: zoneStatus bit 0 (`fz.ias_gas_alarm_1`) and bit 1
+// (`fz.ias_gas_alarm_2`); both emit "gas". Used by Heiman combustible-
+// gas sensors (HS1CG family / HS3CG).
+extern const FzConverter kFzIasGasAlarm;
+extern const FzConverter kFzIasGasAlarm2;
 
 // ── genOnOff power-on behaviour (standard ZCL attribute 0x4003) ─────
 //

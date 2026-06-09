@@ -992,6 +992,8 @@ constexpr IasAlarmLabel kLbl_WaterLeak   { "water_leak",      0 };
 constexpr IasAlarmLabel kLbl_Smoke       { "smoke",           0 };
 constexpr IasAlarmLabel kLbl_Co          { "carbon_monoxide", 0 };
 constexpr IasAlarmLabel kLbl_Vibration   { "vibration",       0 };
+constexpr IasAlarmLabel kLbl_Gas         { "gas",             0 };  // z2m fz.ias_gas_alarm_1
+constexpr IasAlarmLabel kLbl_Gas2        { "gas",             1 };  // z2m fz.ias_gas_alarm_2
 
 }  // namespace
 
@@ -1017,6 +1019,8 @@ ZHC_IAS_TYPED_CVT(kFzIasWaterLeakAlarm, &kLbl_WaterLeak);
 ZHC_IAS_TYPED_CVT(kFzIasSmokeAlarm,     &kLbl_Smoke);
 ZHC_IAS_TYPED_CVT(kFzIasCoAlarm,        &kLbl_Co);
 ZHC_IAS_TYPED_CVT(kFzIasVibrationAlarm, &kLbl_Vibration);
+ZHC_IAS_TYPED_CVT(kFzIasGasAlarm,       &kLbl_Gas);
+ZHC_IAS_TYPED_CVT(kFzIasGasAlarm2,      &kLbl_Gas2);
 
 // ── ssIasAce arm / panic command decoders ───────────────────────────
 //

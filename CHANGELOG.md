@@ -132,6 +132,34 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Heiman IAS-Zone sensor family** — 27 auto-generated defs decoded the
+  bare `alarm` key (generic `kFzIasZone`) while their expose declared the
+  *semantic* key, so the primary sensor state never reached the shadow.
+  Because there is no `alarm`→semantic rename layer, a smoke detector
+  exposing `smoke` (etc.) silently produced nothing on alarm. All 27 are
+  graduated to Tier-2 parent overrides under `definitions/heiman/` (so a
+  regen of `generated/` can no longer re-introduce the gap):
+  - 26 swapped to the typed `kFzIas<Type>Alarm` converter that emits the
+    semantic key directly — `contact` (D1-EFA, HS1DS, HS3DS, HS8DS-EFA,
+    Heiman-M1), `smoke` (HS15A-M, HS1SA-E, HS1SA-E-PLUS, HS2SA-EF-3.0,
+    HS3SA/HS1SA), `carbon_monoxide` (HS1CA-E), `gas` (HS1CG, HS1CG-E,
+    HS1CG_H, HS1CG-M via `alarm_1`; HS1CG-E_3.0, HS1CG_M, HS3CG via
+    `alarm_2`), `occupancy` (HS1MS-EF, HS1MS-M, HS3MS, PIR_TPV12),
+    `vibration` (HS1VS-EF, HS1VS-N), `water_leak` (HS1WL/HS3WL, HS2WL).
+    Mirrors the already-correct HS1CA-M / HS2WD-E heiman defs and the
+    trust / smartthings IAS ports.
+  - **HS1MIS-3.0** was additionally mis-ported as an IAS device; z2m
+    decodes it via `fz.occupancy` (msOccupancySensing `0x0406`), so it is
+    re-pointed at the generic `kFzOccupancy` converter with a corrected
+    `0x0406` binding and the IAS-only `tamper`/`battery_low` exposes
+    dropped.
+  - Added generic `kFzIasGasAlarm` / `kFzIasGasAlarm2` converters
+    (`fz.ias_gas_alarm_{1,2}`, zoneStatus bits 0/1 → `gas`) to
+    `definitions/_generic/`, which had no gas-zone decoder.
+  - New host fixture `tests/test_heiman_parity.cpp` pins the semantic-key
+    decode (and absence of the bare `alarm` key) per representative type,
+    the `alarm_2` bit-1 gas variant, and the HS1MIS-3.0 occupancy path.
+
 - Three **Schneider Electric (Wiser)** devices whose auto-generated ports
   dropped a core decoder are graduated to parent overrides under
   `definitions/schneider/` (so a regen of `generated/` can no longer silently
