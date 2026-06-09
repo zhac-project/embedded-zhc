@@ -8,6 +8,22 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Sber IAS sensors decoded to dead keys** — three SDevices (Sber) IAS Zone
+  sensors had auto-generated ports that wired the generic `kFzIasZone`
+  converter (which emits the raw zoneStatus bits `alarm_1` / `alarm_2` /
+  `tamper` / `battery_low`) while their expose list declared a bare `alarm`
+  key that no converter produced, so the sensor's core state never reached the
+  shadow. z2m decodes each via `m.iasZoneAlarm({zoneType: ...})`, publishing a
+  semantic key. Graduated each def to `definitions/sber/Sbe_*.cpp` and wired the
+  typed `kFzIas<Type>Alarm` converter + matching expose:
+  **SBDV-00029** (motion) → `kFzIasMotionAlarm` / `occupancy`;
+  **SBDV-00030** (opening/contact) → `kFzIasContactAlarm` / `contact`;
+  **SBDV-00154** (water leak) → `kFzIasWaterLeakAlarm` / `water_leak` (z2m
+  drops `tamper` for this device, so the expose is dropped to match). Pinned by
+  `tests/test_sber_parity.cpp`.
+
 ### Added
 
 - `ConfigStepOp::Write` — declarative ZCL **Write Attributes** configure

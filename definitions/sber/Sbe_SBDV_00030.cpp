@@ -1,15 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sber SBDV-00030 — auto-generated.
-// Smart opening sensor
-// z2m-source: sber.ts #SBDV-00030.
+// Tier 2: Sber SBDV-00030 — graduated from generated/ to fix a real parity gap.
+// Smart opening (door/window contact) sensor.
+// z2m-source: sber.ts #SBDV-00030 — m.iasZoneAlarm({zoneType: "contact", ...}).
+//
+// PARITY FIX: the auto-generated port wired the generic kFzIasZone, which emits
+// raw zoneStatus bits ("alarm_1"/"alarm_2"/"tamper"/"battery_low"). The expose
+// list declared key "alarm" that no converter ever produces, so the contact
+// state never reached the shadow. z2m's iasZoneAlarm with zoneType "contact"
+// publishes the semantic key `contact`. There is no rename layer, so we wire the
+// typed kFzIasContactAlarm converter (zoneStatus bit 0 -> "contact", plus tamper
+// + battery_low) and expose `contact` to match.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::sber {
 namespace {
 const FzConverter* const kFz_SBDV_00030[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
 constexpr const char* kModels_SBDV_00030[] = { "TS0203" };
@@ -21,7 +29,7 @@ constexpr const char* kManus_SBDV_00030[] = { "_TYZB01_epni2jgy" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

@@ -1,15 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sber SBDV-00154 — auto-generated.
-// Smart water leak sensor
-// z2m-source: sber.ts #SBDV-00154.
+// Tier 2: Sber SBDV-00154 — graduated from generated/ to fix a real parity gap.
+// Smart water leak sensor.
+// z2m-source: sber.ts #SBDV-00154 —
+//   m.iasZoneAlarm({zoneType: "water_leak", zoneAttributes: ["alarm_1", "battery_low"]}).
+//
+// PARITY FIX: the auto-generated port wired the generic kFzIasZone, which emits
+// raw zoneStatus bits ("alarm_1"/...). The expose list declared key "alarm" that
+// no converter ever produces, so the leak state never reached the shadow. z2m's
+// iasZoneAlarm with zoneType "water_leak" publishes the semantic key
+// `water_leak`. There is no rename layer, so we wire the typed
+// kFzIasWaterLeakAlarm converter (zoneStatus bit 0 -> "water_leak") and expose
+// `water_leak`. z2m's zoneAttributes omit tamper for this device, so the tamper
+// expose is dropped to match (the decoder still emits battery_low).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::sber {
 namespace {
 const FzConverter* const kFz_SBDV_00154[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
 constexpr const char* kModels_SBDV_00154[] = { "TS0207" };
@@ -21,8 +31,7 @@ constexpr const char* kManus_SBDV_00154[] = { "_TZ3000_c8bqthpo" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
