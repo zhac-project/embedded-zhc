@@ -10,6 +10,22 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **MindY Leleka air-quality monitor — the `co2` channel was silently
+  dropped.** The def declared a `co2` expose and bound the standard msCO2
+  cluster (0x040D) but omitted the decoder from its from-zigbee list; its
+  header comment claiming "Tier-1 has no kFzCO2" was stale (the generic
+  `kFzCO2` already exists, matching z2m `fz.co2` =
+  `floor(measuredValue * 1e6)` → ppm). Graduated the def `generated/` →
+  Tier-2 parent override and wired `generic::kFzCO2`. The sibling
+  temperature / humidity / pressure / illuminance channels already decoded
+  via the generic converters. The manuf-specific config knobs
+  (read_interval, night_*, co2_*, lux_*, offset_*, temperature_sensor) and
+  the per-device last_boot / wifi surfaces have no generic decoder and stay
+  deferred (write-side infra). New fixture `tests/test_mindy_parity.cpp`
+  pins the restored CO2 ppm decode (exclusive — no phantom sibling keys)
+  and regression-checks the four sibling channels. Mirrors the
+  wirenboard / diyruz CO2 fixes.
+
 - **Aurora "AOne" non-light family — sensors decoded the wrong IAS key and
   the remote + wireless dimmers had their entire action stream dropped.**
   Five Aurora defs were graduated from `generated/` to Tier-2 parent

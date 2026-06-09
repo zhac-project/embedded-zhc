@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: MindY Leleka — hand-rewritten 2026-04-28 (was wrong-bundle).
+// Tier 2: MindY Leleka — graduated from generated/ 2026-06-10 to wire the
+// CO2 decoder (parity fix; the kFzCO2 generic now exists). Hand-rewritten
+// 2026-04-28 (was wrong-bundle).
 // Advanced Environmental Monitoring Device (T/H/P/CO2/lux + dimmable LED).
 // z2m-source: mindy.ts #Leleka.
 //
@@ -8,16 +10,15 @@
 //   - kFzTemperature  → msTemperatureMeasurement (0x0402)
 //   - kFzHumidity     → msRelativeHumidity       (0x0405)
 //   - kFzPressure     → msPressureMeasurement    (0x0403)
+//   - kFzCO2          → msCO2                     (0x040D)  (CO2 ppm)
 //   - kFzIlluminance  → msIlluminanceMeasurement (0x0400)
 //   - kFzOnOff        → genOnOff                 (0x0006)  (LED indicator)
 //   - kFzBrightness   → genLevelCtrl             (0x0008)  (LED dim)
 //   - kTzOnOff / kTzBrightness                              (LED control)
 //
 // Gaps vs z2m (kept as exposes for shadow surfacing):
-//   - msCO2 (0x040D) `measuredValue` decoder — Tier-1 has no kFzCO2;
-//     attribute matches `fz.co2` shape (u16 ppm scaled). Adding it to
-//     `_generic/_shared.{hpp,cpp}` is the natural follow-up.
-//   - All `customAttrIds` config attributes (read_interval, night_mode,
+//   - `temperature_sensor` enumLookup (CPU/SCD4X/BMP280) + all
+//     `customAttrIds` config attributes (read_interval, night_mode,
 //     night_on/off_time, co2_*, lux_*, offset_*) ride manuf-specific
 //     genBasic / msCO2 / msIlluminance / ms* attribute reads/writes
 //     that no Tier-1 generic decoder covers today. Listed in exposes
@@ -41,6 +42,7 @@ const FzConverter* const kFz_Leleka[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzPressure,
+    &::zhc::generic::kFzCO2,
     &::zhc::generic::kFzIlluminance,
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
@@ -121,7 +123,7 @@ constexpr BindingSpec kBind_Leleka[] = {
     { 1, 0x0402 }, // msTemperatureMeasurement
     { 1, 0x0403 }, // msPressureMeasurement
     { 1, 0x0405 }, // msRelativeHumidity
-    { 1, 0x040D }, // msCO2 (bind declared even though Tier-1 lacks decoder)
+    { 1, 0x040D }, // msCO2 (kFzCO2)
 };
 
 }  // namespace

@@ -1226,6 +1226,14 @@ target_link_libraries(zhc_bacchus_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_diyruz_parity_tests tests/test_diyruz_parity.cpp)
 target_link_libraries(zhc_diyruz_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the MindY Leleka air-quality monitor. The def declared
+# a `co2` expose and bound msCO2 (0x040D) but omitted the decoder, so every
+# CO2 report silently dropped (the generic kFzCO2 already existed; the def's
+# "Tier-1 has no kFzCO2" comment was stale). Wired generic::kFzCO2 and
+# graduated the def generated/ -> parent. See tests/README.md.
+add_executable(zhc_mindy_parity_tests tests/test_mindy_parity.cpp)
+target_link_libraries(zhc_mindy_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the PushOk Hardware DIY family. POK003/POK010 (water
 # level) exposed `contact` (genBinaryInput presentValue) with no decoder —
 # wired vendor kFzPushokContact. POK008 (thermostat relay) dropped its
@@ -1581,6 +1589,7 @@ add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_bacchus_parity_tests      COMMAND zhc_bacchus_parity_tests)
 add_test(NAME zhc_diyruz_parity_tests       COMMAND zhc_diyruz_parity_tests)
+add_test(NAME zhc_mindy_parity_tests        COMMAND zhc_mindy_parity_tests)
 add_test(NAME zhc_pushok_parity_tests       COMMAND zhc_pushok_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_lincukoo_parity_tests     COMMAND zhc_lincukoo_parity_tests)
