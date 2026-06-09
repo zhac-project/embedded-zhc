@@ -10,6 +10,30 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **xyzroe ZigUSB_C6 over-exposed a phantom `energy` channel, dropped the
+  over-current alarm, and mis-keyed every metering/switch channel** — found
+  by a z2m↔embedded-zhc parity pass over the 3 xyzroe DIY power-monitor defs
+  (ZigUSB / ZigUSB_C6 / ZigDC). ZigUSB_C6 is built entirely from
+  `m.electricityMeter({cluster:"electrical", electricalMeasurementType:"both"})`
+  + `m.temperature()` + `m.onOff()`×3 + `m.iasZoneAlarm({zoneType:"generic",
+  zoneAttributes:["alarm_1"]})`. Three real gaps: (1) `cluster:"electrical"`
+  maps to `fz.electrical_measurement` (haElectricalMeasurement 0x0B04) ONLY —
+  it exposes no `energy` and uses no seMetering — but the prior hand-rewrite
+  wired `kFzMetering` + an `energy` expose + a `{1,0x0702}` bind, all phantom
+  (removed); (2) the over-current IAS alarm was dropped entirely — restored via
+  the generic `kFzIasZoneStatusChange` + `{1,0x0500}` bind; (3) with the
+  `{1,2,3}` endpoint_map the dispatch suffix-rewrite emits `power_1`/`current_1`/
+  `voltage`(forced-global)/`temperature_3`/`state_1`/`state_2`/`state_3`/
+  `alarm_1_1`, but the exposes were bare `state`/`power`/`current`/`temperature`/
+  `alarm_1` and the two indicator-LED switches (`state_2`/`state_3`, with their
+  `{2,0x0006}`/`{3,0x0006}` binds) were missing — exposes renamed to the runtime
+  shape and the LED switches added, so every standard channel now surfaces. Def
+  graduated to a Tier-2 parent override. ZigUSB + ZigDC verified CLEAN: their
+  voltage/current/power/uptime ride genAnalogInput (0x000C) through vendor
+  `description`-string parsers with no generic converter (INFRA, deferred); only
+  their standard `fz.temperature`/`fz.humidity` (0x0402/0x0405) channels are
+  portable and decode correctly. New fixture `tests/test_xyzroe_parity.cpp`.
+
 - **VSmart HS-SEDR00ZB-VNM door/window sensor never reported `contact`**
   — found by a z2m↔embedded-zhc parity pass over the 6 VSmart (HumanSmart)
   defs. The generated port wired the generic `kFzIasZone`, which emits a

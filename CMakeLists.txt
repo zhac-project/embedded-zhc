@@ -1189,6 +1189,19 @@ target_link_libraries(zhc_innr_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bituo_technik_parity_tests tests/test_bituo_technik_parity.cpp)
 target_link_libraries(zhc_bituo_technik_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the xyzroe DIY USB/DC power-monitor family
+# (ZigUSB / ZigUSB_C6 / ZigDC). ZigUSB + ZigDC route their voltage/current/
+# power over genAnalogInput (0x000C) with vendor description-string parsers
+# (no generic 0x000C converter) -> INFRA, deferred; only their standard
+# fz.temperature/fz.humidity (0x0402/0x0405) channels are portable and are
+# pinned here. ZigUSB_C6 is pure modernExtend: m.electricityMeter(cluster:
+# "electrical") maps to haElectricalMeasurement (0x0B04) ONLY -- the earlier
+# port's kFzMetering + `energy` + 0x0702 bind were phantom and were removed,
+# and the dropped m.iasZoneAlarm over-current channel (ssIasZone 0x0500 ->
+# alarm_1) was restored via the generic kFzIasZoneStatusChange.
+add_executable(zhc_xyzroe_parity_tests tests/test_xyzroe_parity.cpp)
+target_link_libraries(zhc_xyzroe_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Hive (British Gas) family. Two gaps: (1) the contact
 # (DWS003), motion (MOT003) and keypad (KEYPAD001) IAS devices lowered the
 # generic kFzIasZone (bare "alarm_1") while exposing contact/occupancy — dead
@@ -1381,6 +1394,7 @@ add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)
+add_test(NAME zhc_xyzroe_parity_tests       COMMAND zhc_xyzroe_parity_tests)
 add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
