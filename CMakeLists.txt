@@ -908,6 +908,14 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the AwoX / EGLO non-light family. The EPIR_Zm PIR
+# motion sensor dropped its `occupancy` channel (shipped state/battery
+# only); the ERCU_WS_Zm wall remote (multi-EP) and 33952 (ERCU_Zm) remote
+# were both mis-ported as dead on/off switches. Graduated to parent
+# overrides wiring kFzOccupancy and the generic command-action decoders.
+add_executable(zhc_awox_parity_tests tests/test_awox_parity.cpp)
+target_link_libraries(zhc_awox_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Adeo (ENKI LEXMAN) sensor + key-fob family. Six IAS
 # sensors lowered the generic kFzIasZone behind a semantic expose (dead key);
 # the 4-in-1 (83633205) additionally dropped its illuminance/temp/humidity
@@ -1528,6 +1536,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_ewelink_parity_tests      COMMAND zhc_ewelink_parity_tests)
 add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)

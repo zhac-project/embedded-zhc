@@ -10,6 +10,34 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **AwoX / EGLO non-light family — a PIR sensor and two remotes shipped
+  with their primary signal dead.** Three generated Tier-1 defs were
+  mis-modelled and graduated to Tier-2 parents:
+  - **EPIR_Zm** (Connect-Z PIR motion sensor, EGLO 99106) wired only
+    `kFzOnOff` + `kFzBattery` and exposed `state`/`battery`/`voltage` —
+    `occupancy`, the whole reason the device exists, was dropped, so the
+    `msOccupancySensing` (0x0406) report was dead. z2m models it as
+    `m.battery() + m.occupancy() + …`. Added the generic `kFzOccupancy`
+    decoder, an `occupancy` Binary expose, and the 0x0406 binding. (No
+    illuminance channel exists in z2m despite the "motion + light"
+    branding.)
+  - **ERCU_WS_Zm** (Connect-Z wall-mount light remote, EGLO 900116) and
+    **33952 / ERCU_Zm** (remote controller) were both stubbed as on/off
+    switches (`kFzOnOff` + a controllable on/off TZ, both dead — they are
+    pure command transmitters with no relay) exposing a meaningless
+    `state`. z2m exposes `action` driven by genOnOff / genLevelCtrl /
+    lightingColorCtrl (/genScenes) client commands. Re-wired both to the
+    generic command-action decoders and exposed `action`; ERCU_WS_Zm is
+    multi-endpoint (`{"1":1,"3":3}`), so it carries an endpoint label map
+    + `endpoint_action_suffix` and surfaces `action_1` / `action_3`. The
+    AwoX-specific `raw`-frame magic-byte sub-actions (`awox_color_ctrl`
+    colours, `awox_level_ctrl` refresh, `awox_scenes_raw`) have no generic
+    decoder and are deferred, mirroring the legrand remote precedent. New
+    `tests/test_awox_parity.cpp` pins the restored PIR occupancy decode,
+    the per-endpoint action suffix on the wall remote (incl. level + colour
+    command families), and the command-action stream on the 33952 remote
+    (incl. genScenes `recall_<n>`).
+
 - **Vesternet REM-013 / WAL-011 / WAL-012 multi-button scene remotes — every
   button collapsed onto one `action`.** These battery remotes (12-, 4- and
   8-button; rebranded Sunricher `ZGRC-KEY-013` / `ZG2833K4_EU06` /
