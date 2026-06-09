@@ -908,6 +908,15 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Lonsonho (Tuya-OEM) family. X701A (1-gang switch) dropped
+# the "_TZ3000_ehgouyvu" manufacturer name from its TS0001 fingerprint, so
+# that variant never matched; graduated to a parent override restoring both
+# names. The rest are structural guards (multi-gang endpoint_maps,
+# attribute-based TS130F covers on 0x0102, RGBCW colour surface; Tuya-DP
+# switches/dimmer surfaces are INFRA-deferred). See tests/README.md.
+add_executable(zhc_lonsonho_parity_tests tests/test_lonsonho_parity.cpp)
+target_link_libraries(zhc_lonsonho_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the AwoX / EGLO non-light family. The EPIR_Zm PIR
 # motion sensor dropped its `occupancy` channel (shipped state/battery
 # only); the ERCU_WS_Zm wall remote (multi-EP) and 33952 (ERCU_Zm) remote
@@ -1576,6 +1585,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_ewelink_parity_tests      COMMAND zhc_ewelink_parity_tests)

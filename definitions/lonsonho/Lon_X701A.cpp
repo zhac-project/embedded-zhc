@@ -1,8 +1,12 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Lonsonho X701A — auto-generated.
+// Tier 2: Lonsonho X701A — graduated from generated/ to fix a fingerprint gap.
 // 1 gang switch with backlight
-// z2m-source: lonsonho.ts #X701A.
+// z2m-source: lonsonho.ts #X701A —
+//   tuya.fingerprint("TS0001", ["_TZ3000_t3s9qmmg", "_TZ3000_ehgouyvu"]).
+// The generated def only carried "_TZ3000_t3s9qmmg"; "_TZ3000_ehgouyvu"
+// was dropped, so that hardware variant never matched. Both manufacturer
+// names are restored below.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::lonsonho {
@@ -14,7 +18,7 @@ const TzConverter* const kTz_X701A[] = {
     &::zhc::generic::kTzOnOff,
 };
 constexpr const char* kModels_X701A[] = { "TS0001" };
-constexpr const char* kManus_X701A[] = { "_TZ3000_t3s9qmmg" };
+constexpr const char* kManus_X701A[] = { "_TZ3000_t3s9qmmg", "_TZ3000_ehgouyvu" };
 }  // namespace
 
 

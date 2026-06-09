@@ -10,6 +10,22 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Lonsonho X701A (1-gang switch with backlight) — one hardware variant
+  never matched.** z2m fingerprints the device as
+  `tuya.fingerprint("TS0001", ["_TZ3000_t3s9qmmg", "_TZ3000_ehgouyvu"])`,
+  but the generated def carried only `_TZ3000_t3s9qmmg`, so units
+  reporting `_TZ3000_ehgouyvu` matched no definition at all. Graduated
+  `Lon_X701A.cpp` from `generated/` to a Tier-2 parent override restoring
+  both manufacturer names. New fixture `tests/test_lonsonho_parity.cpp`
+  pins the fingerprint fix (resolved through the registry) plus structural
+  guards over the rest of the family: multi-gang switch endpoint_maps,
+  the attribute-based TS130F covers exposing `position` on
+  closuresWindowCovering (0x0102, not a Tuya-DP curtain), the dual-cover
+  per-endpoint suffixing, and the RGBCW colour surface. The Tuya-DP
+  devices (X711A/X712A/X713A via `legacy.fz.tuya_switch`, VM-Zigbee-S02
+  via `tuyaDatapoints`) remain INFRA-deferred — their exposes/endpoint
+  maps mirror z2m but DP decode awaits the Tuya-DP dispatch layer.
+
 - **Müller-Licht (tint) battery remotes — advertised colour-wheel and
   store actions were dead enum entries with no decoder.** The three tint
   remotes shipped `action` enums matching z2m but only wired the
