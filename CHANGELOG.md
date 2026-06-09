@@ -10,6 +10,30 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Four Owon HVAC controllers had dead climate exposes the generic
+  thermostat decoder never filled** — surfaced by a z2m↔embedded-zhc
+  parity pass over the 19-def vendor. The generic `kFzThermostat` decodes
+  only hvacThermostat attrs `0x0000`/`0x0012`/`0x001C`, but z2m's
+  `fz.thermostat` also decodes the cooling setpoint (`0x0011`) and
+  running-state (`0x0029`), and `fz.occupancy` decodes msOccupancySensing.
+  - `AC201` / `AC221` / `PCT504` exposed `current_cooling_setpoint`
+    (z2m `.withSetpoint("occupied_cooling_setpoint", …)`) with no decoder.
+  - `PCT504` / `PCT512` exposed `running_state` (z2m `.withRunningState`)
+    with no decoder, and `occupancy` (z2m `m.occupancy()`) with no decoder
+    despite binding msOccupancySensing — even though the generic
+    `kFzOccupancy` already exists.
+  Added a vendor-local `kFzOwonThermostatExtras` (attr `0x0011` cooling
+  setpoint as raw s16; attr `0x0029` running-state mapped enum→string via
+  z2m `thermostatRunningStates`: 0=idle/1=heat/2=cool/4=fan_only) wired
+  alongside the generic decoder, and wired the generic `kFzOccupancy` on
+  PCT504/PCT512. All four thermostat defs were graduated from
+  `definitions/owon/generated/` to Tier-2 parents. The IAS sensors
+  (DWS312/SPM915/PIR313/PIR323-PTH contact+motion, all typed `contact`/
+  `occupancy` keys), THS317 temp/humidity, WSP plugs, SLC remotes/plug and
+  the PC321 3-phase meter (per-phase + top-level current/reactive channels
+  are OWON manuSpec attributes, correctly deferred as infra) were audited
+  and found correct. Pinned by `tests/test_owon_parity.cpp`.
+
 - **Four ShinaSystem (SiHAS) devices lost their primary channel to a
   generator miss** — surfaced by a z2m↔embedded-zhc parity pass over the
   40-def vendor.

@@ -1,14 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Owon AC201 — auto-generated.
+// Tier 2: Owon AC201 — uses shared owon converters.
 // HVAC controller/IR blaster
-// z2m-source: owon.ts #AC201.
+// Parity fix: z2m exposes a cooling setpoint (.withSetpoint("occupied_cooling_
+// setpoint", ...)) decoded by fz.thermostat from hvacThermostat attr 0x0011.
+// The generic kFzThermostat decodes only 0x0000/0x0012/0x001C, so
+// current_cooling_setpoint was a dead expose. Wired kFzOwonThermostatExtras.
+// z2m-source: owon.ts #AC201 + fromZigbee.ts fz.thermostat.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/owon/_shared.hpp"
 
 namespace zhc::devices::owon {
 namespace {
 const FzConverter* const kFz_AC201[] = {
     &::zhc::generic::kFzThermostat,
+    &::zhc::owon::kFzOwonThermostatExtras,
     &::zhc::generic::kFzFanMode,
 };
 const TzConverter* const kTz_AC201[] = {

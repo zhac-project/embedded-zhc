@@ -1012,6 +1012,16 @@ target_link_libraries(zhc_shelly_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ubisys_parity_tests tests/test_ubisys_parity.cpp)
 target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Owon HVAC family. AC201/AC221/PCT504 declared a
+# cooling setpoint and PCT504/PCT512 declared running_state + occupancy that
+# the generic kFzThermostat (0x0000/0x0012/0x001C) never decoded and no
+# occupancy decoder was wired — all dead exposes. Wired a vendor-local
+# kFzOwonThermostatExtras (attr 0x0011 cooling setpoint + 0x0029 running_state
+# enum->string) alongside the generic decoder, plus the generic kFzOccupancy.
+# All four thermostat defs graduated to Tier-2 parent overrides. See tests/README.md.
+add_executable(zhc_owon_parity_tests tests/test_owon_parity.cpp)
+target_link_libraries(zhc_owon_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Lytko L101Ze thermostat family: six of the seven
 # L101Ze-* ports were mis-lowered as battery on/off stubs (z2m defines them
 # via modernExtend thermostat({...}) dynamic exposes the generator can't read)
@@ -1135,6 +1145,7 @@ add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
+add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
