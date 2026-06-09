@@ -998,6 +998,19 @@ target_link_libraries(zhc_lytko_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_slacky_therm_r08_tests tests/test_slacky_therm_r08.cpp)
 target_link_libraries(zhc_slacky_therm_r08_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Engo (ENGO Controls) TS0601 thermostat family. The
+# engo registry held SEVEN stale battery+on/off stub defs (kDef_E25_230,
+# kDef_E25_BATB, kDef_E40, kDef_ECB62_ZB, kDef_EONE, kDef_EONE_230W,
+# kDef_EONE_BATB) from an earlier generation pass, each duplicating the
+# {TS0601 + _TZE20x_*} fingerprint of a kDefEng__TZE* DP def that carries the
+# full thermostat datapoint map. Two defs per fingerprint made the resolved
+# behaviour hinge on registry order (find_definition is first-match), risking
+# a battery+state-only readout instead of setpoint/local_temperature/mode.
+# The stubs were removed; the DP defs cover all ten manufacturer names. See
+# tests/README.md for the pattern.
+add_executable(zhc_engo_parity_tests tests/test_engo_parity.cpp)
+target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1086,6 +1099,7 @@ add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
+add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)

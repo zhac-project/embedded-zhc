@@ -10,6 +10,22 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Seven Engo (ENGO Controls) TS0601 thermostats had duplicate-fingerprint
+  battery on/off stubs shadowing their full Tuya-datapoint defs** — the engo
+  registry carried seven stale defs from an earlier generation pass
+  (`kDef_E25_230`, `kDef_E25_BATB`, `kDef_E40`, `kDef_ECB62_ZB`, `kDef_EONE`,
+  `kDef_EONE_230W`, `kDef_EONE_BATB`), each a bare battery + on/off stub
+  (`state`/`battery`/`voltage`, `kFzBattery` + `kFzOnOff`, bound `genOnOff
+  0x0006`, no Tuya DP decoder). Every stub duplicated the
+  `{TS0601 + _TZE20x_*}` fingerprint of one of the ten `kDefEng__TZE*` DP defs
+  that carry the full datapoint map (setpoint / local_temperature /
+  system_mode / running_state / child_lock / …, plus the ECB62-ZB control
+  box's pump/boiler outputs). With two defs per fingerprint the resolved
+  device hung on registry order (`find_definition` is first-match), risking a
+  battery+state-only readout instead of the climate surface. The seven stubs
+  were removed from `definitions/engo/`; the `kDefEng__TZE*` DP defs cover all
+  ten manufacturer names as the sole match each. Pinned by
+  `tests/test_engo_parity.cpp`.
 - **Six Lytko L101Ze thermostats were lowered as battery on/off switches** —
   z2m defines every `L101Ze-*` model via `modernExtend`'s `thermostat({...})`
   builder (a floor/room heating thermostat: `local_temperature` /

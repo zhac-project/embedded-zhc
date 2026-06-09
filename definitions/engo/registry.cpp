@@ -17,13 +17,15 @@ extern const PreparedDefinition kDefEng__TZE204_djurk6p5;
 extern const PreparedDefinition kDefEng__TZE204_glk6viwg;
 extern const PreparedDefinition kDefEng__TZE204_lnxdk2ch;
 
-extern const PreparedDefinition kDef_E40;
-extern const PreparedDefinition kDef_EONE_BATB;
-extern const PreparedDefinition kDef_EONE;
-extern const PreparedDefinition kDef_E25_BATB;
-extern const PreparedDefinition kDef_EONE_230W;
-extern const PreparedDefinition kDef_ECB62_ZB;
-extern const PreparedDefinition kDef_E25_230;
+// The seven kDef_E25_230 / kDef_E25_BATB / kDef_E40 / kDef_ECB62_ZB /
+// kDef_EONE / kDef_EONE_230W / kDef_EONE_BATB defs were stale battery+on/off
+// stubs from an earlier generation pass. Each shared an identical
+// {TS0601 + _TZE20x_*} fingerprint with one of the kDefEng__TZE* DP defs
+// below, which carry the full thermostat datapoint map. Two defs matching
+// the same fingerprint made the resolved behaviour depend on registry order
+// (find_definition is first-match), so a device could surface only
+// battery+state instead of setpoint/local_temperature/mode. The stubs are
+// removed; the kDefEng__TZE* DP defs cover all ten manufacturer names.
 
 const PreparedDefinition* const kEngoRegistry[] = {
     &kDefEng__TZE200_awnadkan,
@@ -36,13 +38,6 @@ const PreparedDefinition* const kEngoRegistry[] = {
     &kDefEng__TZE204_djurk6p5,
     &kDefEng__TZE204_glk6viwg,
     &kDefEng__TZE204_lnxdk2ch,
-    &kDef_E40,
-    &kDef_EONE_BATB,
-    &kDef_EONE,
-    &kDef_E25_BATB,
-    &kDef_EONE_230W,
-    &kDef_ECB62_ZB,
-    &kDef_E25_230,
 };
 const std::size_t kEngoRegistryCount = sizeof(kEngoRegistry) / sizeof(kEngoRegistry[0]);
 
