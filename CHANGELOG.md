@@ -10,6 +10,30 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Amina amina S EV Charger — AC metering channels dropped or unexposed.**
+  The charger drives its AC metering through z2m's
+  `m.electricityMeter({cluster: "electrical", acFrequency: true, threePhase:
+  true})` plus a standalone `total_active_power` numeric (attribute
+  `totalActivePower` 0x0304, kW). The hand-rewritten Tier-2 def leaned solely on
+  the generic `kFzElectricalMeasurement` (activePower 0x050B / rmsVoltage 0x0505
+  / rmsCurrent 0x0508 only) and only exposed `power`/`energy`, so `voltage` and
+  `current` were decoded-but-unexposed and `ac_frequency`, `total_active_power`,
+  and all six per-phase B/C channels (`power_phase_b/c`, `voltage_phase_b/c`,
+  `current_phase_b/c`) were dropped on the floor. The device's PRIMARY
+  instantaneous-power reading is `total_active_power` (0x0304) — z2m's
+  `fzLocal.poll_energy` keys its energy poll off `msg.data.totalActivePower`,
+  confirming the firmware reports there rather than via activePower 0x050B.
+  Added `kFzAminaElectricalMeasurementExtras` (new
+  `definitions/amina/_shared.{hpp,cpp}`) decoding ac_frequency 0x0300,
+  totalActivePower 0x0304, and the per-phase B/C power/voltage/current attrs,
+  wired alongside the generic `kFzElectricalMeasurement`; added the missing
+  exposes. Graduated `Ami_amina_S.cpp` from `generated/` to a parent Tier-2
+  override. `power_factor` stays unexposed (z2m default `powerFactor: false`,
+  not overridden). The EV-specific state/alarms/energy/offline-config channels
+  on the 0xFEE7 manuSpecific cluster were already decoded by the per-device
+  converters; new `tests/test_amina_parity.cpp` pins the restored standard
+  channels plus a regression on the manuSpecific decoders.
+
 - **DIYRuZ parity pass — `soil_moisture`, `co2` and `contact` were exposed but
   silently dropped on three sensors.** All three headline channels were declared
   as exposes by the generated Tier-1 ports but had no decoder wired, because the

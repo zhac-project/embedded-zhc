@@ -13,15 +13,27 @@
 //     decimal-stringified attr id (e.g. attr 0x02 → "2").
 //   * `genLevelCtrl::currentLevel` doubles as `charge_limit` (A 6..32).
 //     `charge_limit_with_on_off` issues `moveToLevelWithOnOff` (cmd 0x04).
-//   * `haElectricalMeasurement::totalActivePower` produces "power" via
-//     the generic Fz; the TS poll-on-power side-effect (re-reading
-//     totalActiveEnergy) is a runtime concern handled at the gateway,
-//     not modelled here.
+//   * AC metering rides standard `haElectricalMeasurement` (0x0B04).
+//     The generic `kFzElectricalMeasurement` decodes activePower 0x050B
+//     (→power), rmsVoltage 0x0505 (→voltage), rmsCurrent 0x0508
+//     (→current). The frequency, total-active-power and per-phase b/c
+//     channels z2m adds via `m.electricityMeter(cluster:"electrical",
+//     acFrequency:true, threePhase:true)` + the standalone
+//     `total_active_power` numeric are decoded by
+//     `kFzAminaElectricalMeasurementExtras` (definitions/amina/_shared.*),
+//     wired alongside the generic. The device's PRIMARY instantaneous
+//     power reading is `total_active_power` (attr totalActivePower
+//     0x0304): z2m's `fzLocal.poll_energy` keys its energy poll off
+//     `msg.data.totalActivePower`, confirming the firmware reports there
+//     rather than via activePower 0x050B. The TS poll-on-power
+//     side-effect (re-reading totalActiveEnergy) is a runtime concern
+//     handled at the gateway, not modelled here.
 //   * `alarms` (BITMAP16) is surfaced as a raw uint plus the derived
 //     `alarm_active` boolean; the TS's `aminaAlarms`-string-list view
 //     can't be expressed in ZHC's static expose model.
 
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/amina/_shared.hpp"
 
 #include <cstdint>
 #include <cstring>
@@ -366,9 +378,10 @@ ZHC_AMINA_TZ(kTzAminaEnableOffline,      kSpecEnableOffline,      "enable_offlin
 // ── Converter tables ────────────────────────────────────────────────
 
 const FzConverter* const kFz_amina_S[] = {
-    &::zhc::generic::kFzOnOff,                  // genOnOff::onOff → "state"
-    &::zhc::generic::kFzElectricalMeasurement,  // totalActivePower → "power"
-    &kFzAminaLevel,                             // currentLevel → "charge_limit"
+    &::zhc::generic::kFzOnOff,                   // genOnOff::onOff → "state"
+    &::zhc::generic::kFzElectricalMeasurement,   // activePower/voltage/current
+    &kFzAminaElectricalMeasurementExtras,        // ac_frequency / total_active_power / phase b,c
+    &kFzAminaLevel,                              // currentLevel → "charge_limit"
     &kFzAminaEvStatus,
     &kFzAminaAlarms,
     &kFzAminaEnergy,
@@ -390,7 +403,17 @@ constexpr const char* kModels_amina_S[] = { "amina S" };
 
 constexpr Expose kAutoExposes[] = {
     {"state",                    ExposeType::Binary,  Access::StateSet, nullptr, "Charger relay",                        nullptr, 0},
-    {"power",                    ExposeType::Numeric, Access::State,    "W",     "Total active power",                   nullptr, 0},
+    {"power",                    ExposeType::Numeric, Access::State,    "W",     "Instantaneous measured power",         nullptr, 0},
+    {"total_active_power",       ExposeType::Numeric, Access::State,    "kW",    "Instantaneous measured total active power", nullptr, 0},
+    {"voltage",                  ExposeType::Numeric, Access::State,    "V",     "Measured electrical voltage",          nullptr, 0},
+    {"current",                  ExposeType::Numeric, Access::State,    "A",     "Measured electrical current",          nullptr, 0},
+    {"ac_frequency",             ExposeType::Numeric, Access::State,    "Hz",    "Measured electrical AC frequency",     nullptr, 0},
+    {"power_phase_b",            ExposeType::Numeric, Access::State,    "W",     "Instantaneous measured power on phase B", nullptr, 0},
+    {"power_phase_c",            ExposeType::Numeric, Access::State,    "W",     "Instantaneous measured power on phase C", nullptr, 0},
+    {"voltage_phase_b",          ExposeType::Numeric, Access::State,    "V",     "Measured electrical voltage on phase B", nullptr, 0},
+    {"voltage_phase_c",          ExposeType::Numeric, Access::State,    "V",     "Measured electrical voltage on phase C", nullptr, 0},
+    {"current_phase_b",          ExposeType::Numeric, Access::State,    "A",     "Measured electrical current on phase B", nullptr, 0},
+    {"current_phase_c",          ExposeType::Numeric, Access::State,    "A",     "Measured electrical current on phase C", nullptr, 0},
     {"energy",                   ExposeType::Numeric, Access::State,    "kWh",   "Cumulative active energy",             nullptr, 0},
     {"last_session_energy",      ExposeType::Numeric, Access::State,    "kWh",   "Energy delivered last charge session", nullptr, 0},
     {"charge_limit",             ExposeType::Numeric, Access::StateSet, "A",     "Maximum allowed amperage draw",        nullptr, 0},

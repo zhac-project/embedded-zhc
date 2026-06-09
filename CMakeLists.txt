@@ -1294,6 +1294,20 @@ target_link_libraries(zhc_innr_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bituo_technik_parity_tests tests/test_bituo_technik_parity.cpp)
 target_link_libraries(zhc_bituo_technik_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Amina amina S EV Charger. Its AC metering rides
+# standard haElectricalMeasurement 0x0B04 via z2m's m.electricityMeter
+# (cluster:"electrical", acFrequency, threePhase) + a standalone
+# total_active_power numeric. The hand-rewrite leaned solely on the
+# generic kFzElectricalMeasurement (activePower/voltage/current) and only
+# exposed power/energy, so ac_frequency / total_active_power / the per-
+# phase b/c voltage/current/power were dropped and voltage/current were
+# decoded-but-unexposed. Added kFzAminaElectricalMeasurementExtras
+# (definitions/amina/_shared.cpp) wired alongside the generic + the
+# missing exposes. The EV-state/alarms/energy channels on the 0xFEE7
+# manuSpecific cluster were already decoded (regression-tested here).
+add_executable(zhc_amina_parity_tests tests/test_amina_parity.cpp)
+target_link_libraries(zhc_amina_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the xyzroe DIY USB/DC power-monitor family
 # (ZigUSB / ZigUSB_C6 / ZigDC). ZigUSB + ZigDC route their voltage/current/
 # power over genAnalogInput (0x000C) with vendor description-string parsers
@@ -1536,6 +1550,7 @@ add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)
+add_test(NAME zhc_amina_parity_tests        COMMAND zhc_amina_parity_tests)
 add_test(NAME zhc_xyzroe_parity_tests       COMMAND zhc_xyzroe_parity_tests)
 add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
