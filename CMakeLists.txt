@@ -1031,6 +1031,16 @@ target_link_libraries(zhc_sber_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_lincukoo_parity_tests tests/test_lincukoo_parity.cpp)
 target_link_libraries(zhc_lincukoo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the QA QAT44Z4H (4-gang) / QAT44Z6H (6-gang) wall
+# switches: both generated stubs wired generic genOnOff (0x0006) + a single
+# bare `state`, but these TS0601 _TZE204_* devices are Tuya-MCU switches that
+# z2m decodes via legacy.fz.tuya_switch (datapoints 1..N → gangs l1..lN on
+# manuSpecificTuya 0xEF00). Graduated to Tier-2 parent overrides wiring the
+# Tuya-DP infra with a {1..N → state_lN} map + per-gang exposes.
+# See tests/README.md for the pattern.
+add_executable(zhc_qa_parity_tests tests/test_qa_parity.cpp)
+target_link_libraries(zhc_qa_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Sinopé family: WL4200/S/4210 + RM3500ZB leak sensors
 # (graduated from generic kFzIasZone "alarm" to typed kFzIasWaterLeakAlarm +
 # kFzTemperature), VA4200WZ/4201WZ/4220ZB valves (graduated from the wrong-
@@ -1381,6 +1391,7 @@ add_test(NAME zhc_bacchus_parity_tests      COMMAND zhc_bacchus_parity_tests)
 add_test(NAME zhc_pushok_parity_tests       COMMAND zhc_pushok_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_lincukoo_parity_tests     COMMAND zhc_lincukoo_parity_tests)
+add_test(NAME zhc_qa_parity_tests           COMMAND zhc_qa_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
 add_test(NAME zhc_third_reality_parity_tests COMMAND zhc_third_reality_parity_tests)

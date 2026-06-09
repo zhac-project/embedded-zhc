@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **QA QAT44Z4H (4-gang) / QAT44Z6H (6-gang) wall switches decoded and
+  controlled none of their gangs** — found by a z2m↔embedded-zhc parity pass
+  over the 28 QA defs. Both are TS0601 Tuya-MCU devices (`_TZE204_kyzjsjo3` /
+  `_TZE204_4cl0dzt4`) that z2m drives with `legacy.fz.tuya_switch` /
+  `legacy.tz.tuya_switch_state` on `manuSpecificTuya` (0xEF00): the
+  multiEndpoint datapoints `1..N` carry per-gang bool ON/OFF (DP 1→l1,
+  2→l2, … 6→l6), every gang multiplexed through the single physical endpoint 1.
+  The generated stubs instead wired the generic genOnOff converters
+  (`kFzOnOff`/`kTzOnOff`, cluster 0x0006) against a single bare `state` expose
+  — so these devices never emit plain genOnOff and the entire multi-gang
+  surface was dead (no state read, no per-gang control). Both defs graduated
+  to Tier-2 parent overrides wiring the Tuya-DP infra (`fz_tuya_datapoints` /
+  `tz_tuya_datapoints`) with a `{1..N → state_lN}` bool map, per-gang
+  `state_l1..lN` exposes, and the `{1,0xEF00}` binding — mirroring the sibling
+  DP ports (`Qa__TZE284_ms97nkyy` etc.). New fixture `tests/test_qa_parity.cpp`.
+  (The rest of QA verified CLEAN: the 6 manufacturer-discriminated DP ports
+  `_TZE284_*` / `_TZ3218_kwht8j5m` and the hand-rewritten QAFZ200 CCT light /
+  QASZP power-sensor stubs already match z2m; the TS0726 scene switches'
+  `commandTuyaAction` button-lookup decode + the TS110E dimmers' `switch_type` /
+  `power_on_behavior` need converters absent from the generic/tuya layer —
+  INFRA, deferred.)
+
 - **xyzroe ZigUSB_C6 over-exposed a phantom `energy` channel, dropped the
   over-current alarm, and mis-keyed every metering/switch channel** — found
   by a z2m↔embedded-zhc parity pass over the 3 xyzroe DIY power-monitor defs
