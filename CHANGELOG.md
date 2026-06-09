@@ -10,6 +10,22 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Nous (Tuya-OEM) parity pass — E6 and SZ-T04 LCD temp/humidity sensors were
+  dead on every primary channel.** Both are TS0601 Tuya-DP devices (z2m serves
+  them via `legacy.fz.nous_lcd_temperature_humidity_sensor` on manuSpecificTuya
+  0xEF00), but the generated defs wired a genPowerCfg-only battery converter
+  (`kFzBattery`) — so temperature, humidity *and* battery never decoded (these
+  devices send nothing on genPowerCfg/msTemperature). Graduated both from
+  `generated/` to parent Tier-2 overrides and wired `kFzTuyaDatapoints` with the
+  z2m DP map (temperature DP1 /10, humidity DP2, battery DP4, min/max temp
+  DP10/11 /10, min/max humidity DP12/13, temp/humidity alarm DP14/15, unit DP9;
+  SZ-T04 adds report intervals DP17/18 and sensitivity DP19 /10 / DP20). Added
+  the inverse `tz_tuya_datapoints` write path so the STATE_SET config keys
+  round-trip. New fixture `tests/test_nous_parity.cpp` decodes real 0xEF00 DP
+  frames through the dispatcher for both. The other 10 nous defs were verified
+  correct (E5 standard-cluster T/H; A11Z metering plug; the four `_TZE*` Tuya-DP
+  defs full; E9/E12/E13/D5Z model-only stubs are shadowed by their DP twins).
+
 - **Stelpro thermostat parity pass — `keypad_lockout` dead attribute fixed on
   all 6 defs** (HT402, SMT402, SMT402AD, SORB, ST218, STZB402). Each declared
   the `keypad_lockout` expose as `StateSet` (read + write) but wired neither a

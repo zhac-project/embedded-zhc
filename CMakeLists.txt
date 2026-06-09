@@ -1362,6 +1362,14 @@ target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_neo_parity_tests tests/test_neo_parity.cpp)
 target_link_libraries(zhc_neo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Nous (Tuya-OEM) family. The E6 and SZ-T04 LCD
+# temperature/humidity sensors are TS0601 Tuya-DP devices but the generated
+# defs wired a genPowerCfg-only battery converter, so temperature, humidity
+# and battery never decoded. These pin the restored Tuya-DP decode path
+# (temperature DP1 /10, humidity DP2, battery DP4, sensitivity DP19 /10).
+add_executable(zhc_nous_parity_tests tests/test_nous_parity.cpp)
+target_link_libraries(zhc_nous_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the ShinaSystem (SiHAS) family. Generator misses left
 # several primary sensor/control channels dead: USM/OSM/DMS exposed
 # occupancy with no decoder (and USM dropped illuminance), and GCM-300Z's
@@ -1526,6 +1534,7 @@ add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
 add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)
+add_test(NAME zhc_nous_parity_tests         COMMAND zhc_nous_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
