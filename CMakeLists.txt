@@ -917,6 +917,13 @@ target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_easyiot_parity_tests tests/test_easyiot_parity.cpp)
 target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
 
+# Custom devices (DiY) flower/soil sensors. ZeeFlora + b-parasite exposed
+# soil_moisture but no generic kFzSoilMoisture existed (0x0408 also missing
+# from cluster_names); soil reports dropped. Added the decoder + graduated
+# both defs to Tier-2 (ZeeFlora also regains m.illuminance()).
+add_executable(zhc_custom_devices_diy_parity_tests tests/test_custom_devices_diy_parity.cpp)
+target_link_libraries(zhc_custom_devices_diy_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for three Sber/SDevices IAS sensors (SBDV-00029 motion,
 # SBDV-00030 contact, SBDV-00154 water leak) whose auto-generated defs wired the
 # generic kFzIasZone (emits raw "alarm_1"/...) against a bare "alarm" expose, so
@@ -1109,6 +1116,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
+add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)

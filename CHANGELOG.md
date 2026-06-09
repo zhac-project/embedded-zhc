@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Custom devices (DiY) `ZeeFlora` and `b-parasite` soil sensors never
+  decoded soil moisture** — both defs exposed `soil_moisture`, but no
+  `kFzSoilMoisture` converter existed in `_generic/_shared` and the
+  `msSoilMoisture` cluster (0x0408) was absent from `cluster_names.hpp`, so
+  every `msSoilMoisture` report silently dropped — the sensors surfaced
+  battery/temperature/humidity but not the headline soil reading. Added a
+  generic `kFzSoilMoisture` converter (cluster `msSoilMoisture` 0x0408,
+  `measuredValue` u16 / 100 → %, mirroring `kFzHumidity` / z2m
+  `m.soilMoisture` scale 100) plus the 0x0408 → `"msSoilMoisture"` mapping,
+  and graduated both defs from `definitions/custom_devices_diy/generated/`
+  to Tier-2 parents wiring it. `ZeeFlora` additionally carried z2m
+  `extend:[m.illuminance()]` that the generator had dropped entirely (no
+  `illuminance` expose, no `kFzIlluminance`, no 0x0400 bind) — restored.
+  The shared `kFzSoilMoisture` also unblocks the matching gap in the
+  bacchus/diyruz/efekta flower sensors (tracked separately). Pinned by
+  `tests/test_custom_devices_diy_parity.cpp`.
+
 - **Nine Third Reality IAS-Zone sensors decoded the bare `alarm` key instead
   of their semantic state** — the generated defs for four motion/presence
   sensors (`3RMS16BZ`, `3RSMR01067Z`, `3RPS01083Z`, and the night light

@@ -54,6 +54,7 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         case 0x0403: return "msPressureMeasurement";
         case 0x0405: return "msRelativeHumidity";
         case 0x0406: return "msOccupancySensing";
+        case 0x0408: return "msSoilMoisture";
         case 0x040D: return "msCO2";
 
         // Security & safety

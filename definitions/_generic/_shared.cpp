@@ -836,6 +836,22 @@ bool fz_humidity(const DecodedMessage& msg, const FzConverter&,
     return true;
 }
 
+// msSoilMoisture (0x0408) measuredValue (u16, 0.01 %). Mirrors fz_humidity.
+bool fz_soil_moisture(const DecodedMessage& msg, const FzConverter&,
+                        const PreparedDefinition&, RuntimeContext&,
+                        FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");
+    if (!v) return false;
+    std::int32_t raw = 0;
+    if (v->type == ValueType::Uint)     raw = static_cast<std::int32_t>(v->u);
+    else if (v->type == ValueType::Int) raw = static_cast<std::int32_t>(v->i);
+    else return false;
+    Value o{}; o.type = ValueType::Float;
+    o.f = static_cast<float>(raw) / 100.0f;
+    out.put("soil_moisture", o);
+    return true;
+}
+
 bool fz_pressure(const DecodedMessage& msg, const FzConverter&,
                   const PreparedDefinition&, RuntimeContext&,
                   FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
@@ -938,6 +954,21 @@ extern const FzConverter kFzIlluminance{
     .frame_flags_value = 0,
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_illuminance },
+    .user_config       = nullptr,
+};
+
+extern const FzConverter kFzSoilMoisture{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "msSoilMoisture",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_soil_moisture },
     .user_config       = nullptr,
 };
 

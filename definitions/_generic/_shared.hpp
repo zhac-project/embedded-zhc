@@ -190,6 +190,13 @@ extern const FzConverter kFzPressure;
 // z2m-source: fromZigbee.ts `fz.illuminance`.
 extern const FzConverter kFzIlluminance;
 
+// `msSoilMoisture` (cluster 0x0408) attr 0x0000 (u16 0.01 %).
+//   soil_moisture = raw / 100.0
+// Shape mirrors kFzHumidity. Used by flower/soil sensors across vendors
+// (custom_devices_diy ZeeFlora/b-parasite, bacchus, diyruz, efekta, …).
+// z2m-source: modernExtend.ts `m.soilMoisture` (scale 100) / `fz.soil_moisture`.
+extern const FzConverter kFzSoilMoisture;
+
 // `ssIasZone` (cluster 0x0500) commandStatusChangeNotification (cmd 0x00):
 // Payload = { zoneStatus:u16, extendedStatus:u8, zoneId:u8, delay:u16 }.
 // zoneStatus bit decoding:
