@@ -1,15 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Smartthings 3305-S — parity-extended 2026-04-28.
+// Tier 2: Smartthings 3305-S — IAS wrong-bit fix 2026-06-09.
 // Motion sensor (2014 model).
-// z2m-source: smartthings.ts #3305-S.
+// z2m-source: smartthings.ts #3305-S (fromZigbee: [fz.temperature,
+//             fz.ias_occupancy_alarm_2, fz.battery]).
 //
 // z2m bundle: temperature + IAS motion (alarm_2 → occupancy, battery_low,
-// tamper) + battery. NOTE: z2m uses `fz.ias_occupancy_alarm_2` (alarm_2 bit
-// for occupancy); ZHC's `kFzIasMotionAlarm` reads alarm_1 — this matches the
-// SmartThings firmware which puts the PIR bit in alarm_1 on most modern
-// units, but on the original 3305 hardware reports may use alarm_2.
-// Hardware testing recommended.
+// tamper) + battery.
+//
+// FIX: z2m reads occupancy from `fz.ias_occupancy_alarm_2` (zoneStatus
+// bit 1) ONLY. The previous port wired `kFzIasMotionAlarm` (bit 0), so
+// occupancy never fired on this device. Switched to `kFzIasMotionAlarm2`
+// (bit 1) to match z2m.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::smartthings {
@@ -17,7 +19,7 @@ namespace {
 const FzConverter* const kFz_D3305_S[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzTemperature,
-    &::zhc::generic::kFzIasMotionAlarm,
+    &::zhc::generic::kFzIasMotionAlarm2,
 };
 
 constexpr const char* kModels_D3305_S[] = { "3305-S", "3305" };

@@ -939,6 +939,19 @@ target_link_libraries(zhc_orvibo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_develco_parity_tests tests/test_develco_parity.cpp)
 target_link_libraries(zhc_develco_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Samsung SmartThings sensor family. Motion
+# sensors 3305-S / 3325-S read occupancy from fz.ias_occupancy_alarm_2
+# (zoneStatus bit 1) but the generated ports wired kFzIasMotionAlarm
+# (bit 0) — occupancy never fired; switched to kFzIasMotionAlarm2. The
+# IM6001-BTP01 button advertised an action enum that was never populated
+# (the generated def wired kFzIasZoneStatusChange, which emits alarm-bit
+# booleans); z2m maps the whole ssIasZone zoneStatus value via
+# fz.command_status_change_notification_action -> action. Added a vendor
+# kFzStButtonAction converter (definitions/smartthings/_shared.cpp) and
+# graduated all three defs to Tier-2 parents.
+add_executable(zhc_smartthings_parity_tests tests/test_smartthings_parity.cpp)
+target_link_libraries(zhc_smartthings_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Halo Smart Labs HALO / HALO+ smoke + CO
 # detectors. Both defs were battery+on/off stubs that dropped the whole
 # safety-sensor set; the Halo IAS demux converter (kFzHaloIasZone) already
@@ -1298,6 +1311,7 @@ add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_orvibo_parity_tests       COMMAND zhc_orvibo_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
+add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
 add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)
 add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)

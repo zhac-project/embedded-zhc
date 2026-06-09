@@ -1,34 +1,33 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Smartthings IM6001-BTP01 — hand-rewritten 2026-04-28.
+// Tier 2: Smartthings IM6001-BTP01 — button-action decode fix 2026-06-09.
 // Button.
-// z2m-source: smartthings.ts #IM6001-BTP01.
+// z2m-source: smartthings.ts #IM6001-BTP01 (fromZigbee:
+//   [fz.command_status_change_notification_action, fz.battery,
+//    fz.temperature, fz.ignore_iaszone_attreport]).
 //
 // z2m bundle:
-//   fz: command_status_change_notification_action, battery, temperature,
-//       ignore_iaszone_attreport
 //   exposes: battery, temperature, action: ["off","single","double","hold"]
 //
 // Previous port had on/off + on/off TZ — that was wrong; the device is a
 // battery button, no genOnOff cluster.
 //
-// Runtime gap: action enum decoding from ssIasZone
-// commandStatusChangeNotification (cmd 0x00, alarm bit pattern -> label
-// map). ZHC's `kFzIasZoneStatusChange` exists but emits the raw zone
-// status as `alarm`/`tamper`/`battery_low` rather than mapping to the
-// SmartThings button-state-machine values. Hardware testing required to
-// confirm the exact zone-status <-> action mapping.
-// Until the mapping is wired, only `temperature`, `battery`, and the raw
-// IAS zone status will be emitted. The expose array still advertises the
-// action enum for UI completeness.
+// FIX: the `action` enum was advertised but never populated — the port
+// wired the generic `kFzIasZoneStatusChange`, which emits alarm-bit
+// booleans (alarm_1/alarm_2/tamper/battery_low), not the action string.
+// z2m's `fz.command_status_change_notification_action` maps the whole
+// ssIasZone commandStatusChangeNotification `zoneStatus` value through
+// {0:"off", 1:"single", 2:"double", 3:"hold"} → `action`. Wired the
+// vendor `kFzStButtonAction` converter that does exactly that.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/smartthings/_shared.hpp"
 
 namespace zhc::devices::smartthings {
 namespace {
 const FzConverter* const kFz_IM6001_BTP01[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzTemperature,
-    &::zhc::generic::kFzIasZoneStatusChange,
+    &::zhc::smartthings::kFzStButtonAction,
 };
 
 constexpr const char* kModels_IM6001_BTP01[] = { "button" };

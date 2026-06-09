@@ -10,6 +10,30 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Samsung SmartThings motion sensors lost occupancy and the button lost its
+  action** — found by a z2m↔embedded-zhc parity pass over the 28 SmartThings
+  defs (the other 25 — motion STS-IRM-250/251 + IM6001-MTP01, contact 3300-S/
+  3321-S/IM6001-MPP01/STSS-MULT-001/F-MLT-US-2, water-leak STS-WTR-250/
+  F-ADT-WTR-1/WTR-UK-V2/IM6001-WLP01/3315-S/3315-G, the dimmable lights
+  GP-LBU019BBAWU/7ZA-A806ST-Q1R, plugs STS-OUT-US-2/F-APP-UK-V2/IM6001-OTP05/
+  GP-WOU019BBDWG, presence STS-PRS-251/STSS-PRES-001, siren SZ-SRN12N and the
+  3310-S humidity sensor are at parity; the Samsung-accelerometer x/y/z+moving
+  channels, the arrival-sensor presence cluster and the Centralite humidity
+  attribute remain manuSpecific infra, deferred as in z2m's own extends).
+  Three defs were graduated from `generated/` to Tier-2 parent overrides: the
+  **3305-S** and **3325-S** motion sensors read occupancy from z2m's
+  `fz.ias_occupancy_alarm_2` (ssIasZone `zoneStatus` **bit 1**) only, but the
+  generated ports wired `kFzIasMotionAlarm` (bit 0) — the PIR bit never reached
+  the shadow; swapped to `kFzIasMotionAlarm2` (bit 1). The **IM6001-BTP01**
+  button advertised an `action` enum (`off`/`single`/`double`/`hold`) that was
+  never populated: the generated def wired the generic `kFzIasZoneStatusChange`
+  (which emits alarm-bit booleans), whereas z2m's
+  `fz.command_status_change_notification_action` maps the whole ssIasZone
+  `zoneStatus` value through `{0:off, 1:single, 2:double, 3:hold}` → `action`.
+  Added a vendor `kFzStButtonAction` converter
+  (`definitions/smartthings/_shared.{hpp,cpp}`) that does exactly that and
+  wired it into the button.
+
 - **Yandex (Alice) contact/leak/motion sensors and the TRV surfaced no
   primary state** — found by a z2m↔embedded-zhc parity pass over the 13 Yandex
   defs (the wireless buttons 00534/00535, gang switches 00531/00532, relays
