@@ -1,19 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ctm MBD-S — auto-generated.
-// MBD-S, motion detector with 16A relay
+// Tier 2: Ctm MBD-S — graduated from generated/ for the occupancy fix.
+// MBD-S, motion detector with 16A relay.
+//
+// Parity fix: this is a motion detector whose `occupancy` expose had
+// NO decoder — the auto-port note wrongly claimed msOccupancySensing
+// (0x0406) lacked a generic converter, but `kFzOccupancy` (z2m
+// fz.occupancy equivalent, attr 0x0000 bit 0) exists and is now wired.
+// z2m: fz.occupancy + fz.ctm_mbd_device_enabled + fz.ctm_relay_state +
+// m.illuminance(). The CTM relay-state writer handles the manuSpec write.
 // z2m-source: ctm.ts #MBD-S.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/ctm/_shared.hpp"
 
 namespace zhc::devices::ctm {
 namespace {
-// MBD-S z2m: fz.occupancy + fz.ctm_mbd_device_enabled + fz.ctm_relay_state
-// + m.illuminance(). BLOCKED: msOccupancySensing 0x0406 has no generic
-// decoder in `_generic/_shared.cpp` (only `kFzIgnoreOccupancyReport`
-// today). Use the shared CTM relay-state writer for the manuSpec write.
 const FzConverter* const kFz_MBD_S[] = {
     &::zhc::generic::kFzOnOff,
+    &::zhc::generic::kFzOccupancy,
     &::zhc::generic::kFzIlluminance,
 };
 const TzConverter* const kTz_MBD_S[] = {
@@ -26,10 +30,9 @@ constexpr const char* kModels_MBD_S[] = { "MBD-S" };
 }  // namespace
 
 
-// Manual: drop spurious IAS exposes (device has no zone); add occupancy
-// (decode TODO) + illuminance + device_enabled. Bindings retain 0x0406
-// so the device still sends reports — they'll surface as raw attribute
-// keys until ZHC gains a generic occupancy decoder.
+// Manual: drop spurious IAS exposes (device has no zone); occupancy now
+// decoded by kFzOccupancy (msOccupancySensing 0x0406) + illuminance +
+// device_enabled.
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},

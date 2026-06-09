@@ -88,4 +88,85 @@ ZHC_CTM_TZ(kTzCtmPreset,              kSpecCtmPreset,
 
 #undef ZHC_CTM_TZ
 
+// ── ssIasZone (0x0500) read-only zone-status decoders ───────────────
+//
+// CTM re-labels the standard IAS zoneStatus bits per device. The
+// generic `kFzIasZone` only knows the bare `alarm` (bit 0) name, so
+// these vendor decoders own the bit→key mapping. zoneStatus arrives
+// two ways and z2m's `m.iasZoneAlarm` / `ctm_water_leak_alarm` handle
+// both, so we do too:
+//   * commandStatusChangeNotification (cmd 0x00): zoneStatus:u16 LE is
+//     the first body field after the ZCL header.
+//   * attributeReport / readResponse: zoneStatus is attr 0x0002, which
+//     the parser surfaces under payload key "2".
+
+namespace {
+
+// Pull the u16 zoneStatus out of whichever wire shape arrived. Returns
+// false when neither carries it.
+bool ctm_read_zone_status(const DecodedMessage& msg, std::uint16_t& status) {
+    if (msg.type == MessageType::Command) {
+        // Body: zoneStatus:u16 LE, extendedStatus:u8, zoneId:u8, delay:u16.
+        const std::size_t hdr = msg.manufacturer_specific ? 5 : 3;
+        if (msg.raw_data.size() < hdr + 2) return false;
+        status = static_cast<std::uint16_t>(msg.raw_data[hdr]) |
+                 (static_cast<std::uint16_t>(msg.raw_data[hdr + 1]) << 8);
+        return true;
+    }
+    // AttributeReport / ReadResponse — attr 0x0002 (ZoneStatus, u16).
+    const Value* v = msg.payload.find("2");
+    if (!v || v->type != ValueType::Uint) return false;
+    status = static_cast<std::uint16_t>(v->u);
+    return true;
+}
+
+bool fz_ctm_stove_guard_zone(const DecodedMessage& msg, const FzConverter&,
+                              const PreparedDefinition&, RuntimeContext&,
+                              FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    std::uint16_t s = 0;
+    if (!ctm_read_zone_status(msg, s)) return false;
+    Value v{}; v.type = ValueType::Bool;
+    v.b = (s & (1u << 0)) != 0; out.put("high_temperature", v);
+    v.b = (s & (1u << 1)) != 0; out.put("power_cut_off",    v);
+    v.b = (s & (1u << 2)) != 0; out.put("tamper",           v);
+    v.b = (s & (1u << 3)) != 0; out.put("battery_low",      v);
+    return true;
+}
+
+bool fz_ctm_water_leak(const DecodedMessage& msg, const FzConverter&,
+                       const PreparedDefinition&, RuntimeContext&,
+                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    std::uint16_t s = 0;
+    if (!ctm_read_zone_status(msg, s)) return false;
+    Value v{}; v.type = ValueType::Bool;
+    v.b = (s & (1u << 0)) != 0; out.put("active_water_leak", v);
+    v.b = (s & (1u << 1)) != 0; out.put("water_leak",        v);
+    v.b = (s & (1u << 3)) != 0; out.put("battery_low",       v);
+    return true;
+}
+
+}  // namespace
+
+#define ZHC_CTM_IAS_FZ(var, fn_ref)                                   \
+    extern const FzConverter var{                                     \
+        .family            = FrameFamily::Zcl,                        \
+        .cluster           = "ssIasZone",                             \
+        .type_mask         = type_bit(MessageType::Command) |         \
+                             type_bit(MessageType::AttributeReport) | \
+                             type_bit(MessageType::ReadResponse),     \
+        .command_id        = WILDCARD_CMD_ID,                         \
+        .attr_id           = WILDCARD_ATTR_ID,                        \
+        .endpoint          = WILDCARD_ENDPOINT,                       \
+        .frame_flags_mask  = 0,                                       \
+        .frame_flags_value = 0,                                       \
+        .direction         = Direction::ServerToClient,              \
+        .fn                = { .zcl_fn = fn_ref },                    \
+        .user_config       = nullptr,                                 \
+    }
+
+ZHC_CTM_IAS_FZ(kFzCtmStoveGuardZone, fz_ctm_stove_guard_zone);
+ZHC_CTM_IAS_FZ(kFzCtmWaterLeak,      fz_ctm_water_leak);
+
+#undef ZHC_CTM_IAS_FZ
+
 }  // namespace zhc::ctm

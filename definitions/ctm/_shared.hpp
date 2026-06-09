@@ -50,4 +50,26 @@ extern const TzConverter kTzCtmFrostGuard;
 extern const TzConverter kTzCtmChildLockThermostat;
 extern const TzConverter kTzCtmPreset;
 
+// ── ssIasZone (0x0500) read-only decoders ───────────────────────────
+// The generic `kFzIasZone` collapses zoneStatus bit 0 to a bare
+// `alarm` key, which is WRONG for the CTM stove guards and water
+// devices: z2m re-labels the bits per device. These vendor decoders
+// mirror the z2m wire shape exactly and fire on the same frame set
+// z2m listens to (commandStatusChangeNotification + attributeReport +
+// readResponse).
+
+// Stove guards mKomfy 2.0 (6254380) + mKomfy 2.5 (mkomfy25). z2m
+// `m.iasZoneAlarm({zoneType:"generic", manufacturerZoneAttributes:[
+//   {bit:0,name:"high_temperature"}, {bit:1,name:"power_cut_off"}],
+//   zoneAttributes:["tamper","battery_low"]})` emits exactly:
+//   bit 0 → "high_temperature", bit 1 → "power_cut_off",
+//   bit 2 → "tamper", bit 3 → "battery_low".  No bare "alarm".
+extern const FzConverter kFzCtmStoveGuardZone;
+
+// AX Water Sensor + AX Valve Controller. z2m `fzLocal.ctm_water_leak
+// _alarm` emits:  bit 0 → "active_water_leak", bit 1 → "water_leak",
+// bit 3 → "battery_low".  Note the leak state lives on bit 1, NOT the
+// bit-0 the generic `kFzIasWaterLeakAlarm` reads.
+extern const FzConverter kFzCtmWaterLeak;
+
 }  // namespace zhc::ctm

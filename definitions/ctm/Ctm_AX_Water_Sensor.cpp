@@ -1,15 +1,24 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ctm AX_Water_Sensor — auto-generated.
-// AX Water Sensor, water leakage detector
+// Tier 2: Ctm AX_Water_Sensor — graduated from generated/ for an
+// IAS-zone bit-mapping fix.
+// AX Water Sensor, water leakage detector.
+//
+// Parity fix: z2m's `fzLocal.ctm_water_leak_alarm` reads zoneStatus
+// bit 0 = "active_water_leak", bit 1 = "water_leak", bit 3 =
+// "battery_low" — it does NOT emit "tamper". The auto-port wired the
+// generic `kFzIasWaterLeakAlarm`, which reads the leak state from
+// bit 0 (so it reported the *active* bit as the leak) and declared a
+// spurious `tamper`. Re-wired onto the CTM-specific `kFzCtmWaterLeak`.
 // z2m-source: ctm.ts #AX_Water_Sensor.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/ctm/_shared.hpp"
 
 namespace zhc::devices::ctm {
 namespace {
 const FzConverter* const kFz_AX_Water_Sensor[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasWaterLeakAlarm,
+    &::zhc::ctm::kFzCtmWaterLeak,
 };
 
 constexpr const char* kModels_AX_Water_Sensor[] = { "AX Water Sensor" };
@@ -17,13 +26,13 @@ constexpr const char* kModels_AX_Water_Sensor[] = { "AX Water Sensor" };
 }  // namespace
 
 
-// Manual: water_leak label (was generic `alarm`) to match z2m's
-// `ctm_water_leak_alarm` decoder semantics.
+// Manual: leak on bit 1 (water_leak) + bit 0 (active_water_leak),
+// battery_low on bit 3 — matches z2m `ctm_water_leak_alarm`. No tamper.
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"active_water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 

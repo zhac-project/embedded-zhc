@@ -1,15 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ctm AX_Valve_Controller — auto-generated.
-// AX Valve Controller, water shutoff valve controller
+// Tier 2: Ctm AX_Valve_Controller — graduated from generated/ for an
+// IAS-zone bit-mapping fix.
+// AX Valve Controller, water shutoff valve controller.
+//
+// Parity fix: same as AX_Water_Sensor — z2m's `ctm_water_leak_alarm`
+// puts the leak on zoneStatus bit 1 ("water_leak"), bit 0 is
+// "active_water_leak", bit 3 is "battery_low", with no "tamper". The
+// auto-port used the generic `kFzIasWaterLeakAlarm` (bit 0) and a
+// spurious `tamper`. On/off control (genOnOff) is correct — z2m wires
+// `fz.on_off` + `tz.on_off` + `e.switch()`, NOT a cover. Re-wired the
+// leak decoder onto `kFzCtmWaterLeak`.
 // z2m-source: ctm.ts #AX_Valve_Controller.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/ctm/_shared.hpp"
 
 namespace zhc::devices::ctm {
 namespace {
 const FzConverter* const kFz_AX_Valve_Controller[] = {
     &::zhc::generic::kFzOnOff,
-    &::zhc::generic::kFzIasWaterLeakAlarm,
+    &::zhc::ctm::kFzCtmWaterLeak,
 };
 const TzConverter* const kTz_AX_Valve_Controller[] = {
     &::zhc::generic::kTzOnOff,
@@ -19,11 +29,12 @@ constexpr const char* kModels_AX_Valve_Controller[] = { "AX Valve Controller" };
 }  // namespace
 
 
-// Manual: water_leak label (z2m `ctm_water_leak_alarm` semantics).
+// Manual: leak on bit 1 (water_leak) + bit 0 (active_water_leak),
+// battery_low on bit 3 — matches z2m `ctm_water_leak_alarm`. No tamper.
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"active_water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 

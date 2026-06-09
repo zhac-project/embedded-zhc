@@ -951,6 +951,14 @@ target_link_libraries(zhc_namron_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_danfoss_parity_tests tests/test_danfoss_parity.cpp)
 target_link_libraries(zhc_danfoss_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the CTM Lyng family: stove-guard IAS zone bits
+# (high_temperature/power_cut_off, was a dead `alarm`), water-leak bit
+# mapping (leak on bit 1, was bit 0), and the MBD motion detectors'
+# dead occupancy expose (now decoded via kFzOccupancy). Several defs
+# were graduated to Tier-2 parent overrides. See tests/README.md.
+add_executable(zhc_ctm_parity_tests tests/test_ctm_parity.cpp)
+target_link_libraries(zhc_ctm_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
 # auto-generated def was mis-lowered as a battery on/off switch and was
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
@@ -1039,6 +1047,7 @@ add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
+add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)

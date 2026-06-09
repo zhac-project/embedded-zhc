@@ -10,6 +10,33 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **CTM Lyng stove guards, water devices, and motion detectors had broken core
+  decoders** — six auto-generated CTM defs were graduated to Tier-2 parent
+  overrides to fix real parity gaps against `ctm.ts`:
+  - **mKomfy 2.0 (`6254380`) + mKomfy 2.5 (`mkomfy25`) stove guards** wired the
+    generic `kFzIasZone`, which emits a bare `alarm` (zoneStatus bit 0) that
+    never matched any expose, and dropped both real stove-guard signals. z2m
+    uses `m.iasZoneAlarm({zoneType:"generic", manufacturerZoneAttributes:[{bit:0,
+    name:"high_temperature"},{bit:1,name:"power_cut_off"}], zoneAttributes:
+    ["tamper","battery_low"]})`. Added `kFzCtmStoveGuardZone` (bit 0 →
+    `high_temperature`, bit 1 → `power_cut_off`, bit 2 → `tamper`, bit 3 →
+    `battery_low`) and replaced the dead `alarm` expose with the two signals.
+  - **AX Water Sensor + AX Valve Controller** wired the generic
+    `kFzIasWaterLeakAlarm`, which reads the leak from zoneStatus **bit 0** and
+    declared a spurious `tamper`. z2m's `fzLocal.ctm_water_leak_alarm` puts the
+    leak on **bit 1** (`water_leak`), bit 0 is `active_water_leak`, bit 3 is
+    `battery_low`, with no tamper — so the leak was read off the wrong bit and
+    `active_water_leak` was missing entirely. Added `kFzCtmWaterLeak` with the
+    correct bit map and exposes.
+  - **MBD-S + MBD Dim motion detectors** declared an `occupancy` expose with
+    **no decoder** — a stale note claimed `msOccupancySensing` (0x0406) had no
+    generic converter, but `kFzOccupancy` (z2m `fz.occupancy`, attr 0x0000)
+    exists; it is now wired, so motion actually reaches the shadow.
+
+  Added `kFzCtmStoveGuardZone` / `kFzCtmWaterLeak` to `definitions/ctm/_shared.*`
+  (both fire on `commandStatusChangeNotification` + `attributeReport` +
+  `readResponse`, matching z2m). Pinned by `tests/test_ctm_parity.cpp`.
+
 - **Danfoss Ally TRV 014G2461 `pi_heating_demand` was a dead expose** — the def
   declared a `pi_heating_demand` readout (z2m
   `danfossExtend.danfossThermostat({piHeatingDemand:{values:true}})`, decoded by

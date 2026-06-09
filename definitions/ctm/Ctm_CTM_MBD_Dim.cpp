@@ -1,19 +1,22 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ctm CTM_MBD_Dim — auto-generated.
-// MBD Dim, motion detector with dimmer
+// Tier 2: Ctm CTM_MBD_Dim — graduated from generated/ for the occupancy fix.
+// MBD Dim, motion detector with dimmer.
+//
+// Parity fix: same dead-`occupancy` gap as MBD-S — now decoded by the
+// generic `kFzOccupancy` (msOccupancySensing 0x0406, z2m fz.occupancy).
+// z2m: occupancy + ctm_mbd_device_enabled + ctm_relay_state + brightness
+// + lighting_ballast_configuration + m.illuminance(). No IAS.
 // z2m-source: ctm.ts #CTM_MBD_Dim.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/ctm/_shared.hpp"
 
 namespace zhc::devices::ctm {
 namespace {
-// CTM_MBD_Dim z2m: occupancy + ctm_mbd_device_enabled + ctm_relay_state
-// + brightness + lighting_ballast_configuration + m.illuminance(). No
-// IAS. Occupancy decode TODO (see MBD_S note).
 const FzConverter* const kFz_CTM_MBD_Dim[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzOccupancy,
     &::zhc::generic::kFzIlluminance,
 };
 const TzConverter* const kTz_CTM_MBD_Dim[] = {
@@ -27,9 +30,8 @@ constexpr const char* kModels_CTM_MBD_Dim[] = { "MBD Dim" };
 }  // namespace
 
 
-// Manual: drop spurious IAS exposes; add occupancy + illuminance +
-// device_enabled. ballast_min/max/power_on_level keys decoded raw via
-// kFzBallast (already wired via the brightness path? — TODO if not).
+// Manual: drop spurious IAS exposes; occupancy now decoded by
+// kFzOccupancy + illuminance + device_enabled.
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
