@@ -919,6 +919,17 @@ target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_develco_parity_tests tests/test_develco_parity.cpp)
 target_link_libraries(zhc_develco_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Legrand / BTicino / Netatmo battery action
+# remotes. 067694/067773/067774/WNAL63/067646/067755/067767 are wireless
+# pushbuttons & scene remotes with no local relay, but their generated
+# defs wired kFzOnOff + a controllable on/off TZ — dead, since these
+# devices only *send* genOnOff/genLevelCtrl/genScenes/cover commands. All
+# graduated to Tier-2 parents wiring the generic command-action decoders
+# and exposing "action" (+ per-gang suffix on the dual 067774) instead of
+# a phantom "state".
+add_executable(zhc_legrand_parity_tests tests/test_legrand_parity.cpp)
+target_link_libraries(zhc_legrand_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the IKEA non-light family: several generated defs
 # wired the full kFzIkeaLight bundle (state/brightness/color_temp) onto
 # devices that are not lights — TRADFRI motion (E1525/E1745), VINDSTYRKA
@@ -1177,6 +1188,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
+add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)

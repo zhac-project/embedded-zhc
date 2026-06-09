@@ -10,6 +10,33 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Legrand / BTicino / Netatmo battery remotes published a dead `state`
+  instead of `action` button events** — found by a z2m↔embedded-zhc parity
+  pass over the Legrand vendor. Seven wireless pushbuttons / scene remotes
+  with no local relay (`067694` toggle, `067773` remote, `067774` dual-gang,
+  `WNAL63` Netatmo remote dimmer, `067646` shutter remote, `067755` 4-scene
+  pocket remote, `067767` color-dimmer remote) shipped generated defs wiring
+  `kFzOnOff` + a controllable on/off `to_zigbee`. Those never fired: the
+  devices only *send* cluster commands (genOnOff / genLevelCtrl / genScenes /
+  closuresWindowCovering, client→server), which `kFzOnOff` (an attribute-
+  report decoder) ignores — so the `state` expose stayed empty and the TZ
+  was meaningless. Each was graduated from `generated/` to a Tier-2 parent
+  wiring the matching generic command-action decoders
+  (`kFzCommandOn/Off/Toggle`, `kFzCommandMove/Step/Stop`,
+  `kFzCommandCoverOpen/Close/Stop`, `kFzCommandRecall`) and now exposes
+  `action` + `battery` instead of a phantom `state`/switch. `067774` gains
+  its `{left:1, right:2}` endpoint map + `endpoint_action_suffix` so each
+  gang surfaces as `action_left` / `action_right` (mirrors z2m
+  `postfixWithEndpointName`). Pinned by `tests/test_legrand_parity.cpp`.
+  Deferred as infra (no generic decoder; left as-is): the Green-Power scene
+  switches (`ZLGP14/15/16`, `ZLGP17/18`, `600087L` — `fz.legrand_greenpower`,
+  no GP frame path in the host parser), the `legrand_scenes`
+  enter/leave/sleep/wakeup remaps (`064873`, `752189`), the cover-tilt expose
+  (z2m adds it dynamically only when the device's `calibrationMode` reads
+  `venetian_bso` at pairing; the generic cover decoder is lift-only), and the
+  `067646` `moving`/`stopped` sub-actions (a Legrand genBinaryInput
+  present-value remap).
+
 - **Lincukoo SZT06 temperature/humidity sensor surfaced no temperature or
   humidity** — found by a z2m↔embedded-zhc parity pass over the Lincukoo
   vendor. The generated `SZT06` def lowered only `kFzBattery` and exposed
