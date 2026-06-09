@@ -3,11 +3,14 @@
 // Host tests for the declarative config_steps pipeline.
 //
 // Verifies:
-//   - Read / Cmd / Callback / Wait ops fire in array order
+//   - Read / Cmd / Write / Callback / Wait ops fire in array order
 //   - Endpoint 0 in the step coerces to 1 inside the walker
 //   - First failing step aborts and run_configure returns false
 //   - Callback index out of range fails rather than crashing
-//   - Missing platform hooks short-circuit (Read/Cmd → false, Wait → skip)
+//   - Missing platform hooks short-circuit (Read/Cmd → false,
+//     Write/Wait → skip and continue)
+//   - Write routes through ctx.configure_write with exact attr_id /
+//     attr_type / value bytes / manu_code (lumi 0xFCC0-style)
 
 #include <array>
 #include <cassert>
@@ -24,7 +27,7 @@ using namespace zhc;
 namespace {
 
 struct Recorded {
-    enum class Kind { Read, Cmd, Sleep, Callback };
+    enum class Kind { Read, Cmd, Sleep, Callback, Write };
     Kind          kind;
     std::uint8_t  endpoint;
     std::uint16_t cluster_id;
@@ -33,6 +36,10 @@ struct Recorded {
     std::vector<std::uint8_t> payload;
     std::uint16_t wait_ms;
     bool          retval;
+    // Write-only capture fields (zero on every other op).
+    std::uint16_t attr_id   = 0;
+    std::uint8_t  attr_type = 0;
+    std::uint16_t manu_code = 0;
 };
 
 // Mutable test fixture. Test setup writes `s_script` to decide the
@@ -41,6 +48,7 @@ std::vector<Recorded>     s_calls;
 bool                      s_next_read_ok  = true;
 bool                      s_next_cmd_ok   = true;
 bool                      s_next_cb_ok    = true;
+bool                      s_next_write_ok = true;
 
 bool mock_read(std::uint16_t /*idx*/, std::uint8_t ep,
                 std::uint16_t cluster, const std::uint8_t* attrs,
@@ -68,6 +76,17 @@ void mock_sleep(std::uint16_t wait_ms) {
     s_calls.push_back(std::move(r));
 }
 
+bool mock_write(std::uint16_t /*idx*/, std::uint8_t ep,
+                 std::uint16_t cluster, std::uint16_t attr_id,
+                 std::uint8_t attr_type, const std::uint8_t* value,
+                 std::size_t len, std::uint16_t manu_code) {
+    Recorded r{Recorded::Kind::Write, ep, cluster, 0, 0,
+               std::vector<std::uint8_t>(value, value + len),
+               0, s_next_write_ok, attr_id, attr_type, manu_code};
+    s_calls.push_back(std::move(r));
+    return s_next_write_ok;
+}
+
 bool mock_callback_ok(std::uint16_t /*nwk*/, std::uint8_t ep,
                        RuntimeContext& /*ctx*/) {
     Recorded r{Recorded::Kind::Callback, ep, 0, 0, 0, {}, 0, s_next_cb_ok};
@@ -82,6 +101,7 @@ RuntimeContext make_ctx(bool wire_hooks = true) {
     if (wire_hooks) {
         ctx.configure_read  = &mock_read;
         ctx.configure_cmd   = &mock_cmd;
+        ctx.configure_write = &mock_write;
         ctx.configure_sleep = &mock_sleep;
     }
     return ctx;
@@ -103,9 +123,10 @@ PreparedDefinition make_def(const ConfigStep* steps,
 
 void reset_state() {
     s_calls.clear();
-    s_next_read_ok = true;
-    s_next_cmd_ok  = true;
-    s_next_cb_ok   = true;
+    s_next_read_ok  = true;
+    s_next_cmd_ok   = true;
+    s_next_cb_ok    = true;
+    s_next_write_ok = true;
 }
 
 // ─── test_read_then_cmd_then_wait ────────────────────────────────────
@@ -230,6 +251,85 @@ void test_wait_without_sleep_hook() {
     assert(s_calls.empty());
 }
 
+// ─── test_write_step_captured ────────────────────────────────────────
+// Mirrors the Cmd-capture test: a Write step routes through
+// ctx.configure_write with the exact endpoint / cluster / attr_id /
+// attr_type / value bytes / manu_code. Models a lumi 0xFCC0 manu-specific
+// "event-mode" enable write (attr 0x0009 = u8 0x01, manuf 0x115F).
+
+void test_write_step_captured() {
+    reset_state();
+    static constexpr std::uint8_t value[] = { 0x01 };
+    // Field order: op, endpoint, cluster_id, cmd_id, flags, payload,
+    //              payload_len, wait_ms, manu_code, attr_id, attr_type
+    ConfigStep steps[] = {
+        { ConfigStepOp::Write, 1, 0xFCC0, 0, 0, value, sizeof(value),
+          0, 0x115F, 0x0009, 0x20 },
+    };
+    auto def = make_def(steps, 1);
+    auto ctx = make_ctx();
+
+    const bool ok = run_configure(def, ctx);
+    assert(ok);
+    assert(s_calls.size() == 1);
+    const auto& w = s_calls[0];
+    assert(w.kind == Recorded::Kind::Write);
+    assert(w.endpoint == 1);
+    assert(w.cluster_id == 0xFCC0);
+    assert(w.attr_id == 0x0009);
+    assert(w.attr_type == 0x20);
+    assert(w.manu_code == 0x115F);
+    assert(w.payload == std::vector<std::uint8_t>(value, value + sizeof(value)));
+}
+
+// Endpoint 0 in a Write step also coerces to 1 (same walker rule).
+void test_write_endpoint_zero_coerces_to_1() {
+    reset_state();
+    static constexpr std::uint8_t value[] = { 0x00, 0x01 };
+    ConfigStep steps[] = {
+        { ConfigStepOp::Write, 0, 0x0006, 0, 0, value, sizeof(value),
+          0, 0, 0x8001, 0x30 },
+    };
+    auto def = make_def(steps, 1);
+    auto ctx = make_ctx();
+    const bool ok = run_configure(def, ctx);
+    assert(ok);
+    assert(s_calls.size() == 1);
+    assert(s_calls[0].endpoint == 1);          // coerced from 0
+    assert(s_calls[0].attr_id == 0x8001);
+    assert(s_calls[0].attr_type == 0x30);
+}
+
+// ─── test_write_without_hook_is_skipped ──────────────────────────────
+// A null configure_write must SKIP the step and let the walk continue
+// (no crash, returns true) — unlike Read/Cmd which fail-closed. Write is
+// inert until firmware implements the hook, so configure must still
+// finish. A trailing Cmd proves the walk did not abort.
+
+void test_write_without_hook_is_skipped() {
+    reset_state();
+    static constexpr std::uint8_t value[] = { 0x01 };
+    static constexpr std::uint8_t body[]  = { 0xAB };
+    ConfigStep steps[] = {
+        { ConfigStepOp::Write, 1, 0xFCC0, 0,    0, value, sizeof(value),
+          0, 0x115F, 0x0009, 0x20 },
+        { ConfigStepOp::Cmd,   1, 0x0006, 0x42, 0, body,  sizeof(body),
+          0, 0, 0, 0 },
+    };
+    auto def = make_def(steps, 2);
+    // Wire Cmd but NOT Write, to prove the null-Write skip continues the walk.
+    RuntimeContext ctx{};
+    ctx.device_index = 0;
+    ctx.device_nwk   = 0xD049;
+    ctx.configure_cmd = &mock_cmd;   // configure_write left null
+
+    const bool ok = run_configure(def, ctx);
+    assert(ok);                       // null Write = skip, not abort
+    assert(s_calls.size() == 1);      // only the Cmd recorded
+    assert(s_calls[0].kind == Recorded::Kind::Cmd);
+    assert(s_calls[0].cmd_or_idx == 0x42);
+}
+
 }  // namespace
 
 int main() {
@@ -240,5 +340,8 @@ int main() {
     test_callback_bad_index();
     test_missing_hook_fails();
     test_wait_without_sleep_hook();
+    test_write_step_captured();
+    test_write_endpoint_zero_coerces_to_1();
+    test_write_without_hook_is_skipped();
     return 0;
 }

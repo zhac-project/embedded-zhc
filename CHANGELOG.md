@@ -10,6 +10,35 @@ across the ZHAC platform.
 
 ### Added
 
+- `ConfigStepOp::Write` — declarative ZCL **Write Attributes** configure
+  step (host-side infra only). The declarative configure pipeline
+  (`ConfigStep` in `include/zhc/runtime/definition.hpp`) previously
+  covered only `Read` / `Cmd` / `Callback` / `Wait`, so z2m
+  `endpoint.write(cluster, {attr: value}, {manufacturerCode})` configure
+  steps could not be expressed. Added the `Write` op plus two additive,
+  default-initialised `ConfigStep` fields — `attr_id` (u16) and
+  `attr_type` (ZCL data-type byte) — so the ~hundreds of existing
+  positional `ConfigStep` initializers stay valid and warnings-as-errors
+  stays clean. Write field mapping: `endpoint` / `cluster_id` / `attr_id`
+  / `attr_type` / value bytes in `payload`+`payload_len` (LE per
+  `attr_type`) / `manu_code` / `flags`. Added `RuntimeContext`
+  `configure_write` (typedef `ConfigureWriteFn`, signature
+  `(device_index, endpoint, cluster_id, attr_id, attr_type,
+  const std::uint8_t* value, std::size_t len, manufacturer_code)`),
+  mirroring `configure_cmd`. The `run_configure` walker
+  (`src/runtime/dispatch.cpp`) handles `Write` by invoking
+  `configure_write` **null-safe** — a missing hook SKIPs the step and the
+  walk continues (Write is inert until firmware implements the hook),
+  unlike `Read`/`Cmd` which fail-closed. Host coverage added to
+  `tests/test_config_steps.cpp` (exact attr_id/attr_type/value/manu_code
+  capture; endpoint-0→1 coercion; null-hook skip-and-continue). No device
+  def is wired to `Write` yet — it would be inert until firmware lands the
+  transmit side. **Firmware follow-up (hardware-gated):** each core must
+  implement `configure_write` to emit a real ZCL Write Attributes frame.
+  Unblocks declarative lumi/Aqara 0xFCC0 "event-mode" enable writes (most
+  QBKG*/WS-* wall switches) and Tuya `operation_mode` force-writes — the
+  0xFCC0 follow-up already flagged below.
+
 - lumi (Aqara) switch/plug attribute reporting (parity Batch 1). A
   parity worklist flagged 113 lumi defs as "missing configure": z2m sets
   up attribute reporting in each SKU's

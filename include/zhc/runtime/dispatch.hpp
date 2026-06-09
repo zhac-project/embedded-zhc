@@ -69,6 +69,23 @@ using ConfigureReadFn = bool (*)(std::uint16_t device_index,
                                   std::uint8_t  attr_id_count,
                                   std::uint16_t manu_code);
 
+// Platform hook for ZCL Write Attributes issued during configure
+// (`ConfigStepOp::Write`). Single attribute per call. `value` points at
+// the attribute payload encoded LE per `attr_type` (the ZCL data-type
+// byte). `manu_code` 0 = profile-wide; non-zero = manufacturer-specific
+// frame (lumi 0xFCC0 event-mode, Tuya operation_mode force-write).
+// Returns false on transport failure. Null → Write steps are silently
+// skipped (the walker treats a missing hook as a no-op, NOT an abort, so
+// hosts that never transmit writes still complete configure).
+using ConfigureWriteFn = bool (*)(std::uint16_t device_index,
+                                   std::uint8_t  endpoint,
+                                   std::uint16_t cluster_id,
+                                   std::uint16_t attr_id,
+                                   std::uint8_t  attr_type,
+                                   const std::uint8_t* value,
+                                   std::size_t   len,
+                                   std::uint16_t manufacturer_code);
+
 // Platform sleep hook used by `ConfigStepOp::Wait`. Null → steps of
 // that op type are silently skipped (no-op on tiny hosts without a
 // scheduler).
@@ -86,6 +103,7 @@ struct RuntimeContext {
     ConfigureReportFn    configure_report;  // optional — join-time report setup
     ConfigureCmdFn       configure_cmd;     // optional — join-time ZCL command
     ConfigureReadFn      configure_read;    // optional — join-time ZCL read
+    ConfigureWriteFn     configure_write;   // optional — join-time ZCL write
     ConfigureSleepFn     configure_sleep;   // optional — Wait-op hook
     std::uint16_t        device_nwk;        // populated at run_configure time for Callback op
     std::uint16_t        device_index;

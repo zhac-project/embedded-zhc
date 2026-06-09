@@ -327,6 +327,21 @@ bool run_configure(const PreparedDefinition& def, RuntimeContext& ctx) {
                                              s.flags)
                         : false;
                     break;
+                case ConfigStepOp::Write:
+                    // Single ZCL Write Attributes. Value bytes ride in
+                    // payload/payload_len (LE per s.attr_type). A missing
+                    // hook is a SKIP (step_ok stays true), not an abort:
+                    // Write is inert until firmware provides configure_write,
+                    // so hosts without it must still finish configure. This
+                    // differs from Read/Cmd (fail-closed) and matches the
+                    // Wait / null-Callback-slot skip semantics.
+                    if (ctx.configure_write) {
+                        step_ok = ctx.configure_write(
+                            ctx.device_index, ep, s.cluster_id, s.attr_id,
+                            s.attr_type, s.payload, s.payload_len,
+                            s.manu_code);
+                    }
+                    break;
                 case ConfigStepOp::Callback:
                     if (def.config_callbacks &&
                         s.cmd_id < def.config_callbacks_count) {

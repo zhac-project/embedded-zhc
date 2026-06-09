@@ -112,13 +112,17 @@ using OnEventFn   = void (*)(std::uint16_t device_index, EventId event_id,
 // `zigbee_configure_queue` handles re-attempts.
 //
 // z2m-source: each `configure:` step in z2m converter files maps to
-// one of `Read` / `Cmd` / `Callback`. `Wait` is a ZHC addition for
-// Tuya firmwares that need settle time between probes.
+// one of `Read` / `Cmd` / `Write` / `Callback`. `Wait` is a ZHC addition
+// for Tuya firmwares that need settle time between probes.
 enum class ConfigStepOp : std::uint8_t {
     Read     = 0,   // ZCL Read Attributes — payload = attr-id list (2 B each, LE)
     Cmd      = 1,   // Cluster-specific command — payload = body after CmdID
     Callback = 2,   // C++ hook in def.config_callbacks[cmd_id]
     Wait     = 3,   // Sleep `wait_ms` milliseconds (no radio traffic)
+    Write    = 4,   // ZCL Write Attributes (single attr) — see Write field
+                    //   mapping on `ConfigStep` below. Routes through
+                    //   ctx.configure_write. z2m `endpoint.write(cluster,
+                    //   {attr: value}, {manufacturerCode})`.
 };
 
 // Flag bits for `ConfigStep::flags`.
@@ -137,10 +141,29 @@ struct ConfigStep {
     // dispatcher for Read/Cmd/Callback — leave zero on those steps; the
     // walker force-zeros it before any platform hook fires.
     std::uint16_t  wait_ms;
-    // ZCL manufacturer code for Read/Cmd. 0 = profile-wide frame (default).
-    // When non-zero the platform sets FC bit 2 (manu-specific) and inserts
-    // the LE manu code between FC and TSN per ZCL spec.
+    // ZCL manufacturer code for Read/Cmd/Write. 0 = profile-wide frame
+    // (default). When non-zero the platform sets FC bit 2 (manu-specific)
+    // and inserts the LE manu code between FC and TSN per ZCL spec. Lumi
+    // 0xFCC0 "event-mode" writes and Tuya operation_mode force-writes are
+    // the motivating manu-specific Write callers.
     std::uint16_t  manu_code;
+    // ── Write-op fields (ConfigStepOp::Write only) ───────────────────
+    // Additive with defaults so the ~hundreds of positional ConfigStep
+    // initializers (Read/Cmd/Callback/Wait) stay valid — they simply omit
+    // these and get the zero defaults. Ignored by every non-Write op.
+    //
+    // Write field mapping:
+    //   endpoint    → target endpoint (0 coerced to 1 by the walker)
+    //   cluster_id  → ZCL cluster holding the attribute
+    //   attr_id     → 16-bit attribute id to write (this field)
+    //   attr_type   → ZCL data-type byte of the value (u8=0x20, u16=0x21,
+    //                 bool=0x10, enum8=0x30, …) — this field
+    //   payload     → value bytes, encoded LE per `attr_type`
+    //   payload_len → length of the value in bytes
+    //   manu_code   → manufacturer code (0 = profile-wide)
+    //   flags       → kStepFlag* bits (e.g. disable-default-response)
+    std::uint16_t  attr_id   = 0;   // Write: attribute id
+    std::uint8_t   attr_type = 0;   // Write: ZCL data-type byte of the value
 };
 
 // Per-device callback signature invoked for `ConfigStepOp::Callback`.
