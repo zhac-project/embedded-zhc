@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Nodon SIN-4-RS-20 — hand-rewrite (calibration manuSpec).
+// Tier 2: Nodon SIN-4-RS-20 — hand-rewrite (calibration manuSpec + tilt).
 // Roller shutter relay switch.
 //
 // z2m: `m.windowCovering({controls:['tilt','lift'], coverMode:true}) +
@@ -10,20 +10,24 @@
 // closuresWindowCovering, manu 0x128B; switch_type is enum8 on the
 // same cluster (0x1001).
 //
-// Tilt support: the generic `kTzCoverPosition` only writes the lift
-// attribute today; tilt + cover_mode + state are tracked as TODO.
+// Tilt support: z2m's `controls:['tilt','lift']` exposes both
+// `position` and `tilt` and `fz.cover_position_tilt` decodes lift
+// (0x0008) + tilt (0x0009). This def wires kFzNodonCoverPositionTilt
+// (both halves) plus the generic kTzCoverPositionTilt writer and a
+// `tilt` expose. (cover_mode + state still TODO.)
 //
-// z2m-source: nodon.ts #SIN-4-RS-20.
+// z2m-source: nodon.ts #SIN-4-RS-20 + fromZigbee.ts cover_position_tilt.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/nodon/_shared.hpp"
 
 namespace zhc::devices::nodon {
 namespace {
 const FzConverter* const kFz_SIN_4_RS_20[] = {
-    &::zhc::generic::kFzCoverPosition,
+    &kFzNodonCoverPositionTilt,
 };
 const TzConverter* const kTz_SIN_4_RS_20[] = {
     &::zhc::generic::kTzCoverPosition,
+    &::zhc::generic::kTzCoverPositionTilt,
     &kTzNodonCalibVertUp,
     &kTzNodonCalibVertDown,
     &kTzNodonCalibRotUp,
@@ -35,9 +39,11 @@ constexpr const char* kModels_SIN_4_RS_20[] = { "SIN-4-RS-20", "SIN-4-UNK" };
 }  // namespace
 
 
-// Hand-aligned to z2m exposes (cover_mode + tilt + state still TODO).
+// Hand-aligned to z2m exposes (cover_mode + state still TODO).
 constexpr Expose kAutoExposes[] = {
     {"position",                          ExposeType::Numeric, Access::StateSet, "%",
+        nullptr, nullptr, 0},
+    {"tilt",                              ExposeType::Numeric, Access::StateSet, "%",
         nullptr, nullptr, 0},
     {"calibration_vertical_run_time_up",  ExposeType::Numeric, Access::StateSet, "10 ms",
         "Manual calibration: vertical run time up.", nullptr, 0, ExposeCategory::Config},

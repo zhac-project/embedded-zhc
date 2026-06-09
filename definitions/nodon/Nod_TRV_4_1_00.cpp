@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Nodon TRV-4-1-00 — hand-rewrite (manuSpec + extra exposes).
+// Tier 2: Nodon TRV-4-1-00 — hand-rewrite (manuSpec + extra exposes).
 // Thermostatic Radiator Valve.
 //
 // z2m wires `m.battery() + nodonModernExtend.trvMode() +
@@ -10,6 +10,11 @@
 // the device speaks both NXP and NodOn manu codes). For trv_mode and
 // valve_position we use the NODON manu code (0x128B) per
 // `nodonModernExtend`.
+//
+// trv_mode (0x4000) / valve_position (0x4001) now decode via
+// kFzNodonTrvExtras — z2m's enumLookup/numeric modernExtends generate a
+// read path, but the generic kFzThermostat only handles 0x0000 /
+// 0x0012 / 0x001C, so these were write-only (dead STATE_GET) before.
 //
 // Still-TODO: child_lock, mirror_display, eurotronic_error_status,
 // unoccupied_heating_setpoint, min/max_heat_setpoint_limit,
@@ -26,6 +31,7 @@ namespace {
 const FzConverter* const kFz_TRV_4_1_00[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzThermostat,
+    &kFzNodonTrvExtras,
 };
 const TzConverter* const kTz_TRV_4_1_00[] = {
     &::zhc::generic::kTzThermostat,

@@ -1169,6 +1169,17 @@ target_link_libraries(zhc_pushok_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ubisys_parity_tests tests/test_ubisys_parity.cpp)
 target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the NodOn family. TRV-4-1-00 declared trv_mode
+# (hvacThermostat attr 0x4000) + valve_position (0x4001) with matching Tz
+# writers but only wired the generic kFzThermostat (0x0000/0x0012/0x001C),
+# leaving both write-only — fixed with kFzNodonTrvExtras. SIN-4-RS-20[_PRO]
+# roller shutters gained a tilt axis (attr 0x0009) via
+# kFzNodonCoverPositionTilt + a `tilt` expose + the generic
+# kTzCoverPositionTilt writer (z2m controls:['tilt','lift']). Both
+# graduated to Tier-2 parent overrides. See tests/README.md.
+add_executable(zhc_nodon_parity_tests tests/test_nodon_parity.cpp)
+target_link_libraries(zhc_nodon_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Owon HVAC family. AC201/AC221/PCT504 declared a
 # cooling setpoint and PCT504/PCT512 declared running_state + occupancy that
 # the generic kFzThermostat (0x0000/0x0012/0x001C) never decoded and no
@@ -1440,6 +1451,7 @@ add_test(NAME zhc_yandex_parity_tests       COMMAND zhc_yandex_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
+add_test(NAME zhc_nodon_parity_tests        COMMAND zhc_nodon_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
 add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)

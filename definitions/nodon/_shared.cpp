@@ -183,4 +183,146 @@ extern const FzConverter kFzNodonDryContact{
     .user_config       = nullptr,
 };
 
+// ── Fz: trv_mode + valve_position (hvacThermostat manuSpec attrs) ────
+//
+// TRV-4-1-00. z2m wires `nodonModernExtend.trvMode()` (enumLookup over
+// hvacThermostat attr 0x4000) and `valvePosition()` (numeric over attr
+// 0x4001); both auto-generate a fromZigbee path. The generic
+// `kFzThermostat` only decodes 0x0000 / 0x0012 / 0x001C, so the
+// `trv_mode` / `valve_position` exposes had matching Tz writers but no
+// decode — STATE_GET / reporting never surfaced. This converter fills
+// the read path on the same hvacThermostat cluster (0x0201), keyed by
+// the runtime's decimal attribute strings ("16384" = 0x4000, "16385" =
+// 0x4001).
+//
+// z2m-source: nodon.ts `nodonModernExtend.trvMode` / `.valvePosition`.
+namespace {
+
+// trv_mode enum (attr 0x4000): mirrors the z2m enumLookup mapping.
+constexpr const char* kTrvModeLabels[] = {
+    "auto",                 // 0x00
+    "valve_position_mode",  // 0x01
+    "manual",               // 0x02
+};
+
+bool fz_trv_extras(const DecodedMessage& msg,
+                   const FzConverter&,
+                   const PreparedDefinition&,
+                   RuntimeContext&,
+                   FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool emitted = false;
+
+    // attr 0x4000 — trv_mode (enum8). getFromLookup miss is dropped.
+    if (const Value* v = msg.payload.find("16384")) {
+        std::uint64_t raw = 0;
+        bool ok = false;
+        if (v->type == ValueType::Uint)      { raw = v->u; ok = true; }
+        else if (v->type == ValueType::Int && v->i >= 0) {
+            raw = static_cast<std::uint64_t>(v->i); ok = true;
+        }
+        if (ok && raw < sizeof(kTrvModeLabels) / sizeof(kTrvModeLabels[0])) {
+            Value o{};
+            o.type = ValueType::StringRef;
+            o.str  = kTrvModeLabels[raw];  // static storage — borrowed
+            if (out.put("trv_mode", o)) emitted = true;
+        }
+    }
+
+    // attr 0x4001 — valve_position (u8, 0..100 %).
+    if (const Value* v = msg.payload.find("16385")) {
+        std::uint64_t pct = 0;
+        bool ok = false;
+        if (v->type == ValueType::Uint)      { pct = v->u; ok = true; }
+        else if (v->type == ValueType::Int && v->i >= 0) {
+            pct = static_cast<std::uint64_t>(v->i); ok = true;
+        }
+        if (ok && pct <= 100) {
+            Value o{};
+            o.type = ValueType::Uint;
+            o.u    = pct;
+            if (out.put("valve_position", o)) emitted = true;
+        }
+    }
+
+    return emitted;
+}
+
+}  // namespace
+
+extern const FzConverter kFzNodonTrvExtras{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "hvacThermostat",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_trv_extras },
+    .user_config       = nullptr,
+};
+
+// ── Fz: cover position + tilt (closuresWindowCovering) ──────────────
+//
+// SIN-4-RS-20 / SIN-4-RS-20_PRO. z2m's
+// `m.windowCovering({controls:['tilt','lift']})` exposes both
+// `position` and `tilt` and decodes them via `fz.cover_position_tilt`
+// from attrs 0x0008 (CurrentPositionLiftPercentage → position) and
+// 0x0009 (CurrentPositionTiltPercentage → tilt). The generic
+// `kFzCoverPosition` only handles the lift half, leaving `tilt` as a
+// dead expose. This converter decodes both halves; mirrors
+// `kFzUbisysCoverPositionTilt`. Values > 100 (e.g. 0xFF "unknown") are
+// skipped, matching z2m.
+//
+// z2m-source: fromZigbee.ts `cover_position_tilt`.
+namespace {
+
+bool fz_cover_position_tilt(const DecodedMessage& msg,
+                            const FzConverter&,
+                            const PreparedDefinition&,
+                            RuntimeContext&,
+                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool emitted = false;
+
+    auto emit_pct = [&](const char* attr_key, const char* out_key) {
+        if (const Value* v = msg.payload.find(attr_key)) {
+            std::uint64_t pct = 0;
+            bool ok = false;
+            if (v->type == ValueType::Uint)      { pct = v->u; ok = true; }
+            else if (v->type == ValueType::Int && v->i >= 0) {
+                pct = static_cast<std::uint64_t>(v->i); ok = true;
+            }
+            if (ok && pct <= 100) {
+                Value o{};
+                o.type = ValueType::Uint;
+                o.u    = pct;
+                if (out.put(out_key, o)) emitted = true;
+            }
+        }
+    };
+
+    emit_pct("8", "position");  // 0x0008 CurrentPositionLiftPercentage
+    emit_pct("9", "tilt");      // 0x0009 CurrentPositionTiltPercentage
+    return emitted;
+}
+
+}  // namespace
+
+extern const FzConverter kFzNodonCoverPositionTilt{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "closuresWindowCovering",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_cover_position_tilt },
+    .user_config       = nullptr,
+};
+
 }  // namespace zhc::devices::nodon

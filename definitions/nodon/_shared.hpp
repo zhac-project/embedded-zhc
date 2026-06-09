@@ -16,9 +16,16 @@
 //   - closuresWindowCovering 0x0001..0x0004 calibration runtimes (uint16)
 //   - closuresWindowCovering 0x1001 switch_type (enum8)
 //   - genBinaryInput 0x0055 dry_contact (presentValue) — fz only via kFzNodonDryContact
+//   - hvacThermostat 0x4000/0x4001 read path — kFzNodonTrvExtras
+//   - closuresWindowCovering 0x0008/0x0009 read path — kFzNodonCoverPositionTilt
 //
 // Custom 0xFC00 PilotWire cluster (setMode command, `pilot_wire_mode`)
-// is not yet wired here; left as TODO for a follow-up port.
+// is NOT wired and is deferred as infra: `cluster_names.hpp` already
+// maps 0xFC00 → "manuSpecificPhilips" (a hardcoded collision), and the
+// FzConverter dispatch matches on cluster NAME only (no cluster-id
+// path), so a NodOn pilot-wire decoder cannot be cleanly targeted
+// without cluster-name infra changes. Affects FPS-4-1-00 / SIN-4-FP-20
+// / SIN-4-FP-21.
 //
 // z2m-source: zigbee-herdsman-converters/src/devices/nodon.ts
 //             `nodonModernExtend`.
@@ -58,5 +65,16 @@ extern const TzConverter kTzNodonValvePosition;
 // kFzNodonDryContact reads attr 0x0055 (presentValue, ENUM8) on
 // genBinaryInput and emits `dry_contact` ∈ {contact_closed,contact_open}.
 extern const FzConverter kFzNodonDryContact;
+
+// kFzNodonTrvExtras reads hvacThermostat attrs 0x4000 (trv_mode, enum8 →
+// auto/valve_position_mode/manual) and 0x4001 (valve_position, u8 0..100)
+// — the read counterpart to kTzNodonTrvMode / kTzNodonValvePosition,
+// which the generic kFzThermostat does not decode. TRV-4-1-00.
+extern const FzConverter kFzNodonTrvExtras;
+
+// kFzNodonCoverPositionTilt reads closuresWindowCovering attrs 0x0008
+// (position) and 0x0009 (tilt). Replaces the generic lift-only
+// kFzCoverPosition on the tilt-capable roller shutters (SIN-4-RS-20[_PRO]).
+extern const FzConverter kFzNodonCoverPositionTilt;
 
 }  // namespace zhc::devices::nodon

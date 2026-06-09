@@ -10,6 +10,35 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **NodOn TRV-4-1-00 `trv_mode` / `valve_position` and SIN-4-RS-20[_PRO]
+  `tilt` were dead (no decode)** — found by a z2m↔embedded-zhc parity pass
+  over the 16 NodOn defs. (1) TRV-4-1-00 declared `trv_mode`
+  (`nodonModernExtend.trvMode`, enumLookup over hvacThermostat attr
+  `0x4000`) and `valve_position` (`.valvePosition`, numeric over attr
+  `0x4001`) exposes with matching Tz writers, but only wired the generic
+  `kFzThermostat` (decodes `0x0000`/`0x0012`/`0x001C`) — so both were
+  write-only with dead STATE_GET/reporting, while z2m's modernExtends
+  auto-generate a read path. Wired a vendor-local `kFzNodonTrvExtras`
+  (attr `0x4000` enum8 → `auto`/`valve_position_mode`/`manual`; `0x4001`
+  u8 → `valve_position` 0..100). (2) SIN-4-RS-20 / SIN-4-RS-20_PRO roller
+  shutters wired the lift-only generic `kFzCoverPosition` and exposed only
+  `position`, but z2m's `m.windowCovering({controls:['tilt','lift']})`
+  exposes `position` + `tilt` and `fz.cover_position_tilt` also decodes
+  attr `0x0009` (CurrentPositionTiltPercentage → `tilt`). Wired
+  `kFzNodonCoverPositionTilt` (lift `0x0008` + tilt `0x0009`, skips the
+  `0xFF` unknown sentinel), added a `tilt` expose and the generic
+  `kTzCoverPositionTilt` writer. All three defs graduated to Tier-2 parent
+  overrides. New fixture `tests/test_nodon_parity.cpp` pins both decodes
+  plus regression of the generic thermostat/lift surface. The rest of the
+  range was at parity (relay modules SIN-4-1-xx/SIN-4-2-xx incl. the
+  2-channel `endpoint_map`, SDC-4-1-00 dry contact, SDO-4-1-00 IAS
+  contact, SEM-4-1-00 meter, STPH-4-1-00 climate sensor). The
+  `pilot_wire_mode` surface on FPS-4-1-00 / SIN-4-FP-20 / SIN-4-FP-21
+  (z2m `nodonPilotWire`, custom cluster `0xFC00`) is deferred as infra:
+  `cluster_names.hpp` already maps `0xFC00` → `manuSpecificPhilips` (a
+  hardcoded collision) and Fz dispatch matches on cluster name only, so a
+  NodOn pilot-wire decoder can't be cleanly targeted without cluster-name
+  infra changes.
 - **Immax (Neo) 07046L 4-Touch key fob never emitted an `action`** — found
   by a z2m↔embedded-zhc parity pass over the 24 Immax defs. The generated
   def lowered `kFzCommandRecall` (genScenes cluster `0x0005` commandRecall →
