@@ -10,6 +10,36 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Bosch Smart Home sensors, siren, plug, and thermostats were mis-classed or
+  decoded the wrong key** — twelve Bosch defs were graduated to Tier-2 parent
+  overrides to fix real parity gaps against `bosch.ts`:
+  - **A row of non-light devices was mapped onto the Bosch "Light" bundle**
+    (`{state, brightness, color_temp}` + onOff/level/colorTemp converters) and
+    therefore decoded nothing the device sends while advertising phantom
+    `brightness`/`color_temp`: `BSEN-CV` + `BSEN-C2D` (door/window contacts),
+    `BSEN-W` (water alarm), `BSP-FD` (smart plug), `BTH-RM` + `BTH-RM230Z`
+    (room thermostats), and `BSIR-EZ` (outdoor siren). Each was re-targeted to
+    the correct bundle: contacts → `kFzBoschContact`, water → `kFzBoschWaterLeak`,
+    plug → `kFzBoschPlug` (genOnOff + seMetering, `state`/`power`/`energy`),
+    thermostats → `kFzBoschTrv`/`kTzBoschTrv` (flat `local_temperature` /
+    `current_heating_setpoint` / `system_mode` / `running_state` + Bosch
+    manuSpec writes), siren → `kFzBoschIasBattery`.
+  - **The IAS security sensors emitted a bare `alarm`** — `BSEN-C2`, `BSEN-M`,
+    `BSD-2`, `ISW-ZPR1-WP13`, and `RADION TriTech ZB` (plus the re-classed
+    contacts/water above) wired the generic `kFzIasZone`, which emits a bare
+    `alarm` (zoneStatus bit 0) that the SPA cannot map to a device class. z2m
+    emits the semantic key for the zone type. Added typed bundles
+    `kFzBoschContact` → `contact`, `kFzBoschMotion` → `occupancy`,
+    `kFzBoschSmoke` → `smoke`, `kFzBoschWaterLeak` → `water_leak` (bit 0 →
+    semantic key, bit 2 → `tamper`, bit 3 → `battery_low`), wiring the generic
+    `kFzIasContactAlarm` / `kFzIasMotionAlarm` / `kFzIasSmokeAlarm` /
+    `kFzIasWaterLeakAlarm`.
+  - Deferred (INFRA, manuSpec custom cluster with no generic converter):
+    Twinguard (`8750001213`, custom `twinguardSmokeDetector` 0xE000 air-quality
+    + smoke) left as-is; the `BSIR-EZ` siren command surface (Bosch
+    `alarmControl`), contact/plug button-action + auto-off extras, and TRV
+    valve-adaptation diagnostics remain unwired. See `docs/BOSCH_PARITY.md`.
+  - Pinned by `tests/test_bosch_parity.cpp` (12 cases).
 - **CTM Lyng stove guards, water devices, and motion detectors had broken core
   decoders** — six auto-generated CTM defs were graduated to Tier-2 parent
   overrides to fix real parity gaps against `ctm.ts`:

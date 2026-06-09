@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Bosch BSEN-M — Motion detector (RFPR-ZB-SH-EU).
-// Wires the bosch/_shared IAS-zone battery sensor bundle
-// (kFzBattery + kFzIasZone + battery/voltage/battery_low/alarm/tamper
-// exposes).
+// Tier 2: Bosch BSEN-M — Motion detector (RFPR-ZB-SH-EU).
+// Wires the bosch/_shared typed-motion bundle: genPowerCfg battery +
+// ssIasZone decoded to the semantic `occupancy` key (zoneStatus bit 0),
+// matching z2m's `tamperAndOccupancyAlarm`. The generic IAS bundle it
+// used to share emitted a bare `alarm` the SPA can't map; switched to
+// kFzBoschMotion.
 //
 // Gaps vs z2m: sensitivity_level / test_mode / illuminance / temperature
 // (boschBsenExtend.* with custom 0xFCAB / 0xFCAD style cluster, mfgcode
@@ -26,12 +28,12 @@ extern const PreparedDefinition kDef_BSEN_M{
     .model                   = "BSEN-M",
     .vendor                  = "Bosch",
     .meta                    = nullptr,
-    .exposes                 = kExposesBoschIasBattery,
-    .exposes_count           = kExposesBoschIasBatteryCount,
+    .exposes                 = kExposesBoschMotion,
+    .exposes_count           = kExposesBoschMotionCount,
     .white_labels            = nullptr,
     .white_labels_count      = 0,
-    .from_zigbee             = kFzBoschIasBattery,
-    .from_zigbee_count       = kFzBoschIasBatteryCount,
+    .from_zigbee             = kFzBoschMotion,
+    .from_zigbee_count       = kFzBoschMotionCount,
     .to_zigbee               = nullptr,
     .to_zigbee_count         = 0,
     .configure               = nullptr,

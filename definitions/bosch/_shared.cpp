@@ -68,6 +68,101 @@ const ::zhc::BindingSpec kBindingsBoschIasBattery[] = {
 const std::uint8_t kBindingsBoschIasBatteryCount =
     static_cast<std::uint8_t>(sizeof(kBindingsBoschIasBattery)/sizeof(kBindingsBoschIasBattery[0]));
 
+// ── Typed IAS-zone sensor bundles ───────────────────────────────────
+// The generic `kFzIasZone` above emits a bare `alarm` (zoneStatus bit 0).
+// z2m's Bosch security sensors expose the *semantic* key for their zone
+// type instead — `contact` (door/window), `occupancy` (motion) and
+// `water_leak` (water alarm). Wire the zone-type-specific converters so
+// the runtime emits the same key z2m does (bit 0 → semantic key, bit 2 →
+// tamper, bit 3 → battery_low). genPowerCfg battery rides alongside.
+// z2m-source: bosch.ts reportContactState / tamperAndOccupancyAlarm /
+// waterAndTamperAlarm.
+
+// Door/window contact (BSEN-C2 / BSEN-CV / BSEN-C2D) — zoneStatus bit 0
+// → `contact`.
+const ::zhc::FzConverter* const kFzBoschContact[] = {
+    &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzIasContactAlarm,
+};
+const std::uint8_t kFzBoschContactCount =
+    static_cast<std::uint8_t>(sizeof(kFzBoschContact)/sizeof(kFzBoschContact[0]));
+const ::zhc::Expose kExposesBoschContact[] = {
+    { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "voltage",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "mV", nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "battery_low", ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "contact",     ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
+    { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
+};
+const std::uint8_t kExposesBoschContactCount =
+    static_cast<std::uint8_t>(sizeof(kExposesBoschContact)/sizeof(kExposesBoschContact[0]));
+
+// Motion detector (BSEN-M / ISW-ZPR1-WP13 / RADION TriTech ZB) —
+// zoneStatus bit 0 → `occupancy`.
+const ::zhc::FzConverter* const kFzBoschMotion[] = {
+    &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzIasMotionAlarm,
+};
+const std::uint8_t kFzBoschMotionCount =
+    static_cast<std::uint8_t>(sizeof(kFzBoschMotion)/sizeof(kFzBoschMotion[0]));
+const ::zhc::Expose kExposesBoschMotion[] = {
+    { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "voltage",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "mV", nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "battery_low", ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "occupancy",   ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
+    { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
+};
+const std::uint8_t kExposesBoschMotionCount =
+    static_cast<std::uint8_t>(sizeof(kExposesBoschMotion)/sizeof(kExposesBoschMotion[0]));
+
+// Water alarm (BSEN-W / BSD-2, both `RBSH-WS`/`RBSH-SD` "Water alarm"
+// in z2m) — zoneStatus bit 0 → `water_leak`.
+const ::zhc::FzConverter* const kFzBoschWaterLeak[] = {
+    &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
+};
+const std::uint8_t kFzBoschWaterLeakCount =
+    static_cast<std::uint8_t>(sizeof(kFzBoschWaterLeak)/sizeof(kFzBoschWaterLeak[0]));
+const ::zhc::Expose kExposesBoschWaterLeak[] = {
+    { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "voltage",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "mV", nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "battery_low", ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "water_leak",  ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
+    { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
+};
+const std::uint8_t kExposesBoschWaterLeakCount =
+    static_cast<std::uint8_t>(sizeof(kExposesBoschWaterLeak)/sizeof(kExposesBoschWaterLeak[0]));
+
+// Smoke alarm (BSD-2, RBSH-SD-ZB-EU "Smoke alarm II") — zoneStatus bit 0
+// → `smoke`. z2m's `smokeAlarmAndButtonPushes` rides the IAS zone state;
+// the button-pushes + broadcast/test commands are manuSpec extras.
+const ::zhc::FzConverter* const kFzBoschSmoke[] = {
+    &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzIasSmokeAlarm,
+};
+const std::uint8_t kFzBoschSmokeCount =
+    static_cast<std::uint8_t>(sizeof(kFzBoschSmoke)/sizeof(kFzBoschSmoke[0]));
+const ::zhc::Expose kExposesBoschSmoke[] = {
+    { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "voltage",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "mV", nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "battery_low", ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Diagnostic },
+    { "smoke",       ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
+    { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
+};
+const std::uint8_t kExposesBoschSmokeCount =
+    static_cast<std::uint8_t>(sizeof(kExposesBoschSmoke)/sizeof(kExposesBoschSmoke[0]));
+
 // ── Smart-plug bundle ───────────────────────────────────────────────
 const ::zhc::FzConverter* const kFzBoschPlug[] = {
     &::zhc::generic::kFzOnOff,

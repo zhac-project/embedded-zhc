@@ -31,6 +31,28 @@ extern const std::uint8_t              kExposesBoschIasBatteryCount;
 extern const ::zhc::BindingSpec        kBindingsBoschIasBattery[];
 extern const std::uint8_t              kBindingsBoschIasBatteryCount;
 
+// ── Typed IAS-zone sensor bundles (semantic key, not bare `alarm`) ──
+// Same genPowerCfg + ssIasZone bindings as kBindingsBoschIasBattery, but
+// wire the zone-type-specific converter so the runtime emits z2m's
+// semantic key. Contact → `contact`, Motion → `occupancy`, Water →
+// `water_leak`. Use kBindingsBoschIasBattery for .bindings.
+extern const ::zhc::FzConverter* const kFzBoschContact[];
+extern const std::uint8_t              kFzBoschContactCount;
+extern const ::zhc::Expose             kExposesBoschContact[];
+extern const std::uint8_t              kExposesBoschContactCount;
+extern const ::zhc::FzConverter* const kFzBoschMotion[];
+extern const std::uint8_t              kFzBoschMotionCount;
+extern const ::zhc::Expose             kExposesBoschMotion[];
+extern const std::uint8_t              kExposesBoschMotionCount;
+extern const ::zhc::FzConverter* const kFzBoschWaterLeak[];
+extern const std::uint8_t              kFzBoschWaterLeakCount;
+extern const ::zhc::Expose             kExposesBoschWaterLeak[];
+extern const std::uint8_t              kExposesBoschWaterLeakCount;
+extern const ::zhc::FzConverter* const kFzBoschSmoke[];
+extern const std::uint8_t              kFzBoschSmokeCount;
+extern const ::zhc::Expose             kExposesBoschSmoke[];
+extern const std::uint8_t              kExposesBoschSmokeCount;
+
 // ── Smart-plug bundle (BSP-FZ2 / BSP-FD): on/off + electrical meter ─
 extern const ::zhc::FzConverter* const kFzBoschPlug[];
 extern const std::uint8_t              kFzBoschPlugCount;

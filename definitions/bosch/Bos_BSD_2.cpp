@@ -1,8 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Bosch BSD-2 — Smoke alarm II (RBSH-SD-ZB-EU).
-// Wires the bosch/_shared IAS-zone battery sensor bundle. Smoke alarm
-// is reported via the IAS Zone status bit, captured by `kFzIasZone`.
+// Tier 2: Bosch BSD-2 — Smoke alarm II (RBSH-SD-ZB-EU).
+// Wires the bosch/_shared typed-smoke bundle: genPowerCfg battery +
+// ssIasZone decoded to the semantic `smoke` key (zoneStatus bit 0),
+// matching z2m's `smokeAlarmAndButtonPushes`. The generic IAS bundle it
+// used to share emitted a bare `alarm` the SPA can't map; switched to
+// kFzBoschSmoke.
 //
 // Gaps vs z2m: button_pushes (smoke alarm cluster custom attrs 0x8F01/
 // 0x8F06 mfgcode 0x1209), alarm_control / broadcast_alarm command
@@ -27,12 +30,12 @@ extern const PreparedDefinition kDef_BSD_2{
     .model                   = "BSD-2",
     .vendor                  = "Bosch",
     .meta                    = nullptr,
-    .exposes                 = kExposesBoschIasBattery,
-    .exposes_count           = kExposesBoschIasBatteryCount,
+    .exposes                 = kExposesBoschSmoke,
+    .exposes_count           = kExposesBoschSmokeCount,
     .white_labels            = nullptr,
     .white_labels_count      = 0,
-    .from_zigbee             = kFzBoschIasBattery,
-    .from_zigbee_count       = kFzBoschIasBatteryCount,
+    .from_zigbee             = kFzBoschSmoke,
+    .from_zigbee_count       = kFzBoschSmokeCount,
     .to_zigbee               = nullptr,
     .to_zigbee_count         = 0,
     .configure               = nullptr,
