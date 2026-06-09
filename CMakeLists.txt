@@ -1057,6 +1057,15 @@ target_link_libraries(zhc_robb_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_vesternet_parity_tests tests/test_vesternet_parity.cpp)
 target_link_libraries(zhc_vesternet_parity_tests PRIVATE zhc_definitions)
 
+# Paulmann remote family (501.37/501.34/500.67/501.40/501.41): all five are
+# battery scene/RGB remotes (toZigbee: []) that the generator wrong-bundled
+# as settable on/off lights, killing every button press. Graduated each def,
+# wired the genOnOff/genLevelCtrl/lightingColorCtrl/genScenes command
+# decoders + an `action` expose, dropped the phantom state, and added
+# endpoint_map + endpoint_action_suffix for the multi-button models.
+add_executable(zhc_paulmann_parity_tests tests/test_paulmann_parity.cpp)
+target_link_libraries(zhc_paulmann_parity_tests PRIVATE zhc_definitions)
+
 # Custom devices (DiY) flower/soil sensors. ZeeFlora + b-parasite exposed
 # soil_moisture but no generic kFzSoilMoisture existed (0x0408 also missing
 # from cluster_names); soil reports dropped. Added the decoder + graduated
@@ -1551,6 +1560,7 @@ add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
 add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)
+add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)

@@ -10,6 +10,40 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Paulmann remote family — all five battery remotes shipped with every
+  button dead.** Paulmann is otherwise a clean lighting vendor, but its
+  scene/RGB remotes (501.37, 501.34, 500.67, 501.40, 501.41) each carry
+  `toZigbee: []` (they cannot be controlled) yet the generator wrong-bundled
+  every one as a settable on/off light — `kFzOnOff` + `kTzOnOff` + a writable
+  `state` expose — so the `action` decode was dropped and each device falsely
+  advertised a relay. All five generated Tier-1 defs were graduated to Tier-2
+  parents and re-wired to the generic genOnOff / genLevelCtrl /
+  lightingColorCtrl / genScenes command-action decoders, exposing `action`
+  and dropping the phantom state + toolbox:
+  - **501.37 / 501.34** (4-button white switches, z2m `multiEndpoint`): two
+    rocker pairs on EP1/EP2 emitting `command_on/off/move/stop`. Added an
+    endpoint label map `{1,2}` + `endpoint_action_suffix`, so presses surface
+    as `action_1` / `action_2` (z2m on_1..off_2 / brightness_move_*_N). 501.34
+    is the `brightness_stop` variant of 501.37.
+  - **500.67** (RGB remote, single endpoint): `command_on/off/toggle/step/
+    move/stop/move_to_color_temp/move_to_color/color_loop_set/
+    enhanced_move_to_hue_and_saturation`. The Tint-specific `fz.tint_scene`
+    (`scene_*`) is a genBasic write recall with no generic ZHC equivalent
+    (same gap as innr's `rc_110_level_to_scene`) and is deferred.
+  - **501.40** (4-button RGB remote, z2m `deviceEndpoints{1..4}`): full
+    commandsOnOff/LevelCtrl/ColorCtrl/Scenes set across EP1-4 with an
+    endpoint label map `{1,2,3,4}` + `endpoint_action_suffix` (`action_1`..
+    `action_4`); battery stays a global key.
+  - **501.41** (white remote, single endpoint): commandsOnOff/LevelCtrl/
+    ColorCtrl(color-temp move+step)/Scenes(store,recall). The custom
+    `paulmann50141ColorTemperatureStopCommand` only recovers
+    `color_temperature_move_stop` from a malformed 5-byte raw frame; the
+    normal move-stop is already decoded, so the raw quirk is deferred to a
+    vendor fz. New `tests/test_paulmann_parity.cpp` pins the per-endpoint
+    action suffix on the multi-button remotes, the bare-`action` stream on
+    the single-endpoint remotes (incl. color-temp move and genScenes
+    `recall_<n>`), the absence of a settable `state`, and the empty toolbox.
+
 - **AwoX / EGLO non-light family — a PIR sensor and two remotes shipped
   with their primary signal dead.** Three generated Tier-1 defs were
   mis-modelled and graduated to Tier-2 parents:
