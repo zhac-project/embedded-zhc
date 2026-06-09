@@ -887,6 +887,9 @@ target_link_libraries(zhc_hoch_din_tz_tests PRIVATE zhc_definitions)
 add_executable(zhc_diy_range_extender_tests tests/test_diy_range_extender.cpp)
 target_link_libraries(zhc_diy_range_extender_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_sonoff_snzb02_tests tests/test_sonoff_snzb02.cpp)
+target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -960,6 +963,7 @@ add_test(NAME zhc_tuya_light_reports_tests  COMMAND zhc_tuya_light_reports_tests
 add_test(NAME zhc_ts0502b_config_tests      COMMAND zhc_ts0502b_config_tests)
 add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
+add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)

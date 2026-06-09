@@ -132,6 +132,27 @@ across the ZHAC platform.
 
 ### Fixed
 
+- Sonoff **SNZB-02** temperature & humidity sensor now surfaces
+  `temperature` + `humidity`. The auto-generated def
+  (`definitions/sonoff/generated/Son_SNZB_02.cpp`) lowered only
+  `ewelinkBattery()` and so exposed nothing but `battery` + `voltage`,
+  dropping the device's entire reason for existing. Graduated to a
+  hand-maintained **Tier 2** parent override
+  (`definitions/sonoff/SNZB_02.cpp`; generated row deleted) that adds the
+  generic `kFzTemperature` / `kFzHumidity` converters plus the matching
+  `msTemperatureMeasurement` (0x0402) / `msRelativeHumidity` (0x0405)
+  bindings — at parity with z2m `sonoff.ts #SNZB-02`
+  (`e.temperature()`, `e.humidity()`, `fz.SNZB02_temperature`,
+  `fz.humidity`). z2m's `SNZB02_temperature` is `fz.temperature` plus a
+  -33..100 °C garbage-report clamp; the generic decoder uses the
+  identical /100.0 scaling, so it is at parity for every in-range value.
+  New host test `tests/test_sonoff_snzb02.cpp` pins the expose/binding
+  shape and decode of temp (incl. negative) + humidity wire reports.
+  (Investigation note: the other six sonoff probe "expose-gaps" —
+  `TRVZB`, `ZBCurtain`, `ZBDongle-E`, `SWV`, `SNZB-01-KF`, `SNZB-01M` —
+  were false positives or need runtime infra that does not exist yet
+  [`kFzFlow`, FC11/FC12 custom-cluster decoders], so they are left as-is.)
+
 - Tuya IAS sensor decode + bindings (Phase-2b Batch 4). The worklist
   flagged `definitions/tuya/TS0202.cpp` (motion) and
   `definitions/tuya/TS0203.cpp` (contact) as "missing configure", but the
