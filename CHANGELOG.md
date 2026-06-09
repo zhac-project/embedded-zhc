@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Sunricher sensor parity** — ten auto-generated Sunricher ports fixed by
+  graduating to Tier-2 parent overrides under `definitions/sunricher/`:
+  - **IAS alarm sensors decoded to dead keys** — six sensors wired the generic
+    `kFzIasZone` (emits the bare `alarm` bit) behind an `alarm` expose, while z2m
+    decodes each via `m.iasZoneAlarm({zoneType})` and publishes a semantic key
+    with no rename layer, so the alarm never reached the shadow. Wired the typed
+    `kFzIas<Type>Alarm` converter + matching expose:
+    **SR-ZG9070A-SS** (smoke) → `kFzIasSmokeAlarm` / `smoke`;
+    **SR-ZG9060A-GS** (gas) → `kFzIasGasAlarm` / `gas`;
+    **SR-ZG9060B-CS** (CO) → `kFzIasCoAlarm` / `carbon_monoxide`;
+    **SR-ZG9050C-WS** + **SR-ZG9050B-WS** (water leak) → `kFzIasWaterLeakAlarm` /
+    `water_leak`; **SR-ZG9011A-DS** (contact) → `kFzIasContactAlarm` / `contact`.
+  - **SR-ZG9030F-PS** (human-presence sensor) was mis-ported as a controllable
+    on/off relay (`genOnOff`, expose `state`). It has no relay — replaced with
+    `kFzOccupancy` + `kFzIlluminance` and `occupancy` / `illuminance` exposes.
+  - **HK-SENSOR-4IN1-A** (occupancy + temp + humidity + illuminance) and
+    **SR-ZG9033TH** (temp + humidity) lowered only `kFzBattery`, dropping every
+    measurement the device exists to report; **SR-ZG9032A-PIR** lowered only its
+    ep1 light and dropped occupancy (ep2) + illuminance (ep3). Added the generic
+    `kFzOccupancy` / `kFzTemperature` / `kFzHumidity` / `kFzIlluminance` decoders,
+    exposes, and cluster binds. Pinned by `tests/test_sunricher_parity.cpp`.
+
 - **Sber IAS sensors decoded to dead keys** — three SDevices (Sber) IAS Zone
   sensors had auto-generated ports that wired the generic `kFzIasZone`
   converter (which emits the raw zoneStatus bits `alarm_1` / `alarm_2` /

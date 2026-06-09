@@ -1,18 +1,24 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sunricher SR-ZG9011A-DS — auto-generated.
-// Door/window sensor
-// z2m-source: sunricher.ts #SR-ZG9011A-DS.
+// Tier 2: Sunricher SR-ZG9070A-SS — graduated from generated/ to fix a real parity gap.
+// Smart photoelectric smoke alarm.
+// z2m-source: sunricher.ts #SR-ZG9070A-SS — m.iasZoneAlarm({zoneType: "smoke", ...}).
+//
+// PARITY FIX: the auto-generated port wired the generic kFzIasZone, which emits
+// the raw zoneStatus bit as "alarm". z2m's iasZoneAlarm with zoneType "smoke"
+// publishes the semantic key `smoke`, and there is no rename layer, so a consumer
+// keyed on z2m's `smoke` never saw the alarm. Wire the typed kFzIasSmokeAlarm
+// (zoneStatus bit 0 -> "smoke", plus tamper + battery_low) and expose `smoke`.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::sunricher {
 namespace {
-const FzConverter* const kFz_SR_ZG9011A_DS[] = {
+const FzConverter* const kFz_SR_ZG9070A_SS[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasSmokeAlarm,
 };
 
-constexpr const char* kModels_SR_ZG9011A_DS[] = { "HK-SENSOR-CT-MINI" };
+constexpr const char* kModels_SR_ZG9070A_SS[] = { "HK-SENSOR-SMO" };
 
 }  // namespace
 
@@ -21,7 +27,7 @@ constexpr const char* kModels_SR_ZG9011A_DS[] = { "HK-SENSOR-CT-MINI" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +38,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_SR_ZG9011A_DS{
-    .zigbee_models=kModels_SR_ZG9011A_DS, .zigbee_models_count=sizeof(kModels_SR_ZG9011A_DS)/sizeof(kModels_SR_ZG9011A_DS[0]),
+extern const PreparedDefinition kDef_SR_ZG9070A_SS{
+    .zigbee_models=kModels_SR_ZG9070A_SS, .zigbee_models_count=sizeof(kModels_SR_ZG9070A_SS)/sizeof(kModels_SR_ZG9070A_SS[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="SR-ZG9011A-DS", .vendor="Sunricher",
+    .model="SR-ZG9070A-SS", .vendor="Sunricher",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_SR_ZG9011A_DS, .from_zigbee_count=sizeof(kFz_SR_ZG9011A_DS)/sizeof(kFz_SR_ZG9011A_DS[0]),
+    .from_zigbee=kFz_SR_ZG9070A_SS, .from_zigbee_count=sizeof(kFz_SR_ZG9070A_SS)/sizeof(kFz_SR_ZG9070A_SS[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
