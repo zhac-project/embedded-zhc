@@ -62,7 +62,6 @@ extern const PreparedDefinition kDef_D4512792;
 extern const PreparedDefinition kDef_D4512793;
 extern const PreparedDefinition kDef_D540139X;
 extern const PreparedDefinition kDef_D89665;
-extern const PreparedDefinition kDef_D4512752_4512753;
 extern const PreparedDefinition kDef_D4512762;
 extern const PreparedDefinition kDef_D4512763;
 extern const PreparedDefinition kDef_D4512764;
@@ -126,7 +125,6 @@ const PreparedDefinition* const kNamronRegistry[] = {
     &kDef_D4512793,
     &kDef_D540139X,
     &kDef_D89665,
-    &kDef_D4512752_4512753,
     &kDef_D4512762,
     &kDef_D4512763,
     &kDef_D4512764,

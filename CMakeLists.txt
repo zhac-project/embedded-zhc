@@ -935,6 +935,13 @@ target_link_libraries(zhc_sinope_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_sunricher_parity_tests tests/test_sunricher_parity.cpp)
 target_link_libraries(zhc_sunricher_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Namron 4512752/4512753 Tuya-DP touch thermostat, whose
+# full-DP def collided with a metering-only generated stub on the same TS0601 +
+# _TZE204_p3lqqy2r fingerprint; the stub was removed and the full-DP def
+# graduated to a Tier-2 parent override. See tests/README.md for the pattern.
+add_executable(zhc_namron_parity_tests tests/test_namron_parity.cpp)
+target_link_libraries(zhc_namron_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
 # auto-generated def was mis-lowered as a battery on/off switch and was
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
@@ -1021,6 +1028,7 @@ add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
+add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)

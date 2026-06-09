@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Namron 4512752/4512753 Tuya thermostat decoded nothing under collision** —
+  the namron registry held two definitions claiming the identical fingerprint
+  (zigbeeModel `TS0601` + manufacturer `_TZE204_p3lqqy2r`): the full port
+  `kDefNam__TZE204_p3lqqy2r`, which wires `fz_tuya_datapoints` over the device's
+  17-DP map (setpoint / local_temperature / mode / sensor / child_lock /
+  metering / …), and a second generated def `kDef_D4512752_4512753` that lowered
+  only `kFzMetering` + `kFzElectricalMeasurement` and **no** Tuya datapoint
+  decoder, dropping the thermostat's entire core surface. Because both matched
+  the same keys, the device's behaviour hung on registry order
+  (`find_definition` is first-match within the Tuya-styled pass) — a latent
+  shadowing hazard. Removed the metering-only stub, graduated the full-DP def to
+  `definitions/namron/Nam__TZE204_p3lqqy2r.cpp` (Tier 2) as the sole match, and
+  preserved its human-facing `.model` label `4512752/4512753`. Pinned by
+  `tests/test_namron_parity.cpp`.
+
 - **Sunricher sensor parity** — ten auto-generated Sunricher ports fixed by
   graduating to Tier-2 parent overrides under `definitions/sunricher/`:
   - **IAS alarm sensors decoded to dead keys** — six sensors wired the generic

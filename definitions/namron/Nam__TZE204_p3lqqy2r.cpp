@@ -1,6 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Auto-generated from z2m devices/namron.ts (fingerprint TS0601 / _TZE204_p3lqqy2r).
+// Tier 2: Namron 4512752/4512753 "Touch thermostat 16A 2.0" (Tuya TS0601 /
+// _TZE204_p3lqqy2r). Graduated from generated/ to resolve a duplicate-fingerprint
+// collision: a second generated def (kDef_D4512752_4512753) claimed the same
+// TS0601 + _TZE204_p3lqqy2r match keys but lowered ONLY metering/electrical
+// converters — no Tuya datapoint decoder, so it dropped the device's entire
+// core surface (local_temperature, current_heating_setpoint, mode, sensor,
+// child_lock, …). That stub was removed; this full-DP def is the sole match.
+// `.model` set to the human-facing "4512752/4512753" (was "TS0601__TZE204_p3lqqy2r").
+// z2m-source: namron.ts #4512752/4512753 — tuya.modernExtend.tuyaBase({dp:true}).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 namespace zhc::devices::namron {
@@ -113,7 +121,7 @@ extern const PreparedDefinition kDefNam__TZE204_p3lqqy2r{
     .zigbee_models=kM__TZE204_p3lqqy2r,.zigbee_models_count=sizeof(kM__TZE204_p3lqqy2r)/sizeof(kM__TZE204_p3lqqy2r[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_p3lqqy2r,.manufacturer_names_count=1,
-    .model="TS0601__TZE204_p3lqqy2r",.vendor="Namron",
+    .model="4512752/4512753",.vendor="Namron",
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_p3lqqy2r,
