@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Aqara WXCJKG11LM wired scene switch 1-button (Opple).
-// z2m-source: lumi.ts #WXCJKG11LM (lumi.remote.b186opcn01).
+// z2m-source: lumi.ts #WXCJKG11LM (lumi.remote.b286opcn01).
 //
 // configure: z2m writes manuSpecificLumi (0xFCC0) attr `mode` (0x0009,
 // uint8) = 1 with manufacturerCode 0x115F at join — this enables the
