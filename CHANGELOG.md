@@ -10,6 +10,31 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **PushOk Hardware water-level sensors, thermostat relay and window/vent
+  covers dropped their headline channels** — found by a z2m↔embedded-zhc
+  parity pass over the 17 PushOk defs (the valves POK001/POK006, soil sensor
+  POK002/POK007, illuminance POK004/POK011, temp/humidity POK005, probe
+  thermometers POK014/POK015 and the POK020 TRV are at parity; the voltage
+  monitor POK009 analog channels, the POK021 gas-pulse counter — both on
+  genAnalogInput/genAnalogOutput with no Tier-1 decoder, mirroring the Bacchus
+  water-level meter — and the POK012 router's IAS `ac_status`/`battery_defect`
+  diagnostic bits remain infra, deferred). Five defs were graduated from
+  `generated/` to Tier-2 parent overrides: the **POK003** and **POK010** water
+  level sensors expose `contact` from z2m's
+  `m.binary({cluster:"genBinaryInput", attribute:"presentValue"})` but wired no
+  decoder, so every contact report silently dropped — added a vendor
+  `kFzPushokContact` converter (`definitions/pushok/_shared.{hpp,cpp}`,
+  genBinaryInput 0x000F presentValue 0x0055 → bool). The **POK008** thermostat
+  relay decodes `temperature` in z2m (`m.temperature` on
+  msTemperatureMeasurement) but the generated port dropped both the expose and
+  the decoder — wired generic `kFzTemperature` + the expose + the 0x0402
+  binding. The **POK016** window opener and **POK017** greenhouse vent are
+  `m.windowCovering` covers (position on closuresWindowCovering 0x0102), but a
+  prior port misclassified POK016 as an `m.onOff` switch and stripped POK017 to
+  battery-only, dropping the position channel entirely — both restored to
+  proper covers (`kFzCoverPosition` + `kTzCoverState`/`kTzCoverPositionLift`,
+  `state`+`position` exposes).
+
 - **Samsung SmartThings motion sensors lost occupancy and the button lost its
   action** — found by a z2m↔embedded-zhc parity pass over the 28 SmartThings
   defs (the other 25 — motion STS-IRM-250/251 + IM6001-MTP01, contact 3300-S/

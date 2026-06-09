@@ -1121,6 +1121,16 @@ target_link_libraries(zhc_shelly_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bacchus_parity_tests tests/test_bacchus_parity.cpp)
 target_link_libraries(zhc_bacchus_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the PushOk Hardware DIY family. POK003/POK010 (water
+# level) exposed `contact` (genBinaryInput presentValue) with no decoder —
+# wired vendor kFzPushokContact. POK008 (thermostat relay) dropped its
+# temperature channel — wired generic kFzTemperature. POK016/POK017
+# (window/vent) are m.windowCovering covers that were misclassified as an
+# on/off switch (POK016) or stripped to battery-only (POK017) — restored the
+# cover position. See tests/README.md.
+add_executable(zhc_pushok_parity_tests tests/test_pushok_parity.cpp)
+target_link_libraries(zhc_pushok_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Ubisys family. H1/H10 thermostats declared
 # pi_heating_demand + running_mode exposes that the generic kFzThermostat
 # never decoded (attrs 0x0008/0x001E) — wired kFzUbisysThermostatExtras
@@ -1320,6 +1330,7 @@ add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy
 add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_bacchus_parity_tests      COMMAND zhc_bacchus_parity_tests)
+add_test(NAME zhc_pushok_parity_tests       COMMAND zhc_pushok_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_lincukoo_parity_tests     COMMAND zhc_lincukoo_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
