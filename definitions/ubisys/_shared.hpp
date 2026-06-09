@@ -80,4 +80,40 @@ extern const TzConverter kTzUbisysRemoteTempDuration;     // UINT16 0x0014
 //             ubisys.fz.dimmer_setup.
 extern const FzConverter kFzUbisysDimmerSetup;
 
+// ── fz: thermostat extras the generic decoder skips ───────────────
+//
+// The generic `kFzThermostat` only decodes hvacThermostat (0x0201)
+// attrs 0x0000 (local_temperature), 0x0012 (current_heating_setpoint)
+// and 0x001C (system_mode). The Ubisys H1 / H10 climate exposes also
+// publish two standard attributes that z2m's `fz.thermostat` decodes
+// but the generic converter drops, so they were dead exposes:
+//
+//   attr 0x0008 PIHeatingDemand   (u8)  → "pi_heating_demand" (%)
+//   attr 0x001E ThermostatRunningMode (enum8) → "running_mode" (string)
+//
+// Unlike Danfoss, Ubisys does NOT set `dontMapPIHeatingDemand`, so the
+// raw 0-255 value is remapped to 0-100 % (z2m `mapNumberRange`), using
+// the canonical half-up rounding `(v*100 + 127) / 255`.
+//
+// `running_mode` is mapped to z2m's `constants.thermostatRunningMode`
+// strings: 0→"off", 3→"cool", 4→"heat".
+//
+// z2m-source: zigbee-herdsman-converters/src/converters/fromZigbee.ts
+//             fz.thermostat (pi_heating_demand + running_mode branches).
+extern const FzConverter kFzUbisysThermostatExtras;
+
+// ── fz: cover lift + tilt ─────────────────────────────────────────
+//
+// The generic `kFzCoverPosition` decodes only closuresWindowCovering
+// (0x0102) attr 0x0008 (CurrentPositionLiftPercentage → "position").
+// The J1 shutter controller also reports attr 0x0009
+// (CurrentPositionTiltPercentage), which z2m's `fz.cover_position_tilt`
+// publishes as "tilt". This converter emits both (raw 0-100; the J1
+// reports 0xFF / 255 when a position is unknown — those are skipped,
+// matching the z2m `<= 100` guard).
+//
+// z2m-source: zigbee-herdsman-converters/src/converters/fromZigbee.ts
+//             fz.cover_position_tilt.
+extern const FzConverter kFzUbisysCoverPositionTilt;
+
 }  // namespace zhc::ubisys

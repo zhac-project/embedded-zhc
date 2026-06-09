@@ -145,4 +145,131 @@ extern const FzConverter kFzUbisysDimmerSetup{
     .user_config       = nullptr,
 };
 
+// ── fz: hvacThermostat extras (0x0008 demand + 0x001E running mode) ─
+//
+// Decodes the two standard hvacThermostat attributes the generic
+// `kFzThermostat` skips. local_temperature / current_heating_setpoint
+// / system_mode are still emitted by the generic converter wired
+// alongside this one on the H1 / H10 defs.
+bool fz_ubisys_thermostat_extras(const DecodedMessage& msg,
+                                 const FzConverter&,
+                                 const PreparedDefinition&,
+                                 RuntimeContext&,
+                                 FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool emitted = false;
+
+    // attr 0x0008 — PIHeatingDemand (u8). z2m maps 0-255 → 0-100 %
+    // (Ubisys does not set dontMapPIHeatingDemand). Use half-up
+    // rounding to mirror the integer `%` expose.
+    if (const Value* v = msg.payload.find("8")) {
+        std::uint64_t raw = 0;
+        bool ok = false;
+        if (v->type == ValueType::Uint) { raw = v->u; ok = true; }
+        else if (v->type == ValueType::Int && v->i >= 0) {
+            raw = static_cast<std::uint64_t>(v->i); ok = true;
+        }
+        if (ok) {
+            if (raw > 255) raw = 255;
+            Value o{};
+            o.type = ValueType::Uint;
+            o.u    = (raw * 100u + 127u) / 255u;
+            if (out.put("pi_heating_demand", o)) emitted = true;
+        }
+    }
+
+    // attr 0x001E — ThermostatRunningMode (enum8). z2m lookup:
+    // 0 → "off", 3 → "cool", 4 → "heat" (constants.thermostatRunningMode).
+    // Unknown values are dropped, matching getFromLookup's miss.
+    if (const Value* v = msg.payload.find("30")) {
+        std::uint64_t mode = 0;
+        bool ok = false;
+        if (v->type == ValueType::Uint) { mode = v->u; ok = true; }
+        else if (v->type == ValueType::Int && v->i >= 0) {
+            mode = static_cast<std::uint64_t>(v->i); ok = true;
+        }
+        if (ok) {
+            const char* label = nullptr;
+            switch (mode) {
+                case 0: label = "off";  break;
+                case 3: label = "cool"; break;
+                case 4: label = "heat"; break;
+                default: break;
+            }
+            if (label) {
+                Value o{};
+                o.type = ValueType::StringRef;
+                o.str  = label;
+                if (out.put("running_mode", o)) emitted = true;
+            }
+        }
+    }
+
+    return emitted;
+}
+
+extern const FzConverter kFzUbisysThermostatExtras{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "hvacThermostat",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_ubisys_thermostat_extras },
+    .user_config       = nullptr,
+};
+
+// ── fz: closuresWindowCovering lift + tilt ────────────────────────
+//
+// Emits "position" (attr 0x0008) and "tilt" (attr 0x0009). Values of
+// 0xFF (255) are the J1's "unknown" sentinel and are skipped (z2m's
+// `<= 100` guard). Raw 0-100 passthrough — same convention as the
+// generic `kFzCoverPosition` (no inversion at this layer).
+bool fz_ubisys_cover_position_tilt(const DecodedMessage& msg,
+                                   const FzConverter&,
+                                   const PreparedDefinition&,
+                                   RuntimeContext&,
+                                   FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool emitted = false;
+
+    auto emit_pct = [&](const char* attr_key, const char* out_key) {
+        if (const Value* v = msg.payload.find(attr_key)) {
+            std::uint64_t pct = 0;
+            bool ok = false;
+            if (v->type == ValueType::Uint) { pct = v->u; ok = true; }
+            else if (v->type == ValueType::Int && v->i >= 0) {
+                pct = static_cast<std::uint64_t>(v->i); ok = true;
+            }
+            if (ok && pct <= 100) {
+                Value o{};
+                o.type = ValueType::Uint;
+                o.u    = pct;
+                if (out.put(out_key, o)) emitted = true;
+            }
+        }
+    };
+
+    emit_pct("8", "position");  // CurrentPositionLiftPercentage
+    emit_pct("9", "tilt");      // CurrentPositionTiltPercentage
+    return emitted;
+}
+
+extern const FzConverter kFzUbisysCoverPositionTilt{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "closuresWindowCovering",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_ubisys_cover_position_tilt },
+    .user_config       = nullptr,
+};
+
 }  // namespace zhc::ubisys

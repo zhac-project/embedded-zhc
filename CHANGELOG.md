@@ -10,6 +10,33 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Ubisys H1/H10 thermostats, J1 shutter, and R0 router had real parity gaps** —
+  four Ubisys defs were graduated to Tier-2 parent overrides against `ubisys.ts`:
+  - **H1 + H10 heating regulators declared `pi_heating_demand` and `running_mode`
+    exposes that never populated** — z2m's `e.climate()` carries
+    `.withPiHeatingDemand(STATE_GET)` + `.withRunningMode(...)`, decoded by
+    `fz.thermostat` from standard `hvacThermostat` attrs `0x0008` (PIHeatingDemand)
+    and `0x001E` (ThermostatRunningMode). The defs wired only the generic
+    `kFzThermostat`, which decodes `0x0000`/`0x0012`/`0x001C` and skips those two,
+    leaving both as dead exposes. Added `kFzUbisysThermostatExtras` (shared
+    `_shared.cpp`) and wired it on both. Unlike Danfoss, Ubisys does **not** set
+    `dontMapPIHeatingDemand`, so demand is remapped `0-255 → 0-100 %`
+    (`(raw*100+127)/255`); `running_mode` maps `0→off`/`3→cool`/`4→heat`.
+  - **J1 shutter controller was missing its `tilt` axis** — z2m's
+    `e.cover().withTilt()` exposes tilt and `fz.cover_position_tilt` decodes
+    `closuresWindowCovering` attr `0x0009` (CurrentPositionTiltPercentage), which
+    the J1 reports. The def declared only `position` and wired the generic
+    `kFzCoverPosition` (lift attr `0x0008` only). Added `kFzUbisysCoverPositionTilt`
+    (emits `position` + `tilt`, skips the `0xFF` "unknown" sentinel per z2m's
+    `<= 100` guard), declared a `tilt` expose, and added the generic
+    `kTzCoverPositionTilt` writer.
+  - **R0 Zigbee router advertised a dead on/off `state`** — z2m declares
+    `exposes: []` with no `toZigbee` and no genOnOff cluster, but the auto-port
+    wired `kFzOnOff`/`kTzOnOff` + a `state` expose: an uncontrollable phantom
+    bundle on a router. Stripped to no exposes / no converters (binds genBasic for
+    modelId reporting), mirroring the KeenHome GW01 repeater fix.
+  - Pinned by `tests/test_ubisys_parity.cpp`.
+
 - **Shelly S4SN-0071A "Flood Gen 4" leak sensor never surfaced its leak state** —
   the auto-generated def wired the generic `kFzIasZone`, which decodes only an
   *attribute report* of ZoneStatus (attr `0x0002`) and emits the bare key

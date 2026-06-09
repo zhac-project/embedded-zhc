@@ -975,6 +975,16 @@ target_link_libraries(zhc_bosch_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_shelly_parity_tests tests/test_shelly_parity.cpp)
 target_link_libraries(zhc_shelly_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Ubisys family. H1/H10 thermostats declared
+# pi_heating_demand + running_mode exposes that the generic kFzThermostat
+# never decoded (attrs 0x0008/0x001E) — wired kFzUbisysThermostatExtras
+# (0-255 -> 0-100 % demand remap, enum->string running_mode). J1 shutter
+# gained a tilt axis (attr 0x0009) via kFzUbisysCoverPositionTilt. R0
+# router shed a dead on/off bundle (z2m exposes: []). All graduated to
+# Tier-2 parent overrides. See tests/README.md.
+add_executable(zhc_ubisys_parity_tests tests/test_ubisys_parity.cpp)
+target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
 # auto-generated def was mis-lowered as a battery on/off switch and was
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
@@ -1066,6 +1076,7 @@ add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
+add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)

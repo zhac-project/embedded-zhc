@@ -8,6 +8,15 @@
 //   ubisysRemoteTemperature             (INT16, attr 0x0013)
 //   ubisysRemoteTemperatureValidDuration (UINT16, attr 0x0014)
 // All writes carry mfgcode 0x10F2.
+//
+// Parity fix (real gap): z2m's climate expose carries
+// `.withPiHeatingDemand(STATE_GET)` and `.withRunningMode([off,heat])`,
+// decoded by `fz.thermostat` from standard hvacThermostat attrs 0x0008
+// (PIHeatingDemand) and 0x001E (ThermostatRunningMode). The generic
+// `kFzThermostat` only decodes 0x0000 / 0x0012 / 0x001C, so both were
+// dead exposes (never populated in the shadow). Now wired to
+// `kFzUbisysThermostatExtras` (0-255 → 0-100 % remap for demand,
+// enum→string for running_mode).
 // z2m-source: ubisys.ts #H1.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/ubisys/_shared.hpp"
@@ -17,6 +26,7 @@ namespace {
 const FzConverter* const kFz_H1[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzThermostat,
+    &::zhc::ubisys::kFzUbisysThermostatExtras,
 };
 const TzConverter* const kTz_H1[] = {
     &::zhc::generic::kTzThermostat,
@@ -37,6 +47,9 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    // Parity fix: decoded by kFzUbisysThermostatExtras (attrs 0x0008/0x001E).
+    {"pi_heating_demand", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"running_mode",      ExposeType::Enum,    Access::State, nullptr, nullptr, nullptr, 0},
     {"local_temperature_offset",    ExposeType::Numeric, Access::StateSet, "C",  nullptr, nullptr, 0},
     {"vacation_mode",               ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"remote_temperature",          ExposeType::Numeric, Access::StateSet, "C",  nullptr, nullptr, 0},

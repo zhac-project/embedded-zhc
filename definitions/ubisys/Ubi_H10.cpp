@@ -1,15 +1,26 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ubisys H10 — auto-generated.
-// Heatingcontrol 10-Way
+// Tier 2: Ubisys H10 — uses shared ubisys converters.
+// Heatingcontrol 10-Way (10 switch endpoints l1..l10 + 10 climate
+// endpoints th1..th10, flattened per project convention with the
+// endpoint_map suffixing runtime keys).
+//
+// Parity fix (real gap): z2m's climate exposes carry
+// `.withPiHeatingDemand(STATE_GET)` and `.withRunningMode(...)`,
+// decoded by `fz.thermostat` from standard hvacThermostat attrs 0x0008
+// (PIHeatingDemand) and 0x001E (ThermostatRunningMode). The generic
+// `kFzThermostat` only decodes 0x0000 / 0x0012 / 0x001C, so both were
+// dead exposes. Now wired to `kFzUbisysThermostatExtras`.
 // z2m-source: ubisys.ts #H10.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/ubisys/_shared.hpp"
 
 namespace zhc::devices::ubisys {
 namespace {
 const FzConverter* const kFz_H10[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzThermostat,
+    &::zhc::ubisys::kFzUbisysThermostatExtras,
 };
 const TzConverter* const kTz_H10[] = {
     &::zhc::generic::kTzOnOff,
@@ -28,6 +39,9 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    // Parity fix: decoded by kFzUbisysThermostatExtras (attrs 0x0008/0x001E).
+    {"pi_heating_demand", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"running_mode",      ExposeType::Enum,    Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
