@@ -916,6 +916,15 @@ target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_sber_parity_tests tests/test_sber_parity.cpp)
 target_link_libraries(zhc_sber_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Sinopé family: WL4200/S/4210 + RM3500ZB leak sensors
+# (graduated from generic kFzIasZone "alarm" to typed kFzIasWaterLeakAlarm +
+# kFzTemperature), VA4200WZ/4201WZ/4220ZB valves (graduated from the wrong-
+# cluster generic cover converters to genLevelCtrl/genOnOff Sinopé valve
+# converters), and LM4110ZB tank monitor (genAnalogInput tank_level + temp).
+# See tests/README.md for the pattern.
+add_executable(zhc_sinope_parity_tests tests/test_sinope_parity.cpp)
+target_link_libraries(zhc_sinope_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
 # auto-generated def was mis-lowered as a battery on/off switch and was
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
@@ -1000,6 +1009,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
+add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)

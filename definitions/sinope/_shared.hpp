@@ -63,6 +63,39 @@ bool fz_sinope_hvac_manu(const DecodedMessage& msg,
 extern const FzConverter kFzSinopeManu;       // cluster 0xFF01
 extern const FzConverter kFzSinopeHvacManu;   // cluster 0x0201, manuSpec attrs
 
+// ── Sinopé water-valve (VA42xx) position/state ────────────────────────
+//
+// The Sedna/valve family reports position through `genLevelCtrl`
+// currentLevel (0-255) and open/closed through `genOnOff` — NOT the
+// `closuresWindowCovering` cluster the generic cover converter reads.
+// z2m models these with `fz.cover_position_via_brightness` (emits both
+// `position` 0-100 and `state` OPEN/CLOSE) and `fz.cover_state_via_onoff`
+// (emits `state` OPEN/CLOSE).
+//
+// `kFzSinopeValvePosition` — genLevelCtrl currentLevel 0-255 → `position`
+//   (0-100, mapNumberRange) + `state` ("OPEN" when position>0 else "CLOSE").
+// `kFzSinopeValveState`    — genOnOff onOff → `state` ("OPEN"|"CLOSE").
+//
+// z2m-source: converters/fromZigbee.ts cover_position_via_brightness /
+//             cover_state_via_onoff.
+extern const FzConverter kFzSinopeValvePosition;  // cluster genLevelCtrl
+extern const FzConverter kFzSinopeValveState;     // cluster genOnOff
+
+// `kTzSinopeValvePosition` — write `position` (0-100) by scaling to
+// genLevelCtrl level 0-255 and issuing moveToLevelWithOnOff (cmd 0x04).
+// Mirrors z2m `tz.cover_via_brightness` numeric path.
+extern const TzConverter kTzSinopeValvePosition;  // key "position"
+
+// ── Sinopé tank-level monitor (LM4110ZB) ──────────────────────────────
+//
+// The LM4110ZB gauge reports a dial angle on `genAnalogInput`
+// presentValue (attr 0x0055). z2m's `fzLocal.tank_level` maps that angle
+// to a 0-100 % remaining via a fixed calibration. presentValue == -1 is
+// the "empty / not-readable" sentinel → 0 %.
+//
+// z2m-source: sinope.ts fzLocal.tank_level.
+extern const FzConverter kFzSinopeTankLevel;      // cluster genAnalogInput
+
 // Manu-specific TzConverters (writeAttributes with mfgcode 0x119C).
 // All wired through `::zhc::generic::tz_zcl_write_attr`.
 //

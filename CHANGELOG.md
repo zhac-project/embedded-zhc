@@ -24,6 +24,33 @@ across the ZHAC platform.
   drops `tamper` for this device, so the expose is dropped to match). Pinned by
   `tests/test_sber_parity.cpp`.
 
+- **Sinopé leak/valve/tank-monitor parity** — three real gaps in the generated
+  Sinopé ports fixed by graduating to Tier-2 parent overrides:
+  - **WL4200 / WL4200S / WL4210** (water leak detectors) and **RM3500ZB**
+    (Calypso water-heater controller) wired the generic `kFzIasZone` (bare
+    `alarm` key) behind an `alarm` expose, so the `water_leak` state z2m
+    publishes (`fz.ias_water_leak_alarm_1` / `fzLocal.ias_water_leak_alarm`)
+    never reached the shadow; they also dropped the on-board temperature
+    sensor. Swapped in the typed `kFzIasWaterLeakAlarm` (emits `water_leak`)
+    + `kFzTemperature`, with semantic exposes and an `msTemperatureMeasurement`
+    bind.
+  - **VA4200WZ / VA4201WZ / VA4220ZB** (water valves) used the generic cover
+    converters, which read/write `closuresWindowCovering`. The valves report
+    position on `genLevelCtrl` currentLevel and open/closed on `genOnOff`
+    (z2m `fz.cover_position_via_brightness` + `fz.cover_state_via_onoff`,
+    `tz.cover_via_brightness`), so position decode was dead and the `state`
+    was absent entirely. Added Sinopé valve converters `kFzSinopeValvePosition`
+    / `kFzSinopeValveState` / `kTzSinopeValvePosition` (genLevelCtrl 0-255 ↔
+    position 0-100, plus open/close/stop), an `OPEN`/`CLOSE` `state` expose,
+    and `genOnOff` + `genLevelCtrl` binds.
+  - **LM4110ZB** (tank-level monitor) only wired `kFzBattery`, dropping its
+    core function: the gauge fill level (z2m `fzLocal.tank_level`,
+    `genAnalogInput` presentValue → %) and temperature. Added
+    `kFzSinopeTankLevel` + `kFzTemperature` with `tank_level` / `temperature`
+    exposes and `genAnalogInput` + `msTemperatureMeasurement` binds.
+
+  Pinned by `tests/test_sinope_parity.cpp`.
+
 ### Added
 
 - `ConfigStepOp::Write` — declarative ZCL **Write Attributes** configure
