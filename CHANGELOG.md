@@ -10,6 +10,32 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Zemismart curtain/blind tubular motors were shadowed by dead
+  generic-cover stubs** — surfaced by a z2m↔embedded-zhc parity pass over the
+  Zemismart vendor. Six defs (`ZM16B`, `ZMP1`, `ZN-USC1U-HT`, `ZM25R1`,
+  `ZM25RX-08/30`, `ZM25TQ`) wired the generic `closuresWindowCovering`
+  (0x0102) cover converter, but each is a TS0601 device that speaks **only**
+  Tuya datapoints on `manuSpecificTuya` (0xEF00) — so the stub's `position`
+  could decode nothing on the real wire.
+  - Five of them (`ZM16B`/`ZMP1`/`ZN-USC1U-HT`/`ZM25R1`/`ZM25RX-08/30`)
+    duplicated the `{TS0601 + _TZE*}` fingerprint of an existing
+    `kDefZem__TZE*` DP def that already carries the full datapoint map
+    (position via DP 2/3 or 8/9, state, motor_direction, battery). Two defs
+    per fingerprint made resolution depend on registry order
+    (`find_definition` is first-match), so a motor could land on the dead
+    generic-cover stub. The five stubs were removed; the `kDefZem__TZE*` DP
+    defs now match those manufacturer names as the sole def each.
+  - `ZM25TQ` (`_TZE200_fzo2pocs`) had no competing DP def — it was graduated
+    from `generated/` to a Tier-2 Tuya-DP override (DP 1 state
+    `{OPEN/STOP/CLOSE}`, DP 2 + DP 3 → `position`, DP 103/104/105 stroke
+    limits), mirroring its `ZM25RX-08/30`/`ZMP1` siblings and z2m
+    `legacy.fz.tuya_cover` (`coverPosition`=2, `coverArrived`=3).
+  - Deferred (INFRA): `ZM-AM02_cover` (complex per-model `legacy.fz.ZMAM02_cover`
+    AM02 lookups) and the `ZM-RM02` scene-switch action surface
+    (`legacy.fromZigbee.ZMRM02`) keep their current wiring; `ZM-CSW032-D` is a
+    genuine TS0302 standard-cluster cover and is unchanged. Pinned by
+    `tests/test_zemismart_parity.cpp`.
+
 - **Develco / Frient sensors had dead IAS keys, lost temperature/humidity
   channels, a phantom alarm bundle on a repeater, and a button wired as a
   switch** — surfaced by a z2m↔embedded-zhc parity pass over the Develco

@@ -1070,6 +1070,14 @@ target_link_libraries(zhc_slacky_therm_r08_tests PRIVATE zhc_definitions)
 add_executable(zhc_engo_parity_tests tests/test_engo_parity.cpp)
 target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Zemismart curtain/blind-motor + switch family. Six
+# generic-cover stubs (kFzCoverPosition on the 0x0102 cluster) shadowed TS0601
+# Tuya-DP devices that only speak 0xEF00; five duplicated a kDefZem__TZE* DP
+# def's fingerprint and were removed, and ZM25TQ was graduated to a real DP
+# def. Pins DP resolution + position/state decode. See tests/README.md.
+add_executable(zhc_zemismart_parity_tests tests/test_zemismart_parity.cpp)
+target_link_libraries(zhc_zemismart_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the ShinaSystem (SiHAS) family. Generator misses left
 # several primary sensor/control channels dead: USM/OSM/DMS exposed
 # occupancy with no decoder (and USM dropped illuminance), and GCM-300Z's
@@ -1173,6 +1181,7 @@ add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
+add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
