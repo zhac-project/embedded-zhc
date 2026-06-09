@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Sengled IAS sensor family — motion and contact sensors shipped with
+  their primary state dead.** Four Sengled IAS-Zone defs lowered (or, for
+  E13-N11, half-rewrote to) the generic `kFzIasZone` converter — which emits
+  the bare key `alarm` — while z2m's `m.iasZoneAlarm({zoneType})` publishes a
+  *semantic* key (`occupancy` / `contact`). With no rename layer the decoded
+  alarm never reached the matching expose, so the sensor's whole reason for
+  existing was dead in the shadow. Each was graduated to a Tier-2 parent and
+  re-pointed at the typed `kFzIas{Motion,Contact}Alarm` converter (which
+  emits the semantic key directly, matching `fz.ias_<type>_alarm_1` on
+  zoneStatus bit 0), mirroring the heiman IAS family fix:
+  - **E1M-G7H** (motion sensor) → `kFzIasMotionAlarm`, expose `occupancy`.
+  - **E1D-G73WNA** (window/door contact) → `kFzIasContactAlarm`, expose `contact`.
+  - **E2D-G73** (window/door contact G2) → `kFzIasContactAlarm`, expose `contact`.
+  - **E13-N11** (flood light + motion) → the 2026-04-28 rewrite had already
+    renamed the expose to `occupancy` but left the decoder as `kFzIasZone`,
+    so occupancy stayed dead; swapped the decoder to `kFzIasMotionAlarm`. The
+    light channel is unchanged.
+
+  New `tests/test_sengled_parity.cpp` pins each device's semantic key decode
+  (and the absence of the bare `alarm` key), tamper/battery_low passthrough,
+  and that E13-N11's on/off light channel still decodes alongside occupancy.
+
 - **Paulmann remote family — all five battery remotes shipped with every
   button dead.** Paulmann is otherwise a clean lighting vendor, but its
   scene/RGB remotes (501.37, 501.34, 500.67, 501.40, 501.41) each carry

@@ -988,6 +988,9 @@ target_link_libraries(zhc_develco_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smartthings_parity_tests tests/test_smartthings_parity.cpp)
 target_link_libraries(zhc_smartthings_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_sengled_parity_tests tests/test_sengled_parity.cpp)
+target_link_libraries(zhc_sengled_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Halo Smart Labs HALO / HALO+ smoke + CO
 # detectors. Both defs were battery+on/off stubs that dropped the whole
 # safety-sensor set; the Halo IAS demux converter (kFzHaloIasZone) already
@@ -1553,6 +1556,7 @@ add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_orvibo_parity_tests       COMMAND zhc_orvibo_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
+add_test(NAME zhc_sengled_parity_tests      COMMAND zhc_sengled_parity_tests)
 add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)
 add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)

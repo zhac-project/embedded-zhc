@@ -1,15 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sengled E1M-G7H — auto-generated.
+// Tier 2: Sengled E1M-G7H — hand-maintained parity override.
+//
+// Graduated from generated/Sen_E1M_G7H.cpp: the generated def lowered the
+// generic kFzIasZone converter — which emits the bare key "alarm" — while
+// z2m's m.iasZoneAlarm({zoneType: "occupancy"}) publishes the semantic key
+// "occupancy". With no rename layer the primary motion state never reached
+// the shadow. z2m decodes this via fz.ias_occupancy_alarm_1 (zoneStatus
+// bit 0), so the typed kFzIasMotionAlarm converter — which emits
+// "occupancy" directly — is at parity. Mirrors the heiman PIR_TPV12 fix.
 // Motion sensor
-// z2m-source: sengled.ts #E1M-G7H.
+// z2m-source: sengled.ts #E1M-G7H (extend: m.battery() + m.iasZoneAlarm({zoneType: "occupancy", zoneAttributes: ["alarm_1", "tamper", "battery_low"]})).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::sengled {
 namespace {
 const FzConverter* const kFz_E1M_G7H[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_E1M_G7H[] = { "E1M-G7H" };
@@ -21,7 +29,7 @@ constexpr const char* kModels_E1M_G7H[] = { "E1M-G7H" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

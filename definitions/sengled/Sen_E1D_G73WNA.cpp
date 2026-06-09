@@ -1,15 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sengled E1D-G73WNA — auto-generated.
+// Tier 2: Sengled E1D-G73WNA — hand-maintained parity override.
+//
+// Graduated from generated/Sen_E1D_G73WNA.cpp: the generated def lowered the
+// generic kFzIasZone converter — which emits the bare key "alarm" — while
+// z2m's m.iasZoneAlarm({zoneType: "contact"}) publishes the semantic key
+// "contact". With no rename layer the primary contact state never reached
+// the shadow. z2m decodes this via fz.ias_contact_alarm_1 (zoneStatus
+// bit 0), so the typed kFzIasContactAlarm converter — which emits
+// "contact" directly — is at parity. Mirrors the heiman HS1DS fix.
 // Smart window and door sensor
-// z2m-source: sengled.ts #E1D-G73WNA.
+// z2m-source: sengled.ts #E1D-G73WNA (extend: m.iasZoneAlarm({zoneType: "contact", zoneAttributes: ["alarm_1", "tamper", "battery_low"]}) + m.battery({voltage: true, voltageReporting: true})).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::sengled {
 namespace {
 const FzConverter* const kFz_E1D_G73WNA[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
 constexpr const char* kModels_E1D_G73WNA[] = { "E1D-G73" };
@@ -21,7 +29,7 @@ constexpr const char* kModels_E1D_G73WNA[] = { "E1D-G73" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
