@@ -1,15 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Develco WISZB-137 — auto-generated.
-// Vibration sensor
-// z2m-source: develco.ts #WISZB-137.
+// Tier 2: Develco WISZB-137 vibration sensor — graduated from generated.
+// Vibration sensor.
+//
+// Parity fix: WISZB-137 is a VIBRATION sensor (not a contact sensor).
+// Generic kFzIasZone emits the bare key "alarm", but z2m's
+// fz.ias_vibration_alarm_1 publishes "vibration" (zoneStatus bit 0).
+// Swap in the typed kFzIasVibrationAlarm (vibration + tamper +
+// battery_low) and add the msTemperatureMeasurement channel z2m wires
+// via develcoModernExtend.temperature().
+//
+// z2m-source: develco.ts #WISZB-137 — fz.ias_vibration_alarm_1 +
+//             develcoModernExtend.temperature().
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::develco {
 namespace {
 const FzConverter* const kFz_WISZB_137[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasVibrationAlarm,
+    &::zhc::generic::kFzTemperature,
 };
 
 constexpr const char* kModels_WISZB_137[] = { "WISZB-137" };
@@ -21,13 +31,15 @@ constexpr const char* kModels_WISZB_137[] = { "WISZB-137" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"vibration", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
     {1, 0x0500},
 };
 // --- end auto-generated block ---

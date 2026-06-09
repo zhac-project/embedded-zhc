@@ -1,14 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Develco HMSZB-120 — auto-generated.
-// Temperature & humidity sensor
-// z2m-source: develco.ts #HMSZB-120.
+// Tier 2: Develco HMSZB-120 temp/humidity sensor — graduated from generated.
+// Temperature & humidity sensor.
+//
+// Parity fix: the generated def wired ONLY kFzBattery, so the two primary
+// channels (temperature, humidity) were dead. z2m exposes temperature +
+// humidity + battery. Wire the generic msTemperatureMeasurement (0x0402)
+// and msRelativeHumidity (0x0405) decoders.
+//
+// z2m-source: develco.ts #HMSZB-120/-110 — develcoModernExtend.temperature
+//             + m.humidity + m.battery.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::develco {
 namespace {
 const FzConverter* const kFz_HMSZB_120[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzTemperature,
+    &::zhc::generic::kFzHumidity,
 };
 
 constexpr const char* kModels_HMSZB_120[] = { "HMSZB-110", "HMSZB-120" };
@@ -20,10 +29,14 @@ constexpr const char* kModels_HMSZB_120[] = { "HMSZB-110", "HMSZB-120" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
+    {1, 0x0405},
 };
 // --- end auto-generated block ---
 

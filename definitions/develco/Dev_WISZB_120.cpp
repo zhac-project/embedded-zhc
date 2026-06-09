@@ -1,18 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Develco WISZB-138 — auto-generated.
-// Window sensor
-// z2m-source: develco.ts #WISZB-138.
+// Tier 2: Develco WISZB-120 window/contact sensor — graduated from generated.
+// Window sensor.
+//
+// Parity fix: generic kFzIasZone emits the bare key "alarm", but z2m's
+// fz.ias_contact_alarm_1 publishes "contact" (zoneStatus bit 0). Swap in
+// the typed kFzIasContactAlarm (contact + tamper + battery_low) and add
+// the msTemperatureMeasurement channel z2m wires via
+// develcoModernExtend.temperature().
+//
+// z2m-source: develco.ts #WISZB-120 — fz.ias_contact_alarm_1 +
+//             develcoModernExtend.temperature().
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::develco {
 namespace {
-const FzConverter* const kFz_WISZB_138[] = {
+const FzConverter* const kFz_WISZB_120[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
+    &::zhc::generic::kFzTemperature,
 };
 
-constexpr const char* kModels_WISZB_138[] = { "WISZB-138", "GWA1513_WindowSensor" };
+constexpr const char* kModels_WISZB_120[] = { "WISZB-120" };
 
 }  // namespace
 
@@ -21,25 +30,27 @@ constexpr const char* kModels_WISZB_138[] = { "WISZB-138", "GWA1513_WindowSensor
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
     {1, 0x0500},
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_WISZB_138{
-    .zigbee_models=kModels_WISZB_138, .zigbee_models_count=sizeof(kModels_WISZB_138)/sizeof(kModels_WISZB_138[0]),
+extern const PreparedDefinition kDef_WISZB_120{
+    .zigbee_models=kModels_WISZB_120, .zigbee_models_count=sizeof(kModels_WISZB_120)/sizeof(kModels_WISZB_120[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="WISZB-138", .vendor="Develco",
+    .model="WISZB-120", .vendor="Develco",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_WISZB_138, .from_zigbee_count=sizeof(kFz_WISZB_138)/sizeof(kFz_WISZB_138[0]),
+    .from_zigbee=kFz_WISZB_120, .from_zigbee_count=sizeof(kFz_WISZB_120)/sizeof(kFz_WISZB_120[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),

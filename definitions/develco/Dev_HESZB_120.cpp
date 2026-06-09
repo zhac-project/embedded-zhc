@@ -1,15 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Develco HESZB-120 — auto-generated.
-// Fire detector with siren
-// z2m-source: develco.ts #HESZB-120.
+// Tier 2: Develco HESZB-120 heat/fire detector — graduated from generated.
+// Fire detector with siren.
+//
+// Parity fix: generic kFzIasZone emits the bare key "alarm", but z2m's
+// fz.ias_smoke_alarm_1_develco publishes "smoke" (zoneStatus bit 0) —
+// Develco routes this heat alarm through the smoke decoder. Swap in the
+// typed kFzIasSmokeAlarm (smoke + tamper + battery_low) and add the
+// msTemperatureMeasurement channel z2m wires via
+// develcoModernExtend.temperature(). kTzWarning (IAS WD) kept.
+//
+// z2m-source: develco.ts #HESZB-120 — fz.ias_smoke_alarm_1_develco +
+//             develcoModernExtend.temperature().
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::develco {
 namespace {
 const FzConverter* const kFz_HESZB_120[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasSmokeAlarm,
+    &::zhc::generic::kFzTemperature,
 };
 const TzConverter* const kTz_HESZB_120[] = {
     &::zhc::generic::kTzWarning,
@@ -23,13 +33,15 @@ constexpr const char* kModels_HESZB_120[] = { "HESZB-120" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
     {1, 0x0500},
 };
 // --- end auto-generated block ---

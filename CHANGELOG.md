@@ -10,6 +10,37 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Develco / Frient sensors had dead IAS keys, lost temperature/humidity
+  channels, a phantom alarm bundle on a repeater, and a button wired as a
+  switch** — surfaced by a z2m↔embedded-zhc parity pass over the Develco
+  vendor. Affected defs graduated from `generated/` to Tier-2 parent
+  overrides.
+  - **FLSZB-110 (flood), HESZB-120 + SMSZB-120 (heat/smoke),
+    MOSZB-130/140/141/153 (motion), WISZB-120/121/134/138 (contact),
+    WISZB-137 (vibration)** lowered the generic `kFzIasZone` converter,
+    which emits the bare key `alarm`, while their exposes declared the
+    semantic key. Swapped in the typed `kFzIas<Type>Alarm` converters
+    (`water_leak`/`smoke`/`occupancy`/`contact`/`vibration` + `tamper` +
+    `battery_low`), matching z2m's per-zone-type `fz.ias_*_alarm_1`
+    (Develco routes the HESZB-120 heat alarm through `ias_smoke_alarm_1`).
+  - **Temperature channel restored** on FLSZB-110, HESZB-120, SMSZB-120,
+    WISZB-120/121/137/138 — these report `msTemperatureMeasurement`
+    (`0x0402`) via z2m `develcoModernExtend.temperature()`, previously
+    undecoded. (WISZB-134 intentionally omits it, matching z2m.)
+  - **AQSZB-110 air quality sensor** wired only battery; every primary
+    channel was dead. Wired the existing develco VOC decoder (manuSpecific
+    `0xFC03` → `voc` µg/m³ + `air_quality` enum) plus generic temperature
+    (`0x0402`) and humidity (`0x0405`).
+  - **HMSZB-120 temp/humidity sensor** wired only battery — added generic
+    temperature + humidity decoders/exposes/bindings.
+  - **REXZB-111 range extender** carried a phantom `alarm`/`tamper` IAS
+    bundle (generic `kFzIasZone` + `0x0500` binding) that z2m never
+    publishes for this mains repeater. Stripped to battery only.
+  - **SBTZB-110 smart button** was wired as an on/off switch (`kFzOnOff`
+    + `kTzOnOff` + controllable `state`). Re-wired to `kFzEwelinkAction`
+    (genOnOff command → `action`) and exposes `action`, matching z2m
+    `fz.ewelink_action`.
+
 - **Five IKEA non-light devices were wired as phantom lights, and several
   sensor channels were dead** — surfaced by a z2m↔embedded-zhc parity pass
   over the 100-def IKEA vendor. The generated defs lowered the full

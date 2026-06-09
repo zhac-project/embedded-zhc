@@ -908,6 +908,17 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Develco / Frient family. The IAS sensors
+# (FLSZB/HESZB/SMSZB/MOSZB/WISZB) lowered the generic kFzIasZone (bare
+# "alarm") instead of the typed kFzIas<Type>Alarm their expose declared,
+# and dropped the msTemperatureMeasurement channel several models report.
+# AQSZB-110 (voc/air_quality/temp/humidity) and HMSZB-120 (temp/humidity)
+# wired only battery. REXZB-111 (repeater) carried a phantom IAS
+# alarm/tamper bundle; SBTZB-110 (button) was wired as an on/off switch
+# instead of fz.ewelink_action. All graduated to parent overrides.
+add_executable(zhc_develco_parity_tests tests/test_develco_parity.cpp)
+target_link_libraries(zhc_develco_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the IKEA non-light family: several generated defs
 # wired the full kFzIkeaLight bundle (state/brightness/color_temp) onto
 # devices that are not lights — TRADFRI motion (E1525/E1745), VINDSTYRKA
@@ -1144,6 +1155,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)

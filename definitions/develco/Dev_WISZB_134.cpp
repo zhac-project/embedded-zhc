@@ -1,18 +1,26 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Develco MOSZB-153 — auto-generated.
-// Motion Sensor 2 Pet
-// z2m-source: develco.ts #MOSZB-153.
+// Tier 2: Develco WISZB-134 window/door sensor — graduated from generated.
+// Window/door sensor.
+//
+// Parity fix: generic kFzIasZone emits the bare key "alarm", but z2m
+// wires m.iasZoneAlarm({zoneType:"contact"}) which publishes "contact"
+// (zoneStatus bit 0). Swap in the typed kFzIasContactAlarm (contact +
+// tamper + battery_low). NOTE: unlike WISZB-120/121/138, the -134
+// z2m definition does NOT add develcoModernExtend.temperature(), so no
+// temperature channel here.
+//
+// z2m-source: develco.ts #WISZB-134 — m.iasZoneAlarm zoneType contact.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::develco {
 namespace {
-const FzConverter* const kFz_MOSZB_153[] = {
+const FzConverter* const kFz_WISZB_134[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
-constexpr const char* kModels_MOSZB_153[] = { "MOSZB-153" };
+constexpr const char* kModels_WISZB_134[] = { "WISZB-134" };
 
 }  // namespace
 
@@ -21,7 +29,7 @@ constexpr const char* kModels_MOSZB_153[] = { "MOSZB-153" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,18 +40,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-
-constexpr WhiteLabel kWhiteLabels_MOSZB_153[] = {
-    {"Frient","MOSZB-153"},
-};
-extern const PreparedDefinition kDef_MOSZB_153{
-    .zigbee_models=kModels_MOSZB_153, .zigbee_models_count=sizeof(kModels_MOSZB_153)/sizeof(kModels_MOSZB_153[0]),
+extern const PreparedDefinition kDef_WISZB_134{
+    .zigbee_models=kModels_WISZB_134, .zigbee_models_count=sizeof(kModels_WISZB_134)/sizeof(kModels_WISZB_134[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="MOSZB-153", .vendor="Develco",
+    .model="WISZB-134", .vendor="Develco",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=kWhiteLabels_MOSZB_153, .white_labels_count=sizeof(kWhiteLabels_MOSZB_153)/sizeof(kWhiteLabels_MOSZB_153[0]),
-    .from_zigbee=kFz_MOSZB_153, .from_zigbee_count=sizeof(kFz_MOSZB_153)/sizeof(kFz_MOSZB_153[0]),
+    .white_labels=nullptr, .white_labels_count=0,
+    .from_zigbee=kFz_WISZB_134, .from_zigbee_count=sizeof(kFz_WISZB_134)/sizeof(kFz_WISZB_134[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),

@@ -1,15 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Develco REXZB-111 — auto-generated.
-// Range extender with backup battery
-// z2m-source: develco.ts #REXZB-111.
+// Tier 2: Develco REXZB-111 range extender — graduated from generated.
+// Range extender with backup battery.
+//
+// Parity fix: this is a mains-powered repeater with a backup battery —
+// NOT an alarm sensor. The generated def lowered the generic kFzIasZone
+// converter, which fabricates phantom "alarm" + "tamper" keys that z2m
+// never publishes (z2m wires only m.battery + a generic iasZoneAlarm
+// limited to battery_low/battery_defect; alarm/tamper are absent). Strip
+// the IAS converter + its phantom exposes + the 0x0500 binding, leaving
+// the real battery/voltage channel. battery_low/battery_defect ride on a
+// manuSpecific develco zone-status read with no generic converter →
+// deferred (INFRA), not fabricated here.
+//
+// z2m-source: develco.ts #REXZB-111 — m.battery only (no alarm/tamper).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::develco {
 namespace {
 const FzConverter* const kFz_REXZB_111[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
 };
 
 constexpr const char* kModels_REXZB_111[] = { "REXZB-111" };
@@ -21,14 +31,10 @@ constexpr const char* kModels_REXZB_111[] = { "REXZB-111" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
-    {1, 0x0500},
 };
 // --- end auto-generated block ---
 

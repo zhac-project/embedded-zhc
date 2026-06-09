@@ -1,14 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Develco AQSZB-110 — auto-generated.
-// Air quality sensor
-// z2m-source: develco.ts #AQSZB-110.
+// Tier 2: Develco AQSZB-110 air quality sensor — graduated from generated.
+// Air quality sensor.
+//
+// Parity fix: the generated def wired ONLY kFzBattery, so every primary
+// channel (VOC, air-quality enum, temperature, humidity) was dead. z2m
+// exposes voc + air_quality + temperature + humidity + battery. Wire the
+// existing develco VOC decoder (manuSpecific cluster 0xFC03 → voc µg/m³ +
+// air_quality enum) plus the generic msTemperatureMeasurement (0x0402)
+// and msRelativeHumidity (0x0405) decoders.
+//
+// z2m-source: develco.ts #AQSZB-110 — develcoModernExtend.voc/airQuality/
+//             temperature + m.humidity + m.battery.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/develco/_shared.hpp"   // kFzDevelcoVoc
 
 namespace zhc::devices::develco {
 namespace {
 const FzConverter* const kFz_AQSZB_110[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::develco::kFzDevelcoVoc,
+    &::zhc::generic::kFzTemperature,
+    &::zhc::generic::kFzHumidity,
 };
 
 constexpr const char* kModels_AQSZB_110[] = { "AQSZB-110" };
@@ -20,10 +33,16 @@ constexpr const char* kModels_AQSZB_110[] = { "AQSZB-110" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"voc", ExposeType::Numeric, Access::State, "µg/m³", nullptr, nullptr, 0},
+    {"air_quality", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
+    {1, 0x0405},
 };
 // --- end auto-generated block ---
 
