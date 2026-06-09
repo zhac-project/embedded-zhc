@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **23 Yale smart locks never reported battery level** — found by a
+  z2m↔embedded-zhc parity pass over the Yale vendor (28 defs, all door locks).
+  Every Yale lock in z2m decodes battery: most use the shared `lockExtend()`
+  helper, which bundles `fz.battery` + `e.battery()` (+ `e.battery_low()`), and
+  the rest use `m.battery()`. But 23 of the 28 generated defs wired only
+  `kFzLock` (the `lock_state` decoder) and dropped battery entirely — the
+  `genPowerCfg` decoder, the `battery` expose, and the `0x0001` binding were all
+  missing, so a battery-powered lock never surfaced its charge level. (The other
+  5 — SOLIS01, YMC420-W, YRL256 TS, YMI70A, YRM476 — had already been
+  hand-corrected.) All 23 graduated from `generated/` to Tier-2 parents wiring
+  the generic `kFzBattery` + a `battery` expose + the `genPowerCfg` bind. The
+  lock-state decode (`kFzLock` → `lock_state`) and the lock/unlock command
+  encoder (`kTzLock`, key `state` → closuresDoorLock cmd 0x00/0x01) were already
+  correct on every def and are pinned as a regression guard. PIN/user-code
+  management, auto-relock, sound-volume and the programming/operation-event
+  `action` stream remain out of scope (bespoke converters; deferred). Pinned by
+  `tests/test_yale_parity.cpp`.
 - **Hive DWS003 / MOT003 contact + motion sensors (and the KEYPAD001 alarm
   keypad) never surfaced their primary state** — found by a z2m↔embedded-zhc
   parity pass over the Hive vendor. All three lowered the generic `kFzIasZone`,

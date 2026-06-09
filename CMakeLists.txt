@@ -965,6 +965,18 @@ target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_custom_devices_diy_parity_tests tests/test_custom_devices_diy_parity.cpp)
 target_link_libraries(zhc_custom_devices_diy_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Yale smart-door-lock family. Every Yale lock in
+# z2m decodes battery (via the shared lockExtend() helper that bundles
+# fz.battery + e.battery(), or via m.battery()), but 23 of the 28 generated
+# defs wired only kFzLock (lock_state) and dropped the genPowerCfg decoder,
+# the "battery" expose and the 0x0001 bind — a battery-powered lock that
+# never reported its charge. All 23 graduated to Tier-2 parents wiring the
+# generic kFzBattery + a "battery" expose + the genPowerCfg binding. The
+# lock-state decode (kFzLock) and lock/unlock encoder (kTzLock) were already
+# correct and are pinned as a regression guard. See tests/README.md.
+add_executable(zhc_yale_parity_tests tests/test_yale_parity.cpp)
+target_link_libraries(zhc_yale_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for three Sber/SDevices IAS sensors (SBDV-00029 motion,
 # SBDV-00030 contact, SBDV-00154 water leak) whose auto-generated defs wired the
 # generic kFzIasZone (emits raw "alarm_1"/...) against a bare "alarm" expose, so
@@ -1237,6 +1249,7 @@ add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
+add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_bacchus_parity_tests      COMMAND zhc_bacchus_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
