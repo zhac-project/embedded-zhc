@@ -1026,6 +1026,10 @@ constexpr IasAlarmLabel kLbl_Vibration   { "vibration",       0 };
 constexpr IasAlarmLabel kLbl_Rain        { "rain",            0 };  // eWeLink WS01 rainfall
 constexpr IasAlarmLabel kLbl_Gas         { "gas",             0 };  // z2m fz.ias_gas_alarm_1
 constexpr IasAlarmLabel kLbl_Gas2        { "gas",             1 };  // z2m fz.ias_gas_alarm_2
+// z2m m.iasZoneAlarm({zoneType: "alarm"}) publishes the single key `alarm`
+// (both alarm_1/alarm_2 collapse onto it). Used by generic sirens (adeo
+// LDSENK06). bit 0 → `alarm`.
+constexpr IasAlarmLabel kLbl_Alarm       { "alarm",           0 };
 
 }  // namespace
 
@@ -1054,6 +1058,7 @@ ZHC_IAS_TYPED_CVT(kFzIasVibrationAlarm, &kLbl_Vibration);
 ZHC_IAS_TYPED_CVT(kFzIasRainAlarm,      &kLbl_Rain);
 ZHC_IAS_TYPED_CVT(kFzIasGasAlarm,       &kLbl_Gas);
 ZHC_IAS_TYPED_CVT(kFzIasGasAlarm2,      &kLbl_Gas2);
+ZHC_IAS_TYPED_CVT(kFzIasGenericAlarm,   &kLbl_Alarm);
 
 // ── ssIasAce arm / panic command decoders ───────────────────────────
 //

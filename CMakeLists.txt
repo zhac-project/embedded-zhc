@@ -908,6 +908,15 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Adeo (ENKI LEXMAN) sensor + key-fob family. Six IAS
+# sensors lowered the generic kFzIasZone behind a semantic expose (dead key);
+# the 4-in-1 (83633205) additionally dropped its illuminance/temp/humidity
+# channels; the LDSENK09 key fob was mis-ported as an on/off relay. Graduated
+# to parent overrides with typed kFzIas<Type>Alarm / kFzIasGenericAlarm,
+# kFzIasAceArm + kFzIasAcePanic, and the standard measurement decoders.
+add_executable(zhc_adeo_parity_tests tests/test_adeo_parity.cpp)
+target_link_libraries(zhc_adeo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the eWeLink (Coolkit / Sonoff-OEM) vendor. The WS01
 # rainfall sensor reports rain over ssIasZone commandStatusChangeNotification
 # (zoneStatus bit 0); z2m maps it via fzLocal.WS01_rain -> {rain}. Its
@@ -1461,6 +1470,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_ewelink_parity_tests      COMMAND zhc_ewelink_parity_tests)
 add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)

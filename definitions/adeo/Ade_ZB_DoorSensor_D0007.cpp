@@ -1,7 +1,16 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Adeo ZB-DoorSensor-D0007 — auto-generated.
+// Tier 2: Adeo ZB-DoorSensor-D0007 — hand-maintained parity override.
 // ENKI LEXMAN wireless smart door window sensor
+//
+// Graduated from generated/Ade_ZB_DoorSensor_D0007.cpp: the generated def
+// lowered the generic kFzIasZone (which emits the bare key `alarm`) behind an
+// `alarm` expose, while z2m decodes this contact sensor via
+// m.iasZoneAlarm({zoneType: "contact"}) and exposes contact/battery_low/
+// tamper. With no rename layer the contact state never reached the shadow.
+// Wired the typed kFzIasContactAlarm (emits `contact` + tamper + battery_low)
+// and renamed the expose to `contact`. Mirrors the heiman HS1DS / sunricher
+// SR-ZG9011A-DS contact ports.
 // z2m-source: adeo.ts #ZB-DoorSensor-D0007.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,7 +18,7 @@ namespace zhc::devices::adeo {
 namespace {
 const FzConverter* const kFz_ZB_DoorSensor_D0007[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
 constexpr const char* kModels_ZB_DoorSensor_D0007[] = { "ZB-DoorSensor-D0007" };
@@ -21,7 +30,7 @@ constexpr const char* kModels_ZB_DoorSensor_D0007[] = { "ZB-DoorSensor-D0007" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

@@ -1,14 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Adeo LDSENK06 — auto-generated.
+// Tier 2: Adeo LDSENK06 — hand-maintained parity override.
 // ENKI LEXMAN indoor siren 85db
+//
+// Graduated from generated/Ade_LDSENK06.cpp: the generated def lowered the
+// generic kFzIasZone (which emits alarm_1/alarm_2) while the expose declares
+// the single key `alarm`. With no rename layer the alarm state never reached
+// the shadow. z2m decodes this via m.iasZoneAlarm({zoneType: "alarm"}), which
+// collapses both alarm bits onto the single `alarm` key — so the typed
+// kFzIasGenericAlarm converter (emits `alarm` + tamper + battery_low) is at
+// parity. m.iasWarning() is a SET-only siren control (tz.warning) with no
+// generic write converter — deferred (does not affect decode parity).
 // z2m-source: adeo.ts #LDSENK06.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::adeo {
 namespace {
 const FzConverter* const kFz_LDSENK06[] = {
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasGenericAlarm,
 };
 
 constexpr const char* kModels_LDSENK06[] = { "LDSENK06" };

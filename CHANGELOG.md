@@ -10,6 +10,50 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Adeo (ENKI LEXMAN / LexMan) parity pass — 7 of 50 defs corrected** over a
+  z2m↔embedded-zhc sweep. Adeo is otherwise a bounded-lighting vendor (the
+  LDSENK*/ZBEK-*/LXEK-* bulbs are stock `m.light` and decode fine); every gap
+  was on the sensor / key-fob ports. Six IAS devices lowered the generic
+  `kFzIasZone` (which emits `alarm_1`/`alarm_2`, or a bare `alarm`) behind a
+  *semantic* expose, so with no rename layer the primary sensor state never
+  reached the shadow; each was graduated to a Tier-2 parent override wiring the
+  typed `kFzIas<Type>Alarm`:
+  - **LDSENK10** (PIR motion) → `kFzIasMotionAlarm` / `occupancy`
+    (z2m `fz.ias_occupancy_alarm_1`).
+  - **83633206** (ZB-WaterSensor-D0001 leak) → `kFzIasWaterLeakAlarm` /
+    `water_leak` (z2m `iasZoneAlarm({zoneType: "water_leak"})`).
+  - **ZB-DoorSensor-D0007** (contact) → `kFzIasContactAlarm` / `contact`
+    (z2m `iasZoneAlarm({zoneType: "contact"})`).
+  - **LDSENK08** (door + vibration) → `kFzIasContactAlarm` / `contact` +
+    `kFzBattery`. The `vibration` bit-1 sub-flag and the `sensitivity` write
+    (custom ssIasZone decode + attribute write in z2m's `fzLocal`/`tzLocal`)
+    have no generic converter and remain deferred.
+  - **LDSENK06** (indoor 85 dB siren) → new generic `kFzIasGenericAlarm` /
+    `alarm`. z2m's `iasZoneAlarm({zoneType: "alarm"})` collapses both alarm
+    bits onto the single `alarm` key, which the generic `kFzIasZone`
+    (`alarm_1`/`alarm_2`) never produced. The `iasWarning()` siren *control*
+    (SET-only `tz.warning`) has no generic write path and is deferred.
+  - **83633205** (ZB-SMART-PIRTH-V3 "4-in-1") was the worst gap: it lowered only
+    `kFzBattery` + `kFzIasZone`, dropping the illuminance, temperature and
+    humidity channels the device exists to report and leaving motion on a dead
+    `alarm` key. Wired the generic `kFzIlluminance` / `kFzTemperature` /
+    `kFzHumidity` decoders + exposes + binds, and swapped in `kFzIasMotionAlarm`
+    for `occupancy` (which here rides ssIasZone, not msOccupancySensing).
+  - **LDSENK09** (security key fob) was mis-ported as an on/off relay
+    (`kFzOnOff` + `kTzOnOff` + a controllable `state`). It is an ssIasAce
+    *sender*; the `state` was dead and the action surface was missing. Re-wired
+    to `kFzIasAceArm` + `kFzIasAcePanic`, exposed `action`
+    [panic, disarm, arm_partial_zones, arm_all_zones], bound ssIasAce (0x0501),
+    and dropped the bogus to_zigbee path. Mirrors the linkind / immax key-fob
+    ports.
+
+  Added generic converter `kFzIasGenericAlarm` (ssIasZone bit 0 → `alarm` +
+  tamper + battery_low) for the zoneType:"alarm" case. All seven defs graduated
+  to Tier-2 parent overrides; covered by `tests/test_adeo_parity.cpp`. The
+  1-key remote **83633204** (z2m `fz.adeo_button_65024`, a manuSpecific private
+  cluster 0xFE00 `raw` decoder) is left as-is — it has no generic converter and
+  is deferred as infra.
+
 - **Osram (LEDVANCE / Lightify) parity pass — 3 of 44 defs corrected** over a
   z2m↔embedded-zhc sweep. Osram is otherwise a pure lighting vendor
   (`ledvanceLight` / `ledvanceOnOff` over stock ZCL; the plugs are on/off-only

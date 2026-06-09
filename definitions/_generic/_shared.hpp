@@ -287,6 +287,11 @@ extern const FzConverter kFzIasRainAlarm;
 // gas sensors (HS1CG family / HS3CG).
 extern const FzConverter kFzIasGasAlarm;
 extern const FzConverter kFzIasGasAlarm2;
+// Generic alarm: zoneStatus bit 0 → "alarm" bool (+ tamper, battery_low).
+// Matches z2m `m.iasZoneAlarm({zoneType: "alarm"})`, which collapses both
+// alarm bits onto the single `alarm` key. Used by generic sirens (adeo
+// LDSENK06 indoor 85 dB siren).
+extern const FzConverter kFzIasGenericAlarm;
 
 // ── genOnOff power-on behaviour (standard ZCL attribute 0x4003) ─────
 //

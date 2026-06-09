@@ -1,18 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Adeo LDSENK08 — auto-generated.
-// ENKI LEXMAN wireless smart door window sensor with vibration
-// z2m-source: adeo.ts #LDSENK08.
+// Tier 2: Adeo 83633206 — hand-maintained parity override.
+// ENKI LEXMAN water leak sensor
+//
+// Graduated from generated/Ade_D83633206.cpp: the generated def lowered the
+// generic kFzIasZone (which emits the bare key `alarm`) behind an `alarm`
+// expose, while z2m decodes this leak sensor via
+// m.iasZoneAlarm({zoneType: "water_leak"}) (zoneStatus bit 0 -> `water_leak`)
+// and exposes water_leak/battery_low/tamper. With no rename layer the leak
+// flag never reached the shadow. Wired the typed kFzIasWaterLeakAlarm (emits
+// `water_leak` + tamper + battery_low) and renamed the expose to
+// `water_leak`. Mirrors the sunricher SR-ZG9050C-WS water-leak port.
+// z2m-source: adeo.ts #83633206.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::adeo {
 namespace {
-const FzConverter* const kFz_LDSENK08[] = {
+const FzConverter* const kFz_D83633206[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
-constexpr const char* kModels_LDSENK08[] = { "LDSENK08" };
+constexpr const char* kModels_D83633206[] = { "ZB-WaterSensor-D0001" };
 
 }  // namespace
 
@@ -21,7 +30,7 @@ constexpr const char* kModels_LDSENK08[] = { "LDSENK08" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +41,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_LDSENK08{
-    .zigbee_models=kModels_LDSENK08, .zigbee_models_count=sizeof(kModels_LDSENK08)/sizeof(kModels_LDSENK08[0]),
+extern const PreparedDefinition kDef_D83633206{
+    .zigbee_models=kModels_D83633206, .zigbee_models_count=sizeof(kModels_D83633206)/sizeof(kModels_D83633206[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="LDSENK08", .vendor="Adeo",
+    .model="83633206", .vendor="Adeo",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_LDSENK08, .from_zigbee_count=sizeof(kFz_LDSENK08)/sizeof(kFz_LDSENK08[0]),
+    .from_zigbee=kFz_D83633206, .from_zigbee_count=sizeof(kFz_D83633206)/sizeof(kFz_D83633206[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
