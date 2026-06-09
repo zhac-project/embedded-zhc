@@ -10,6 +10,44 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Five IKEA non-light devices were wired as phantom lights, and several
+  sensor channels were dead** — surfaced by a z2m↔embedded-zhc parity pass
+  over the 100-def IKEA vendor. The generated defs lowered the full
+  `kFzIkeaLight` bundle (`state`/`brightness`/`color_temp` exposes +
+  genOnOff/genLevelCtrl/genColorCtrl bindings) onto devices that are not
+  lights, so their real channels never reached the shadow.
+  - **E1525/E1745 TRADFRI motion sensor** — phantom light. Stripped to
+    `kFzBattery` + `battery`/`voltage` exposes (z2m `ikeaBattery()`).
+    Occupancy/requested-brightness come over outward-bound genOnOff
+    `commandOnWithTimedOff` / genLevelCtrl `commandMoveToLevelWithOnOff`,
+    which need command converters that do not exist generically yet
+    (noted as deferred infra).
+  - **E2112 VINDSTYRKA air quality & humidity sensor** — phantom light.
+    Wired generic `kFzTemperature` (`0x0402`) + `kFzHumidity` (`0x0405`)
+    matching z2m `m.temperature()`/`m.humidity()`. `pm25` (custom
+    `0x042a`) and `voc_index` (manuSpecific) need dedicated decoders —
+    deferred infra.
+  - **E1746 TRADFRI signal repeater** — phantom light on a router that
+    z2m declares with `exposes:[]`. Stripped to an empty definition.
+  - **E2007 STARKVIND air purifier** — phantom light. All channels
+    (fan/pm25/air_quality/filters) live on manuSpecific cluster `0xfc7d`
+    with no generic decoder; stripped the phantom light to an empty
+    definition (full support deferred as infra).
+  - **E2134 VALLHORN wireless motion sensor** — wired only `kFzBattery`,
+    leaving its primary outputs dead. Added generic `kFzOccupancy`
+    (msOccupancySensing `0x0406`) + `kFzIlluminance` (`0x0400`) +
+    `occupancy`/`illuminance` exposes + bindings, matching z2m
+    `m.occupancy()`/`m.illuminance()`.
+- **Four IKEA battery-powered blinds dropped their battery channel** —
+  `E1757` FYRTUR / `E1926` KADRILJ / `E2102` PRAKTLYSING / `E2103`
+  TREDANSEN exposed only cover `position`; z2m wires `ikeaBattery()` on
+  all of them. Added generic `kFzBattery` + `battery`/`voltage` exposes +
+  genPowerCfg (`0x0001`) binding to each.
+  All nine defs were graduated from `definitions/ikea/generated/` to
+  Tier-2 parents. New `tests/test_ikea_parity.cpp` pins the phantom-light
+  keys gone, VALLHORN occupancy+illuminance decode, VINDSTYRKA
+  temperature+humidity decode, and battery presence on motion+blinds.
+
 - **Four Owon HVAC controllers had dead climate exposes the generic
   thermostat decoder never filled** — surfaced by a z2m↔embedded-zhc
   parity pass over the 19-def vendor. The generic `kFzThermostat` decodes

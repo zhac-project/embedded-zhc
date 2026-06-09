@@ -908,6 +908,17 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the IKEA non-light family: several generated defs
+# wired the full kFzIkeaLight bundle (state/brightness/color_temp) onto
+# devices that are not lights — TRADFRI motion (E1525/E1745), VINDSTYRKA
+# air quality (E2112), signal repeater (E1746), STARKVIND air purifier
+# (E2007) — leaving their real channels dead. VALLHORN (E2134) lost its
+# occupancy/illuminance decoders, and the FYRTUR/KADRILJ/PRAKTLYSING/
+# TREDANSEN blinds dropped ikeaBattery(). All graduated to Tier-2 parent
+# overrides. See tests/README.md.
+add_executable(zhc_ikea_parity_tests tests/test_ikea_parity.cpp)
+target_link_libraries(zhc_ikea_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Easyiot ZB-WB01/02/03/08 multi-button scene
 # remotes. Their auto-generated defs lowered the generic
 # kFzCommandOn/Off/Toggle (emit bare "on"/"off"/"toggle", no button
@@ -1133,6 +1144,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)

@@ -1,14 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ikea E1746 — auto-generated.
-// TRADFRI signal repeater
-// z2m-source: ikea.ts #E1746.
+// Tier 2: Ikea E1746 — TRADFRI signal repeater.
+//
+// z2m-source: ikea.ts #E1746 — m.identify() + m.linkQuality() only;
+// exposes:[] (no controllable/sensor endpoints). It is a mains-powered
+// Zigbee router with nothing to read or set.
+//
+// The auto-generated def wired the full kFzIkeaLight bundle
+// (state/brightness/color_temp + OnOff/Level/Color bindings), which is
+// a phantom light on a device that has no genOnOff/genLevelCtrl/
+// genColorCtrl. Stripped to an empty definition to match z2m.
 #include "definitions/_generic/_shared.hpp"
-#include "definitions/ikea/_shared.hpp"
 
 namespace zhc::devices::ikea {
 namespace {
-
 
 constexpr const char* kModels_E1746[] = { "TRADFRI signal repeater" };
 
@@ -19,15 +24,11 @@ extern const PreparedDefinition kDef_E1746{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="E1746", .vendor="Ikea",
-    .meta=nullptr, .exposes=kExposesIkeaLight, .exposes_count=kExposesIkeaLightCount,
+    .meta=nullptr, .exposes=nullptr, .exposes_count=0,
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFzIkeaLight, .from_zigbee_count=kFzIkeaLightCount,
-    .to_zigbee=kTzIkeaLight, .to_zigbee_count=kTzIkeaLightCount,
+    .from_zigbee=nullptr, .from_zigbee_count=0,
+    .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
-    .bindings                 = kBindingsIkeaLight,
-    .bindings_count           = kBindingsIkeaLightCount,
-    .reports                  = kReportsIkeaLight,
-    .reports_count            = kReportsIkeaLightCount,
 };
 
 }  // namespace zhc::devices::ikea
