@@ -1038,6 +1038,14 @@ target_link_libraries(zhc_slacky_therm_r08_tests PRIVATE zhc_definitions)
 add_executable(zhc_engo_parity_tests tests/test_engo_parity.cpp)
 target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the ShinaSystem (SiHAS) family. Generator misses left
+# several primary sensor/control channels dead: USM/OSM/DMS exposed
+# occupancy with no decoder (and USM dropped illuminance), and GCM-300Z's
+# gas valve had a null to_zigbee plus a state/gas_valve_state key mismatch.
+# These pin the restored decode/encode paths. See tests/README.md.
+add_executable(zhc_shinasystem_parity_tests tests/test_shinasystem_parity.cpp)
+target_link_libraries(zhc_shinasystem_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1130,6 +1138,7 @@ add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
+add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)

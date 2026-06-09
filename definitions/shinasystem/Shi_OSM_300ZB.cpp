@@ -1,7 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Shinasystem OSM-300ZB — auto-generated.
+// Tier 2: Shinasystem OSM-300ZB — graduated from generated/.
 // SiHAS Motion Sensor
+//
+// Generator miss: z2m's `extend: [m.occupancy(), m.battery(...)]` was
+// lowered to battery only. The `occupancy` expose was emitted (and
+// msOccupancySensing 0x0406 was bound) but had NO decoder, so the
+// primary motion state never reached the shadow. Re-added kFzOccupancy.
+// Same shape as heiman HS1MIS-3.0 (msOccupancySensing, not IAS).
+//
 // z2m-source: shinasystem.ts #OSM-300ZB.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/shinasystem/_shared.hpp"
@@ -10,6 +17,7 @@ namespace zhc::devices::shinasystem {
 namespace {
 const FzConverter* const kFz_OSM_300ZB[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzOccupancy,
 };
 
 constexpr const char* kModels_OSM_300ZB[] = { "OSM-300Z" };

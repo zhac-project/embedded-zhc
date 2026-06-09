@@ -1,7 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Shinasystem DMS-300ZB — auto-generated.
+// Tier 2: Shinasystem DMS-300ZB — graduated from generated/.
 // SiHAS dual motion sensor
+//
+// Generator miss: z2m's `fromZigbee: [fz.battery, fzLocal.DMS300_OUT,
+// fzLocal.DMS300_IN, fz.occupancy_timeout]` was lowered to battery
+// only, so BOTH PIR channels were dead (battery-only readout). Re-added
+// the two stateless channel decoders:
+//   kFzSihasOccupancyIn  — msOccupancySensing (ep1) → occupancy_in
+//   kFzSihasOccupancyOut — ssIasZone (ep2) bit0    → occupancy_out
+// Dropped the phantom `occupancy` expose (z2m emits no such key). The
+// derived `occupancy_or` / `occupancy_and` need cross-message state
+// (z2m globalStore) and `occupancy_timeout` is a writable config attr;
+// both are deferred as vendor infra.
+//
 // z2m-source: shinasystem.ts #DMS-300ZB.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/shinasystem/_shared.hpp"
@@ -10,6 +22,8 @@ namespace zhc::devices::shinasystem {
 namespace {
 const FzConverter* const kFz_DMS_300ZB[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::shinasystem::kFzSihasOccupancyIn,
+    &::zhc::shinasystem::kFzSihasOccupancyOut,
 };
 
 constexpr const char* kModels_DMS_300ZB[] = { "DMS-300Z" };
@@ -21,7 +35,6 @@ constexpr const char* kModels_DMS_300ZB[] = { "DMS-300Z" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"occupancy_in", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"occupancy_out", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

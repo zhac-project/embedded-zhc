@@ -193,6 +193,119 @@ extern const ::zhc::FzConverter kFzSihasPeopleCnt{
     .user_config       = nullptr,
 };
 
+// ── kFzSihasOccupancyIn / kFzSihasOccupancyOut (DMS-300Z) ───────────
+
+namespace {
+
+// IN sensor: msOccupancySensing 0x0000 (bitmap8) bit 0. Mirror of the
+// generic fz_occupancy but emits the suffixed key `occupancy_in`.
+bool fz_sihas_occupancy_in(const ::zhc::DecodedMessage& msg,
+                           const ::zhc::FzConverter&,
+                           const ::zhc::PreparedDefinition&,
+                           ::zhc::RuntimeContext&,
+                           ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const ::zhc::Value* v = msg.payload.find("0");   // attr 0x0000
+    if (!v || v->type != ::zhc::ValueType::Uint) return false;
+    ::zhc::Value o{};
+    o.type = ::zhc::ValueType::Bool;
+    o.b    = (v->u & 0x01u) != 0;
+    out.put("occupancy_in", o);
+    return true;
+}
+
+// OUT sensor: ssIasZone commandStatusChangeNotification, zoneStatus
+// (u16 LE) bit 0. Mirror of the generic IAS status-change decode but
+// emits the single suffixed key `occupancy_out`.
+bool fz_sihas_occupancy_out(const ::zhc::DecodedMessage& msg,
+                            const ::zhc::FzConverter&,
+                            const ::zhc::PreparedDefinition&,
+                            ::zhc::RuntimeContext&,
+                            ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // Payload after ZCL header: zoneStatus:u16 LE, extStatus:u8,
+    // zoneId:u8, delay:u16. SiHAS sends no manufacturer code.
+    const std::size_t hdr = msg.manufacturer_specific ? 5 : 3;
+    if (msg.raw_data.size() < hdr + 2) return false;
+    const std::uint16_t status =
+        static_cast<std::uint16_t>(msg.raw_data[hdr]) |
+        (static_cast<std::uint16_t>(msg.raw_data[hdr + 1]) << 8);
+    ::zhc::Value o{};
+    o.type = ::zhc::ValueType::Bool;
+    o.b    = (status & 0x0001u) != 0;
+    out.put("occupancy_out", o);
+    return true;
+}
+
+}  // namespace
+
+extern const ::zhc::FzConverter kFzSihasOccupancyIn{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "msOccupancySensing",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::AttributeReport) |
+                         ::zhc::type_bit(::zhc::MessageType::ReadResponse),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0, .frame_flags_value = 0,
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_sihas_occupancy_in },
+    .user_config       = nullptr,
+};
+
+extern const ::zhc::FzConverter kFzSihasOccupancyOut{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "ssIasZone",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command),
+    .command_id        = 0x00,   // commandStatusChangeNotification
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0, .frame_flags_value = 0,
+    // ZoneStatusChangeNotification flows device → coord (FC bit 3 = 1).
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_sihas_occupancy_out },
+    .user_config       = nullptr,
+};
+
+// ── kFzSihasGasValveState (GCM-300Z) ───────────────────────────────
+
+namespace {
+
+// genOnOff 0x0000 (key "0"): onOff==1 → "OPEN", 0 → "CLOSE". Emits the
+// `gas_valve_state` string key (z2m fzLocal.GCM300Z_valve_status).
+bool fz_sihas_gas_valve_state(const ::zhc::DecodedMessage& msg,
+                              const ::zhc::FzConverter&,
+                              const ::zhc::PreparedDefinition&,
+                              ::zhc::RuntimeContext&,
+                              ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const ::zhc::Value* v = msg.payload.find("0");   // attr 0x0000
+    if (!v) return false;
+    bool open;
+    if      (v->type == ::zhc::ValueType::Bool) open = v->b;
+    else if (v->type == ::zhc::ValueType::Uint) open = v->u != 0;
+    else if (v->type == ::zhc::ValueType::Int)  open = v->i != 0;
+    else return false;
+    ::zhc::Value o{};
+    o.type = ::zhc::ValueType::StringRef;
+    o.str  = open ? "OPEN" : "CLOSE";   // .rodata literal — safe across return.
+    out.put("gas_valve_state", o);
+    return true;
+}
+
+}  // namespace
+
+extern const ::zhc::FzConverter kFzSihasGasValveState{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "genOnOff",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::AttributeReport) |
+                         ::zhc::type_bit(::zhc::MessageType::ReadResponse),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0, .frame_flags_value = 0,
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_sihas_gas_valve_state },
+    .user_config       = nullptr,
+};
+
 // ── ZclWriteSpec set + TzConverter macros ──────────────────────────
 
 namespace {
@@ -303,5 +416,57 @@ ZHC_SHINA_TZ(kTzSihasScheduleTime,       kSpecScheduleTime,       "schedule_time
 ZHC_SHINA_TZ(kTzSihasValveStatus,        kSpecValveStatus,        "valve_status",        "hvacThermostat", 0x0201)
 
 #undef ZHC_SHINA_TZ
+
+// ── kTzSihasGasValveState (GCM-300Z) ───────────────────────────────
+//
+// Writes a genOnOff command (0x01 = on/OPEN, 0x00 = off/CLOSE) from the
+// `gas_valve_state` key. Accepts the "OPEN"/"CLOSE" strings z2m sends as
+// well as the bool/uint forms the SPA's attr-set path produces. Mirrors
+// z2m tzLocal.GCM300Z_valve_status. FC 0x11 = client→server, default
+// response disabled (same convention as the generic onOff command).
+namespace {
+
+bool tz_sihas_gas_valve_state(std::string_view key, const ::zhc::Value& input,
+                              const ::zhc::TzConverter&,
+                              const ::zhc::PreparedDefinition&,
+                              ::zhc::RuntimeContext&,
+                              std::span<std::uint8_t> out_frame,
+                              std::size_t& out_size) {
+    out_size = 0;
+    if (key != "gas_valve_state") return false;
+
+    std::uint8_t cmd;
+    if (input.type == ::zhc::ValueType::Bool) {
+        cmd = input.b ? 0x01 : 0x00;
+    } else if (input.type == ::zhc::ValueType::Uint) {
+        cmd = input.u ? 0x01 : 0x00;
+    } else if (input.type == ::zhc::ValueType::Int) {
+        cmd = input.i != 0 ? 0x01 : 0x00;
+    } else if (input.type == ::zhc::ValueType::StringRef && input.str) {
+        if      (std::strcmp(input.str, "OPEN")  == 0) cmd = 0x01;
+        else if (std::strcmp(input.str, "CLOSE") == 0) cmd = 0x00;
+        else return false;
+    } else {
+        return false;
+    }
+
+    if (out_frame.size() < 3) return false;
+    out_frame[0] = 0x11;     // FC: client→server, disable default response.
+    out_frame[1] = 0x00;     // TSN — platform adapter patches.
+    out_frame[2] = cmd;      // genOnOff command id (0x00 off / 0x01 on).
+    out_size = 3;
+    return true;
+}
+
+}  // namespace
+
+extern const ::zhc::TzConverter kTzSihasGasValveState{
+    .key         = "gas_valve_state",
+    .cluster     = "genOnOff",
+    .cluster_id  = 0x0006,
+    .command_id  = 0x00,    // encoded per-request (on/off).
+    .fn          = &tz_sihas_gas_valve_state,
+    .user_config = nullptr,
+};
 
 }  // namespace zhc::shinasystem

@@ -1,7 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Shinasystem USM-300ZB — auto-generated.
+// Tier 2: Shinasystem USM-300ZB — graduated from generated/.
 // SiHAS multipurpose sensor
+//
+// Generator miss: z2m's `fromZigbee: [fz.battery, fz.temperature,
+// fz.humidity, fz.occupancy]` plus `extend: [m.illuminance(...)]` was
+// lowered to battery+temperature+humidity only. The `occupancy` expose
+// was emitted but had NO decoder (msOccupancySensing 0x0406 never
+// reached the shadow), and the `illuminance` channel was dropped
+// entirely (no expose, no decoder, no 0x0400 binding). Re-added
+// kFzOccupancy + kFzIlluminance, the illuminance expose, and the
+// 0x0400 binding.
+//
 // z2m-source: shinasystem.ts #USM-300ZB.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/shinasystem/_shared.hpp"
@@ -12,6 +22,8 @@ const FzConverter* const kFz_USM_300ZB[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
+    &::zhc::generic::kFzOccupancy,
+    &::zhc::generic::kFzIlluminance,
 };
 
 constexpr const char* kModels_USM_300ZB[] = { "USM-300Z" };
@@ -26,6 +38,7 @@ constexpr Expose kAutoExposes[] = {
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -33,6 +46,7 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0402},
     {1, 0x0405},
     {1, 0x0406},
+    {1, 0x0400},
 };
 // --- end auto-generated block ---
 

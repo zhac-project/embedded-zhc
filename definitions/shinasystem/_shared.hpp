@@ -51,6 +51,31 @@ extern const FzConverter kFzSihasActionMulti;   // endpoint-prefixed
 //   "status"  (string: "idle"/"in"/"out" from the fractional digit)
 extern const FzConverter kFzSihasPeopleCnt;
 
+// DMS-300Z dual-motion sensor channel decoders. The device carries two
+// independent PIR sensors on separate clusters/endpoints:
+//   IN  sensor → msOccupancySensing (0x0406) attr 0x0000, emits
+//                `occupancy_in`  (z2m fzLocal.DMS300_IN).
+//   OUT sensor → ssIasZone (0x0500) commandStatusChangeNotification,
+//                zoneStatus bit 0, emits `occupancy_out`
+//                (z2m fzLocal.DMS300_OUT).
+// NOTE: z2m additionally derives `occupancy_or` / `occupancy_and` by
+// caching the opposite channel across messages (globalStore) — that
+// cross-message state is not modelled here, so only the two raw
+// channels are emitted. `occupancy_timeout` (writable config attr) is
+// likewise deferred.
+extern const FzConverter kFzSihasOccupancyIn;   // msOccupancySensing → occupancy_in
+extern const FzConverter kFzSihasOccupancyOut;  // ssIasZone bit0 → occupancy_out
+
+// GCM-300Z gas-valve state. The valve open/closed status rides on the
+// standard genOnOff attribute (0x0000): onOff==1 → "OPEN", 0 → "CLOSE".
+// z2m exposes this as a writable binary keyed `gas_valve_state` (rather
+// than the generic on/off `state` key), read via fzLocal.GCM300Z_valve_status
+// and written via tzLocal.GCM300Z_valve_status (an onOff command).
+// The generic kFzOnOff/kTzOnOff use the `state` key, which never matches
+// the `gas_valve_state` expose — hence these dedicated converters.
+extern const FzConverter kFzSihasGasValveState;  // genOnOff 0x0000 → gas_valve_state
+extern const TzConverter kTzSihasGasValveState;  // gas_valve_state → genOnOff on/off cmd
+
 // ── to-Zigbee ──────────────────────────────────────────────────────
 //
 // Every spec below targets a vendor-private attribute id in the 0x9000

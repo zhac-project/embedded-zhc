@@ -10,6 +10,35 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Four ShinaSystem (SiHAS) devices lost their primary channel to a
+  generator miss** — surfaced by a z2m↔embedded-zhc parity pass over the
+  40-def vendor.
+  - `USM-300ZB` multipurpose sensor exposed `occupancy` with no decoder and
+    dropped the illuminance channel entirely. z2m wires
+    `fromZigbee:[…fz.occupancy]` + `extend:[m.illuminance()]`. Re-added
+    `kFzOccupancy` + `kFzIlluminance`, the `illuminance` expose, and the
+    0x0400 binding.
+  - `OSM-300ZB` motion sensor (`extend:[m.occupancy(), m.battery()]`) was
+    lowered to battery-only; the `occupancy` expose had no decoder. Re-added
+    `kFzOccupancy` (msOccupancySensing, same shape as heiman HS1MIS-3.0).
+  - `DMS-300ZB` dual-motion sensor was battery-only with both PIR channels
+    dead. z2m reads `occupancy_in` (msOccupancySensing) and `occupancy_out`
+    (ssIasZone bit 0). Added two stateless vendor channel decoders
+    (`kFzSihasOccupancyIn` / `kFzSihasOccupancyOut`) and dropped the phantom
+    `occupancy` expose (z2m emits no such key). The derived
+    `occupancy_or`/`occupancy_and` (cross-message state) and writable
+    `occupancy_timeout` remain deferred as vendor infra.
+  - `GCM-300Z` gas valve had two bugs: `to_zigbee` was left null (every
+    writable control — valve, close_timeout, close_remain_timeout, volume,
+    overheat_mode — was dead) and the valve rode the generic on/off `state`
+    key while the expose is `gas_valve_state` ("OPEN"/"CLOSE"). Wired
+    `to_zigbee` and added dedicated `kFzSihasGasValveState` /
+    `kTzSihasGasValveState` converters (genOnOff attr/command ↔ OPEN/CLOSE).
+  All four defs were graduated from `definitions/shinasystem/generated/` to
+  Tier-2 parents. The ~22 SBM/SQM button-and-switch variants, the PMM power
+  meters, HQM/TCM thermostats, WCM outlet and the remaining sensors were
+  audited and found correct. Pinned by `tests/test_shinasystem_parity.cpp`.
+
 - **Custom devices (DiY) `ZeeFlora` and `b-parasite` soil sensors never
   decoded soil moisture** — both defs exposed `soil_moisture`, but no
   `kFzSoilMoisture` converter existed in `_generic/_shared` and the

@@ -1,7 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Shinasystem GCM-300Z — auto-generated.
+// Tier 2: Shinasystem GCM-300Z — graduated from generated/.
 // SiHAS gas valve
+//
+// Generator misses (two real bugs):
+//  1) `to_zigbee` was left null even though a kTz_GCM_300Z array was
+//     emitted — so EVERY writable control (valve, close_timeout,
+//     close_remain_timeout, volume, overheat_mode) was dead. Wired it.
+//  2) The valve read/write rode the generic on/off `state` key, but the
+//     device's primary control is exposed as `gas_valve_state`
+//     ("OPEN"/"CLOSE"). The generic kFzOnOff/kTzOnOff (key "state")
+//     never matched that expose, so valve status never reached the
+//     shadow and valve commands were dropped. Swapped in the dedicated
+//     kFzSihasGasValveState / kTzSihasGasValveState converters.
+//
 // z2m-source: shinasystem.ts #GCM-300Z.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/shinasystem/_shared.hpp"
@@ -10,10 +22,10 @@ namespace zhc::devices::shinasystem {
 namespace {
 const FzConverter* const kFz_GCM_300Z[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzOnOff,
+    &::zhc::shinasystem::kFzSihasGasValveState,
 };
 const TzConverter* const kTz_GCM_300Z[] = {
-    &::zhc::generic::kTzOnOff,
+    &::zhc::shinasystem::kTzSihasGasValveState,
     &::zhc::shinasystem::kTzSihasCloseTimeout,
     &::zhc::shinasystem::kTzSihasCloseRemainTimeout,
     &::zhc::shinasystem::kTzSihasVolume,
@@ -50,7 +62,7 @@ extern const PreparedDefinition kDef_GCM_300Z{
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
     .from_zigbee=kFz_GCM_300Z, .from_zigbee_count=sizeof(kFz_GCM_300Z)/sizeof(kFz_GCM_300Z[0]),
-    .to_zigbee=nullptr, .to_zigbee_count=0,
+    .to_zigbee=kTz_GCM_300Z, .to_zigbee_count=sizeof(kTz_GCM_300Z)/sizeof(kTz_GCM_300Z[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
