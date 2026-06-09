@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Wirenboard WB-MSW-ZIGBEE v.3 / v.4 dropped their `occupancy` and `co2`
+  channels** — found by a z2m↔embedded-zhc parity pass over the Wirenboard
+  vendor. Both multi-sensor ports declared `occupancy` and `co2` exposes and
+  bound the matching standard clusters (msOccupancySensing 0x0406, msCO2
+  0x040D), but neither wired an `from_zigbee` converter for them — so the PIR
+  occupancy flag and the CO2 reading never reached the shadow. z2m decodes
+  both via standard-cluster converters (`fz.occupancy`, `fz.co2`). Wired the
+  existing generic `kFzOccupancy` (attr 0x0000 bit 0) and added a new generic
+  `kFzCO2` (msCO2 attr 0x0000 single-precision float → `floor(value · 1e6)`
+  ppm, mirroring z2m `fz.co2`; tolerates already-scaled integer reports). Both
+  defs graduated from `generated/` to Tier-2 parents. The sprut custom-cluster
+  channels (noise, voc) and manuSpecific config writes remain deferred (no
+  generic decoder yet). Pinned by `tests/test_wirenboard_parity.cpp`.
 - **Legrand / BTicino / Netatmo battery remotes published a dead `state`
   instead of `action` button events** — found by a z2m↔embedded-zhc parity
   pass over the Legrand vendor. Seven wireless pushbuttons / scene remotes

@@ -614,6 +614,13 @@ extern const TzConverter kTzIasWdMaxDuration;
 // of the bitmap8 attribute. z2m fz.occupancy equivalent.
 extern const FzConverter kFzOccupancy;
 
+// msCO2 (0x040D) MeasuredValue 0x0000 — single-precision float carrying
+// the CO2 concentration as a mole fraction (e.g. 0.0004 = 400 ppm).
+// Mirrors z2m `fz.co2`: `co2 = floor(measuredValue * 1e6)` → ppm (uint).
+// Also tolerates already-scaled integer reports (some firmware pushes
+// raw ppm as a u16) by passing them through unscaled.
+extern const FzConverter kFzCO2;
+
 // hvacThermostat setpoint-limit attribute writes (INT16, 0.01 °C).
 // UNIT CONTRACT: caller supplies the already-scaled int (e.g.
 // 1500 = 15.00 °C). DIFFERENT from `kTzThermostat` setpoints above —

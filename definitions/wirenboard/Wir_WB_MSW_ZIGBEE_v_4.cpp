@@ -1,10 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Wirenboard WB-MSW-ZIGBEE v.4 — hand-rewritten from z2m source.
+// Tier 2: Wirenboard WB-MSW-ZIGBEE v.4 — hand-rewritten from z2m source.
 // Wall-mounted multi sensor — modernExtend variant of v.3 that adds
 // illuminance + an activity-indicator endpoint and grows the manuSpec
 // attribute set on `genBasic` and `sprutDevice`.
-// z2m-source: wirenboard.ts #WB-MSW-ZIGBEE v.4.
+// z2m-source: wirenboard.ts #WB-MSW-ZIGBEE v.4
+//             + converters/fromZigbee.ts fz.occupancy / fz.co2.
+//
+// Parity fix (graduated from generated/): like v.3, the `occupancy`
+// and `co2` exposes had no fz decoder wired. z2m wires fz.occupancy
+// (msOccupancySensing 0x0406) + fz.co2 (msCO2 0x040D) — both standard
+// clusters this device binds. Wired generic kFzOccupancy + new generic
+// kFzCO2 (see kFz array). Illuminance was already decoded.
 //
 // Endpoints:
 //   l1, l2, l3   — three on/off relays (cluster 0x0006).
@@ -34,6 +41,8 @@ const FzConverter* const kFz_WB_MSW_ZIGBEE_v_4[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzIlluminance,
+    &::zhc::generic::kFzOccupancy,   // msOccupancySensing 0x0406 → occupancy (z2m fz.occupancy)
+    &::zhc::generic::kFzCO2,         // msCO2 0x040D → co2 ppm        (z2m fz.co2)
 };
 const TzConverter* const kTz_WB_MSW_ZIGBEE_v_4[] = {
     &::zhc::generic::kTzOnOff,

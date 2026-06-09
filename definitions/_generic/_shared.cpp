@@ -3154,6 +3154,60 @@ extern const FzConverter kFzOccupancy{
     .user_config       = nullptr,
 };
 
+// ── msCO2 decoder ───────────────────────────────────────────────────
+//
+// Closes z2m fz.co2. Attribute 0x0000 (MeasuredValue) on the standard
+// msCO2 cluster (0x040D) is a single-precision float holding the CO2
+// mole fraction (0.0004 == 400 ppm); z2m emits
+// `co2: Math.floor(measuredValue * 1000000)` → ppm. We mirror that:
+// read the Float, scale by 1e6, floor, emit `co2` as Uint ppm.
+// A few firmwares report the value as an already-scaled integer ppm on
+// the same attr — pass those through unscaled so we never report a
+// wildly wrong 1e6× value. Used by Wirenboard WB-MSW-ZIGBEE-v3/v4 and
+// any other vendor binding the standard msCO2 cluster.
+
+namespace {
+
+bool fz_co2(const DecodedMessage& msg,
+             const FzConverter&,
+             const PreparedDefinition&,
+             RuntimeContext&,
+             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");   // attr 0x0000 MeasuredValue
+    if (!v) return false;
+    Value o{}; o.type = ValueType::Uint;
+    if (v->type == ValueType::Float) {
+        if (v->f < 0.0f) return false;        // invalid / unmeasured
+        o.u = static_cast<std::uint64_t>(v->f * 1000000.0f);
+    } else if (v->type == ValueType::Uint) {
+        o.u = v->u;                           // already ppm
+    } else if (v->type == ValueType::Int) {
+        if (v->i < 0) return false;
+        o.u = static_cast<std::uint64_t>(v->i);
+    } else {
+        return false;
+    }
+    out.put("co2", o);
+    return true;
+}
+
+}  // namespace
+
+extern const FzConverter kFzCO2{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "msCO2",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_co2 },
+    .user_config       = nullptr,
+};
+
 // ── hvacThermostat setpoint-limit attribute writes ──────────────────
 //
 // Closes z2m tz.thermostat_min_heat_setpoint_limit /

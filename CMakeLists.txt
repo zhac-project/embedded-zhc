@@ -1110,6 +1110,11 @@ target_link_libraries(zhc_zemismart_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_shinasystem_parity_tests tests/test_shinasystem_parity.cpp)
 target_link_libraries(zhc_shinasystem_parity_tests PRIVATE zhc_definitions)
 
+# Wirenboard WB-MSW-ZIGBEE v.3/v.4 — occupancy + co2 channels were
+# declared but undecoded; wired kFzOccupancy + new generic kFzCO2.
+add_executable(zhc_wirenboard_parity_tests tests/test_wirenboard_parity.cpp)
+target_link_libraries(zhc_wirenboard_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1209,6 +1214,7 @@ add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
+add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)

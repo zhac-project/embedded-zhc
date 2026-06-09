@@ -1,9 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Wirenboard WB-MSW-ZIGBEE v.3 — hand-rewritten from z2m source.
+// Tier 2: Wirenboard WB-MSW-ZIGBEE v.3 — hand-rewritten from z2m source.
 // Wall-mounted multi sensor (temperature, humidity, occupancy, CO2,
 // VOC, noise + 3 on/off relays on endpoints l1/l2/l3).
-// z2m-source: wirenboard.ts #WB-MSW-ZIGBEE v.3.
+// z2m-source: wirenboard.ts #WB-MSW-ZIGBEE v.3
+//             + converters/fromZigbee.ts fz.occupancy / fz.co2.
+//
+// Parity fix (graduated from generated/): the `occupancy` and `co2`
+// exposes were declared but no fz converter decoded them. z2m wires
+// fz.occupancy (msOccupancySensing 0x0406) and fz.co2 (msCO2 0x040D);
+// both are standard clusters this device already binds + reports on.
+// Wired the generic kFzOccupancy + the new generic kFzCO2 — see the
+// kFz array below.
 //
 // Manufacturer code: 0x6666 (CUSTOM_SPRUT_DEVICE).
 // Custom clusters used by the device:
@@ -16,13 +24,15 @@
 // Plus manuSpec attrs piggy-backed onto standard clusters
 // (msTemperatureMeasurement.sprutTemperatureOffset, etc.).
 //
-// The current generic kFz/kTz set only ships kFzOnOff + kFzTemperature
-// + kFzHumidity + kFzIlluminance — the sprut-coded writes for
-// occupancy_timeout, noise_timeout, th_heater, etc. need a future
-// `wirenboard/_shared.{hpp,cpp}` bundle (Tier 2). For now the exposes
-// list keeps those attributes Access::State so the shadow accepts the
-// values the device pushes, and the binding list registers the
-// standard clusters the device is reporting on.
+// The sprut-coded writes for occupancy_timeout, noise_timeout,
+// th_heater, etc. still need a future `wirenboard/_shared.{hpp,cpp}`
+// bundle (those ride manuSpecific attrs on custom/standard clusters
+// with no generic converter yet). For now the exposes list keeps those
+// config attributes Access::State so the shadow accepts the values the
+// device pushes, and the binding list registers the standard clusters
+// the device reports on. The live sensor surface (temperature,
+// humidity, occupancy, co2) is fully decoded; noise / voc remain on the
+// sprut custom clusters (no generic decoder — deferred infra).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::wirenboard {
@@ -32,6 +42,8 @@ const FzConverter* const kFz_WB_MSW_ZIGBEE_v_3[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
+    &::zhc::generic::kFzOccupancy,   // msOccupancySensing 0x0406 → occupancy (z2m fz.occupancy)
+    &::zhc::generic::kFzCO2,         // msCO2 0x040D → co2 ppm        (z2m fz.co2)
 };
 const TzConverter* const kTz_WB_MSW_ZIGBEE_v_3[] = {
     &::zhc::generic::kTzOnOff,
