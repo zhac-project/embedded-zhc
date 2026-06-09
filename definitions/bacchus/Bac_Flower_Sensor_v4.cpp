@@ -1,22 +1,33 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Bacchus Flower_Sensor_v4 — generic converters only.
+// Tier 2: Bacchus Flower_Sensor_v4 — generic converters + soil moisture.
 // Soil moisture / temperature / illuminance plant sensor.
-// z2m-source: bacchus.ts #Flower_Sensor_v4.
+// z2m-source: bacchus.ts #Flower_Sensor_v4 (extend: [m.soilMoisture(),
+// m.temperature(), m.illuminance(), ..., m.battery()]).
 //
 // Coverage shape:
-//   - kFzTemperature → msTemperatureMeasurement (0x0402) — °C.
-//   - kFzIlluminance → msIlluminanceMeasurement (0x0400) — lx.
-//   - kFzBattery     → genPowerCfg (0x0001) — battery + voltage.
+//   - kFzSoilMoisture → msSoilMoisture (0x0408) measuredValue, u16 /100 → %.
+//   - kFzTemperature  → msTemperatureMeasurement (0x0402) — °C.
+//   - kFzIlluminance  → msIlluminanceMeasurement (0x0400) — lx.
+//   - kFzBattery      → genPowerCfg (0x0001) — battery + voltage.
 //
-// Gap: msSoilMoisture (0x0408) — same as Flower_Sensor_v2; not in Tier-1
-// generic. The v4 firmware adds manu battery attrs 0x0204/0x0205 on
-// genPowerCfg which the generic kFzBattery does not surface either.
+// Bug fixed (parity pass): same as Flower_Sensor_v2 — `soil_moisture` is
+// the headline measurement (z2m `m.soilMoisture()` on 0x0408) but the
+// generated Tier-1 def dropped it. kFzSoilMoisture now exists in
+// _generic/_shared — wired here. Graduated generated/ → parent.
+//
+// Still not decoded (not a parity gap): report_delay/threshold are
+// msSoilMoisture manu write attrs 0x0202/0x0203; tx_radio_power /
+// smart_sleep / thermal_compensation are extra v4 manu attrs (0x0206 +
+// genOnOff manu). All write-side, need a vendor TZ helper. The v4 also
+// adds manu battery attrs 0x0204/0x0205 on genPowerCfg that the generic
+// kFzBattery does not surface. Listed in exposes for discoverability.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::bacchus {
 namespace {
 const FzConverter* const kFz_Flower_Sensor_v4[] = {
+    &::zhc::generic::kFzSoilMoisture,
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzIlluminance,
     &::zhc::generic::kFzBattery,

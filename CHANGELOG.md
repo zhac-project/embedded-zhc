@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Bacchus Flower_Sensor_v2 / Flower_Sensor_v4 never decoded `soil_moisture`,
+  their headline measurement** — found by a z2m↔embedded-zhc parity pass over
+  the Bacchus vendor. z2m reports soil moisture via `m.soilMoisture()` on
+  msSoilMoisture (0x0408), but both generated Tier-1 defs only wired
+  `kFzTemperature`/`kFzIlluminance`/`kFzBattery`, so every soil report silently
+  dropped — the sensors surfaced temperature/illuminance/battery but not the
+  one channel a flower sensor exists for. The generic `kFzSoilMoisture`
+  converter (0x0408 measuredValue, u16 / 100 → %; added earlier for the sibling
+  custom_devices_diy / diyruz / efekta flower sensors) already existed but was
+  never referenced. Wired `&generic::kFzSoilMoisture` into both defs and
+  graduated them from `generated/` to Tier-2 parents. Remaining undecoded
+  channels (report_delay/threshold and the v4 tx_radio_power/smart_sleep/
+  thermal_compensation) are write-side manufacturer-specific attributes that
+  need a vendor TZ helper and are out of scope for this measurement-parity fix.
+  Pinned by `tests/test_bacchus_parity.cpp`.
 - **Halo Smart Labs HALO / HALO+ smoke + CO detectors dropped their entire
   safety-sensor channel set** — found by a z2m↔embedded-zhc parity pass over the
   Halo Smart Labs vendor. Both generated defs were battery+on/off stubs: they

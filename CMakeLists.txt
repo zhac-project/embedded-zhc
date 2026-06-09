@@ -1056,6 +1056,15 @@ target_link_libraries(zhc_bosch_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_shelly_parity_tests tests/test_shelly_parity.cpp)
 target_link_libraries(zhc_shelly_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Bacchus DIY flower / soil sensors. Flower_Sensor_v2
+# and Flower_Sensor_v4 both expose `soil_moisture` (z2m m.soilMoisture() on
+# msSoilMoisture 0x0408 — the headline measurement) but the generated Tier-1
+# defs never wired generic::kFzSoilMoisture, so every soil report silently
+# dropped. Wired it (converter already existed for custom_devices_diy/diyruz/
+# efekta flower sensors) and graduated both defs to Tier-2. See tests/README.md.
+add_executable(zhc_bacchus_parity_tests tests/test_bacchus_parity.cpp)
+target_link_libraries(zhc_bacchus_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Ubisys family. H1/H10 thermostats declared
 # pi_heating_demand + running_mode exposes that the generic kFzThermostat
 # never decoded (attrs 0x0008/0x001E) — wired kFzUbisysThermostatExtras
@@ -1217,6 +1226,7 @@ add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
+add_test(NAME zhc_bacchus_parity_tests      COMMAND zhc_bacchus_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_lincukoo_parity_tests     COMMAND zhc_lincukoo_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)

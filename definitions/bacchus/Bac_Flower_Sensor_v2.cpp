@@ -1,22 +1,31 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Bacchus Flower_Sensor_v2 — generic converters only.
+// Tier 2: Bacchus Flower_Sensor_v2 — generic converters + soil moisture.
 // Soil moisture / temperature plant sensor.
-// z2m-source: bacchus.ts #Flower_Sensor_v2.
+// z2m-source: bacchus.ts #Flower_Sensor_v2 (extend: [m.soilMoisture(),
+// m.temperature(), ..., m.battery()]).
 //
 // Coverage shape:
-//   - kFzTemperature → msTemperatureMeasurement (0x0402) — °C.
-//   - kFzBattery     → genPowerCfg (0x0001) — battery + voltage.
+//   - kFzSoilMoisture → msSoilMoisture (0x0408) measuredValue, u16 /100 → %.
+//   - kFzTemperature  → msTemperatureMeasurement (0x0402) — °C.
+//   - kFzBattery      → genPowerCfg (0x0001) — battery + voltage.
 //
-// Gap: Soil moisture (msSoilMoisture, cluster 0x0408) — there's no
-// `kFzSoilMoisture` in Tier-1 generic. Listed in exposes for parity but
-// not decoded today. Adding it to `_generic/_shared.{hpp,cpp}` is the
-// natural next step (single-attr u16 % shape, mirrors kFzHumidity).
+// Bug fixed (parity pass): `soil_moisture` is the headline measurement
+// (z2m `m.soilMoisture()` on msSoilMoisture 0x0408), but the generated
+// Tier-1 def only wired kFzTemperature + kFzBattery, so every soil report
+// silently dropped. kFzSoilMoisture now exists in _generic/_shared (added
+// for the sibling custom_devices_diy/diyruz/efekta flower sensors) — wired
+// here. Graduated generated/ → parent to do so.
+//
+// Still not decoded (manu attrs, not a parity gap): report_delay /
+// threshold are msSoilMoisture manu attrs 0x0202/0x0203 (write-side,
+// need a vendor TZ helper); listed in exposes for discoverability.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::bacchus {
 namespace {
 const FzConverter* const kFz_Flower_Sensor_v2[] = {
+    &::zhc::generic::kFzSoilMoisture,
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzBattery,
 };
