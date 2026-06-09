@@ -1258,6 +1258,15 @@ target_link_libraries(zhc_pushok_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_osram_parity_tests tests/test_osram_parity.cpp)
 target_link_libraries(zhc_osram_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Müller-Licht (tint) battery remotes. The three
+# remotes (MLI-404011/404049, 404022/404049C, 404002) advertised action
+# enums for colour-wheel / store events the auto-generated ports never
+# wired. Graduated to Tier-2 parents wiring kFzCommandMoveToColor (+
+# MoveToColorTemp on 404011) and kFzCommandStore. scene_<n> stays a
+# pinned INFRA gap (fz.tint_scene needs Write-attr payload parsing).
+add_executable(zhc_muller_licht_parity_tests tests/test_muller_licht_parity.cpp)
+target_link_libraries(zhc_muller_licht_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Ubisys family. H1/H10 thermostats declared
 # pi_heating_demand + running_mode exposes that the generic kFzThermostat
 # never decoded (attrs 0x0008/0x001E) — wired kFzUbisysThermostatExtras
@@ -1584,6 +1593,7 @@ add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
 add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)
 add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
+add_test(NAME zhc_muller_licht_parity_tests COMMAND zhc_muller_licht_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)

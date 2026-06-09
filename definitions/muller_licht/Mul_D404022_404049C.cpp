@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: MullerLicht 404022/404049C — hand-rewritten from a wrong on/off bundle.
+// Tier 2: MullerLicht 404022/404049C — hand-rewritten from a wrong on/off bundle.
 // Tint dim remote control (10-scene RGB+CCT remote).
 // z2m-source: muller_licht.ts #404022/404049C.
 //
@@ -8,10 +8,17 @@
 //   command_on, command_off, command_step, command_move, command_stop,
 //   command_move_to_color_temp, command_move_to_color, tint_scene
 //
-// Standard genOnOff/genLevelCtrl path covers on/off/step/move/stop. The
-// colour wheels and the ten stored `tint_scene` recalls degrade
-// silently (no shared decoder for command_move_to_color or the Tint-
-// private tint_scene yet). See docs/MULLER_LICHT_PARITY.md.
+// genOnOff/genLevelCtrl covers on/off/step/move/stop and
+// kFzCommandMoveToColorTemp covers color_temperature_move. The colour
+// wheel is now wired too:
+//   * color_move ← kFzCommandMoveToColor (lightingColorCtrl cmd 0x07).
+// Previously color_move was a dead enum entry with no decoder.
+//
+// scene_1..10 (z2m `fz.tint_scene`, a genBasic *Write Attributes* of attr
+// 0x4005) still degrade silently: the foundation Write-attribute parser
+// does not populate `msg.payload`, so the generic kFzTintScene converter
+// can never fire. Wiring it would be inert — INFRA gap, see
+// docs/MULLER_LICHT_PARITY.md.
 //
 // Both `zigbeeModel: ["tint-Remote-white"]` and the Tuya-rebrand
 // fingerprint `{modelID: "Remote Control", manufacturerName: "MLI"}`
@@ -26,7 +33,8 @@ const FzConverter* const kFz_D404022_404049C[] = {
     &::zhc::generic::kFzCommandStep,
     &::zhc::generic::kFzCommandMove,
     &::zhc::generic::kFzCommandStop,
-    &::zhc::generic::kFzCommandMoveToColorTemp,
+    &::zhc::generic::kFzCommandMoveToColorTemp,  // color_temperature_move
+    &::zhc::generic::kFzCommandMoveToColor,      // color_move
 };
 
 constexpr const char* kModels_D404022_404049C[] = { "tint-Remote-white", "Remote Control" };

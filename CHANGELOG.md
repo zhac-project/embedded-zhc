@@ -10,6 +10,32 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Müller-Licht (tint) battery remotes — advertised colour-wheel and
+  store actions were dead enum entries with no decoder.** The three tint
+  remotes shipped `action` enums matching z2m but only wired the
+  genOnOff/genLevelCtrl command decoders, so several advertised events
+  could never surface. Graduated all three from `generated/` to Tier-2
+  parent overrides and wired the generic command decoders that already
+  exist (used by paulmann/legrand):
+  - **MLI-404011/MLI-404049** — added `kFzCommandMoveToColorTemp`
+    (`color_temperature_move`, z2m `fz.tint404011_move_to_color_temp` — the
+    bare string matches; z2m's `_up`/`_down` suffix is internal
+    state-tracking, not on the wire) and `kFzCommandMoveToColor`
+    (`color_move`, `fz.command_move_to_color`).
+  - **404022/404049C** — added `kFzCommandMoveToColor` (`color_move`);
+    `color_temperature_move` was already wired.
+  - **404002** — added `kFzCommandStore` (`store_1`, `fz.command_store`);
+    `recall_1` already decoded via `kFzCommandRecall`.
+
+  `scene_<n>` (z2m `fz.tint_scene`) stays a deliberately unwired INFRA
+  gap: it decodes a genBasic *Write Attributes* of attr 0x4005, but the
+  foundation Write-attribute parser does not populate `DecodedMessage`'s
+  payload, so the generic `kFzTintScene` converter can never fire — wiring
+  it would be inert. Tracked for a shared Write-attr parser fix. New
+  fixture `tests/test_muller_licht_parity.cpp` pins the restored
+  colour-wheel + store decodes (and the recall sanity path) and pins the
+  scene gap so a future parser fix flips it intentionally.
+
 - **MindY Leleka air-quality monitor — the `co2` channel was silently
   dropped.** The def declared a `co2` expose and bound the standard msCO2
   cluster (0x040D) but omitted the decoder from its from-zigbee list; its

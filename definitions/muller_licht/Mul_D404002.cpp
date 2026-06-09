@@ -1,13 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: MullerLicht 404002 — hand-rewritten from a wrong on/off bundle.
+// Tier 2: MullerLicht 404002 — hand-rewritten from a wrong on/off bundle.
 // Tint dim remote control.
 // z2m-source: muller_licht.ts #404002.
 //
 // z2m fromZigbee: command_on, command_off, command_step, command_move,
 // command_stop, command_recall, command_store. Single-zone dim remote —
-// every command has a generic decoder. PARTIAL only on `command_store`
-// (no shared decoder yet); the rest emit clean `action=<event>` strings.
+// every command now has a generic decoder. `store_1` ← kFzCommandStore
+// (genScenes commandStore cmd 0x04); previously the store action was a
+// dead enum entry while recall_1 already worked via kFzCommandRecall.
 //
 // Battery-only remote — no to_zigbee path. Bindings cover on/off,
 // level control, and scenes, matching z2m's `configure(...)` block.
@@ -22,6 +23,7 @@ const FzConverter* const kFz_D404002[] = {
     &::zhc::generic::kFzCommandMove,
     &::zhc::generic::kFzCommandStop,
     &::zhc::generic::kFzCommandRecall,
+    &::zhc::generic::kFzCommandStore,   // store_1
 };
 
 constexpr const char* kModels_D404002[] = { "ZBT-DIMController-D0800" };
