@@ -2,6 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0
 // Vendor-parity rewrite: Avatto ME168_AVATTO — Thermostatic radiator valve.
 // z2m-source: avatto.ts #ME168_AVATTO (fingerprint TS0601 / _TZE200_ybsqljjg, _TZE200_cxakecfo, _TZE200_4aijvczq, _TZE200_r5ksy7qo).
+// Tier 2: DP47 local_temperature_calibration divisor fixed 100 -> 1. z2m wires
+// `localTempCalibration2`, whose decode is identity (from: (v) => v) — the value
+// is already in whole degrees (withLocalTemperatureCalibration(-30,30,1)). The
+// generated /100 divisor turned a +3 °C offset into 0.03 °C (100x under-read).
+// (TRV26/TRV60 use `localTempCalibration1` = v/10, correctly divisor=10.)
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 namespace zhc::devices::avatto {
@@ -61,7 +66,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE200_4aijvczq[] = {
     { 35, "error_status", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 36, "frost_protection", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 39, "scale_protection", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
-    { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 101, "comfort_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 103, "boost_time", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 104, "boost_timeset_countdown", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },

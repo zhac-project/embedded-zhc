@@ -10,6 +10,32 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Avatto ME168_AVATTO TRV temperature calibration read 100× too small, and
+  the ZDMS16-1 / ZDMS16-2 dimmers reported the wrong `switch_type`** — found
+  by a z2m↔embedded-zhc parity pass over the 11 existing Avatto defs (all
+  Tuya-OEM TS0601 datapoint devices plus one TS0011 on/off module). The rest
+  of the catalogue (the ME168/TRV26/TRV60 thermostats, the ZWPM16/ZWPM16-2
+  energy meters, the ZWSH16 temp/humidity sensor, the ZBS16 boiler switch and
+  the LZWSM16-1 module) is at parity. Three auto-generated DP-table decode
+  bugs were fixed: (1) `ME168_AVATTO` (`_TZE200_4aijvczq`) DP47
+  `local_temperature_calibration` carried `divisor=100`, but z2m wires
+  `localTempCalibration2`, whose decode is identity — the wire value is
+  already in whole degrees (`withLocalTemperatureCalibration(-30, 30, 1)`), so
+  a +3 °C offset surfaced as 0.03 °C (TRV26/TRV60 use `localTempCalibration1`
+  = v/10, correctly `divisor=10`); (2) `ZDMS16-1` (`_TZE204_5cuocqty`) DP4
+  `switch_type` used the generic `switchType` enum order
+  `{momentary:0, toggle:1, state:2}` instead of z2m's `switchType2`
+  `{toggle:0, state:1, momentary:2}`, mislabelling every reading; (3)
+  `ZDMS16-2` (`_TZE204_o9gyszw2`) had the same `switch_type` bug on BOTH
+  channels (DP4 + DP10). The sibling `ZDMS16-US-W2` (`_TZE204_sdykkwsu`)
+  already used the correct `switchType2` order and was left unchanged. All
+  three defs were graduated to Tier-2 parent overrides. The dimmer
+  brightness/min/max DPs (z2m `scale0_254to0_1000`, 0–1000 wire) were verified
+  as a deliberate codebase-wide passthrough convention (`divisor=1`, exposed
+  device-native 0–1000) and are not a per-vendor gap. New
+  `tests/test_avatto_parity.cpp` pins the corrected calibration scale and
+  `switch_type` labels decoded off the 0xEF00 wire.
+
 - **Innr SP 120 / SP 234 / SP 240 (incl. SP 242/244) / OSP 240 metering
   plugs were dropping the current + voltage channels** — found by a
   z2m↔embedded-zhc parity pass over the Innr vendor (116 defs). Innr is

@@ -2,15 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 // Vendor-parity rewrite: Avatto ZDMS16-1 — 1 channel dimmer.
 // z2m-source: avatto.ts #ZDMS16-1 (fingerprint TS0601 / _TZE204_5cuocqty, _TZE204_nqqylykc, _TZE204_2cyb66xl, _TZE204_tgdnh7pw, _TZE284_nqqylykc).
+// Tier 2: DP4 switch_type enum re-ordered to z2m `switchType2`
+// {toggle:0, state:1, momentary:2}. The generated table used the generic
+// `switchType` order {momentary:0, toggle:1, state:2}, so every reading was
+// mislabelled (wire 0 -> "momentary" instead of "toggle", etc.).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 namespace zhc::devices::avatto {
 namespace {
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_5cuocqty_switch_type_dp4[] = {
-    { 0, "momentary" },
-    { 1, "toggle" },
-    { 2, "state" },
+    { 0, "toggle" },
+    { 1, "state" },
+    { 2, "momentary" },
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_5cuocqty_power_on_behavior_dp14[] = {

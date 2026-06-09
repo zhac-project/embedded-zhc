@@ -1165,6 +1165,16 @@ target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_zemismart_parity_tests tests/test_zemismart_parity.cpp)
 target_link_libraries(zhc_zemismart_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Avatto family (Tuya-OEM TS0601 DP devices). Three
+# auto-generated DP-table decode bugs fixed: ME168_AVATTO DP47 calibration
+# divisor 100->1 (z2m localTempCalibration2 is identity), and ZDMS16-1 +
+# ZDMS16-2 (both channels) switch_type enums re-ordered from the generic
+# switchType order to z2m switchType2 {toggle:0,state:1,momentary:2}. Pins the
+# corrected calibration scale + switch_type labels on the 0xEF00 wire. See
+# tests/README.md.
+add_executable(zhc_avatto_parity_tests tests/test_avatto_parity.cpp)
+target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the ShinaSystem (SiHAS) family. Generator misses left
 # several primary sensor/control channels dead: USM/OSM/DMS exposed
 # occupancy with no decoder (and USM dropped illuminance), and GCM-300Z's
@@ -1292,6 +1302,7 @@ add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
+add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
