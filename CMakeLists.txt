@@ -1320,6 +1320,14 @@ target_link_libraries(zhc_wirenboard_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_niko_parity_tests tests/test_niko_parity.cpp)
 target_link_libraries(zhc_niko_parity_tests PRIVATE zhc_definitions)
 
+# Perenio — PEHWE20 two-channel relay was missing `endpoint_map`, so its
+# `_l1`/`_l2` exposes never populated (both channels collided on the bare
+# `state`/`power_on_behavior`/`switch_type` keys). Graduated to Tier-2 +
+# added the map. Tests pin per-endpoint key suffixing, the perenioSpecific
+# smart-plug decode (PEHPL0X), and the IAS sensor semantic keys.
+add_executable(zhc_perenio_parity_tests tests/test_perenio_parity.cpp)
+target_link_libraries(zhc_perenio_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1439,6 +1447,7 @@ add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
+add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)

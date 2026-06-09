@@ -10,6 +10,26 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Perenio PEHWE20 two-channel mini-relay could not distinguish its two
+  switch channels** — found by a z2m↔embedded-zhc parity pass over the 5
+  Perenio defs. The def declared per-endpoint exposes
+  (`state_l1`/`state_l2`, `power_on_behavior_l1`/`_l2`,
+  `switch_type_l1`/`_l2`, mirroring z2m's `endpoint: () => ({l1: 1, l2: 2})`
+  + `withEndpoint(...)`) but was missing the `endpoint_map` field. The
+  dispatcher only rewrites emitted Fz keys to `<key>_<label>` when
+  `endpoint_map` is populated, so the bare `state`/`power_on_behavior`/
+  `switch_type` keys the converters emit were never suffixed: both
+  channels collided on the same unsuffixed key (last-writer-wins) and the
+  declared `_l1`/`_l2` exposes never populated; outbound writes to
+  `state_l2` had no endpoint to route to. Added
+  `endpoint_map = {{"l1", 1}, {"l2", 2}}` and graduated the def to a
+  Tier-2 parent override. Diagnostic reports (haDiagnostic on EP10, not in
+  the map) correctly stay unsuffixed — `last_message_lqi`/`rssi` are
+  device-global. The plug (PEHPL0X: `perenioSpecific` smart-plug decode +
+  `seMetering`) and the three IAS sensors (PECMS01 occupancy, PECWS01
+  contact, PECLS01 water_leak) were already at parity. New fixture
+  `tests/test_perenio_parity.cpp`.
+
 - **Siglis zigfred plus (ZFP-1A-CH) and uno (ZFU-1D-CH) dropped the
   front-surface RGB LED and never decoded button presses** — found by a
   z2m↔embedded-zhc parity pass over the 2 Siglis defs. (1) EP5

@@ -1,13 +1,18 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Perenio PEHWE20 — hand-rewritten (vendor parity sweep).
+// Tier 2: Perenio PEHWE20 — hand-rewritten (vendor parity sweep).
 // Two-channel single-wire mini-relay (l1=ep1, l2=ep2, diag=ep10).
-// z2m-source: perenio.ts #PEHWE20.
+// z2m-source: perenio.ts #PEHWE20 (endpoint: {l1: 1, l2: 2}).
 //
 // Adds power_on_behavior + switch_type + diagnostic LQI/RSSI relative
 // to the previous auto-generated stub. Multi-endpoint exposes follow
-// z2m's `withEndpoint("l1"/"l2")` shape; v1 dispatch keeps the keys
-// flat and the platform layer handles per-endpoint demux.
+// z2m's `withEndpoint("l1"/"l2")` shape. The state/power_on_behavior/
+// switch_type converters emit bare keys; the dispatcher rewrites them
+// to `<key>_<label>` per `endpoint_map` + src_endpoint, so ep1 → `_l1`
+// and ep2 → `_l2`. Without the map both channels would collide on the
+// same unsuffixed key (last-writer-wins) and the `_l1`/`_l2` exposes
+// would never populate. Diagnostic reports arrive on ep10 (not in the
+// map) → `last_message_lqi`/`rssi` stay unsuffixed (device-global).
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/perenio/_shared.hpp"
 
@@ -57,6 +62,11 @@ constexpr BindingSpec kAutoBindings[] = {
     {10, 0x0B05},   // haDiagnostic
 };
 
+// Multi-endpoint demux: ep1 → "l1", ep2 → "l2" (mirrors z2m
+// `endpoint: () => ({l1: 1, l2: 2})`). Drives Fz key suffixing and
+// Tz outbound routing for state / power_on_behavior / switch_type.
+constexpr ::zhc::EndpointLabel kEndpoints_PEHWE20[] = { {"l1", 1}, {"l2", 2} };
+
 extern const PreparedDefinition kDef_PEHWE20{
     .zigbee_models=kModels_PEHWE20, .zigbee_models_count=sizeof(kModels_PEHWE20)/sizeof(kModels_PEHWE20[0]),
     .manufacturer_name_prefix=nullptr,
@@ -68,6 +78,8 @@ extern const PreparedDefinition kDef_PEHWE20{
     .to_zigbee=kTz_PEHWE20, .to_zigbee_count=sizeof(kTz_PEHWE20)/sizeof(kTz_PEHWE20[0]),
     .configure=nullptr, .on_event=nullptr,
     .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .endpoint_map=kEndpoints_PEHWE20,
+    .endpoint_map_count=sizeof(kEndpoints_PEHWE20)/sizeof(kEndpoints_PEHWE20[0]),
 };
 
 }  // namespace zhc::devices::perenio
