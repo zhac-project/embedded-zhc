@@ -1,16 +1,22 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Orvibo T40S6Z.
+// Tier 2: Orvibo T40S6Z — graduated from generated/ to decode button actions.
 // MixSwitch 6 gangs
-// z2m-source: orvibo.ts #T40S6Z.
-// BLOCKED — z2m fz.orvibo_raw_2 emits 6 button_N_click actions on a raw
-// cluster. Same gap as CR11S8UZ. Stub only.
+// z2m-source: orvibo.ts #T40S6Z (fz.orvibo_raw_2).
+//
+// The generated stub wired the generic kFzOnOff behind a `state` expose,
+// but z2m treats this as a stateless scene remote: `fz.orvibo_raw_2`
+// decodes a vendor-private raw frame on cluster 0x0017 into `action` =
+// "button_<n>_<click|hold|release>" (z2m exposes button_1..6_click).
+// Wired the shared kFzOrviboRaw2Action converter + `action` expose; the
+// dead `state` is dropped. See orvibo/_shared.{hpp,cpp}.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/orvibo/_shared.hpp"
 
 namespace zhc::devices::orvibo {
 namespace {
 const FzConverter* const kFz_T40S6Z[] = {
-    &::zhc::generic::kFzOnOff,
+    &::zhc::orvibo::kFzOrviboRaw2Action,
 };
 constexpr const char* kModels_T40S6Z[] = { "bcb949e87e8c4ea6bc2803052dd8fbf5" };
 
@@ -18,7 +24,10 @@ constexpr const char* kModels_T40S6Z[] = { "bcb949e87e8c4ea6bc2803052dd8fbf5" };
 
 
 constexpr Expose kAutoExposes[] = {
-    {"state", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    // z2m exposes e.action(["button_1_click".."button_6_click"]); ZHC has
+    // no enum/list action type, so this stays String/State. The action
+    // strings are produced by kFzOrviboRaw2Action.
+    {"action", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

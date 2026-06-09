@@ -1,17 +1,22 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Orvibo CR11S8UZ.
+// Tier 2: Orvibo CR11S8UZ — graduated from generated/ to decode button actions.
 // Smart sticker switch
-// z2m-source: orvibo.ts #CR11S8UZ.
-// BLOCKED — z2m fz.orvibo_raw_1 decodes a vendor-private raw cluster
-// (0x0017) into 12 button_N_click/_hold/_release actions. ZHC has no raw-
-// cluster decoder; shipped as state-only stub until a per-device fz lands.
+// z2m-source: orvibo.ts #CR11S8UZ (fz.orvibo_raw_1).
+//
+// The generated stub wired the generic kFzOnOff behind a `state` expose,
+// but this is a stateless 4-button scene remote with no genOnOff relay.
+// z2m decodes a vendor-private raw frame on cluster 0x0017 via
+// `fz.orvibo_raw_1`, publishing `action` = "button_<1-4>_<click|hold|
+// release>". Wired the shared kFzOrviboRaw1Action converter + `action`
+// expose; the dead `state` is dropped. See orvibo/_shared.{hpp,cpp}.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/orvibo/_shared.hpp"
 
 namespace zhc::devices::orvibo {
 namespace {
 const FzConverter* const kFz_CR11S8UZ[] = {
-    &::zhc::generic::kFzOnOff,
+    &::zhc::orvibo::kFzOrviboRaw1Action,
 };
 constexpr const char* kModels_CR11S8UZ[] = { "3c4e4fc81ed442efaf69353effcdfc5f", "51725b7bcba945c8a595b325127461e9" };
 
@@ -19,7 +24,10 @@ constexpr const char* kModels_CR11S8UZ[] = { "3c4e4fc81ed442efaf69353effcdfc5f",
 
 
 constexpr Expose kAutoExposes[] = {
-    {"state", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    // z2m exposes e.action(["button_1_click".."button_4_release"]); ZHC has
+    // no enum/list action type, so this stays String/State. The action
+    // strings are produced by kFzOrviboRaw1Action.
+    {"action", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

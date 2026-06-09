@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Orvibo CR11S8UZ + T40S6Z scene remotes emitted nothing on a button
+  press** — found by a z2m↔embedded-zhc parity pass over the 38 Orvibo defs
+  (the IAS sensors SN10ZW/SM10ZW/SM20/SW21/SW30 already use the typed
+  `kFzIas<Type>Alarm` converters, the AM25/W40CZ/W45CZ/CM10ZW curtain motors
+  already decode `position` on `closuresWindowCovering`, and the multi-gang
+  switches/dimmers/sensors are at parity). Both remotes were auto-generated as
+  state-only stubs wiring the generic `kFzOnOff` behind a Binary `state`
+  expose, but they are stateless scene remotes with no genOnOff relay: z2m
+  decodes a vendor-private raw frame on the Orvibo cluster (id 0x0017) via
+  `fz.orvibo_raw_1` / `fz.orvibo_raw_2`, publishing an `action` string
+  (`"button_<n>_<click|hold|release>"`). The entire button-action surface was
+  lost. Added two shared raw-frame decoders (`kFzOrviboRaw1Action` /
+  `kFzOrviboRaw2Action` in `orvibo/_shared.cpp`) modelled on the existing
+  terncy `MessageType::Raw` precedent — they read the button byte
+  (raw_1 lookup `{3→1,11→2,7→3,15→4}`, raw_2 identity `{1..7}`) and action byte
+  (`{0→click,2→hold,3→release}`) from `msg.raw_body` and emit the z2m-matching
+  `action`. Both defs were graduated to Tier-2 parent overrides wiring the new
+  converter + an `action` String expose (replacing the dead `state`). New
+  `tests/test_orvibo_parity.cpp` pins each button/action pair, the
+  unrecognised-byte and direction-mismatch no-match cases, and the absence of
+  the stale `state`/`on`/`off` literals.
+
 - **Avatto ME168_AVATTO TRV temperature calibration read 100× too small, and
   the ZDMS16-1 / ZDMS16-2 dimmers reported the wrong `switch_type`** — found
   by a z2m↔embedded-zhc parity pass over the 11 existing Avatto defs (all
