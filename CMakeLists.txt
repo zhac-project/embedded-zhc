@@ -908,6 +908,15 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Easyiot ZB-WB01/02/03/08 multi-button scene
+# remotes. Their auto-generated defs lowered the generic
+# kFzCommandOn/Off/Toggle (emit bare "on"/"off"/"toggle", no button
+# prefix), but z2m's easyiot_action remaps the verbs (toggle->single,
+# on->double, off->long) AND prefixes the button from src_endpoint. All
+# four graduated to Tier-2 parents wiring the vendor kFzEasyiotAction.
+add_executable(zhc_easyiot_parity_tests tests/test_easyiot_parity.cpp)
+target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for three Sber/SDevices IAS sensors (SBDV-00029 motion,
 # SBDV-00030 contact, SBDV-00154 water leak) whose auto-generated defs wired the
 # generic kFzIasZone (emits raw "alarm_1"/...) against a bare "alarm" expose, so
@@ -1088,6 +1097,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)

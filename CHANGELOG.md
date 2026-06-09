@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Four Easyiot ZB-WB01/02/03/08 scene remotes emitted the wrong `action`
+  verb and lost button identity** — the four button remotes lowered the
+  generic `kFzCommandOn`/`kFzCommandOff`/`kFzCommandToggle` converters, which
+  emit the *standard* literals `on`/`off`/`toggle` with no button prefix. z2m's
+  `easyiot_action` fz instead remaps the verbs (`commandToggle`→`single`,
+  `commandOn`→`double`, `commandOff`→`long`) and prefixes the originating
+  button derived from `msg.endpoint.ID` (`1_single` … `8_long`). So
+  embedded-zhc surfaced the wrong action string and collapsed every button to
+  one un-prefixed `action`. All four defs were graduated from
+  `definitions/easyiot/generated/` to Tier-2 parents wiring a new vendor
+  converter `kFzEasyiotAction` (`definitions/easyiot/_shared.cpp`) that
+  reproduces the z2m verb map and per-button prefix from `src_endpoint`.
+  Pinned by `tests/test_easyiot_parity.cpp`.
+
 - **Seven Engo (ENGO Controls) TS0601 thermostats had duplicate-fingerprint
   battery on/off stubs shadowing their full Tuya-datapoint defs** — the engo
   registry carried seven stale defs from an earlier generation pass

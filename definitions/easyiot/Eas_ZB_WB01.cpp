@@ -1,32 +1,31 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Easyiot ZB-WB01 — auto-generated.
+// Tier 2: Easyiot ZB-WB01 — graduated from generated/ for the action remap.
 // 1-button remote control
-// z2m-source: easyiot.ts #ZB-WB01.
+// z2m-source: easyiot.ts #ZB-WB01 (+ fzLocal.easyiot_action).
 //
 // Battery-powered remote: it never receives genOnOff writes (read-only
 // from the gateway perspective). It *emits* genOnOff On/Off/Toggle
-// commands which z2m's `easyiot_action` fz turns into
-// `1_single` / `1_double` / `1_long`. ZHC has no command->action
-// label mapper yet, so the raw command FzConverters are wired here
-// and the actual `action` string is left for the runtime.
-#include "definitions/_generic/_shared.hpp"
+// commands which z2m's `easyiot_action` fz remaps to
+// `1_single` / `1_double` / `1_long`. The generic kFzCommandOn/Off/Toggle
+// converters emit the *standard* literals ("on"/"off"/"toggle") with no
+// button prefix — wrong verb AND no button identity — so this def wires
+// the vendor kFzEasyiotAction converter (in easyiot/_shared.cpp) which
+// reproduces the z2m verb map + per-button prefix from src_endpoint.
+#include "definitions/easyiot/_shared.hpp"
 
 namespace zhc::devices::easyiot {
 namespace {
 const FzConverter* const kFz_ZB_WB01[] = {
-    &::zhc::generic::kFzCommandOn,
-    &::zhc::generic::kFzCommandOff,
-    &::zhc::generic::kFzCommandToggle,
+    &kFzEasyiotAction,
     &::zhc::generic::kFzBattery,
 };
 constexpr const char* kModels_ZB_WB01[] = { "ZB-WB01" };
 
 constexpr Expose kExposes_ZB_WB01[] = {
-    // TODO(easyiot): runtime needs to map genOnOff
-    // commandOn/Off/Toggle into action strings
-    // ("1_single"/"1_double"/"1_long"). Exposed as String/State here
-    // for forward-compat — currently no fz emits it.
+    // z2m exposes e.action(["1_single","1_double","1_long"]); ZHC has no
+    // enum expose type, so this stays String/State. kFzEasyiotAction
+    // emits the matching "1_<single|double|long>" at runtime.
     {"action",  ExposeType::String,  Access::State, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%",     nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV",    nullptr, nullptr, 0},

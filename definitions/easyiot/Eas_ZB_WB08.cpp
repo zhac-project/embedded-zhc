@@ -1,25 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Easyiot ZB-WB08 — auto-generated.
+// Tier 2: Easyiot ZB-WB08 — graduated from generated/ for the action remap.
 // 8-button remote control
-// z2m-source: easyiot.ts #ZB-WB08.
+// z2m-source: easyiot.ts #ZB-WB08 (+ fzLocal.easyiot_action).
 //
-// Eight-endpoint button remote (ep1..ep8). Same notes as ZB-WB01.
-#include "definitions/_generic/_shared.hpp"
+// Eight-endpoint button remote (ep1..ep8). Same notes as ZB-WB01:
+// kFzEasyiotAction reproduces z2m's verb remap + per-button prefix
+// (ep1 -> "1_*" .. ep8 -> "8_*") from src_endpoint.
+#include "definitions/easyiot/_shared.hpp"
 
 namespace zhc::devices::easyiot {
 namespace {
 const FzConverter* const kFz_ZB_WB08[] = {
-    &::zhc::generic::kFzCommandOn,
-    &::zhc::generic::kFzCommandOff,
-    &::zhc::generic::kFzCommandToggle,
+    &kFzEasyiotAction,
     &::zhc::generic::kFzBattery,
 };
 constexpr const char* kModels_ZB_WB08[] = { "ZB-WB08" };
 
 constexpr Expose kExposes_ZB_WB08[] = {
-    // TODO(easyiot): per-endpoint action mapping
-    // (1_single..8_long) needs runtime support.
+    // z2m: e.action(["1_single".."8_long"]). String/State here;
+    // kFzEasyiotAction emits "<button>_<verb>" at runtime.
     {"action",  ExposeType::String,  Access::State, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%",     nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV",    nullptr, nullptr, 0},
