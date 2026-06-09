@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Siglis zigfred plus (ZFP-1A-CH) and uno (ZFU-1D-CH) dropped the
+  front-surface RGB LED and never decoded button presses** — found by a
+  z2m↔embedded-zhc parity pass over the 2 Siglis defs. (1) EP5
+  (`zigfredEndpoint`, label `l1`) was missing from each def's
+  `endpoint_map`, so the front-surface RGB LED's `state`/`brightness`/
+  `color` reports on EP5 never received the `_l1` suffix and could not
+  match the declared `state_l1`/`brightness_l1`/`color_l1` exposes (z2m
+  maps `l1: zigfredEndpoint`). Added `{"l1", 5}` to both maps. (2) Button
+  events arrive as a manufacturer-specific cluster command
+  (`manuSpecificSiglisZigfred` 0xFC42, cmd 0x02 `siglisZigfredButtonEvent`,
+  payload `button:u8 type:u8 duration:u16`) with no generic equivalent —
+  the `action` expose was a declared no-op. Added a vendor converter
+  `siglis::kFzZigfredButtonEvent` (new `definitions/siglis/_shared.{hpp,cpp}`)
+  that mirrors z2m's `zifgredFromZigbeeButtonEvent` lookups into
+  `action: "button_<n>_<event>"`, guarded on `manufacturer_specific` so it
+  does not hijack the non-manu genOnOff Toggle (also cmd 0x02). Both defs
+  graduated to Tier-2 parent overrides. New fixture
+  `tests/test_siglis_parity.cpp`. (All other endpoints — 4 dimmers + 2
+  covers on ZFP, relay + dimmer on ZFU — verified already correct.
+  Remaining `level_config` / hue-saturation move-step / power-on-behavior
+  TZ helpers stay deferred: no generic equivalents yet.)
+
 - **Plugwise Tom (106-03) and Emma (170-01) thermostats had dead
   exposes** — found by a z2m↔embedded-zhc parity pass over the 4 Plugwise
   defs. Both wired the generic `kFzThermostat`, which decodes only

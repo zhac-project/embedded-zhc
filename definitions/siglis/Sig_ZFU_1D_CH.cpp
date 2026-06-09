@@ -15,7 +15,16 @@
 //
 // Original auto-generated bundle was wrong: only state+brightness on EP1, no
 // per-endpoint exposes, no color, no action, no manu-cluster binding.
+//
+// Tier-2 parity fixes (feat/siglis-parity):
+//   * EP5 (`l1`) was absent from endpoint_map, so the front-surface RGB
+//     LED's state/brightness/color reports never picked up the `_l1`
+//     suffix and could never match the state_l1/brightness_l1/color_l1
+//     exposes. z2m maps `l1: zigfredEndpoint(=5)`. Added below.
+//   * Button events on the manu cluster now decode via
+//     siglis::kFzZigfredButtonEvent (was a documented TODO no-op).
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/siglis/_shared.hpp"
 
 namespace zhc::devices::siglis {
 namespace {
@@ -23,12 +32,14 @@ namespace {
 // z2m-source: fromZigbee=[zifgredFromZigbeeButtonEvent, fz.color_colortemp,
 // fz.on_off, fz.brightness, fz.level_config, fz.power_on_behavior].
 //
-// TODO(parity): kFzZigfredButtonEvent (manu cluster 0xFC42), kFzLevelConfig,
-// kFzPowerOnBehavior1 are not yet in the generic shared library. We bind
-// the on/off, brightness and color generics so the device's lighting state
-// is still observable; button events and level configuration round-trips
-// currently no-op.
+// kFzZigfredButtonEvent decodes the manu-cluster button presses (0xFC42
+// cmd 0x02) into `action` (button_<n>_<event>).
+//
+// TODO(parity): kFzLevelConfig, kFzPowerOnBehavior1 are not yet in the
+// generic shared library; level configuration round-trips currently
+// no-op.
 const FzConverter* const kFz_ZFU_1D_CH[] = {
+    &::zhc::siglis::kFzZigfredButtonEvent,
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColor,
@@ -54,7 +65,10 @@ const TzConverter* const kTz_ZFU_1D_CH[] = {
 
 constexpr const char* kModels_ZFU_1D_CH[] = { "zigfred uno" };
 
-constexpr ::zhc::EndpointLabel kEndpoints_ZFU_1D_CH[] = { {"l2", 6}, {"l3", 7} };
+// `l1`=EP5 MUST be present so front-surface RGB reports get the `_l1`
+// suffix (matching the state_l1/brightness_l1/color_l1 exposes). z2m
+// includes it via `l1: zigfredEndpoint`.
+constexpr ::zhc::EndpointLabel kEndpoints_ZFU_1D_CH[] = { {"l1", 5}, {"l2", 6}, {"l3", 7} };
 
 }  // namespace
 

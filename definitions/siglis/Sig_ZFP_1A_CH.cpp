@@ -19,7 +19,16 @@
 // Original auto-generated bundle was wrong: only state+brightness+position
 // on EP1, no per-endpoint exposes, no color, no action, no manu-cluster
 // binding, only single cover instead of two.
+//
+// Tier-2 parity fixes (feat/siglis-parity):
+//   * EP5 (`l1`) was absent from endpoint_map, so the front-surface RGB
+//     LED's state/brightness/color reports never picked up the `_l1`
+//     suffix and could never match the declared state_l1/brightness_l1/
+//     color_l1 exposes. z2m maps `l1: zigfredEndpoint(=5)`. Added below.
+//   * Button events on the manu cluster now decode via
+//     siglis::kFzZigfredButtonEvent (was a documented TODO no-op).
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/siglis/_shared.hpp"
 
 namespace zhc::devices::siglis {
 namespace {
@@ -28,13 +37,16 @@ namespace {
 // fz.on_off, fz.brightness, fz.level_config, fz.power_on_behavior,
 // fz.cover_position_tilt].
 //
-// TODO(parity): kFzZigfredButtonEvent (manu cluster 0xFC42 cmd
-// commandSiglisZigfredButtonEvent), kFzLevelConfig, kFzPowerOnBehavior1
-// have no generic equivalents — button actions and level-config round-trips
-// currently no-op. Cover tilt rides the same closuresWindowCovering cluster
-// as position; the generic kFzCoverPosition reads only `currentPositionLift`,
-// so tilt reports are also no-op until a tilt-aware variant lands.
+// kFzZigfredButtonEvent decodes the manu-cluster button presses (0xFC42
+// cmd 0x02) into `action` (button_<n>_<event>).
+//
+// TODO(parity): kFzLevelConfig, kFzPowerOnBehavior1 have no generic
+// equivalents — level-config round-trips currently no-op. Cover tilt
+// rides the same closuresWindowCovering cluster as position; the generic
+// kFzCoverPosition reads only `currentPositionLift`, so tilt reports are
+// also no-op until a tilt-aware variant lands.
 const FzConverter* const kFz_ZFP_1A_CH[] = {
+    &::zhc::siglis::kFzZigfredButtonEvent,
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColor,
@@ -63,7 +75,10 @@ const TzConverter* const kTz_ZFP_1A_CH[] = {
 
 constexpr const char* kModels_ZFP_1A_CH[] = { "zigfred plus" };
 
-constexpr ::zhc::EndpointLabel kEndpoints_ZFP_1A_CH[] = { {"l2", 7}, {"l3", 8}, {"l4", 9}, {"l5", 10}, {"l6", 11}, {"l7", 12} };
+// `l1`=EP5 MUST be present so front-surface RGB reports get the `_l1`
+// suffix (matching the state_l1/brightness_l1/color_l1 exposes). z2m
+// includes it via `l1: zigfredEndpoint`.
+constexpr ::zhc::EndpointLabel kEndpoints_ZFP_1A_CH[] = { {"l1", 5}, {"l2", 7}, {"l3", 8}, {"l4", 9}, {"l5", 10}, {"l6", 11}, {"l7", 12} };
 
 }  // namespace
 

@@ -982,6 +982,16 @@ target_link_libraries(zhc_legrand_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ikea_parity_tests tests/test_ikea_parity.cpp)
 target_link_libraries(zhc_ikea_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Siglis zigfred plus (ZFP-1A-CH) / uno
+# (ZFU-1D-CH) wall controllers. The hand-rewrite left EP5 (`l1`,
+# zigfredEndpoint) out of the endpoint_map, so the front-surface RGB
+# LED's reports never picked up the `_l1` suffix to match the
+# state_l1/brightness_l1/color_l1 exposes; and button presses on the
+# manuSpecificSiglisZigfred cluster (0xFC42 cmd 0x02) were undecoded.
+# Both fixed: l1 mapped + siglis::kFzZigfredButtonEvent decodes `action`.
+add_executable(zhc_siglis_parity_tests tests/test_siglis_parity.cpp)
+target_link_libraries(zhc_siglis_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Easyiot ZB-WB01/02/03/08 multi-button scene
 # remotes. Their auto-generated defs lowered the generic
 # kFzCommandOn/Off/Toggle (emit bare "on"/"off"/"toggle", no button
@@ -1394,6 +1404,7 @@ add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests
 add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)
 add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
+add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
