@@ -1,10 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Robb ROB_200-025-0 — hand-rewritten from a wrong on/off bundle.
+// Tier 2: Robb ROB_200-025-0 — hand-rewritten from a wrong on/off bundle.
 // Zigbee 8 button wall switch.
-// z2m-source: robb.ts #ROB_200-025-0.
+// z2m-source: robb.ts #ROB_200-025-0 — fz.command_on/off/move/stop + fz.battery,
+//   meta:{multiEndpoint:true}; e.action(on_<n>/off_<n>/brightness_move_up_<n>/
+//   brightness_move_down_<n>/brightness_stop_<n> for n in 1..4).
 //
-// Actions: on_<n>, off_<n>, brightness_move_up_<n>, brightness_move_down_<n>, brightness_stop_<n> for n in 1..4.
+// PARITY FIX (lost per-button identity): identical to ROB_200-007-0 — the bare
+// `action` key (a kAlwaysGlobalKey) collapsed all 8 buttons onto one key,
+// discarding the originating endpoint that z2m encodes as on_1..brightness_stop_4.
+// Set endpoint_action_suffix so the dispatcher emits `action_<n>` per endpoint.
 // No to_zigbee path — this is a battery-powered remote/scene controller,
 // the device is the genOnOff/genLevelCtrl client and we never write back.
 #include "definitions/_generic/_shared.hpp"
@@ -49,6 +54,7 @@ extern const PreparedDefinition kDef_ROB_200_025_0{
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
     .endpoint_map       = kEndpoints_ROB_200_025_0,
     .endpoint_map_count = sizeof(kEndpoints_ROB_200_025_0)/sizeof(kEndpoints_ROB_200_025_0[0]),
+    .endpoint_action_suffix = true,  // per-button: action_1..action_4 (z2m on_<n>/off_<n>/...)
 };
 
 }  // namespace zhc::devices::robb

@@ -1,20 +1,28 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Robb ROB_200-018-0 — hand-rewritten from a wrong on/off bundle.
+// Tier 2: Robb ROB_200-018-0 — hand-rewritten from a wrong on/off bundle.
 // Zigbee knob smart dimmer (Sunricher SR-ZG2835 white-label).
-// z2m-source: robb.ts #ROB_200-018-0.
+// z2m-source: robb.ts #ROB_200-018-0 — fz.command_on, fz.command_off,
+//   fz.command_move_to_level, fz.command_move_to_color_temp, fz.battery,
+//   fz.command_move_to_color.
 //
 // z2m emits actions on_1, off_1, brightness_move_to_level_1,
 // color_temperature_move_1, color_move_1 (the `_1` suffix is the legacy
 // multiEndpoint:true tail; z2m's own source comments mark it as a deprecated
-// breaking change). We pick up on/off/move_to_level/move_to_color_temp via
-// the standard command decoders. PARTIAL — color_move arrives via
-// command_move_to_color which has no shared decoder yet (see PARITY).
+// breaking change).
+//
+// PARITY FIX (wrong color decoder): the original hand-port wired
+// kFzCommandMoveToHueAndSaturation (lightingColorCtrl cmd 0x06) — a command
+// this device never sends — and noted command_move_to_color had "no shared
+// decoder yet". kFzCommandMoveToColor (cmd 0x07 → `color_move`) EXISTS now and
+// is exactly what z2m's fz.command_move_to_color decodes, so swap to it. The
+// `_1` suffix is appended downstream via the endpoint_map (none here → bare
+// `color_move`, matching the deprecated-suffix note above).
 // MoveToLevel/MoveToColorTemp emit attribute-shaped events, not raw action
-// strings — consumers see `brightness=<n>` / `color_temperature=<n>`, which
-// is the same wire shape z2m forwards under the `action_*` umbrella.
-// No to_zigbee path — this is a battery remote, the device is the genOnOff
-// / genLevelCtrl client and we never write back.
+// strings — consumers see `brightness=<n>` / `color_temperature=<n>`, the same
+// wire shape z2m forwards under the `action_*` umbrella.
+// No to_zigbee path — this is a battery remote, the device is the genOnOff /
+// genLevelCtrl / lightingColorCtrl client and we never write back.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::robb {
@@ -24,7 +32,7 @@ const FzConverter* const kFz_ROB_200_018_0[] = {
     &::zhc::generic::kFzCommandOff,
     &::zhc::generic::kFzCommandMoveToLevel,
     &::zhc::generic::kFzCommandMoveToColorTemp,
-    &::zhc::generic::kFzCommandMoveToHueAndSaturation,
+    &::zhc::generic::kFzCommandMoveToColor,
     &::zhc::generic::kFzBattery,
 };
 

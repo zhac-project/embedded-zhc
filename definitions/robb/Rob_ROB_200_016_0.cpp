@@ -1,20 +1,26 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Robb ROB_200-016-0 — hand-rewritten from a wrong on/off bundle.
+// Tier 2: Robb ROB_200-016-0 — hand-rewritten from a wrong on/off bundle.
 // RGB CCT DIM 3-in-1 Zigbee remote.
-// z2m-source: robb.ts #ROB_200-016-0.
+// z2m-source: robb.ts #ROB_200-016-0 — fz.battery, fz.command_move_to_color,
+//   fz.command_move_to_color_temp, fz.command_move_hue, fz.command_step,
+//   fz.command_recall, fz.command_on/off/toggle, fz.command_stop, fz.command_move,
+//   fz.command_color_loop_set, fz.command_enhanced_move_to_hue_and_saturation,
+//   fz.command_move_to_hue_and_saturation.
 //
-// Actions emitted: on, off, toggle, brightness_move_up/down, brightness_stop,
-// brightness_step_up/down, recall_<n>. PARTIAL — z2m additionally emits
-// color_move, color_temperature_move, hue_move, color_loop_set,
-// enhanced_move_to_hue_and_saturation and move_to_hue_and_saturation; the
-// matching command-mode lightingColorCtrl decoders (move_to_color, move_hue,
-// color_loop_set, …) are not yet present in `_generic/_shared.{hpp,cpp}`.
-// MoveToColorTemp arrives via the existing kFzCommandMoveToColorTemp which
-// emits the `color_temperature` attribute (legacy "state" path), not the
-// command-mode `color_temperature_move` action — see PARITY for the gap.
-// No to_zigbee path — this is a battery-powered remote/scene controller,
-// the device is the genOnOff/genLevelCtrl client and we never write back.
+// PARITY FIX (missing color actions): the original hand-port noted that the
+// command-mode lightingColorCtrl decoders (move_to_color, move_hue,
+// color_loop_set, enhanced/move_to_hue_and_saturation, move_to_color_temp) were
+// "not yet present" in `_generic/_shared`. They EXIST now — wire all six so the
+// remote's full RGB/CCT action set (color_move, color_temperature_move,
+// hue_move, color_loop_set, enhanced_move_to_hue_and_saturation,
+// move_to_hue_and_saturation) reaches consumers instead of only
+// on/off/toggle/brightness/recall. All are lightingColorCtrl (0x0300) command-
+// mode decoders disambiguated by command id (no clash with the genLevelCtrl
+// Move at cmd 0x01 on cluster 0x0008).
+// No to_zigbee path — this is a battery-powered remote/scene controller, the
+// device is the genOnOff/genLevelCtrl/lightingColorCtrl client; we never write
+// back.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::robb {
@@ -28,6 +34,12 @@ const FzConverter* const kFz_ROB_200_016_0[] = {
     &::zhc::generic::kFzCommandToggle,
     &::zhc::generic::kFzCommandStop,
     &::zhc::generic::kFzCommandMove,
+    &::zhc::generic::kFzCommandMoveToColor,
+    &::zhc::generic::kFzCommandMoveToColorTemp,
+    &::zhc::generic::kFzCommandMoveHue,
+    &::zhc::generic::kFzCommandColorLoopSet,
+    &::zhc::generic::kFzCommandEnhancedMoveToHueAndSat,
+    &::zhc::generic::kFzCommandMoveToHueAndSaturation,
 };
 
 constexpr const char* kModels_ROB_200_016_0[] = { "ROB_200-016-0" };

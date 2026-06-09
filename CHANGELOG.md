@@ -10,6 +10,56 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **ROBB (ROBB Smarrt) parity pass — 9 of 32 defs corrected** over a
+  z2m↔embedded-zhc sweep (ROBB rebrands Sunricher hardware, so several gaps
+  mirror the Sunricher pass). Five device families were misclassified by the
+  auto-generator:
+  - **ROB_200-081-0 / ROB_200-084-0 (4-button wireless wall switches) emitted
+    a dead controllable `state` instead of `action`.** z2m drives these with
+    `m.commandsOnOff()` + `m.commandsLevelCtrl()` — the device is a genOnOff/
+    genLevelCtrl *client* that only sends commands — but the port lowered a
+    controllable `m.onOff()` (writable `state` + `kTzOnOff`). Re-wired to the
+    generic command-action decoders (on/off + brightness move/stop), exposed
+    `action`, dropped the bogus to_zigbee path, and set
+    `endpoint_action_suffix` so each button reports as `action_1..action_4`.
+  - **ROB_200-070-0 (PIR + temperature + humidity + light sensor) dropped all
+    four of its measurements.** The port lowered only `kFzBattery` +
+    `kFzIasZone`, so the sensor surfaced just its IAS bits + battery. Added
+    `kFzOccupancy` + `kFzTemperature` + `kFzHumidity` + `kFzIlluminance` plus
+    the matching exposes and per-endpoint binds (occupancy/IAS on ep1,
+    temp/humidity/lux on ep3/4/5 → suffixed `temperature_3` etc.), mirroring
+    the twin Sunricher HK-SENSOR-4IN1-A.
+  - **ROB_200-017-0 / ROB_200-017-1 (smart plugs) dropped their internal
+    temperature.** z2m wires `fz.temperature`; the port omitted it. Added
+    `kFzTemperature` + the `temperature` expose + the msTemperatureMeasurement
+    (0x0402) bind.
+  - **ROB_200-016-0 (RGB CCT remote) was missing its colour actions and
+    ROB_200-018-0 (knob dimmer) used the wrong colour decoder.** The earlier
+    hand-port had noted the lightingColorCtrl command decoders were "not yet
+    present" — they exist now. Wired `kFzCommandMoveToColor` /
+    `MoveToColorTemp` / `MoveHue` / `ColorLoopSet` /
+    `EnhancedMoveToHueAndSat` / `MoveToHueAndSaturation` on 016, and swapped
+    018's stray `kFzCommandMoveToHueAndSaturation` (a command it never sends)
+    for `kFzCommandMoveToColor` (z2m's `color_move`).
+  - **ROB_200-007-0 / ROB_200-008-0 / ROB_200-025-0 (8-/4-button remotes) lost
+    per-button identity.** They emitted a bare `action` (a global key), so all
+    buttons collapsed onto one key; z2m distinguishes them per endpoint
+    (`on_1`..`brightness_stop_4`). Set `endpoint_action_suffix` so the
+    dispatcher rewrites to `action_<n>` per endpoint (same convention as
+    Legrand 067774).
+
+  All nine defs were graduated from `generated/` to Tier-2 parents (symbol-
+  based registry needs no edit). The remaining 23 defs were at parity:
+  the plain `m.light()` dimmers/CCT/RGB drivers (004/006/011/060/061/063,
+  etc.), the curtain controllers 010/029 (`fz.cover_position_tilt`,
+  `coverInverted`), the 1-gang AC switches 003/030, the 5-gang relay 050
+  (`endpoint_map`), the metering switches 011/014/026-0/026-1/035
+  (`kFzMetering` + `kFzElectricalMeasurement`), the 4-channel remote 024
+  (z2m exposes *bare* `on`/`off`/`recall_*` actions — no per-endpoint suffix,
+  so the generated bare-`action` form already matches), and the door/window
+  sensor 001 (`iasZoneAlarm` contact). New fixture
+  `tests/test_robb_parity.cpp` pins all five fixed families.
+
 - **eWeLink WS01 rainfall sensor never reported `rain`** — found by a
   z2m↔embedded-zhc parity pass over the 18 eWeLink defs. WS01 reports
   rainfall over `ssIasZone` commandStatusChangeNotification (zoneStatus

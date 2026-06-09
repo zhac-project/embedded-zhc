@@ -1020,6 +1020,18 @@ target_link_libraries(zhc_siglis_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_easyiot_parity_tests tests/test_easyiot_parity.cpp)
 target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for ROBB (ROBB Smarrt / rebranded Sunricher). The
+# auto-generated port misclassified several devices: the 4-button wireless
+# switches (081/084) became controllable on/off relays (dead `state` +
+# kTzOnOff) instead of `action`-emitting command clients; the PIR sensor
+# (070) dropped occupancy/temperature/humidity/illuminance; the metering
+# plugs (017-0/017-1) dropped their internal temperature; and the color
+# remotes (016 RGB-CCT, 018 knob) were missing or mis-wired lightingColorCtrl
+# command decoders. All graduated to Tier-2 parents wiring the correct
+# generic converters.
+add_executable(zhc_robb_parity_tests tests/test_robb_parity.cpp)
+target_link_libraries(zhc_robb_parity_tests PRIVATE zhc_definitions)
+
 # Custom devices (DiY) flower/soil sensors. ZeeFlora + b-parasite exposed
 # soil_moisture but no generic kFzSoilMoisture existed (0x0408 also missing
 # from cluster_names); soil reports dropped. Added the decoder + graduated
@@ -1446,6 +1458,7 @@ add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
+add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
