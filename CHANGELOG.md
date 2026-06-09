@@ -132,6 +132,35 @@ across the ZHAC platform.
 
 ### Fixed
 
+- Three **Schneider Electric (Wiser)** devices whose auto-generated ports
+  dropped a core decoder are graduated to parent overrides under
+  `definitions/schneider/` (so a regen of `generated/` can no longer silently
+  re-introduce the gap):
+  - **EER53000** — Wiser radiator thermostat (VACT, zigbeeModel
+    `EH-ZB-VACT`) was lowered as a bare on/off switch (state/battery only).
+    z2m decodes a full climate via `fzLocal.wiser_smart_thermostat`. Wired
+    the generic `kFzThermostat` / `kTzThermostat` converters (+ binding
+    `hvacThermostat` 0x0201) so `local_temperature` /
+    `current_heating_setpoint` / `system_mode` surface, bringing it to parity
+    with its sibling EER51000. Climate ships **flat** (project rule);
+    zone_mode / keypad_lockout / valve-calibration ride Schneider
+    manuSpecific attrs (0x105E) and remain deferred (no in-tree converter).
+  - **550B1024** — temperature & humidity sensor (zigbeeModel
+    `CCT593011_AS`) was ported battery-only; z2m fromZigbee is
+    `[fz.humidity, fz.temperature, fz.battery]`. Added the generic
+    `kFzTemperature` / `kFzHumidity` converters, `temperature` + `humidity`
+    exposes, and bindings `msTemperatureMeasurement` (0x0402) /
+    `msRelativeHumidity` (0x0405).
+  - **CCTFR6400** — "Temperature/Humidity measurement with thermostat
+    interface": the thermostat half was wired but the named humidity
+    measurement was missing (z2m carries `fz.humidity` + `e.humidity()` +
+    `msRelativeHumidity` bind). Added `kFzHumidity` + `humidity` expose +
+    binding 0x0405.
+
+  New host fixture `tests/test_schneider_parity.cpp` pins the expose/binding
+  shape and decodes real ZCL reports for all three at the
+  `dispatch_from_zigbee` boundary.
+
 - Philips Hue **motion sensors** SML001/SML002/SML003/SML004
   (`9290012607` / `9290019758` / `9290030675` / `9290030674`) now decode
   **occupancy**. The shared `kExposesPhilipsMotionSensor` already declared

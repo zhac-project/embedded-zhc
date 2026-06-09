@@ -893,6 +893,13 @@ target_link_libraries(zhc_diy_range_extender_tests PRIVATE zhc_definitions)
 add_executable(zhc_sonoff_snzb02_tests tests/test_sonoff_snzb02.cpp)
 target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for three Schneider/Wiser devices whose auto-generated defs
+# dropped a core decoder (EER53000 TRV ported as a switch; 550B1024 sensor
+# battery-only; CCTFR6400 missing its humidity measurement). All graduated to
+# parent overrides. See tests/README.md for the pattern.
+add_executable(zhc_schneider_parity_tests tests/test_schneider_parity.cpp)
+target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
 # auto-generated def was mis-lowered as a battery on/off switch and was
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
@@ -974,6 +981,7 @@ add_test(NAME zhc_ts0502b_config_tests      COMMAND zhc_ts0502b_config_tests)
 add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
+add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
