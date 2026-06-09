@@ -10,6 +10,34 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Osram (LEDVANCE / Lightify) parity pass — 3 of 44 defs corrected** over a
+  z2m↔embedded-zhc sweep. Osram is otherwise a pure lighting vendor
+  (`ledvanceLight` / `ledvanceOnOff` over stock ZCL; the plugs are on/off-only
+  — z2m wires no metering — and decode fine), so the gaps were all on the
+  three non-light ports, which were dead:
+  - **SMART+ Switch Mini (AC0251100NJ/AC0251600NJ/AC0251700NJ) and SMART+
+    Switch (4058075816459) emitted a dead controllable `state` instead of
+    `action`.** Both are battery-powered remotes that z2m drives with the
+    genOnOff / genLevelCtrl / lightingColorCtrl *command* converters
+    (`fz.command_on/off`, `fz.command_move/stop/move_to_level`,
+    `fz.command_move_to_color_temp`, `fz.command_step_color_temperature`,
+    `fz.command_move_hue`) behind a single `action` enum — but the generated
+    ports lowered `kFzOnOff` (which decodes the genOnOff command into a phantom
+    on/off `state`) and declared only a `state` expose, so every button was
+    dead. Re-wired to the generic command-action decoders, exposed `action`,
+    and dropped the bogus to_zigbee path.
+  - **SMART+ Motion Sensor (AC01353010G) dropped its temperature and reported
+    the wrong occupancy key.** z2m wires `fz.temperature` +
+    `fz.ias_occupancy_only_alarm_2`. The port had no temperature decoder,
+    expose, or msTemperatureMeasurement (0x0402) bind — temperature was dead —
+    and lowered the generic `kFzIasZone` (which emits a bare `alarm` key) instead
+    of the `occupancy` key z2m advertises. Added `kFzTemperature` + the
+    `temperature` expose + 0x0402 bind, and re-pointed the IAS decode at the
+    typed `kFzIasMotionAlarm2` (occupancy / tamper / battery_low).
+
+  All three graduated to Tier-2 parent overrides; covered by
+  `tests/test_osram_parity.cpp`.
+
 - **ROBB (ROBB Smarrt) parity pass — 9 of 32 defs corrected** over a
   z2m↔embedded-zhc sweep (ROBB rebrands Sunricher hardware, so several gaps
   mirror the Sunricher pass). Five device families were misclassified by the

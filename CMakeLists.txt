@@ -1182,6 +1182,20 @@ target_link_libraries(zhc_bacchus_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_pushok_parity_tests tests/test_pushok_parity.cpp)
 target_link_libraries(zhc_pushok_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Osram (LEDVANCE/Lightify) family. Otherwise a pure
+# lighting vendor (ledvanceLight/ledvanceOnOff over stock ZCL — CLEAN, plugs
+# are on/off-only with no metering in z2m). Three non-light ports were dead:
+# the SMART+ Switch Mini (AC0251100NJ/...) and Switch (4058075816459) remotes
+# lowered kFzOnOff + a phantom `state` instead of the genOnOff/genLevelCtrl/
+# lightingColorCtrl command action converters — every button was dead; and the
+# SMART+ Motion Sensor (AC01353010G) had no temperature decoder/expose/0x0402
+# binding and lowered the generic kFzIasZone (bare `alarm`) instead of the
+# `occupancy` key z2m advertises. All three graduated to Tier-2 parent
+# overrides (action enum + command converters; kFzTemperature +
+# kFzIasMotionAlarm2). See tests/README.md.
+add_executable(zhc_osram_parity_tests tests/test_osram_parity.cpp)
+target_link_libraries(zhc_osram_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Ubisys family. H1/H10 thermostats declared
 # pi_heating_demand + running_mode exposes that the generic kFzThermostat
 # never decoded (attrs 0x0008/0x001E) — wired kFzUbisysThermostatExtras
@@ -1476,6 +1490,7 @@ add_test(NAME zhc_yandex_parity_tests       COMMAND zhc_yandex_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
+add_test(NAME zhc_osram_parity_tests        COMMAND zhc_osram_parity_tests)
 add_test(NAME zhc_nodon_parity_tests        COMMAND zhc_nodon_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
 add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
