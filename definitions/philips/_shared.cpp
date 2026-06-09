@@ -127,8 +127,17 @@ const std::uint8_t kExposesPhilipsColorCTLightCount =
     static_cast<std::uint8_t>(sizeof(kExposesPhilipsColorCTLight) / sizeof(kExposesPhilipsColorCTLight[0]));
 
 // ── Hue motion sensor (SML00x) ──────────────────────────────────────
+// z2m wires `fz.battery, fz.occupancy, fz.temperature` plus `m.illuminance()`.
+// `kFzOccupancy` (generic msOccupancySensing 0x0406 decoder, attr 0x0000 bit
+// 0) closes z2m's `fz.occupancy` for the `occupancy` expose below — the
+// 0x0406 binding is already declared in kBindingsPhilipsMotionSensor.  The
+// remaining z2m channels (motion_sensitivity / led_indication /
+// occupancy_timeout via philips.tz.hue_motion_*) are Hue-specific
+// manuSpecific writes with no generic converter and stay unported (tracked in
+// docs/PHILIPS_PARITY.md "runtime gaps").
 const ::zhc::FzConverter* const kFzPhilipsMotionSensor[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzOccupancy,
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzIlluminance,
 };

@@ -132,6 +132,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- Philips Hue **motion sensors** SML001/SML002/SML003/SML004
+  (`9290012607` / `9290019758` / `9290030675` / `9290030674`) now decode
+  **occupancy**. The shared `kExposesPhilipsMotionSensor` already declared
+  the `occupancy` expose and `kBindingsPhilipsMotionSensor` already bound
+  msOccupancySensing (0x0406), but the shared fz array
+  `kFzPhilipsMotionSensor` (`definitions/philips/_shared.cpp`) omitted the
+  decoder — so the state was advertised but never surfaced. Wired the
+  generic `kFzOccupancy` (msOccupancySensing attr 0x0000 bit 0, the same
+  decoder used cross-vendor by lumi/terncy/owon/etc.) into the array,
+  matching z2m's `fz.occupancy`. Host coverage added in
+  `tests/test_philips_motion.cpp` (occupied + vacant). The Hue-specific
+  motion_sensitivity / led_indication / occupancy_timeout channels
+  (`philips.tz.hue_motion_*`, manuSpecificPhilips writes) have no generic
+  converter and remain unported.
+
 - SlackyDiy **THERM_SLACKY_DIY_R08** (Tuya floor-heating thermostat,
   custom firmware, zigbeeModel `Tuya_Thermostat_r08`) is now lowered as a
   thermostat instead of a phantom switch. The auto-generated def

@@ -49,9 +49,11 @@ extern const std::uint8_t              kExposesPhilipsColorCTLightCount;
 // ── Hue motion sensor (SML00x) — occupancy + temperature + lux ──────
 //
 // z2m wires `fz.battery, fz.occupancy, fz.temperature` plus
-// `m.illuminance()`.  ZHC has no dedicated msOccupancySensing decoder
-// today, so we keep the standard battery + temperature + illuminance
-// channels and mark the gap in `docs/PHILIPS_PARITY.md`.
+// `m.illuminance()`.  All four channels are ported: occupancy via the
+// generic `kFzOccupancy` (msOccupancySensing 0x0406) decoder.  The
+// Hue-specific motion_sensitivity / led_indication / occupancy_timeout
+// writes (philips.tz.hue_motion_*) have no generic converter and remain
+// unported — see `docs/PHILIPS_PARITY.md`.
 extern const ::zhc::FzConverter* const kFzPhilipsMotionSensor[];
 extern const std::uint8_t              kFzPhilipsMotionSensorCount;
 extern const ::zhc::Expose             kExposesPhilipsMotionSensor[];

@@ -778,6 +778,9 @@ target_link_libraries(zhc_wxkg01lm_tests PRIVATE zhc_definitions)
 add_executable(zhc_rtcgq11lm_tests tests/test_rtcgq11lm.cpp)
 target_link_libraries(zhc_rtcgq11lm_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_philips_motion_tests tests/test_philips_motion.cpp)
+target_link_libraries(zhc_philips_motion_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_generic_tests tests/test_generic.cpp)
 target_link_libraries(zhc_generic_tests PRIVATE zhc_definitions)
 
@@ -932,6 +935,7 @@ add_test(NAME zhc_timer_tests     COMMAND zhc_timer_tests)
 add_test(NAME zhc_expose_range_tests COMMAND zhc_expose_range_tests)
 add_test(NAME zhc_wxkg01lm_tests  COMMAND zhc_wxkg01lm_tests)
 add_test(NAME zhc_rtcgq11lm_tests COMMAND zhc_rtcgq11lm_tests)
+add_test(NAME zhc_philips_motion_tests COMMAND zhc_philips_motion_tests)
 add_test(NAME zhc_generic_tests   COMMAND zhc_generic_tests)
 add_test(NAME zhc_modern_extend_tests COMMAND zhc_modern_extend_tests)
 add_test(NAME zhc_lumi_specific_tests COMMAND zhc_lumi_specific_tests)
