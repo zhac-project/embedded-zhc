@@ -81,6 +81,27 @@ bool fz_danfoss_thermostat(const DecodedMessage& msg,
                            RuntimeContext&,
                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     bool emitted = false;
+
+    // Standard attr 0x0008 — PIHeatingDemand (u8). The generic
+    // `kFzThermostat` only decodes 0x0000 / 0x0012 / 0x001C, so the
+    // valve-demand readout that z2m's `fz.thermostat` publishes as
+    // `pi_heating_demand` would otherwise be a dead expose on the Ally
+    // TRV. Every Danfoss thermostat sets `dontMapPIHeatingDemand: true`
+    // (z2m `meta.thermostat`), so the value is the raw 0-100 percentage
+    // with no 0-255 → 0-100 remap (z2m `mapNumberRange(v,0,100,0,100)`
+    // is identity). Emit as Uint to match the `%` Numeric expose.
+    if (const Value* v = msg.payload.find("8")) {
+        Value o{};
+        if (v->type == ValueType::Uint) {
+            o.type = ValueType::Uint; o.u = v->u;
+            if (out.put("pi_heating_demand", o)) emitted = true;
+        } else if (v->type == ValueType::Int && v->i >= 0) {
+            o.type = ValueType::Uint;
+            o.u   = static_cast<std::uint64_t>(v->i);
+            if (out.put("pi_heating_demand", o)) emitted = true;
+        }
+    }
+
     char keybuf[8];
     for (const auto& e : kHvacThermostatAttrs) {
         std::snprintf(keybuf, sizeof(keybuf), "%u",

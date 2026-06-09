@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Danfoss Ally TRV 014G2461 `pi_heating_demand` was a dead expose** — the def
+  declared a `pi_heating_demand` readout (z2m
+  `danfossExtend.danfossThermostat({piHeatingDemand:{values:true}})`, decoded by
+  the standard `fz.thermostat` from `hvacThermostat` attr `0x0008`), but only
+  wired the generic `kFzThermostat`, which decodes `0x0000` / `0x0012` /
+  `0x001C` and skips `0x0008` — so the valve-demand percentage never reached the
+  shadow. Extended `kFzDanfossThermostat` (already wired on this device) to also
+  decode `0x0008` as the raw 0-100 % value (Danfoss sets
+  `dontMapPIHeatingDemand: true`, so z2m's `mapNumberRange(v,0,100,0,100)` is
+  identity). Graduated `definitions/danfoss/Dan_D014G2461.cpp` to Tier 2; pinned
+  by `tests/test_danfoss_parity.cpp`. The Icon / Icon2 multi-room floor-heating
+  controllers were audited and the primary per-room control surface
+  (`local_temperature` / `current_heating_setpoint` / `system_mode`, decoded via
+  the wildcard-endpoint `kFzThermostat` + runtime `_<label>` suffix path) works;
+  their remaining per-room diagnostics (`running_state`, floor sensor, battery,
+  l16 system status) stay deferred as documented multi-endpoint manuSpec infra.
+
 - **Namron 4512752/4512753 Tuya thermostat decoded nothing under collision** —
   the namron registry held two definitions claiming the identical fingerprint
   (zigbeeModel `TS0601` + manufacturer `_TZE204_p3lqqy2r`): the full port

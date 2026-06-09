@@ -14,10 +14,12 @@
 namespace zhc::devices::danfoss {
 
 // FzConverter that decodes Danfoss-specific hvacThermostat attributes
-// (mfg 0x1246). The standard attrs (local_temperature, etc.) are still
-// handled by the generic `kFzThermostat`; this converter only emits
-// the vendor-specific ones (mounted_mode_active, viewing_direction,
-// heat_required, window_open_internal, etc.).
+// (mfg 0x1246). The standard attrs local_temperature / setpoint /
+// system_mode are still handled by the generic `kFzThermostat`; this
+// converter emits the vendor-specific ones (mounted_mode_active,
+// viewing_direction, heat_required, window_open_internal, etc.) PLUS
+// the one standard attr the generic decoder skips: `pi_heating_demand`
+// (0x0008, raw 0-100 — Danfoss sets `dontMapPIHeatingDemand`).
 extern const ::zhc::FzConverter kFzDanfossThermostat;
 
 // FzConverter for `hvacUserInterfaceCfg` (0x0204) — currently only

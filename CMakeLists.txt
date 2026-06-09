@@ -942,6 +942,15 @@ target_link_libraries(zhc_sunricher_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_namron_parity_tests tests/test_namron_parity.cpp)
 target_link_libraries(zhc_namron_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Danfoss Ally TRV 014G2461, which declared a
+# pi_heating_demand expose (z2m danfossThermostat piHeatingDemand → standard
+# fz.thermostat, hvacThermostat attr 0x0008) but only wired the generic
+# kFzThermostat (0x0000/0x0012/0x001C), leaving the valve-demand readout
+# dead. kFzDanfossThermostat now also decodes 0x0008 (raw 0-100,
+# dontMapPIHeatingDemand). See tests/README.md for the pattern.
+add_executable(zhc_danfoss_parity_tests tests/test_danfoss_parity.cpp)
+target_link_libraries(zhc_danfoss_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
 # auto-generated def was mis-lowered as a battery on/off switch and was
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
@@ -1029,6 +1038,7 @@ add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
+add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)

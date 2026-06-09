@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Danfoss 014G2461 — auto-generated, manu-spec wired by hand.
+// Tier 2: Danfoss 014G2461 — graduated from generated/ to wire the
+// `pi_heating_demand` decoder (parity fix, see below).
 // Ally thermostat (white-labelled as Danfoss 014G2463, Hive UK7004240,
 // Popp 701721). z2m drives this device through danfossExtend.* —
 // addDanfossHvacThermostatCluster + addDanfossHvacUserInterfaceCfgCluster
@@ -11,6 +12,14 @@
 // keypadLockout / m.battery / m.writeTimeDaily). All manu-spec
 // attribute IDs sit in `hvacThermostat` (0x4000-0x4051) +
 // `hvacUserInterfaceCfg` (0x4000) under mfg `0x1246`.
+//
+// Parity fix (real gap): the def exposes `pi_heating_demand` (z2m
+// `danfossThermostat({piHeatingDemand:{values:true}})` → standard
+// `fz.thermostat` decodes attr 0x0008), but the generic `kFzThermostat`
+// only decodes 0x0000 / 0x0012 / 0x001C — so the valve-demand readout
+// was a dead expose. `kFzDanfossThermostat` now also decodes 0x0008
+// (raw 0-100, `dontMapPIHeatingDemand: true`). No def-table change
+// needed here — the converter was already wired below.
 // z2m-source: danfoss.ts #014G2461.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/danfoss/_shared.hpp"
