@@ -1,8 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: ThirdReality 3RSNL02043Z — auto-generated.
-// Zigbee multi-function night light
-// z2m-source: third_reality.ts #3RSNL02043Z.
+// Tier 2: ThirdReality 3RSNL02043Z — graduated from generated/.
+// Zigbee multi-function night light (dimmable light + motion sensor).
+// z2m-source: third_reality.ts #3RSNL02043Z —
+// fromZigbee: [fzLocal.thirdreality_private_motion_sensor, fz.ias_occupancy_alarm_1_report]
+// → occupancy from ssIasZone zoneStatus bit 0.
+// Parity fix: the generated def lowered the generic kFzIasZone (bare "alarm")
+// while the motion half of this device must surface as "occupancy". Swapped to
+// the typed kFzIasMotionAlarm (zoneStatus bit 0 → "occupancy", + tamper/
+// battery_low) and renamed the expose key; the genOnOff/genLevelCtrl light path
+// is unchanged.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::third_reality {
@@ -10,7 +17,7 @@ namespace {
 const FzConverter* const kFz_D3RSNL02043Z[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 const TzConverter* const kTz_D3RSNL02043Z[] = {
     &::zhc::generic::kTzOnOff,
@@ -25,7 +32,7 @@ constexpr const char* kModels_D3RSNL02043Z[] = { "3RSNL02043Z" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

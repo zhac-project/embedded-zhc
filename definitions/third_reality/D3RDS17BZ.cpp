@@ -1,18 +1,22 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: ThirdReality 3RVS01031Z — auto-generated.
-// Zigbee vibration sensor
-// z2m-source: third_reality.ts #3RVS01031Z.
+// Tier 2: ThirdReality 3RDS17BZ — graduated from generated/.
+// Door sensor.
+// z2m-source: third_reality.ts #3RDS17BZ — fromZigbee: [fz.ias_contact_alarm_1].
+// Parity fix: the generated def lowered the generic kFzIasZone (bare "alarm")
+// for a door/window contact whose state must surface as "contact". Swapped to
+// the typed kFzIasContactAlarm (zoneStatus bit 0 → "contact", + tamper/
+// battery_low) and renamed the expose key.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::third_reality {
 namespace {
-const FzConverter* const kFz_D3RVS01031Z[] = {
+const FzConverter* const kFz_D3RDS17BZ[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
-constexpr const char* kModels_D3RVS01031Z[] = { "3RVS01031Z" };
+constexpr const char* kModels_D3RDS17BZ[] = { "3RDS17BZ" };
 
 }  // namespace
 
@@ -21,7 +25,7 @@ constexpr const char* kModels_D3RVS01031Z[] = { "3RVS01031Z" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +36,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_D3RVS01031Z{
-    .zigbee_models=kModels_D3RVS01031Z, .zigbee_models_count=sizeof(kModels_D3RVS01031Z)/sizeof(kModels_D3RVS01031Z[0]),
+extern const PreparedDefinition kDef_D3RDS17BZ{
+    .zigbee_models=kModels_D3RDS17BZ, .zigbee_models_count=sizeof(kModels_D3RDS17BZ)/sizeof(kModels_D3RDS17BZ[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="3RVS01031Z", .vendor="ThirdReality",
+    .model="3RDS17BZ", .vendor="ThirdReality",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_D3RVS01031Z, .from_zigbee_count=sizeof(kFz_D3RVS01031Z)/sizeof(kFz_D3RVS01031Z[0]),
+    .from_zigbee=kFz_D3RDS17BZ, .from_zigbee_count=sizeof(kFz_D3RDS17BZ)/sizeof(kFz_D3RDS17BZ[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),

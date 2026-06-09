@@ -1,18 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: ThirdReality 3RMS16BZ — auto-generated.
-// Wireless motion sensor
-// z2m-source: third_reality.ts #3RMS16BZ.
+// Tier 2: ThirdReality 3RWS0218Z — graduated from generated/.
+// Smart WaterLeak Sensor WL2.
+// z2m-source: third_reality.ts #3RWS0218Z —
+// m.iasZoneAlarm({zoneType: "water_leak", zoneAttributes: ["alarm_1"]}).
+// Parity fix: the generated def lowered the generic kFzIasZone (bare "alarm")
+// for a leak sensor whose state must surface as "water_leak". Swapped to the
+// typed kFzIasWaterLeakAlarm (zoneStatus bit 0 → "water_leak", + tamper/
+// battery_low) and renamed the expose key.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::third_reality {
 namespace {
-const FzConverter* const kFz_D3RMS16BZ[] = {
+const FzConverter* const kFz_D3RWS0218Z[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
-constexpr const char* kModels_D3RMS16BZ[] = { "3RMS16BZ" };
+constexpr const char* kModels_D3RWS0218Z[] = { "3RWS0218Z" };
 
 }  // namespace
 
@@ -21,7 +26,7 @@ constexpr const char* kModels_D3RMS16BZ[] = { "3RMS16BZ" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +37,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_D3RMS16BZ{
-    .zigbee_models=kModels_D3RMS16BZ, .zigbee_models_count=sizeof(kModels_D3RMS16BZ)/sizeof(kModels_D3RMS16BZ[0]),
+extern const PreparedDefinition kDef_D3RWS0218Z{
+    .zigbee_models=kModels_D3RWS0218Z, .zigbee_models_count=sizeof(kModels_D3RWS0218Z)/sizeof(kModels_D3RWS0218Z[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="3RMS16BZ", .vendor="ThirdReality",
+    .model="3RWS0218Z", .vendor="ThirdReality",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_D3RMS16BZ, .from_zigbee_count=sizeof(kFz_D3RMS16BZ)/sizeof(kFz_D3RMS16BZ[0]),
+    .from_zigbee=kFz_D3RWS0218Z, .from_zigbee_count=sizeof(kFz_D3RWS0218Z)/sizeof(kFz_D3RWS0218Z[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),

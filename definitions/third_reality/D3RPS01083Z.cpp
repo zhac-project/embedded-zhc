@@ -1,15 +1,21 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: ThirdReality 3RPS01083Z — auto-generated.
-// Smart presence sensor R2
-// z2m-source: third_reality.ts #3RPS01083Z.
+// Tier 2: ThirdReality 3RPS01083Z — graduated from generated/.
+// Smart presence sensor R2.
+// z2m-source: third_reality.ts #3RPS01083Z —
+// m.iasZoneAlarm({zoneType: "occupancy", zoneAttributes: ["alarm_1"]}).
+// Parity fix: the generated def lowered the generic kFzIasZone (bare "alarm")
+// for a presence sensor whose state must surface as "occupancy". Swapped to the
+// typed kFzIasMotionAlarm (zoneStatus bit 0 → "occupancy", + tamper/battery_low)
+// and renamed the expose key. (Radar settings on mfr cluster 0xFF01 are
+// manuSpecific → deferred as infra.)
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::third_reality {
 namespace {
 const FzConverter* const kFz_D3RPS01083Z[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_D3RPS01083Z[] = { "3RPS01083Z" };
@@ -21,7 +27,7 @@ constexpr const char* kModels_D3RPS01083Z[] = { "3RPS01083Z" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

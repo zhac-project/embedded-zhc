@@ -1,8 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: ThirdReality 3RWS18BZ — auto-generated.
-// Water sensor
-// z2m-source: third_reality.ts #3RWS18BZ.
+// Tier 2: ThirdReality 3RWS18BZ — graduated from generated/.
+// Water sensor.
+// z2m-source: third_reality.ts #3RWS18BZ —
+// m.iasZoneAlarm({zoneType: "water_leak", ...}). The genOnOff state is the
+// water-leak buzzer enable toggle.
+// Parity fix: the generated def lowered the generic kFzIasZone (bare "alarm")
+// for a leak sensor whose state must surface as "water_leak". Swapped to the
+// typed kFzIasWaterLeakAlarm (zoneStatus bit 0 → "water_leak", + tamper/
+// battery_low) and renamed the expose key.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::third_reality {
@@ -10,7 +16,7 @@ namespace {
 const FzConverter* const kFz_D3RWS18BZ[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 const TzConverter* const kTz_D3RWS18BZ[] = {
     &::zhc::generic::kTzOnOff,
@@ -25,7 +31,7 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

@@ -10,6 +10,27 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Nine Third Reality IAS-Zone sensors decoded the bare `alarm` key instead
+  of their semantic state** — the generated defs for four motion/presence
+  sensors (`3RMS16BZ`, `3RSMR01067Z`, `3RPS01083Z`, and the night light
+  `3RSNL02043Z`), two contact sensors (`3RDS17BZ` door, `3RDTS01056Z` garage
+  tilt), two water-leak sensors (`3RWS18BZ`, `3RWS0218Z`) and the vibration
+  sensor (`3RVS01031Z`) all lowered the generic `kFzIasZone` converter, which
+  emits the bare key `alarm`. z2m drives each from a typed zone-type decoder
+  (`fz.ias_{occupancy,contact,water_leak,vibration}_alarm_1` /
+  `m.iasZoneAlarm({zoneType})`), so embedded-zhc never surfaced the primary
+  state (`occupancy` / `contact` / `water_leak` / `vibration`) to the shadow.
+  All nine were graduated from `definitions/third_reality/generated/` to
+  Tier-2 parent overrides wiring the typed `kFzIasMotionAlarm` /
+  `kFzIasContactAlarm` / `kFzIasWaterLeakAlarm` / `kFzIasVibrationAlarm`
+  converters (semantic key + `tamper` + `battery_low` from zoneStatus bits
+  0/2/3) with the expose key renamed to match. The night light's
+  `genOnOff`/`genLevelCtrl` light path and the water sensor's `genOnOff`
+  buzzer toggle are kept intact. Pinned by
+  `tests/test_third_reality_parity.cpp`. (The 3RVS01031Z x/y/z acceleration
+  and the 3RPS01083Z radar settings ride manufacturer-specific clusters with
+  no existing converter and remain deferred as infrastructure.)
+
 - **Four Easyiot ZB-WB01/02/03/08 scene remotes emitted the wrong `action`
   verb and lost button identity** — the four button remotes lowered the
   generic `kFzCommandOn`/`kFzCommandOff`/`kFzCommandToggle` converters, which

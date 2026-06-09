@@ -944,6 +944,17 @@ target_link_libraries(zhc_sinope_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_sunricher_parity_tests tests/test_sunricher_parity.cpp)
 target_link_libraries(zhc_sunricher_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Third Reality IAS-Zone sensor family: nine generated
+# defs decoded the bare "alarm" key (generic kFzIasZone) while exposing the
+# semantic key (occupancy x4 [3RMS16BZ/3RSMR01067Z/3RPS01083Z/night-light
+# 3RSNL02043Z], contact x2 [3RDS17BZ/3RDTS01056Z], water_leak x2
+# [3RWS18BZ/3RWS0218Z], vibration [3RVS01031Z]). All graduated to Tier-2
+# parent overrides using the typed kFzIas<Type>Alarm converters; the light /
+# buzzer genOnOff paths on the night light + water sensor are kept intact.
+# See tests/README.md for the pattern.
+add_executable(zhc_third_reality_parity_tests tests/test_third_reality_parity.cpp)
+target_link_libraries(zhc_third_reality_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Namron 4512752/4512753 Tuya-DP touch thermostat, whose
 # full-DP def collided with a metering-only generated stub on the same TS0601 +
 # _TZE204_p3lqqy2r fingerprint; the stub was removed and the full-DP def
@@ -1102,6 +1113,7 @@ add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
+add_test(NAME zhc_third_reality_parity_tests COMMAND zhc_third_reality_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
