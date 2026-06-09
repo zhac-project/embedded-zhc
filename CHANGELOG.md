@@ -10,6 +10,27 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Neo (NEO Coolcam) sirens, PIR and T/H sensor lost their primary
+  channels** — found by a z2m↔embedded-zhc parity pass over the 25 neo defs.
+  The Tuya-DP water valves (NAS-WV03B/WV03B2), AB06B2 siren, PS10B2 presence
+  and STH02B2 soil sensor resolve correctly to their `Neo__TZE*` Tuya-DP
+  defs (registry order makes the DP def win Pass-1 over the shadowed named
+  IAS stub for shared fingerprints). Four named devices were misrouted by the
+  generator and graduated from `generated/` to Tier-2 parent overrides: the
+  **NAS-AB02B0** (`_TZE200_d0yu2xgi`) and **NAS-AB02B2** (`_TZE200_t1blo2bj`,
+  `_TZE204_t1blo2bj`, `_TZE204_q76rtoa9`) sirens and the **NAS-PD07**
+  (`_TZE200_7hfcudw5`) PIR were wired to `kFzIasZone` (a `{alarm,tamper,
+  battery_low}` IAS expose set), but z2m serves all three over Tuya-DP
+  (`legacy.fz.neo_t_h_alarm` / `neo_alarm` / `neo_nas_pd07`, manuSpecificTuya
+  0xEF00) — so temperature, humidity, occupancy, alarm, duration, volume and
+  melody never decoded. Replaced each IAS stub with the proper Tuya-DP map
+  (temperature /10 per z2m, the differing AB02B0 vs AB02B2 volume enum order,
+  the AO\* DP ids for AB02B2) plus a write path. The **NAS-TH07B2**
+  (`_TZ3000_utwgoauk`, SNZB-02 clone) is the family's only standard-cluster
+  device — z2m wires `m.temperature()+m.humidity()+m.battery()` but the
+  generated port carried `kFzBattery` only, dropping both temperature and
+  humidity; added generic `kFzTemperature` (0x0402) + `kFzHumidity` (0x0405)
+  with their exposes and binds. Pinned by `tests/test_neo_parity.cpp`.
 - **PushOk Hardware water-level sensors, thermostat relay and window/vent
   covers dropped their headline channels** — found by a z2m↔embedded-zhc
   parity pass over the 17 PushOk defs (the valves POK001/POK006, soil sensor

@@ -1218,6 +1218,14 @@ target_link_libraries(zhc_zemismart_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_avatto_parity_tests tests/test_avatto_parity.cpp)
 target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Neo (NEO Coolcam, Tuya-OEM) family. Four named
+# devices were misrouted by the generator to IAS Zone / battery-only: the
+# NAS-AB02B0 / NAS-AB02B2 sirens and NAS-PD07 PIR are Tuya-DP (neo_t_h_alarm /
+# neo_alarm / neo_nas_pd07), and NAS-TH07B2 (SNZB-02) is standard-cluster T/H.
+# These pin the restored Tuya-DP + standard temperature/humidity decode paths.
+add_executable(zhc_neo_parity_tests tests/test_neo_parity.cpp)
+target_link_libraries(zhc_neo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the ShinaSystem (SiHAS) family. Generator misses left
 # several primary sensor/control channels dead: USM/OSM/DMS exposed
 # occupancy with no decoder (and USM dropped illuminance), and GCM-300Z's
@@ -1350,6 +1358,7 @@ add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
+add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
