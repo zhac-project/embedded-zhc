@@ -10,6 +10,43 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Lidl Silvercrest / Livarno / Parkside (Tuya-OEM) — six defs were
+  decoding the wrong thing, plus a duplicate-fingerprint stub** — found by a
+  z2m↔embedded-zhc parity pass over the Lidl vendor (17 defs). (1) The two
+  IAS sensors lowered the generic `kFzIasZone` (which emits the bare key
+  `alarm`) while z2m types them by `zoneType`: HG06335/HG07310 motion
+  (`m.iasZoneAlarm({zoneType:"occupancy"})`) and HG06336 contact
+  (`zoneType:"contact"`) — so the one bit each sensor exists to report never
+  reached the shadow. Swapped in the typed `kFzIasMotionAlarm` /
+  `kFzIasContactAlarm` converters (zoneStatus bit 0 → `occupancy` / `contact`;
+  tamper/battery_low preserved). (2) Three command remotes — FB20-002,
+  FB21-001 (Livarno dimmer remotes) and HG08164 (Silvercrest smart button) —
+  were emitted by the generator as controllable on/off endpoints (`kFzOnOff` +
+  `kTzOnOff`, a `state` expose) when they are battery-less/battery wall
+  controllers. z2m surfaces their cluster commands as an `action` stream
+  (`fz.command_on/off/step/move/stop`); rewired to the generic `kFzCommand*`
+  converters with an `action` enum expose (HG08164 keeps `kFzBattery`). The
+  vendor-specific frames (`FB20002_on`, `tuya.fz.switch_scene`,
+  `tuya.fz.on_off_action` single/double) have no generic converter and are
+  deferred — the `action` expose still admits their values. (3) HG08673
+  (Silvercrest plug with power monitoring) wired only `kFzOnOff`, dropping its
+  entire metering surface; z2m builds it with `electricalMeasurements` +
+  metering polling, so added `kFzElectricalMeasurement` (power/voltage/current)
+  + `kFzMetering` (energy/power), the four exposes, and the
+  `haElectricalMeasurement`/`seMetering` binds. (4) PSBZS-A1 carried a
+  duplicate battery+onoff stub (`kDef_PSBZS_A1`) registered alongside the full
+  Tuya-DP def (`kDefLid__TZE200_htnnfasr`) for the identical
+  TS0601/`_TZE200_htnnfasr` fingerprint; removed the stub (file + registry
+  entry) so the watering timer keeps its real `timer`/`time_left`/`frost_lock`
+  DP keys. All six edited defs graduated from `generated/` to Tier-2 parents.
+  Pinned by `tests/test_lidl_parity.cpp` (IAS semantic-key decode, action-verb
+  decode on real genOnOff/genLevelCtrl wire shapes, metering attr reports, and
+  a registry single-def guard for the PSBZS fingerprint). The remaining lidl
+  defs are at parity: the HG06467 garden-string light (z2m `legacy.fz.silver-
+  crest_smart_led_string`) and the 368308-2010 TRV (`legacy.fromZigbee.zs_-
+  thermostat`) need bespoke legacy converters and are deferred as infra; the
+  HG06668 doorbell button (`fz.tuya_doorbell_button` → `action="pressed"`) has
+  no generic IAS-action converter and is likewise deferred.
 - **23 Yale smart locks never reported battery level** — found by a
   z2m↔embedded-zhc parity pass over the Yale vendor (28 defs, all door locks).
   Every Yale lock in z2m decodes battery: most use the shared `lockExtend()`

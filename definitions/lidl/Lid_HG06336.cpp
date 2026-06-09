@@ -1,7 +1,16 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Lidl HG06336 — auto-generated.
-// Silvercrest smart window and door sensor
+// Tier 2: Lidl HG06336 — hand-maintained parity override.
+// Silvercrest smart window and door sensor.
+//
+// Graduated from generated/Lid_HG06336.cpp: the generated def lowered
+// the generic kFzIasZone (which emits the bare key "alarm") while the
+// expose declared "alarm" too — so the open/closed bit never surfaced
+// as the semantic "contact" key the rest of the stack reads. z2m wires
+// m.iasZoneAlarm({zoneType:"contact"}) (= fz.ias_contact_alarm_1,
+// zoneStatus bit 0). Swapped in the typed kFzIasContactAlarm converter,
+// which emits "contact" directly. Mirrors the heiman HS1DS / hive
+// DWS003 IAS-contact ports.
 // z2m-source: lidl.ts #HG06336.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,7 +18,7 @@ namespace zhc::devices::lidl {
 namespace {
 const FzConverter* const kFz_HG06336[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
 constexpr const char* kModels_HG06336[] = { "TY0203" };
@@ -21,7 +30,7 @@ constexpr const char* kManus_HG06336[] = { "_TZ1800_ejwkn2h2", "_TZ1800_ho6i0zk9
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

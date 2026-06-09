@@ -23,8 +23,6 @@ extern const PreparedDefinition kDef_HG06336;
 extern const PreparedDefinition kDef_D14153806L;
 extern const PreparedDefinition kDef_HG08633;
 
-extern const PreparedDefinition kDef_PSBZS_A1;
-
 const PreparedDefinition* const kLidlRegistry[] = {
     &kDefLid__TZE200_htnnfasr,
     &kDef_D368308_2010,
@@ -42,7 +40,6 @@ const PreparedDefinition* const kLidlRegistry[] = {
     &kDef_HG06336,
     &kDef_D14153806L,
     &kDef_HG08633,
-    &kDef_PSBZS_A1,
 };
 const std::size_t kLidlRegistryCount = sizeof(kLidlRegistry) / sizeof(kLidlRegistry[0]);
 

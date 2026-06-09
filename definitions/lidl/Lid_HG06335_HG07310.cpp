@@ -1,7 +1,16 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Lidl HG06335/HG07310 — auto-generated.
-// Silvercrest smart motion sensor
+// Tier 2: Lidl HG06335/HG07310 — hand-maintained parity override.
+// Silvercrest smart motion sensor.
+//
+// Graduated from generated/Lid_HG06335_HG07310.cpp: the generated def
+// lowered the generic kFzIasZone (which emits the bare key "alarm")
+// while the expose declared "alarm" too — so the motion bit never
+// surfaced as the semantic "occupancy" key the rest of the stack reads.
+// z2m wires m.iasZoneAlarm({zoneType:"occupancy"}) (= fz.ias_occupancy_-
+// alarm_1, zoneStatus bit 0). Swapped in the typed kFzIasMotionAlarm
+// converter, which emits "occupancy" directly. Mirrors the heiman /
+// hive IAS-motion ports.
 // z2m-source: lidl.ts #HG06335/HG07310.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,7 +18,7 @@ namespace zhc::devices::lidl {
 namespace {
 const FzConverter* const kFz_HG06335_HG07310[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_HG06335_HG07310[] = { "TY0202" };
@@ -21,7 +30,7 @@ constexpr const char* kManus_HG06335_HG07310[] = { "_TZ1800_fcdjzz3s" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

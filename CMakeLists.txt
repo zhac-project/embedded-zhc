@@ -908,6 +908,17 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Lidl Silvercrest / Livarno / Parkside family
+# (Tuya-OEM). The two IAS sensors (HG06335 motion, HG06336 contact) lowered
+# the generic kFzIasZone (bare "alarm") instead of the typed
+# kFzIas<Type>Alarm their zoneType implies; the three command remotes
+# (FB20-002, FB21-001, HG08164) emitted a controllable on/off `state`
+# instead of an `action` stream; the HG08673 power plug dropped its entire
+# metering surface; and PSBZS-A1 carried a duplicate battery+onoff stub
+# shadowing the full Tuya-DP def. See tests/README.md.
+add_executable(zhc_lidl_parity_tests tests/test_lidl_parity.cpp)
+target_link_libraries(zhc_lidl_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Develco / Frient family. The IAS sensors
 # (FLSZB/HESZB/SMSZB/MOSZB/WISZB) lowered the generic kFzIasZone (bare
 # "alarm") instead of the typed kFzIas<Type>Alarm their expose declared,
@@ -1243,6 +1254,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
 add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)
 add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
