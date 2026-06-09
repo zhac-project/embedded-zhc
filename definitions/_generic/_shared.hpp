@@ -278,6 +278,10 @@ extern const FzConverter kFzIasWaterLeakAlarm;
 extern const FzConverter kFzIasSmokeAlarm;
 extern const FzConverter kFzIasCoAlarm;
 extern const FzConverter kFzIasVibrationAlarm;
+// Rain alarm: zoneStatus bit 0 → "rain" bool. Matches eWeLink's
+// `fzLocal.WS01_rain` (rainfall sensor reports leak/rain via ssIasZone
+// commandStatusChangeNotification, bit 0).
+extern const FzConverter kFzIasRainAlarm;
 // Gas alarm: zoneStatus bit 0 (`fz.ias_gas_alarm_1`) and bit 1
 // (`fz.ias_gas_alarm_2`); both emit "gas". Used by Heiman combustible-
 // gas sensors (HS1CG family / HS3CG).

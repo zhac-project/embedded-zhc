@@ -908,6 +908,17 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the eWeLink (Coolkit / Sonoff-OEM) vendor. The WS01
+# rainfall sensor reports rain over ssIasZone commandStatusChangeNotification
+# (zoneStatus bit 0); z2m maps it via fzLocal.WS01_rain -> {rain}. Its
+# generated port declared the `rain` expose but wired the generic
+# kFzIasZoneStatusChange (which only emits alarm_1/tamper/battery_low), so the
+# expose stayed empty. Graduated to a parent override wiring the new typed
+# kFzIasRainAlarm. Guards SNZB-05 (typed water_leak) and CK-BL702-ROUTER
+# (z2m exposes:[] -> no phantom on/off) too. See tests/README.md.
+add_executable(zhc_ewelink_parity_tests tests/test_ewelink_parity.cpp)
+target_link_libraries(zhc_ewelink_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Immax (Neo) 07046L 4-Touch key fob. It was generated
 # with kFzCommandRecall (genScenes 0x0005), but the device sends IAS ACE
 # (ssIasAce 0x0501) commandArm/commandPanic — so no action ever decoded.
@@ -1424,6 +1435,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_ewelink_parity_tests      COMMAND zhc_ewelink_parity_tests)
 add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_orvibo_parity_tests       COMMAND zhc_orvibo_parity_tests)

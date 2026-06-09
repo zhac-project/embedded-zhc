@@ -5,17 +5,18 @@
 // commandStatusChangeNotification (zonestatus bit0 -> rain bool).
 // z2m tz: []; z2m exposes: [e.rain()]. No on/off, no battery in z2m.
 // Generic generator wrongly added kFzBattery+kFzOnOff and a genOnOff
-// binding — removed here. Bind ssIasZone (0x0500) and reuse the
-// generic IAS zone-status converter; bit0 alarm currently surfaces as
-// the existing "alarm" key. A dedicated `rain` mapping needs a
-// per-device fz override — left for a future sweep.
+// binding — removed here. Bind ssIasZone (0x0500) and decode the
+// rainfall via the typed kFzIasRainAlarm converter (zoneStatus bit0 ->
+// "rain" bool), matching z2m's fzLocal.WS01_rain. Previously this wired
+// the generic kFzIasZoneStatusChange, which only emits alarm_1/alarm_2/
+// tamper/battery_low and never the "rain" key the expose advertises.
 // z2m-source: ewelink.ts #WS01 + fzLocal.WS01_rain.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::ewelink {
 namespace {
 const FzConverter* const kFz_WS01[] = {
-    &::zhc::generic::kFzIasZoneStatusChange,
+    &::zhc::generic::kFzIasRainAlarm,
 };
 constexpr const char* kModels_WS01[] = { "WS01" };
 

@@ -10,6 +10,33 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **eWeLink WS01 rainfall sensor never reported `rain`** — found by a
+  z2m↔embedded-zhc parity pass over the 18 eWeLink defs. WS01 reports
+  rainfall over `ssIasZone` commandStatusChangeNotification (zoneStatus
+  bit 0); z2m maps it with `fzLocal.WS01_rain` → `{rain: bool}`. The
+  generated port correctly declared the `rain` expose but wired the
+  generic `kFzIasZoneStatusChange`, which only emits
+  `alarm_1`/`alarm_2`/`tamper`/`battery_low` — so the `rain` expose stayed
+  permanently empty while phantom alarm-bit keys leaked into the shadow.
+  Added a typed `kFzIasRainAlarm` converter (zoneStatus bit 0 → `rain`) to
+  the generic shared layer (mirrors the existing
+  `kFzIas{WaterLeak,Smoke,Co,…}Alarm` family) and graduated WS01 to a
+  Tier-2 parent override wired to it. New fixture
+  `tests/test_ewelink_parity.cpp` pins the rain decode plus regression
+  guards that WS01 carries no phantom on/off (z2m `toZigbee:[]`), that
+  SNZB-05 decodes typed `water_leak`, and that the CK-BL702-ROUTER USB
+  repeater stays expose-less (z2m `exposes:[]`). The rest of the range was
+  at parity: the NAS-AB03B3/AB06B3 sirens (custom `0xFC11`
+  `customEwelinkSiren` writes for melody/volume/duration + genOnOff alarm
+  + IAS battery_low — already hand-corrected, *not* Tuya-DP), the curtains
+  AM25B/MYRX25Z/CK-MG22 (`m.windowCovering({coverInverted:true})` = raw
+  lift passthrough, which the generic cover converter already matches),
+  the multi-gang switches ZB-SW02..05 (`endpoint_map`), and the plain
+  on/off switches/plugs (SA-003/SA-030, ZB-SW01, SWITCH-ZR02/ZR03,
+  CK-BL702-MSW). The curtains' custom-cluster `ewelinkBattery` and
+  `ewelinkMotor*` (mode/reverse/calibration/speed, custom `0xEF00`)
+  channels are deferred as manuSpecific infra (no generic decoder).
+
 - **NodOn TRV-4-1-00 `trv_mode` / `valve_position` and SIN-4-RS-20[_PRO]
   `tilt` were dead (no decode)** — found by a z2m↔embedded-zhc parity pass
   over the 16 NodOn defs. (1) TRV-4-1-00 declared `trv_mode`
