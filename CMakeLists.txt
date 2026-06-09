@@ -1162,6 +1162,22 @@ target_link_libraries(zhc_owon_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_innr_parity_tests tests/test_innr_parity.cpp)
 target_link_libraries(zhc_innr_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the BITUO TECHNIK DIN-rail energy-meter family (11 SDM/SPM
+# defs). All run z2m m.electricityMeter (producedEnergy + acFrequency +
+# powerFactor, threePhase on SDM01W/SPM02) plus the vendor bituo_fz.total_power /
+# phase_energy converters, which read STANDARD seMetering 0x0702 +
+# haElectricalMeasurement 0x0B04 attrs (no manufacturer-specific cluster). The
+# generated ports catalogued the full expose set but the generic kFzMetering
+# (energy/power) + kFzElectricalMeasurement (power/voltage/current) decode none
+# of the extras, so produced_energy / ac_frequency / power_factor /
+# power_apparent / power_reactive / total_power* / per-phase b/c voltage/current/
+# power / per-phase tier energy were dead. Added kFzBituoMeteringExtras +
+# kFzBituoElectricalMeasurementExtras (definitions/bituo_technik/_shared.cpp),
+# wired alongside the generics on all 11 graduated Tier-2 defs. See
+# tests/README.md.
+add_executable(zhc_bituo_technik_parity_tests tests/test_bituo_technik_parity.cpp)
+target_link_libraries(zhc_bituo_technik_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Hive (British Gas) family. Two gaps: (1) the contact
 # (DWS003), motion (MOT003) and keypad (KEYPAD001) IAS devices lowered the
 # generic kFzIasZone (bare "alarm_1") while exposing contact/occupancy — dead
@@ -1352,6 +1368,7 @@ add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
+add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)
 add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)

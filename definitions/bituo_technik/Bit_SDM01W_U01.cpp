@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
+// Tier 2: uses shared bituo_technik converters (full metering/electrical channel decode).
 // Tier 1: BituoTechnik SDM01W-U01 — auto-generated.
 // Smart energy monitor for 3P+N system
 // z2m-source: bituo_technik.ts #SDM01W-U01.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/bituo_technik/_shared.hpp"
 
 namespace zhc::devices::bituo_technik {
 namespace {
@@ -11,6 +13,8 @@ const FzConverter* const kFz_SDM01W_U01[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzElectricalMeasurement,
+    &::zhc::bituo_technik::kFzBituoMeteringExtras,
+    &::zhc::bituo_technik::kFzBituoElectricalMeasurementExtras,
 };
 const TzConverter* const kTz_SDM01W_U01[] = {
     &::zhc::generic::kTzOnOff,
@@ -22,13 +26,13 @@ constexpr const char* kModels_SDM01W_U01[] = { "SDM01W", "SDM01-3Z1" };
 
 // Hand-extended 2026-04-28: full 3-phase exposes per z2m TS extend block
 // (m.electricityMeter threePhase + producedEnergy + acFrequency + powerFactor)
-// plus bituo_fz.total_power and bituo_fz.phase_energy custom fields.
-// NOTE: total_power*, energy_phase_*, produced_energy_phase_*, ac_frequency,
-// power_factor, power_reactive*, power_apparent*, *_phase_b, *_phase_c are
-// catalogued (Access::State) but NOT yet decoded by kFzMetering /
-// kFzElectricalMeasurement — they need vendor-specific fz support
-// (currentTier{1,2,3}SummDelivered/Received, totalActive/Reactive/ApparentPower,
-// acFrequency 0x0300, powerFactor 0x0510). See BITUO_TECHNIK_PARITY.md.
+//
+// Full 3-phase/total channel set now decoded by kFzBituoMeteringExtras +
+// kFzBituoElectricalMeasurementExtras (wired below): per-phase b/c
+// voltage/current/power, total_power*, ac_frequency, power_factor,
+// power_reactive/power_apparent, produced_energy + per-phase tier energy.
+// (power_reactive_phase_b/c, power_apparent_phase_b/c, power_factor_phase_b/c
+// have no standard single-attr ZCL id and stay catalogued, matching z2m.)
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},

@@ -1,26 +1,35 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: BituoTechnik SPM01-U02 — auto-generated.
+// Tier 2: uses shared bituo_technik converters (full metering/electrical channel decode).
+// Tier 1: BituoTechnik SDM01B-U01 — auto-generated.
 // Smart energy monitor for 1P+N system
-// z2m-source: bituo_technik.ts #SPM01-U02.
+// z2m-source: bituo_technik.ts #SDM01B-U01.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/bituo_technik/_shared.hpp"
 
 namespace zhc::devices::bituo_technik {
 namespace {
-const FzConverter* const kFz_SPM01_U02[] = {
+const FzConverter* const kFz_SDM01B_U01[] = {
+    &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzElectricalMeasurement,
+    &::zhc::bituo_technik::kFzBituoMeteringExtras,
+    &::zhc::bituo_technik::kFzBituoElectricalMeasurementExtras,
 };
-
-constexpr const char* kModels_SPM01_U02[] = { "SPM01" };
+const TzConverter* const kTz_SDM01B_U01[] = {
+    &::zhc::generic::kTzOnOff,
+};
+constexpr const char* kModels_SDM01B_U01[] = { "SDM01B" };
 
 }  // namespace
 
 
 // Hand-extended 2026-04-28: 1P+N exposes per z2m TS extend
 // (m.electricityMeter producedEnergy + acFrequency + powerFactor + power_apparent).
-// No on/off in U02 SKU. See BITUO_TECHNIK_PARITY.md for decode gaps.
+// produced_energy / ac_frequency / power_factor / power_apparent now decoded
+// by kFzBituoMeteringExtras + kFzBituoElectricalMeasurementExtras (wired below).
 constexpr Expose kAutoExposes[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"produced_energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
@@ -32,20 +41,21 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
+    {1, 0x0006},
     {1, 0x0702},
     {1, 0x0B04},
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_SPM01_U02{
-    .zigbee_models=kModels_SPM01_U02, .zigbee_models_count=sizeof(kModels_SPM01_U02)/sizeof(kModels_SPM01_U02[0]),
+extern const PreparedDefinition kDef_SDM01B_U01{
+    .zigbee_models=kModels_SDM01B_U01, .zigbee_models_count=sizeof(kModels_SDM01B_U01)/sizeof(kModels_SDM01B_U01[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="SPM01-U02", .vendor="BituoTechnik",
+    .model="SDM01B-U01", .vendor="BituoTechnik",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_SPM01_U02, .from_zigbee_count=sizeof(kFz_SPM01_U02)/sizeof(kFz_SPM01_U02[0]),
-    .to_zigbee=nullptr, .to_zigbee_count=0,
+    .from_zigbee=kFz_SDM01B_U01, .from_zigbee_count=sizeof(kFz_SDM01B_U01)/sizeof(kFz_SDM01B_U01[0]),
+    .to_zigbee=kTz_SDM01B_U01, .to_zigbee_count=sizeof(kTz_SDM01B_U01)/sizeof(kTz_SDM01B_U01[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };

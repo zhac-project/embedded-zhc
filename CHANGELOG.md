@@ -10,6 +10,33 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **BITUO TECHNIK energy meters decoded only 4 of ~20 metering channels**
+  — found by a z2m↔embedded-zhc parity pass over the 11 SDM/SPM DIN-rail
+  meter defs (SDM01/SDM02, SPM01/SPM02; U00/U01/U02 SKUs). All 11 run z2m's
+  `m.electricityMeter` (with `producedEnergy` + `acFrequency` + `powerFactor`,
+  plus `threePhase` on SDM01W/SPM02) and the vendor `bituo_fz.total_power` /
+  `bituo_fz.phase_energy` converters — but the generated ports wired only the
+  generic `kFzMetering` (seMetering 0x0000 energy / 0x0400 power) and
+  `kFzElectricalMeasurement` (haElectricalMeasurement 0x050B power / 0x0505
+  voltage / 0x0508 current), so every catalogued extra was a dead expose:
+  `produced_energy`, `ac_frequency`, `power_factor`, `power_apparent`,
+  `power_reactive`, `total_power`/`total_power_reactive`/`total_power_apparent`,
+  the per-phase B/C `voltage`/`current`/`power`, and the per-phase tier-summation
+  `energy_phase_*`/`produced_energy_phase_*`. Bituo uses NO manufacturer-specific
+  cluster — both converters read STANDARD seMetering / haElectricalMeasurement
+  attributes (vendor-assigned slots inside the standard clusters) — so a new
+  pair of reusable converters, `kFzBituoMeteringExtras` (seMetering 0x0001
+  produced + 0x0102–0x0107 tier energy) and `kFzBituoElectricalMeasurementExtras`
+  (0x0300 frequency, 0x0510 factor, 0x050E/0x050F reactive/apparent, 0x0304–0x0306
+  totals, 0x0905/0x0908/0x090B + 0x0A05/0x0A08/0x0A0B per-phase B/C), now decode
+  them. Values are raw pass-through, matching the generic converters (the runtime
+  scales downstream). The converters wire alongside the generics on all 11 defs
+  (`definitions/bituo_technik/_shared.{hpp,cpp}`), graduated from `generated/`
+  to Tier-2 parent overrides. Also restored the 6 per-phase tier-energy exposes
+  that the **SPM02-U01** catalogue dropped (its z2m entry carries
+  `bituo_fz.phase_energy` like SDM01W, which did list them). Covered by
+  `tests/test_bituo_technik_parity.cpp`.
+
 - **Neo (NEO Coolcam) sirens, PIR and T/H sensor lost their primary
   channels** — found by a z2m↔embedded-zhc parity pass over the 25 neo defs.
   The Tuya-DP water valves (NAS-WV03B/WV03B2), AB06B2 siren, PS10B2 presence

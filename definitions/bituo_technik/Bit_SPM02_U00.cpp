@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
+// Tier 2: uses shared bituo_technik converters (full metering/electrical channel decode).
 // Tier 1: BituoTechnik SPM02-U00 — auto-generated.
 // Smart energy monitor for 3P+N system
 // z2m-source: bituo_technik.ts #SPM02-U00.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/bituo_technik/_shared.hpp"
 
 namespace zhc::devices::bituo_technik {
 namespace {
@@ -11,6 +13,8 @@ const FzConverter* const kFz_SPM02_U00[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzElectricalMeasurement,
+    &::zhc::bituo_technik::kFzBituoMeteringExtras,
+    &::zhc::bituo_technik::kFzBituoElectricalMeasurementExtras,
 };
 const TzConverter* const kTz_SPM02_U00[] = {
     &::zhc::generic::kTzOnOff,
@@ -22,7 +26,10 @@ constexpr const char* kModels_SPM02_U00[] = { "SPM02-E0" };
 
 // Hand-extended 2026-04-28: 3P+N exposes per z2m TS extend
 // (m.electricityMeter threePhase + producedEnergy + acFrequency + powerFactor)
-// plus bituo_fz.total_power. See BITUO_TECHNIK_PARITY.md for decode gaps.
+// Full channel set now decoded by kFzBituoMeteringExtras +
+// kFzBituoElectricalMeasurementExtras (wired below): produced_energy,
+// ac_frequency, power_factor, power_reactive/power_apparent, total_power*,
+// per-phase b/c voltage/current/power.
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
