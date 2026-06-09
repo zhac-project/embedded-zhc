@@ -1471,6 +1471,17 @@ target_link_libraries(zhc_perenio_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_stelpro_parity_tests tests/test_stelpro_parity.cpp)
 target_link_libraries(zhc_stelpro_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Aurora "AOne" non-light family. The PIR
+# (AU-A1ZBPIRS) and contact (AU-A1ZBDWS) sensors decoded the bare "alarm"
+# key (generic kFzIasZone) instead of the typed occupancy/contact, and the
+# PIR dropped its illuminance channel; the smart remote (AU-A1ZBRC) and both
+# wireless battery rotary dimmers (AU-A1ZBR1GW single-EP, AU-A1ZBR2GW
+# multi-EP) were mis-ported as dead on/off switches with the action stream
+# dropped. Graduated to parent overrides wiring kFzIas<Type>Alarm +
+# kFzIlluminance and the generic command-action decoders.
+add_executable(zhc_aurora_lighting_parity_tests tests/test_aurora_lighting_parity.cpp)
+target_link_libraries(zhc_aurora_lighting_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1606,6 +1617,7 @@ add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
 add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)
 add_test(NAME zhc_stelpro_parity_tests      COMMAND zhc_stelpro_parity_tests)
+add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)

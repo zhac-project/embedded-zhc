@@ -10,6 +10,34 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Aurora "AOne" non-light family — sensors decoded the wrong IAS key and
+  the remote + wireless dimmers had their entire action stream dropped.**
+  Five Aurora defs were graduated from `generated/` to Tier-2 parent
+  overrides:
+  - **AU-A1ZBPIRS** (PIR) decoded the generic `kFzIasZone` bare key `alarm`
+    instead of z2m's `fz.ias_occupancy_alarm_1` → `occupancy`, and dropped
+    the `m.illuminance()` lux channel entirely. Re-pointed at
+    `kFzIasMotionAlarm` (emits `occupancy`) + added `kFzIlluminance`, the
+    `illuminance` expose and the `msIlluminanceMeasurement` (0x0400) binding.
+  - **AU-A1ZBDWS** (door/window contact) had the same `kFzIasZone` → `alarm`
+    bug vs `fz.ias_contact_alarm_1` → `contact`. Swapped to
+    `kFzIasContactAlarm`; battery channel unchanged.
+  - **AU-A1ZBRC** (smart remote) was wrong-bundled as a settable on/off light
+    (`kFzOnOff` + `kTzOnOff` + writable `state`), so every button press was
+    dead and it falsely advertised a relay. Rewired to the genOnOff /
+    genLevelCtrl(step) / genScenes(recall, store) command decoders, exposing
+    `action`; phantom `state` and toolbox removed.
+  - **AU-A1ZBR1GW** (1-gang wireless rotary dimmer, single endpoint) had its
+    action stream dropped the same way. Rewired to genOnOff / genLevelCtrl /
+    lightingColorCtrl(stepColorTemp) command decoders + `action`.
+  - **AU-A1ZBR2GW** (2-gang wireless rotary dimmer, multi-EP {right:1,
+    left:2}) had its action stream explicitly deferred. Wired the command
+    decoders and enabled `endpoint_action_suffix` so each gang keeps identity
+    (`action_right` / `action_left`); battery stays a global key.
+  New fixture `tests/test_aurora_lighting_parity.cpp` pins the typed sensor
+  keys (no bare `alarm`), illuminance decode, the action labels per command,
+  and the 2-gang per-endpoint suffixing. Mirrors the heiman / paulmann fixes.
+
 - **Sengled IAS sensor family — motion and contact sensors shipped with
   their primary state dead.** Four Sengled IAS-Zone defs lowered (or, for
   E13-N11, half-rewrote to) the generic `kFzIasZone` converter — which emits
