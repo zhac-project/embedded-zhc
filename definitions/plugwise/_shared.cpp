@@ -81,6 +81,7 @@ enum class PType : std::uint8_t {
     IntScaled100,    // INT16 raw / 100 -> Int (still int — caller scales display)
     ForceLookup,     // u32 -> string label via kForceLookup
     RadioLookup,     // u8/bool -> string label via kRadioStrengthLookup
+    RunningState,    // map16 -> string label via constants.thermostatRunningStates
 };
 
 struct PEntry {
@@ -90,6 +91,19 @@ struct PEntry {
 };
 
 constexpr PEntry kAttrs[] = {
+    // Standard hvacThermostat attrs that the generic kFzThermostat drops
+    // (it handles only 0x0000 / 0x0012 / 0x001C). z2m decodes all of
+    // these via base fz.thermostat — without them the Tom/Emma exposes
+    // (pi_heating_demand, occupied_cooling_setpoint, running_state,
+    // local_temperature_calibration, outdoor_temperature) are dead.
+    // Raw INT pass-through mirrors the generic setpoint branch; the
+    // runtime/SPA applies the per-expose display divisor (owon precedent).
+    { 0x0001, "outdoor_temperature",           PType::Int          },  // OutdoorTemperature (s16)
+    { 0x0008, "pi_heating_demand",             PType::Uint         },  // PIHeatingDemand (u8, 0..100 on Plugwise)
+    { 0x0010, "local_temperature_calibration", PType::Int          },  // LocalTemperatureCalibration (s8)
+    { 0x0011, "occupied_cooling_setpoint",     PType::Int          },  // OccupiedCoolingSetpoint (s16)
+    { 0x0029, "running_state",                 PType::RunningState },  // ThermostatRunningState (map16)
+    // Plugwise manufacturer-specific attrs (0x1172 mfg code):
     { 0x4001, "valve_position",                PType::Uint         },
     { 0x4002, "error_status",                  PType::Uint         },
     { 0x4003, "current_heating_setpoint",      PType::IntScaled100 },
@@ -184,6 +198,29 @@ bool fz_plugwise_thermostat(const DecodedMessage& msg,
                     kRadioStrengthLookup,
                     sizeof(kRadioStrengthLookup) / sizeof(kRadioStrengthLookup[0]),
                     raw);
+                if (!label) continue;
+                o.type = ValueType::StringRef; o.str = label;
+                break;
+            }
+            case PType::RunningState: {
+                // ThermostatRunningState (map16). z2m looks the raw value
+                // up in constants.thermostatRunningStates. The Plugwise
+                // heating family runs the common low states (Emma exposes
+                // running_state over [idle, heat, cool]); cover the bits
+                // z2m maps and drop unknowns (matching getFromLookup miss).
+                std::uint64_t st = 0;
+                if      (v->type == ValueType::Uint) st = v->u;
+                else if (v->type == ValueType::Int && v->i >= 0)
+                    st = static_cast<std::uint64_t>(v->i);
+                else continue;
+                const char* label = nullptr;
+                switch (st) {
+                    case 0x00: label = "idle";     break;
+                    case 0x01: label = "heat";     break;
+                    case 0x02: label = "cool";     break;
+                    case 0x04: label = "fan_only"; break;
+                    default: break;
+                }
                 if (!label) continue;
                 o.type = ValueType::StringRef; o.str = label;
                 break;

@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Plugwise Tom (106-03) and Emma (170-01) thermostats had dead
+  exposes** — found by a z2m↔embedded-zhc parity pass over the 4 Plugwise
+  defs. Both wired the generic `kFzThermostat`, which decodes only
+  hvacThermostat attrs `0x0000`/`0x0012`/`0x001C`, leaving several declared
+  exposes undecoded that z2m's base `fz.thermostat` fills: Tom's
+  `pi_heating_demand` (`0x0008`) and Emma's `occupied_cooling_setpoint`
+  (`0x0011`), `running_state` (`0x0029`, map16→string),
+  `local_temperature_calibration` (`0x0010`) and `outdoor_temperature`
+  (`0x0001`). Extended the existing `kFzPlugwiseThermostat` converter to
+  decode these standard attrs alongside its manufacturer-specific (`0x1172`)
+  set. Emma additionally overloads `pIHeatingDemand` as the boiler-water
+  setpoint — z2m surfaces it as `boiler_setpoint` (°C), not
+  `pi_heating_demand` (%) — so the 170-01 expose was renamed and populated
+  via a def-local converter. Both defs graduated to Tier-2 parent overrides.
+  New fixture `tests/test_plugwise_parity.cpp`. (The Lisa 158-01 thermostat
+  and 160-01 plug verified CLEAN — pure-generic and already matching z2m.)
+
 - **QA QAT44Z4H (4-gang) / QAT44Z6H (6-gang) wall switches decoded and
   controlled none of their gangs** — found by a z2m↔embedded-zhc parity pass
   over the 28 QA defs. Both are TS0601 Tuya-MCU devices (`_TZE204_kyzjsjo3` /

@@ -25,8 +25,16 @@
 
 namespace zhc::devices::plugwise {
 
-// Decoder for Plugwise-specific hvacThermostat attribute reports.
-// Emits:
+// Decoder for Plugwise hvacThermostat attribute reports. Covers both
+// the manufacturer-specific 0x40xx/0xF0xx attributes AND the standard
+// ZCL attributes that the generic kFzThermostat skips (it only handles
+// 0x0000 / 0x0012 / 0x001C):
+//   0x0001 OutdoorTemperature (INT16)           -> "outdoor_temperature"
+//   0x0008 PIHeatingDemand (UINT8, 0..100)      -> "pi_heating_demand"
+//   0x0010 LocalTemperatureCalibration (INT8)   -> "local_temperature_calibration"
+//   0x0011 OccupiedCoolingSetpoint (INT16)      -> "occupied_cooling_setpoint"
+//   0x0029 ThermostatRunningState (MAP16)       -> "running_state" (idle/heat/cool/fan_only)
+// Manufacturer-specific (mfg 0x1172) attributes:
 //   0x4001 plugwiseValvePosition (UINT8)        -> "valve_position"
 //   0x4002 (raw)                                -> "error_status"
 //   0x4003 plugwiseCurrentHeatingSetpoint INT16 -> "current_heating_setpoint" (/100)

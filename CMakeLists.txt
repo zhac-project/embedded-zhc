@@ -1161,6 +1161,17 @@ target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_owon_parity_tests tests/test_owon_parity.cpp)
 target_link_libraries(zhc_owon_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Plugwise heating family + plug. The Tom (106-03)
+# and Emma (170-01) thermostat ports declared standard hvacThermostat
+# exposes that the generic kFzThermostat (0x0000/0x0012/0x001C only) never
+# filled: pi_heating_demand (0x0008), occupied_cooling_setpoint (0x0011),
+# running_state (0x0029), local_temperature_calibration (0x0010) and
+# outdoor_temperature (0x0001). Fixed by extending kFzPlugwiseThermostat to
+# decode them; Emma's pIHeatingDemand-as-boiler_setpoint overload wired via
+# a def-local converter + expose rename. Both defs graduated to Tier-2.
+add_executable(zhc_plugwise_parity_tests tests/test_plugwise_parity.cpp)
+target_link_libraries(zhc_plugwise_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the VSmart (HumanSmart) family. The HS-SEDR00ZB door
 # sensor (z2m m.iasZoneAlarm zoneType:"contact", invertAlarm:true) was wired
 # to the generic kFzIasZone, which emits a generic "alarm" boolean and never
@@ -1402,6 +1413,7 @@ add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
+add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)

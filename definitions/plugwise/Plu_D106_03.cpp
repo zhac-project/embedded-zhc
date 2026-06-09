@@ -10,10 +10,16 @@
 // * Decoder coverage:
 //     - kFzBattery               -> battery / voltage
 //     - kFzTemperature           -> local_temperature (msTemperatureMeasurement)
-//     - kFzThermostat            -> pIHeatingDemand -> "pi_heating_demand"
-//     - kFzPlugwiseThermostat    -> manuSpec attrs (valve_position, force,
+//     - kFzThermostat            -> (generic) local_temperature only on
+//                                   this device; 0x0012/0x001C unsupported.
+//     - kFzPlugwiseThermostat    -> pi_heating_demand (0x0008) + manuSpec
+//                                   attrs (valve_position, force,
 //                                   radio_strength, error_status,
-//                                   plugwise_t_diff, current_heating_setpoint)
+//                                   plugwise_t_diff, current_heating_setpoint).
+//                                   NOTE: the generic kFzThermostat does NOT
+//                                   decode 0x0008 (only 0x0000/0x0012/0x001C),
+//                                   so pi_heating_demand was a dead expose
+//                                   until kFzPlugwiseThermostat was extended.
 // * Writer coverage:
 //     - kTzPlugwiseValvePosition  -> "valve_position"
 //     - kTzPlugwisePushForce      -> "force" (string lookup)
