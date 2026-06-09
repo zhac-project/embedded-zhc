@@ -985,6 +985,13 @@ target_link_libraries(zhc_shelly_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ubisys_parity_tests tests/test_ubisys_parity.cpp)
 target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Lytko L101Ze thermostat family: six of the seven
+# L101Ze-* ports were mis-lowered as battery on/off stubs (z2m defines them
+# via modernExtend thermostat({...}) dynamic exposes the generator can't read)
+# and were graduated to Tier-2 parent thermostat overrides. See tests/README.md.
+add_executable(zhc_lytko_parity_tests tests/test_lytko_parity.cpp)
+target_link_libraries(zhc_lytko_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
 # auto-generated def was mis-lowered as a battery on/off switch and was
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
@@ -1077,6 +1084,7 @@ add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
+add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)

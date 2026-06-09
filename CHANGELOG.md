@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Six Lytko L101Ze thermostats were lowered as battery on/off switches** —
+  z2m defines every `L101Ze-*` model via `modernExtend`'s `thermostat({...})`
+  builder (a floor/room heating thermostat: `local_temperature` /
+  `current_heating_setpoint` / `system_mode` / `running_mode` on
+  `hvacThermostat`, plus Lytko manuSpec config attrs). The legacy generator
+  cannot read those dynamic exposes, so six of the seven L101Ze ports
+  (`L101Ze-SLN`, `-SLM`, `-SMN`, `-DLN`, `-DLM`, `-DBN`) were emitted as a
+  battery + on/off stub (`state`/`battery`/`voltage`, wired to `kFzBattery` +
+  `kFzOnOff`, bound to `genOnOff 0x0006`) — on hardware they would never
+  surface a temperature, setpoint or mode. Each was graduated to a Tier-2
+  parent override mapping the core control surface onto the generic
+  `kFzThermostat` decoder (`0x0000`/`0x0012`/`0x001C`) + generic
+  `kTzThermostat` writes + the shared Lytko manuSpec TZ encoders, mirroring
+  the already-corrected sibling `L101Ze-SBN`. Dual-channel models (`-DLN`,
+  `-DLM`, `-DBN`) declare a two-entry `endpoint_map {3,4}` so the runtime
+  suffixes per-channel keys to `<key>_3` / `<key>_4`; single-channel models
+  carry no `endpoint_map` so their keys stay un-suffixed, matching the
+  literal `L101Z-*` siblings. Power metering (`electricityMeter`) and
+  `remote_sensing` config remain deferred (no generic decoder equivalent).
+  New parity fixture `tests/test_lytko_parity.cpp` pins the decode + per-EP
+  suffixing.
+
 - **Ubisys H1/H10 thermostats, J1 shutter, and R0 router had real parity gaps** —
   four Ubisys defs were graduated to Tier-2 parent overrides against `ubisys.ts`:
   - **H1 + H10 heating regulators declared `pi_heating_demand` and `running_mode`
