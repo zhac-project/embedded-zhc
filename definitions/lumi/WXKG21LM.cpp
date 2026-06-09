@@ -34,6 +34,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+// configure: force manuSpecificLumi `mode` (0x0009, uint8) = 1 ("event")
+// with manufacturerCode 0x115F. z2m: endpoint.write("manuSpecificLumi",
+// {mode: 1}, {manufacturerCode}). Field order: op, endpoint, cluster_id,
+// cmd_id, flags, payload, payload_len, wait_ms, manu_code, attr_id,
+// attr_type.
+constexpr std::uint8_t kModeEvent[] = { 0x01 };
+constexpr ConfigStep kConfigSteps[] = {
+    { ConfigStepOp::Write, 1, 0xFCC0, 0, 0,
+      kModeEvent, sizeof(kModeEvent),
+      0, /*manu_code=*/0x115F, /*attr_id=*/0x0009, /*attr_type=*/0x20 },
+};
+
 extern const PreparedDefinition kDefWXKG21LM{
     .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
     .model = "WXKG21LM", .vendor = "Xiaomi",
@@ -44,5 +56,7 @@ extern const PreparedDefinition kDefWXKG21LM{
     .to_zigbee = FX::tz_list, .to_zigbee_count = FX::tz_count,
     .configure = nullptr, .on_event = nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .config_steps = kConfigSteps,
+    .config_steps_count = sizeof(kConfigSteps)/sizeof(kConfigSteps[0]),
 };
 }

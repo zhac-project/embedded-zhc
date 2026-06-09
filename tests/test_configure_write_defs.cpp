@@ -14,6 +14,11 @@
 //     z2m: lumi.ts `endpoint.write("manuSpecificLumi", {mode: 1},
 //     {manufacturerCode: 0x115f})`.
 //
+// Plus the five lumi event-mode defs wired in feat/wire-lumi-mode (same
+// manuSpecificLumi mode-write as WXCJKG11LM): WXCJKG12LM, WXCJKG13LM,
+// WXKG15LM (parent def for the Aqara WRS-R02 whiteLabel), WXKG21LM,
+// WXKG22LM.
+//
 // These defs also carry non-Write steps (Wait / Read). The walker fails a
 // Read with no hook, so this fixture wires harmless success stubs for the
 // read / cmd / sleep hooks and only *captures* the Write op — exactly how
@@ -32,6 +37,11 @@ extern const PreparedDefinition kDef_TS004F_knob;
 }
 namespace zhc::devices::lumi {
 extern const PreparedDefinition kDefWXCJKG11LM;
+extern const PreparedDefinition kDefWXCJKG12LM;
+extern const PreparedDefinition kDefWXCJKG13LM;
+extern const PreparedDefinition kDefWXKG15LM;   // also covers WRS-R02 whiteLabel
+extern const PreparedDefinition kDefWXKG21LM;
+extern const PreparedDefinition kDefWXKG22LM;
 }
 
 using namespace zhc;
@@ -134,10 +144,52 @@ void test_wxcjkg11lm_mode_write() {
     assert(w.value == std::vector<std::uint8_t>{0x01});   // "event"
 }
 
+// Shared check for the lumi event-mode defs wired in feat/wire-lumi-mode:
+// every one writes manuSpecificLumi (0xFCC0) attr mode (0x0009, uint8) = 1
+// with manufacturerCode 0x115F on endpoint 1, and nothing else.
+void assert_lumi_mode_write(const PreparedDefinition& def) {
+    s_writes.clear();
+    auto ctx = make_ctx();
+
+    const bool ok = run_configure(def, ctx);
+    assert(ok);
+    assert(s_writes.size() == 1);          // exactly one Write op in the def
+
+    const WriteCall& w = only_write_to(0xFCC0, 0x0009);
+    assert(w.endpoint  == 1);
+    assert(w.cluster_id == 0xFCC0);        // manuSpecificLumi
+    assert(w.attr_id   == 0x0009);         // mode
+    assert(w.attr_type == 0x20);           // uint8
+    assert(w.manu_code == 0x115F);         // Lumi manufacturer code
+    assert(w.value == std::vector<std::uint8_t>{0x01});   // "event"
+}
+
+void test_wxcjkg12lm_mode_write() {
+    assert_lumi_mode_write(devices::lumi::kDefWXCJKG12LM);
+}
+void test_wxcjkg13lm_mode_write() {
+    assert_lumi_mode_write(devices::lumi::kDefWXCJKG13LM);
+}
+// WXKG15LM is the parent def for the Aqara WRS-R02 whiteLabel.
+void test_wxkg15lm_mode_write() {
+    assert_lumi_mode_write(devices::lumi::kDefWXKG15LM);
+}
+void test_wxkg21lm_mode_write() {
+    assert_lumi_mode_write(devices::lumi::kDefWXKG21LM);
+}
+void test_wxkg22lm_mode_write() {
+    assert_lumi_mode_write(devices::lumi::kDefWXKG22LM);
+}
+
 }  // namespace
 
 int main() {
     test_ts004f_knob_operation_mode_write();
     test_wxcjkg11lm_mode_write();
+    test_wxcjkg12lm_mode_write();
+    test_wxcjkg13lm_mode_write();
+    test_wxkg15lm_mode_write();
+    test_wxkg21lm_mode_write();
+    test_wxkg22lm_mode_write();
     return 0;
 }

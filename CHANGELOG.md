@@ -63,6 +63,32 @@ across the ZHAC platform.
     real def with a capturing `configure_write` and asserts the exact
     `(endpoint, cluster, attr_id, attr_type, value, manu_code)`.
 
+- Wired the remaining five lumi (Aqara) event-mode device defs to
+  `ConfigStepOp::Write`, completing the set of six lumi SKUs whose z2m
+  `configure` does `endpoint.write("manuSpecificLumi", {mode: 1},
+  {manufacturerCode})` (verified against `devices/lumi.ts` — exactly six
+  such writes; `lib/lumi.ts` `mode: {ID: 0x0009, type: UINT8}`,
+  manufacturerCode `0x115f`). Each adds a one-step `config_steps` array
+  mirroring WXCJKG11LM: manuSpecificLumi (`0xFCC0`) attr `0x0009` (mode),
+  uint8 (`0x20`), value `{0x01}` ("event"), manu_code `0x115F`, endpoint 1
+  (host-testable now; over-the-air inert until firmware implements
+  `configure_write`):
+  - **WXCJKG12LM** (`definitions/lumi/WXCJKG12LM.cpp`, `kDefWXCJKG12LM`).
+  - **WXCJKG13LM** (`definitions/lumi/WXCJKG13LM.cpp`, `kDefWXCJKG13LM`).
+  - **WXKG15LM** (`definitions/lumi/WXKG15LM.cpp`, `kDefWXKG15LM`) — this
+    parent def also covers the Aqara **WRS-R02** whiteLabel (no standalone
+    def). z2m additionally writes attr `293` (`0x125`)=`0x02` for the
+    "multiple clicks" mode; that second non-mode write is intentionally
+    left out of scope here (event-mode wiring only).
+  - **WXKG21LM** (`definitions/lumi/WXKG21LM.cpp`, `kDefWXKG21LM`).
+  - **WXKG22LM** (`definitions/lumi/WXKG22LM.cpp`, `kDefWXKG22LM`).
+  - Extended `tests/test_configure_write_defs.cpp` with a shared
+    `assert_lumi_mode_write` check asserting the exact `(endpoint 1,
+    cluster 0xFCC0, attr 0x0009, type 0x20, value {0x01}, manu 0x115F)` for
+    each newly-wired def via a capturing `configure_write`.
+  - Note: QBKG\*/WS-\* lumi wall switches are deliberately **not** wired —
+    z2m does not perform the `{mode: 1}` write for them (verified).
+
 - lumi (Aqara) switch/plug attribute reporting (parity Batch 1). A
   parity worklist flagged 113 lumi defs as "missing configure": z2m sets
   up attribute reporting in each SKU's
