@@ -919,6 +919,14 @@ target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_develco_parity_tests tests/test_develco_parity.cpp)
 target_link_libraries(zhc_develco_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Halo Smart Labs HALO / HALO+ smoke + CO
+# detectors. Both defs were battery+on/off stubs that dropped the whole
+# safety-sensor set; the Halo IAS demux converter (kFzHaloIasZone) already
+# existed in _shared.cpp but was never wired, and temperature/humidity/
+# pressure (standard clusters) plus the EP2 colour light were missing.
+add_executable(zhc_halo_parity_tests tests/test_halo_parity.cpp)
+target_link_libraries(zhc_halo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Legrand / BTicino / Netatmo battery action
 # remotes. 067694/067773/067774/WNAL63/067646/067755/067767 are wireless
 # pushbuttons & scene remotes with no local relay, but their generated
@@ -1203,6 +1211,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
+add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)
 add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)

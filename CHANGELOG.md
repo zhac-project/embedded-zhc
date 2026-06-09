@@ -10,6 +10,29 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Halo Smart Labs HALO / HALO+ smoke + CO detectors dropped their entire
+  safety-sensor channel set** — found by a z2m↔embedded-zhc parity pass over the
+  Halo Smart Labs vendor. Both generated defs were battery+on/off stubs: they
+  surfaced only `state`/`battery`/`voltage` while z2m's `haloCommonExtend`
+  reports `smoke`/`carbon_monoxide`/`tamper`/`battery_low`/`test`/
+  `mains_power_connected` (the device's whole purpose) plus `temperature`/
+  `humidity`/`pressure` and an RGB status light. The endpoint-aware `ssIasZone`
+  demux converter (`kFzHaloIasZone` — EP1 smoke + diagnostics, EP3
+  carbon_monoxide, matching z2m's `haloZoneStatus`) already existed in
+  `definitions/halo_smart_labs/_shared.cpp` but was never referenced by either
+  def. Re-wired both defs to `kFzHaloIasZone` + the generic `kFzTemperature`/
+  `kFzHumidity`/`kFzPressure` (standard clusters 0x0402/0x0405/0x0403) and added
+  the EP2 colour light (`kFzOnOff`/`kFzBrightness`/`kFzColor` +
+  `kTzOnOff`/`kTzBrightness`/`kTzColor`, keys suffixed `_light` via an
+  `endpoint_map` of `{light → 2}` with `default_endpoint = 2`), with the
+  matching ssIasZone/temperature/humidity/pressure/genOnOff/genLevelCtrl/
+  lightingColorCtrl bindings on the correct endpoints. Both defs graduated from
+  `generated/` to Tier-2 parents. The four manufacturer-specific clusters
+  (`haloDeviceStatus` 0xFD00, `haloControl` 0xFD01, `haloSensors` 0xFD02
+  [`co_ppm`], and HALO+'s `haloWeather` 0xFD03 severe-storm radio) remain
+  unwired — `cluster_id_to_name()` does not know their names, so no FzConverter
+  can select them; tracked as infrastructure work. Pinned by
+  `tests/test_halo_parity.cpp`.
 - **Niko 552-80401 wireless motion sensor never reported `occupancy`** — found
   by a z2m↔embedded-zhc parity pass over the Niko vendor. The generated def
   lowered the generic `kFzIasZone` converter, which emits the neutral key
