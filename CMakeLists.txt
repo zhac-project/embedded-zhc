@@ -890,6 +890,12 @@ target_link_libraries(zhc_diy_range_extender_tests PRIVATE zhc_definitions)
 add_executable(zhc_sonoff_snzb02_tests tests/test_sonoff_snzb02.cpp)
 target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
+# auto-generated def was mis-lowered as a battery on/off switch and was
+# graduated to a Tier-2 parent override. See tests/README.md for the pattern.
+add_executable(zhc_slacky_therm_r08_tests tests/test_slacky_therm_r08.cpp)
+target_link_libraries(zhc_slacky_therm_r08_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -964,6 +970,7 @@ add_test(NAME zhc_ts0502b_config_tests      COMMAND zhc_ts0502b_config_tests)
 add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
+add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)

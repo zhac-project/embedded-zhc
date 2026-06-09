@@ -132,6 +132,36 @@ across the ZHAC platform.
 
 ### Fixed
 
+- SlackyDiy **THERM_SLACKY_DIY_R08** (Tuya floor-heating thermostat,
+  custom firmware, zigbeeModel `Tuya_Thermostat_r08`) is now lowered as a
+  thermostat instead of a phantom switch. The auto-generated def
+  (`definitions/slacky_diy/generated/Sla_THERM_SLACKY_DIY_R08.cpp`)
+  mis-classified it as a battery + on/off device (`kFzBattery` +
+  `kFzOnOff`, exposes `state`/`battery`/`voltage`, binds genPowerCfg
+  0x0001 + genOnOff 0x0006) — the wrong device class entirely, so it
+  surfaced a fake switch and never reported temperature, setpoint or mode.
+  Graduated to a hand-maintained **Tier 2** parent override
+  (`definitions/slacky_diy/THERM_SLACKY_DIY_R08.cpp`; generated row
+  deleted) matching its 13 sibling THERM defs: generic `kFzThermostat` /
+  `kTzThermostat` on the custom `hvacThermostat` cluster (0x0201), exposing
+  `local_temperature` / `current_heating_setpoint` / `system_mode` — at
+  parity with z2m `slacky_diy.ts #THERM_SLACKY_DIY_R08`
+  (`localFromZigbeeThermostat` incl. `fz.thermostat`, `e.climate()`). The
+  device's richer controls (child_lock, weekly schedules, eco_mode,
+  frost/heat protect, calibration) ride manufacturer-specific 0x0201
+  attributes and z2m's `e.climate()` composite; the runtime has no generic
+  decoder for those and ships climate flat, so they are deferred exactly as
+  for every other slacky_diy / Tuya thermostat (infra, not an R08 gap).
+  New host test `tests/test_slacky_therm_r08.cpp` pins that the override
+  exposes/binds the thermostat (and NOT the phantom switch/battery) and
+  decodes localTemp / setpoint / systemMode wire reports.
+  (Investigation note: the other 13 slacky_diy probe "expose-gaps"
+  [R01–R07, R09–R0D] and all 15 "missing configure" rows are false
+  positives or runtime infra — the extra thermostat controls need
+  custom-0x0201-attr decoders that do not exist yet, and `configureCommon`
+  is bind+read+reporting whose bindings the defs already carry; vendor is
+  otherwise at parity.)
+
 - Sonoff **SNZB-02** temperature & humidity sensor now surfaces
   `temperature` + `humidity`. The auto-generated def
   (`definitions/sonoff/generated/Son_SNZB_02.cpp`) lowered only
