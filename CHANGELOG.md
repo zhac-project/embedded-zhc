@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Vesternet REM-013 / WAL-011 / WAL-012 multi-button scene remotes — every
+  button collapsed onto one `action`.** These battery remotes (12-, 4- and
+  8-button; rebranded Sunricher `ZGRC-KEY-013` / `ZG2833K4_EU06` /
+  `ZG2833K8_EU05`) are genOnOff/genLevelCtrl/genScenes clients that emit bare
+  command actions (`"on"`, `"brightness_move_up"`, `"recall_<scene>"`). Because
+  `action` is a `kAlwaysGlobalKey`, the dispatcher never suffixed it, so a press
+  on endpoint 1 and a press on endpoint 4 both surfaced as the same
+  `action: "on"` — the originating button was discarded and an N-button remote
+  was indistinguishable from a 1-button one. z2m distinguishes them per
+  endpoint (`on_1..on_4`, …, `recall_1_1..recall_2_4`). Graduated all three defs
+  from `generated/` to Tier-2 parents, added the per-endpoint label map
+  (`{1,2,3,4}` / `{1,2}`) plus the EP2-4 binds, and set `endpoint_action_suffix`
+  so the dispatcher rewrites the key to `action_<n>` per endpoint (the recall
+  scene rides in the value, so endpoint *and* scene both survive). Identical fix
+  to the robb/sunricher rebrand of the same hardware (`Rob_ROB_200_007_0` /
+  `Rob_ROB_200_008_0`). The single-endpoint 2-button WAL-006 is unaffected (bare
+  `action`, no map — matching the robb `ROB_200-009-0` precedent). New
+  `tests/test_vesternet_parity.cpp` pins `action_<n>` per endpoint (incl.
+  genScenes recall) for the three remotes, plus regression guards that WAL-006
+  stays single-EP, SWI-015 still demuxes `state_l1`/`state_l2`, and PIR-21 keeps
+  its IAS occupancy wiring.
+
 - **SMaBiT (Bitron Video) AV2010/33 vibration sensor — vibration never fired
   (wrong IAS zoneStatus bit).** z2m wires this sensor to
   `fz.ias_occupancy_alarm_2`, which reads zoneStatus **bit 1** (alarm_2). The

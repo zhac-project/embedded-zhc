@@ -5,6 +5,15 @@
 // Auto-generator wrong-bundled this as on/off; reality is button-event
 // only. See Ves_VES_ZB_REM_013.cpp comment for the semantic mapping.
 //
+// PARITY FIX (lost per-button identity): the command decoders emit a bare
+// `action` ("on", "brightness_move_up", …), which is a kAlwaysGlobalKey, so
+// without endpoint_action_suffix all four rocker pairs collapsed onto the same
+// `action` key and the originating endpoint was thrown away — z2m instead
+// distinguishes them as on_1..on_4/…/brightness_stop_4. Added the per-endpoint
+// label map ({1,2,3,4}) and set endpoint_action_suffix so the dispatcher
+// rewrites the key to `action_<n>` per endpoint. Same convention as the robb/
+// sunricher rebrand of this 8-button hardware (Rob_ROB_200_007_0).
+//
 // z2m fromZigbee: fz.command_on, fz.command_off, fz.command_move,
 //                 fz.command_stop, fz.battery
 // z2m toZigbee: [] (cannot be controlled).
@@ -12,6 +21,7 @@
 //              brightness_move_up_1..4, brightness_move_down_1..4,
 //              brightness_stop_1..4] → 24 labels for 8 buttons (paired).
 // z2m meta: {multiEndpoint: true, battery: {dontDividePercentage: true}}
+// z2m configure: bind genOnOff/genLevelCtrl on EP1-4, +genPowerCfg on EP1.
 //
 // z2m-source: vesternet.ts #VES-ZB-WAL-012.
 #include "definitions/_generic/_shared.hpp"
@@ -27,6 +37,12 @@ const FzConverter* const kFz_VES_ZB_WAL_012[] = {
 };
 constexpr const char* kModels_VES_ZB_WAL_012[] = { "ZG2833K8_EU05" };
 
+// Per-endpoint label map: EP1..4 → "1".."4". Drives the `action_<n>` suffix
+// rewrite (paired with endpoint_action_suffix) so each rocker keeps identity.
+constexpr ::zhc::EndpointLabel kEndpoints_VES_ZB_WAL_012[] = {
+    {"1", 1}, {"2", 2}, {"3", 3}, {"4", 4},
+};
+
 }  // namespace
 
 
@@ -41,6 +57,12 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
     {1, 0x0001},
+    {2, 0x0006},
+    {2, 0x0008},
+    {3, 0x0006},
+    {3, 0x0008},
+    {4, 0x0006},
+    {4, 0x0008},
 };
 // --- end ---
 
@@ -58,7 +80,10 @@ extern const PreparedDefinition kDef_VES_ZB_WAL_012{
     .from_zigbee=kFz_VES_ZB_WAL_012, .from_zigbee_count=sizeof(kFz_VES_ZB_WAL_012)/sizeof(kFz_VES_ZB_WAL_012[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .endpoint_map=kEndpoints_VES_ZB_WAL_012,
+    .endpoint_map_count=sizeof(kEndpoints_VES_ZB_WAL_012)/sizeof(kEndpoints_VES_ZB_WAL_012[0]),
+    .endpoint_action_suffix=true,
 };
 
 }  // namespace zhc::devices::vesternet

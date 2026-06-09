@@ -1041,6 +1041,14 @@ target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_robb_parity_tests tests/test_robb_parity.cpp)
 target_link_libraries(zhc_robb_parity_tests PRIVATE zhc_definitions)
 
+# Vesternet (rebranded Sunricher). The multi-endpoint scene remotes (REM-013
+# 12-button, WAL-011 4-button, WAL-012 8-button) emitted a bare `action`
+# (a kAlwaysGlobalKey), collapsing every button onto one key. Set
+# endpoint_action_suffix + endpoint_map so each button keeps identity
+# (action_<n>) — same fix as the robb rebrand of the same hardware.
+add_executable(zhc_vesternet_parity_tests tests/test_vesternet_parity.cpp)
+target_link_libraries(zhc_vesternet_parity_tests PRIVATE zhc_definitions)
+
 # Custom devices (DiY) flower/soil sensors. ZeeFlora + b-parasite exposed
 # soil_moisture but no generic kFzSoilMoisture existed (0x0408 also missing
 # from cluster_names); soil reports dropped. Added the decoder + graduated
@@ -1533,6 +1541,7 @@ add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
+add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)

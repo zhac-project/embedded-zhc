@@ -4,19 +4,29 @@
 // Zigbee 12-button remote — battery-powered, NO on/off state. The
 // auto-generator wrong-bundled this as a generic on/off switch; reality
 // is that the device only emits commandOn/Off/Move/Stop/Recall ZCL
-// cluster commands which the action-decoders translate into "on_N",
-// "off_N", "brightness_move_up_N", "brightness_move_down_N",
-// "brightness_stop_N", "recall_N_M" semantic action labels.
+// cluster commands which the action-decoders translate into "on",
+// "off", "brightness_move_up", "brightness_move_down",
+// "brightness_stop", "recall_<scene>" semantic action labels.
+//
+// PARITY FIX (lost per-endpoint identity): the command decoders emit a bare
+// `action`, which is a kAlwaysGlobalKey, so without endpoint_action_suffix
+// every one of the four rocker groups collapsed onto the same `action` key
+// and the originating endpoint was thrown away. z2m distinguishes them per
+// endpoint (on_1..on_4, …, recall_1_1..recall_2_4). Added the per-endpoint
+// label map ({1,2,3,4}) and set endpoint_action_suffix so the dispatcher
+// rewrites the key to `action_<n>` per endpoint; the recall scene rides in
+// the value (`recall_<scene>`), so both endpoint and scene survive.
 //
 // z2m fromZigbee: fz.command_on, fz.command_off, fz.command_move,
 //                 fz.command_stop, fz.command_recall, fzLocal.battery
 // z2m toZigbee: [] (it cannot be controlled).
-// z2m exposes: e.battery(), e.action([72 labels]).
-//
-// Action-key suffix routing per source endpoint (1..6 for the 12 keys
-// = 6 rocker pairs) is delivered by `kFzCommandOn/Off/Move/Stop/Recall`
-// via their default endpoint suffixing. There is no per-endpoint state
-// because the device just routes button presses to its own EPs.
+// z2m exposes: e.battery(), e.action([32 labels]) — on/off/stop/
+//   brightness_move_up/brightness_move_down/brightness_stop × ep 1-4,
+//   plus recall_1_1..recall_1_4 and recall_2_1..recall_2_4.
+// z2m meta: {multiEndpoint: true, battery: {dontDividePercentage: true},
+//            publishDuplicateTransaction: true}
+// z2m configure: bind genOnOff/genLevelCtrl/genScenes on EP1-4,
+//                +genPowerCfg on EP1.
 //
 // z2m-source: vesternet.ts #VES-ZB-REM-013.
 #include "definitions/_generic/_shared.hpp"
@@ -34,6 +44,12 @@ const FzConverter* const kFz_VES_ZB_REM_013[] = {
 // Toolbox is empty — the remote has no controllable state.
 constexpr const char* kModels_VES_ZB_REM_013[] = { "ZGRC-KEY-013" };
 
+// Per-endpoint label map: EP1..4 → "1".."4". Drives the `action_<n>` suffix
+// rewrite (paired with endpoint_action_suffix) so each rocker keeps identity.
+constexpr ::zhc::EndpointLabel kEndpoints_VES_ZB_REM_013[] = {
+    {"1", 1}, {"2", 2}, {"3", 3}, {"4", 4},
+};
+
 }  // namespace
 
 
@@ -41,23 +57,32 @@ constexpr const char* kModels_VES_ZB_REM_013[] = { "ZGRC-KEY-013" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    // `action` is the conventional event label key; values are emitted
-    // by kFzCommand* converters. We expose it as Enum-typed; valid
-    // labels from z2m: on_1..on_6, off_1..off_6, stop_1..stop_6,
-    // brightness_move_up_1..6, brightness_move_down_1..6,
-    // brightness_stop_1..6, recall_1_1..6_5 — total 72 distinct strings.
+    // `action` is the conventional event label key; values are emitted by
+    // kFzCommand* converters and the dispatcher suffixes the key per source
+    // endpoint (endpoint_action_suffix) → action_1..action_4 carrying values
+    // on/off/brightness_move_up/brightness_move_down/brightness_stop and
+    // recall_<scene> (z2m equivalents on_1..on_4 … recall_1_1..recall_2_4).
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
-// z2m configure: bind genOnOff/genLevelCtrl/genPowerCfg + battery%.
-// fz.command_recall implies genScenes binding too. Configure callbacks
-// are deferred to vendor-specific configure() in v2; for now we only
-// declare the binding rows so the adapter can emit ZDO bind requests.
+// z2m configure: bind genOnOff/genLevelCtrl/genScenes on EP1-4, +genPowerCfg
+// on EP1. Configure callbacks are deferred to vendor-specific configure() in
+// v2; for now we only declare the binding rows so the adapter can emit ZDO
+// bind requests.
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},   // genOnOff
     {1, 0x0008},   // genLevelCtrl
     {1, 0x0001},   // genPowerCfg
     {1, 0x0005},   // genScenes (for fz.command_recall)
+    {2, 0x0006},
+    {2, 0x0008},
+    {2, 0x0005},
+    {3, 0x0006},
+    {3, 0x0008},
+    {3, 0x0005},
+    {4, 0x0006},
+    {4, 0x0008},
+    {4, 0x0005},
 };
 // --- end ---
 
@@ -75,7 +100,10 @@ extern const PreparedDefinition kDef_VES_ZB_REM_013{
     .from_zigbee=kFz_VES_ZB_REM_013, .from_zigbee_count=sizeof(kFz_VES_ZB_REM_013)/sizeof(kFz_VES_ZB_REM_013[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .endpoint_map=kEndpoints_VES_ZB_REM_013,
+    .endpoint_map_count=sizeof(kEndpoints_VES_ZB_REM_013)/sizeof(kEndpoints_VES_ZB_REM_013[0]),
+    .endpoint_action_suffix=true,
 };
 
 }  // namespace zhc::devices::vesternet
