@@ -1,14 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Immax 07046L — hand-rewritten (keyfob action via genScenes commandRecall).
+// Tier 2: Immax 07046L — keyfob action via ssIasAce arm / panic commands.
 // 4-Touch single click buttons
-// z2m-source: immax.ts #07046L.
+// z2m-source: immax.ts #07046L — fromZigbee: [fz.command_arm, fz.command_panic],
+//   exposes: e.action(["disarm","arm_stay","arm_away","panic"]).
+//
+// Was generated with kFzCommandRecall (genScenes 0x0005 commandRecall →
+// "recall_<scene>"), which never matches: this key fob sends IAS ACE
+// (ssIasAce 0x0501) commandArm (0x00) + commandPanic (0x04), not scene
+// recalls. Re-point at the generic kFzIasAceArm + kFzIasAcePanic decoders
+// (the direct equivalents of fz.command_arm / fz.command_panic) and bind
+// ssIasAce (0x0501) so the action actually reaches the shadow.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::immax {
 namespace {
 const FzConverter* const kFz_D07046L[] = {
-    &::zhc::generic::kFzCommandRecall,
+    &::zhc::generic::kFzIasAceArm,
+    &::zhc::generic::kFzIasAcePanic,
 };
 constexpr const char* kModels_D07046L[] = { "Keyfob-ZB3.0" };
 
@@ -20,7 +29,7 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0005},
+    {1, 0x0501},  // ssIasAce — arm / panic commands
 };
 
 extern const PreparedDefinition kDef_D07046L{

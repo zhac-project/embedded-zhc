@@ -10,6 +10,27 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Immax (Neo) 07046L 4-Touch key fob never emitted an `action`** — found
+  by a z2m↔embedded-zhc parity pass over the 24 Immax defs. The generated
+  def lowered `kFzCommandRecall` (genScenes cluster `0x0005` commandRecall →
+  `recall_<scene>`) and bound `0x0005`, but z2m (`fz.command_arm` +
+  `fz.command_panic`) decodes this key fob's presses from IAS ACE
+  (`ssIasAce` `0x0501`) commandArm (`0x00`) and commandPanic (`0x04`). The
+  recall decoder could never match those frames, so disarm/arm/away/panic
+  produced no state. Graduated the def to a Tier-2 parent override wiring
+  the generic `kFzIasAceArm` + `kFzIasAcePanic` converters (the direct
+  equivalents of `fz.command_arm` / `fz.command_panic`) and re-bound
+  `ssIasAce` (`0x0501`). New fixture `tests/test_immax_parity.cpp` pins the
+  arm/panic action decode and the binding swap. The rest of the Immax range
+  was at parity or out of scope: the plain bulbs (TS0502C CCT, 07008L/07042L/
+  07115L/07743L, etc.), the 07048L plug (on/off + metering +
+  electrical_measurement), the IAS sensors (07043M motion, 07045L contact,
+  07047L 4-in-1) and the TS0601 keypad Tuya-DP defs all decode correctly.
+  The 07502L "4-in-1" (z2m `legacy.fz.ZB003X`), the 07504L siren (custom
+  local `ts0219*` converters) and the 07752L Tuya double-socket
+  (`tuya.modernExtend.tuyaOnOff` l1/l2) need vendor-private converter infra
+  and are deferred.
+
 - **Perenio PEHWE20 two-channel mini-relay could not distinguish its two
   switch channels** — found by a z2m↔embedded-zhc parity pass over the 5
   Perenio defs. The def declared per-endpoint exposes

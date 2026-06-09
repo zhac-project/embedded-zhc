@@ -908,6 +908,14 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Immax (Neo) 07046L 4-Touch key fob. It was generated
+# with kFzCommandRecall (genScenes 0x0005), but the device sends IAS ACE
+# (ssIasAce 0x0501) commandArm/commandPanic — so no action ever decoded.
+# Graduated to a Tier-2 parent wiring kFzIasAceArm + kFzIasAcePanic and
+# binding 0x0501. See tests/README.md.
+add_executable(zhc_immax_parity_tests tests/test_immax_parity.cpp)
+target_link_libraries(zhc_immax_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Lidl Silvercrest / Livarno / Parkside family
 # (Tuya-OEM). The two IAS sensors (HG06335 motion, HG06336 contact) lowered
 # the generic kFzIasZone (bare "alarm") instead of the typed
@@ -1405,6 +1413,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_orvibo_parity_tests       COMMAND zhc_orvibo_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
