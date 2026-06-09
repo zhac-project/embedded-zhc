@@ -10,6 +10,30 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **DIYRuZ parity pass — `soil_moisture`, `co2` and `contact` were exposed but
+  silently dropped on three sensors.** All three headline channels were declared
+  as exposes by the generated Tier-1 ports but had no decoder wired, because the
+  matching converter did not exist when the ports were generated. (1) **Flower**
+  (soil/temp/humidity/pressure/illuminance/battery) exposed `soil_moisture` from
+  z2m `fz.soil_moisture` (msSoilMoisture 0x0408 measuredValue / 100) with no
+  decoder — wired generic `kFzSoilMoisture` and added the 0x0408 binding. (2)
+  **AirSense** (CO2/temp/humidity/pressure) exposed `co2` from z2m `fz.co2`
+  (msCO2 0x040D measuredValue × 1e6 → ppm) with no decoder — wired generic
+  `kFzCO2`. (3) **magnet** exposed `contact` from z2m `fz.diyruz_contact`
+  (genOnOff `onOff` 0x0000 != 0 — *not* IAS) with no decoder; the generic
+  `kFzOnOff` decodes the same attribute but emits `state`, so added a vendor
+  `kFzDiyruzContact` (genOnOff onOff → bool `contact`) in new
+  `definitions/diyruz/_shared.{hpp,cpp}`. Graduated all three defs from
+  `generated/` to parent Tier-2 overrides. New fixture
+  `tests/test_diyruz_parity.cpp` decodes real attribute-report wire shapes
+  through the dispatcher and pins each restored channel (Flower's multi-endpoint
+  `*_bme`/`*_ds` suffixing included) plus per-channel exclusivity. The other 9
+  DIYRuZ defs were verified: RT (state + temperature), R4_5 / R8_8 (multi-relay
+  on/off with endpoint maps) decode fully; FreePad / FreePad_LeTV_8 / KEYPAD20
+  (`action` via genMultistateInput presentValue), rspm, Geiger and Zintercom
+  carry only manufacturer-specific / multistate channels with no generic
+  converter and stay as-is.
+
 - **Nous (Tuya-OEM) parity pass — E6 and SZ-T04 LCD temp/humidity sensors were
   dead on every primary channel.** Both are TS0601 Tuya-DP devices (z2m serves
   them via `legacy.fz.nous_lcd_temperature_humidity_sensor` on manuSpecificTuya

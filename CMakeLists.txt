@@ -1181,6 +1181,15 @@ target_link_libraries(zhc_shelly_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bacchus_parity_tests tests/test_bacchus_parity.cpp)
 target_link_libraries(zhc_bacchus_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the DIYRuZ family. DIYRuZ_Flower exposed
+# `soil_moisture` (msSoilMoisture) and DIYRuZ_AirSense exposed `co2` (msCO2)
+# with no decoder — the generic kFzSoilMoisture/kFzCO2 did not exist when
+# the ports were generated; wired both now. DIYRuZ_magnet exposed `contact`
+# (genOnOff onOff, NOT IAS) with no decoder — added vendor kFzDiyruzContact.
+# See tests/README.md.
+add_executable(zhc_diyruz_parity_tests tests/test_diyruz_parity.cpp)
+target_link_libraries(zhc_diyruz_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the PushOk Hardware DIY family. POK003/POK010 (water
 # level) exposed `contact` (genBinaryInput presentValue) with no decoder —
 # wired vendor kFzPushokContact. POK008 (thermostat relay) dropped its
@@ -1506,6 +1515,7 @@ add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy
 add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_bacchus_parity_tests      COMMAND zhc_bacchus_parity_tests)
+add_test(NAME zhc_diyruz_parity_tests       COMMAND zhc_diyruz_parity_tests)
 add_test(NAME zhc_pushok_parity_tests       COMMAND zhc_pushok_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_lincukoo_parity_tests     COMMAND zhc_lincukoo_parity_tests)

@@ -1,12 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Diyruz DIYRuZ_Flower — hand-rewritten 2026-04-28.
-// Flower sensor: BME280 (EP1: temp/humidity/pressure/illuminance/battery)
-// + DS18B20 (EP2: extra temperature).
-// z2m-source: diyruz.ts #DIYRuZ_Flower.
-// PARTIAL: msSoilMoisture (0x0408) report drops — no kFzSoilMoisture in
-// Tier-1 generic. The multi-EP runtime routes msTemperature reports from
-// EP2 to the "ds" label, EP1 to "bme".
+// Tier 2: Diyruz DIYRuZ_Flower — hand-rewritten 2026-04-28; soil_moisture
+// wired 2026-06-09.
+// Flower sensor: BME280 (EP1: temp/humidity/pressure/illuminance/battery
+// + msSoilMoisture) + DS18B20 (EP2: extra temperature).
+// z2m-source: diyruz.ts #DIYRuZ_Flower
+//   (fromZigbee: [temperature, humidity, soil_moisture, pressure, battery]
+//    + extend m.illuminance()).
+// soil_moisture (z2m fz.soil_moisture, msSoilMoisture 0x0408 measuredValue
+// / 100) is the headline channel; it was exposed but had no decoder while
+// kFzSoilMoisture did not exist. The generic now exists, so wire it. The
+// multi-EP runtime routes msTemperature reports from EP2 to the "ds"
+// label, EP1 to "bme".
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::diyruz {
@@ -17,6 +22,7 @@ const FzConverter* const kFz_DIYRuZ_Flower[] = {
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzPressure,
     &::zhc::generic::kFzIlluminance,
+    &::zhc::generic::kFzSoilMoisture,
 };
 
 constexpr const char* kModels_DIYRuZ_Flower[] = { "DIYRuZ_Flower" };
@@ -42,6 +48,7 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0405},  // msRelativeHumidity
     {1, 0x0403},  // msPressureMeasurement
     {1, 0x0400},  // msIlluminanceMeasurement
+    {1, 0x0408},  // msSoilMoisture (BME)
     {2, 0x0402},  // msTemperatureMeasurement (DS18B20)
 };
 

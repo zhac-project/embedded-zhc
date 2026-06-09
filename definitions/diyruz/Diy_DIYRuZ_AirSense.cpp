@@ -1,19 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Diyruz DIYRuZ_AirSense — hand-rewritten 2026-04-28.
+// Tier 2: Diyruz DIYRuZ_AirSense — hand-rewritten 2026-04-28; co2 wired
+// 2026-06-09.
 // Air quality sensor (CO2, temp, humidity, pressure on EP1).
-// z2m-source: diyruz.ts #DIYRuZ_AirSense.
-// PARTIAL: standard cluster fz (temperature, humidity, pressure) wired via
-// generics. msCO2 (0x040D) reports dropped — no kFzCo2 in Tier-1 generic
-// (Wirenboard has the same gap). manuSpec config attrs on msCO2/msTemp/etc
-// (threshold1/2, *_offset, auto_brightness) are diyruz-custom and BLOCKED
-// (would need a diyruz/_shared.{hpp,cpp} bundle for tz_zcl_write_attr).
+// z2m-source: diyruz.ts #DIYRuZ_AirSense
+//   (fromZigbee: [temperature, humidity, co2, pressure, ...config]).
+// co2 (z2m fz.co2, msCO2 0x040D measuredValue * 1e6 → ppm) is the headline
+// channel; it was exposed but had no decoder while kFzCO2 did not exist.
+// The generic now exists, so wire it alongside the standard cluster fz
+// (temperature, humidity, pressure). manuSpec config attrs on msCO2/msTemp/
+// etc (threshold1/2, *_offset, enable_abc) are diyruz-custom write-only
+// settings and remain BLOCKED (would need a diyruz/_shared tz bundle).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::diyruz {
 namespace {
 
 const FzConverter* const kFz_DIYRuZ_AirSense[] = {
+    &::zhc::generic::kFzCO2,
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzPressure,

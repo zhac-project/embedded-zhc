@@ -1,19 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Diyruz DIYRuZ_magnet — hand-rewritten 2026-04-28.
+// Tier 2: Diyruz DIYRuZ_magnet — hand-rewritten 2026-04-28; contact wired
+// 2026-06-09.
 // DIYRuZ contact sensor.
-// z2m-source: diyruz.ts #DIYRuZ_magnet.
-// PARTIAL: battery wired via generic. fz.diyruz_contact is a custom
-// attribute on a non-IAS cluster (genOnOff manu) and BLOCKED — the prior
-// kFzIasZone wiring was a wrong-bundle assumption (z2m does NOT use IAS
-// here). Contact expose is declared so the UI shows the device shape;
-// runtime updates would need a diyruz/_shared.cpp converter.
+// z2m-source: diyruz.ts #DIYRuZ_magnet
+//   (fromZigbee: [keypad20_battery, diyruz_contact]).
+// contact (z2m fz.diyruz_contact, genOnOff onOff 0x0000 != 0) is the
+// headline channel. z2m does NOT use IAS here — it reads the plain onOff
+// attribute and reports `contact`. The generic kFzOnOff decodes the same
+// attr but emits `state`, so a vendor-local kFzDiyruzContact (diyruz/
+// _shared) maps onOff → `contact`. Battery via generic.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/diyruz/_shared.hpp"
 
 namespace zhc::devices::diyruz {
 namespace {
 const FzConverter* const kFz_DIYRuZ_magnet[] = {
     &::zhc::generic::kFzBattery,
+    &kFzDiyruzContact,
 };
 
 constexpr const char* kModels_DIYRuZ_magnet[] = { "DIYRuZ_magnet" };
