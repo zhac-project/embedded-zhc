@@ -10,6 +10,22 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **VSmart HS-SEDR00ZB-VNM door/window sensor never reported `contact`**
+  — found by a z2m↔embedded-zhc parity pass over the 6 VSmart (HumanSmart)
+  defs. The generated port wired the generic `kFzIasZone`, which emits a
+  generic `"alarm"` boolean, but z2m maps this device with
+  `m.iasZoneAlarm({zoneType:"contact", invertAlarm:true})` and advertises a
+  `"contact"` expose — so the catalogued expose was dead against the wire
+  shape. Re-wired to the typed `kFzIasContactAlarm` (the same converter the
+  rest of the contact-sensor fleet uses) and renamed the expose
+  `alarm` → `contact`; `tamper` + `battery_low` unchanged. Polarity is
+  preserved: z2m's `invertAlarmPayload` defaults true for `zoneType:"contact"`
+  and this device's explicit `invertAlarm:true` flips it back to false, so
+  `contact = (zoneStatus & 1)` — exactly what `kFzIasContactAlarm` emits. Def
+  graduated to a Tier-2 parent override. The other 5 VSmart defs (SEOC
+  occupancy, SW100/200/300/400 wall switches with their custom LED/vibration/
+  intensity write-path commands) verified CLEAN. New fixture
+  `tests/test_vsmart_parity.cpp`.
 - **BITUO TECHNIK energy meters decoded only 4 of ~20 metering channels**
   — found by a z2m↔embedded-zhc parity pass over the 11 SDM/SPM DIN-rail
   meter defs (SDM01/SDM02, SPM01/SPM02; U00/U01/U02 SKUs). All 11 run z2m's

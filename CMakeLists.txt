@@ -1151,6 +1151,17 @@ target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_owon_parity_tests tests/test_owon_parity.cpp)
 target_link_libraries(zhc_owon_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the VSmart (HumanSmart) family. The HS-SEDR00ZB door
+# sensor (z2m m.iasZoneAlarm zoneType:"contact", invertAlarm:true) was wired
+# to the generic kFzIasZone, which emits a generic "alarm" boolean and never
+# the "contact" key z2m advertises — a dead expose. Re-wired to the typed
+# kFzIasContactAlarm (contact/tamper/battery_low) and graduated to a Tier-2
+# parent override. Regression-covers the SEOC occupancy sensor, the SW100/
+# SW200 switches (endpoint_map presence), and the custom LED/vibration TZ
+# command encoders. See tests/README.md.
+add_executable(zhc_vsmart_parity_tests tests/test_vsmart_parity.cpp)
+target_link_libraries(zhc_vsmart_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Innr smart-plug family. Innr is otherwise a pure
 # lighting/remote vendor (CLEAN), but the metering plugs SP 120/234/240 and
 # OSP 240 use z2m m.electricityMeter() — which defaults to cluster:"both"
@@ -1367,6 +1378,7 @@ add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
+add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)
 add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
