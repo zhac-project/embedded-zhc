@@ -1121,6 +1121,14 @@ target_link_libraries(zhc_sunricher_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_third_reality_parity_tests tests/test_third_reality_parity.cpp)
 target_link_libraries(zhc_third_reality_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the SMaBiT (Bitron Video) AV2010/33 vibration sensor,
+# whose generated def read zoneStatus bit 0 (kFzIasVibrationAlarm) while z2m
+# wires fz.ias_occupancy_alarm_2 (bit 1) — so vibration never fired. Graduated
+# to a Tier-2 parent override using the new bit-1 variant kFzIasVibrationAlarm2;
+# the four bit-0 vibration sensors are unaffected. See tests/README.md.
+add_executable(zhc_bitron_parity_tests tests/test_bitron_parity.cpp)
+target_link_libraries(zhc_bitron_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Namron 4512752/4512753 Tuya-DP touch thermostat, whose
 # full-DP def collided with a metering-only generated stub on the same TS0601 +
 # _TZE204_p3lqqy2r fingerprint; the stub was removed and the full-DP def
@@ -1537,6 +1545,7 @@ add_test(NAME zhc_qa_parity_tests           COMMAND zhc_qa_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
 add_test(NAME zhc_third_reality_parity_tests COMMAND zhc_third_reality_parity_tests)
+add_test(NAME zhc_bitron_parity_tests       COMMAND zhc_bitron_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_yandex_parity_tests       COMMAND zhc_yandex_parity_tests)

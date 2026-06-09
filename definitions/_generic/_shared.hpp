@@ -278,6 +278,12 @@ extern const FzConverter kFzIasWaterLeakAlarm;
 extern const FzConverter kFzIasSmokeAlarm;
 extern const FzConverter kFzIasCoAlarm;
 extern const FzConverter kFzIasVibrationAlarm;
+// Variant of kFzIasVibrationAlarm reading zoneStatus bit 1 instead of
+// bit 0, still emitting the semantic "vibration" key. Matches z2m
+// `fz.ias_occupancy_alarm_2` used by SMaBiT/Bitron AV2010/33 (a vibration
+// sensor that signals on alarm_2). Distinct from kFzIasMotionAlarm2, which
+// emits "occupancy".
+extern const FzConverter kFzIasVibrationAlarm2;
 // Rain alarm: zoneStatus bit 0 → "rain" bool. Matches eWeLink's
 // `fzLocal.WS01_rain` (rainfall sensor reports leak/rain via ssIasZone
 // commandStatusChangeNotification, bit 0).

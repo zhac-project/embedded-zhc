@@ -1,17 +1,24 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Bitron AV2010/33 — hand-rewritten 2026-04-28.
+// Tier 2: Bitron AV2010/33 — graduated 2026-06-10 (IAS bit-selection fix).
 // Vibration sensor.
-// z2m-source: bitron.ts #AV2010/33.
+// z2m-source: bitron.ts #AV2010/33 (fz.ias_occupancy_alarm_2).
 //
 // z2m bundle: fz.ias_occupancy_alarm_2
 //   exposes [occupancy, battery_low].
 //
 // Mapped:
-//   kFzIasVibrationAlarm — ssIasZone status → "vibration" + "tamper" + "battery_low".
-//                          z2m's ias_occupancy_alarm_2 reads bit 1 (alarm_2);
-//                          the generic decoder currently reads bit 0 (alarm_1).
-//                          Bit-selection gap noted in docs/BITRON_PARITY.md.
+//   kFzIasVibrationAlarm2 — ssIasZone status → "vibration" + "tamper" + "battery_low".
+//                           z2m's ias_occupancy_alarm_2 reads zoneStatus bit 1
+//                           (alarm_2), NOT bit 0. The previously wired
+//                           kFzIasVibrationAlarm reads bit 0, so this sensor's
+//                           vibration event (signalled on alarm_2) never fired.
+//                           kFzIasVibrationAlarm2 is the bit-1 variant emitting
+//                           the same semantic "vibration" key. The other four
+//                           vibration sensors (develco WISZB-137, heiman
+//                           HS1VS-EF/N, third_reality 3RVS01031Z) use
+//                           fz.ias_vibration_alarm_1 (bit 0) and keep
+//                           kFzIasVibrationAlarm unchanged.
 // NOTE: z2m exposes "occupancy" here; we expose semantic "vibration" (zoneType
 //       0x002D). This diverges from z2m's label but matches the underlying
 //       hardware kind.
@@ -20,7 +27,7 @@
 namespace zhc::devices::bitron {
 namespace {
 const FzConverter* const kFz_AV2010_33[] = {
-    &::zhc::generic::kFzIasVibrationAlarm,
+    &::zhc::generic::kFzIasVibrationAlarm2,
 };
 
 constexpr const char* kModels_AV2010_33[] = { "AV2010/33", "902010/33" };

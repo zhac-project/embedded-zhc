@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **SMaBiT (Bitron Video) AV2010/33 vibration sensor — vibration never fired
+  (wrong IAS zoneStatus bit).** z2m wires this sensor to
+  `fz.ias_occupancy_alarm_2`, which reads zoneStatus **bit 1** (alarm_2). The
+  generated Tier-1 def lowered the generic `kFzIasVibrationAlarm`, whose label
+  reads **bit 0** (alarm_1) — correct for the other four vibration sensors
+  (develco WISZB-137, heiman HS1VS-EF/N, third_reality 3RVS01031Z, all on
+  `fz.ias_vibration_alarm_1`), but wrong here: AV2010/33 signals vibration on
+  alarm_2, so the event was watched on the wrong bit and never reached the
+  shadow. Added a bit-1 variant `kFzIasVibrationAlarm2` (emitting the same
+  semantic `vibration` key, mirroring the existing `kFzIasMotionAlarm2`
+  precedent) in `definitions/_generic/_shared.{hpp,cpp}`, and graduated
+  `Bit_AV2010_33.cpp` from `generated/` to a parent Tier-2 override pointing at
+  it. The four bit-0 vibration sensors are unaffected. New
+  `tests/test_bitron_parity.cpp` pins that AV2010/33 decodes `vibration` from
+  bit 1 (and not bit 0) with shared tamper/battery_low, plus a regression that
+  the bit-0 occupancy path (AV2010/22) is untouched.
+
 - **Amina amina S EV Charger — AC metering channels dropped or unexposed.**
   The charger drives its AC metering through z2m's
   `m.electricityMeter({cluster: "electrical", acFrequency: true, threePhase:
