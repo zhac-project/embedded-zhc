@@ -1108,6 +1108,17 @@ target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_owon_parity_tests tests/test_owon_parity.cpp)
 target_link_libraries(zhc_owon_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Innr smart-plug family. Innr is otherwise a pure
+# lighting/remote vendor (CLEAN), but the metering plugs SP 120/234/240 and
+# OSP 240 use z2m m.electricityMeter() — which defaults to cluster:"both"
+# (seMetering 0x0702 + haElectricalMeasurement 0x0B04) — while the generated
+# Tier-1 ports wired only kFzMetering, dropping the current + voltage
+# channels. Wired the generic kFzElectricalMeasurement + current/voltage
+# exposes + 0x0B04 bind; all four graduated to Tier-2 overrides. See
+# tests/README.md.
+add_executable(zhc_innr_parity_tests tests/test_innr_parity.cpp)
+target_link_libraries(zhc_innr_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Hive (British Gas) family. Two gaps: (1) the contact
 # (DWS003), motion (MOT003) and keypad (KEYPAD001) IAS devices lowered the
 # generic kFzIasZone (bare "alarm_1") while exposing contact/occupancy — dead
@@ -1275,6 +1286,7 @@ add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
+add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)

@@ -10,6 +10,24 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Innr SP 120 / SP 234 / SP 240 (incl. SP 242/244) / OSP 240 metering
+  plugs were dropping the current + voltage channels** — found by a
+  z2m↔embedded-zhc parity pass over the Innr vendor (116 defs). Innr is
+  otherwise a pure lighting/remote vendor and the rest of the catalogue is
+  at parity (lights = `m.light(...)`; remotes RC 110/210/250 already surface
+  `action`). These four plugs are built in z2m with `m.onOff()` +
+  `m.electricityMeter(...)`, and `electricityMeter()` defaults to
+  `cluster:"both"` / `electricalMeasurementType:"ac"` — so it decodes BOTH
+  seMetering (0x0702 → energy) AND haElectricalMeasurement (0x0B04 →
+  rmsCurrent/rmsVoltage/activePower). The auto-generated Tier-1 ports wired
+  only `kFzMetering` (0x0702), so `current` and `voltage` never reached the
+  shadow. Graduated all four to Tier-2 parent overrides: added the generic
+  `kFzElectricalMeasurement` converter (→ `power`/`voltage`/`current`), the
+  `current`/`voltage` exposes, and the 0x0B04 bind (mirrors the Lidl HG08673
+  power-plug override). The plain-onOff plugs (SP 110/220/222/224, OSP 210)
+  match z2m's `m.onOff()` and were left unchanged. New
+  `tests/test_innr_parity.cpp` pins power/voltage/current decode from 0x0B04
+  and energy from 0x0702 across all four defs.
 - **Lidl Silvercrest / Livarno / Parkside (Tuya-OEM) — six defs were
   decoding the wrong thing, plus a duplicate-fingerprint stub** — found by a
   z2m↔embedded-zhc parity pass over the Lidl vendor (17 defs). (1) The two
