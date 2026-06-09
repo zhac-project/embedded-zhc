@@ -39,6 +39,30 @@ across the ZHAC platform.
   QBKG*/WS-* wall switches) and Tuya `operation_mode` force-writes — the
   0xFCC0 follow-up already flagged below.
 
+- Wired the first two real device defs to `ConfigStepOp::Write` (host-
+  testable now; over-the-air inert until firmware implements
+  `configure_write`):
+  - **Tuya TS004F knob** (`definitions/tuya/TS004F_knob.cpp`,
+    `kDef_TS004F_knob`) — appended a `Write` step to its `config_steps`
+    forcing `operation_mode` to "event": genOnOff (`0x0006`) attr `0x8004`
+    (tuyaOperationMode), enum8 (`0x30`), value `{0x01}`, manu_code 0. This
+    lands the previously deferred z2m configure write
+    (`endpoint.write("genOnOff", {tuyaOperationMode: 1})` for
+    ERS-10TZBVK-AA in `tuya.ts`) that had been parked because `ConfigStepOp`
+    lacked a `Write` op — header note updated deferred → done.
+  - **Aqara WXCJKG11LM** Opple wireless switch
+    (`definitions/lumi/WXCJKG11LM.cpp`, `kDefWXCJKG11LM`) — added a
+    `config_steps` array with one `Write` step enabling "event" mode:
+    manuSpecificLumi (`0xFCC0`) attr `0x0009` (mode), uint8 (`0x20`), value
+    `{0x01}`, manu_code `0x115F` (Lumi). Mirrors z2m's
+    `endpoint.write("manuSpecificLumi", {mode: 1}, {manufacturerCode})` in
+    `lumi.ts` (attr/type from `lib/lumi.ts`
+    `mode: {ID: 0x0009, type: UINT8}`; manufacturerCode `0x115f`).
+  - New host test `tests/test_configure_write_defs.cpp` (registered in
+    `CMakeLists.txt`, links `zhc_definitions`) runs `run_configure` on each
+    real def with a capturing `configure_write` and asserts the exact
+    `(endpoint, cluster, attr_id, attr_type, value, manu_code)`.
+
 - lumi (Aqara) switch/plug attribute reporting (parity Batch 1). A
   parity worklist flagged 113 lumi defs as "missing configure": z2m sets
   up attribute reporting in each SKU's

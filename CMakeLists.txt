@@ -760,6 +760,9 @@ target_link_libraries(zhc_dispatch_tests PRIVATE zhc_runtime)
 add_executable(zhc_config_steps_tests tests/test_config_steps.cpp)
 target_link_libraries(zhc_config_steps_tests PRIVATE zhc_runtime)
 
+add_executable(zhc_configure_write_defs_tests tests/test_configure_write_defs.cpp)
+target_link_libraries(zhc_configure_write_defs_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_matcher_tests tests/test_definition_runtime.cpp)
 target_link_libraries(zhc_matcher_tests PRIVATE zhc_runtime)
 
@@ -914,6 +917,7 @@ add_test(NAME zhc_parser_tests    COMMAND zhc_parser_tests)
 add_test(NAME zhc_decoder_tests   COMMAND zhc_decoder_tests)
 add_test(NAME zhc_dispatch_tests  COMMAND zhc_dispatch_tests)
 add_test(NAME zhc_config_steps_tests COMMAND zhc_config_steps_tests)
+add_test(NAME zhc_configure_write_defs_tests COMMAND zhc_configure_write_defs_tests)
 add_test(NAME zhc_matcher_tests   COMMAND zhc_matcher_tests)
 add_test(NAME zhc_timer_tests     COMMAND zhc_timer_tests)
 add_test(NAME zhc_expose_range_tests COMMAND zhc_expose_range_tests)

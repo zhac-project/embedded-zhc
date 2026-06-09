@@ -2,6 +2,13 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Aqara WXCJKG11LM wired scene switch 1-button (Opple).
 // z2m-source: lumi.ts #WXCJKG11LM (lumi.remote.b186opcn01).
+//
+// configure: z2m writes manuSpecificLumi (0xFCC0) attr `mode` (0x0009,
+// uint8) = 1 with manufacturerCode 0x115F at join — this enables the
+// "event" reporting mode (per-button multistate events) for the Opple
+// switch. Expressed here as a `ConfigStepOp::Write` step. See lib/lumi.ts
+// (`mode: {ID: 0x0009, type: UINT8}`, `manufacturerCode = 0x115f`) and the
+// device `configure` (`endpoint.write("manuSpecificLumi", {mode: 1}, …)`).
 #include "definitions/lumi/_shared.hpp"
 namespace zhc::devices::lumi {
 namespace {
@@ -44,6 +51,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+// configure: force manuSpecificLumi `mode` (0x0009, uint8) = 1 ("event")
+// with manufacturerCode 0x115F. z2m: endpoint.write("manuSpecificLumi",
+// {mode: 1}, {manufacturerCode}). Field order: op, endpoint, cluster_id,
+// cmd_id, flags, payload, payload_len, wait_ms, manu_code, attr_id,
+// attr_type.
+constexpr std::uint8_t kModeEvent[] = { 0x01 };
+constexpr ConfigStep kConfigSteps[] = {
+    { ConfigStepOp::Write, 1, 0xFCC0, 0, 0,
+      kModeEvent, sizeof(kModeEvent),
+      0, /*manu_code=*/0x115F, /*attr_id=*/0x0009, /*attr_type=*/0x20 },
+};
+
 
 extern const PreparedDefinition kDefWXCJKG11LM{
     .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
@@ -56,5 +75,7 @@ extern const PreparedDefinition kDefWXCJKG11LM{
     .to_zigbee = nullptr, .to_zigbee_count = 0,
     .configure = nullptr, .on_event = nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .config_steps = kConfigSteps,
+    .config_steps_count = sizeof(kConfigSteps)/sizeof(kConfigSteps[0]),
 };
 }

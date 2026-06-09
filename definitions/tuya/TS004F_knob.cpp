@@ -33,9 +33,13 @@
 // same as z2m, which lists it in `e.action()` but wires no producer here):
 //   - saturation_move
 //
-// operation_mode is NOT force-written at configure time: `ConfigStepOp`
-// has no Write op; knobs default to event mode and the tz converter lets
-// the user switch from the UI. (Trade-off carried from the v1 hand-port.)
+// operation_mode is force-written to "event" (1) at configure time via a
+// `ConfigStepOp::Write` step — genOnOff attr 0x8004 (tuyaOperationMode),
+// enum8 0x30, value 0x01. This mirrors z2m's ERS-10TZBVK-AA `configure`
+// (`endpoint.write("genOnOff", {tuyaOperationMode: 1})` in tuya.ts), which
+// puts the knob into per-click "event" reporting. The tz converter still
+// lets the user switch to "command" (group control) from the UI afterward.
+// (Previously deferred because `ConfigStepOp` lacked a Write op — now done.)
 
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
@@ -132,11 +136,21 @@ constexpr std::uint8_t kMagicAttrs_TS004F_knob[] = {
     0x05, 0x00,  0x07, 0x00,  0xFE, 0xFF,
 };
 
-// Configure pipeline — bind-settle then magic packet.
+// operation_mode = "event" (1). genOnOff attr 0x8004 (tuyaOperationMode),
+// enum8 0x30 — see kSpecOperationMode in tuya/_shared.cpp.
+constexpr std::uint8_t kOpModeEvent_TS004F_knob[] = { 0x01 };
+
+// Configure pipeline — bind-settle, magic packet, then force operation_mode
+// to "event" (z2m ERS-10TZBVK-AA: write tuyaOperationMode:1 then read back).
+// Field order: op, endpoint, cluster_id, cmd_id, flags, payload, payload_len,
+//              wait_ms, manu_code, attr_id, attr_type.
 constexpr ConfigStep kConfigSteps_TS004F_knob[] = {
     { ConfigStepOp::Wait, 0, 0,      0,    0, nullptr, 0, 600 },
     { ConfigStepOp::Read, 1, 0x0000, 0x00, 0,
       kMagicAttrs_TS004F_knob, sizeof(kMagicAttrs_TS004F_knob), 2000 },
+    { ConfigStepOp::Write, 1, 0x0006, 0, 0,
+      kOpModeEvent_TS004F_knob, sizeof(kOpModeEvent_TS004F_knob),
+      0, /*manu_code=*/0, /*attr_id=*/0x8004, /*attr_type=*/0x30 },
 };
 
 }  // namespace
