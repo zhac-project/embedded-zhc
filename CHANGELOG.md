@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Lincukoo SZT06 temperature/humidity sensor surfaced no temperature or
+  humidity** — found by a z2m↔embedded-zhc parity pass over the Lincukoo
+  vendor. The generated `SZT06` def lowered only `kFzBattery` and exposed
+  only `battery`/`voltage`, but z2m wires `m.temperature()` + `m.humidity()`
+  (+ `m.battery({voltage:true})`): the device reports its primary
+  measurements on the standard `msTemperatureMeasurement` (0x0402) and
+  `msRelativeHumidity` (0x0405) clusters, so a paired sensor published
+  nothing but battery. The def was graduated from `generated/` to a Tier-2
+  parent override adding `kFzTemperature` + `kFzHumidity` (emitting the
+  `temperature`/`humidity` keys, scaled /100) and the 0x0402 / 0x0405
+  reporting bindings alongside the existing 0x0001 power binding. The rest of
+  the vendor is Tuya-DP and already wires its `tuyaDatapoints`; the named
+  model stubs (`SZLR08`, `SZR07`, `E02C-Z10T`, …) are harmless dead
+  duplicates of their manufacturer-discriminated `kDefLin__TZE*` twins, which
+  win in `find_definition` Pass 1. Pinned by
+  `tests/test_lincukoo_parity.cpp`.
+
 - **Zemismart curtain/blind tubular motors were shadowed by dead
   generic-cover stubs** — surfaced by a z2m↔embedded-zhc parity pass over the
   Zemismart vendor. Six defs (`ZM16B`, `ZMP1`, `ZN-USC1U-HT`, `ZM25R1`,

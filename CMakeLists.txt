@@ -954,6 +954,19 @@ target_link_libraries(zhc_custom_devices_diy_parity_tests PRIVATE zhc_definition
 add_executable(zhc_sber_parity_tests tests/test_sber_parity.cpp)
 target_link_libraries(zhc_sber_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Lincukoo SZT06 temperature/humidity sensor, whose
+# generated stub lowered only kFzBattery (battery/voltage exposes) and so
+# surfaced no temperature/humidity despite reporting both on the standard
+# msTemperatureMeasurement (0x0402) / msRelativeHumidity (0x0405) clusters
+# (z2m m.temperature()/m.humidity()). Graduated to a Tier-2 parent override
+# adding kFzTemperature + kFzHumidity and the 0x0402/0x0405 bindings. The
+# remaining Lincukoo devices are Tuya-DP (tuyaDatapoints already wired); the
+# named model stubs are dead duplicates of their manufacturer-discriminated
+# kDefLin__TZE* twins (which win in find_definition Pass 1). See
+# tests/README.md for the pattern.
+add_executable(zhc_lincukoo_parity_tests tests/test_lincukoo_parity.cpp)
+target_link_libraries(zhc_lincukoo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Sinopé family: WL4200/S/4210 + RM3500ZB leak sensors
 # (graduated from generic kFzIasZone "alarm" to typed kFzIasWaterLeakAlarm +
 # kFzTemperature), VA4200WZ/4201WZ/4220ZB valves (graduated from the wrong-
@@ -1169,6 +1182,7 @@ add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
+add_test(NAME zhc_lincukoo_parity_tests     COMMAND zhc_lincukoo_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
 add_test(NAME zhc_third_reality_parity_tests COMMAND zhc_third_reality_parity_tests)
