@@ -1,19 +1,28 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Hive SLR1c — auto-generated.
+// Tier 2: Hive SLR1b — auto-generated.
 // Heating thermostat
-// z2m-source: hive.ts #SLR1c.
+// z2m-source: hive.ts #SLR1b.
+// Tier 2: graduated to wire the running_state decode the generic
+// kFzThermostat drops. z2m wires fz.thermostat (which decodes attr
+// 0x0029 ThermostatRunningState) and exposes .withRunningState; the
+// generic converter only does 0x0000/0x0012/0x001C, so running_state
+// was missing from the shadow. kFzHiveThermostatExtras (alongside the
+// generic decoder) fills it; the running_state expose is added below.
+// z2m-source: hive.ts receivers + fromZigbee.ts fz.thermostat.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/hive/_shared.hpp"
 
 namespace zhc::devices::hive {
 namespace {
-const FzConverter* const kFz_SLR1c[] = {
+const FzConverter* const kFz_SLR1b[] = {
     &::zhc::generic::kFzThermostat,
+    &::zhc::hive::kFzHiveThermostatExtras,
 };
-const TzConverter* const kTz_SLR1c[] = {
+const TzConverter* const kTz_SLR1b[] = {
     &::zhc::generic::kTzThermostat,
 };
-constexpr const char* kModels_SLR1c[] = { "SLR1c" };
+constexpr const char* kModels_SLR1b[] = { "SLR1b" };
 
 }  // namespace
 
@@ -23,6 +32,7 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -30,15 +40,15 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_SLR1c{
-    .zigbee_models=kModels_SLR1c, .zigbee_models_count=sizeof(kModels_SLR1c)/sizeof(kModels_SLR1c[0]),
+extern const PreparedDefinition kDef_SLR1b{
+    .zigbee_models=kModels_SLR1b, .zigbee_models_count=sizeof(kModels_SLR1b)/sizeof(kModels_SLR1b[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="SLR1c", .vendor="Hive",
+    .model="SLR1b", .vendor="Hive",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_SLR1c, .from_zigbee_count=sizeof(kFz_SLR1c)/sizeof(kFz_SLR1c[0]),
-    .to_zigbee=kTz_SLR1c, .to_zigbee_count=sizeof(kTz_SLR1c)/sizeof(kTz_SLR1c[0]),
+    .from_zigbee=kFz_SLR1b, .from_zigbee_count=sizeof(kFz_SLR1b)/sizeof(kFz_SLR1b[0]),
+    .to_zigbee=kTz_SLR1b, .to_zigbee_count=sizeof(kTz_SLR1b)/sizeof(kTz_SLR1b[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };

@@ -10,6 +10,32 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Hive DWS003 / MOT003 contact + motion sensors (and the KEYPAD001 alarm
+  keypad) never surfaced their primary state** — found by a z2m↔embedded-zhc
+  parity pass over the Hive vendor. All three lowered the generic `kFzIasZone`,
+  which emits the bare keys `alarm_1`/`alarm_2`, while their exposes declared
+  the semantic keys `contact` (DWS003) and `occupancy` (MOT003) — so the
+  one bit each sensor exists to report never reached the shadow. z2m wires the
+  typed `fz.ias_contact_alarm_1` / `fz.ias_occupancy_alarm_1` decoders. Swapped
+  in the typed `kFzIasContactAlarm` / `kFzIasMotionAlarm` converters (zoneStatus
+  bit 0 → semantic key; tamper/battery_low preserved) and graduated the three
+  defs from `generated/` to Tier-2 parents. KEYPAD001 declares BOTH `occupancy`
+  and `contact` (z2m wires both alarm-1 decoders on the same status-change
+  notification), so it carries both typed converters; its IAS-ACE arm/panic
+  command path stays unwired (no generic converter exists — out of scope).
+  Pinned by `tests/test_hive_parity.cpp`.
+- **Hive heating receivers (SLR1/SLR1b/SLR1c/SLR1d, SLR2/SLR2b/SLR2c, OTR1)
+  dropped `running_state`** — found by the same Hive parity pass. z2m wires
+  `fz.thermostat`, which decodes hvacThermostat attr 0x0029
+  (ThermostatRunningState), and the exposes carry `.withRunningState(["idle",
+  "heat"])`; but the generic `kFzThermostat` decodes only attrs 0x0000/0x0012/
+  0x001C, so the heat/idle state the receivers report was never published.
+  Added a vendor-local `kFzHiveThermostatExtras` (attr 0x0029 enum → string via
+  z2m's `constants.thermostatRunningStates`) wired alongside the generic decoder
+  on each receiver, plus the `running_state` expose; all eight defs graduated
+  from `generated/` to Tier-2 parents. The core surface (local_temperature /
+  current_heating_setpoint / system_mode) still decodes via the generic
+  converter and is regression-checked. Pinned by `tests/test_hive_parity.cpp`.
 - **Bacchus Flower_Sensor_v2 / Flower_Sensor_v4 never decoded `soil_moisture`,
   their headline measurement** — found by a z2m↔embedded-zhc parity pass over
   the Bacchus vendor. z2m reports soil moisture via `m.soilMoisture()` on

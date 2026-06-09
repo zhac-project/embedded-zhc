@@ -1085,6 +1085,18 @@ target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_owon_parity_tests tests/test_owon_parity.cpp)
 target_link_libraries(zhc_owon_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Hive (British Gas) family. Two gaps: (1) the contact
+# (DWS003), motion (MOT003) and keypad (KEYPAD001) IAS devices lowered the
+# generic kFzIasZone (bare "alarm_1") while exposing contact/occupancy — dead
+# keys — fixed by swapping in the typed kFzIasContactAlarm / kFzIasMotionAlarm;
+# (2) every heating receiver (SLR1/1b/1c/1d, SLR2/2b/2c, OTR1) dropped
+# running_state because the generic kFzThermostat decodes only 0x0000/0x0012/
+# 0x001C — fixed with a vendor-local kFzHiveThermostatExtras (attr 0x0029
+# enum->string) alongside the generic decoder + a running_state expose. All
+# eleven defs graduated to Tier-2 parent overrides. See tests/README.md.
+add_executable(zhc_hive_parity_tests tests/test_hive_parity.cpp)
+target_link_libraries(zhc_hive_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Lytko L101Ze thermostat family: six of the seven
 # L101Ze-* ports were mis-lowered as battery on/off stubs (z2m defines them
 # via modernExtend thermostat({...}) dynamic exposes the generator can't read)
@@ -1238,6 +1250,7 @@ add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
+add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)

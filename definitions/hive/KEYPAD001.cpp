@@ -1,27 +1,34 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Hive KEYPAD001 — hand-tuned.
+// Tier 2: Hive KEYPAD001 — hand-tuned (graduated for typed IAS decode).
 // Alarm security keypad — z2m wiring is fz.command_arm_with_transaction +
 // fz.command_panic + fz.battery + fz.ias_occupancy_alarm_1 + fz.identify
 // + fz.ias_contact_alarm_1 + fz.ias_ace_occupancy_with_timeout, with
 // tz.arm_mode and exposes for action codes / arm zones / panic.
 //
-// The ZHC generic library currently exposes the IAS-Zone and battery
-// paths but NOT the IAS-ACE arm/panic command converters or fz.identify,
-// so this port is PARTIAL: the keypad's status/tamper/battery reports
-// reach the shadow, but PIN-coded arm/disarm actions and the IAS-ACE
-// panel-status reply path are not wired. Earlier auto-port wrongly
-// listed kFzOnOff/kTzOnOff and bound 0x0006 (the keypad has no genOnOff
-// reporting). Cleared on/off, restored the binds the device's configure
-// actually performs (genPowerCfg + ssIasZone + ssIasAce + genIdentify).
-// z2m-source: hive.ts #KEYPAD001.
+// Parity fix (IAS-Zone status): the auto-port wired the generic
+// `kFzIasZone`, which emits `alarm_1` / `alarm_2` — so the keypad's
+// `occupancy` and `contact` exposes were both dead. z2m wires BOTH
+// `fz.ias_occupancy_alarm_1` (→ `occupancy`) and `fz.ias_contact_alarm_1`
+// (→ `contact`); both read zoneStatus bit 0 off the same status-change
+// notification. This wires the typed `kFzIasMotionAlarm` + `kFzIasContactAlarm`
+// pair — all-match dispatch fires both, so a single frame fills both keys
+// (tamper + battery_low preserved, merged idempotently).
+//
+// Still PARTIAL: the ZHC generic library has the IAS-Zone + battery paths
+// but NOT the IAS-ACE arm/panic command converters or fz.identify, so
+// PIN-coded arm/disarm actions and the IAS-ACE panel-status reply path
+// remain unwired (INFRA — no generic converter exists). Binds reflect the
+// device's actual configure (genPowerCfg + ssIasZone + ssIasAce + genIdentify).
+// z2m-source: hive.ts #KEYPAD001 + fromZigbee.ts fz.ias_{occupancy,contact}_alarm_1.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::hive {
 namespace {
 const FzConverter* const kFz_KEYPAD001[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 constexpr const char* kModels_KEYPAD001[] = { "KEYPAD001" };
 
