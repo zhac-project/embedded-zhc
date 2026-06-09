@@ -967,6 +967,14 @@ target_link_libraries(zhc_ctm_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bosch_parity_tests tests/test_bosch_parity.cpp)
 target_link_libraries(zhc_bosch_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Shelly S4SN-0071A "Flood Gen 4" leak sensor,
+# whose auto-generated def wired the generic kFzIasZone (attr-report
+# decoder emitting the bare `alarm` key) instead of the typed water-leak
+# StatusChangeNotification decoder z2m uses. Graduated to a Tier-2 parent
+# override (kFzIasWaterLeakAlarm + `water_leak` expose). See tests/README.md.
+add_executable(zhc_shelly_parity_tests tests/test_shelly_parity.cpp)
+target_link_libraries(zhc_shelly_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the SlackyDiy THERM_SLACKY_DIY_R08 thermostat, whose
 # auto-generated def was mis-lowered as a battery on/off switch and was
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
@@ -1050,6 +1058,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_shelly_parity_tests       COMMAND zhc_shelly_parity_tests)
 add_test(NAME zhc_sber_parity_tests         COMMAND zhc_sber_parity_tests)
 add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)

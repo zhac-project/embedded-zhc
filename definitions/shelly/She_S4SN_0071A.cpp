@@ -1,7 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Shelly S4SN-0071A — auto-generated.
-// Flood Gen 4
+// Tier 2: Shelly S4SN-0071A — Flood Gen 4 (graduated from generated/).
+//
+// Parity fix (wrong IAS converter + wrong key): z2m declares
+//   m.iasZoneAlarm({zoneType: "water_leak",
+//                   zoneAttributes: ["alarm_1", "tamper", "battery_low"]})
+// which decodes the IAS Zone-Status-Change-Notification command and
+// renames bit 0 (alarm_1) to the semantic key "water_leak".
+//
+// The generated port used generic kFzIasZone, which (a) only decodes an
+// *attribute report* of ZoneStatus (attr 0x0002) — not the standard
+// commandStatusChangeNotification push these sensors send — and
+// (b) emits the raw key "alarm". The expose then declared yet another
+// name ("alarm"), so the leak state never surfaced under z2m's
+// "water_leak" key. Swapped to kFzIasWaterLeakAlarm (the generic typed
+// water-leak converter already used by trust/smartthings/centralite/…),
+// which decodes the StatusChangeNotification command and emits
+// "water_leak" + "tamper" + "battery_low", matching z2m exactly.
+//
 // z2m-source: shelly.ts #S4SN-0071A.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,7 +25,7 @@ namespace zhc::devices::shelly {
 namespace {
 const FzConverter* const kFz_S4SN_0071A[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
 constexpr const char* kModels_S4SN_0071A[] = { "Flood" };
@@ -21,7 +37,7 @@ constexpr const char* kModels_S4SN_0071A[] = { "Flood" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

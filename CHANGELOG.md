@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Shelly S4SN-0071A "Flood Gen 4" leak sensor never surfaced its leak state** —
+  the auto-generated def wired the generic `kFzIasZone`, which decodes only an
+  *attribute report* of ZoneStatus (attr `0x0002`) and emits the bare key
+  `alarm`, while its expose also declared `alarm`. z2m uses
+  `m.iasZoneAlarm({zoneType: "water_leak", zoneAttributes: ["alarm_1", "tamper",
+  "battery_low"]})`, which decodes the IAS Zone-Status-Change-Notification
+  *command* and emits the semantic key `water_leak`. The def was graduated to a
+  Tier-2 parent override that swaps in the typed `kFzIasWaterLeakAlarm`
+  converter and renames the expose `alarm` → `water_leak`, matching `shelly.ts`.
+  Pinned by `tests/test_shelly_parity.cpp`.
+
 - **Bosch Smart Home sensors, siren, plug, and thermostats were mis-classed or
   decoded the wrong key** — twelve Bosch defs were graduated to Tier-2 parent
   overrides to fix real parity gaps against `bosch.ts`:
