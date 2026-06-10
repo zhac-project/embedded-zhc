@@ -2158,6 +2158,9 @@ target_link_libraries(zhc_slacky_therm_r08_tests PRIVATE zhc_definitions)
 add_executable(zhc_engo_parity_tests tests/test_engo_parity.cpp)
 target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_evanell_parity_tests tests/test_evanell_parity.cpp)
+target_link_libraries(zhc_evanell_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_envilar_parity_tests tests/test_envilar_parity.cpp)
 target_link_libraries(zhc_envilar_parity_tests PRIVATE zhc_definitions)
 
@@ -2851,6 +2854,7 @@ add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
+add_test(NAME zhc_evanell_parity_tests      COMMAND zhc_evanell_parity_tests)
 add_test(NAME zhc_envilar_parity_tests      COMMAND zhc_envilar_parity_tests)
 add_test(NAME zhc_siterwell_parity_tests    COMMAND zhc_siterwell_parity_tests)
 add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
