@@ -32,6 +32,17 @@
 
 namespace zhc::devices::inovelli {
 
+// Scene / button-tap action decoder. Inovelli switches/dimmers/fan with
+// `supportsButtonTaps: true` emit a manufacturer-specific raw frame on
+// endpoint 2 (cluster 0xFC31, cmd 0x00) carrying { button, click } and
+// z2m turns it into `action: "<button>_<click>"` (e.g. `up_double`,
+// `config_held`). See `_shared.cpp` for the full lookup tables.
+//
+// z2m-source: inovelli.ts fzLocal.inovelli (the `msg.type === "raw"`
+//             branch) + `buttonLookup` / `clickLookup` / e.action(
+//             BUTTON_TAP_SEQUENCES).
+extern const FzConverter kFzInovelliSceneAction;
+
 // z2m: `INOVELLI = 0x122f`. Used for every manuSpec write/report.
 constexpr std::uint16_t kInovelliMfgCode = 0x122f;
 

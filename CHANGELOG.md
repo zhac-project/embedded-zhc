@@ -10,7 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
-- **Paul Neuhaus Q-Home remotes dropped/mis-decoded colour-wheel actions.**
+- **Inovelli Blue-series switches/dimmers/fan dropped their button-tap
+  `action`.** z2m marks VZM30-SN, VZM31-SN, VZM32-SN and VZM35-SN
+  `supportsButtonTaps: true`, decoding a manufacturer-specific raw frame on
+  endpoint 2 (`manuSpecificInovelli` 0xFC31, cmd 0x00) into
+  `action: "<button>_<click>"` (e.g. `up_double`, `config_held`). The
+  generated ports wired only on/off/brightness/metering, so both the
+  `action` expose and its decoder were missing — every single/double/triple/
+  held/release tap was dead. Added `inovelli::kFzInovelliSceneAction`
+  (button 1-6 → down/up/config + aux variants × click 0-6, guarded on
+  endpoint 2 + `manufacturer_specific` so a plain command-0x00 frame can't
+  mint a bogus action) and graduated the four defs out of `generated/` to
+  wire the converter + `action` expose. VZM36 (`supportsButtonTaps: false`)
+  is intentionally left untouched.
   Both remotes carried stale "converter absent" port comments from before the
   generic command bundle gained `kFzCommandColorLoopSet` /
   `kFzCommandEnhancedMoveToHueAndSat` (lightingColorCtrl cmd 0x44 / 0x43).

@@ -1,22 +1,30 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Inovelli VZM31-SN — uses shared inovelli converters.
-// 2-in-1 switch + dimmer
-// z2m-source: inovelli.ts #VZM31-SN.
+// Tier 2: Inovelli VZM35-SN — uses shared inovelli converters.
+// Fan controller (mains-powered; NOT battery-operated)
+// z2m-source: inovelli.ts #VZM35-SN.
+// Graduated from generated/ to wire the scene/button-tap `action`
+// decoder (z2m `supportsButtonTaps: true`): manuSpec raw frame on
+// endpoint 2 → action `<button>_<click>`.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/inovelli/_shared.hpp"
 
 namespace zhc::devices::inovelli {
 namespace {
-const FzConverter* const kFz_VZM31_SN[] = {
+
+constexpr const char* kModels_VZM35_SN[] = { "VZM35-SN" };
+
+const FzConverter* const kFz_VZM35_SN[] = {
     &::zhc::generic::kFzOnOff,
-    &::zhc::generic::kFzBrightness,
-    &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzBrightness,  // genLevelCtrl drives fan_mode in z2m
+    &kFzInovelliSceneAction,  // z2m supportsButtonTaps → action <button>_<click>
 };
-const TzConverter* const kTz_VZM31_SN[] = {
+const TzConverter* const kTz_VZM35_SN[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     // Inovelli manuSpec writeable parameters (cluster 0xFC31, mfg 0x122f).
+    // Subset of COMMON_DIMMER_ATTRIBUTES that VZM35 uses for fan
+    // ramp/min/max/output-mode (3-speed vs exhaust on-off).
     &kTzInoDimmingSpeedUpRemote,
     &kTzInoDimmingSpeedUpLocal,
     &kTzInoRampRateOffToOnRemote,
@@ -35,17 +43,13 @@ const TzConverter* const kTz_VZM31_SN[] = {
     &kTzInoOutputMode,
     &kTzInoSmartBulbMode,
 };
-constexpr const char* kModels_VZM31_SN[] = { "VZM31-SN" };
-
-}  // namespace
-
 
 constexpr Expose kAutoExposes[] = {
-    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state",     ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
-    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
-    // Inovelli COMMON_DIMMER + COMMON_DIMMER_ON_OFF parameter exposes.
+    // z2m e.action(BUTTON_TAP_SEQUENCES) — scene/button taps.
+    {"action", ExposeType::Enum, Access::State, nullptr, "<button>_<click>", nullptr, 0},
+    // VZM35 fan-specific parameter exposes (subset of COMMON_DIMMER).
     {"dimmingSpeedUpRemote",    ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"dimmingSpeedUpLocal",     ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"rampRateOffToOnRemote",   ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
@@ -66,23 +70,25 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0008},
-    {1, 0x0702},
-    {1, 0xFC31},  // manuSpecificInovelli — for parameter writes/reports.
+    {1, 0x0006},   // genOnOff
+    {1, 0x0008},   // genLevelCtrl (fan_mode)
+    {1, 0xFC31},   // manuSpecificInovelli — parameter writes/reports.
 };
 
-extern const PreparedDefinition kDef_VZM31_SN{
-    .zigbee_models=kModels_VZM31_SN, .zigbee_models_count=sizeof(kModels_VZM31_SN)/sizeof(kModels_VZM31_SN[0]),
+}  // namespace
+
+extern const PreparedDefinition kDef_VZM35_SN{
+    .zigbee_models=kModels_VZM35_SN, .zigbee_models_count=sizeof(kModels_VZM35_SN)/sizeof(kModels_VZM35_SN[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="VZM31-SN", .vendor="Inovelli",
+    .model="VZM35-SN", .vendor="Inovelli",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_VZM31_SN, .from_zigbee_count=sizeof(kFz_VZM31_SN)/sizeof(kFz_VZM31_SN[0]),
-    .to_zigbee=kTz_VZM31_SN, .to_zigbee_count=sizeof(kTz_VZM31_SN)/sizeof(kTz_VZM31_SN[0]),
+    .from_zigbee=kFz_VZM35_SN, .from_zigbee_count=sizeof(kFz_VZM35_SN)/sizeof(kFz_VZM35_SN[0]),
+    .to_zigbee=kTz_VZM35_SN, .to_zigbee_count=sizeof(kTz_VZM35_SN)/sizeof(kTz_VZM35_SN[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=kAutoBindings,
+    .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::inovelli

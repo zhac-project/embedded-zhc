@@ -1174,6 +1174,14 @@ target_link_libraries(zhc_ikea_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_siglis_parity_tests tests/test_siglis_parity.cpp)
 target_link_libraries(zhc_siglis_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Inovelli Blue-series switches/dimmers/fan
+# (VZM30/31/32/35-SN). z2m marks them supportsButtonTaps:true, emitting a
+# manuSpecificInovelli (0xFC31 cmd 0x00) raw frame on EP2 → action
+# <button>_<click>. The generated ports dropped both the action expose
+# and the decoder; inovelli::kFzInovelliSceneAction restores them.
+add_executable(zhc_inovelli_parity_tests tests/test_inovelli_parity.cpp)
+target_link_libraries(zhc_inovelli_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Easyiot ZB-WB01/02/03/08 multi-button scene
 # remotes. Their auto-generated defs lowered the generic
 # kFzCommandOn/Off/Toggle (emit bare "on"/"off"/"toggle", no button
@@ -1975,6 +1983,7 @@ add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)
 add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
+add_test(NAME zhc_inovelli_parity_tests     COMMAND zhc_inovelli_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
 add_test(NAME zhc_paul_neuhaus_parity_tests COMMAND zhc_paul_neuhaus_parity_tests)
