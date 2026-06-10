@@ -1073,6 +1073,15 @@ target_link_libraries(zhc_hej_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_visonic_parity_tests tests/test_visonic_parity.cpp)
 target_link_libraries(zhc_visonic_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the PEQ 3300-P door & window contact sensor. The auto-port
+# lowered the generic kFzIasZone (emits the bare "alarm" key) so the contact
+# state never matched the expose, and it dropped the z2m fz.temperature channel
+# entirely (decoder + `temperature` expose + 0x0402 binding). Graduated to a
+# parent override wiring the typed kFzIasContactAlarm (z2m-inverted contact)
+# plus the restored kFzTemperature channel.
+add_executable(zhc_peq_parity_tests tests/test_peq_parity.cpp)
+target_link_libraries(zhc_peq_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the iHORN sensor family. Every IAS def lowered the generic
 # kFzIasZone (bare key "alarm") while exposing the semantic key — graduated to
 # Tier-2 overrides using typed kFzIasMotionAlarm (LH-992ZB/LH-990ZB/LH-990F →
@@ -3015,6 +3024,7 @@ add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_aeotec_parity_tests       COMMAND zhc_aeotec_parity_tests)
 add_test(NAME zhc_netvox_parity_tests       COMMAND zhc_netvox_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
+add_test(NAME zhc_peq_parity_tests          COMMAND zhc_peq_parity_tests)
 add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
 add_test(NAME zhc_somgoms_parity_tests      COMMAND zhc_somgoms_parity_tests)
 add_test(NAME zhc_ecolink_parity_tests      COMMAND zhc_ecolink_parity_tests)
