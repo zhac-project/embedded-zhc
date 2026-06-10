@@ -58,6 +58,16 @@ across the ZHAC platform.
   `valve_state_auto_shutdown` (DP 2), `shutdown_timer` (DP 11) and `battery`
   (DP 110). Per the giex precedent, the float-divisor suspect was FALSE: z2m
   passes every value DP through raw, so all DPs decode at divisor 1.
+- **Airam CTR.U / CTR.UBX remotes: dead `action`, mis-ported as on/off
+  switches.** Both command-style dimmer remotes (`ZBT-Remote-EU-DIMV1A2`
+  / `ZBT-Remote-EU-DIMV2A2`) were auto-ported as controllable on/off
+  switches (`kFzOnOff` + `kTzOnOff` + a dead `state` expose), dropping
+  every button press. z2m wires `fz.command_on/off/step/move/stop/recall`
+  and exposes a composite `action`. Fixed by graduating both defs and
+  wiring the generic genOnOff/genLevelCtrl/genScenes command converters
+  (`kFzCommandOn/Off/Step/Move/Stop/Recall`) so they publish `action`
+  (`on`/`off`/`brightness_step_*`/`brightness_move_*`/`brightness_stop`/
+  `recall_<n>`), with no write path.
 
 - **FireAngel CO sensors: dead/missing carbon-monoxide channels.** The
   W2-Module (`Alarm_SD_Device`) was auto-ported battery-only — z2m wires
