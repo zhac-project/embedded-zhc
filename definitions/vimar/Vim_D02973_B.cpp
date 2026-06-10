@@ -1,14 +1,24 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Vimar 02973.B — auto-generated.
-// Vimar IoT thermostat
+// Tier 2: Vimar 02973.B — graduated 2026-06-10.
+// Vimar IoT thermostat (Thermostat_v0.1 / WheelThermostat_v1.0).
+//
+// z2m wires `fz.thermostat` (full hvacThermostat surface) and exposes a
+// climate with heating + cooling setpoints and system_mode off/heat/cool.
+// The generic `kFzThermostat` decodes only 0x0000 / 0x0012 / 0x001C, so
+// the `occupied_cooling_setpoint` (attr 0x0011) expose was dead. The
+// vendor `kFzVimarThermostatExtras` decodes it alongside the generic one.
+// Also fixed the exposes: cooling setpoint added, and `system_mode`
+// corrected from a phantom Binary to an Enum (z2m off/heat/cool).
 // z2m-source: vimar.ts #02973.B.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/vimar/_shared.hpp"
 
 namespace zhc::devices::vimar {
 namespace {
 const FzConverter* const kFz_D02973_B[] = {
     &::zhc::generic::kFzThermostat,
+    &kFzVimarThermostatExtras,
 };
 const TzConverter* const kTz_D02973_B[] = {
     &::zhc::generic::kTzThermostat,
@@ -22,7 +32,8 @@ constexpr const char* kModels_D02973_B[] = { "Thermostat_v0.1", "WheelThermostat
 constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"occupied_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

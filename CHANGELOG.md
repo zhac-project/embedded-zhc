@@ -36,6 +36,20 @@ across the ZHAC platform.
   /`commandNotification`, a Green Power frame family the embedded-zhc parser
   does not yet produce (216Z further needs the compound `commandID_<rawByte0>`
   key). Schema/role parity is what the shadow + SPA consume.
+- **Vimar thermostat dropped its cooling setpoint and the RemoteControl was
+  mis-ported as an on/off switch.** The 02973.B IoT thermostat wires z2m's
+  full `fz.thermostat` and exposes both heating and cooling setpoints plus
+  `system_mode` off/heat/cool, but the auto-port wired only the generic
+  `kFzThermostat` (decodes 0x0000/0x0012/0x001C), leaving the
+  `occupied_cooling_setpoint` (attr 0x0011) expose dead and declaring
+  `system_mode` as a phantom Binary. Added a vendor `kFzVimarThermostatExtras`
+  converter (0x0011 → occupied_cooling_setpoint) alongside the generic decoder,
+  exposed the cooling setpoint, and corrected system_mode to an Enum.
+  RemoteControl_v1.0 is a battery transmitter (`m.commandsOnOff()`,
+  `m.commandsWindowCovering()`, `m.commandsLevelCtrl()`) but was mapped as a
+  controllable on/off switch (`kFzOnOff` + `kTzOnOff` + a writable `state`);
+  rewired to the generic command converters (action emitter), dropped the
+  phantom `state` and toZigbee.
 
 - **The Light Group (SLC SmartOne) remotes were wrong-bundled as settable
   lights.** S57003 (4-channel wall remote) and S57007 (3-button remote
