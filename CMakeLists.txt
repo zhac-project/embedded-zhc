@@ -2370,6 +2370,13 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Domraem DOM-Z-105P "5 in 1" LED controller family. The
+# auto-generator collapsed every m.light() to on/off + brightness, dropping the
+# 0x0300 axes: RGB regained hs color (kFzColor); RGBW/RGBCCT regained colorTemp
+# + xy + hs; CCT + WW/CW regained colorTemp. DIMMER stays clean.
+add_executable(zhc_domraem_parity_tests tests/test_domraem_parity.cpp)
+target_link_libraries(zhc_domraem_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Shenzhen Homa LED-driver family. The auto-generator collapsed
 # every m.light() to on/off + brightness, dropping the 0x0300 color axis: RGB +
 # RGBW (m.light({color:true})) regained xy color (kFzColor); RGBW suffixes its
@@ -2736,6 +2743,7 @@ add_test(NAME zhc_nobo_parity_tests         COMMAND zhc_nobo_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
+add_test(NAME zhc_domraem_parity_tests      COMMAND zhc_domraem_parity_tests)
 add_test(NAME zhc_shenzhen_homa_parity_tests COMMAND zhc_shenzhen_homa_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)

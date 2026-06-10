@@ -112,6 +112,14 @@ across the ZHAC platform.
   in the dispatch always-global blocklist so multi-load metering switches
   keep z2m's single un-suffixed `e.power()`/`e.energy()` exposes.
 
+- **Domraem DOM-Z-105P LED controllers regained their color/colorTemp axes.**
+  The auto-generator collapsed every `m.light(...)` variant to on/off +
+  brightness only. Restored the dropped 0x0300 axes per modelID to match z2m:
+  `RGB` (hs color) regained hue/saturation; `RGBW` + `RGBCCT` regained
+  colorTemp (158–495 mired) + xy + hs; `CCT` (158–495) + `WW/CW` (158–500)
+  regained colorTemp. `DIMMER` was already correct. Five generated defs
+  graduated to Tier 2 with `kFzColor`/`kFzColorTemperature` +
+  `kTzColor`/`kTzColorTemp`; pinned by `tests/test_domraem_parity.cpp`.
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
   but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
