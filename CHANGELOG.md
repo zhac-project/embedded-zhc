@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **LUX KONOz KN-Z-WH1-B04 thermostat: dead cooling-setpoint + running
+  state.** The HVAC thermostat's climate expose declares
+  `occupied_cooling_setpoint` and `withRunningState(["idle","heat","cool"])`,
+  both decoded by z2m's `fz.thermostat` from standard hvacThermostat attrs
+  0x0011 (OccupiedCoolingSetpoint) and 0x0029 (ThermostatRunningState). The
+  auto-port wired only the generic `kFzThermostat` (0x0000/0x0012/0x001C),
+  so both were dead exposes; `running_mode` (0x001E, also z2m-decoded) was
+  likewise dropped. Added a vendor `_shared.{hpp,cpp}` with
+  `kFzLuxThermostatExtras`, graduated the def to Tier 2 (added the
+  `occupied_cooling_setpoint` / `running_state` / `running_mode` exposes),
+  and authored `tests/test_lux_parity.cpp`. The `fan_mode` channel was
+  already correctly decoded by the generic `kFzFanMode` (regression-tested).
+
 - **FireAngel CO sensors: dead/missing carbon-monoxide channels.** The
   W2-Module (`Alarm_SD_Device`) was auto-ported battery-only — z2m wires
   `fz.W2_module_carbon_monoxide` and reports CO on ssIasZone zoneStatus

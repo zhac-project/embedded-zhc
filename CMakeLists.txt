@@ -1746,6 +1746,14 @@ target_link_libraries(zhc_muller_licht_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ubisys_parity_tests tests/test_ubisys_parity.cpp)
 target_link_libraries(zhc_ubisys_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the LUX KONOz KN-Z-WH1-B04 HVAC thermostat. The
+# auto-port wired only the generic kFzThermostat (0x0000/0x0012/0x001C),
+# leaving occupied_cooling_setpoint (0x0011) + running_state (0x0029) as
+# dead exposes; running_mode (0x001E) is z2m-decoded too. Fixed by wiring
+# kFzLuxThermostatExtras. fan_mode (hvacFanCtrl) regression-checked.
+add_executable(zhc_lux_parity_tests tests/test_lux_parity.cpp)
+target_link_libraries(zhc_lux_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the NodOn family. TRV-4-1-00 declared trv_mode
 # (hvacThermostat attr 0x4000) + valve_position (0x4001) with matching Tz
 # writers but only wired the generic kFzThermostat (0x0000/0x0012/0x001C),
@@ -2496,6 +2504,7 @@ add_test(NAME zhc_ls_parity_tests           COMMAND zhc_ls_parity_tests)
 add_test(NAME zhc_livolo_parity_tests       COMMAND zhc_livolo_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
+add_test(NAME zhc_lux_parity_tests          COMMAND zhc_lux_parity_tests)
 add_test(NAME zhc_osram_parity_tests        COMMAND zhc_osram_parity_tests)
 add_test(NAME zhc_nodon_parity_tests        COMMAND zhc_nodon_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
