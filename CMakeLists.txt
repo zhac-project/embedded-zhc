@@ -1371,6 +1371,14 @@ target_link_libraries(zhc_mercator_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_develco_parity_tests tests/test_develco_parity.cpp)
 target_link_libraries(zhc_develco_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the D-Link DCH-B112 door/window + vibration sensor.
+# The auto port wired the generic kFzIasZone (bare `alarm`, bit0 not
+# inverted) and dropped the contact + vibration channels. z2m's
+# fzLocal.DCH_B112 decodes the ZoneStatusChangeNotification into
+# contact=!(bit0) / vibration=bit1 / tamper=bit2 / battery_low=bit3.
+add_executable(zhc_dlink_parity_tests tests/test_dlink_parity.cpp)
+target_link_libraries(zhc_dlink_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Databyte (databyte.ch) family. Touch4
 # (DTB-ED2011-014) dropped the fzLocal.DTB2011014 decoder (battery-only)
 # so key_1..key_4 (genOnOff manufacturer attrs 0xA191..0xA194) never
@@ -2691,6 +2699,7 @@ add_test(NAME zhc_livingwise_parity_tests   COMMAND zhc_livingwise_parity_tests)
 add_test(NAME zhc_linptech_parity_tests     COMMAND zhc_linptech_parity_tests)
 add_test(NAME zhc_profalux_parity_tests     COMMAND zhc_profalux_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
+add_test(NAME zhc_dlink_parity_tests        COMMAND zhc_dlink_parity_tests)
 add_test(NAME zhc_databyte_parity_tests     COMMAND zhc_databyte_parity_tests)
 add_test(NAME zhc_frient_parity_tests       COMMAND zhc_frient_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
