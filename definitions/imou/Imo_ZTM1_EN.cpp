@@ -1,14 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Imou ZTM1-EN — auto-generated.
+// Tier 2: Imou ZTM1-EN — temperature/humidity sensor (missing-channel fix).
 // Temperature and humidity sensor
-// z2m-source: imou.ts #ZTM1-EN.
+// z2m-source: imou.ts #ZTM1-EN — m.battery() + m.temperature() + m.humidity().
+//
+// The generated def kept only m.battery() — it dropped the two primary
+// channels (temperature via msTemperatureMeasurement 0x0402,
+// humidity via msRelativeHumidity 0x0405), leaving a "temperature &
+// humidity sensor" that reported neither. Wire the generic
+// kFzTemperature + kFzHumidity decoders, add the exposes and the
+// matching report bindings.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::imou {
 namespace {
 const FzConverter* const kFz_ZTM1_EN[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzTemperature,
+    &::zhc::generic::kFzHumidity,
 };
 
 constexpr const char* kModels_ZTM1_EN[] = { "ZTM1-EN" };
@@ -20,10 +29,14 @@ constexpr const char* kModels_ZTM1_EN[] = { "ZTM1-EN" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
+    {1, 0x0405},
 };
 // --- end auto-generated block ---
 

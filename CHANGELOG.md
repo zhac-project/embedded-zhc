@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **IMOU (Dahua) sensor family parity: IAS dead-keys + dropped channels.**
+  All six IMOU battery sensors were auto-ported onto the generic
+  `kFzIasZone` (emits `alarm_1`/`alarm_2`) or battery-only, so the primary
+  channels never reached the shadow. Graduated each to a Tier-2 override:
+  ZP1-EN PIR now decodes `occupancy` (`kFzIasMotionAlarm`); ZR1-EN siren +
+  ZD1-EN contact decode the bare `alarm` key (`kFzIasGenericAlarm`, matching
+  z2m's `alarm` zoneType); ZGA1-EN gas now emits the split `gas_alarm_1`/
+  `gas_alarm_2` + `test` keys and drops the phantom `battery_low` (new
+  imou-local `kFzImouGasAlarm`); ZTM1-EN re-wires the dropped `temperature`
+  (0x0402) + `humidity` (0x0405) channels; ZE1-EN wireless switch decodes
+  `action:"press"` on zoneStatus==2 (new imou-local `kFzImouAlarmButton`).
+  New `definitions/imou/_shared.{hpp,cpp}` + `test_imou_parity`. (z2m
+  `m.iasWarning()` siren control on ZR1-EN deferred — to-zigbee infra.)
 - **JetHome WS7 parity: phantom on/off, dead discrete-input channel.** The
   3-channel battery discrete-input module was auto-ported with a phantom
   genOnOff in/out (settable `state` expose + `kFzOnOff`/`kTzOnOff` +

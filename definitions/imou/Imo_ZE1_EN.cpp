@@ -1,15 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Imou ZE1-EN — auto-generated.
+// Tier 2: Imou ZE1-EN — wireless switch (missing action fix).
 // Wireless switch
-// z2m-source: imou.ts #ZE1-EN.
+// z2m-source: imou.ts #ZE1-EN — m.battery() + imouAlarmButton().
+//
+// imouAlarmButton() decodes an IAS Zone Status Change Notification and
+// publishes `action:"press"` ONLY when zoneStatus === 2. The generated
+// def kept only m.battery(), so the button press was completely dropped
+// (no action expose, no IAS fz, no 0x0500 binding). Wire the imou-local
+// kFzImouAlarmButton, add the `action` enum expose and the ssIasZone
+// binding.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/imou/_shared.hpp"
 
 namespace zhc::devices::imou {
 namespace {
 const FzConverter* const kFz_ZE1_EN[] = {
     &::zhc::generic::kFzBattery,
+    &kFzImouAlarmButton,
 };
+
+constexpr const char* kActions_ZE1_EN[] = { "press" };
+
 
 constexpr const char* kModels_ZE1_EN[] = { "ZE1-EN" };
 
@@ -20,10 +32,12 @@ constexpr const char* kModels_ZE1_EN[] = { "ZE1-EN" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActions_ZE1_EN, 1},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0500},
 };
 // --- end auto-generated block ---
 

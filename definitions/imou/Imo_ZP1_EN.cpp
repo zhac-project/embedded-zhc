@@ -1,15 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Imou ZP1-EN — auto-generated.
+// Tier 2: Imou ZP1-EN — PIR motion sensor (IAS dead-key fix).
 // Zigbee ZP1 PIR motion sensor
-// z2m-source: imou.ts #ZP1-EN.
+// z2m-source: imou.ts #ZP1-EN — m.iasZoneAlarm({zoneType:"occupancy",
+//   zoneAttributes:["alarm_1","tamper","battery_low"]}).
+//
+// z2m's `occupancy` zoneType publishes the semantic key `occupancy`
+// (zoneStatus bit 0) + tamper (bit 2) + battery_low (bit 3). The
+// generated def lowered the generic kFzIasZone, which emits `alarm_1`/
+// `alarm_2` — never matching the declared expose, so the motion state
+// was dead. Swap in typed kFzIasMotionAlarm (emits `occupancy`) and
+// rename the expose to match.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::imou {
 namespace {
 const FzConverter* const kFz_ZP1_EN[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_ZP1_EN[] = { "ZP1-EN" };
@@ -21,7 +29,7 @@ constexpr const char* kModels_ZP1_EN[] = { "ZP1-EN" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
