@@ -1,7 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ecolink FFZB1-SM-ECO — auto-generated.
-// Audio Detector: Listens for the siren tone from a UL listed smoke detector in your home and sends signal to your Zigbee HUB
+// Tier 2: Ecolink FFZB1-SM-ECO — hand-curated (was missing-decoder).
+// Audio Detector: Listens for the siren tone from a UL listed smoke detector in
+// your home and sends signal to your Zigbee HUB. z2m extends with m.temperature()
+// + m.iasZoneAlarm({zoneType:"alarm"}) + m.battery(), but the auto-port lowered
+// only kFzBattery + kFzIasZone and dropped the temperature channel. The bare
+// `alarm` IAS key is correct (z2m zoneType "alarm" collapses onto `alarm`); added
+// kFzTemperature (msTemperatureMeasurement 0x0402), the temperature expose and the
+// 0x0402 binding.
 // z2m-source: ecolink.ts #FFZB1-SM-ECO.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,6 +15,7 @@ namespace zhc::devices::ecolink {
 namespace {
 const FzConverter* const kFz_FFZB1_SM_ECO[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzIasZone,
 };
 
@@ -21,6 +28,7 @@ constexpr const char* kModels_FFZB1_SM_ECO[] = { "FFZB1-SM-ECO" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
@@ -28,6 +36,7 @@ constexpr Expose kAutoExposes[] = {
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
     {1, 0x0500},
 };
 // --- end auto-generated block ---
