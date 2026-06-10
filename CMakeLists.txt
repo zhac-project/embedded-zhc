@@ -1598,6 +1598,16 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Salus Controls vendor. The RE600 Zigbee router was
+# auto-ported with a phantom on/off (state) + battery/voltage bundle and bound
+# genOnOff/genPowerCfg; z2m declares it fromZigbee:[]/toZigbee:[]/exposes:[]
+# (pure repeater). Graduated to a Tier-2 parent stripping it all. Also guards
+# the already-correct SW600/OS600/WLS600 typed-IAS decode, the FC600 flat
+# thermostat surface, and the SP600/SPE600/SX885ZB metering plugs (seMetering
+# 0x0702 only, no phantom 0x0B04). See tests/README.md.
+add_executable(zhc_salus_controls_parity_tests tests/test_salus_controls_parity.cpp)
+target_link_libraries(zhc_salus_controls_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1751,6 +1761,7 @@ add_test(NAME zhc_ts0044_tests              COMMAND zhc_ts0044_tests)
 add_test(NAME zhc_ts004f_knob_tests         COMMAND zhc_ts004f_knob_tests)
 add_test(NAME zhc_datek_parity_tests        COMMAND zhc_datek_parity_tests)
 add_test(NAME zhc_mercator_parity_tests     COMMAND zhc_mercator_parity_tests)
+add_test(NAME zhc_salus_controls_parity_tests COMMAND zhc_salus_controls_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
