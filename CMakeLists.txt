@@ -1662,6 +1662,18 @@ target_link_libraries(zhc_salus_controls_parity_tests PRIVATE zhc_definitions)
 # regression guards. See tests/README.md.
 add_executable(zhc_kmpcil_parity_tests tests/test_kmpcil_parity.cpp)
 target_link_libraries(zhc_kmpcil_parity_tests PRIVATE zhc_definitions)
+# Parity fixtures for the RGB Genie scene/rotary remote family. ZB-1026 is the
+# lone real m.light() dimmer (sink); the other seven (ZB-5001/5004/5121/5122,
+# ZB-3008/3009, ZB-5028) are action senders the auto-gen wrongly bundled as
+# settable on/off lights — already corrected to action+battery/colour bundles
+# in definitions/rgb_genie/_shared.{hpp,cpp}. This suite pins remote shape
+# (action expose, no settable state, empty toolbox), single- vs multi-EP
+# action suffixing, battery decode, and LOCKS the ColorCtrl move decoders
+# (command_move_hue / move_to_color / move_color_temperature) that stale port
+# comments wrongly described as "not yet wired in _generic" — they are wired
+# (kFzCommandMoveHue/MoveToColor/MoveColorTemperature). See tests/README.md.
+add_executable(zhc_rgb_genie_parity_tests tests/test_rgb_genie_parity.cpp)
+target_link_libraries(zhc_rgb_genie_parity_tests PRIVATE zhc_definitions)
 
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
@@ -1823,6 +1835,7 @@ add_test(NAME zhc_mercator_parity_tests     COMMAND zhc_mercator_parity_tests)
 add_test(NAME zhc_viessmann_parity_tests    COMMAND zhc_viessmann_parity_tests)
 add_test(NAME zhc_salus_controls_parity_tests COMMAND zhc_salus_controls_parity_tests)
 add_test(NAME zhc_kmpcil_parity_tests       COMMAND zhc_kmpcil_parity_tests)
+add_test(NAME zhc_rgb_genie_parity_tests    COMMAND zhc_rgb_genie_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

@@ -53,6 +53,18 @@ across the ZHAC platform.
   using it with the two phantom exposes removed. (volume/duration write and
   `ac_connected` from genBasic.powerSource remain INFRA-deferred — no generic
   converter yet.)
+- **RGB Genie ZB-5028 4-EP scene remote — colliding per-endpoint actions.**
+  z2m marks the ZB-5028 (and sibling ZB-3008) `meta: {multiEndpoint: true}`
+  with no `endpoint()` map, so `postfixWithEndpointName` suffixes every action
+  with the raw endpoint ID and the four buttons emit distinct events. The port
+  declared an `endpoint_map` (ep1..ep4) but omitted `endpoint_action_suffix`,
+  so the dispatch kept `action` global (it is in `kAlwaysGlobalKeys`) and all
+  four endpoints collapsed onto one bare `action` key — ZB-3008 had the flag,
+  ZB-5028 was missed. Added `.endpoint_action_suffix = true` (graduated
+  `Rgb_ZB_5028.cpp` to a Tier-2 parent). Also corrected stale "command_move_*
+  not yet wired in _generic" port notes (those ColorCtrl move decoders are
+  wired and fire). Covered by the new `tests/test_rgb_genie_parity.cpp`.
+
 - **Viessmann ViCare radiator TRV (ZK03840) — false `window_open` flag and
   dead `occupied_heating_setpoint`.** Two decode bugs against z2m's
   `fzLocal.viessmann_thermostat`: (1) the manuSpec attr 0x4000

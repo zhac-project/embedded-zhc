@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: RGB Genie ZB-5028 — hand-rewritten 2026-04-28q.
+// Tier 2: RGB Genie ZB-5028 — graduated from generated/ 2026-06-10.
 // RGB remote with 4 endpoints and 3 scene recalls (battery, multi-EP).
 // z2m-source: rgb_genie.ts #ZB-5028.
 //
@@ -11,10 +11,16 @@
 //   exposes [battery, action(on, off, brightness_*, recall_1..3,
 //            hue_move, color_temperature_move, color_move, hue_stop)].
 //   meta: {multiEndpoint: true, battery: {dontDividePercentage: true}}.
-// NOTE: previous port wired kFzOnOff and exposed `state`. ZB-5028 is a
-//   4-EP battery-powered RGB scene remote (sender). PARTIAL:
-//   command_move_hue and command_move_to_color are not yet wired in
-//   _generic.
+// FIX (2026-06-10): z2m's `meta.multiEndpoint` with no `endpoint()` map
+//   postfixes every action with the raw endpoint ID (utils.ts
+//   postfixWithEndpointName → `value_<msg.endpoint.ID>`), so EP1..EP4
+//   emit distinct actions (e.g. recall_1_4). The earlier port declared
+//   `endpoint_map` but forgot `.endpoint_action_suffix = true`, so the
+//   dispatch left `action` GLOBAL (kAlwaysGlobalKeys) and all four
+//   buttons collided on a single bare key — sibling ZB-3008 (also
+//   multiEndpoint) had the flag, this one was missed. Flag added below.
+//   command_move_hue / command_move_to_color ARE wired in _generic now
+//   (kFzActionBatteryRGB pulls them in), so hue_move / color_move fire.
 #include "definitions/rgb_genie/_shared.hpp"
 
 namespace zhc::devices::rgb_genie {
@@ -51,6 +57,7 @@ extern const PreparedDefinition kDef_ZB_5028{
     .bindings=kBindingsActionBatteryRGB, .bindings_count=kBindingsActionBatteryRGBCount,
     .endpoint_map=kEndpoints_ZB_5028,
     .endpoint_map_count=sizeof(kEndpoints_ZB_5028)/sizeof(kEndpoints_ZB_5028[0]),
+    .endpoint_action_suffix = true,
 };
 
 }  // namespace zhc::devices::rgb_genie
