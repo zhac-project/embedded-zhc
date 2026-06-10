@@ -1,8 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Onesti S4RX-110 — auto-generated.
-// Relax smart plug
-// z2m-source: onesti.ts #S4RX-110.
+// Tier 2: Onesti S4RX-110 "Relax" smart plug — restored device_temperature.
+//
+// z2m wires fz.device_temperature + e.device_temperature() and binds
+// genDeviceTempCfg (0x0002), but the auto-generated port dropped the
+// converter, the expose, and the bind, so the plug's internal die
+// temperature never surfaced. Same gap class as dawon_dns PM-B540-ZB.
+// Fixed by wiring the generic kFzDeviceTemperature (0x0002 attr 0x0000,
+// raw whole °C), adding the device_temperature expose + 0x0002 bind.
+// All of the plug's clusters live on endpoint 2 (z2m
+// `endpoint: () => ({default: 2})`), so bindings target ep 2 and
+// default_endpoint=2 routes outbound on/off there.
+// z2m-source: onesti.ts #S4RX-110 + converters/fromZigbee.ts device_temperature.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::onesti {
@@ -11,6 +20,7 @@ const FzConverter* const kFz_S4RX_110[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzElectricalMeasurement,
+    &::zhc::generic::kFzDeviceTemperature,
 };
 const TzConverter* const kTz_S4RX_110[] = {
     &::zhc::generic::kTzOnOff,
@@ -27,12 +37,14 @@ constexpr Expose kAutoExposes[] = {
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0702},
-    {1, 0x0B04},
+    {2, 0x0006},
+    {2, 0x0702},
+    {2, 0x0B04},
+    {2, 0x0002},  // genDeviceTempCfg
 };
 // --- end auto-generated block ---
 
@@ -47,6 +59,7 @@ extern const PreparedDefinition kDef_S4RX_110{
     .to_zigbee=kTz_S4RX_110, .to_zigbee_count=sizeof(kTz_S4RX_110)/sizeof(kTz_S4RX_110[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+.default_endpoint=2,
 };
 
 }  // namespace zhc::devices::onesti
