@@ -943,6 +943,15 @@ target_link_libraries(zhc_ajax_online_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_atlantic_parity_tests tests/test_atlantic_parity.cpp)
 target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for two Light Solutions bulbs whose auto-generated defs
+# dropped a lighting axis. 42-032 (CCT driver) lost the colorTemp axis and
+# 91-943 (RGBW+CCT controller) lost BOTH color (hue/sat/xy) and colorTemp.
+# Both graduated to parent overrides wiring the generic color/colorTemp
+# converters + 0x0300 binding. The plain dimmers/switch are guarded
+# FALSE-by-category.
+add_executable(zhc_lightsolutions_parity_tests tests/test_lightsolutions_parity.cpp)
+target_link_libraries(zhc_lightsolutions_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Casaia CTHS-317-ET remote temperature probe. The
 # generated def reduced it to battery-only (kFzBattery + battery/voltage),
 # dropping z2m's fz.temperature decoder + e.temperature() expose (the whole
@@ -2572,6 +2581,7 @@ add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
+add_test(NAME zhc_lightsolutions_parity_tests COMMAND zhc_lightsolutions_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_prolight_parity_tests     COMMAND zhc_prolight_parity_tests)
