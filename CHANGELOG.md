@@ -33,6 +33,23 @@ across the ZHAC platform.
   endpoints. New reusable `::zhc::generic::kFzBinaryInput` added for any
   genBinaryInput presentValue device.
 
+- **MultIR (MIR series) IAS dead-keys, dropped channels, and a phantom
+  switch.** All seven MultIR sensor ports were corrected against z2m: the
+  contact (MIR-MC100), smoke (MIR-SM200), and water-leak (MIR-WA100) sensors
+  wired the generic `kFzIasZone` (bare `alarm`) against a semantic expose key
+  — swapped to the typed `kFzIasContactAlarm` / `kFzIasSmokeAlarm` /
+  `kFzIasWaterLeakAlarm` (→ `contact`/`smoke`/`water_leak`); MIR-SM100-E
+  (z2m zoneType "generic" + both alarms) now uses `kFzIasZoneStatusChange`
+  for `alarm_1`/`alarm_2`; MIR-IR100 PIR regained its `occupancy` IAS key
+  (`kFzIasMotionAlarm`) plus the dropped illuminance channel
+  (msIlluminanceMeasurement 0x0400); MIR-TE600 regained temperature (0x0402)
+  + humidity (0x0405), which the port had reduced to battery-only; and the
+  MIR-SO100 SOS button — mis-modelled as a settable genOnOff switch (phantom
+  `state` + write path + 0x0006 binding) — now decodes its raw ssIasZone
+  press command (byte 0/1/128 → single/double/hold) to `action` via the new
+  vendor `kFzMultirSosAction`. (Deferred infra: the MIR-IR100 `sensitivity`
+  enum over ssIasZone attr 0x0013 — no generic IAS-attribute config
+  converter exists yet.)
 - **LifeControl (MCLH series) ports dropped whole channels.** Three
   auto-generated defs lost half their z2m functionality: MCLH-02 "vivi
   ZLight" colour bulb (`m.light({colorTemp, color: true})`) wired only

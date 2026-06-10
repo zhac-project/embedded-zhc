@@ -1,7 +1,10 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Multir MIR-TE600 — auto-generated.
-// Temperature sensor
+// Tier 2: Multir MIR-TE600 — temperature + humidity sensor.
+// z2m extend: m.battery() + m.temperature() + m.humidity(). The auto-port
+// lowered only kFzBattery, dropping BOTH the temperature (0x0402) and
+// humidity (0x0405) channels. Added kFzTemperature + kFzHumidity and their
+// bindings.
 // z2m-source: multir.ts #MIR-TE600.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,6 +12,8 @@ namespace zhc::devices::multir {
 namespace {
 const FzConverter* const kFz_MIR_TE600[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzTemperature,
+    &::zhc::generic::kFzHumidity,
 };
 
 constexpr const char* kModels_MIR_TE600[] = { "MIR-TE600" };
@@ -20,10 +25,14 @@ constexpr const char* kModels_MIR_TE600[] = { "MIR-TE600" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "\xC2\xB0""C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
+    {1, 0x0405},
 };
 // --- end auto-generated block ---
 

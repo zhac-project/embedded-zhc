@@ -1,18 +1,22 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Multir MIR-SM100-E — auto-generated.
-// Smoke sensor
-// z2m-source: multir.ts #MIR-SM100-E.
+// Tier 2: Multir MIR-SM200 — smoke sensor.
+// z2m m.iasZoneAlarm({zoneType:"smoke"}) publishes the semantic key `smoke`
+// (bit0) + tamper + battery_low. The auto-port wired the generic kFzIasZone
+// (bare `alarm`) → dead key. Swapped to the typed kFzIasSmokeAlarm.
+// (The SET-only `silence` enum — z2m tzLocal.MIRSM200, genOnOff off — has no
+// decoder side and is intentionally not modelled as state.)
+// z2m-source: multir.ts #MIR-SM200.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::multir {
 namespace {
-const FzConverter* const kFz_MIR_SM100_E[] = {
+const FzConverter* const kFz_MIR_SM200[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasSmokeAlarm,
 };
 
-constexpr const char* kModels_MIR_SM100_E[] = { "MIR-SM100-E" };
+constexpr const char* kModels_MIR_SM200[] = { "MIR-SM200" };
 
 }  // namespace
 
@@ -21,7 +25,7 @@ constexpr const char* kModels_MIR_SM100_E[] = { "MIR-SM100-E" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +36,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_MIR_SM100_E{
-    .zigbee_models=kModels_MIR_SM100_E, .zigbee_models_count=sizeof(kModels_MIR_SM100_E)/sizeof(kModels_MIR_SM100_E[0]),
+extern const PreparedDefinition kDef_MIR_SM200{
+    .zigbee_models=kModels_MIR_SM200, .zigbee_models_count=sizeof(kModels_MIR_SM200)/sizeof(kModels_MIR_SM200[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="MIR-SM100-E", .vendor="Multir",
+    .model="MIR-SM200", .vendor="Multir",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_MIR_SM100_E, .from_zigbee_count=sizeof(kFz_MIR_SM100_E)/sizeof(kFz_MIR_SM100_E[0]),
+    .from_zigbee=kFz_MIR_SM200, .from_zigbee_count=sizeof(kFz_MIR_SM200)/sizeof(kFz_MIR_SM200[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
