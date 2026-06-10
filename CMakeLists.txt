@@ -1367,6 +1367,14 @@ target_link_libraries(zhc_profalux_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_mercator_parity_tests tests/test_mercator_parity.cpp)
 target_link_libraries(zhc_mercator_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Mill (Norwegian electric heating) family. Both the
+# Mill-gen-4 WiFi heating panel and the MFTWIFI smart floor thermostat are z2m
+# m.thermostat() devices (hvacThermostat 0x0201) but were auto-ported as bare
+# genOnOff switch + battery. Re-wired to kFzThermostat/kTzThermostat; the test
+# pins the flat thermostat shape + 0x0000/0x0012/0x001C decoders.
+add_executable(zhc_mill_parity_tests tests/test_mill_parity.cpp)
+target_link_libraries(zhc_mill_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Develco / Frient family. The IAS sensors
 # (FLSZB/HESZB/SMSZB/MOSZB/WISZB) lowered the generic kFzIasZone (bare
 # "alarm") instead of the typed kFzIas<Type>Alarm their expose declared,
@@ -2835,6 +2843,7 @@ add_test(NAME zhc_ts0044_tests              COMMAND zhc_ts0044_tests)
 add_test(NAME zhc_ts004f_knob_tests         COMMAND zhc_ts004f_knob_tests)
 add_test(NAME zhc_datek_parity_tests        COMMAND zhc_datek_parity_tests)
 add_test(NAME zhc_mercator_parity_tests     COMMAND zhc_mercator_parity_tests)
+add_test(NAME zhc_mill_parity_tests         COMMAND zhc_mill_parity_tests)
 add_test(NAME zhc_viessmann_parity_tests    COMMAND zhc_viessmann_parity_tests)
 add_test(NAME zhc_salus_controls_parity_tests COMMAND zhc_salus_controls_parity_tests)
 add_test(NAME zhc_kmpcil_parity_tests       COMMAND zhc_kmpcil_parity_tests)

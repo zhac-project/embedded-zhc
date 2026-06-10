@@ -121,6 +121,14 @@ across the ZHAC platform.
   manuSpecific `power_on_behavior`/`child_lock`/`countdown` extras lack a
   generic decoder and are deferred.)
 
+- **Mill heating thermostat parity.** Both `Mill-gen-4` (WiFi heating panel)
+  and `MFTWIFI` (smart floor thermostat) are z2m `m.thermostat()` devices
+  (hvacThermostat `0x0201`: `occupiedHeatingSetpoint` 5..35 + `systemMode`
+  `["off","heat"]`) but were auto-ported as bare genOnOff switches with phantom
+  `state`/`battery`/`voltage` and a `0x0001`/`0x0006` bind. Re-wired both to the
+  generic `kFzThermostat` read + `kTzThermostat` write, exposing flat
+  `local_temperature` / `current_heating_setpoint` / `system_mode`, bound
+  `0x0201`, and dropped the phantom on/off + battery channels.
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
