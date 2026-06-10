@@ -21,6 +21,18 @@ across the ZHAC platform.
   — a pure binder that z2m declares with `fromZigbee:[], toZigbee:[],
   exposes:[]` — had been given a phantom controllable `state` plus `battery`/
   `voltage` exposes and decoders; stripped to nothing to match z2m.
+- **YSRSAI LED controllers: rescued the dimmer + WW/CW from phantom-battery
+  mis-ports.** z2m drives all three (`YSR-MINI-01_dimmer` ZB-DL01,
+  `YSR-MINI-01_wwcw` ZB-CT01, `YSR-MINI-01_rgbcct`) with
+  `tuya.modernExtend.tuyaLight()` — a mains-powered ZCL light, not a Tuya
+  0xEF00 DP device and not battery-powered. The auto-port mis-classified the
+  dimmer and the WW/CW as battery sensors (`kFzBattery` + bare `kFzOnOff`,
+  phantom `battery`/`voltage` exposes) and dropped the brightness channel
+  (and `color_temp` on the CCT). Re-wired both as real lights: dimmer →
+  state + brightness (genOnOff + genLevelCtrl); WW/CW → state + brightness +
+  color_temp (+ lightingColorCtrl 0x0300), with `kTzOnOff`/`kTzBrightness`/
+  `kTzColorTemp` write-back, bindings, and configure-reporting. rgbcct was
+  already correct and is now regression-guarded.
 
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`

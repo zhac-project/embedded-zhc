@@ -926,6 +926,16 @@ target_link_libraries(zhc_smarli_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_schwaiger_parity_tests tests/test_schwaiger_parity.cpp)
 target_link_libraries(zhc_schwaiger_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the YSRSAI LED-controller family. z2m drives all three
+# with tuya.modernExtend.tuyaLight() (a mains-powered ZCL light), but the
+# auto-port mis-classified the dimmer (ZB-DL01) and the WW/CW (ZB-CT01) as
+# battery sensors — phantom battery/voltage exposes plus a dropped brightness
+# (and color_temp on the CCT) channel. Restored kFzBrightness/kFzColorTemp +
+# write-back and removed the phantom battery bundle. rgbcct is a regression
+# guard for the full RGB+CCT axis.
+add_executable(zhc_ysrsai_parity_tests tests/test_ysrsai_parity.cpp)
+target_link_libraries(zhc_ysrsai_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Ajax Online LED-bulb family. Pins the dropped
 # colour / colour-temperature axes the auto-ports carried: full-colour bulbs
 # (Aj_Zigbee_Led_Strip / AJ_ZB_GU10 / AJ_ZIGPROA60 / ZB_A60_RGBCW / the Tuya
@@ -2737,6 +2747,7 @@ add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
+add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
 add_test(NAME zhc_cleverio_parity_tests     COMMAND zhc_cleverio_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
