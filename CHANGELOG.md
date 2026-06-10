@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Profalux covers + remotes — phantom on/off, dropped tilt, dead
+  position.** Three z2m-parity fixes graduated out of `generated/`: **NB102**
+  is an empty cover remote in z2m (`fromZigbee:[]`/`toZigbee:[]`/`exposes:[]`)
+  but the port hallucinated an on/off `state` + battery bundle — stripped to
+  an empty definition. **MOT-C1ZxxC/F** is a lift+tilt cover on EP2
+  (`closuresWindowCovering`) but the port wired `genOnOff` behind a phantom
+  `state` and dropped the tilt half — now decodes `position` (attr 0x0008) +
+  `tilt` (attr 0x0009), encodes via cover-state/lift/tilt, binds 0x0102 on
+  EP2 with `default_endpoint=2`, and carries no `state` expose. **NSAV061**
+  is an older cover driven via `genLevelCtrl currentLevel` (position) +
+  `genOnOff` (OPEN/CLOSE) but the port used the generic `kFzBrightness` (raw
+  `brightness` key, no 0..100 scale), so `position` decoded to nothing —
+  added `profalux/_shared.{hpp,cpp}` with cover-via-brightness converters
+  (scaled `position` + OPEN/CLOSE `state` decode, `position`→genLevelCtrl
+  level encode) mirroring the iluminize 5128.10 precedent. Covered by
+  `tests/test_profalux_parity.cpp`.
+
 - **Mercator Ikuü SSWF01G AC fan controller — dead `fan_state` key.** z2m's
   `fz.fan` decodes `hvacFanCtrl` attr 0x0000 (fanMode) and publishes BOTH
   `fan_mode` and `fan_state` ("OFF"/"ON"), but the generated port wired the

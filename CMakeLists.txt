@@ -986,6 +986,14 @@ target_link_libraries(zhc_lidl_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_orvibo_parity_tests tests/test_orvibo_parity.cpp)
 target_link_libraries(zhc_orvibo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for Profalux cover motors + remotes. NB102 is an empty
+# remote (was hallucinated with a phantom on/off + battery bundle);
+# MOT-C1ZxxC/F is a lift+tilt cover on EP2 (was on/off + dropped tilt);
+# NSAV061 is a genLevelCtrl-driven cover (was raw `brightness`, position
+# decoded to nothing). See tests/README.md.
+add_executable(zhc_profalux_parity_tests tests/test_profalux_parity.cpp)
+target_link_libraries(zhc_profalux_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Mercator Ikuü SSWF01G AC fan controller. z2m's
 # fz.fan decodes hvacFanCtrl attr 0x0000 (fanMode) into BOTH `fan_mode` and
 # `fan_state`; the generated port wired the generic kFzFanMode (fan_mode only)
@@ -1683,6 +1691,7 @@ add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_iluminize_parity_tests    COMMAND zhc_iluminize_parity_tests)
 add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_orvibo_parity_tests       COMMAND zhc_orvibo_parity_tests)
+add_test(NAME zhc_profalux_parity_tests     COMMAND zhc_profalux_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
 add_test(NAME zhc_sengled_parity_tests      COMMAND zhc_sengled_parity_tests)
