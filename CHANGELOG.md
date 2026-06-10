@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Cleverio SA100 siren + SS300 sensor parity.** `SS300` (SM0201
+  temp/humidity sensor) had both primary channels dropped — wired battery-only
+  — when z2m decodes `fz.temperature` + `fz.humidity` + `fz.battery`; restored
+  `kFzTemperature`/`kFzHumidity` converters, the temperature/humidity exposes,
+  and the 0x0402/0x0405 binds. `SA100` (TS0219 smart siren) used the broad
+  `kFzIasZone` (extra tamper + battery_low) with phantom `tamper`/`battery_low`
+  exposes, while z2m's `fz.ias_alarm_only_alarm_1` (generic zoneType) emits a
+  bare `alarm` only; re-pointed at `kFzIasZoneAlarmOnly` and dropped the two
+  phantom exposes (mirrors sibling Woox R7051). Volume (ssIasWd attr 0x0002)
+  and power_source remain INFRA-deferred (no generic converter yet).
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as

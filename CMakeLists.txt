@@ -934,6 +934,14 @@ target_link_libraries(zhc_schwaiger_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ajax_online_parity_tests tests/test_ajax_online_parity.cpp)
 target_link_libraries(zhc_ajax_online_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Cleverio SA100 siren + SS300 temp/humidity sensor.
+# SA100 swapped kFzIasZone for kFzIasZoneAlarmOnly (z2m fz.ias_alarm_only_alarm_1
+# emits bare `alarm` only) and dropped phantom tamper/battery_low exposes.
+# SS300 had temperature + humidity channels dropped (battery-only); restored
+# kFzTemperature + kFzHumidity converters and exposes.
+add_executable(zhc_cleverio_parity_tests tests/test_cleverio_parity.cpp)
+target_link_libraries(zhc_cleverio_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Atlantic Group GW003-AS-IN-TE-FC AC interface. The
 # generated def wired generic kFzThermostat + kFzFanMode but exposed
 # occupied_cooling_setpoint (hvacThermostat attr 0x0011) and
@@ -2595,6 +2603,7 @@ add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
+add_test(NAME zhc_cleverio_parity_tests     COMMAND zhc_cleverio_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_lightsolutions_parity_tests COMMAND zhc_lightsolutions_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
