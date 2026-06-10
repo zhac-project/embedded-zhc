@@ -290,39 +290,20 @@ bool meter_put_uint(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out, const char* key,
     return out.put(key, o);
 }
 
-// Raw signed pass-through (s8/s16 wire types). Accepts an unsigned record
-// too (some stacks surface small magnitudes as Uint), widening to the
-// signed slot — mirroring the generic active-power branch.
-bool meter_put_int(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out, const char* key,
-                   const Value* v) {
-    if (!v) return false;
-    if (v->type != ValueType::Int && v->type != ValueType::Uint) return false;
-    Value o{};
-    o.type = ValueType::Int;
-    o.i    = v->type == ValueType::Int ? v->i
-                                       : static_cast<std::int64_t>(v->u);
-    return out.put(key, o);
-}
-
-// haElectricalMeasurement (0x0B04): phase B/C voltage/current,
-// ac_frequency and power_factor — the threePhase channels z2m's
-// `m.electricityMeter({cluster:"electrical", threePhase:true})` decodes
-// but the generic kFzElectricalMeasurement (power/voltage/current only)
-// drops.
+// haElectricalMeasurement (0x0B04): phase B/C voltage/current — the
+// threePhase channels z2m's `m.electricityMeter({cluster:"electrical",
+// threePhase:true, power:false})` decodes but the generic
+// kFzElectricalMeasurement (phase-A power/voltage/current only) drops.
+// NB: z2m leaves acFrequency/powerFactor defaulted OFF for this bundle
+// (electricityMeter defaults acFrequency:false, powerFactor:false and the
+// HSE2905E electrical bundle does not override them), so those two are
+// intentionally NOT decoded/exposed here.
 bool fz_datek_elec_extras(const DecodedMessage& msg,
                           const FzConverter&,
                           const PreparedDefinition&,
                           RuntimeContext&,
                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     bool emitted = false;
-
-    // attr 0x0300 (768) — ACFrequency (u16) -> "ac_frequency".
-    if (meter_put_uint(out, "ac_frequency", msg.payload.find("768")))
-        emitted = true;
-
-    // attr 0x0510 (1296) — PowerFactor (s8) -> "power_factor". Raw.
-    if (meter_put_int(out, "power_factor", msg.payload.find("1296")))
-        emitted = true;
 
     // Per-phase B/C (threePhase electrical bundle, power:false → no
     // active-power phases):

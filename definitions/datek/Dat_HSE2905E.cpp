@@ -5,14 +5,16 @@
 // z2m stacks two m.electricityMeter() bundles:
 //   metering  (producedEnergy:true)        → energy + produced_energy + power
 //   electrical(threePhase:true, power:false)
-//             → voltage/current phase A + phase B/C + ac_frequency + power_factor
+//             → voltage/current phase A + phase B/C
 //   plus m.temperature().
+// NB: electricityMeter() defaults acFrequency:false / powerFactor:false and
+// this device's electrical bundle does NOT override them, so z2m exposes
+// neither ac_frequency nor power_factor — we intentionally do not either.
 // The generic kFzMetering (energy/power) + kFzElectricalMeasurement
 // (power/voltage/current) cover only the phase-A core; the Datek
-// kFzMeteringExtras + kFzElectricalMeasurementExtras add produced_energy,
-// phase B/C voltage/current, ac_frequency and power_factor ALONGSIDE the
-// generics (mirrors definitions/bituo_technik). All raw pass-through;
-// runtime scales downstream.
+// kFzMeteringExtras + kFzElectricalMeasurementExtras add produced_energy and
+// phase B/C voltage/current ALONGSIDE the generics (mirrors
+// definitions/bituo_technik). All raw pass-through; runtime scales downstream.
 // z2m-source: datek.ts #HSE2905E.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/datek/_shared.hpp"
@@ -43,8 +45,6 @@ constexpr Expose kAutoExposes[] = {
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
     {"current_phase_b", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
     {"current_phase_c", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
-    {"ac_frequency", ExposeType::Numeric, Access::State, "Hz", nullptr, nullptr, 0},
-    {"power_factor", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
 };
 

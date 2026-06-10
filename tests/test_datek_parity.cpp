@@ -15,20 +15,21 @@
 // `m.temperature()`:
 //   metering   (producedEnergy: true)        -> energy + produced_energy + power
 //   electrical (threePhase: true, power: false)
-//              -> voltage/current phase A + phase B/C + ac_frequency + power_factor
+//              -> voltage/current phase A + phase B/C
+// (electricityMeter() defaults acFrequency:false / powerFactor:false and
+// this bundle does not override them, so z2m exposes neither — nor do we.)
 // The generic kFzMetering (seMetering energy 0x0000 / power 0x0400) and
 // kFzElectricalMeasurement (haElectricalMeasurement power 0x050B /
 // voltage 0x0505 / current 0x0508) decode only the phase-A core, so
-// produced_energy, the phase B/C voltage/current channels, ac_frequency
-// and power_factor were dead exposes. The fix wires Datek
-// kFzMeteringExtras (seMetering) + kFzElectricalMeasurementExtras
-// (haElectricalMeasurement) ALONGSIDE the generics; all numeric channels
-// are raw pass-through (runtime scales downstream).
+// produced_energy and the phase B/C voltage/current channels were dead
+// exposes. The fix wires Datek kFzMeteringExtras (seMetering) +
+// kFzElectricalMeasurementExtras (haElectricalMeasurement) ALONGSIDE the
+// generics; all numeric channels are raw pass-through (runtime scales).
 //
 // Verified here:
 //   * produced_energy (seMetering 0x0001 CurrentSummReceived, u48).
-//   * ac_frequency (0x0300), power_factor (0x0510), and the phase B/C
-//     voltage (0x0905/0x0A05) and current (0x0908/0x0A08) channels.
+//   * the phase B/C voltage (0x0905/0x0A05) and current (0x0908/0x0A08)
+//     channels.
 //   * Regression: the generic converters still own energy / power /
 //     voltage / current.
 //
@@ -142,19 +143,9 @@ void check_hse2905e() {
     expect_uint(def, SE_METERING, "seMetering", 0x0001, 0x25, u48(424242),
                 "produced_energy", 424242);
 
-    // haElectricalMeasurement extras:
-    expect_uint(def, HA_ELEC, "haElectricalMeasurement", 0x0300, 0x21, u16(5000),
-                "ac_frequency", 5000);   // 50.00 Hz raw
-    // power_factor: s8 -50 (0xCE) surfaced as Int.
-    {
-        const std::uint8_t pf[] = {0xCE};
-        auto r = dispatch_zcl(def, HA_ELEC, "haElectricalMeasurement", 1,
-                              attr_report(0x0510, 0x28 /*INT8*/, pf));
-        assert(def_exposes(def, "power_factor"));
-        const Value* v = r.merged.find("power_factor");
-        assert(v && v->type == ValueType::Int && v->i == -50);
-    }
-    // Phase B/C voltage + current (UINT16).
+    // haElectricalMeasurement extras — phase B/C voltage + current (UINT16).
+    // (z2m leaves ac_frequency/power_factor defaulted OFF for this device's
+    // electrical bundle, so we intentionally do not decode/expose them.)
     expect_uint(def, HA_ELEC, "haElectricalMeasurement", 0x0905, 0x21, u16(2302),
                 "voltage_phase_b", 2302);
     expect_uint(def, HA_ELEC, "haElectricalMeasurement", 0x0A05, 0x21, u16(2303),
