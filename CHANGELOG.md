@@ -65,6 +65,17 @@ across the ZHAC platform.
   and derives `battery` via z2m's `voltageToPercentage {min:2500, max:3000}`.
   Bindings corrected to genPowerCfg + msTemperatureMeasurement +
   msRelativeHumidity; phantom genOnOff bind + `state` expose removed.
+- **Danalock V3-BTZB/V3-BTZBE smartlock: restored the lock action stream +
+  PIN write that the generated port dropped.** The auto-port wired only
+  `kFzLock` + `kFzBattery` (battery/voltage/lock_state). z2m also wires
+  `fz.lock_operation_event` + `fz.lock_programming_event` (the `action` /
+  `action_user` / `action_source` / `action_source_name` stream) and
+  `tz.pincode_lock`. Graduated the def to Tier 2 and wired the existing
+  generic closuresDoorLock helpers `kFzLockOperationEvent` (cmd 0x21),
+  `kFzLockProgrammingEvent` (cmd 0x20) and `kTzLockPinCode`, plus the
+  `action*`/`pin_code` exposes. The `fz.lock_pin_code_response`
+  (commandGetPinCodeRsp) read-back has no generic decoder yet and is
+  deferred (INFRA). Covered by `tests/test_danalock_parity.cpp`.
 
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
