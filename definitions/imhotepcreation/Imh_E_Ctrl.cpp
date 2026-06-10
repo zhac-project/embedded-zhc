@@ -5,13 +5,22 @@
 // post-sweep. Heater thermostat PH25 and compliant. Covers
 // whiteLabels "RSS E-Ctrl" (Towel heater THIE) and "RPH E-Ctrl"
 // (Panel radiant MPHIE) — same fingerprint, same converters.
-// z2m-source: imhotepcreation.ts #E-Ctrl.
+//
+// Parity fix 2026-06-10: the def exposed min_heat_setpoint_limit /
+// max_heat_setpoint_limit (z2m `.numeric(... ea.ALL)`) but the generic
+// kFzThermostat decodes only 0x0000/0x0012/0x001C, so those were dead
+// exposes. z2m's fz.thermostat decodes them from attrs 0x0015/0x0016 —
+// wired kFzImhotepThermostatExtras alongside the generic decoder.
+// z2m-source: imhotepcreation.ts #E-Ctrl + fromZigbee.ts fz.thermostat
+//             (min/maxHeatSetpointLimit branches).
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/imhotepcreation/_shared.hpp"
 
 namespace zhc::devices::imhotepcreation {
 namespace {
 const FzConverter* const kFz_E_Ctrl[] = {
     &::zhc::generic::kFzThermostat,
+    &::zhc::imhotepcreation::kFzImhotepThermostatExtras,
     &::zhc::generic::kFzOccupancy,
 };
 const TzConverter* const kTz_E_Ctrl[] = {

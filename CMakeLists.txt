@@ -1331,6 +1331,17 @@ target_link_libraries(zhc_nodon_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_owon_parity_tests tests/test_owon_parity.cpp)
 target_link_libraries(zhc_owon_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Imhotep Creation heater thermostats + BRI4P bridge.
+# Both defs exposed standard hvacThermostat setpoint-limit / cooling-setpoint
+# keys the generic kFzThermostat (0x0000/0x0012/0x001C only) never filled —
+# dead exposes against z2m's fz.thermostat. E-Ctrl: min/max heat setpoint
+# limits (0x0015/0x0016). BRI4P: cooling setpoint (0x0011) + min/max heat AND
+# cool setpoint limits (0x0015-0x0018), none of which were even exposed.
+# Wired a vendor-local kFzImhotepThermostatExtras alongside the generic
+# decoder; both defs graduated to Tier-2 parent overrides. See tests/README.md.
+add_executable(zhc_imhotepcreation_parity_tests tests/test_imhotepcreation_parity.cpp)
+target_link_libraries(zhc_imhotepcreation_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Plugwise heating family + plug. The Tom (106-03)
 # and Emma (170-01) thermostat ports declared standard hvacThermostat
 # exposes that the generic kFzThermostat (0x0000/0x0012/0x001C only) never
@@ -1689,6 +1700,7 @@ add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_osram_parity_tests        COMMAND zhc_osram_parity_tests)
 add_test(NAME zhc_nodon_parity_tests        COMMAND zhc_nodon_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
+add_test(NAME zhc_imhotepcreation_parity_tests COMMAND zhc_imhotepcreation_parity_tests)
 add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
