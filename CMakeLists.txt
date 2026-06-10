@@ -900,6 +900,15 @@ target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
 add_executable(zhc_schneider_parity_tests tests/test_schneider_parity.cpp)
 target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Securifi Almond Click button. The auto-port mis-ported
+# it as a controllable on/off switch (kFzOnOff + kTzOnOff + bare `state`); z2m
+# wires fz.almond_click (ssIasAce commandArm, device-specific armmode lookup
+# 3->single/0->double/2->long) + e.action([...]) + no toZigbee. Graduated to a
+# parent override with the vendor kFzAlmondClick decoder. The Peanut plug
+# (PP-WHT-US) is verified clean (electrical_measurement 0x0B04, no 0x0702).
+add_executable(zhc_securifi_parity_tests tests/test_securifi_parity.cpp)
+target_link_libraries(zhc_securifi_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for three smarli. devices whose auto-generated defs dropped a
 # real channel. PDM1 dimmer + 1RE1 relay + COV1 curtain all use
 # m.electricityMeter() (cluster:"both" → 0x0702 energy + 0x0B04 power/voltage/
@@ -2533,6 +2542,7 @@ add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
+add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
