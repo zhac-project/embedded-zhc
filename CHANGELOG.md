@@ -32,6 +32,15 @@ across the ZHAC platform.
   `kTzStelproKeypadLockout` (same gap previously fixed for the Stelpro siblings).
   Pinned by the new `tests/test_stello_parity.cpp`.
 
+- **iCasa ICZB-IW21D metering dimmer dropped voltage + current.** z2m drives
+  it with `m.electricityMeter()`, whose default `cluster:"both"` decodes both
+  `seMetering` (0x0702 energy/power) and `haElectricalMeasurement` (0x0B04
+  power/voltage/current). The auto-generated port wired only `kFzMetering`
+  (the 0x0702 half), exposing just energy + power, so RMSVoltage (0x0505) and
+  RMSCurrent (0x0508) were dead. Graduated to Tier 2 and added
+  `kFzElectricalMeasurement` + the 0x0B04 binding + `voltage`/`current`
+  exposes. Added `tests/test_icasa_parity.cpp` (also regression-guards the
+  KPD12/KPD14S/RM11S command-action keypad/remote ports).
 - **Paul Neuhaus Q-Home remotes dropped/mis-decoded colour-wheel actions.**
   Both remotes carried stale "converter absent" port comments from before the
   generic command bundle gained `kFzCommandColorLoopSet` /
