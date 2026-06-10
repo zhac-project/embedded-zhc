@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Net2Grid N2G-SP command-action parity.** The SP31 metering outlet is
+  both a controllable on/off plug and a command source — z2m wires
+  `fz.command_on`/`fz.command_off` alongside `fz.on_off`/`fz.metering`. The
+  auto-port kept only the attribute-report on/off + seMetering 0x0702
+  energy/power and dropped both command converters, so the plug's genOnOff
+  On/Off commands (physical button / bound group) never surfaced. Added the
+  generic `kFzCommandOn`/`kFzCommandOff` + an `action` enum while keeping the
+  on/off write path and metering channel. (No 0x0B04 gap: z2m uses
+  `fz.metering`, 0x0702 only.) Graduated `Net_N2G_SP.cpp` out of `generated/`.
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as

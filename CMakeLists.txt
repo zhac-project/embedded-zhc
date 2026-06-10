@@ -1207,6 +1207,9 @@ target_link_libraries(zhc_adeo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_airam_parity_tests tests/test_airam_parity.cpp)
 target_link_libraries(zhc_airam_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_net2grid_parity_tests tests/test_net2grid_parity.cpp)
+target_link_libraries(zhc_net2grid_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the EnOcean PTM 215Z / 215ZE / 216Z Green Power
 # pushbutton transmitters. All three were mis-ported as controllable on/off
 # relays (kFzOnOff/kTzOnOff + dead `state` + genOnOff bind); each now exposes
@@ -2620,6 +2623,7 @@ add_test(NAME zhc_eglo_parity_tests         COMMAND zhc_eglo_parity_tests)
 add_test(NAME zhc_ecozy_parity_tests        COMMAND zhc_ecozy_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_airam_parity_tests        COMMAND zhc_airam_parity_tests)
+add_test(NAME zhc_net2grid_parity_tests     COMMAND zhc_net2grid_parity_tests)
 add_test(NAME zhc_enocean_parity_tests      COMMAND zhc_enocean_parity_tests)
 add_test(NAME zhc_led_trading_parity_tests  COMMAND zhc_led_trading_parity_tests)
 add_test(NAME zhc_woox_parity_tests         COMMAND zhc_woox_parity_tests)
