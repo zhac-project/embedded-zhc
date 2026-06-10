@@ -917,6 +917,17 @@ target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_lonsonho_parity_tests tests/test_lonsonho_parity.cpp)
 target_link_libraries(zhc_lonsonho_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Honyar (Tuya-OEM) family. The three multi-gang switches
+# (HY0096 2-gang, HY0097 + 00500c35 3-gang) declared multiple z2m switch
+# endpoints but the generated defs carried a single bare `state` expose and
+# bound genOnOff only on EP1, so the gangs collided on the bare key and the
+# upper endpoints were never bound. Graduated to Tier-2 overrides with
+# per-gang suffixed exposes + per-endpoint bindings + endpoint_map. The
+# HY0157 dual-socket metering plug is INFRA-deferred (multiEndpointSkip on
+# the metering keys has no per-def runtime hook). See tests/README.md.
+add_executable(zhc_honyar_parity_tests tests/test_honyar_parity.cpp)
+target_link_libraries(zhc_honyar_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Sylvania (OSRAM Lightify US) family. The 74388 contact +
 # temperature sensor lowered the generic kFzIasZone converter (bare "alarm"
 # key) while z2m's fz.ias_contact_alarm_1 publishes the semantic key
@@ -1818,6 +1829,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
+add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
 add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)

@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **HONYAR multi-gang switches collided all gangs on a single `state` key
+  and never bound the upper endpoints.** z2m gives U2-86K21ND10-ZD (HY0096,
+  2-gang `{left:1, right:2}`), U2-86K31ND10-ZD (HY0097) and U86K31ND6
+  (00500c35, both 3-gang `{left:1, center:2, right:3}`) a switch on every
+  endpoint with genOnOff bound per endpoint (`e.switch().withEndpoint(...)`
+  / `m.deviceEndpoints` + `m.onOff`). The generated defs carried a single
+  bare `state` expose and a single EP1 binding (HY0096/HY0097 also lacked
+  the `endpoint_map` entirely), so the runtime suffix rewrite could not
+  separate the gangs — they overwrote each other on the bare `state` key —
+  and EP2/EP3 were never bound. Graduated each to a Tier-2 parent override
+  with per-gang suffixed exposes (`state_left`/`state_center`/`state_right`),
+  per-endpoint genOnOff bindings, and the `endpoint_map`. (The HY0157
+  dual-socket metering plug's per-endpoint split is INFRA-deferred — its
+  `multiEndpointSkip` metering keys have no per-def runtime hook.)
+
 - **TERNCY raw-frame action/motion decoder read past the body (dead action +
   occupancy surface).** z2m's `fzLocal.terncy_raw` reads the WHOLE raw frame
   buffer (`msg.data`, ZCL header included): `msg.data[4]` discriminates action
