@@ -23,6 +23,20 @@ across the ZHAC platform.
   (111). The suspected per-DP scale/float-divisor was confirmed FALSE — z2m
   passes every value DP straight through with no scaling. DP 106
   (currentTemperature) stays unmapped to match z2m (it explicitly ignores it).
+- **EnOcean PTM 215Z / 215ZE / 216Z Green Power transmitters were ported as
+  controllable on/off relays.** All three self-powered pushbutton modules are
+  pure action remotes in z2m (`toZigbee: []` + a single `e.action([...])`),
+  but the auto-generator emitted `kFzOnOff` + `kTzOnOff`, a dead settable
+  `state` Binary expose, and a genOnOff (0x0006) coordinator bind — so a
+  transmitter falsely advertised a relay and offered nothing meaningful.
+  Graduated all three defs out of `generated/`, replaced `state` with the
+  semantic `action` enum carrying z2m's full per-model action list, and
+  removed the phantom converters/binding. The action *decoder* stays a
+  documented defer: z2m reads these over `cluster: "greenPower"`
+  /`commandNotification`, a Green Power frame family the embedded-zhc parser
+  does not yet produce (216Z further needs the compound `commandID_<rawByte0>`
+  key). Schema/role parity is what the shadow + SPA consume.
+
 - **The Light Group (SLC SmartOne) remotes were wrong-bundled as settable
   lights.** S57003 (4-channel wall remote) and S57007 (3-button remote
   control) are battery-powered scene/dimmer remotes with z2m `toZigbee: []`,

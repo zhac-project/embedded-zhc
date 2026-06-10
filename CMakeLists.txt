@@ -1026,6 +1026,14 @@ target_link_libraries(zhc_awox_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_adeo_parity_tests tests/test_adeo_parity.cpp)
 target_link_libraries(zhc_adeo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the EnOcean PTM 215Z / 215ZE / 216Z Green Power
+# pushbutton transmitters. All three were mis-ported as controllable on/off
+# relays (kFzOnOff/kTzOnOff + dead `state` + genOnOff bind); each now exposes
+# the semantic `action` enum, is non-controllable, and binds nothing. The
+# action decoder stays a documented INFRA defer (no Green Power frame family).
+add_executable(zhc_enocean_parity_tests tests/test_enocean_parity.cpp)
+target_link_libraries(zhc_enocean_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Woox (Tuya-OEM) family. The R7051 TS0219 siren
 # decodes its alarm via z2m fz.ias_alarm_only_alarm_1 (ssIasZone attr 0x0002
 # bit 0 -> `alarm` ONLY), but the generated def lowered the broader kFzIasZone
@@ -2084,6 +2092,7 @@ add_test(NAME zhc_makegood_parity_tests     COMMAND zhc_makegood_parity_tests)
 add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
+add_test(NAME zhc_enocean_parity_tests      COMMAND zhc_enocean_parity_tests)
 add_test(NAME zhc_woox_parity_tests         COMMAND zhc_woox_parity_tests)
 add_test(NAME zhc_linkind_parity_tests      COMMAND zhc_linkind_parity_tests)
 add_test(NAME zhc_universal_electronics_inc_parity_tests COMMAND zhc_universal_electronics_inc_parity_tests)
