@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Hampton Bay fan + light parity.** `#99432` (universal ceiling-fan
+  remote, z2m `fromZigbee:[fz.fan]`) decoded only `fan_mode` via the generic
+  `kFzFanMode` and declared it as a bare Binary with no `fan_state` expose —
+  so the z2m-derived on/off `fan_state` was dead. Replaced with an inlined
+  vendor converter (`kFzHamptonFan`) emitting `fan_mode` (u8) + `fan_state`
+  (Bool: off/0 → false), an Enum `fan_mode` expose with the z2m mode labels,
+  and a Binary `fan_state` expose (mirrors the Mercator SSWF01G precedent).
+  `#54668161` (12 in. LED smart puff, z2m `m.light({colorTemp})`) had its
+  color_temp axis dropped — restored `kFzColorTemperature`/`kTzColorTemp`,
+  the `color_temp` expose, and the lightingColorCtrl (0x0300) bind.
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
