@@ -1021,6 +1021,17 @@ target_link_libraries(zhc_sengled_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_halo_parity_tests tests/test_halo_parity.cpp)
 target_link_libraries(zhc_halo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Datek Eva AMS HAN power-meter (HSE2905E "Meter
+# Reader"). z2m stacks two m.electricityMeter bundles (metering +
+# producedEnergy, electrical + threePhase) but the generated port wired
+# only the generic kFzMetering/kFzElectricalMeasurement (phase-A core), so
+# produced_energy, phase B/C voltage/current, ac_frequency and
+# power_factor were dead exposes. Added Datek kFzMeteringExtras +
+# kFzElectricalMeasurementExtras (definitions/datek/_shared.cpp) and
+# graduated the def to a Tier-2 parent.
+add_executable(zhc_datek_parity_tests tests/test_datek_parity.cpp)
+target_link_libraries(zhc_datek_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Legrand / BTicino / Netatmo battery action
 # remotes. 067694/067773/067774/WNAL63/067646/067755/067767 are wireless
 # pushbuttons & scene remotes with no local relay, but their generated
@@ -1707,6 +1718,7 @@ add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)
 add_test(NAME zhc_zg_204z_tests             COMMAND zhc_zg_204z_tests)
 add_test(NAME zhc_ts0044_tests              COMMAND zhc_ts0044_tests)
 add_test(NAME zhc_ts004f_knob_tests         COMMAND zhc_ts004f_knob_tests)
+add_test(NAME zhc_datek_parity_tests        COMMAND zhc_datek_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

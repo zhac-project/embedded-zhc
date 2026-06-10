@@ -271,4 +271,116 @@ ZHC_DATEK_TZ(kTzOccupancyTimeout, kSpecOccupancyTimeout, "occupancy_timeout",
 
 #undef ZHC_DATEK_TZ
 
+// ── fz: electricity-meter extras (HSE2905E) ────────────────────────
+//
+// See _shared.hpp for the z2m bundle breakdown. These add the channels
+// the generic metering / electrical-measurement converters drop.
+
+namespace {
+
+// Raw unsigned pass-through (u16/u48 wire types). Matches the generic
+// kFzMetering/kFzElectricalMeasurement convention; the runtime applies
+// the cluster multiplier/divisor downstream.
+bool meter_put_uint(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out, const char* key,
+                    const Value* v) {
+    if (!v || v->type != ValueType::Uint) return false;
+    Value o{};
+    o.type = ValueType::Uint;
+    o.u    = v->u;
+    return out.put(key, o);
+}
+
+// Raw signed pass-through (s8/s16 wire types). Accepts an unsigned record
+// too (some stacks surface small magnitudes as Uint), widening to the
+// signed slot — mirroring the generic active-power branch.
+bool meter_put_int(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out, const char* key,
+                   const Value* v) {
+    if (!v) return false;
+    if (v->type != ValueType::Int && v->type != ValueType::Uint) return false;
+    Value o{};
+    o.type = ValueType::Int;
+    o.i    = v->type == ValueType::Int ? v->i
+                                       : static_cast<std::int64_t>(v->u);
+    return out.put(key, o);
+}
+
+// haElectricalMeasurement (0x0B04): phase B/C voltage/current,
+// ac_frequency and power_factor — the threePhase channels z2m's
+// `m.electricityMeter({cluster:"electrical", threePhase:true})` decodes
+// but the generic kFzElectricalMeasurement (power/voltage/current only)
+// drops.
+bool fz_datek_elec_extras(const DecodedMessage& msg,
+                          const FzConverter&,
+                          const PreparedDefinition&,
+                          RuntimeContext&,
+                          FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool emitted = false;
+
+    // attr 0x0300 (768) — ACFrequency (u16) -> "ac_frequency".
+    if (meter_put_uint(out, "ac_frequency", msg.payload.find("768")))
+        emitted = true;
+
+    // attr 0x0510 (1296) — PowerFactor (s8) -> "power_factor". Raw.
+    if (meter_put_int(out, "power_factor", msg.payload.find("1296")))
+        emitted = true;
+
+    // Per-phase B/C (threePhase electrical bundle, power:false → no
+    // active-power phases):
+    //   rmsVoltagePhB 0x0905 (2309) / PhC 0x0A05 (2565) -> voltage_phase_b/c
+    //   rmsCurrentPhB 0x0908 (2312) / PhC 0x0A08 (2568) -> current_phase_b/c
+    if (meter_put_uint(out, "voltage_phase_b", msg.payload.find("2309")))
+        emitted = true;
+    if (meter_put_uint(out, "voltage_phase_c", msg.payload.find("2565")))
+        emitted = true;
+    if (meter_put_uint(out, "current_phase_b", msg.payload.find("2312")))
+        emitted = true;
+    if (meter_put_uint(out, "current_phase_c", msg.payload.find("2568")))
+        emitted = true;
+
+    return emitted;
+}
+
+// seMetering (0x0702): produced_energy — the `producedEnergy:true`
+// channel z2m's metering bundle decodes but generic kFzMetering drops.
+bool fz_datek_metering_extras(const DecodedMessage& msg,
+                              const FzConverter&,
+                              const PreparedDefinition&,
+                              RuntimeContext&,
+                              FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // attr 0x0001 (1) — CurrentSummReceived (u48) -> "produced_energy".
+    return meter_put_uint(out, "produced_energy", msg.payload.find("1"));
+}
+
+}  // namespace
+
+extern const FzConverter kFzElectricalMeasurementExtras{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "haElectricalMeasurement",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_datek_elec_extras },
+    .user_config       = nullptr,
+};
+
+extern const FzConverter kFzMeteringExtras{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "seMetering",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_datek_metering_extras },
+    .user_config       = nullptr,
+};
+
 }  // namespace zhc::datek

@@ -2,13 +2,20 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Datek HSE2905E — hand-upgraded for full z2m parity.
 // Datek Eva AMS HAN power-meter sensor.
-// Wires the metering + electrical-measurement + temperature axes
-// from the z2m m.electricityMeter() bundles. Three-phase split and
-// `producedEnergy` are decoded via the generic clusters; runtime
-// callers see the standard energy/power/voltage/current/temperature
-// keys from the foundation parser.
+// z2m stacks two m.electricityMeter() bundles:
+//   metering  (producedEnergy:true)        → energy + produced_energy + power
+//   electrical(threePhase:true, power:false)
+//             → voltage/current phase A + phase B/C + ac_frequency + power_factor
+//   plus m.temperature().
+// The generic kFzMetering (energy/power) + kFzElectricalMeasurement
+// (power/voltage/current) cover only the phase-A core; the Datek
+// kFzMeteringExtras + kFzElectricalMeasurementExtras add produced_energy,
+// phase B/C voltage/current, ac_frequency and power_factor ALONGSIDE the
+// generics (mirrors definitions/bituo_technik). All raw pass-through;
+// runtime scales downstream.
 // z2m-source: datek.ts #HSE2905E.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/datek/_shared.hpp"
 
 namespace zhc::devices::datek {
 namespace {
@@ -16,6 +23,8 @@ const FzConverter* const kFz_HSE2905E[] = {
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzElectricalMeasurement,
     &::zhc::generic::kFzTemperature,
+    &::zhc::datek::kFzMeteringExtras,
+    &::zhc::datek::kFzElectricalMeasurementExtras,
 };
 
 constexpr const char* kModels_HSE2905E[] = { "Meter Reader" };
@@ -26,9 +35,16 @@ constexpr const char* kModels_HSE2905E[] = { "Meter Reader" };
 // --- hand-curated exposes/bindings (z2m parity) ---
 constexpr Expose kAutoExposes[] = {
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"produced_energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_phase_b", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_phase_c", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_phase_b", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_phase_c", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"ac_frequency", ExposeType::Numeric, Access::State, "Hz", nullptr, nullptr, 0},
+    {"power_factor", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
 };
 
