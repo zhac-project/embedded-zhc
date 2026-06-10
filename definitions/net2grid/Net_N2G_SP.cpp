@@ -1,13 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Net2Grid N2G-SP — auto-generated.
-// White Net2Grid power outlet switch with power meter
+// Tier 2: Net2Grid N2G-SP — hand-curated (was missing command-action channel).
+// White Net2Grid power outlet switch with power meter. z2m wires
+//   fromZigbee:[fz.command_on, fz.command_off, fz.on_off, fz.metering]
+// Besides the controllable on/off state (fz.on_off / tz.on_off) and the
+// seMetering 0x0702 energy+power channel, the plug also EMITS genOnOff On/Off
+// commands surfaced as `action: "on"/"off"`. The auto-port kept only the
+// attribute-report on/off + metering and dropped both command converters, so
+// every physical-button / bound-group press was lost. Fixed by adding the
+// generic kFzCommandOn/kFzCommandOff (genOnOff cmd 0x01/0x00, ClientToServer)
+// alongside the existing channels and publishing an `action` enum. No 0x0B04
+// gap: z2m uses fz.metering (0x0702 only), not electricityMeter — already
+// covered by kFzMetering.
 // z2m-source: net2grid.ts #N2G-SP.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::net2grid {
 namespace {
 const FzConverter* const kFz_N2G_SP[] = {
+    &::zhc::generic::kFzCommandOn,
+    &::zhc::generic::kFzCommandOff,
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
 };
@@ -24,6 +36,8 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    // command-action channel: fz.command_on/off → action "on"/"off".
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
