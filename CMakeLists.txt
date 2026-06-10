@@ -1160,6 +1160,15 @@ target_link_libraries(zhc_awox_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_eglo_parity_tests tests/test_eglo_parity.cpp)
 target_link_libraries(zhc_eglo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the eCozy 1TST-EU thermostat. z2m's fz.thermostat
+# decodes pi_heating_demand (0x0008), local_temperature_calibration (0x0010)
+# and running_state (0x0029), but the generic kFzThermostat only handles
+# 0x0000/0x0012/0x001C — those three keys were exposed-but-dead. Graduated
+# to a Tier-2 parent with kFzEcozyThermostatExtras + the real climate-flat
+# exposes.
+add_executable(zhc_ecozy_parity_tests tests/test_ecozy_parity.cpp)
+target_link_libraries(zhc_ecozy_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Adeo (ENKI LEXMAN) sensor + key-fob family. Six IAS
 # sensors lowered the generic kFzIasZone behind a semantic expose (dead key);
 # the 4-in-1 (83633205) additionally dropped its illuminance/temp/humidity
@@ -2499,6 +2508,7 @@ add_test(NAME zhc_ge_parity_tests           COMMAND zhc_ge_parity_tests)
 add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_eglo_parity_tests         COMMAND zhc_eglo_parity_tests)
+add_test(NAME zhc_ecozy_parity_tests        COMMAND zhc_ecozy_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_airam_parity_tests        COMMAND zhc_airam_parity_tests)
 add_test(NAME zhc_enocean_parity_tests      COMMAND zhc_enocean_parity_tests)

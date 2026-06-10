@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **eCozy 1TST-EU thermostat: dead pi_heating_demand / running_state /
+  local_temperature_calibration.** z2m's `ecozy.ts` wires `fz.thermostat`,
+  which decodes the full hvacThermostat attribute set, and the climate block
+  exposes `pi_heating_demand` (0x0008), `running_state` (0x0029) and
+  `local_temperature_calibration` (0x0010). The auto-port wired only the
+  generic `kFzThermostat`, which decodes just 0x0000/0x0012/0x001C — so all
+  three keys were exposed-but-dead, and `system_mode` was a `Binary` stub.
+  Graduated to Tier 2 with `kFzEcozyThermostatExtras` (delegates to the
+  generic decoder, then adds pi_heating_demand mapped 0-255→0-100 %, lt_cal
+  raw/10 °C as float, running_state {idle,heat}) and upgraded the exposes to
+  the real climate-flat surface (Enum `system_mode`/`running_state` + the
+  three keys). keypad_lockout (hvacUserInterfaceCfg 0x0204) is bound by z2m
+  but never decoded/exposed there, so it is not a gap.
+
 - **Nordtronic metering dimmers/relays: dropped 0x0B04 half + dead remote.**
   The four metering devices `98424072` (rotary), `98425271` (Box Dimmer G2),
   `98425033` (ceiling micro) and `98425034` (DIN rail) are z2m `m.light()` +
