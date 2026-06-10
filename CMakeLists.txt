@@ -986,6 +986,15 @@ target_link_libraries(zhc_lidl_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_orvibo_parity_tests tests/test_orvibo_parity.cpp)
 target_link_libraries(zhc_orvibo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Mercator Ikuü SSWF01G AC fan controller. z2m's
+# fz.fan decodes hvacFanCtrl attr 0x0000 (fanMode) into BOTH `fan_mode` and
+# `fan_state`; the generated port wired the generic kFzFanMode (fan_mode only)
+# while declaring a `fan_state` expose, leaving that key dead. Graduated to a
+# Tier-2 parent with an inlined vendor converter (kFzMercatorFan) emitting
+# fan_mode (u8) + fan_state (Bool). See tests/README.md.
+add_executable(zhc_mercator_parity_tests tests/test_mercator_parity.cpp)
+target_link_libraries(zhc_mercator_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Develco / Frient family. The IAS sensors
 # (FLSZB/HESZB/SMSZB/MOSZB/WISZB) lowered the generic kFzIasZone (bare
 # "alarm") instead of the typed kFzIas<Type>Alarm their expose declared,
@@ -1719,6 +1728,7 @@ add_test(NAME zhc_zg_204z_tests             COMMAND zhc_zg_204z_tests)
 add_test(NAME zhc_ts0044_tests              COMMAND zhc_ts0044_tests)
 add_test(NAME zhc_ts004f_knob_tests         COMMAND zhc_ts004f_knob_tests)
 add_test(NAME zhc_datek_parity_tests        COMMAND zhc_datek_parity_tests)
+add_test(NAME zhc_mercator_parity_tests     COMMAND zhc_mercator_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

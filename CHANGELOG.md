@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Mercator Ikuü SSWF01G AC fan controller — dead `fan_state` key.** z2m's
+  `fz.fan` decodes `hvacFanCtrl` attr 0x0000 (fanMode) and publishes BOTH
+  `fan_mode` and `fan_state` ("OFF"/"ON"), but the generated port wired the
+  generic `kFzFanMode` (which emits `fan_mode` only) while still declaring a
+  `fan_state` expose — so that key never populated. Graduated `Mer_SSWF01G.cpp`
+  to a Tier-2 parent with an inlined vendor converter (`kFzMercatorFan`) that
+  emits `fan_mode` (u8) plus `fan_state` (Bool: off/0 → false) from the same
+  report, mirroring z2m. Covered by `tests/test_mercator_parity.cpp`.
 - **Iluminize 5128.10 roller shutter + 5715/5717 metering dimmers — dead
   decoders.** The 5128.10 "switch shutter with level control" is a
   brightness-driven cover in z2m (`fz.cover_position_via_brightness` +
