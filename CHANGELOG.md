@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Viessmann ViCare radiator TRV (ZK03840) — false `window_open` flag and
+  dead `occupied_heating_setpoint`.** Two decode bugs against z2m's
+  `fzLocal.viessmann_thermostat`: (1) the manuSpec attr 0x4000
+  `viessmannWindowOpenInternal` was flattened to `window_open = (raw != 0)`,
+  but z2m treats only raw 3/4 as window-open (codes 0-2/5 are "unknown" → not
+  open), so codes 1/2/5 false-flagged the window as open; (2) the def declared
+  the z2m expose `occupied_heating_setpoint`, but the wired generic
+  `kFzThermostat` emits attr 0x0012 as `current_heating_setpoint`, leaving the
+  setpoint readout dead. `kFzViessmannThermostat` now decodes the standard
+  surface (local_temperature 0x0000, occupied_heating_setpoint 0x0012,
+  system_mode 0x001C) with z2m-faithful keys plus the manuSpec trio with the
+  `raw==3||raw==4` window rule; generic `kFzThermostat` dropped from the def
+  (no phantom `current_heating_setpoint`). Graduated `Vie_ZK03840.cpp` to a
+  Tier-2 parent. Covered by `tests/test_viessmann_parity.cpp`.
+
 - **Mercator Ikuü SSWF01G AC fan controller — dead `fan_state` key.** z2m's
   `fz.fan` decodes `hvacFanCtrl` attr 0x0000 (fanMode) and publishes BOTH
   `fan_mode` and `fan_state` ("OFF"/"ON"), but the generated port wired the

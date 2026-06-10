@@ -1598,6 +1598,13 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Viessmann (ViCare) family. The ZK03840 radiator TRV decoded
+# manuSpec attr 0x4000 viessmannWindowOpenInternal as a flat `!= 0` boolean,
+# but z2m only treats raw 3/4 as window-open (0-2/5 are "unknown"). Fixed in
+# kFzViessmannThermostat. See tests/README.md for the pattern.
+add_executable(zhc_viessmann_parity_tests tests/test_viessmann_parity.cpp)
+target_link_libraries(zhc_viessmann_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1751,6 +1758,7 @@ add_test(NAME zhc_ts0044_tests              COMMAND zhc_ts0044_tests)
 add_test(NAME zhc_ts004f_knob_tests         COMMAND zhc_ts004f_knob_tests)
 add_test(NAME zhc_datek_parity_tests        COMMAND zhc_datek_parity_tests)
 add_test(NAME zhc_mercator_parity_tests     COMMAND zhc_mercator_parity_tests)
+add_test(NAME zhc_viessmann_parity_tests    COMMAND zhc_viessmann_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

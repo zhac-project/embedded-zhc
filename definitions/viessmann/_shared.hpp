@@ -11,15 +11,20 @@
 // `hvacThermostat` (cluster 0x0201):
 //
 //   0x4000 ENUM8   viessmannWindowOpenInternal → "window_open"
-//                                                 (decoded as bool: !=0)
+//                                                 (bool: raw==3 || raw==4;
+//                                                  z2m treats 0-2/5 as not-open)
 //   0x4003 BOOLEAN viessmannWindowOpenForce    → "window_open_force"
 //   0x4012 BOOLEAN viessmannAssemblyMode       → "assembly_mode"
 //
 // In z2m the read-side converter is named `fzLocal.viessmann_thermostat`
-// and chains `fz.thermostat.convert(...)` with the three extras. Our
-// equivalent splits responsibilities — generic `kFzThermostat` decodes
-// the standard attrs; `kFzViessmannThermostat` adds the manu-specific
-// trio.
+// and chains `fz.thermostat.convert(...)` with the three extras.
+// `kFzViessmannThermostat` mirrors that single-converter shape: it
+// decodes the standard surface with z2m-faithful keys
+// (local_temperature 0x0000, occupied_heating_setpoint 0x0012,
+// system_mode 0x001C) AND the manu-specific trio. The generic
+// `kFzThermostat` is deliberately NOT wired on the TRV because it emits
+// 0x0012 as `current_heating_setpoint`, which the ZK03840 expose +
+// z2m do not declare.
 //
 // Two non-Viessmann decoders also live here because no generic
 // equivalent exists yet:

@@ -4,9 +4,12 @@
 // ViCare radiator thermostat valve.
 // z2m-source: viessmann.ts #ZK03840.
 //
-// Wires the standard hvacThermostat decoder + Viessmann-specific
-// manuSpec (mfg=0x1221) read of window_open / window_open_force /
-// assembly_mode, plus the keypad_lockout read on hvacUserInterfaceCfg.
+// Wires the Viessmann thermostat decoder (standard surface +
+// manuSpec mfg=0x1221 window_open / window_open_force / assembly_mode),
+// plus the keypad_lockout read on hvacUserInterfaceCfg. The generic
+// kFzThermostat is intentionally NOT wired: it emits attr 0x0012 as
+// `current_heating_setpoint`, but z2m + this def declare
+// `occupied_heating_setpoint`, which kFzViessmannThermostat emits.
 // Tz adds window_open_force write (manuSpec) and keypad_lockout
 // write (non-manu).
 #include "definitions/viessmann/_shared.hpp"
@@ -15,7 +18,6 @@ namespace zhc::devices::viessmann {
 namespace {
 const FzConverter* const kFz_ZK03840[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzThermostat,
     &kFzViessmannThermostat,
     &kFzKeypadLockout,
 };
