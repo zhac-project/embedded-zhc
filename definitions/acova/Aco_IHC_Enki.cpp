@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Acova IHC-Enki — hand-rewritten 2026-04-29g sweep.
+// Tier 2: Acova IHC-Enki — graduated from generated/ 2026-06-10.
 // Acova Madras IHC towel radiator (Zigbee thermostat).
 //
 // z2m-source: acova.ts #IHC-Enki.
@@ -8,13 +8,20 @@
 // z2m uses modernExtend `m.thermostat({ setpoints: { values:
 // {occupiedHeatingSetpoint: {min:7, max:30, step:0.5}}},
 // localTemperatureCalibration: {values:{min:-5, max:5, step:0.1}},
-// systemMode: {values: ["off", "heat", "auto"]}})`. There is **no**
-// on/off, battery, or voltage in the source — the previous generator
-// pass produced a completely wrong device class (kFzOnOff +
-// kFzBattery, exposes state/battery/voltage, bindings genBasic +
-// genOnOff). This sweep rewrites it as a pure heating thermostat
-// using the standard kFzThermostat / kTzThermostat helpers.
-#include "definitions/_generic/_shared.hpp"
+// systemMode: {values: ["off", "heat", "auto"]}})`. m.thermostat
+// decodes inbound via fz.thermostat and exposes
+// "occupied_heating_setpoint" + "local_temperature_calibration".
+// There is **no** on/off, battery, or voltage in the source — an
+// earlier generator pass produced a wrong device class (kFzOnOff +
+// kFzBattery); the 2026-04-29g sweep rewrote it as a pure thermostat.
+//
+// Parity fix over that sweep: the def used the generic kFzThermostat,
+// which only decodes 0x0000 / 0x0012 / 0x001C and emits 0x0012 as
+// "current_heating_setpoint". So occupied_heating_setpoint and
+// local_temperature_calibration were dead keys. Now routed through
+// kFzAcovaThermostatExtras (see _shared): 0x0012 →
+// occupied_heating_setpoint, 0x0010 → local_temperature_calibration.
+#include "definitions/acova/_shared.hpp"
 
 namespace zhc::devices::acova {
 namespace {
@@ -22,7 +29,7 @@ namespace {
 constexpr const char* kModels_IHC_Enki[] = { "IHC-Enki" };
 
 const FzConverter* const kFz_IHC_Enki[] = {
-    &::zhc::generic::kFzThermostat,
+    &kFzAcovaThermostatExtras,
 };
 const TzConverter* const kTz_IHC_Enki[] = {
     &::zhc::generic::kTzThermostat,

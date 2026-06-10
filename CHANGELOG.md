@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Acova electric-radiator thermostats reported dead setpoint / running-state
+  keys.** All three Acova defs (ALCANTARA2, TAFFETAS2/PERCALE2, IHC-Enki) routed
+  inbound through the generic `kFzThermostat`, which decodes only hvacThermostat
+  `0x0000`/`0x0012`/`0x001C` and emits attr `0x0012` under the key
+  `current_heating_setpoint`. But z2m's `fz.thermostat` (and the Acova exposes)
+  use `occupied_heating_setpoint`, so the occupied setpoint never updated; the
+  unoccupied setpoint (`0x0014`), `running_state` (`0x0029`) and
+  `local_temperature_calibration` (`0x0010`) were not decoded at all. Graduated
+  the three defs to Tier 2 and routed them through a new
+  `kFzAcovaThermostatExtras` (in `definitions/acova/_shared`) that decodes the
+  full Acova surface with z2m's keys (`0x0029` → `idle`/`heat`). Outbound
+  vendor `system_mode` enum and `fz.hvac_user_interface` remain PARTIAL. Added
+  `tests/test_acova_parity.cpp`.
+
 - **Paul Neuhaus Q-Home remotes dropped/mis-decoded colour-wheel actions.**
   Both remotes carried stale "converter absent" port comments from before the
   generic command bundle gained `kFzCommandColorLoopSet` /

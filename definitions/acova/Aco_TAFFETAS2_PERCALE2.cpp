@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Acova TAFFETAS2/PERCALE2 — hand-rewritten 2026-04-29g sweep.
+// Tier 2: Acova TAFFETAS2/PERCALE2 — graduated from generated/ 2026-06-10.
 // Taffetas 2 / Percale 2 heater (Zigbee thermostat).
 //
 // z2m-source: acova.ts #TAFFETAS2/PERCALE2.
@@ -10,24 +10,31 @@
 // lookup) + tz.thermostat_local_temperature_calibration. configure()
 // binds hvacThermostat on EP1 and msOccupancySensing on EP2.
 //
-// The previous generator pass mistakenly attached kFzIasZone and
-// emitted IAS exposes (alarm/tamper/battery_low) plus binding
-// 0x0500 — the source has no IAS at all. This sweep replaces IAS
-// with the correct kFzOccupancy + EP2 0x0406 binding and adds the
-// missing thermostat exposes (unoccupied_heating_setpoint,
+// An earlier generator pass mistakenly attached kFzIasZone + IAS
+// exposes + a 0x0500 binding — the source has no IAS at all. The
+// 2026-04-29g sweep replaced that with kFzOccupancy + EP2 0x0406 and
+// added the thermostat exposes (unoccupied_heating_setpoint,
 // running_state, local_temperature_calibration, occupancy).
+//
+// Parity fix over that sweep: the def still used the generic
+// kFzThermostat, which only decodes 0x0000 / 0x0012 / 0x001C and emits
+// 0x0012 as "current_heating_setpoint". So occupied_heating_setpoint,
+// unoccupied_heating_setpoint, local_temperature_calibration and
+// running_state were ALL dead keys. Now routed through
+// kFzAcovaThermostatExtras (see _shared): 0x0012 →
+// occupied_heating_setpoint, 0x0014 → unoccupied_heating_setpoint,
+// 0x0010 → local_temperature_calibration, 0x0029 → running_state.
 //
 // PARTIAL: tz.acova_thermostat_system_mode (vendor systemMode enum)
 // and fz.hvac_user_interface have no dedicated shared helpers; the
 // generic kTzThermostat will write standard systemMode codes which
-// the device may not honour for the Acova-specific values. Tracked
-// in ACOVA_PARITY.md.
-#include "definitions/_generic/_shared.hpp"
+// the device may not honour for the Acova-specific values.
+#include "definitions/acova/_shared.hpp"
 
 namespace zhc::devices::acova {
 namespace {
 const FzConverter* const kFz_TAFFETAS2_PERCALE2[] = {
-    &::zhc::generic::kFzThermostat,
+    &kFzAcovaThermostatExtras,
     &::zhc::generic::kFzOccupancy,
 };
 const TzConverter* const kTz_TAFFETAS2_PERCALE2[] = {
