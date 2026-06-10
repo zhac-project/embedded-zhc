@@ -1783,6 +1783,14 @@ target_link_libraries(zhc_stello_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_netica_parity_tests tests/test_netica_parity.cpp)
 target_link_libraries(zhc_netica_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Acova electric-radiator thermostats
+# (ALCANTARA2, TAFFETAS2/PERCALE2, IHC-Enki). The generic kFzThermostat
+# emits attr 0x0012 as "current_heating_setpoint" and decodes none of
+# 0x0014 / 0x0010 / 0x0029, so occupied/unoccupied setpoint, calibration
+# and running_state were dead keys. kFzAcovaThermostatExtras fixes them.
+add_executable(zhc_acova_parity_tests tests/test_acova_parity.cpp)
+target_link_libraries(zhc_acova_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Aurora "AOne" non-light family. The PIR
 # (AU-A1ZBPIRS) and contact (AU-A1ZBDWS) sensors decoded the bare "alarm"
 # key (generic kFzIasZone) instead of the typed occupancy/contact, and the
@@ -2064,6 +2072,7 @@ add_test(NAME zhc_lellki_parity_tests       COMMAND zhc_lellki_parity_tests)
 add_test(NAME zhc_stelpro_parity_tests      COMMAND zhc_stelpro_parity_tests)
 add_test(NAME zhc_stello_parity_tests       COMMAND zhc_stello_parity_tests)
 add_test(NAME zhc_netica_parity_tests       COMMAND zhc_netica_parity_tests)
+add_test(NAME zhc_acova_parity_tests        COMMAND zhc_acova_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
