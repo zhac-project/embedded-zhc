@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Swann security family: rescued from dead IAS/on-off ports.** All three
+  defs had dead channels. `SWO-MOS1PA` (motion) and `SWO-WDS1PA` (window/door)
+  were auto-ported onto generic `kFzIasZone`, which emits a bare `alarm` key
+  while the declared exposes are `occupancy`/`contact` — so those semantic
+  channels never updated; now wired to typed `kFzIasMotionAlarm` /
+  `kFzIasContactAlarm` (the latter applies z2m's contact = !bit0 inversion),
+  matching z2m `fz.ias_occupancy_alarm_1` / `fz.ias_contact_alarm_1`.
+  `SWO-KEF1PA` (key fob) was mis-ported as a *controllable* genOnOff switch
+  (kFzOnOff + kTzOnOff + writable `state` + 0x0006 binding) when it is an
+  ssIasAce (0x0501) action source; now wired to `kFzIasAceArm` +
+  `kFzIasAcePanic` with `action`/`action_code`/`action_zone` exposes, no
+  toZigbee, and an ssIasAce binding, mirroring z2m `fz.command_arm` +
+  `fz.command_panic`.
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
