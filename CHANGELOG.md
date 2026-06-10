@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Essentials thermostat (TS0601 / _TZE200_i48qyn9s) dropped its primary
+  setpoint + open-window channels.** The auto extract mapped only 7 of z2m's
+  18 active datapoints, omitting the PRIMARY heating setpoint (DP 16
+  `current_heating_setpoint`, z2m `divideBy(2)`) and the open-window detection
+  set (DP 107 `window_open`, DP 116 `open_window_temperature` `divideBy(2)`,
+  DP 117 `detect_window_time_minute` raw) — leaving a thermostat with a
+  visible mode but no settable/readable target temperature. Graduated the
+  generated def to a Tier-2 override and restored these DPs with z2m-matching
+  scale; `window_open` fans the boolean DP to a "YES"/"NO" label via
+  `kTuyaDpFlagBoolEnum`. DP 34 battery (custom `(v-70)*1.7` curve), DP 45
+  `fault_code`, and DP 103 `away_setting` (composite) remain deferred — no
+  DP-map infra for those shapes.
+
 - **TERNCY raw-frame action/motion decoder read past the body (dead action +
   occupancy surface).** z2m's `fzLocal.terncy_raw` reads the WHOLE raw frame
   buffer (`msg.data`, ZCL header included): `msg.data[4]` discriminates action

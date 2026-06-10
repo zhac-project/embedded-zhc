@@ -1,6 +1,24 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Auto-generated from z2m devices/essentials.ts (fingerprint TS0601 / _TZE200_i48qyn9s).
+// Tier 2: Essentials "Thermostat Zigbee smart home" (TS0601 / _TZE200_i48qyn9s).
+//
+// The auto extract kept only 7 of z2m's 18 active datapoints, dropping the
+// thermostat's PRIMARY setpoint (DP 16 current_heating_setpoint) plus the
+// open-window detection channels — leaving a thermostat with a visible mode
+// but no settable/readable target temperature. Restored the expressible
+// missing DPs and corrected their scale to match z2m:
+//   DP 16  current_heating_setpoint  divideBy(2)   (z2m valueConverterBasic.divideBy(2))
+//   DP 107 window_open               bool->YES/NO  (z2m lookup{YES:true, NO:false})
+//   DP 116 open_window_temperature   divideBy(2)
+//   DP 117 detect_window_time_minute raw (divisor 1)
+// DP 24 local_temperature /10 and DP 104 local_temperature_calibration /10
+// were already correct: ez decodes the 4-byte BE numeric as a signed int32,
+// so z2m's localTempCalibration1 >55 unsigned-wraparound branch is unneeded.
+// Deferred (no DP-map infra): DP 34 battery (custom (v-70)*1.7 curve),
+// DP 45 fault_code (passthrough log), DP 103 away_setting (composite byte
+// array). child_lock kept as a plain bool per repo-wide thermostat convention.
+//
+// z2m-source: devices/essentials.ts #_TZE200_i48qyn9s.
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 namespace zhc::devices::essentials {
@@ -12,16 +30,27 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_i48qyn9s_system_mode_dp2[] = 
     { 2, "off" },
 };
 
+// z2m lookup({YES: true, NO: false}) over the boolean window_open DP — a
+// boolean fanned to a string label via kTuyaDpFlagBoolEnum (keyed 0/1).
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_i48qyn9s_window_open_dp107[] = {
+    { 0, "NO" },
+    { 1, "YES" },
+};
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE200_i48qyn9s[] = {
     { 2, "system_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_i48qyn9s_system_mode_dp2, sizeof(kEnum__TZE200_i48qyn9s_system_mode_dp2)/sizeof(kEnum__TZE200_i48qyn9s_system_mode_dp2[0]) },
+    { 16, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 2, nullptr, 0, 0 },
     { 24, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 30, "child_lock", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 101, "comfort_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 102, "eco_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 104, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 105, "schedule_override_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 107, "window_open", ::zhc::TuyaDpType::Bool, 1, kEnum__TZE200_i48qyn9s_window_open_dp107, sizeof(kEnum__TZE200_i48qyn9s_window_open_dp107)/sizeof(kEnum__TZE200_i48qyn9s_window_open_dp107[0]), ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    { 116, "open_window_temperature", ::zhc::TuyaDpType::Numeric, 2, nullptr, 0, 0 },
+    { 117, "detect_window_time_minute", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE200_i48qyn9s{ kEntries__TZE200_i48qyn9s, 7 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE200_i48qyn9s{ kEntries__TZE200_i48qyn9s, sizeof(kEntries__TZE200_i48qyn9s)/sizeof(kEntries__TZE200_i48qyn9s[0]) };
 constexpr FzConverter kFzDp__TZE200_i48qyn9s{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",
@@ -57,12 +86,16 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"action", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"local_temperature", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"comfort_temperature", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"eco_temperature", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"local_temperature_calibration", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"schedule_override_setpoint", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"window_open", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"open_window_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"detect_window_time_minute", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
