@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Espressif `ZigbeeRangeExtender` (ESP32-C6/H2 router): stripped phantom
+  on/off + battery bundle.** z2m defines this as a pure router — `exposes: []`,
+  `fromZigbee: []`, `toZigbee: []`, with `configure()` only binding genBasic.
+  The Tier-1 auto-port carried a phantom bundle (`kFzOnOff` + `kFzBattery`
+  converters; `state`/`battery`/`voltage` exposes; genPowerCfg `0x0001` +
+  genOnOff `0x0006` binds) that exists nowhere in z2m, so a mains-powered range
+  extender surfaced a dead toggle and a phantom battery/voltage in the shadow.
+  Graduated out of `generated/` and reduced to z2m parity (no exposes/fz/tz,
+  genBasic bind only); also added the `manufacturerName: "Espressif"` fingerprint
+  gate z2m requires (the port was model-only).
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
