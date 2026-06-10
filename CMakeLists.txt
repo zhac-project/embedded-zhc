@@ -1984,6 +1984,17 @@ target_link_libraries(zhc_bticino_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_lellki_parity_tests tests/test_lellki_parity.cpp)
 target_link_libraries(zhc_lellki_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Vimar (wired Italian) family: the 02973.B IoT
+# thermostat wired only the generic kFzThermostat (0x0000/0x0012/0x001C),
+# leaving the occupied_cooling_setpoint (attr 0x0011) expose dead — z2m
+# wires the full fz.thermostat. kFzVimarThermostatExtras
+# (definitions/vimar/_shared.cpp) decodes it alongside the generic one,
+# and the RemoteControl_v1.0 transmitter was mis-ported as an on/off
+# switch instead of an action emitter (m.commandsOnOff/WindowCovering/
+# LevelCtrl). See tests/README.md for the pattern.
+add_executable(zhc_vimar_parity_tests tests/test_vimar_parity.cpp)
+target_link_libraries(zhc_vimar_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -2181,6 +2192,7 @@ add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
 add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
+add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
