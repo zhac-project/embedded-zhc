@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **EasyAccess EasyCode903G2.1 (EasyFinger V2) door-lock parity.** The
+  auto-port carried a phantom genOnOff bundle (`kFzOnOff` + `kTzOnOff` +
+  a `{1,0x0006}` binding) on a device that has no on/off cluster, and
+  dropped z2m's entire `fz.easycode_action` event stream plus the
+  `sound_volume` / `auto_relock` config. Graduated to Tier 2: removed the
+  phantom on/off, ported the RAW closuresDoorLock unlock decoder
+  (`kFzEasycodeAction` → `action` = lock / zigbee_unlock / rfid_unlock /
+  keypad_unlock), added the `soundVolume` (0x0024) read decoder with z2m's
+  `lockSoundVolume` labels + the `sound_volume` / `auto_relock` writers,
+  and corrected bindings to endpoint 11 closuresDoorLock (0x0101) +
+  genPowerCfg (0x0001). The lock toggle now routes through the generic
+  `kTzLock`.
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as

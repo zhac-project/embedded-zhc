@@ -1771,6 +1771,13 @@ target_link_libraries(zhc_ls_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_livolo_parity_tests tests/test_livolo_parity.cpp)
 target_link_libraries(zhc_livolo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the EasyAccess EasyCode903G2.1 door lock: the port
+# carried a phantom genOnOff bundle, dropped fz.easycode_action (the
+# keypad/RFID/zigbee unlock event stream), and dropped sound_volume /
+# auto_relock. Fixed to the closuresDoorLock wire shape.
+add_executable(zhc_easyaccess_parity_tests tests/test_easyaccess_parity.cpp)
+target_link_libraries(zhc_easyaccess_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Bosch Smart Home family: a row of non-light
 # devices (contacts/water/smoke/siren/plug/thermostats) were mis-classed
 # onto the Bosch "Light" bundle, and the IAS sensors emitted a bare
@@ -2685,6 +2692,7 @@ add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_jethome_parity_tests      COMMAND zhc_jethome_parity_tests)
 add_test(NAME zhc_ls_parity_tests           COMMAND zhc_ls_parity_tests)
 add_test(NAME zhc_livolo_parity_tests       COMMAND zhc_livolo_parity_tests)
+add_test(NAME zhc_easyaccess_parity_tests   COMMAND zhc_easyaccess_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_lux_parity_tests          COMMAND zhc_lux_parity_tests)
