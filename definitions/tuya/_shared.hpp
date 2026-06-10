@@ -92,6 +92,16 @@ inline constexpr std::uint8_t kTuyaDpFlagScheduleDay    = 0x04;
 // is emitted. Honours kTuyaDpFlagInvertBool first. Lets a single bool DP
 // fan to both an on/off `state` row and a "heat"/"off" `system_mode` row.
 inline constexpr std::uint8_t kTuyaDpFlagBoolEnum       = 0x08;
+// Enum DP fanned out to a boolean key. The DP arrives as an Enum (Uint on
+// the wire). With this flag set on a `type == Enum` entry, the raw value is
+// matched against `enum_table`: a hit emits Bool `true`, a miss emits Bool
+// `false` (still consuming the DP). This lets a single state enum DP fan to
+// both a string `smoke_state` row (plain Enum entry, full table) and a
+// boolean `smoke` alarm row (this flag, table listing only the alarm value)
+// — z2m `from: (v) => ({smoke: state === "alarm", smoke_state: state})` over
+// one Tuya enum DP on smoke / gas / leak detectors. Honours
+// kTuyaDpFlagInvertBool (inverts the final boolean) for symmetry.
+inline constexpr std::uint8_t kTuyaDpFlagEnumBool       = 0x10;
 
 struct TuyaDatapointMap {
     const TuyaDpMapEntry* entries;

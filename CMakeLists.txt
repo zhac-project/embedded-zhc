@@ -2010,6 +2010,14 @@ target_link_libraries(zhc_tech_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_essentials_parity_tests tests/test_essentials_parity.cpp)
 target_link_libraries(zhc_essentials_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Onenuo 288WZ smoke detector (TS0601 / _TZE204_kgaxpvxr +
+# _TZE284_n4ttsck2). The auto-extracted DP defs dropped DP1 (smoke +
+# smoke_state) and DP101 (self_test_result) and carried phantom state/action
+# exposes; a sibling stub mis-wired the detector to ssIasZone. DP1 enum fans
+# to a boolean smoke alarm via the new kTuyaDpFlagEnumBool flag.
+add_executable(zhc_onenuo_parity_tests tests/test_onenuo_parity.cpp)
+target_link_libraries(zhc_onenuo_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the GiEX water-irrigation valves (QT06_1 / QT06_2). Both are
 # Tuya-MCU (0xEF00) DP-stream devices (z2m legacy.fromZigbee.giexWaterValve)
 # auto-ported as bare kFzBattery + kFzOnOff stubs binding ZCL 0x0001/0x0006
@@ -2578,6 +2586,7 @@ add_test(NAME zhc_envilar_parity_tests      COMMAND zhc_envilar_parity_tests)
 add_test(NAME zhc_siterwell_parity_tests    COMMAND zhc_siterwell_parity_tests)
 add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_essentials_parity_tests   COMMAND zhc_essentials_parity_tests)
+add_test(NAME zhc_onenuo_parity_tests       COMMAND zhc_onenuo_parity_tests)
 add_test(NAME zhc_giex_parity_tests         COMMAND zhc_giex_parity_tests)
 add_test(NAME zhc_qoto_parity_tests         COMMAND zhc_qoto_parity_tests)
 add_test(NAME zhc_alecto_parity_tests       COMMAND zhc_alecto_parity_tests)

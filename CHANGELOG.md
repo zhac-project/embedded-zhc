@@ -61,6 +61,21 @@ across the ZHAC platform.
   manufacturer-specific config attributes — min/max/start brightness, boost,
   dimming_mode, default_move_rate — need read/write of arbitrary attribute
   IDs with no generic converter; left as INFRA defer.)
+- **Onenuo 288WZ smoke detector: dead alarm + self-test channels.** The
+  TS0601 detector (`_TZE204_kgaxpvxr` / `_TZE284_n4ttsck2`) is a Tuya-DP
+  (0xEF00) device, but its auto-ported defs kept only 3 of z2m's 5
+  datapoints — dropping DP1 (the actual `smoke` alarm + `smoke_state`) and
+  DP101 (`self_test_result`) — and declared phantom `state`/`action` binary
+  exposes the device never reports. A sibling descriptive stub also
+  mis-wired the detector to ssIasZone (0x0500) instead of the DP map.
+  Completed both DP maps to match z2m: DP1 enum {alarm,normal,detecting,
+  unknown} now fans into both a string `smoke_state` and a boolean `smoke`
+  (true only in the alarm state), DP101 boolean fans to failure/success,
+  and the exposes now mirror z2m (`smoke`, `smoke_state`, `self_test_result`,
+  `battery`, `silence`, `sensitivity`). Added a reusable
+  `kTuyaDpFlagEnumBool` to the Tuya DP infra for the enum→boolean alarm
+  fan-out. Graduated both defs out of `generated/` and added
+  `tests/test_onenuo_parity.cpp`.
 
 - **Prolight bulbs/remote: dropped colour axis + dead remote.** The E27
   (`5412748727371`) and GU10 (`5412748727401`) white-and-colour bulbs are
