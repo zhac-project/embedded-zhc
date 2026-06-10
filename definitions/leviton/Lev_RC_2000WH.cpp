@@ -2,13 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Leviton RC-2000WH — Omnistat2 thermostat lives on EP9.
 // Omnistat2 wireless thermostat
+//
+// z2m wires `fz.thermostat` (full hvacThermostat surface). The generic
+// `kFzThermostat` only decodes 0x0000 / 0x0012 / 0x001C, leaving the
+// device's pi_heating_demand (0x0008), local_temperature_calibration
+// (0x0010) and occupied_cooling_setpoint (0x0011) exposes dead. The
+// vendor `kFzLevitonThermostat` decodes those alongside the generic one.
 // z2m-source: leviton.ts #RC-2000WH.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/leviton/_shared.hpp"
 
 namespace zhc::devices::leviton {
 namespace {
 const FzConverter* const kFz_RC_2000WH[] = {
     &::zhc::generic::kFzThermostat,
+    &kFzLevitonThermostat,
     &::zhc::generic::kFzFanMode,
 };
 const TzConverter* const kTz_RC_2000WH[] = {

@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Leviton RC-2000WH (Omnistat2) thermostat left three exposes dead.** z2m
+  wires the full `fz.thermostat`, which publishes the entire hvacThermostat
+  surface, but the auto-port only wired the generic `kFzThermostat`
+  (0x0000/0x0012/0x001C). The device's `pi_heating_demand` (attr 0x0008),
+  `local_temperature_calibration` (0x0010) and `occupied_cooling_setpoint`
+  (0x0011) exposes were therefore never populated. Graduated `Lev_RC_2000WH.cpp`
+  to Tier 2 and wired a new vendor converter `kFzLevitonThermostat`
+  (`definitions/leviton/_shared.{hpp,cpp}`) decoding those three alongside the
+  generic decoder + `kFzFanMode`. Unlike Danfoss, Leviton does not set
+  `dontMapPIHeatingDemand`, so `pi_heating_demand` is mapped 0-255→0-100 %
+  (`mapNumberRange`, round-half-up). Added `tests/test_leviton_parity.cpp`.
+
 - **Linptech ES1ZZ(TY) mmWave presence sensor decoded illuminance wrong and
   under a non-z2m key.** z2m's `fzLocal.TS0225_illuminance` reads the whole raw
   ZCL frame (`buffer = msg.data`), takes the little-endian u16 measuredValue at

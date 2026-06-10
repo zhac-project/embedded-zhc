@@ -1308,6 +1308,17 @@ target_link_libraries(zhc_namron_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_danfoss_parity_tests tests/test_danfoss_parity.cpp)
 target_link_libraries(zhc_danfoss_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Leviton RC-2000WH (Omnistat2) thermostat: z2m wires
+# the full fz.thermostat but the auto-port only wired the generic
+# kFzThermostat (0x0000/0x0012/0x001C), leaving pi_heating_demand (0x0008),
+# local_temperature_calibration (0x0010) and occupied_cooling_setpoint
+# (0x0011) dead. kFzLevitonThermostat (definitions/leviton/_shared.cpp) now
+# decodes those alongside the generic decoder + kFzFanMode. Unlike Danfoss,
+# Leviton does not set dontMapPIHeatingDemand → pi_heating_demand is mapped
+# 0-255→0-100 %. See tests/README.md for the pattern.
+add_executable(zhc_leviton_parity_tests tests/test_leviton_parity.cpp)
+target_link_libraries(zhc_leviton_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Yandex (Alice) family: the YNDX-00526 contact and
 # YNDX-00527 leak sensors lowered the generic kFzIasZone (bare "alarm") against
 # a bare expose, the YNDX-00528 motion sensor exposed `occupancy` with no
@@ -1925,6 +1936,7 @@ add_test(NAME zhc_third_reality_parity_tests COMMAND zhc_third_reality_parity_te
 add_test(NAME zhc_bitron_parity_tests       COMMAND zhc_bitron_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
+add_test(NAME zhc_leviton_parity_tests      COMMAND zhc_leviton_parity_tests)
 add_test(NAME zhc_yandex_parity_tests       COMMAND zhc_yandex_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_livolo_parity_tests       COMMAND zhc_livolo_parity_tests)
