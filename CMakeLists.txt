@@ -1470,6 +1470,19 @@ target_link_libraries(zhc_dresden_elektronik_parity_tests PRIVATE zhc_definition
 add_executable(zhc_gewiss_parity_tests tests/test_gewiss_parity.cpp)
 target_link_libraries(zhc_gewiss_parity_tests PRIVATE zhc_definitions)
 
+# Aeotec family parity fixtures. WG001 ("Range extender Zi") is a router
+# (z2m exposes:[]) but was mis-ported as a controllable on/off — stripped to
+# exposeless. ZGA002/ZGA003 used m.electricityMeter() (default cluster:"both")
+# but the port wired only kFzMetering (0x0702), dropping the 0x0B04 electrical
+# half (voltage/current) — added kFzElectricalMeasurement + exposes + bind.
+# ZGA004 ("Pico shutter") used m.windowCovering({controls:["lift","tilt"]}) but
+# the port wired only kFzCoverPosition (lift), dropping tilt (0x0009) — added
+# kFzCoverTilt + kTzCoverPositionTilt + a tilt expose. All three ZGA* also
+# dropped m.deviceTemperature() (0x0002) and the m.commands* scene-button
+# endpoints — added kFzDeviceTemperature + kFzCommand* + action_<n> suffixing.
+add_executable(zhc_aeotec_parity_tests tests/test_aeotec_parity.cpp)
+target_link_libraries(zhc_aeotec_parity_tests PRIVATE zhc_definitions)
+
 # Konke family parity fixtures. The 2AJZ4KPFT and KK-ES-J01W sensors were
 # auto-ported as battery-only — the generator dropped every msTemperature /
 # msRelativeHumidity / msIlluminance channel z2m surfaces. Restored the
@@ -2612,6 +2625,7 @@ add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
 add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
+add_test(NAME zhc_aeotec_parity_tests       COMMAND zhc_aeotec_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
