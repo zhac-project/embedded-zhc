@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Frient (Develco rebrand) sensors/meters: IAS dead-key + lost
+  temperature + missing 0x0B04 electrical half.** `WISZB-131` lowered the
+  generic `kFzIasZone` (bare `alarm`) and dropped the temperature channel —
+  z2m wires `m.iasZoneAlarm({zoneType:"contact"})` + `m.temperature()`, so
+  it now uses `kFzIasContactAlarm` (semantic `contact`) + `kFzTemperature`
+  (0x0402). `SMRZB-153` and `EMIZB-151` wired only `kFzMetering` (0x0702)
+  but z2m's `m.electricityMeter()` default cluster is `"both"`, so the
+  0x0B04 electrical half (`voltage`/`current`) was dead — added
+  `kFzElectricalMeasurement` + the exposes + the 0x0B04 binding. All three
+  graduated generated -> Tier 2, mirroring the develco fixes. (EMIZB-151
+  three-phase/produced-energy/tariff attrs remain INFRA-deferred: no
+  generic decoder.)
+
 - **Purmo/Radson Yali Parada Plus thermostat: dead thermostat extras.**
   The `PUMM01102` electric oil-filled radiator was auto-ported with only
   the generic `kFzThermostat`, which decodes just hvacThermostat

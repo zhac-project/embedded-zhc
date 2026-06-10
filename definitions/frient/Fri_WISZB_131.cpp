@@ -1,15 +1,28 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Frient WISZB-131 — auto-generated.
-// Temperature and contact sensor
-// z2m-source: frient.ts #WISZB-131.
+// Tier 2: Frient WISZB-131 temperature & contact sensor — graduated from generated.
+// Temperature and contact sensor.
+//
+// Parity fix: the generated port wired the generic kFzIasZone, which emits
+// the bare key "alarm", but z2m's m.iasZoneAlarm({zoneType:"contact",
+// zoneAttributes:["alarm_1","battery_low"]}) publishes "contact" (zoneStatus
+// bit 0) + "battery_low" (bit 3). It also dropped the msTemperatureMeasurement
+// channel that z2m wires via m.temperature(). Frient is the Develco rebrand —
+// this mirrors the develco WISZB-120 fix exactly: swap in the typed
+// kFzIasContactAlarm and add kFzTemperature (0x0402, endpoint-agnostic so the
+// Develco separate-endpoint temperature report still decodes).
+//
+// z2m-source: frient.ts #WISZB-131 — m.battery() +
+//             m.iasZoneAlarm({zoneType:"contact",
+//             zoneAttributes:["alarm_1","battery_low"]}) + m.temperature().
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::frient {
 namespace {
 const FzConverter* const kFz_WISZB_131[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
+    &::zhc::generic::kFzTemperature,
 };
 
 constexpr const char* kModels_WISZB_131[] = { "WISZB-131" };
@@ -21,13 +34,14 @@ constexpr const char* kModels_WISZB_131[] = { "WISZB-131" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
     {1, 0x0500},
 };
 // --- end auto-generated block ---
