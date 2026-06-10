@@ -1754,6 +1754,14 @@ target_link_libraries(zhc_ctm_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_jethome_parity_tests tests/test_jethome_parity.cpp)
 target_link_libraries(zhc_jethome_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the LeTV (Leeco) 8-key scene remote (qlwz.letv8key.10).
+# The auto-port mis-cast the remote as a controllable on/off switch (phantom
+# genOnOff + settable `state` + 0x0006 binding) and dropped the whole action
+# channel. Restored: kFzLetv8KeyAction decodes genMultistateInput.presentValue
+# keyed by source endpoint into "<gesture>_<button>" (single_up / hold_center).
+add_executable(zhc_letv_parity_tests tests/test_letv_parity.cpp)
+target_link_libraries(zhc_letv_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the L&S Lighting (ls) family. The SEMOTE remote
 # (756200643) declared a `stop_move_step` action in its enum but emitted
 # it from NO converter (lightingColorCtrl cmd 0x47 had no decoder); fixed
@@ -2683,6 +2691,7 @@ add_test(NAME zhc_zen_parity_tests          COMMAND zhc_zen_parity_tests)
 add_test(NAME zhc_yandex_parity_tests       COMMAND zhc_yandex_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
 add_test(NAME zhc_jethome_parity_tests      COMMAND zhc_jethome_parity_tests)
+add_test(NAME zhc_letv_parity_tests         COMMAND zhc_letv_parity_tests)
 add_test(NAME zhc_ls_parity_tests           COMMAND zhc_ls_parity_tests)
 add_test(NAME zhc_livolo_parity_tests       COMMAND zhc_livolo_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)

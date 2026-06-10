@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **LeTV 8-key scene remote action parity.** `LeTV.8KEY`
+  (`qlwz.letv8key.10`) was mis-ported as a controllable on/off switch —
+  phantom genOnOff in/out (`kFzOnOff`/`kTzOnOff`), a settable `state`
+  Binary expose, a 0x0006 binding and `to_zigbee` — when z2m's role is
+  action-only (`fromZigbee:[fz.qlwz_letv8key_switch]`, `toZigbee:[]`). The
+  entire button channel was dropped: z2m decodes genMultistateInput
+  (0x0012) presentValue (attr 0x0055) keyed by the *source endpoint* into
+  `<gesture>_<button>` (e.g. `single_up`, `hold_center`). Restored with a
+  new `kFzLetv8KeyAction` converter (`definitions/letv/_shared.{hpp,cpp}`)
+  that mirrors z2m's buttonLookup `{4:up,2:down,5:left,3:right,8:center,
+  1:back,7:play,6:voice}` x actionLookup `{0:hold,1:single,2:double,
+  3:tripple}`, replaced the phantom on/off with an `action` enum, and
+  dropped the bogus `to_zigbee` + binding. Button is encoded in the action
+  string so the def carries no endpoint_map.
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
