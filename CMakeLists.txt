@@ -900,6 +900,15 @@ target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
 add_executable(zhc_schneider_parity_tests tests/test_schneider_parity.cpp)
 target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for three smarli. devices whose auto-generated defs dropped a
+# real channel. PDM1 dimmer + 1RE1 relay + COV1 curtain all use
+# m.electricityMeter() (cluster:"both" → 0x0702 energy + 0x0B04 power/voltage/
+# current) but the auto-port wired only kFzMetering (0x0702), dropping the
+# 0x0B04 half. COV1 also declared controls:["lift","tilt"] but wired only
+# kFzCoverPosition, dropping the tilt channel. All graduated to parent overrides.
+add_executable(zhc_smarli_parity_tests tests/test_smarli_parity.cpp)
+target_link_libraries(zhc_smarli_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Schwaiger HAL3xx/5xx/8xx LED bulbs. The auto-ports
 # flattened every m.light({colorTemp, color}) bulb to bare on/off +
 # brightness, dropping the lightingColorCtrl 0x0300 colour-temp + XY/HS
@@ -2356,6 +2365,7 @@ add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
+add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
