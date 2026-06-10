@@ -917,6 +917,17 @@ target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_lonsonho_parity_tests tests/test_lonsonho_parity.cpp)
 target_link_libraries(zhc_lonsonho_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Sylvania (OSRAM Lightify US) family. The 74388 contact +
+# temperature sensor lowered the generic kFzIasZone converter (bare "alarm"
+# key) while z2m's fz.ias_contact_alarm_1 publishes the semantic key
+# "contact"; graduated to a parent override swapping in kFzIasContactAlarm
+# and renaming the expose. The temperature axis (msTemperatureMeasurement
+# 0x0402) was already wired. Everything else (ledvanceLight/ledvanceOnOff
+# bulbs/strips/plug, the 73743 action remote) is structurally correct.
+# See tests/README.md.
+add_executable(zhc_sylvania_parity_tests tests/test_sylvania_parity.cpp)
+target_link_libraries(zhc_sylvania_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the AwoX / EGLO non-light family. The EPIR_Zm PIR
 # motion sensor dropped its `occupancy` channel (shipped state/battery
 # only); the ERCU_WS_Zm wall remote (multi-EP) and 33952 (ERCU_Zm) remote
@@ -1791,6 +1802,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
+add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_woox_parity_tests         COMMAND zhc_woox_parity_tests)

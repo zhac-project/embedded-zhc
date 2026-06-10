@@ -6,17 +6,24 @@
 //
 // z2m wiring: fz.ias_contact_alarm_1 + fz.temperature + fz.battery;
 // configure binds msTemperatureMeasurement + genPowerCfg and reports
-// temperature + batteryVoltage. The auto-generator missed the
-// temperature axis — patched in here. `alarm` (key emitted by the
-// generic IAS Zone Fz) maps to z2m's `contact` semantically; renaming
-// is a generator-side concern (see PARITY_SUMMARY heiman row).
+// temperature + batteryVoltage.
+//
+// Bug fixed: the generic kFzIasZone converter emits the bare key
+// "alarm", but z2m's fz.ias_contact_alarm_1 publishes the semantic key
+// "contact" (zoneStatus bit 0; tamper bit 2; battery_low bit 3). The
+// expose declared "alarm", so the contact state never reached the
+// `contact` shadow key. Swapped to the typed kFzIasContactAlarm
+// converter and renamed the expose to "contact" (same fix as the
+// heiman IAS sensor family). The temperature axis
+// (msTemperatureMeasurement 0x0402 via kFzTemperature) was already
+// present.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::sylvania {
 namespace {
 const FzConverter* const kFz_D74388[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
     &::zhc::generic::kFzTemperature,
 };
 
@@ -25,7 +32,7 @@ constexpr const char* kModels_D74388[] = { "Contact Sensor-A" };
 constexpr Expose kExposes_D74388[] = {
     {"battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm",       ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact",     ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper",      ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
