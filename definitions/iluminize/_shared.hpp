@@ -92,4 +92,25 @@ extern const std::uint8_t              kExposesIluColorCTLightCount;
 extern const ::zhc::BindingSpec        kBindingsIluColorCTLight[];
 extern const std::uint8_t              kBindingsIluColorCTLightCount;
 
+// ── Cover-via-brightness (5128.10 roller-shutter relay) ─────────────
+//
+// z2m's 5128.10 reports position over `genLevelCtrl.currentLevel`
+// (cover_position_via_brightness) and OPEN/CLOSE over `genOnOff.onOff`
+// (cover_state_via_onoff); the generic `kFzCoverPosition` only decodes
+// the `closuresWindowCovering` lift attribute, so a real device's
+// reports decode to nothing. These two add the missing legs.
+
+// genLevelCtrl currentLevel attr 0x0000 (u8 0..255) → "position"
+// (Uint 0..100) + "state" (StringRef "OPEN"/"CLOSE", >0 ⇒ OPEN).
+// Mirrors z2m fz.cover_position_via_brightness.
+extern const ::zhc::FzConverter kFzIluCoverViaBrightness;
+
+// genOnOff onOff attr 0x0000 → "state" ("OPEN" when 1 else "CLOSE").
+// Mirrors z2m fz.cover_state_via_onoff.
+extern const ::zhc::FzConverter kFzIluCoverStateViaOnOff;
+
+// Accepts "position" (Uint 0..100) → genLevelCtrl moveToLevelWithOnOff
+// (cmd 0x04). Mirrors z2m tz.cover_via_brightness (position leg).
+extern const ::zhc::TzConverter kTzIluCoverViaBrightness;
+
 }  // namespace zhc::devices::iluminize

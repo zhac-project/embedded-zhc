@@ -10,6 +10,27 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Iluminize 5128.10 roller shutter + 5715/5717 metering dimmers — dead
+  decoders.** The 5128.10 "switch shutter with level control" is a
+  brightness-driven cover in z2m (`fz.cover_position_via_brightness` +
+  `fz.cover_state_via_onoff` + `fz.cover_position_tilt`), but the
+  auto-generated port wired only the generic `kFzCoverPosition`
+  (`closuresWindowCovering` attr 0x0008) and exposed `position` alone — a real
+  device reports its open percentage on `genLevelCtrl.currentLevel` and
+  OPEN/CLOSE on `genOnOff`, so nothing decoded and `state` never surfaced.
+  Added vendor-shared `kFzIluCoverViaBrightness` / `kFzIluCoverStateViaOnOff`
+  (+ `kTzIluCoverViaBrightness`), graduated `Ilu_D5128_10.cpp` to a Tier-2
+  override wiring those legs + the windowCovering lift fallback + a `state`
+  expose (matching `e.cover_position()`) and binding 0x0006/0x0008/0x0102.
+  The 5715/5717 dimmers use `m.electricityMeter()` (default `cluster:"both"`)
+  but dropped the entire `haElectricalMeasurement` (0x0B04) half — `current`
+  and `voltage` never decoded; graduated both to add
+  `kFzElectricalMeasurement` + `current`/`voltage` exposes + the 0x0B04 bind.
+  New fixture `tests/test_iluminize_parity.cpp` pins the cover
+  position/state/lift decode and the metering current/voltage/energy decode.
+  The remotes (511.324/.524/.541/.544/.557, 5144.\*) and the light/onoff
+  bundles were verified CLEAN; sunricher `externalSwitchType`/`minimumPWM`
+  manuSpecific config attributes were deferred (no generic converter).
 - **Dawon DNS PM-B540-ZB (16 A metering plug) — internal die-temperature
   channel was dropped.** Alone among the Dawon metering plugs, the PM-B540
   also reports its own temperature on `genDeviceTempCfg` (0x0002); z2m wires

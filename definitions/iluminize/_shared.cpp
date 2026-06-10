@@ -7,6 +7,13 @@
 
 #include "definitions/iluminize/_shared.hpp"
 
+#include <cstdint>
+#include <cstring>
+#include <span>
+
+#include "zhc/runtime/definition.hpp"
+#include "zhc/types.hpp"
+
 namespace zhc::devices::iluminize {
 
 // ── On/off only (m.onOff()) ─────────────────────────────────────────
@@ -182,5 +189,130 @@ const ::zhc::BindingSpec kBindingsIluColorCTLight[] = {
 };
 const std::uint8_t kBindingsIluColorCTLightCount =
     static_cast<std::uint8_t>(sizeof(kBindingsIluColorCTLight) / sizeof(kBindingsIluColorCTLight[0]));
+
+// ── Cover-via-brightness pair (5128.10 roller shutter) ──────────────
+//
+// z2m: fromZigbee=[cover_position_via_brightness, cover_state_via_onoff,
+// cover_position_tilt], toZigbee=[cover_state, cover_via_brightness],
+// exposes=[cover_position()]  ⇒  position over genLevelCtrl + state over
+// genOnOff. The generic kFzCoverPosition (closuresWindowCovering only)
+// can't see either, so these add the brightness/onoff legs.
+namespace {
+
+// ZCL frame-control for a cluster-specific c→s command, default-response
+// suppressed (same convention as the keen_home / generic encoders).
+constexpr std::uint8_t kCmdFc = 0x11;
+
+// 0..255 → 0..100 (round-half-up). Matches z2m mapNumberRange semantics.
+constexpr std::uint32_t level_to_pct(std::uint32_t lvl) {
+    if (lvl > 255) lvl = 255;
+    return (lvl * 100u + 127u) / 255u;
+}
+
+// 0..100 → 0..255.
+constexpr std::uint32_t pct_to_level(std::uint32_t pct) {
+    if (pct > 100) pct = 100;
+    return (pct * 255u + 50u) / 100u;
+}
+
+bool fz_ilu_cover_via_brightness(const DecodedMessage& msg,
+                                  const ::zhc::FzConverter&,
+                                  const PreparedDefinition&,
+                                  RuntimeContext&,
+                                  FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // genLevelCtrl currentLevel — attr 0x0000 → key "0".
+    const Value* v = msg.payload.find("0");
+    if (!v || v->type != ValueType::Uint) return false;
+    const std::uint32_t pct = level_to_pct(static_cast<std::uint32_t>(v->u));
+
+    Value pos{}; pos.type = ValueType::Uint; pos.u = pct;
+    out.put("position", pos);
+
+    Value st{}; st.type = ValueType::StringRef;
+    st.str = (pct > 0) ? "OPEN" : "CLOSE";
+    out.put("state", st);
+    return true;
+}
+
+bool fz_ilu_cover_state_via_onoff(const DecodedMessage& msg,
+                                   const ::zhc::FzConverter&,
+                                   const PreparedDefinition&,
+                                   RuntimeContext&,
+                                   FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // genOnOff onOff — attr 0x0000 → key "0".
+    const Value* v = msg.payload.find("0");
+    if (!v) return false;
+    bool on;
+    if (v->type == ValueType::Bool)      on = v->b;
+    else if (v->type == ValueType::Uint) on = v->u != 0;
+    else return false;
+
+    Value st{}; st.type = ValueType::StringRef;
+    st.str = on ? "OPEN" : "CLOSE";
+    out.put("state", st);
+    return true;
+}
+
+bool tz_ilu_cover_via_brightness(std::string_view key, const Value& input,
+                                  const ::zhc::TzConverter&,
+                                  const PreparedDefinition&, RuntimeContext&,
+                                  std::span<std::uint8_t> out_frame,
+                                  std::size_t& out_size) {
+    out_size = 0;
+    if (key != "position") return false;
+    if (input.type != ValueType::Uint || input.u > 100) return false;
+
+    // genLevelCtrl moveToLevelWithOnOff (cmd 0x04): level u8, transtime u16 LE.
+    if (out_frame.size() < 6) return false;
+    out_frame[0] = kCmdFc;
+    out_frame[1] = 0x00;   // TSN — adapter patches.
+    out_frame[2] = 0x04;
+    out_frame[3] = static_cast<std::uint8_t>(pct_to_level(static_cast<std::uint32_t>(input.u)));
+    out_frame[4] = 0x00;   // transtime LSB
+    out_frame[5] = 0x00;   // transtime MSB
+    out_size = 6;
+    return true;
+}
+
+}  // namespace
+
+const ::zhc::FzConverter kFzIluCoverViaBrightness{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genLevelCtrl",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_ilu_cover_via_brightness },
+    .user_config       = nullptr,
+};
+
+const ::zhc::FzConverter kFzIluCoverStateViaOnOff{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genOnOff",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_ilu_cover_state_via_onoff },
+    .user_config       = nullptr,
+};
+
+const ::zhc::TzConverter kTzIluCoverViaBrightness{
+    .key          = "position",
+    .cluster      = "genLevelCtrl",
+    .cluster_id   = 0x0008,
+    .command_id   = 0x04,   // moveToLevelWithOnOff
+    .fn           = tz_ilu_cover_via_brightness,
+    .user_config  = nullptr,
+};
 
 }  // namespace zhc::devices::iluminize

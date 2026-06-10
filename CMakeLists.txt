@@ -953,6 +953,19 @@ target_link_libraries(zhc_ewelink_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_immax_parity_tests tests/test_immax_parity.cpp)
 target_link_libraries(zhc_immax_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Iluminize (German lighting) non-trivial ports. The
+# 5128.10 roller-shutter relay is a brightness cover in z2m
+# (cover_position_via_brightness + cover_state_via_onoff), but the auto-gen
+# port bound only the generic kFzCoverPosition (closuresWindowCovering) and
+# exposed `position` alone, so a real device reporting on genLevelCtrl/genOnOff
+# decoded to nothing and never surfaced state. The 5715/5717 metering dimmers
+# use m.electricityMeter() (cluster:"both") but dropped the entire
+# haElectricalMeasurement (0x0B04) half — current/voltage never decoded.
+# Graduated with vendor cover-via-brightness/onoff converters + a state expose,
+# and kFzElectricalMeasurement + current/voltage exposes. See tests/README.md.
+add_executable(zhc_iluminize_parity_tests tests/test_iluminize_parity.cpp)
+target_link_libraries(zhc_iluminize_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Lidl Silvercrest / Livarno / Parkside family
 # (Tuya-OEM). The two IAS sensors (HG06335 motion, HG06336 contact) lowered
 # the generic kFzIasZone (bare "alarm") instead of the typed
@@ -1600,6 +1613,7 @@ add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_ewelink_parity_tests      COMMAND zhc_ewelink_parity_tests)
 add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
+add_test(NAME zhc_iluminize_parity_tests    COMMAND zhc_iluminize_parity_tests)
 add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_orvibo_parity_tests       COMMAND zhc_orvibo_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
