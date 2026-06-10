@@ -92,6 +92,12 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         case 0xFCCC: return "manuSpecificClusterAduroSmart";  // Terncy / AduroSmart vendor cluster
         case 0xFF01: return "manuSpecificLumiFF01";
         case 0xFF02: return "manuSpecificLumiFF02";
+        // 0xFE05 (65029) — J.XUAN WSZ01 wireless-switch button cluster.
+        // z2m's fz.WSZ01_on_off_action reads attr id 1 (decimal key "1")
+        // from this manuSpecific cluster's attributeReport and maps
+        // 0..3 → release/single/double/hold into `action`. Named here so
+        // the vendor Fz selector (kFzWsz01Action) matches by cluster string.
+        case 0xFE05: return "manuSpecificJxuan";
 
         default:     return nullptr;
     }
