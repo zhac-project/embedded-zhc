@@ -1550,6 +1550,16 @@ target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_tech_parity_tests tests/test_tech_parity.cpp)
 target_link_libraries(zhc_tech_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Essentials "Thermostat Zigbee smart home"
+# (TS0601 / _TZE200_i48qyn9s) Tuya-DP thermostat. The auto extract dropped 11
+# of z2m's 18 active datapoints, including the PRIMARY setpoint (DP 16,
+# divideBy 2) and the open-window detection channels (DP 107 window_open,
+# DP 116 open_window_temperature, DP 117 detect_window_time_minute). These are
+# now mapped with z2m-matching scale; window_open fans the boolean DP to a
+# "YES"/"NO" string via kTuyaDpFlagBoolEnum. See tests/README.md.
+add_executable(zhc_essentials_parity_tests tests/test_essentials_parity.cpp)
+target_link_libraries(zhc_essentials_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Zemismart curtain/blind-motor + switch family. Six
 # generic-cover stubs (kFzCoverPosition on the 0x0102 cluster) shadowed TS0601
 # Tuya-DP devices that only speak 0xEF00; five duplicated a kDefZem__TZE* DP
@@ -1887,6 +1897,7 @@ add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
+add_test(NAME zhc_essentials_parity_tests   COMMAND zhc_essentials_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
 add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)
