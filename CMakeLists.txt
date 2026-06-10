@@ -2267,6 +2267,14 @@ target_link_libraries(zhc_acova_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_intuis_parity_tests tests/test_intuis_parity.cpp)
 target_link_libraries(zhc_intuis_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Nobø (Glen Dimplex) SWT-IZ / SPC-IZ electric-heater
+# thermostats. Both use z2m m.thermostat() but were mis-ported as a bare
+# on/off + battery class (kFzBattery + kFzOnOff) — the whole thermostat
+# surface was dead. kFzNoboThermostat decodes local_temperature,
+# occupied/unoccupied_heating_setpoint, system_mode and running_mode.
+add_executable(zhc_nobo_parity_tests tests/test_nobo_parity.cpp)
+target_link_libraries(zhc_nobo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Aurora "AOne" non-light family. The PIR
 # (AU-A1ZBPIRS) and contact (AU-A1ZBDWS) sensors decoded the bare "alarm"
 # key (generic kFzIasZone) instead of the typed occupancy/contact, and the
@@ -2652,6 +2660,7 @@ add_test(NAME zhc_netica_parity_tests       COMMAND zhc_netica_parity_tests)
 add_test(NAME zhc_purmo_parity_tests        COMMAND zhc_purmo_parity_tests)
 add_test(NAME zhc_acova_parity_tests        COMMAND zhc_acova_parity_tests)
 add_test(NAME zhc_intuis_parity_tests       COMMAND zhc_intuis_parity_tests)
+add_test(NAME zhc_nobo_parity_tests         COMMAND zhc_nobo_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)

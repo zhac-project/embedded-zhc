@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Nobø (Glen Dimplex) SWT-IZ / SPC-IZ thermostats decoded (wrong class).**
+  Both electric-heater thermostats use z2m `m.thermostat()` but were
+  auto-ported as a bare on/off + battery class (`kFzBattery` + `kFzOnOff`,
+  exposing phantom `state`/`battery`/`voltage`), leaving the entire
+  thermostat surface dead. Graduated both defs out of `generated/` and
+  added `kFzNoboThermostat` (hvacThermostat 0x0201) emitting z2m's climate
+  keys: `local_temperature` (0x0000), `occupied_heating_setpoint` (0x0012,
+  NOT the generic dead key `current_heating_setpoint`),
+  `unoccupied_heating_setpoint` (0x0014), `system_mode` (0x001C) and
+  `running_mode` (0x001E, off/heat). Flat exposes; setpoints + system_mode
+  writable via generic `kTzThermostat`.
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
   but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
