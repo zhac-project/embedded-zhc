@@ -1486,6 +1486,15 @@ target_link_libraries(zhc_halemeier_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_datek_parity_tests tests/test_datek_parity.cpp)
 target_link_libraries(zhc_datek_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Schlage BE468 Connect smart deadbolt. The auto-port
+# wired only kFzLock + kFzBattery and dropped the z2m lock-action stream
+# (fz.lock_operation_event / fz.lock_programming_event -> action / action_user
+# / action_source / action_source_name) plus tz.pincode_lock -> pin_code.
+# Restored the generic converters + exposes (kwikset precedent) and corrected
+# lock_state Binary->Enum; graduated the def to a Tier-2 parent.
+add_executable(zhc_schlage_parity_tests tests/test_schlage_parity.cpp)
+target_link_libraries(zhc_schlage_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Legrand / BTicino / Netatmo battery action
 # remotes. 067694/067773/067774/WNAL63/067646/067755/067767 are wireless
 # pushbuttons & scene remotes with no local relay, but their generated
@@ -2897,6 +2906,7 @@ add_test(NAME zhc_zg_204z_tests             COMMAND zhc_zg_204z_tests)
 add_test(NAME zhc_ts0044_tests              COMMAND zhc_ts0044_tests)
 add_test(NAME zhc_ts004f_knob_tests         COMMAND zhc_ts004f_knob_tests)
 add_test(NAME zhc_datek_parity_tests        COMMAND zhc_datek_parity_tests)
+add_test(NAME zhc_schlage_parity_tests      COMMAND zhc_schlage_parity_tests)
 add_test(NAME zhc_mercator_parity_tests     COMMAND zhc_mercator_parity_tests)
 add_test(NAME zhc_mill_parity_tests         COMMAND zhc_mill_parity_tests)
 add_test(NAME zhc_hampton_bay_parity_tests  COMMAND zhc_hampton_bay_parity_tests)

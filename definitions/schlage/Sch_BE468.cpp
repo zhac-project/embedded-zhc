@@ -1,6 +1,16 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Schlage BE468 — auto-generated.
+// Tier 2 (2026-06-11): graduated from generated/. The auto-port wired only
+// kFzLock + kFzBattery and exposed battery/voltage/lock_state, dropping the
+// z2m lock-action stream. z2m BE468 wires fz.lock_operation_event +
+// fz.lock_programming_event (closuresDoorLock cmds 0x21/0x20, server->client)
+// -> action / action_user / action_source / action_source_name, plus
+// tz.pincode_lock -> pin_code (setPinCode 0x05). All three converters already
+// exist generically (kwikset/onesti/datek precedent). Wired them + restored
+// the action + pin_code exposes; lock_state corrected Binary->Enum (z2m emits
+// the not_fully_locked/locked/unlocked enum, never a bool). Bindings stay on
+// endpoint 1 (z2m device.endpoints[0]). PIN/user-code *read* response
+// (fz.lock_pin_code_response -> users map) stays INFRA-deferred.
 // Connect smart deadbolt
 // z2m-source: schlage.ts #BE468.
 #include "definitions/_generic/_shared.hpp"
@@ -10,9 +20,12 @@ namespace {
 const FzConverter* const kFz_BE468[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzLock,
+    &::zhc::generic::kFzLockProgrammingEvent,
+    &::zhc::generic::kFzLockOperationEvent,
 };
 const TzConverter* const kTz_BE468[] = {
     &::zhc::generic::kTzLock,
+    &::zhc::generic::kTzLockPinCode,
 };
 constexpr const char* kModels_BE468[] = { "BE468" };
 
@@ -23,7 +36,12 @@ constexpr const char* kModels_BE468[] = { "BE468" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"lock_state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"lock_state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"pin_code", ExposeType::String, Access::Set, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action_user", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action_source", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action_source_name", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
