@@ -1,6 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Auto-generated from z2m devices/mazda.ts (fingerprint TS0601 / _TZE204_k6rdmisz).
+// Tier 2: MAZDA TR-M2Z thermostatic radiator valve (TS0601 / _TZE204_k6rdmisz).
+// Parity fixes over the auto-port:
+//   1. DP map count was 23 while the table holds 24 entries, so DP47
+//      local_temperature_calibration was silently truncated and never decoded.
+//   2. DP47 carried divisor=1, but z2m wires `localTempCalibration3` whose
+//      decode is v/10 (the wire is a signed s32 in tenths of a degree, already
+//      sign-reinterpreted by decode_tuya_dp). divisor=10 restores the scale.
+// z2m-source: zigbee-herdsman-converters/src/devices/mazda.ts.
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 namespace zhc::devices::mazda {
@@ -29,9 +36,9 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_k6rdmisz[] = {
     { 32, "schedule_friday", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagScheduleDay },
     { 33, "schedule_saturday", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagScheduleDay },
     { 34, "schedule_sunday", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagScheduleDay },
-    { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_k6rdmisz{ kEntries__TZE204_k6rdmisz, 23 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_k6rdmisz{ kEntries__TZE204_k6rdmisz, 24 };
 constexpr FzConverter kFzDp__TZE204_k6rdmisz{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

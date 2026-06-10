@@ -47,6 +47,14 @@ across the ZHAC platform.
   `_TYZB01_fi5yftwv` is left INFRA-deferred — the matcher's manufacturer
   gating is whole-def, so it cannot be applied to one model without also
   gating the ungated `3AFE090103021000` variant.)
+- **MAZDA TR-M2Z — truncated + mis-scaled `local_temperature_calibration`
+  (DP47).** The auto-ported Tuya DP map for both fingerprints
+  (`_TZE204_k6rdmisz` / `_TZE284_k6rdmisz`) declared `count=23` while the entry
+  table held 24 rows, silently truncating the last row so DP47 was never
+  decoded. Once restored to 24, DP47 still carried `divisor=1`, but z2m wires
+  `localTempCalibration3` whose decode is `v/10` (signed s32, tenths of a
+  degree). Set `divisor=10` and `count=24` on both variants; graduated the two
+  generated files to the parent `definitions/mazda/` dir as Tier 2 ports.
 
 - **AduroSmart 81848 / 81998 / 81949 — phantom `energy` channel + seMetering
   (0x0702) on electrical-only power devices.** All three z2m defs use
