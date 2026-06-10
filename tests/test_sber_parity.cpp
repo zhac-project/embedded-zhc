@@ -93,34 +93,42 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
 // clear report drops it. `expect_tamper_expose` distinguishes the two
 // sensors that keep tamper (motion/contact) from water_leak, which z2m
 // publishes without it.
+//
+// `expect_on_bit0`: most zone types publish the semantic key raw on bit 0
+// (bit0 set -> key true). zoneType "contact" inverts in z2m (contact =
+// !bit0: bit0 set -> contact:false), so the contact caller passes false.
+// tamper/battery_low (bits 2/3) are unaffected.
 void check_alarm1(const PreparedDefinition& def, const char* sem,
-                  bool expect_tamper_expose) {
+                  bool expect_tamper_expose, bool expect_on_bit0 = true) {
     // semantic key must be a declared expose (regression guard against
     // generic kFzIasZone, whose "alarm" key never matched the expose).
     assert(def_exposes(def, sem));
     assert(!def_exposes(def, "alarm"));
     assert(def_exposes(def, "tamper") == expect_tamper_expose);
 
-    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
+    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only (bit0 set)
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    if (expect_on_bit0) assert(b_true(on.merged.find(sem)));
+    else                assert(b_false(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);       // bare key must be gone
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
-    auto off = dispatch_ias(def, ias_notif(0x0000));  // all clear
+    auto off = dispatch_ias(def, ias_notif(0x0000));  // all clear (bit0 clear)
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    if (expect_on_bit0) assert(b_false(off.merged.find(sem)));
+    else                assert(b_true(off.merged.find(sem)));
 
-    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
+    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3), bit0 clear
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    if (expect_on_bit0) assert(b_false(tb.merged.find(sem)));
+    else                assert(b_true(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
 
 static void test_motion()  { check_alarm1(devices::sber::kDef_SBDV_00029, "occupancy",  true);  }
-static void test_contact() { check_alarm1(devices::sber::kDef_SBDV_00030, "contact",    true);  }
+static void test_contact() { check_alarm1(devices::sber::kDef_SBDV_00030, "contact",    true,  /*expect_on_bit0=*/false); }
 static void test_water()   { check_alarm1(devices::sber::kDef_SBDV_00154, "water_leak", false); }
 
 }  // namespace

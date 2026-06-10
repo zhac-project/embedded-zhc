@@ -7,7 +7,7 @@
 //   IAS dead-key — four IAS sensors wired the generic kFzIasZone (bare
 //   "alarm") against a semantic expose key the converter never produced.
 //   z2m decodes each via m.iasZoneAlarm({zoneType}) → a typed semantic key:
-//     * MIR-MC100 contact     → kFzIasContactAlarm   → contact   (bit0)
+//     * MIR-MC100 contact     → kFzIasContactAlarm   → contact   (!bit0; z2m inverts contact)
 //     * MIR-SM200 smoke       → kFzIasSmokeAlarm     → smoke     (bit0)
 //     * MIR-WA100 water_leak  → kFzIasWaterLeakAlarm → water_leak(bit0)
 //     * MIR-IR100 occupancy   → kFzIasMotionAlarm    → occupancy (bit0)
@@ -126,32 +126,41 @@ DispatchResult dispatch_ias(RuntimeContext& ctx, const PreparedDefinition& def,
 // Typed IAS sensor: the semantic key is exposed (and bare "alarm" is gone),
 // an alarm on bit0 decodes to it, a clear drops it, tamper + battery_low
 // (status bits 2/3) co-decode.
-void check_ias(const PreparedDefinition& def, const char* sem) {
+//
+// `expect_on_bit0`: most zone types publish the semantic key raw on bit 0.
+// zoneType "contact" inverts in z2m (contact = !bit0: bit0 set -> contact:
+// false), so the contact caller passes false. tamper/battery_low (bits 2/3)
+// are unaffected.
+void check_ias(const PreparedDefinition& def, const char* sem,
+               bool expect_on_bit0 = true) {
     assert(def_exposes(def, sem));
     assert(!def_exposes(def, "alarm"));
 
     RuntimeContext c1{};
-    auto on = dispatch_ias(c1, def, ias_notif(0x0001));
+    auto on = dispatch_ias(c1, def, ias_notif(0x0001));   // bit0 set
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    if (expect_on_bit0) assert(b_true(on.merged.find(sem)));
+    else                assert(b_false(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);   // legacy bare key gone
 
     RuntimeContext c2{};
-    auto off = dispatch_ias(c2, def, ias_notif(0x0000));
+    auto off = dispatch_ias(c2, def, ias_notif(0x0000));  // bit0 clear
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    if (expect_on_bit0) assert(b_false(off.merged.find(sem)));
+    else                assert(b_true(off.merged.find(sem)));
 
     RuntimeContext c3{};
-    auto tb = dispatch_ias(c3, def, ias_notif(0x000C));   // tamper(b2)+battery_low(b3)
+    auto tb = dispatch_ias(c3, def, ias_notif(0x000C));   // tamper(b2)+battery_low(b3), bit0 clear
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    if (expect_on_bit0) assert(b_false(tb.merged.find(sem)));
+    else                assert(b_true(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
 
 void test_ias_typed_sensors() {
     using namespace zhc::devices::multir;
-    check_ias(kDef_MIR_MC100, "contact");
+    check_ias(kDef_MIR_MC100, "contact", /*expect_on_bit0=*/false);  // z2m inverts contact
     check_ias(kDef_MIR_SM200, "smoke");
     check_ias(kDef_MIR_IR100, "occupancy");
 

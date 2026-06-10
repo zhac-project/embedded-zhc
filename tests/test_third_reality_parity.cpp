@@ -92,26 +92,35 @@ bool def_exposes(const PreparedDefinition& def, const char* key) {
 
 // Assert: alarm_1 (bit 0) asserted -> semantic key true, "alarm" absent,
 // tamper/battery_low reflect bits 2/3.
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+//
+// `expect_on_bit0`: occupancy/water_leak/vibration publish the semantic key
+// raw on bit 0 (bit0 set -> key true). zoneType "contact" inverts in z2m
+// (contact = !bit0: bit0 set -> contact:false), so the contact callers pass
+// false. tamper/battery_low (bits 2/3) are unaffected.
+void check_alarm1(const PreparedDefinition& def, const char* sem,
+                  bool expect_on_bit0 = true) {
     // semantic key must be a declared expose (regression guard against the
     // generic kFzIasZone, whose "alarm" key never matched the expose).
     assert(def_exposes(def, sem));
     assert(!def_exposes(def, "alarm"));
 
-    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
+    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only (bit0 set)
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    if (expect_on_bit0) assert(b_true(on.merged.find(sem)));
+    else                assert(b_false(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);       // bare key must be gone
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
-    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
+    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear (bit0 clear)
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    if (expect_on_bit0) assert(b_false(off.merged.find(sem)));
+    else                assert(b_true(off.merged.find(sem)));
 
-    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
+    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3), bit0 clear
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    if (expect_on_bit0) assert(b_false(tb.merged.find(sem)));
+    else                assert(b_true(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -124,9 +133,9 @@ static void test_smr01067z() { check_alarm1(devices::third_reality::kDef_D3RSMR0
 static void test_ps01083z()  { check_alarm1(devices::third_reality::kDef_D3RPS01083Z,  "occupancy"); }
 static void test_snl02043z() { check_alarm1(devices::third_reality::kDef_D3RSNL02043Z, "occupancy"); }
 
-// ── contact (door / tilt) — zoneStatus bit 0 ─────────────────────────
-static void test_ds17bz()    { check_alarm1(devices::third_reality::kDef_D3RDS17BZ,    "contact"); }
-static void test_dts01056z() { check_alarm1(devices::third_reality::kDef_D3RDTS01056Z, "contact"); }
+// ── contact (door / tilt) — z2m inverts: contact = !(zoneStatus bit 0) ─
+static void test_ds17bz()    { check_alarm1(devices::third_reality::kDef_D3RDS17BZ,    "contact", /*expect_on_bit0=*/false); }
+static void test_dts01056z() { check_alarm1(devices::third_reality::kDef_D3RDTS01056Z, "contact", /*expect_on_bit0=*/false); }
 
 // ── water_leak — zoneStatus bit 0 ────────────────────────────────────
 static void test_ws18bz()  { check_alarm1(devices::third_reality::kDef_D3RWS18BZ,  "water_leak"); }

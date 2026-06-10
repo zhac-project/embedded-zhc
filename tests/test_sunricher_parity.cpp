@@ -140,21 +140,29 @@ std::vector<std::uint8_t> attr_report(std::uint16_t attr_id, std::uint8_t type,
 }
 
 // ── Typed IAS alarm: semantic key set on bit 0, bare "alarm" must be gone ─
-void check_ias_alarm(const PreparedDefinition& def, const char* sem_key) {
+//
+// `expect_on_bit0`: smoke/gas/co/water_leak publish the semantic key raw on
+// bit 0 (bit0 set -> key true). zoneType "contact" inverts in z2m (contact =
+// !bit0: bit0 set -> contact:false), so the contact caller passes false.
+// tamper/battery_low (bits 2/3) are unaffected.
+void check_ias_alarm(const PreparedDefinition& def, const char* sem_key,
+                     bool expect_on_bit0 = true) {
     // Regression guard: semantic key exposed, dead "alarm" gone.
     assert(def_exposes(def, sem_key));
     assert(!def_exposes(def, "alarm"));
     assert(def_exposes(def, "tamper"));
     assert(def_exposes(def, "battery_low"));
 
-    auto fired = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 (bit 0)
+    auto fired = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 (bit 0 set)
     assert(fired.any_matched);
-    assert(b_true(fired.merged.find(sem_key)));
+    if (expect_on_bit0) assert(b_true(fired.merged.find(sem_key)));
+    else                assert(b_false(fired.merged.find(sem_key)));
     assert(fired.merged.find("alarm") == nullptr);       // dead key must be gone
 
-    auto clear = dispatch_ias(def, ias_notif(0x0000));
+    auto clear = dispatch_ias(def, ias_notif(0x0000));   // bit 0 clear
     assert(clear.any_matched);
-    assert(b_false(clear.merged.find(sem_key)));
+    if (expect_on_bit0) assert(b_false(clear.merged.find(sem_key)));
+    else                assert(b_true(clear.merged.find(sem_key)));
 
     // Tamper (bit 2) + battery_low (bit 3) still pass through the typed cvt.
     auto tb = dispatch_ias(def, ias_notif(0x000C));      // bits 2 and 3
@@ -224,7 +232,7 @@ int main() {
     check_ias_alarm(kDef_SR_ZG9060B_CS, "carbon_monoxide");
     check_ias_alarm(kDef_SR_ZG9050C_WS, "water_leak");
     check_ias_alarm(kDef_SR_ZG9050B_WS, "water_leak");
-    check_ias_alarm(kDef_SR_ZG9011A_DS, "contact");
+    check_ias_alarm(kDef_SR_ZG9011A_DS, "contact", /*expect_on_bit0=*/false);  // z2m inverts contact
 
     // 2. Presence sensor: occupancy + illuminance, relay "state" gone.
     assert(!def_exposes(kDef_SR_ZG9030F_PS, "state"));

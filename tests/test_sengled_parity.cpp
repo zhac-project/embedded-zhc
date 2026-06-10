@@ -23,6 +23,11 @@
 // each device now decodes its semantic key (and NOT the bare "alarm" key),
 // that tamper/battery_low still surface, and — for E13-N11 — that the light
 // channel (on/off) still decodes alongside the occupancy converter.
+//
+// Contact polarity: z2m publishes `contact = !(zoneStatus bit0)` for every
+// zoneType:"contact" device (closed = magnet present = bit0 clear = contact:
+// true). The contact callsites pass expect_on_bit0=false; occupancy stays
+// raw bit0 (z2m does not invert it).
 
 #include <array>
 #include <cassert>
@@ -93,24 +98,33 @@ bool def_exposes(const PreparedDefinition& def, const char* key) {
 // Assert: alarm_1 (bit 0) asserted -> semantic key true, "alarm" absent,
 // tamper/battery_low reflect bits 2/3, and the bare "alarm" key is never
 // produced (regression guard against generic kFzIasZone).
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+//
+// `expect_on_bit0`: for most zone types z2m publishes the semantic key
+// raw on bit 0 (bit0 set -> key true). For zoneType "contact" z2m inverts
+// (contact = !bit0: bit0 set -> contact:false). Pass false for contact so
+// the polarity assertions flip; tamper/battery_low (bits 2/3) are unaffected.
+void check_alarm1(const PreparedDefinition& def, const char* sem,
+                  bool expect_on_bit0 = true) {
     assert(def_exposes(def, sem));
     assert(!def_exposes(def, "alarm"));  // bare key must not leak into exposes
 
-    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
+    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only (bit0 set)
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    if (expect_on_bit0) assert(b_true(on.merged.find(sem)));
+    else                assert(b_false(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);       // bare key must be gone
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
-    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
+    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear (bit0 clear)
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    if (expect_on_bit0) assert(b_false(off.merged.find(sem)));
+    else                assert(b_true(off.merged.find(sem)));
 
-    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
+    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3), bit0 clear
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    if (expect_on_bit0) assert(b_false(tb.merged.find(sem)));
+    else                assert(b_true(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -119,8 +133,8 @@ void check_alarm1(const PreparedDefinition& def, const char* sem) {
 
 // ── motion / contact alarm_1 (bit 0) decoders ────────────────────────
 static void test_e1m_g7h_occupancy()    { check_alarm1(devices::sengled::kDef_E1M_G7H,    "occupancy"); }
-static void test_e1d_contact()          { check_alarm1(devices::sengled::kDef_E1D_G73WNA, "contact"); }
-static void test_e2d_contact()          { check_alarm1(devices::sengled::kDef_E2D_G73,    "contact"); }
+static void test_e1d_contact()          { check_alarm1(devices::sengled::kDef_E1D_G73WNA, "contact", /*expect_on_bit0=*/false); }
+static void test_e2d_contact()          { check_alarm1(devices::sengled::kDef_E2D_G73,    "contact", /*expect_on_bit0=*/false); }
 
 // ── E13-N11 — light + occupancy combo ────────────────────────────────
 // The occupancy half must decode the semantic key; the light half must
