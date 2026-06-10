@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **FireAngel CO sensors: dead/missing carbon-monoxide channels.** The
+  W2-Module (`Alarm_SD_Device`) was auto-ported battery-only — z2m wires
+  `fz.W2_module_carbon_monoxide` and reports CO on ssIasZone zoneStatus
+  *bit 8* (not the standard bit 0 the generic `kFzIasCoAlarm` reads). The
+  ZBCO-AE-10X-EUR CO alarm was missing from the registry entirely. Added a
+  vendor `_shared.{hpp,cpp}` with `kFzW2ModuleCarbonMonoxide` (bit 8) +
+  `kFzFireangelCoTest` (test = bit 5 OR bit 9), graduated W2-Module to
+  Tier 2 (restored carbon_monoxide expose + 0x0500 binding), and authored
+  the manufacturer-gated ZBCO def (generic `kFzIasCoAlarm` for
+  carbon_monoxide/tamper/battery_low + the test decoder). The two defs share
+  model `Alarm_SD_Device`; the mfr-gated ZBCO wins find_definition Pass 1 for
+  FireAngel hardware, W2-Module is the model-only fallback.
+
 - **Purmo/Radson Yali Parada Plus thermostat: dead thermostat extras.**
   The `PUMM01102` electric oil-filled radiator was auto-ported with only
   the generic `kFzThermostat`, which decodes just hvacThermostat

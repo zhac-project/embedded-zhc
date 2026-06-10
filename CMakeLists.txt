@@ -2050,6 +2050,13 @@ target_link_libraries(zhc_nous_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_shinasystem_parity_tests tests/test_shinasystem_parity.cpp)
 target_link_libraries(zhc_shinasystem_parity_tests PRIVATE zhc_definitions)
 
+# FireAngel CO family. The generated def dropped the W2-Module CO channel
+# (battery-only; CO rides ssIasZone zoneStatus bit 8, not the standard bit 0)
+# and omitted the ZBCO-AE-10X-EUR alarm entirely. These pin the restored /
+# authored decoders + the manufacturer-gated find_definition routing.
+add_executable(zhc_fireangel_parity_tests tests/test_fireangel_parity.cpp)
+target_link_libraries(zhc_fireangel_parity_tests PRIVATE zhc_definitions)
+
 # Wirenboard WB-MSW-ZIGBEE v.3/v.4 — occupancy + co2 channels were
 # declared but undecoded; wired kFzOccupancy + new generic kFzCO2.
 add_executable(zhc_wirenboard_parity_tests tests/test_wirenboard_parity.cpp)
@@ -2487,6 +2494,7 @@ add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)
 add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)
 add_test(NAME zhc_nous_parity_tests         COMMAND zhc_nous_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
+add_test(NAME zhc_fireangel_parity_tests    COMMAND zhc_fireangel_parity_tests)
 add_test(NAME zhc_dawon_dns_parity_tests    COMMAND zhc_dawon_dns_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)

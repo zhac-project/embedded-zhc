@@ -1,13 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Fireangel W2-Module — auto-generated.
+// Tier 2: Fireangel W2-Module — hand-maintained parity override.
 // Carbon monoxide sensor
+//
+// Graduated from generated/Fir_W2_Module.cpp: the generated def dropped the
+// CO channel entirely (battery-only) — z2m wires fz.W2_module_carbon_monoxide
+// + fz.battery and exposes carbon_monoxide() + battery(). The W2 module
+// reports CO on ssIasZone status-change zoneStatus *bit 8* (a non-standard
+// bit the generic kFzIasCoAlarm, which reads bit 0, can't decode), so a
+// dedicated kFzW2ModuleCarbonMonoxide converter is wired and the
+// carbon_monoxide expose + 0x0500 binding restored.
 // z2m-source: fireangel.ts #W2-Module.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/fireangel/_shared.hpp"
 
 namespace zhc::devices::fireangel {
 namespace {
 const FzConverter* const kFz_W2_Module[] = {
+    &::zhc::fireangel::kFzW2ModuleCarbonMonoxide,
     &::zhc::generic::kFzBattery,
 };
 
@@ -20,10 +30,12 @@ constexpr const char* kModels_W2_Module[] = { "Alarm_SD_Device" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"carbon_monoxide", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0500},
 };
 // --- end auto-generated block ---
 

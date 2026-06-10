@@ -7,8 +7,10 @@
 namespace zhc::devices::fireangel {
 
 extern const PreparedDefinition kDef_W2_Module;
+extern const PreparedDefinition kDef_ZBCO_AE_10X_EUR;
 const PreparedDefinition* const kFireangelRegistry[] = {
-    &kDef_W2_Module,
+    &kDef_ZBCO_AE_10X_EUR,   // manufacturer-gated ("Fireangel") — Pass 1
+    &kDef_W2_Module,         // model-only fallback for other manufacturers
 };
 const std::size_t kFireangelRegistryCount = sizeof(kFireangelRegistry) / sizeof(kFireangelRegistry[0]);
 
