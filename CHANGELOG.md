@@ -57,6 +57,19 @@ across the ZHAC platform.
   metering `power:false`, so only `energy` via seMetering 0x0702 is reported;
   the "0x0B04 half" suspect is a false flag) and added the 0x0204 / 0x0406
   bindings.
+- **Simpla Home Soil Pro parity: dropped temperature / illuminance / dual
+  soil_moisture channels.** The auto-generated `Soil Pro` def was a
+  battery-only stub. z2m exposes temperature (msTemperatureMeasurement
+  0x0402) + illuminance (msIlluminanceMeasurement 0x0400) on the default
+  endpoint plus TWO soil_moisture channels (msSoilMoisture 0x0408) on the
+  z1_top (ep 2) and z2_bottom (ep 3) endpoints. Graduated to a Tier-2 def
+  wiring `kFzTemperature` / `kFzIlluminance` / `kFzSoilMoisture` /
+  `kFzBattery`, with the endpoint_map corrected to `{z1_top: 2,
+  z2_bottom: 3}` (was both at ep 1, which would have collided the zones)
+  so the soil zones decode to suffixed keys `soil_moisture_z1_top` /
+  `soil_moisture_z2_bottom` while temperature/illuminance stay bare.
+  `measurement_interval` (genAnalogOutput) and `linear_mode`
+  (genBinaryOutput) config writes are deferred (no generic converter).
 
 - **Envilar parity: metering 0x0B04 half, dead remote, missing CCT channel.**
   `1CH-HP-RELAY-7853` + `7859` use z2m `m.electricityMeter()` (default
