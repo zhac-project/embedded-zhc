@@ -2,16 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Ecodim ED-10012 — wall remote (hand-rewritten, 2026-04-28q).
 // Zigbee 4 button wall switch - white (2 endpoints).
-// z2m-source: ecodim.ts #ED-10012.
-//
-// fromZigbee: command_on / command_off / command_move / command_stop / battery.
-// exposes: action ["on_1","off_1","brightness_move_up_1",
-//                  "brightness_move_down_1","brightness_stop_1",
-//                  "on_2",...,"brightness_stop_2"], battery.
-// toZigbee: [].
-// meta: {multiEndpoint: true, battery: {dontDividePercentage: true}}.
+// z2m-source: ecodim.ts #ED-10012 — fz.command_on/off/move/stop + fz.battery;
+//   e.action(on_1/off_1/brightness_move_up_1/brightness_move_down_1/
+//   brightness_stop_1 + the same for _2); meta:{multiEndpoint:true,
+//   battery:{dontDividePercentage:true}}.
 //   - dontDividePercentage flag is irrelevant in ZHC: kFzBattery emits
 //     the raw u8 percentage attr 0x0021 (already pre-doubled by ZCL).
+//
+// PARITY FIX (lost per-button identity): the command decoders emit a bare
+// `action` (a kAlwaysGlobalKey), collapsing both endpoints onto one key —
+// z2m distinguishes them per endpoint (on_1 / on_2 / …). Set endpoint_map +
+// endpoint_action_suffix so the dispatcher rewrites the key to action_1 /
+// action_2 (same convention as robb ROB_200-007-0).
+// No to_zigbee path — battery-powered genOnOff/genLevelCtrl client.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::ecodim {
@@ -27,7 +30,7 @@ const FzConverter* const kFz_ED_10012[] = {
 constexpr const char* kModels_ED_10012[] = { "ED-10012" };
 
 constexpr Expose kExposes_ED_10012[] = {
-    {"action",  ExposeType::String,  Access::State, nullptr, nullptr, nullptr, 0},
+    {"action",  ExposeType::Enum,    Access::State, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%",     nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV",    nullptr, nullptr, 0},
 };
@@ -37,6 +40,8 @@ constexpr BindingSpec kBindings_ED_10012[] = {
     {1, 0x0006}, {1, 0x0008},
     {2, 0x0006}, {2, 0x0008},
 };
+
+constexpr ::zhc::EndpointLabel kEndpoints_ED_10012[] = { {"1", 1}, {"2", 2} };
 
 }  // namespace
 
@@ -51,6 +56,9 @@ extern const PreparedDefinition kDef_ED_10012{
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
     .bindings=kBindings_ED_10012, .bindings_count=sizeof(kBindings_ED_10012)/sizeof(kBindings_ED_10012[0]),
+    .endpoint_map       = kEndpoints_ED_10012,
+    .endpoint_map_count = sizeof(kEndpoints_ED_10012)/sizeof(kEndpoints_ED_10012[0]),
+    .endpoint_action_suffix = true,  // per-button: action_1/action_2 (z2m on_<n>/off_<n>/...)
 };
 
 }  // namespace zhc::devices::ecodim

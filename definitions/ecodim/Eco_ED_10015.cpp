@@ -2,7 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Ecodim ED-10015 — wall remote (hand-rewritten, 2026-04-28q).
 // Zigbee 8 button wall switch - black (4 endpoints).
-// z2m-source: ecodim.ts #ED-10015.
+// z2m-source: ecodim.ts #ED-10015 — fz.command_on/off/move/stop + fz.battery;
+//   e.action(on_<n>/off_<n>/brightness_move_up_<n>/brightness_move_down_<n>/
+//   brightness_stop_<n> for n in 1..4); meta:{multiEndpoint:true}.
+//
+// PARITY FIX (lost per-button identity): the command decoders emit a bare
+// `action` (a kAlwaysGlobalKey), collapsing all four endpoints onto one key —
+// z2m distinguishes them per endpoint (on_1 .. brightness_stop_4). Set
+// endpoint_map + endpoint_action_suffix so the dispatcher rewrites the key to
+// action_1 .. action_4 (same convention as robb ROB_200-007-0).
+// No to_zigbee path — battery-powered genOnOff/genLevelCtrl client.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::ecodim {
@@ -18,7 +27,7 @@ const FzConverter* const kFz_ED_10015[] = {
 constexpr const char* kModels_ED_10015[] = { "ED-10015" };
 
 constexpr Expose kExposes_ED_10015[] = {
-    {"action",  ExposeType::String,  Access::State, nullptr, nullptr, nullptr, 0},
+    {"action",  ExposeType::Enum,    Access::State, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%",     nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV",    nullptr, nullptr, 0},
 };
@@ -30,6 +39,8 @@ constexpr BindingSpec kBindings_ED_10015[] = {
     {3, 0x0006}, {3, 0x0008},
     {4, 0x0006}, {4, 0x0008},
 };
+
+constexpr ::zhc::EndpointLabel kEndpoints_ED_10015[] = { {"1", 1}, {"2", 2}, {"3", 3}, {"4", 4} };
 
 }  // namespace
 
@@ -44,6 +55,9 @@ extern const PreparedDefinition kDef_ED_10015{
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
     .bindings=kBindings_ED_10015, .bindings_count=sizeof(kBindings_ED_10015)/sizeof(kBindings_ED_10015[0]),
+    .endpoint_map       = kEndpoints_ED_10015,
+    .endpoint_map_count = sizeof(kEndpoints_ED_10015)/sizeof(kEndpoints_ED_10015[0]),
+    .endpoint_action_suffix = true,  // per-button: action_1..action_4 (z2m on_<n>/off_<n>/...)
 };
 
 }  // namespace zhc::devices::ecodim
