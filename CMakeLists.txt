@@ -1548,6 +1548,13 @@ target_link_libraries(zhc_zemismart_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_avatto_parity_tests tests/test_avatto_parity.cpp)
 target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for MAZDA (single device: TR-M2Z TRV, Tuya-OEM TS0601 0xEF00
+# DP valve). The generated DP map truncated DP47 local_temperature_calibration
+# (count=23 vs 24 entries) and gave it divisor=1; z2m wires localTempCalibration3
+# = v/10. Fixed on both fingerprints. See tests/README.md.
+add_executable(zhc_mazda_parity_tests tests/test_mazda_parity.cpp)
+target_link_libraries(zhc_mazda_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Neo (NEO Coolcam, Tuya-OEM) family. Four named
 # devices were misrouted by the generator to IAS Zone / battery-only: the
 # NAS-AB02B0 / NAS-AB02B2 sirens and NAS-PD07 PIR are Tuya-DP (neo_t_h_alarm /
@@ -1843,6 +1850,7 @@ add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
+add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)
 add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)
 add_test(NAME zhc_nous_parity_tests         COMMAND zhc_nous_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
