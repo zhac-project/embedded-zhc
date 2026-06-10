@@ -65,6 +65,18 @@ across the ZHAC platform.
   rewrite has no per-def metering-skip hook), matching the Honyar
   U86Z223A10-ZJU01(GD) precedent. MG-GPO01 was already correct.
 
+- **Visonic (PowerMax/Tyco) IAS sensors lost their primary state + temperature.**
+  All 8 auto-generated Visonic defs lowered the generic `kFzIasZone`
+  converter (bare key `alarm`) while exposing the semantic key, so the
+  occupancy (MP-840/MP-841), contact (MCT-370/350/340 E/340 SMA/302 SMA) or
+  vibration (GB-540) state never reached the shadow. Graduated all 8 to
+  Tier-2 overrides using the typed `kFzIasMotionAlarm` / `kFzIasContactAlarm`
+  / `kFzIasVibrationAlarm` converters (zoneStatus bit 0). The five
+  temperature-capable models (MP-840, MCT-350 SMA, MCT-340 E, MCT-340 SMA,
+  MCT-302 SMA) additionally dropped z2m's `fz.temperature` / `m.temperature()`
+  decoder and `e.temperature()` expose; restored `kFzTemperature`
+  (`msTemperatureMeasurement` 0x0402, /100) + the `temperature` expose +
+  the 0x0402 binding.
 - **LifeControl (MCLH series) ports dropped whole channels.** Three
   auto-generated defs lost half their z2m functionality: MCLH-02 "vivi
   ZLight" colour bulb (`m.light({colorTemp, color: true})`) wired only

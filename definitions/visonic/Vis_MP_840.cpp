@@ -1,15 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Visonic MP-840 — auto-generated.
+// Tier 2: Visonic MP-840 — IAS dead-key + dropped temperature channel.
 // Long range pet immune PIR motion sensor
-// z2m-source: visonic.ts #MP-840.
+// z2m-source: visonic.ts #MP-840
+//   (fromZigbee: [fz.ias_occupancy_alarm_1, fz.temperature, fz.battery]).
+// Two gaps in the generated def:
+//   (1) lowered the generic kFzIasZone (bare key "alarm") while the expose
+//       declared the semantic key -> occupancy never reached the shadow;
+//       swapped to typed kFzIasMotionAlarm (emits `occupancy` from bit 0).
+//   (2) z2m decodes msTemperatureMeasurement (fz.temperature) and exposes
+//       e.temperature(), but the port dropped both the decoder and the
+//       expose -> temperature was dead. Added kFzTemperature + the
+//       `temperature` expose + the 0x0402 binding.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::visonic {
 namespace {
 const FzConverter* const kFz_MP_840[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
+    &::zhc::generic::kFzTemperature,
 };
 
 constexpr const char* kModels_MP_840[] = { "MP-840" };
@@ -21,13 +31,15 @@ constexpr const char* kModels_MP_840[] = { "MP-840" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "\xc2\xb0""C", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
     {1, 0x0500},
 };
 // --- end auto-generated block ---
