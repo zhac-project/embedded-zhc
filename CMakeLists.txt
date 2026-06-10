@@ -1746,6 +1746,18 @@ target_link_libraries(zhc_tech_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_essentials_parity_tests tests/test_essentials_parity.cpp)
 target_link_libraries(zhc_essentials_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the GiEX water-irrigation valves (QT06_1 / QT06_2). Both are
+# Tuya-MCU (0xEF00) DP-stream devices (z2m legacy.fromZigbee.giexWaterValve)
+# auto-ported as bare kFzBattery + kFzOnOff stubs binding ZCL 0x0001/0x0006
+# they never speak and dropping 8 irrigation datapoints. Graduated to Tier-2
+# DP-map overrides: mode/state (bool->string via kTuyaDpFlagBoolEnum),
+# raw numeric water_consumed/battery/irrigation_target/cycle counts (z2m
+# applies NO scale — the float-divisor suspect was FALSE), and String DPs
+# (start/end time, last duration). DP 106 currentTemperature stays unmapped
+# (z2m ignores it). See tests/README.md.
+add_executable(zhc_giex_parity_tests tests/test_giex_parity.cpp)
+target_link_libraries(zhc_giex_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Zemismart curtain/blind-motor + switch family. Six
 # generic-cover stubs (kFzCoverPosition on the 0x0102 cluster) shadowed TS0601
 # Tuya-DP devices that only speak 0xEF00; five duplicated a kDefZem__TZE* DP
@@ -2142,6 +2154,7 @@ add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
 add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_essentials_parity_tests   COMMAND zhc_essentials_parity_tests)
+add_test(NAME zhc_giex_parity_tests         COMMAND zhc_giex_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
 add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)

@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **GiEX water-irrigation valves (QT06_1 / QT06_2) decoded nothing.** Both are
+  Tuya-MCU (0xEF00) DP-stream devices (z2m `legacy.fromZigbee.giexWaterValve`)
+  but the auto-generator ported them as bare `kFzBattery` + `kFzOnOff` stubs
+  binding ZCL clusters 0x0001/0x0006 the devices never speak, dropping 8 of
+  z2m's datapoints and carrying a phantom `voltage`. Graduated both to Tier-2
+  overrides wiring `fz_tuya_datapoints` + `tz_tuya_datapoints` with the full DP
+  map: mode (1) and state (2) as bool→string via `kTuyaDpFlagBoolEnum`, the
+  irrigation start/end time + last-duration String DPs (101/102/114), and the
+  raw numeric channels cycle_irrigation_num_times (103), irrigation_target
+  (104), cycle_irrigation_interval (105), battery (108) and water_consumed
+  (111). The suspected per-DP scale/float-divisor was confirmed FALSE — z2m
+  passes every value DP straight through with no scaling. DP 106
+  (currentTemperature) stays unmapped to match z2m (it explicitly ignores it).
 - **The Light Group (SLC SmartOne) remotes were wrong-bundled as settable
   lights.** S57003 (4-channel wall remote) and S57007 (3-button remote
   control) are battery-powered scene/dimmer remotes with z2m `toZigbee: []`,
