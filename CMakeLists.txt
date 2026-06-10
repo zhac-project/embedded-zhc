@@ -1391,6 +1391,11 @@ target_link_libraries(zhc_mercator_parity_tests PRIVATE zhc_definitions)
 # pins the flat thermostat shape + 0x0000/0x0012/0x001C decoders.
 add_executable(zhc_mill_parity_tests tests/test_mill_parity.cpp)
 target_link_libraries(zhc_mill_parity_tests PRIVATE zhc_definitions)
+# Hampton Bay ceiling-fan + tunable-white light parity. #99432 derives
+# fan_state from hvacFanCtrl (inlined kFzHamptonFan); #54668161 restores the
+# dropped color_temp (lightingColorCtrl) axis. See tests/README.md.
+add_executable(zhc_hampton_bay_parity_tests tests/test_hampton_bay_parity.cpp)
+target_link_libraries(zhc_hampton_bay_parity_tests PRIVATE zhc_definitions)
 
 # Parity fixtures for the Develco / Frient family. The IAS sensors
 # (FLSZB/HESZB/SMSZB/MOSZB/WISZB) lowered the generic kFzIasZone (bare
@@ -2873,6 +2878,7 @@ add_test(NAME zhc_ts004f_knob_tests         COMMAND zhc_ts004f_knob_tests)
 add_test(NAME zhc_datek_parity_tests        COMMAND zhc_datek_parity_tests)
 add_test(NAME zhc_mercator_parity_tests     COMMAND zhc_mercator_parity_tests)
 add_test(NAME zhc_mill_parity_tests         COMMAND zhc_mill_parity_tests)
+add_test(NAME zhc_hampton_bay_parity_tests  COMMAND zhc_hampton_bay_parity_tests)
 add_test(NAME zhc_viessmann_parity_tests    COMMAND zhc_viessmann_parity_tests)
 add_test(NAME zhc_salus_controls_parity_tests COMMAND zhc_salus_controls_parity_tests)
 add_test(NAME zhc_kmpcil_parity_tests       COMMAND zhc_kmpcil_parity_tests)
