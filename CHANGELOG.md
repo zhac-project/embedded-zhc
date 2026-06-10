@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Insta 57008000 blinds actuator exposed a dead `tilt` channel.** z2m's
+  `cover_position_tilt` reports both `currentPositionLiftPercentage` (attr
+  0x0008) and `currentPositionTiltPercentage` (attr 0x0009) on EP6, and the def
+  declared a `tilt` expose, but only the generic `kFzCoverPosition` (lift) was
+  wired so tilt reports decoded to nothing. Graduated to Tier 2 and wired
+  `kFzCoverTilt` (0x0009 → tilt) plus `default_endpoint=6` so outbound cover
+  commands route to the cover EP (matching z2m `endpoint:{default:6}`). Added
+  `tests/test_insta_parity.cpp`.
+
 - **TERNCY raw-frame action/motion decoder read past the body (dead action +
   occupancy surface).** z2m's `fzLocal.terncy_raw` reads the WHOLE raw frame
   buffer (`msg.data`, ZCL header included): `msg.data[4]` discriminates action

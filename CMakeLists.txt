@@ -1614,6 +1614,14 @@ target_link_libraries(zhc_wirenboard_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_niko_parity_tests tests/test_niko_parity.cpp)
 target_link_libraries(zhc_niko_parity_tests PRIVATE zhc_definitions)
 
+# Insta — 57008000 blinds actuator declared a `tilt` expose and z2m's
+# cover_position_tilt reports both currentPositionLiftPercentage (0x0008)
+# and currentPositionTiltPercentage (0x0009) on EP6, but the def wired only
+# the generic kFzCoverPosition (lift). Tilt reports decoded to nothing.
+# Added kFzCoverTilt + default_endpoint=6; test asserts both halves decode.
+add_executable(zhc_insta_parity_tests tests/test_insta_parity.cpp)
+target_link_libraries(zhc_insta_parity_tests PRIVATE zhc_definitions)
+
 # Perenio — PEHWE20 two-channel relay was missing `endpoint_map`, so its
 # `_l1`/`_l2` exposes never populated (both channels collided on the bare
 # `state`/`power_on_behavior`/`switch_type` keys). Graduated to Tier-2 +
@@ -1908,6 +1916,7 @@ add_test(NAME zhc_rgb_genie_parity_tests    COMMAND zhc_rgb_genie_parity_tests)
 add_test(NAME zhc_adurosmart_parity_tests   COMMAND zhc_adurosmart_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
+add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
