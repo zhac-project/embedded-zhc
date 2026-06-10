@@ -10,6 +10,24 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Nordtronic metering dimmers/relays: dropped 0x0B04 half + dead remote.**
+  The four metering devices `98424072` (rotary), `98425271` (Box Dimmer G2),
+  `98425033` (ceiling micro) and `98425034` (DIN rail) are z2m `m.light()` +
+  `m.electricityMeter()`. z2m's `electricityMeter()` defaults to
+  `cluster:"both"` (AC), layering `haElectricalMeasurement` 0x0B04
+  (power/voltage/current) on top of `seMetering` 0x0702 (energy) and binding
+  both. The auto-ports wired only `kFzMetering` (0x0702) and exposed only
+  energy+power — dropping the entire 0x0B04 half, so voltage and current never
+  decoded. Graduated all four to Tier 2: added `kFzElectricalMeasurement`,
+  `voltage`/`current` exposes and the `{1,0x0B04}` bind. The `98426061`
+  "Remote Control" is, in z2m, a command client (`m.commandsOnOff` +
+  `m.commandsLevelCtrl` + `m.commandsColorCtrl` + `m.battery`) but was
+  mis-ported as a controllable on/off switch (`kFzOnOff` + `kTzOnOff` + a
+  `state` expose) with a dead action stream; graduated to Tier 2 wiring the
+  generic `kFzCommand*` converters + an `action` expose, dropping the phantom
+  on/off state and `to_zigbee` setter. (`sunricher.externalSwitchType` on
+  `98425033` is a config-only manuSpecific enum — noted, deferred as infra.)
+
 - **Prolight bulbs/remote: dropped colour axis + dead remote.** The E27
   (`5412748727371`) and GU10 (`5412748727401`) white-and-colour bulbs are
   z2m `m.light({colorTemp:{range:[153,555]}, color:true})` but were

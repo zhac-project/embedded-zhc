@@ -1,8 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Nordtronic 98425034 — auto-generated.
+// Tier 2: Nordtronic 98425034 — graduated for the electricityMeter 0x0B04 half.
 // Zigbee din rail smart dimmer
-// z2m-source: nordtronic.ts #98425034.
+// z2m-source: nordtronic.ts #98425034 (m.light + m.electricityMeter()).
+//
+// z2m's m.electricityMeter() defaults to cluster:"both" (electricalMeasurementType
+// "ac"): it layers haElectricalMeasurement 0x0B04 (power/voltage/current) on top of
+// seMetering 0x0702 (energy). The auto-port wired only kFzMetering and dropped the
+// 0x0B04 half — no voltage/current exposes, no 0x0B04 decoder, no 0x0B04 bind.
+// Restored kFzElectricalMeasurement + voltage/current exposes + the {1,0x0B04} bind.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::nordtronic {
@@ -11,6 +17,7 @@ const FzConverter* const kFz_D98425034[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzElectricalMeasurement,
 };
 const TzConverter* const kTz_D98425034[] = {
     &::zhc::generic::kTzOnOff,
@@ -25,14 +32,17 @@ constexpr const char* kModels_D98425034[] = { "DINDimZ 98425034" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
     {1, 0x0702},
+    {1, 0x0B04},
 };
 // --- end auto-generated block ---
 

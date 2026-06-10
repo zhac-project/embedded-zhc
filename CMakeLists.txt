@@ -1784,6 +1784,9 @@ target_link_libraries(zhc_lux_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_nodon_parity_tests tests/test_nodon_parity.cpp)
 target_link_libraries(zhc_nodon_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_nordtronic_parity_tests tests/test_nordtronic_parity.cpp)
+target_link_libraries(zhc_nordtronic_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Owon HVAC family. AC201/AC221/PCT504 declared a
 # cooling setpoint and PCT504/PCT512 declared running_state + occupancy that
 # the generic kFzThermostat (0x0000/0x0012/0x001C) never decoded and no
@@ -2538,6 +2541,7 @@ add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_lux_parity_tests          COMMAND zhc_lux_parity_tests)
 add_test(NAME zhc_osram_parity_tests        COMMAND zhc_osram_parity_tests)
 add_test(NAME zhc_nodon_parity_tests        COMMAND zhc_nodon_parity_tests)
+add_test(NAME zhc_nordtronic_parity_tests   COMMAND zhc_nordtronic_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
 add_test(NAME zhc_imhotepcreation_parity_tests COMMAND zhc_imhotepcreation_parity_tests)
 add_test(NAME zhc_icasa_parity_tests        COMMAND zhc_icasa_parity_tests)
