@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Linptech ES1ZZ(TY) mmWave presence sensor decoded illuminance wrong and
+  under a non-z2m key.** z2m's `fzLocal.TS0225_illuminance` reads the whole raw
+  ZCL frame (`buffer = msg.data`), takes the little-endian u16 measuredValue at
+  full-frame offset 6/7, and publishes `illuminance = round(10^((raw-1)/10000))`
+  (lux). The ZHC decoder read `raw_body[6]/[7]` — offset by the 3-byte ZCL
+  header, so it read past the value into garbage — and emitted the raw u16 under
+  the non-z2m key `illuminance_raw` with no lux curve. Graduated
+  `Lin_ES1ZZ_TY_.cpp` to Tier 2, fixed the decoder to read `raw_data[6]/[7]`
+  (== z2m's full-frame offsets), apply the lux curve, and emit the standard
+  `illuminance` (lx) key + expose. Added `tests/test_linptech_parity.cpp`.
+  (The `manuSpecificTuya2` cluster-ID mapping 0xE001-vs-0xE002 is a documented
+  cross-vendor decision in `cluster_names.hpp` and left untouched.)
 - **Insta 57008000 blinds actuator exposed a dead `tilt` channel.** z2m's
   `cover_position_tilt` reports both `currentPositionLiftPercentage` (attr
   0x0008) and `currentPositionTiltPercentage` (attr 0x0009) on EP6, and the def

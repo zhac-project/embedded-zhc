@@ -17,14 +17,19 @@
 //  - tzLocal.TS0225 sensitivity / led_indicator / motion_detection_distance
 //    writes (attrs 57348 / 57349 / 57353 / 57355).
 //
-// Still partial:
-//  - msIlluminanceMeasurement raw decode (custom byte 6/7 lux formula)
-//    requires float `pow` — z2m's `10^((raw-1)/10000)` exponential. ZHC
-//    emits the raw u16 measuredValue as `illuminance_raw` instead.
+// Tier 3 fixed 2026-06-10 (parity pass):
+//  - msIlluminanceMeasurement raw decode now matches z2m exactly:
+//    reads the little-endian u16 measuredValue at FULL-FRAME offset 6/7
+//    (z2m's `buffer[7]*256 + buffer[6]` where `buffer = msg.data` is the
+//    whole ZCL frame incl. header — ZHC equivalent is `raw_data`, NOT
+//    `raw_body`; the previous `raw_body[6/7]` was off by the 3-byte ZCL
+//    header), applies z2m's `round(10^((raw-1)/10000))` lux curve, and
+//    emits the standard `illuminance` key (was the non-z2m `illuminance_raw`).
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 
@@ -78,21 +83,30 @@ constexpr ::zhc::FzConverter kFzES1ZZTuya2{
     .user_config       = nullptr,
 };
 
-// fzLocal.TS0225_illuminance — emit the raw u16 measuredValue from
-// msIlluminanceMeasurement raw frames at byte offset 6/7 of the body.
-// z2m converts via `round(10^((raw-1)/10000))`; ZHC keeps raw and lets
-// the caller map (avoids float `pow` on-target).
+// fzLocal.TS0225_illuminance — read the little-endian u16 measuredValue
+// from a msIlluminanceMeasurement *raw* frame and convert to lux.
+// z2m: `buffer = msg.data` (the full ZCL frame), `measuredValue =
+// buffer[7]*256 + buffer[6]`, `illuminance = measuredValue === 0 ? 0 :
+// round(10^((measuredValue-1)/10000))`. ZHC's `raw_data` is the same full
+// frame (incl. the 3-byte ZCL header), so offsets 6/7 line up 1:1 with z2m.
 bool fz_es1zz_illuminance(const ::zhc::DecodedMessage& msg,
                             const ::zhc::FzConverter&,
                             const ::zhc::PreparedDefinition&,
                             ::zhc::RuntimeContext&,
                             ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    if (msg.raw_body.size() < 8) return false;
+    if (msg.raw_data.size() < 8) return false;
     const std::uint16_t raw =
-        static_cast<std::uint16_t>(msg.raw_body[6]) |
-        (static_cast<std::uint16_t>(msg.raw_body[7]) << 8);
-    ::zhc::Value v{}; v.type = ::zhc::ValueType::Uint; v.u = raw;
-    out.put("illuminance_raw", v);
+        static_cast<std::uint16_t>(msg.raw_data[6]) |
+        (static_cast<std::uint16_t>(msg.raw_data[7]) << 8);
+    std::uint32_t lux = 0;
+    if (raw != 0) {
+        const double v = std::pow(10.0, (static_cast<double>(raw) - 1.0) / 10000.0);
+        long rounded = std::lround(v);
+        if (rounded < 0) rounded = 0;
+        lux = static_cast<std::uint32_t>(rounded);
+    }
+    ::zhc::Value v{}; v.type = ::zhc::ValueType::Uint; v.u = lux;
+    out.put("illuminance", v);
     return true;
 }
 
@@ -210,7 +224,7 @@ constexpr Expose kAutoExposes[] = {
     {"static_detection_sensitivity",  ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"presence_keep_time",            ExposeType::Numeric, Access::State,    "min",   nullptr, nullptr, 0},
     {"led_indicator",                 ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"illuminance_raw",               ExposeType::Numeric, Access::State,    nullptr, nullptr, nullptr, 0},
+    {"illuminance",                   ExposeType::Numeric, Access::State,    "lx",    nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

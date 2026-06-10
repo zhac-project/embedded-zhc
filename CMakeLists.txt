@@ -1040,6 +1040,9 @@ target_link_libraries(zhc_lidl_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_orvibo_parity_tests tests/test_orvibo_parity.cpp)
 target_link_libraries(zhc_orvibo_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_linptech_parity_tests tests/test_linptech_parity.cpp)
+target_link_libraries(zhc_linptech_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for Profalux cover motors + remotes. NB102 is an empty
 # remote (was hallucinated with a phantom on/off + battery bundle);
 # MOT-C1ZxxC/F is a lift+tilt cover on EP2 (was on/off + dropped tilt);
@@ -1873,6 +1876,7 @@ add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_iluminize_parity_tests    COMMAND zhc_iluminize_parity_tests)
 add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_orvibo_parity_tests       COMMAND zhc_orvibo_parity_tests)
+add_test(NAME zhc_linptech_parity_tests     COMMAND zhc_linptech_parity_tests)
 add_test(NAME zhc_profalux_parity_tests     COMMAND zhc_profalux_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
