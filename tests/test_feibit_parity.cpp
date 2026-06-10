@@ -14,6 +14,7 @@
 //     * SGA01ZB  fz.ias_gas_alarm_2       (bit1)  -> kFzIasGasAlarm2     -> gas
 //     * SWA01ZB  fz.ias_water_leak_alarm_1(bit0)  -> kFzIasWaterLeakAlarm-> water_leak
 //     * SDM01ZB  fz.ias_contact_alarm_1   (bit0)  -> kFzIasContactAlarm  -> contact
+//                  (z2m inverts: contact = !bit0 — magnet present = closed = true)
 //     * SEB01ZB  fz.ias_sos_alarm_2       (bit1)  -> kFzIasSosAlarm2     -> sos   (new generic)
 //
 //   Missing decoder —
@@ -158,25 +159,38 @@ DispatchResult dispatch_ias(RuntimeContext& ctx, const PreparedDefinition& def,
 // Typed IAS sensor: the semantic key is exposed (and bare "alarm" is gone),
 // an alarm on `alarm_bit` decodes to it, and a clear report drops it. tamper +
 // battery_low (status bits 2/3) always co-decode.
-void check_ias(const PreparedDefinition& def, const char* sem, unsigned alarm_bit) {
+//
+// `invert`: z2m's fz.ias_contact_alarm_1 publishes `contact = !(zoneStatus
+// alarm_bit)` (magnet present = closed door = bit clear = contact:true). For
+// that converter the semantic-key polarity is flipped vs the raw bit; tamper /
+// battery_low are unaffected. All other typed sensors (occupancy / smoke / co /
+// gas / water_leak / sos) keep the raw-bit polarity (invert=false).
+void check_ias(const PreparedDefinition& def, const char* sem, unsigned alarm_bit,
+               bool invert = false) {
     assert(def_exposes(def, sem));
     assert(!def_exposes(def, "alarm"));
 
     RuntimeContext c1{};
     auto on = dispatch_ias(c1, def, ias_notif(static_cast<std::uint16_t>(1u << alarm_bit)));
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    // bit SET → raw sensors true; inverted (contact) → false.
+    if (invert) assert(b_false(on.merged.find(sem)));
+    else        assert(b_true(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);   // legacy bare key must be gone
 
     RuntimeContext c2{};
     auto off = dispatch_ias(c2, def, ias_notif(0x0000));
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    // bit CLEAR → raw sensors false; inverted (contact) → true.
+    if (invert) assert(b_true(off.merged.find(sem)));
+    else        assert(b_false(off.merged.find(sem)));
 
     RuntimeContext c3{};
     auto tb = dispatch_ias(c3, def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    // alarm_bit is clear here → raw sensors false; inverted (contact) → true.
+    if (invert) assert(b_true(tb.merged.find(sem)));
+    else        assert(b_false(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -188,7 +202,7 @@ void test_ias_sensors() {
     check_ias(kDef_SCA01ZB, "carbon_monoxide", 0);
     check_ias(kDef_SGA01ZB, "gas",             1);   // alarm_2 -> bit 1
     check_ias(kDef_SWA01ZB, "water_leak",      0);
-    check_ias(kDef_SDM01ZB, "contact",         0);
+    check_ias(kDef_SDM01ZB, "contact",         0, /*invert=*/true);  // z2m contact = !bit0
     check_ias(kDef_SEB01ZB, "sos",             1);   // sos_alarm_2 -> bit 1
 
     // SGA01ZB on bit 0 must NOT fire (z2m reads alarm_2 only).

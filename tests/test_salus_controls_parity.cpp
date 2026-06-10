@@ -10,8 +10,9 @@
 // reportable state. Graduated to a Tier-2 parent stripping all of it.
 //
 // Also guards the already-correct vendor devices against regression:
-//   - SW600 / OS600 contact sensors: typed `contact` decode (IAS bit 0),
-//     not the generic bare `alarm` key.
+//   - SW600 / OS600 contact sensors: typed `contact` decode, not the generic
+//     bare `alarm` key. z2m inverts: contact = !(IAS bit 0) (bit set/open =
+//     contact false, bit clear/closed = contact true).
 //   - WLS600 water sensor: typed `water_leak` decode (IAS bit 0).
 //   - FC600 fan-coil thermostat: flat climate surface (local_temperature
 //     + current_heating_setpoint + system_mode + fan_mode), thermostat
@@ -85,6 +86,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
 }
 
 bool b_true(const Value* v)  { return v && v->type == ValueType::Bool && v->b; }
+bool b_false(const Value* v) { return v && v->type == ValueType::Bool && !v->b; }
 
 bool def_exposes(const PreparedDefinition& def, const char* key) {
     for (std::size_t i = 0; i < def.exposes_count; ++i)
@@ -121,16 +123,19 @@ static void test_contact_typed() {
         assert(def_exposes(def, "contact"));
         assert(def_binds(def, 0x0500));
 
+        // z2m publishes contact = !(bit0): bit 0 SET (open) → contact FALSE.
         auto open = dispatch_ias(def, ias_notif(0x0001));  // bit 0 set
         assert(open.any_matched);
-        assert(b_true(open.merged.find("contact")));
+        assert(b_false(open.merged.find("contact")));
         assert(open.merged.find("alarm")   == nullptr);  // not the bare key
         assert(open.merged.find("alarm_1") == nullptr);
 
-        // tamper(bit2)+battery_low(bit3) still decode via the typed converter.
+        // tamper(bit2)+battery_low(bit3) still decode via the typed converter;
+        // bit 0 clear here → contact TRUE (closed).
         auto tb = dispatch_ias(def, ias_notif(0x000C));
         assert(tb.any_matched);
         assert(b_true(tb.merged.find("battery_low")));
+        assert(b_true(tb.merged.find("contact")));
     }
 }
 
