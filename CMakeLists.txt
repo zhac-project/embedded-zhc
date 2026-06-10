@@ -1001,6 +1001,12 @@ target_link_libraries(zhc_edp_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_prolight_parity_tests tests/test_prolight_parity.cpp)
 target_link_libraries(zhc_prolight_parity_tests PRIVATE zhc_definitions)
 
+# Bega LED luminaires — 13557 (E27 RGBW) + 85000 (Garden Spotlight RGBW)
+# were z2m m.light({colorTemp, color}) but the auto-port dropped the
+# 0x0300 lightingColorCtrl axis (color_temp/color_xy exposes + bind).
+add_executable(zhc_bega_parity_tests tests/test_bega_parity.cpp)
+target_link_libraries(zhc_bega_parity_tests PRIVATE zhc_definitions)
+
 # MSH / MySmartHouse DIY ESP sensors — multi-channel restored. bme280psm
 # (temp/humidity/pressure) and ds18b20psm (temp) were reduced to
 # battery-only; AirQMon was mis-ported as a bare on/off switch instead of a
@@ -2923,6 +2929,7 @@ add_test(NAME zhc_smartenit_parity_tests    COMMAND zhc_smartenit_parity_tests)
 add_test(NAME zhc_blitzwolf_parity_tests    COMMAND zhc_blitzwolf_parity_tests)
 add_test(NAME zhc_ITCommander_parity_tests  COMMAND zhc_ITCommander_parity_tests)
 add_test(NAME zhc_qmotion_parity_tests      COMMAND zhc_qmotion_parity_tests)
+add_test(NAME zhc_bega_parity_tests         COMMAND zhc_bega_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
