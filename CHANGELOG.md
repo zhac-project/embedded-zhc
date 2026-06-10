@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **IT Commander contact + button parity.** `ITCMDR_Contact` wired the
+  generic `kFzIasZone`, emitting a bare `alarm` (zoneStatus bit 0) that
+  never matched the `contact` expose, so the door/window state was dead.
+  Swapped to `kFzIasContactAlarm` (z2m `fz.ias_contact_alarm_1`: inverted
+  bit-0 → `contact`, bit 2 → `tamper`, bit 3 → `battery_low`) and
+  re-pointed the expose to `contact`. `ITCMDR_Click` is a button but was
+  mis-ported as a controllable genOnOff switch (`kFzOnOff` + `kTzOnOff` +
+  a dead `state` toggle); re-ported to a new vendor `kFzItcmdrClicks`
+  converter (genMultistateInput 0x0012 PresentValue → `action`:
+  single/double/triple/quadruple/hold/release/many, per z2m
+  `fz.itcmdr_clicks`) with an `action` enum expose and no to_zigbee.
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
