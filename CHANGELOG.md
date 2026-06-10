@@ -42,6 +42,20 @@ across the ZHAC platform.
   inverted) now lowers `kFzIasContactAlarm` (`contact = !bit0`). Exposes
   realigned to z2m (occupancy/tamper/battery_low/battery/illuminance for MS100;
   contact/battery_low/battery for CS100).
+- **BlitzWolf BW-IS3 / BW-IS9 decode misroutes.** `BW-IS3` (PIR motion sensor)
+  was auto-ported as a generic IAS zone (`kFzIasZone`, ssIasZone 0x0500) with
+  phantom `alarm`/`tamper`/`battery_low` exposes and a dead 0x0500 bind, but
+  z2m decodes it via `legacy.fz.blitzwolf_occupancy_with_timeout` — a Tuya
+  0xEF00 DP stream (DP3 → occupancy). Graduated to a Tier-2 Tuya-DP override
+  (`fz_tuya_datapoints`, `dp::binary(3,"occupancy")`, `occupancy` expose, 0xEF00
+  bind). `BW-IS9` (water-leak sensor) used `kFzIasZone` (bare `alarm`) while
+  z2m's `m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:["alarm_1",
+  "alarm_2",…]})` bothAlarms config exposes `water_leak_alarm_1` (zoneStatus
+  bit 0) and `water_leak_alarm_2` (bit 1); repointed to two new typed
+  `kFzIasWaterLeakAlarm1`/`kFzIasWaterLeakAlarm2` generic converters with
+  matching exposes. The BW-SS7 1-gang/2-gang relays were verified correct
+  (2-gang already carries the `{l1,l2}` endpoint_map).
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as

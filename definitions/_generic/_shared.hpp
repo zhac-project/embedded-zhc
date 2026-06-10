@@ -293,6 +293,13 @@ extern const FzConverter kFzCommandColorLoopSet;
 // that surface scene picks via attribute writes.
 extern const FzConverter kFzTintScene;
 extern const FzConverter kFzIasWaterLeakAlarm;
+// `bothAlarms` variants of kFzIasWaterLeakAlarm. z2m
+// m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:["alarm_1","alarm_2",…]})
+// exposes both `water_leak_alarm_1` (zoneStatus bit 0) and
+// `water_leak_alarm_2` (bit 1) instead of the single bare `water_leak` key.
+// BlitzWolf BW-IS9.
+extern const FzConverter kFzIasWaterLeakAlarm1;
+extern const FzConverter kFzIasWaterLeakAlarm2;
 extern const FzConverter kFzIasSmokeAlarm;
 extern const FzConverter kFzIasCoAlarm;
 extern const FzConverter kFzIasVibrationAlarm;

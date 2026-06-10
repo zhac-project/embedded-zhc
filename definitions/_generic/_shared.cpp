@@ -1074,6 +1074,13 @@ constexpr IasAlarmLabel kLbl_ContactNI   { "contact",         0, false }; // inv
 constexpr IasAlarmLabel kLbl_Motion      { "occupancy",       0 };
 constexpr IasAlarmLabel kLbl_Motion2     { "occupancy",       1 };  // z2m fz.ias_occupancy_alarm_2
 constexpr IasAlarmLabel kLbl_WaterLeak   { "water_leak",      0 };
+// z2m m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:["alarm_1","alarm_2",…]})
+// sets `bothAlarms`, splitting the alarm into two keys: `water_leak_alarm_1`
+// (zoneStatus bit 0) and `water_leak_alarm_2` (bit 1). Distinct from the
+// single-alarm `kFzIasWaterLeakAlarm` above (bare `water_leak`). BlitzWolf
+// BW-IS9.
+constexpr IasAlarmLabel kLbl_WaterLeak1  { "water_leak_alarm_1", 0 };
+constexpr IasAlarmLabel kLbl_WaterLeak2  { "water_leak_alarm_2", 1 };
 constexpr IasAlarmLabel kLbl_Smoke       { "smoke",           0 };
 constexpr IasAlarmLabel kLbl_Co          { "carbon_monoxide", 0 };
 constexpr IasAlarmLabel kLbl_Vibration   { "vibration",       0 };
@@ -1111,6 +1118,8 @@ ZHC_IAS_TYPED_CVT(kFzIasContactAlarmNI, &kLbl_ContactNI);
 ZHC_IAS_TYPED_CVT(kFzIasMotionAlarm,    &kLbl_Motion);
 ZHC_IAS_TYPED_CVT(kFzIasMotionAlarm2,   &kLbl_Motion2);
 ZHC_IAS_TYPED_CVT(kFzIasWaterLeakAlarm, &kLbl_WaterLeak);
+ZHC_IAS_TYPED_CVT(kFzIasWaterLeakAlarm1, &kLbl_WaterLeak1);
+ZHC_IAS_TYPED_CVT(kFzIasWaterLeakAlarm2, &kLbl_WaterLeak2);
 ZHC_IAS_TYPED_CVT(kFzIasSmokeAlarm,     &kLbl_Smoke);
 ZHC_IAS_TYPED_CVT(kFzIasCoAlarm,        &kLbl_Co);
 ZHC_IAS_TYPED_CVT(kFzIasVibrationAlarm, &kLbl_Vibration);
