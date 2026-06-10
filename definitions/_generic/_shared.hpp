@@ -225,6 +225,9 @@ extern const FzConverter kFzIasZoneStatusChange;
 //
 // Pick ONE of these per device:
 //   - `kFzIasContactAlarm`   zoneType 0x0015 — door/window contact
+//       (emits z2m polarity: contact = !bit0, i.e. closed = true).
+//   - `kFzIasContactAlarmNI` non-inverted contact (raw bit0) — ONLY for
+//       devices z2m flags `invertAlarm:true` (e.g. vsmart HS-SEDR).
 //   - `kFzIasMotionAlarm`    zoneType 0x000D — motion / occupancy
 //   - `kFzIasWaterLeakAlarm` zoneType 0x002A — water leak
 //   - `kFzIasSmokeAlarm`     zoneType 0x0028 — smoke
@@ -235,6 +238,7 @@ extern const FzConverter kFzIasZoneStatusChange;
 // z2m-source: fromZigbee.ts `fz.ias_{contact,occupancy,water_leak,
 // smoke,co,vibration}_alarm_1`.
 extern const FzConverter kFzIasContactAlarm;
+extern const FzConverter kFzIasContactAlarmNI;
 extern const FzConverter kFzIasMotionAlarm;
 // Variant of `kFzIasMotionAlarm` reading zoneStatus bit 1 instead of
 // bit 0. Matches z2m's `fz.ias_occupancy_alarm_2`. Used by iris

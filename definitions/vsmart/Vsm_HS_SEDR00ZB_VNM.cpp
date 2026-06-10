@@ -19,14 +19,16 @@
 // Polarity note: z2m's modernExtend sets `invertAlarmPayload = true` for
 // `zoneType==="contact"`, then this device's explicit `invertAlarm:true`
 // flips it back to `false` — so VSmart publishes `contact = (zoneStatus
-// & 1)` (NOT the usual inverted contact). `kFzIasContactAlarm` emits
-// `contact = (zoneStatus & 1)` too, so the polarity matches exactly.
+// & 1)` (the RAW bit0, NOT the usual inverted contact). The default
+// `kFzIasContactAlarm` now inverts (contact = !bit0, the z2m norm), so
+// this device uses the non-inverting `kFzIasContactAlarmNI` to keep
+// `contact = (zoneStatus & 1)`.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::vsmart {
 namespace {
 const FzConverter* const kFz_HS_SEDR00ZB_VNM[] = {
-    &::zhc::generic::kFzIasContactAlarm,
+    &::zhc::generic::kFzIasContactAlarmNI,
 };
 
 constexpr const char* kModels_HS_SEDR00ZB_VNM[] = { "HS-SEDR00ZB-VNM" };

@@ -1041,7 +1041,13 @@ namespace {
 // user_config points at a static label + bit selector. Most z2m
 // `fz.ias_*_alarm` decoders read bit 0 (alarm_1); a few
 // (`fz.ias_occupancy_alarm_2` and friends) read bit 1 instead.
-struct IasAlarmLabel { const char* alarm_1; std::uint8_t bit = 0; };
+// `invert`: z2m publishes `contact = !(zoneStatus bit0)` (closed door =
+// magnet present = bit0 clear = contact:true) for every zoneType:"contact"
+// device — both fz.ias_contact_alarm_1 and the modernExtend iasZoneAlarm
+// (which sets invertAlarmPayload = (zoneType==="contact")). So the contact
+// label inverts. A device that additionally sets z2m `invertAlarm:true`
+// double-inverts back to raw bit0 → use the non-inverting kLbl_ContactNI.
+struct IasAlarmLabel { const char* alarm_1; std::uint8_t bit = 0; bool invert = false; };
 
 bool fz_ias_typed(const DecodedMessage& msg, const FzConverter& self,
                    const PreparedDefinition&, RuntimeContext&,
@@ -1056,13 +1062,15 @@ bool fz_ias_typed(const DecodedMessage& msg, const FzConverter& self,
     if (!cfg || !cfg->alarm_1) return false;
 
     Value v{}; v.type = ValueType::Bool;
-    v.b = (status & (1u << cfg->bit)) != 0; out.put(cfg->alarm_1,  v);
+    const bool raw_bit = (status & (1u << cfg->bit)) != 0;
+    v.b = cfg->invert ? !raw_bit : raw_bit; out.put(cfg->alarm_1,  v);
     v.b = (status & 0x0004) != 0; out.put("tamper",      v);
     v.b = (status & 0x0008) != 0; out.put("battery_low", v);
     return true;
 }
 
-constexpr IasAlarmLabel kLbl_Contact     { "contact",         0 };
+constexpr IasAlarmLabel kLbl_Contact     { "contact",         0, true };  // z2m inverts contact: contact = !bit0
+constexpr IasAlarmLabel kLbl_ContactNI   { "contact",         0, false }; // invertAlarm:true devices (vsmart HS-SEDR) → raw bit0
 constexpr IasAlarmLabel kLbl_Motion      { "occupancy",       0 };
 constexpr IasAlarmLabel kLbl_Motion2     { "occupancy",       1 };  // z2m fz.ias_occupancy_alarm_2
 constexpr IasAlarmLabel kLbl_WaterLeak   { "water_leak",      0 };
@@ -1099,6 +1107,7 @@ constexpr IasAlarmLabel kLbl_Sos2        { "sos",             1 };
     }
 
 ZHC_IAS_TYPED_CVT(kFzIasContactAlarm,   &kLbl_Contact);
+ZHC_IAS_TYPED_CVT(kFzIasContactAlarmNI, &kLbl_ContactNI);
 ZHC_IAS_TYPED_CVT(kFzIasMotionAlarm,    &kLbl_Motion);
 ZHC_IAS_TYPED_CVT(kFzIasMotionAlarm2,   &kLbl_Motion2);
 ZHC_IAS_TYPED_CVT(kFzIasWaterLeakAlarm, &kLbl_WaterLeak);
