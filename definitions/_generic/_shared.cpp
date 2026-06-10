@@ -79,6 +79,21 @@ bool fz_battery(const DecodedMessage& msg,
         }
     }
 
+    // attr 0x0035 — batteryAlarmState (bitmap32). z2m fz.battery raises
+    // `battery_low` when any of the per-cell "low" bits is set across the
+    // three battery banks: bank-1 bits 0..3, bank-2 bits 10..13, bank-3
+    // bits 20..23. Mirrors converters/fromZigbee.ts `fz.battery`.
+    if (const Value* v = msg.payload.find("53")) {
+        if (v->type == ValueType::Uint) {
+            const std::uint32_t st = static_cast<std::uint32_t>(v->u);
+            const bool low = (st & 0x0000000Fu) || (st & 0x00003C00u) ||
+                             (st & 0x00F00000u);
+            Value bl{}; bl.type = ValueType::Bool; bl.b = low;
+            out.put("battery_low", bl);
+            emitted = true;
+        }
+    }
+
     return emitted;
 }
 

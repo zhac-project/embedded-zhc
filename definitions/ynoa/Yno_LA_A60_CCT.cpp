@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ynoa LA-A60-CCT — auto-generated.
-// Smart LED E27 CCT A60
+// Tier 2: Ynoa LA-A60-CCT — hand-curated (CCT half was dead).
+// Smart LED E27 CCT A60. z2m `m.light({colorTemp:{range:[153,370]}})` — a
+// tunable-white bulb. The auto-port wired only OnOff + Brightness and
+// dropped the color-temperature axis (read + write). Added
+// kFzColorTemperature / kTzColorTemp + the `color_temp` expose + the
+// lightingColorCtrl (0x0300) binding.
 // z2m-source: ynoa.ts #LA-A60-CCT.
 #include "definitions/_generic/_shared.hpp"
 
@@ -10,10 +14,12 @@ namespace {
 const FzConverter* const kFz_LA_A60_CCT[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzColorTemperature,
 };
 const TzConverter* const kTz_LA_A60_CCT[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzColorTemp,
 };
 constexpr const char* kModels_LA_A60_CCT[] = { "ZBT-CCTLight-A0001" };
 
@@ -24,11 +30,13 @@ constexpr const char* kModels_LA_A60_CCT[] = { "ZBT-CCTLight-A0001" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
+    {1, 0x0300},
 };
 // --- end auto-generated block ---
 

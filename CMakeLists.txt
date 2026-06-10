@@ -1806,6 +1806,18 @@ target_link_libraries(zhc_giex_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_zemismart_parity_tests tests/test_zemismart_parity.cpp)
 target_link_libraries(zhc_zemismart_parity_tests PRIVATE zhc_definitions)
 
+# Ynoa (Lytimages): two remotes (LA-5KEY-RGBW, 8718801528334) were
+# wrong-bundled as settable on/off lights — every key press dead — and the
+# four CCT/RGBW bulbs dropped their colorTemp (+ color on the RGBW) axes.
+# Graduated each def: remotes → genOnOff/genLevelCtrl/lightingColorCtrl
+# command decoders + `action`, no toolbox; bulbs → kFzColorTemperature
+# (+ kFzColor) + color_temp/color_xy exposes + 0x0300 binding. Also extended
+# generic kFzBattery to decode genPowerCfg batteryAlarmState (0x0035) so the
+# 5KEY's battery_low is no longer dead. Plug pinned as a regression guard
+# (0x0702 + 0x0B04 both alive).
+add_executable(zhc_ynoa_parity_tests tests/test_ynoa_parity.cpp)
+target_link_libraries(zhc_ynoa_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Avatto family (Tuya-OEM TS0601 DP devices). Three
 # auto-generated DP-table decode bugs fixed: ME168_AVATTO DP47 calibration
 # divisor 100->1 (z2m localTempCalibration2 is identity), and ZDMS16-1 +
@@ -2246,6 +2258,7 @@ add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_essentials_parity_tests   COMMAND zhc_essentials_parity_tests)
 add_test(NAME zhc_giex_parity_tests         COMMAND zhc_giex_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
+add_test(NAME zhc_ynoa_parity_tests         COMMAND zhc_ynoa_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
 add_test(NAME zhc_saswell_parity_tests      COMMAND zhc_saswell_parity_tests)
 add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)

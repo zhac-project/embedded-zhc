@@ -1,7 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ynoa LA-GU10-RGBW — auto-generated.
-// Smart LED GU10 RGB CCT
+// Tier 2: Ynoa LA-GU10-RGBW — hand-curated (color + CT halves were dead).
+// Smart LED GU10 RGB CCT. z2m
+// `m.light({colorTemp:{range:[153,526]}, color:{modes:["xy","hs"]}})` — a
+// full RGB + tunable-white bulb. The auto-port wired only OnOff +
+// Brightness and dropped BOTH the color-temperature axis and the color
+// (xy/hs) axis (read + write). Added kFzColorTemperature + kFzColor /
+// kTzColorTemp + kTzColor + the `color_temp` + `color_xy` exposes + the
+// lightingColorCtrl (0x0300) binding.
 // z2m-source: ynoa.ts #LA-GU10-RGBW.
 #include "definitions/_generic/_shared.hpp"
 
@@ -10,10 +16,14 @@ namespace {
 const FzConverter* const kFz_LA_GU10_RGBW[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzColorTemperature,
+    &::zhc::generic::kFzColor,
 };
 const TzConverter* const kTz_LA_GU10_RGBW[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzColorTemp,
+    &::zhc::generic::kTzColor,
 };
 constexpr const char* kModels_LA_GU10_RGBW[] = { "ZBT-RGBWLight-M0000" };
 
@@ -24,11 +34,14 @@ constexpr const char* kModels_LA_GU10_RGBW[] = { "ZBT-RGBWLight-M0000" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0},
+    {"color_xy", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
+    {1, 0x0300},
 };
 // --- end auto-generated block ---
 
