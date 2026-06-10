@@ -464,6 +464,12 @@ extern const FzConverter kFzElectricalMeasurement;
 // attribute:"presentValue", valueOn:["ON",1], valueOff:["OFF",0]})`.
 // Multi-endpoint contact interfaces suffix to `input_<label>`.
 extern const FzConverter kFzBinaryInput;
+// genBinaryOutput (0x0010) presentValue (attr 0x0055) → "state" (Bool).
+// Mirror of kFzBinaryInput on the binary-output cluster. Multi-endpoint
+// channel devices suffix to `state_<label>`. z2m's per-device
+// activeText/inactiveText enum strings are runtime-only, so the static
+// port emits the decodable boolean half.
+extern const FzConverter kFzBinaryOutput;
 extern const FzConverter kFzThermostat;
 extern const FzConverter kFzIasZone;
 // ssIasZone ZoneStatus attribute report (attr 0x0002, u16), bit 0 → `alarm`

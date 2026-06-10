@@ -2026,6 +2026,17 @@ target_link_libraries(zhc_lellki_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_vimar_parity_tests tests/test_vimar_parity.cpp)
 target_link_libraries(zhc_vimar_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Multiterm ZC0101 ZeeFan fan coil unit controller.
+# The auto-port modelled it as a bare single `fan_mode` binary and dropped
+# the entire multi-endpoint binary-output half — three genBinaryOutput
+# (0x0010) channels on endpoints 8/9/10 (silent_mode/heating_cooling/
+# electric_valve) had no decoder and would have collided on a bare `state`
+# key. Wired the new generic kFzBinaryOutput (presentValue -> boolean state)
+# and added an endpoint_map for ep9/ep10 (ep8 left unmapped so the fan
+# control's hvacFanCtrl key stays unsuffixed). See tests/README.md.
+add_executable(zhc_multiterm_parity_tests tests/test_multiterm_parity.cpp)
+target_link_libraries(zhc_multiterm_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -2106,6 +2117,7 @@ add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_fantem_parity_tests       COMMAND zhc_fantem_parity_tests)
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
+add_test(NAME zhc_multiterm_parity_tests    COMMAND zhc_multiterm_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
 add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)

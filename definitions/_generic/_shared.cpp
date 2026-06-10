@@ -3056,6 +3056,55 @@ extern const FzConverter kFzBinaryInput{
     .user_config       = nullptr,
 };
 
+// ── fz_binary_output (genBinaryOutput 0x0010) ───────────────────────
+//
+// Emits "state" (Bool) from presentValue (attr 0x0055 = decimal "85").
+// Mirror of fz_binary_input but on the genBinaryOutput cluster (0x0010),
+// for devices whose channel state lives in the writable binary-output
+// presentValue rather than a binary-input. Tolerates the present-value
+// arriving as Bool (0x10) or numeric (Uint/Int) and normalises to Bool.
+// On multi-endpoint devices the dispatch layer suffixes the bare key to
+// `state_<label>` per the definition's endpoint_map.
+//
+// z2m faithfully maps presentValue===1 to a per-device activeText /
+// inactiveText string (e.g. "heating"/"cooling"); those texts are only
+// known at runtime from the device's cluster attributes, so the static
+// port emits the decodable boolean half. Callers that need the enum
+// labels read activeText/inactiveText on the device side.
+
+bool fz_binary_output(const DecodedMessage& msg,
+                       const FzConverter&,
+                       const PreparedDefinition&,
+                       RuntimeContext&,
+                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // attr 0x0055 — PresentValue.
+    const Value* v = msg.payload.find("85");
+    if (v == nullptr) return false;
+    bool state;
+    if      (v->type == ValueType::Bool) state = v->b;
+    else if (v->type == ValueType::Uint) state = v->u != 0;
+    else if (v->type == ValueType::Int)  state = v->i != 0;
+    else return false;
+    Value o{}; o.type = ValueType::Bool; o.b = state;
+    out.put("state", o);
+    return true;
+}
+
+extern const FzConverter kFzBinaryOutput{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genBinaryOutput",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_binary_output },
+    .user_config       = nullptr,
+};
+
 // ── fz_thermostat (hvacThermostat 0x0201) ───────────────────────────
 //
 // Emits "local_temperature" (s16, 1/100 °C raw), "occupied_heating_

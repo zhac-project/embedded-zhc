@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Multiterm ZC0101 (ZeeFan fan coil unit controller) dropped its entire
+  multi-endpoint binary-output half.** The auto-port modelled it as a bare
+  single `fan_mode` binary and never decoded the three genBinaryOutput
+  (0x0010) channels on endpoints 8/9/10 (silent_mode/heating_cooling/
+  electric_valve, z2m `fzLocal.binary_output` under
+  `m.deviceEndpoints({8,9,10})`), which would also have collided on a bare
+  `state` key. Added a reusable generic `kFzBinaryOutput` (presentValue →
+  boolean `state`, mirror of `kFzBinaryInput`), graduated the def to Tier 2
+  with the z2m exposes (fan_state + the three channel enums) and an
+  endpoint_map for ep9/ep10 (ep8 left unmapped so the fan's hvacFanCtrl key
+  stays unsuffixed → channels resolve to `state`/`state_9`/`state_10`). The
+  per-channel activeText/inactiveText enum labels + the binary_output write
+  path remain runtime-attribute-dependent and are deferred as infra.
 - **GiEX water-irrigation valves (QT06_1 / QT06_2) decoded nothing.** Both are
   Tuya-MCU (0xEF00) DP-stream devices (z2m `legacy.fromZigbee.giexWaterValve`)
   but the auto-generator ported them as bare `kFzBattery` + `kFzOnOff` stubs
