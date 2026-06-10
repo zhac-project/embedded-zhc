@@ -917,6 +917,16 @@ target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Visonic (PowerMax/Tyco) IAS-Zone sensor family.
+# All 8 generated defs lowered the generic kFzIasZone (bare key "alarm") while
+# exposing the semantic key (occupancy/contact/vibration) — the primary sensor
+# state never reached the shadow. Graduated to Tier-2 overrides using the typed
+# kFzIas<Type>Alarm converters. The five temperature-capable models (MP-840,
+# MCT-350/340 E/340 SMA/302 SMA) also dropped z2m's fz.temperature decoder +
+# e.temperature() expose; restored kFzTemperature + the expose + 0x0402 binding.
+add_executable(zhc_visonic_parity_tests tests/test_visonic_parity.cpp)
+target_link_libraries(zhc_visonic_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Fantem ZB003-X 4-in-1 multi sensor. Its IAS path lowered the
 # generic kFzIasZoneStatusChange (bare "alarm_1") while the expose declared
 # `occupancy`; z2m fz.ZB003X_occupancy maps zoneStatus bit0 -> occupancy, so
@@ -2134,6 +2144,7 @@ add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
 add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
+add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
