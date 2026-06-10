@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Fantem ZB003-X 4-in-1 multi sensor never reported `occupancy`.** The IAS
+  motion path lowered the generic `kFzIasZoneStatusChange`, which emits the
+  bare key `alarm_1` for zoneStatus bit 0, while the expose declared the
+  semantic key `occupancy`. z2m's `fz.ZB003X_occupancy` maps bit 0 →
+  `occupancy` (bit 2 → `tamper`), so motion events never reached the shadow.
+  Re-pointed the def at the typed `kFzIasMotionAlarm` (emits `occupancy` from
+  bit 0, `tamper`/`battery_low` from bits 2/3) and graduated it out of
+  `generated/`. Tuya-DP temp/humidity/calibration path was already correct.
+
 - **Inovelli Blue-series switches/dimmers/fan dropped their button-tap
   `action`.** z2m marks VZM30-SN, VZM31-SN, VZM32-SN and VZM35-SN
   `supportsButtonTaps: true`, decoding a manufacturer-specific raw frame on

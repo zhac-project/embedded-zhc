@@ -3,13 +3,16 @@
 // Tier 2: Fantem ZB003-X — hand-rewritten 2026-04-29g sweep.
 // 4 in 1 multi sensor.
 //
-// z2m-source: fantem.ts #ZB003-X.
+// z2m-source: fantem.ts #ZB003-X (fz.ZB003X_occupancy).
 //
 // Wire format notes:
 //   * Battery (% + voltage) rides standard genPowerCfg via kFzBattery.
 //   * Occupancy + tamper + battery_low ride ssIasZone
 //     commandStatusChangeNotification (cmd 0x00) decoded by
-//     kFzIasZoneStatusChange — the device sends this on motion events.
+//     kFzIasMotionAlarm — z2m fz.ZB003X_occupancy maps zoneStatus bit0
+//     → occupancy (NOT the bare alarm_1 the generic kFzIasZoneStatusChange
+//     emits, which left the `occupancy` expose dead), bit2 → tamper,
+//     bit3 → battery_low. The device sends this on motion events.
 //   * Tuya DP stream on manuSpecificTuya (0xEF00):
 //       DP 102 fantemReportingTime         u32 → reporting_time (min)
 //       DP 104 fantemTempCalibration       i32 → temperature_calibration
@@ -149,7 +152,7 @@ extern const TzConverter kTz_KeepTime{
 
 const FzConverter* const kFz_ZB003_X[] = {
     &::zhc::generic::kFzBattery,             // genPowerCfg → battery + voltage
-    &::zhc::generic::kFzIasZoneStatusChange, // ssIasZone cmd 0x00 → occupancy/tamper/battery_low
+    &::zhc::generic::kFzIasMotionAlarm,      // ssIasZone cmd 0x00 → occupancy(bit0)/tamper(bit2)/battery_low(bit3)
     &::zhc::tuya::kFzTuyaMcuSyncTime,
     &kFzDp_ZB003_X,
 };

@@ -917,6 +917,14 @@ target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Fantem ZB003-X 4-in-1 multi sensor. Its IAS path lowered the
+# generic kFzIasZoneStatusChange (bare "alarm_1") while the expose declared
+# `occupancy`; z2m fz.ZB003X_occupancy maps zoneStatus bit0 -> occupancy, so
+# the def was re-pointed at the typed kFzIasMotionAlarm. Tests pin the
+# occupancy/tamper/battery_low IAS decode plus the Tuya-DP temp/humidity path.
+add_executable(zhc_fantem_parity_tests tests/test_fantem_parity.cpp)
+target_link_libraries(zhc_fantem_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Somfy roller-shutter / blind family. Ysia 5 (1871154) is a
 # 5-channel remote whose port carried an endpoint_map but no
 # endpoint_action_suffix, so all five buttons collided on a bare "action";
@@ -1984,6 +1992,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_fantem_parity_tests       COMMAND zhc_fantem_parity_tests)
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
