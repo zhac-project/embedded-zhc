@@ -1716,6 +1716,14 @@ target_link_libraries(zhc_perenio_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_stelpro_parity_tests tests/test_stelpro_parity.cpp)
 target_link_libraries(zhc_stelpro_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Netica FRZ1 ("FreezBee") Frisquet-boiler
+# thermostat. Pins the graduated-def fixes: phantom battery removed,
+# running_state (0x0029) + control_sequence_of_operation (0x001B) +
+# the two manuSpec read-backs (remote_temperature 0x4000,
+# target_water_temperature 0x4002) now decode.
+add_executable(zhc_netica_parity_tests tests/test_netica_parity.cpp)
+target_link_libraries(zhc_netica_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Aurora "AOne" non-light family. The PIR
 # (AU-A1ZBPIRS) and contact (AU-A1ZBDWS) sensors decoded the bare "alarm"
 # key (generic kFzIasZone) instead of the typed occupancy/contact, and the
@@ -1990,6 +1998,7 @@ add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
 add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)
 add_test(NAME zhc_lellki_parity_tests       COMMAND zhc_lellki_parity_tests)
 add_test(NAME zhc_stelpro_parity_tests      COMMAND zhc_stelpro_parity_tests)
+add_test(NAME zhc_netica_parity_tests       COMMAND zhc_netica_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)

@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Netica FRZ1 ("FreezBee") thermostat carried a phantom battery and four
+  dead exposes.** z2m's `netica.ts` wires `m.temperature() + m.humidity() +
+  m.thermostat({runningState, ctrlSeqeOfOper, ...})` plus three manuSpec
+  hvacThermostat attrs and **no** `m.battery()` / genPowerCfg. The auto-port
+  invented `battery`/`voltage` exposes (+ `kFzBattery` + a 0x0001 binding),
+  and the generic `kFzThermostat` (0x0000/0x0012/0x001C only) never populated
+  `running_state` (0x0029) or `control_sequence_of_operation` (0x001B), while
+  the manuSpec `remote_temperature` (0x4000) and `target_water_temperature`
+  (0x4002) were wired write-only — all four stayed dead despite being declared
+  exposes in z2m. Graduated `Net_FRZ1.cpp` to Tier 2, removed the phantom
+  battery, and added an inline `kFzNeticaThermostatExtras` converter decoding
+  running_state, control_sequence_of_operation and the two manuSpec read-backs
+  alongside the generic decoder. Added `tests/test_netica_parity.cpp`.
+
 - **Leviton RC-2000WH (Omnistat2) thermostat left three exposes dead.** z2m
   wires the full `fz.thermostat`, which publishes the entire hvacThermostat
   surface, but the auto-port only wired the generic `kFzThermostat`
