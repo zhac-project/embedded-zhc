@@ -15,8 +15,10 @@
 // These tests pin, on real wire shapes, that SZ-PIR04N now decodes
 // illuminance (and still decodes its IAS occupancy + temperature channels),
 // and structurally guard the rest of the family against regressions:
-//   - the contact/motion/water IAS sensors emit the *semantic* key (bit 0,
-//     the `_alarm_1` variant per z2m), not the bare "alarm" key;
+//   - the contact/motion/water IAS sensors emit the *semantic* key
+//     (the `_alarm_1` variant per z2m), not the bare "alarm" key. Note z2m
+//     inverts contact (`contact = !(zoneStatus bit0)`), so the contact
+//     assertion is flipped; motion/water remain raw bit 0;
 //   - the metering plugs keep their energy/power (0x0702) channel and, for
 //     SZ-ESW01-AU, the electrical-measurement (0x0B04) channel.
 
@@ -140,15 +142,20 @@ bool def_binds(const PreparedDefinition& def, std::uint16_t cluster) {
     return false;
 }
 
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+// `invert`: z2m publishes `contact = !(zoneStatus bit0)` for zoneType:"contact"
+// devices (kFzIasContactAlarm). For those the bit-0-set frame yields the
+// semantic key FALSE and the clear frame yields TRUE. Non-contact keys
+// (occupancy / water_leak / …) read raw bit 0, so default `invert=false`.
+void check_alarm1(const PreparedDefinition& def, const char* sem,
+                  bool invert = false) {
     assert(def_exposes(def, sem));
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only (bit 0)
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert(invert ? b_false(on.merged.find(sem)) : b_true(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);       // bare key must be gone
     auto off = dispatch_ias(def, ias_notif(0x0000));
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert(invert ? b_true(off.merged.find(sem)) : b_false(off.merged.find(sem)));
 }
 
 }  // namespace
@@ -180,7 +187,7 @@ static void test_pir04n_motion_and_temp() {
 }
 
 // ── IAS family — semantic keys (bit 0 / _alarm_1) ────────────────────
-static void test_contact()    { check_alarm1(devices::sercomm::kDef_XHS2_SE,  "contact"); }
+static void test_contact()    { check_alarm1(devices::sercomm::kDef_XHS2_SE,  "contact", /*invert=*/true); }
 static void test_water_leak() { check_alarm1(devices::sercomm::kDef_SZ_WTD03, "water_leak"); }
 static void test_motion()     { check_alarm1(devices::sercomm::kDef_AL_PIR02, "occupancy"); }
 

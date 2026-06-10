@@ -109,23 +109,30 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
 
 // Assert: an alarm_1 (bit 0) sensor decodes its semantic key, never the
 // bare "alarm", and tracks tamper/battery_low on bits 2/3.
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+//
+// `invert`: z2m publishes `contact = !(zoneStatus bit0)` for zoneType:"contact"
+// devices (kFzIasContactAlarm). For those, a bit-0-set frame yields the
+// semantic key FALSE and a bit-0-clear frame yields TRUE. occupancy / smoke /
+// water_leak read raw bit 0, so default `invert=false`. tamper/battery_low
+// (bits 2/3) are never inverted.
+void check_alarm1(const PreparedDefinition& def, const char* sem,
+                  bool invert = false) {
     assert(def_exposes(def, sem));           // regression guard vs kFzIasZone
 
-    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
+    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only (bit 0)
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert(invert ? b_false(on.merged.find(sem)) : b_true(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
-    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
+    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear (bit 0 low)
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert(invert ? b_true(off.merged.find(sem)) : b_false(off.merged.find(sem)));
 
-    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(2)+battery_low(3)
+    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(2)+battery_low(3), bit0 low
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    assert(invert ? b_true(tb.merged.find(sem)) : b_false(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -174,7 +181,7 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def, std::uint16_t cluster
 
 // ── IAS sensors: semantic-key dead-key fix ───────────────────────────
 static void test_occupancy()  { check_alarm1(devices::gs::kDef_SMHM_I1, "occupancy"); }
-static void test_contact()    { check_alarm1(devices::gs::kDef_SOHM_I1, "contact"); }
+static void test_contact()    { check_alarm1(devices::gs::kDef_SOHM_I1, "contact", /*invert=*/true); }
 static void test_smoke()      { check_alarm1(devices::gs::kDef_SSHM_I1, "smoke"); }
 static void test_water()      { check_alarm1(devices::gs::kDef_SWHM_I1, "water_leak"); }
 static void test_gas_methane(){ check_gas_alarm2(devices::gs::kDef_SGMHM_I1); }
