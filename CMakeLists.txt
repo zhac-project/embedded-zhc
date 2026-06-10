@@ -2074,6 +2074,17 @@ target_link_libraries(zhc_stello_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_netica_parity_tests tests/test_netica_parity.cpp)
 target_link_libraries(zhc_netica_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Purmo/Radson Yali Parada Plus (PUMM01102)
+# electric oil-filled radiator. The Tier-1 auto-port wired only the
+# generic kFzThermostat (0x0000/0x0012/0x001C), leaving the exposed
+# unoccupied_heating_setpoint (0x0014), local_temperature_calibration
+# (0x0010), running_mode (0x001E), running_state (0x0029),
+# max_heat_setpoint_limit (0x0016) and occupancy (0x0002) dead — z2m's
+# fz.thermostat decodes all of them. Now decoded via
+# kFzPurmoThermostatExtras; system_mode re-typed Binary -> Enum.
+add_executable(zhc_purmo_parity_tests tests/test_purmo_parity.cpp)
+target_link_libraries(zhc_purmo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Acova electric-radiator thermostats
 # (ALCANTARA2, TAFFETAS2/PERCALE2, IHC-Enki). The generic kFzThermostat
 # emits attr 0x0012 as "current_heating_setpoint" and decodes none of
@@ -2447,6 +2458,7 @@ add_test(NAME zhc_lellki_parity_tests       COMMAND zhc_lellki_parity_tests)
 add_test(NAME zhc_stelpro_parity_tests      COMMAND zhc_stelpro_parity_tests)
 add_test(NAME zhc_stello_parity_tests       COMMAND zhc_stello_parity_tests)
 add_test(NAME zhc_netica_parity_tests       COMMAND zhc_netica_parity_tests)
+add_test(NAME zhc_purmo_parity_tests        COMMAND zhc_purmo_parity_tests)
 add_test(NAME zhc_acova_parity_tests        COMMAND zhc_acova_parity_tests)
 add_test(NAME zhc_intuis_parity_tests       COMMAND zhc_intuis_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)

@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Purmo/Radson Yali Parada Plus thermostat: dead thermostat extras.**
+  The `PUMM01102` electric oil-filled radiator was auto-ported with only
+  the generic `kFzThermostat`, which decodes just hvacThermostat
+  0x0000/0x0012/0x001C. z2m wires `fz.thermostat` and exposes the full
+  climate surface, so `unoccupied_heating_setpoint` (0x0014),
+  `local_temperature_calibration` (0x0010), `running_mode` (0x001E),
+  `running_state` (0x0029), `max_heat_setpoint_limit` (0x0016) and
+  `occupancy` (0x0002) were exposed-but-dead. Graduated the def to Tier 2,
+  added `kFzPurmoThermostatExtras` (delegates to the generic decoder then
+  adds the missing attrs), wired the matching write path (unoccupied
+  setpoint, max-heat limit, local-temp calibration, occupancy), restored
+  the full flat expose surface, re-typed `system_mode` from Binary to
+  Enum, and pinned the manufacturer name (`computime`).
+
 - **HZC Electric sensor parity: phantom on/off, IAS dead-keys, dropped
   channels.** Three generated sensor defs were mis-ported. `S093TH-ZG`
   (temp/humidity) was wired as a phantom on/off switch (`kFzOnOff` +
