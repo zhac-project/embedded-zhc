@@ -1582,6 +1582,14 @@ target_link_libraries(zhc_innr_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bituo_technik_parity_tests tests/test_bituo_technik_parity.cpp)
 target_link_libraries(zhc_bituo_technik_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the LifeControl (MCLH series). The sweep restored
+# three dropped channels: MCLH-02 colour bulb (lightingColorCtrl half),
+# MCLH-03 socket (haElectricalMeasurement voltage/current), and MCLH-08
+# air-quality sensor (the custom msTemperatureMeasurement-packed temp/
+# humidity/eco2/voc report). See tests/README.md.
+add_executable(zhc_lifecontrol_parity_tests tests/test_lifecontrol_parity.cpp)
+target_link_libraries(zhc_lifecontrol_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Dawon DNS (Korean smart-plug / in-wall-switch)
 # family. The vendor is mostly clean (m.onOff switches, fz.metering plugs,
 # TH-110 temp/humidity, KB-HD100 ssIasZone card-holder). The one real gap
@@ -2050,6 +2058,7 @@ add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)
+add_test(NAME zhc_lifecontrol_parity_tests  COMMAND zhc_lifecontrol_parity_tests)
 add_test(NAME zhc_amina_parity_tests        COMMAND zhc_amina_parity_tests)
 add_test(NAME zhc_xyzroe_parity_tests       COMMAND zhc_xyzroe_parity_tests)
 add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)

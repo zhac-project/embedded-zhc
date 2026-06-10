@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **LifeControl (MCLH series) ports dropped whole channels.** Three
+  auto-generated defs lost half their z2m functionality: MCLH-02 "vivi
+  ZLight" colour bulb (`m.light({colorTemp, color: true})`) wired only
+  on/off + brightness, dropping the entire `lightingColorCtrl` (0x0300)
+  half (color_temp / color_x/y / hue / saturation); MCLH-03 "RICI01"
+  smart socket (`m.electricityMeter()` default cluster "both") wired only
+  `seMetering` (0x0702) energy, dropping the `haElectricalMeasurement`
+  (0x0B04) voltage/current; MCLH-08 "VOC_Sensor" air-quality sensor wired
+  only battery, dropping LifeControl's custom `airQuality()` decode that
+  packs temperature/humidity/eco2/voc into ONE `msTemperatureMeasurement`
+  (0x0402) report. Graduated all three to Tier 2: MCLH-02 + MCLH-03 wire
+  the generic colour / electrical-measurement converters; MCLH-08 gets a
+  vendor `kFzLifecontrolAirQuality` converter (incl. the negative-
+  temperature wrap). Covered by `tests/test_lifecontrol_parity.cpp`.
+
 - **Inovelli Blue-series switches/dimmers/fan dropped their button-tap
   `action`.** z2m marks VZM30-SN, VZM31-SN, VZM32-SN and VZM35-SN
   `supportsButtonTaps: true`, decoding a manufacturer-specific raw frame on
