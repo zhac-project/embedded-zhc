@@ -917,6 +917,15 @@ target_link_libraries(zhc_schwaiger_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_atlantic_parity_tests tests/test_atlantic_parity.cpp)
 target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Casaia CTHS-317-ET remote temperature probe. The
+# generated def reduced it to battery-only (kFzBattery + battery/voltage),
+# dropping z2m's fz.temperature decoder + e.temperature() expose (the whole
+# device purpose) and the e.battery_low() expose. Graduated to a Tier-2
+# override adding kFzTemperature + the temperature & battery_low exposes +
+# the 0x0402 binding (ep3). See tests/README.md for the pattern.
+add_executable(zhc_casaia_parity_tests tests/test_casaia_parity.cpp)
+target_link_libraries(zhc_casaia_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Heiman IAS-Zone sensor family: ~27 generated defs
 # decoded the bare "alarm" key (generic kFzIasZone) while exposing the
 # semantic key (smoke/gas/water_leak/occupancy/contact/vibration/co). All
@@ -2329,6 +2338,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
+add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_imou_parity_tests         COMMAND zhc_imou_parity_tests)
 add_test(NAME zhc_hej_parity_tests          COMMAND zhc_hej_parity_tests)
