@@ -1,18 +1,21 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Multir MIR-WA100 — auto-generated.
-// Water leakage sensor
-// z2m-source: multir.ts #MIR-WA100.
+// Tier 2: Multir MIR-MC100 — door (contact) sensor.
+// z2m m.iasZoneAlarm({zoneType:"contact"}) publishes the semantic key
+// `contact` (bit0), plus tamper + battery_low. The auto-port wired the
+// generic kFzIasZone (bare `alarm`) against a `contact`-less expose set →
+// dead key. Swapped to the typed kFzIasContactAlarm.
+// z2m-source: multir.ts #MIR-MC100.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::multir {
 namespace {
-const FzConverter* const kFz_MIR_WA100[] = {
+const FzConverter* const kFz_MIR_MC100[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
-constexpr const char* kModels_MIR_WA100[] = { "MIR-WA100" };
+constexpr const char* kModels_MIR_MC100[] = { "MIR-MC100", "MIR-MC100-E" };
 
 }  // namespace
 
@@ -21,7 +24,7 @@ constexpr const char* kModels_MIR_WA100[] = { "MIR-WA100" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +35,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_MIR_WA100{
-    .zigbee_models=kModels_MIR_WA100, .zigbee_models_count=sizeof(kModels_MIR_WA100)/sizeof(kModels_MIR_WA100[0]),
+extern const PreparedDefinition kDef_MIR_MC100{
+    .zigbee_models=kModels_MIR_MC100, .zigbee_models_count=sizeof(kModels_MIR_MC100)/sizeof(kModels_MIR_MC100[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="MIR-WA100", .vendor="Multir",
+    .model="MIR-MC100", .vendor="Multir",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_MIR_WA100, .from_zigbee_count=sizeof(kFz_MIR_WA100)/sizeof(kFz_MIR_WA100[0]),
+    .from_zigbee=kFz_MIR_MC100, .from_zigbee_count=sizeof(kFz_MIR_MC100)/sizeof(kFz_MIR_MC100[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),

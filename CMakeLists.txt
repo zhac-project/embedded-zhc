@@ -1264,6 +1264,9 @@ target_link_libraries(zhc_dresden_elektronik_parity_tests PRIVATE zhc_definition
 add_executable(zhc_konke_parity_tests tests/test_konke_parity.cpp)
 target_link_libraries(zhc_konke_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_multir_parity_tests tests/test_multir_parity.cpp)
+target_link_libraries(zhc_multir_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_kwikset_parity_tests tests/test_kwikset_parity.cpp)
 target_link_libraries(zhc_kwikset_parity_tests PRIVATE zhc_definitions)
 
@@ -2053,6 +2056,7 @@ add_test(NAME zhc_paul_neuhaus_parity_tests COMMAND zhc_paul_neuhaus_parity_test
 add_test(NAME zhc_ecodim_parity_tests       COMMAND zhc_ecodim_parity_tests)
 add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)
 add_test(NAME zhc_konke_parity_tests        COMMAND zhc_konke_parity_tests)
+add_test(NAME zhc_multir_parity_tests       COMMAND zhc_multir_parity_tests)
 add_test(NAME zhc_kwikset_parity_tests      COMMAND zhc_kwikset_parity_tests)
 add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
 add_test(NAME zhc_muller_licht_parity_tests COMMAND zhc_muller_licht_parity_tests)

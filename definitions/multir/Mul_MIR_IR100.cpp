@@ -1,7 +1,18 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Multir MIR-IR100 — auto-generated.
-// PIR sensor
+// Tier 2: Multir MIR-IR100 — PIR / occupancy sensor.
+// z2m extend: m.battery() + m.illuminance() + m.iasZoneAlarm({zoneType:
+// "occupancy"}) + m.enumLookup(sensitivity). The auto-port dropped TWO
+// channels: it lowered only kFzBattery + the generic kFzIasZone (bare
+// `alarm`) and never wired illuminance.
+//   * occupancy: zoneType "occupancy" → semantic key `occupancy` (bit0) +
+//     tamper + battery_low. Swapped kFzIasZone → typed kFzIasMotionAlarm
+//     (which emits `occupancy`, matching z2m's IAS_EXPOSE_LOOKUP).
+//   * illuminance: msIlluminanceMeasurement 0x0400 → added kFzIlluminance +
+//     binding 0x0400.
+// DEFER (infra): the `sensitivity` enum (m.enumLookup over ssIasZone attr
+// 0x0013 currentZoneSensitivityLevel, low/medium/high) is a config
+// read/write with no generic IAS-attribute enum converter — note + defer.
 // z2m-source: multir.ts #MIR-IR100.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,7 +20,8 @@ namespace zhc::devices::multir {
 namespace {
 const FzConverter* const kFz_MIR_IR100[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIlluminance,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_MIR_IR100[] = { "MIR-IL100", "MIR-IR100" };
@@ -21,13 +33,15 @@ constexpr const char* kModels_MIR_IR100[] = { "MIR-IL100", "MIR-IR100" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0400},
     {1, 0x0500},
 };
 // --- end auto-generated block ---
