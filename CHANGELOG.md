@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Zen Zen-01-W parity: dead cooling setpoint / running_state / calibration.**
+  The heat+cool+fan thermostat (z2m `fz.thermostat` + `fz.fan` + `fz.battery`)
+  was auto-ported with only the generic `kFzThermostat`, which decodes just
+  0x0000 / 0x0012 / 0x001C — leaving `occupied_cooling_setpoint` (0x0011),
+  `running_state` (0x0029) and `local_temperature_calibration` (0x0010) dead,
+  and omitting those three exposes entirely while mistyping `system_mode` /
+  `fan_mode` as Binary. Graduated to a Tier-2 override: added the vendor
+  `kFzZenThermostat` (`definitions/zen/_shared.cpp`) wired alongside the generic
+  decoder + `kFzFanMode`, restored the missing exposes (enums for
+  system_mode/fan_mode/running_state), and fixed the expose types. New
+  `test_zen_parity`.
 - **JetHome WS7 parity: phantom on/off, dead discrete-input channel.** The
   3-channel battery discrete-input module was auto-ported with a phantom
   genOnOff in/out (settable `state` expose + `kFzOnOff`/`kTzOnOff` +
