@@ -42,6 +42,21 @@ across the ZHAC platform.
   0x0300 binding. ZHS-15 verified already correct (z2m
   `fz.electrical_measurement` = 0x0B04 power/voltage/current only, no
   0x0702 energy) and pinned by a regression test.
+- **Intuis parity: dead thermostat extras, occupancy and keypad UI.** The
+  `intuisradiator` electric heater (Muller Intuitiv) wires z2m `fz.thermostat`
+  + `fz.hvac_user_interface` + `m.occupancy` + `m.electricityMeter`, but the
+  auto-port used only generic `kFzMetering` + `kFzThermostat`. The generic
+  thermostat decoder emits attr 0x0012 as `current_heating_setpoint` (the def
+  declares `occupied_heating_setpoint`) and never touches 0x0014
+  (`unoccupied_heating_setpoint`) or 0x0029 (`running_state`); occupancy
+  (`msOccupancySensing` 0x0406) and `hvacUserInterfaceCfg` 0x0204
+  (`keypad_lockout`, `temperature_display_mode`) had no decoder — all dead
+  exposes. Added `kFzIntuisThermostat` + `kFzIntuisHvacUi` (definitions/intuis/
+  _shared) and wired generic `kFzOccupancy`; graduated the def out of
+  `generated/`, corrected the exposes (dropped the phantom `power` — z2m sets
+  metering `power:false`, so only `energy` via seMetering 0x0702 is reported;
+  the "0x0B04 half" suspect is a false flag) and added the 0x0204 / 0x0406
+  bindings.
 
 - **Envilar parity: metering 0x0B04 half, dead remote, missing CCT channel.**
   `1CH-HP-RELAY-7853` + `7859` use z2m `m.electricityMeter()` (default
