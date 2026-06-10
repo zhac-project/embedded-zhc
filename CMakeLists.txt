@@ -1898,6 +1898,14 @@ target_link_libraries(zhc_sercomm_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_terncy_parity_tests tests/test_terncy_parity.cpp)
 target_link_libraries(zhc_terncy_parity_tests PRIVATE zhc_definitions)
 
+# BTicino (Legrand-family): F20T60A DIN power module was ported with the
+# wrong cluster (seMetering 0x0702 + phantom energy) when z2m's
+# electricityMeter(cluster:"electrical") uses haElectricalMeasurement
+# (0x0B04) → power/voltage/current. K4003C light switch dropped the
+# button action (genBinaryInput 0x000F presentValue → action on/off).
+add_executable(zhc_bticino_parity_tests tests/test_bticino_parity.cpp)
+target_link_libraries(zhc_bticino_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Lellki (Tuya-OEM) family. Two single-gang metering
 # sockets (XF-EU-S100-1-M, WK34-EU) were ported as bare on/off, dropping the
 # seMetering (0x0702) + haElectricalMeasurement (0x0B04) channels that z2m's
@@ -2091,6 +2099,7 @@ add_test(NAME zhc_rgb_genie_parity_tests    COMMAND zhc_rgb_genie_parity_tests)
 add_test(NAME zhc_adurosmart_parity_tests   COMMAND zhc_adurosmart_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
+add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
 add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
