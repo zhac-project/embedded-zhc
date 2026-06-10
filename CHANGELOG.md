@@ -18,11 +18,15 @@ across the ZHAC platform.
   `m.deviceEndpoints({8,9,10})`), which would also have collided on a bare
   `state` key. Added a reusable generic `kFzBinaryOutput` (presentValue →
   boolean `state`, mirror of `kFzBinaryInput`), graduated the def to Tier 2
-  with the z2m exposes (fan_state + the three channel enums) and an
-  endpoint_map for ep9/ep10 (ep8 left unmapped so the fan's hvacFanCtrl key
-  stays unsuffixed → channels resolve to `state`/`state_9`/`state_10`). The
-  per-channel activeText/inactiveText enum labels + the binary_output write
-  path remain runtime-attribute-dependent and are deferred as infra.
+  with the z2m exposes and an endpoint_map for ep9/ep10 (ep8 left unmapped so
+  the fan's hvacFanCtrl key stays unsuffixed → channels resolve to
+  `state`/`state_9`/`state_10`). The fan control is exposed as `fan_mode`
+  (Enum off/low/medium/high/on) — the key `kFzFanMode` actually decodes; the
+  earlier draft declared `fan_state`, which nothing decoded (dead). z2m's
+  derived `fan_state` (on iff fan_mode≠off) needs a fan converter that emits
+  it (see Mercator `kFzMercatorFan`) and is deferred. The per-channel
+  activeText/inactiveText enum labels + the binary_output write path remain
+  runtime-attribute-dependent and are deferred as infra.
 - **Saswell TRV legacy `_TYST11_*` variants decoded nothing.** The
   SEA801/SEA802 thermostatic radiator valve (z2m `legacy.fz.saswell_thermostat`,
   a Tuya-MCU 0xEF00 DP device) had two ez defs sharing the same model: a correct

@@ -19,8 +19,9 @@
 //   * the endpoint_map suffixes ep9 -> state_9, ep10 -> state_10 while ep8
 //     stays bare `state`,
 //   * the fan_mode key from hvacFanCtrl on ep8 is NOT suffixed, and
-//   * the def carries the z2m exposes (fan_state + the three channel enums)
-//     and the bogus bare `fan_mode` expose is gone.
+//   * the def carries the z2m exposes (fan_mode Enum + the three channel
+//     enums); the derived fan_state is INFRA-deferred (no decoder) so it is
+//     NOT declared as a phantom expose.
 //
 // z2m-source: multiterm.ts #ZC0101.
 
@@ -112,15 +113,18 @@ bool b_false(const Value* v) { return v && v->type == ValueType::Bool && !v->b; 
 
 }  // namespace
 
-// ── exposes: z2m fan + three channels; bogus bare fan_mode gone ──────
+// ── exposes: fan_mode (the decoded key) + three channels ─────────────
 static void test_exposes() {
     const auto& def = devices::multiterm::kDef_ZC0101;
-    assert(def_exposes(def, "fan_state"));
+    // kFzFanMode emits the `fan_mode` key, so the expose must be keyed
+    // `fan_mode` (Enum) — not `fan_state` — or the readout is dead.
+    assert(def_exposes(def, "fan_mode"));
     assert(def_exposes(def, "silent_mode"));
     assert(def_exposes(def, "heating_cooling"));
     assert(def_exposes(def, "electric_valve"));
-    // The auto-port's bare `fan_mode` Binary expose must be gone.
-    assert(!def_exposes(def, "fan_mode"));
+    // z2m's derived `fan_state` has no decoder here (kFzFanMode emits only
+    // fan_mode) — it is INFRA-deferred, so it must NOT be a phantom expose.
+    assert(!def_exposes(def, "fan_state"));
 }
 
 // ── genBinaryOutput presentValue decodes + endpoint suffixing ────────

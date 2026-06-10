@@ -167,10 +167,13 @@ static void test_local_temperature_scale_div10() {
     assert(lt > 21.0 && lt < 21.2);  // 211/10 = 21.1
 }
 
-// --- DP27 local_temperature_calibration is identity (z2m signed, no /10) ----
-// z2m: value>6 ? 0xffffffff-value : value. The ez signed-int reinterpret of
-// the 4-byte BE value reproduces this: -3 on the wire (0xFFFFFFFD) -> -3, not
-// -0.3 and not 4294967293.
+// --- DP27 local_temperature_calibration: signed identity, no /10 -----------
+// ez reinterprets the 4-byte value as a SIGNED int: 0xFFFFFFFD -> -3 (not
+// -0.3, not 4294967293). This INTENTIONALLY DIVERGES from z2m's buggy
+// `value>6 ? 0xffffffff-value : value`: z2m reads the DP UNSIGNED, so a -3
+// setting (wire 0xFFFFFFFD = 4294967293) is >6 and z2m returns 0xffffffff -
+// 4294967293 = +2 (a known one's-complement off-by-one). ez emits the correct
+// -3. The +4 case matches z2m (4 is <=6 -> passthrough); only negatives differ.
 static void test_calibration_identity_signed() {
     const auto& d = resolve("TS0601", "_TZE200_zuhszj9s");
     bool found = false;

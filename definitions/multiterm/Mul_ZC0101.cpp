@@ -44,6 +44,10 @@ const FzConverter* const kFz_ZC0101[] = {
 
 constexpr const char* kModels_ZC0101[] = { "ZC0101" };
 
+// z2m e.fan().withModes(["off","low","medium","high","on"]); kFzFanMode
+// emits the raw hvacFanCtrl FanMode value (constants.fanMode 0=off..4=on),
+// so the enum-label indices line up 1:1.
+constexpr const char* kFanModes[] = { "off", "low", "medium", "high", "on" };
 constexpr const char* kSilentModeStates[] = { "inactive", "active" };
 constexpr const char* kHeatingCoolingStates[] = { "heating", "cooling" };
 constexpr const char* kElectricValveStates[] = { "off", "on" };
@@ -52,8 +56,13 @@ constexpr const char* kElectricValveStates[] = { "off", "on" };
 
 
 constexpr Expose kAutoExposes[] = {
-    // Fan control (hvacFanCtrl). z2m e.fan().withState("fan_state").
-    {"fan_state", ExposeType::Binary, Access::StateSet, nullptr, "Fan Control", nullptr, 0},
+    // Fan control (hvacFanCtrl). kFzFanMode decodes the FanMode attr into the
+    // `fan_mode` key, so the expose MUST be keyed `fan_mode` (not `fan_state`)
+    // or the readout is dead. z2m additionally derives `fan_state` (on iff
+    // fan_mode!=off) inside fz.fan — the generic kFzFanMode does not emit it,
+    // so the derived fan_state is INFRA-deferred (would need a converter
+    // extension); declaring it with no decoder would be a phantom expose.
+    {"fan_mode", ExposeType::Enum, Access::StateSet, nullptr, "Fan Control", kFanModes, 5},
     // Three multi-endpoint binary-output channels. Exposes stay bare-keyed;
     // dispatch suffixes the runtime decode per endpoint_map.
     {"silent_mode", ExposeType::Enum, Access::StateSet, nullptr, "Silent mode",
