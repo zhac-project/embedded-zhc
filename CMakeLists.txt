@@ -925,6 +925,13 @@ target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# MSH / MySmartHouse DIY ESP sensors — multi-channel restored. bme280psm
+# (temp/humidity/pressure) and ds18b20psm (temp) were reduced to
+# battery-only; AirQMon was mis-ported as a bare on/off switch instead of a
+# co2 + temperature@l3 air-quality sensor. See tests/README.md.
+add_executable(zhc_msh_parity_tests tests/test_msh_parity.cpp)
+target_link_libraries(zhc_msh_parity_tests PRIVATE zhc_definitions)
+
 # IMOU (Dahua) IAS battery-sensor family — dead-key / missing-channel
 # fixes (ZP1 occupancy, ZR1/ZD1 alarm, ZGA1 gas split-bits + test, ZTM1
 # temp/humidity, ZE1 button action). See tests/README.md.
@@ -2478,6 +2485,7 @@ add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
 add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
+add_test(NAME zhc_msh_parity_tests          COMMAND zhc_msh_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
