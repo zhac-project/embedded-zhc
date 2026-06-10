@@ -43,6 +43,16 @@ across the ZHAC platform.
   genBinaryInput/Output occupancy/state bespoke decoders are pinned as
   regression guards in `tests/test_kmpcil_parity.cpp`.
 
+- **Woox R7051 smart siren (TS0219) — phantom `tamper` / `battery_low`
+  exposes and over-broad IAS decode.** z2m decodes the alarm via
+  `fz.ias_alarm_only_alarm_1` (ssIasZone attr 0x0002 bit 0 → `alarm` only),
+  but the generated def lowered the broader `kFzIasZone` (which also emits
+  `tamper` + `battery_low`) and declared phantom `tamper` / `battery_low`
+  exposes z2m never surfaces for this device. Added a generic
+  `kFzIasZoneAlarmOnly` converter and graduated R7051 to a parent override
+  using it with the two phantom exposes removed. (volume/duration write and
+  `ac_connected` from genBasic.powerSource remain INFRA-deferred — no generic
+  converter yet.)
 - **Viessmann ViCare radiator TRV (ZK03840) — false `window_open` flag and
   dead `occupied_heating_setpoint`.** Two decode bugs against z2m's
   `fzLocal.viessmann_thermostat`: (1) the manuSpec attr 0x4000

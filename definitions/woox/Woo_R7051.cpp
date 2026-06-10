@@ -6,17 +6,19 @@
 //       fz.power_source (genBasic powerSource).
 //   tz: tz.warning, tz.ts0216_volume, tz.ts0216_duration (ssIasWd writeAttrs).
 //
-// Wired today: kFzBattery, kFzIasZone (alarm/tamper/battery_low),
-// kTzWarning. The non-warning siren controls (volume/duration write,
-// ac_connected read) and the alarm-only IAS variant don't have generic
-// converters yet — see TODO list at end of file.
+// Parity fix (z2m<->embedded-zhc pass): z2m uses fz.ias_alarm_only_alarm_1,
+// which decodes ZoneStatus (attr 0x0002) bit 0 → `alarm` ONLY. The
+// generated def lowered the broader kFzIasZone, which ALSO emits tamper +
+// battery_low, and declared phantom `tamper` / `battery_low` exposes that
+// z2m never surfaces for this device. Re-pointed at kFzIasZoneAlarmOnly
+// (single `alarm` key) and dropped the two phantom exposes.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::woox {
 namespace {
 const FzConverter* const kFz_R7051[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasZoneAlarmOnly,
     &::zhc::generic::kFzIasWdMaxDuration,
 };
 const TzConverter* const kTz_R7051[] = {
@@ -32,8 +34,8 @@ constexpr Expose kExp_R7051[] = {
     {"battery",     ExposeType::Numeric, Access::State,    "%",     nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, Access::State,    "mV",    nullptr, nullptr, 0},
     {"alarm",       ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
-    {"tamper",      ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
-    {"battery_low", ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
+    // No tamper / battery_low: z2m's fz.ias_alarm_only_alarm_1 emits only
+    // `alarm`, and the z2m R7051 exposes carry neither key.
     // Warning is a write-only command; surface a placeholder binary
     // so the WebUI can wire a "trigger" toggle. Decoded inbound side
     // remains the IAS alarm bit above.
@@ -45,15 +47,13 @@ constexpr BindingSpec kBind_R7051[] = {
     {1, 0x0500},  // ssIasZone
 };
 
-// TODO (parity gap):
-//   - `volume` / `duration` writes hit ssIasWd attrs 0x0001 / 0x0002.
-//     Needs a generic kTzIasWdVolumeAttr / kTzIasWdDurationAttr or a
-//     ZclWriteSpec table; not yet in `_generic/_shared`.
-//   - `ac_connected` derives from genBasic.powerSource (0x0007)
-//     attr-read; needs a kFzPowerSource generic converter.
-//   - z2m uses `fz.ias_alarm_only_alarm_1` which only exposes alarm_1
-//     (no tamper / battery_low). Our `kFzIasZone` is broader; spurious
-//     tamper/battery_low frames may pass through. Audit on hardware.
+// INFRA-deferred (no generic converter yet — do NOT half-build):
+//   - `volume` (ssIasWd attr 0x0002 read + write, z2m fz/tz.ts0216_volume)
+//     and `duration` write (z2m tz.ts0216_duration writes maxDuration);
+//     needs a kFz/kTzIasWdVolumeAttr or a ZclWriteSpec table.
+//   - `ac_connected` derives from genBasic.powerSource (0x0007 == 2);
+//     needs a kFzPowerSource generic converter.
+//   The alarm-only IAS variant is now handled by kFzIasZoneAlarmOnly.
 
 }  // namespace
 

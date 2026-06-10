@@ -2592,6 +2592,42 @@ extern const FzConverter kFzIasZone{
     .user_config       = nullptr,
 };
 
+// ── fz_ias_zone_alarm_only ──────────────────────────────────────────
+//
+// z2m `fz.ias_alarm_only_alarm_1` (type: attributeReport): decodes
+// ZoneStatus (attr 0x0002, u16) bit 0 → `alarm` (Bool) and NOTHING
+// else. Tuya sirens (TS0216 / TS0219) expose a single `alarm` binary;
+// the broader kFzIasZone would leak phantom tamper / battery_low keys.
+
+bool fz_ias_zone_alarm_only(const DecodedMessage& msg,
+                             const FzConverter&,
+                             const PreparedDefinition&,
+                             RuntimeContext&,
+                             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // attr 0x0002 — ZoneStatus (u16).
+    const Value* v = msg.payload.find("2");
+    if (!v || v->type != ValueType::Uint) return false;
+    Value a{}; a.type = ValueType::Bool;
+    a.b = (static_cast<std::uint32_t>(v->u) & 0x0001) != 0;
+    out.put("alarm", a);
+    return true;
+}
+
+extern const FzConverter kFzIasZoneAlarmOnly{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "ssIasZone",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_ias_zone_alarm_only },
+    .user_config       = nullptr,
+};
+
 // ── fz_ias_zone_config (sensitivity + keep_time) ────────────────────
 //
 // Tuya PIR family (ZG-204Z / IH012-RT01 / ZMS-102 / …) configures
