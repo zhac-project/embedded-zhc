@@ -935,6 +935,15 @@ target_link_libraries(zhc_visonic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_fantem_parity_tests tests/test_fantem_parity.cpp)
 target_link_libraries(zhc_fantem_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Hornbach (FLAIR Viyu) LED bulb family. All 14 generated defs
+# wired only kFzOnOff + kFzBrightness (0x0006/0x0008), dropping the
+# lightingColorCtrl (0x0300) axis that z2m's m.light({colorTemp, color?})
+# exposes — every bulb lost color_temp, the six RGBW variants lost colour too.
+# Graduated to two shared bundles (CTLight / ColorCTLight) in
+# definitions/hornbach/_shared.cpp. See tests/README.md for the pattern.
+add_executable(zhc_hornbach_parity_tests tests/test_hornbach_parity.cpp)
+target_link_libraries(zhc_hornbach_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Somfy roller-shutter / blind family. Ysia 5 (1871154) is a
 # 5-channel remote whose port carried an endpoint_map but no
 # endpoint_action_suffix, so all five buttons collided on a bare "action";
@@ -2143,6 +2152,7 @@ add_test(NAME zhc_konke_parity_tests        COMMAND zhc_konke_parity_tests)
 add_test(NAME zhc_multir_parity_tests       COMMAND zhc_multir_parity_tests)
 add_test(NAME zhc_kwikset_parity_tests      COMMAND zhc_kwikset_parity_tests)
 add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
+add_test(NAME zhc_hornbach_parity_tests     COMMAND zhc_hornbach_parity_tests)
 add_test(NAME zhc_the_light_group_parity_tests COMMAND zhc_the_light_group_parity_tests)
 add_test(NAME zhc_muller_licht_parity_tests COMMAND zhc_muller_licht_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)

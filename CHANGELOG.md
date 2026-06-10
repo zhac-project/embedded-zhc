@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Hornbach (FLAIR Viyu) LED bulbs lost their colour-temperature / colour
+  axis.** All 14 generated defs were wired with only `kFzOnOff` +
+  `kFzBrightness` (clusters 0x0006/0x0008), dropping the `lightingColorCtrl`
+  (0x0300) channel that z2m's `m.light({colorTemp, color?})` exposes — every
+  bulb lost `color_temp`, and the six `*_RGBW_*` / "RGB" variants (10011725,
+  10297666, 10297667, 10454466, 10454467, 10454471) lost the hue/saturation
+  colour axis too. Graduated all 14 to two shared bundles in
+  `definitions/hornbach/_shared.cpp`: CTLight (on/off + brightness +
+  `kFzColorTemperature`/`kTzColorTemp` + `color_temp` expose + 0x0300 bind) for
+  the 8 CCT models, and ColorCTLight (additionally `kFzColor`/`kTzColor` +
+  `color_xy`/`color_hs` exposes) for the 6 RGBW models.
+
 - **GiEX water-irrigation valves (QT06_1 / QT06_2) decoded nothing.** Both are
   Tuya-MCU (0xEF00) DP-stream devices (z2m `legacy.fromZigbee.giexWaterValve`)
   but the auto-generator ported them as bare `kFzBattery` + `kFzOnOff` stubs
