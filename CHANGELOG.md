@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **D-Link DCH-B112 contact/vibration IAS dead-key.** The door/window +
+  vibration sensor was auto-ported with the generic `kFzIasZone`, which
+  emits a bare `alarm` (zoneStatus bit0, NOT inverted) and never produces
+  the `contact` or `vibration` channels the device reports. z2m's
+  `fzLocal.DCH_B112` decodes the `ssIasZone` ZoneStatusChangeNotification
+  into four semantic keys: `contact = !(bit0)` (inverted), `vibration =
+  bit1`, `tamper = bit2`, `battery_low = bit3`. Graduated to a Tier-2
+  override wiring a dedicated zone-status decoder and restoring the
+  `contact` + `vibration` exposes (the phantom `alarm` key is gone).
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
