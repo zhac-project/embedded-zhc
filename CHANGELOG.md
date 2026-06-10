@@ -141,6 +141,19 @@ across the ZHAC platform.
   bit0 → `alarm`, bit2 → `tamper`, bit3 → `battery_low`. (`fz.ias_enroll` is
   GLOBAL IAS enrollment; `fz.ias_wd` / `tz.warning` are ssIasWd 0x0502 to-zigbee
   warning control — both INFRA, deferred.)
+- **Schlage BE468 Connect deadbolt: restored the dropped lock-action stream +
+  PIN programming.** The auto-port wired only `kFzLock` + `kFzBattery` and
+  exposed `battery`/`voltage`/`lock_state`, dropping z2m's
+  `fz.lock_operation_event` / `fz.lock_programming_event` (closuresDoorLock cmds
+  0x21/0x20) → `action` / `action_user` / `action_source` /
+  `action_source_name` and `tz.pincode_lock` → `pin_code`. Wired the generic
+  `kFzLockOperationEvent` + `kFzLockProgrammingEvent` + `kTzLockPinCode` and
+  restored the matching exposes (kwikset/onesti/datek precedent), and corrected
+  `lock_state` from `Binary` to `Enum` (z2m emits the
+  not_fully_locked/locked/unlocked enum). Graduated the def to a Tier-2 parent.
+  PIN/user-code *read* response (`fz.lock_pin_code_response` → users map) stays
+  INFRA-deferred.
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
