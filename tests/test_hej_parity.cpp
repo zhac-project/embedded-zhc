@@ -86,23 +86,25 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
 
 // Assert: alarm_1 (bit 0) asserted -> semantic key true, "alarm" absent,
 // tamper/battery_low reflect bits 2/3 — mirrors test_heiman_parity.
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+// `invert`: z2m publishes contact = !bit0 for zoneType:"contact" — pass
+// true for the contact device; occupancy/other typed alarms stay raw bit0.
+void check_alarm1(const PreparedDefinition& def, const char* sem, bool invert = false) {
     assert(def_exposes(def, sem));            // regression guard vs bare "alarm"
 
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert((invert ? b_false : b_true)(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);       // bare key must be gone
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
     auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert((invert ? b_true : b_false)(off.merged.find(sem)));
 
     auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    assert((invert ? b_true : b_false)(tb.merged.find(sem)));  // bit0 clear here
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -130,7 +132,7 @@ DispatchResult dispatch_onoff_report(const PreparedDefinition& def,
 
 // ── KKZ-DO021 — contact (ias_contact_alarm_1, bit 0) ─────────────────
 static void test_kkz_do021_contact() {
-    check_alarm1(devices::hej::kDef_KKZ_DO021, "contact");
+    check_alarm1(devices::hej::kDef_KKZ_DO021, "contact", /*invert=*/true);
 }
 
 // ── KKZ-MO021 — occupancy (ias_occupancy_alarm_1, bit 0) ─────────────

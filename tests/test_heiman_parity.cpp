@@ -93,25 +93,28 @@ bool def_exposes(const PreparedDefinition& def, const char* key) {
 
 // Assert: alarm_1 (bit 0) asserted -> semantic key true, "alarm" absent,
 // tamper/battery_low reflect bits 2/3.
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+// `invert`: z2m publishes contact = !bit0 for zoneType:"contact" — pass
+// true for the contact device (bit0-SET → key:false, clear → key:true).
+// Other typed alarms (occupancy/smoke/water_leak/...) stay raw bit0.
+void check_alarm1(const PreparedDefinition& def, const char* sem, bool invert = false) {
     // semantic key must be a declared expose (regression guard against
     // generic kFzIasZone, whose "alarm" key never matched the expose).
     assert(def_exposes(def, sem));
 
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert((invert ? b_false : b_true)(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);       // bare key must be gone
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
     auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert((invert ? b_true : b_false)(off.merged.find(sem)));
 
     auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    assert((invert ? b_true : b_false)(tb.merged.find(sem)));  // bit0 clear here
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -119,7 +122,7 @@ void check_alarm1(const PreparedDefinition& def, const char* sem) {
 }  // namespace
 
 // ── per-type alarm_1 (bit 0) decoders ────────────────────────────────
-static void test_contact()    { check_alarm1(devices::heiman::kDef_HS1DS,       "contact"); }
+static void test_contact()    { check_alarm1(devices::heiman::kDef_HS1DS,       "contact", /*invert=*/true); }
 static void test_smoke()      { check_alarm1(devices::heiman::kDef_HS1SA_E,     "smoke"); }
 static void test_gas_alarm1() { check_alarm1(devices::heiman::kDef_HS1CG,       "gas"); }
 static void test_water()      { check_alarm1(devices::heiman::kDef_HS1WL_HS3WL, "water_leak"); }

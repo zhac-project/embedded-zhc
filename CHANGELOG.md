@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Contact-sensor polarity matched to z2m (systemic).** The generic
+  `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
+  but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
+  device (a closed door = magnet present = bit0 clear = `contact:true`),
+  via both `fz.ias_contact_alarm_1` and the modernExtend `iasZoneAlarm`
+  (`invertAlarmPayload = zoneType==="contact"`). All ~82 contact defs that
+  wire the converter were therefore inverted vs z2m. Added an `invert` flag
+  to the typed-IAS label; `kFzIasContactAlarm` now inverts. The lone z2m
+  `invertAlarm:true` device (VSmart HS-SEDR, which double-inverts back to
+  raw bit0) uses the new non-inverting `kFzIasContactAlarmNI`. Only contact
+  inverts — motion/smoke/water/gas/CO/vibration stay raw bit0.
+
 - **Technicolor XHK1-TC (Xfinity security keypad): phantom on/off + IAS dead-key
   + dropped temperature + dead `action_transaction`.** Sibling of the
   UniversalElectronicsInc XHK1-UE. The auto-port wired a phantom `kFzOnOff`/

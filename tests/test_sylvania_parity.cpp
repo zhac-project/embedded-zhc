@@ -93,20 +93,22 @@ static void test_contact() {
     assert(def_exposes(def, "contact"));
     assert(!def_exposes(def, "alarm"));
 
+    // z2m publishes contact = !bit0 (zoneType:"contact"): bit0 set → open
+    // (false), bit0 clear → closed (true).
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only (bit 0)
     assert(on.any_matched);
-    assert(b_true(on.merged.find("contact")));
+    assert(b_false(on.merged.find("contact")));
     assert(on.merged.find("alarm") == nullptr);       // bare key must be gone
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
     auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
     assert(off.any_matched);
-    assert(b_false(off.merged.find("contact")));
+    assert(b_true(off.merged.find("contact")));
 
     auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find("contact")));
+    assert(b_true(tb.merged.find("contact")));        // bit0 clear here
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }

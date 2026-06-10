@@ -99,22 +99,24 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
 
 // Assert: alarm_1 (bit 0) asserted -> semantic key true, "alarm" not used as a
 // dead key for the semantic devices, tamper/battery_low reflect bits 2/3.
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+// `invert`: z2m publishes contact = !bit0 for zoneType:"contact" — pass
+// true for contact devices; occupancy/other typed alarms stay raw bit0.
+void check_alarm1(const PreparedDefinition& def, const char* sem, bool invert = false) {
     assert(def_exposes(def, sem));
 
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert((invert ? b_false : b_true)(on.merged.find(sem)));
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
     auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert((invert ? b_true : b_false)(off.merged.find(sem)));
 
     auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    assert((invert ? b_true : b_false)(tb.merged.find(sem)));  // bit0 clear here
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -171,8 +173,8 @@ bool str_is(const Value* v, const char* want) {
 static void test_siren_alarm()  { check_alarm1(devices::adeo::kDef_LDSENK06,            "alarm"); }
 static void test_pir()          { check_alarm1(devices::adeo::kDef_LDSENK10,            "occupancy"); }
 static void test_water_leak()   { check_alarm1(devices::adeo::kDef_D83633206,           "water_leak"); }
-static void test_contact_door() { check_alarm1(devices::adeo::kDef_ZB_DoorSensor_D0007, "contact"); }
-static void test_contact_vib()  { check_alarm1(devices::adeo::kDef_LDSENK08,            "contact"); }
+static void test_contact_door() { check_alarm1(devices::adeo::kDef_ZB_DoorSensor_D0007, "contact", /*invert=*/true); }
+static void test_contact_vib()  { check_alarm1(devices::adeo::kDef_LDSENK08,            "contact", /*invert=*/true); }
 
 // Regression: the bare alarm_1/alarm_2 keys produced by the old kFzIasZone must
 // no longer leak for the semantic sensors (siren keeps `alarm` by design).

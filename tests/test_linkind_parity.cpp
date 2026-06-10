@@ -215,10 +215,10 @@ static void test_ias_sensors() {
         assert(bool_is(t, "tamper", true));
         assert(bool_is(t, "occupancy", false));
     }
-    // Contact: contact on bit 0.
+    // Contact: z2m inverts (contact = !bit0) → bit0 set = open = false.
     {
         auto r = dispatch_zcl(kDef_ZS110050078, 0x0500, 1, "ssIasZone", ias_status(0x0001));
-        assert(bool_is(r, "contact", true));
+        assert(bool_is(r, "contact", false));
         assert(r.merged.find("alarm") == nullptr);
     }
     // Water leak: water_leak on bit 0.

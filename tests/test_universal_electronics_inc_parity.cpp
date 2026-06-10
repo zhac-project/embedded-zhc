@@ -99,12 +99,15 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
 
 // alarm_1 (bit0) → semantic key true; tamper/battery_low ride bits 2/3.
 // The bare "alarm"/"alarm_1" keys must NOT leak.
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+// `invert`: z2m publishes contact = !bit0 (zoneType:"contact") — pass true
+// for the contact device so bit0-SET → key:false, bit0-CLEAR → key:true.
+// occupancy and the other typed alarms stay raw bit0 (invert=false).
+void check_alarm1(const PreparedDefinition& def, const char* sem, bool invert = false) {
     assert(def_exposes(def, sem));
 
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert((invert ? b_false : b_true)(on.merged.find(sem)));
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
     assert(on.merged.find("alarm") == nullptr);
@@ -112,11 +115,11 @@ void check_alarm1(const PreparedDefinition& def, const char* sem) {
 
     auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert((invert ? b_true : b_false)(off.merged.find(sem)));
 
     auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    assert((invert ? b_true : b_false)(tb.merged.find(sem)));  // bit0 clear here
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -147,7 +150,7 @@ DispatchResult dispatch_ace(const PreparedDefinition& def, std::span<const std::
 
 // ── XHS1-UE / XHS2-UE — typed IAS bit0 alarms ────────────────────────
 static void test_xhs1_pir()     { check_alarm1(devices::universal_electronics_inc::kDef_XHS1_UE, "occupancy"); }
-static void test_xhs2_contact() { check_alarm1(devices::universal_electronics_inc::kDef_XHS2_UE, "contact"); }
+static void test_xhs2_contact() { check_alarm1(devices::universal_electronics_inc::kDef_XHS2_UE, "contact", /*invert=*/true); }
 
 // ── XHK1-UE / UEHK2AZ0 — ssIasAce arm WITH transaction passthrough ───
 static void check_keypad_arm(const PreparedDefinition& def) {
