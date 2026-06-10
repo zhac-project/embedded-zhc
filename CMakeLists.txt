@@ -943,6 +943,17 @@ target_link_libraries(zhc_visonic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_fantem_parity_tests tests/test_fantem_parity.cpp)
 target_link_libraries(zhc_fantem_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the GS (Linkind-OEM) family. The 6 IAS sensors lowered
+# the generic kFzIasZone (bare key "alarm") while exposing a semantic key —
+# graduated to the typed kFzIas<Type>Alarm converters (occupancy/contact/
+# smoke/water_leak/gas; the two gas sensors read alarm_2 bit 1 via
+# kFzIasGasAlarm2). The SKHMP30-I1 socket dropped z2m electricityMeter()'s
+# 0x0B04 half (power/voltage/current) — restored kFzElectricalMeasurement +
+# voltage/current exposes + 0x0B04 binding. The two B*HM bulbs were collapsed
+# to on/off+brightness — restored colorTemp (+ HS colour on BRHM) + 0x0300.
+add_executable(zhc_gs_parity_tests tests/test_gs_parity.cpp)
+target_link_libraries(zhc_gs_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Hornbach (FLAIR Viyu) LED bulb family. All 14 generated defs
 # wired only kFzOnOff + kFzBrightness (0x0006/0x0008), dropping the
 # lightingColorCtrl (0x0300) axis that z2m's m.light({colorTemp, color?})
@@ -2334,6 +2345,7 @@ add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
+add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

@@ -1,18 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Gs SOHM-I1 — auto-generated.
-// Open and close sensor
-// z2m-source: gs.ts #SOHM-I1.
+// Tier 2: Gs SMHM-I1 — graduated from generated/ for a parity fix.
+// Motion sensor
+// z2m-source: gs.ts #SMHM-I1 — m.iasZoneAlarm({zoneType:"occupancy",
+//   zoneAttributes:["alarm_1","tamper","battery_low"]}) + m.battery.
+//
+// Parity fix (IAS dead-key): generic kFzIasZone emitted the bare key
+// "alarm" while z2m's zoneType "occupancy" + alarm_1 publishes the
+// semantic key "occupancy" off zoneStatus bit 0. Swapped to the typed
+// kFzIasMotionAlarm converter (emits "occupancy" + tamper + battery_low)
+// and renamed the primary expose accordingly.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::gs {
 namespace {
-const FzConverter* const kFz_SOHM_I1[] = {
+const FzConverter* const kFz_SMHM_I1[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
-constexpr const char* kModels_SOHM_I1[] = { "SOHM-I1" };
+constexpr const char* kModels_SMHM_I1[] = { "SMHM-I1" };
 
 }  // namespace
 
@@ -21,7 +28,7 @@ constexpr const char* kModels_SOHM_I1[] = { "SOHM-I1" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +39,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_SOHM_I1{
-    .zigbee_models=kModels_SOHM_I1, .zigbee_models_count=sizeof(kModels_SOHM_I1)/sizeof(kModels_SOHM_I1[0]),
+extern const PreparedDefinition kDef_SMHM_I1{
+    .zigbee_models=kModels_SMHM_I1, .zigbee_models_count=sizeof(kModels_SMHM_I1)/sizeof(kModels_SMHM_I1[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="SOHM-I1", .vendor="Gs",
+    .model="SMHM-I1", .vendor="Gs",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_SOHM_I1, .from_zigbee_count=sizeof(kFz_SOHM_I1)/sizeof(kFz_SOHM_I1[0]),
+    .from_zigbee=kFz_SMHM_I1, .from_zigbee_count=sizeof(kFz_SMHM_I1)/sizeof(kFz_SMHM_I1[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
