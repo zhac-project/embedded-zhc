@@ -99,6 +99,16 @@ across the ZHAC platform.
   currentLevel → position+state, genOnOff 0x0006 → state, moveToLevelWithOnOff
   for writes) + bindings 0x0008/0x0006, and added the `state` expose. Mirrors the
   Climax SCM-5ZBS fix (same SCM roller-shutter family).
+- **Evanell EZ200 TRV: rescued from a dead genThermostat port.** The
+  `TS0601` + `_TZE200_dmfguuli`/`_TZE200_rxypyjkw` thermostatic radiator valve
+  was auto-ported onto the generic genThermostat converter (cluster 0x0201)
+  with a phantom 0x0201 binding, but z2m wires it as a Tuya-MCU device on the
+  0xEF00 (manuSpecificTuya) DP stream (`legacy.fz.evanell_thermostat`) — the
+  port decoded NOTHING. Re-wired onto the Tuya-DP read+write infra
+  (`factory::TuyaRw`): DP2 → `system_mode` enum {0:auto,2:heat,3:off}, DP4 →
+  `current_heating_setpoint` /10, DP5 → `local_temperature` /10, DP6 →
+  `battery`, DP8 → `child_lock`. Exposes are now flat (no `Climate`) with a
+  proper enum `system_mode` (was a bare Binary), setpoint range 5..30 °C.
 
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
