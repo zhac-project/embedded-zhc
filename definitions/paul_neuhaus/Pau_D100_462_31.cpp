@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: PaulNeuhaus 100.462.31 — hand-rewritten remote.
+// Tier 2: PaulNeuhaus 100.462.31 — parity fix (missing color actions).
 // Q-REMOTE
 // z2m-source: paul_neuhaus.ts #100.462.31.
 //
@@ -12,14 +12,23 @@
 // z2m exposes: action(...), action_group()
 // z2m toZigbee: []  (receive-only remote)
 //
-// PARTIAL: ZHC's _generic shared bundle currently lacks
-// kFzCommandColorLoopSet, kFzCommandEnhancedMoveToHueAndSaturation, and
-// kFzTintScene — those four action variants will not surface on the
-// state stream. Wired here:
-//   command_on/off/toggle/step/move/stop/recall +
-//   command_move_to_color_temp + command_move_to_color +
-//   command_move_color_temperature.
-// Bindings 0x0005 (genScenes) added for command_recall scene group.
+// PARITY FIX: the prior hand-port claimed kFzCommandColorLoopSet and
+// kFzCommandEnhancedMoveToHueAndSat were absent from ZHC's generic
+// bundle — they exist now (lightingColorCtrl cmd 0x44 / 0x43,
+// definitions/_generic/_shared.cpp). Both are now wired, so the
+// `color_loop_set` and `enhanced_move_to_hue_and_saturation` actions
+// the enum declares finally surface. Together with the previously-wired
+// command_on/off/toggle/step/move/stop/recall +
+// command_move_to_color_temp + command_move_to_color +
+// command_move_color_temperature, only `scene_*` remains dead.
+//
+// INFRA DEFER: `scene_*` (z2m fz.tint_scene = a genBasic Write-Attributes
+// of attr 0x4005). kFzTintScene reads msg.payload, but the foundation
+// Write-attribute parser does not populate msg.payload, so wiring it
+// would be inert. Tracked as a shared-decoder infra gap (same as the
+// muller_licht Tint remote), not a per-device port.
+//
+// Bindings 0x0005 (genScenes) retained for command_recall scene group.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::paul_neuhaus {
@@ -35,6 +44,8 @@ const FzConverter* const kFz_D100_462_31[] = {
     &::zhc::generic::kFzCommandMove,
     &::zhc::generic::kFzCommandMoveColorTemperature,
     &::zhc::generic::kFzCommandRecall,
+    &::zhc::generic::kFzCommandColorLoopSet,            // z2m command_color_loop_set
+    &::zhc::generic::kFzCommandEnhancedMoveToHueAndSat, // z2m command_enhanced_move_to_hue_and_saturation
 };
 // receive-only remote — no toZigbee[] array.
 constexpr const char* kModels_D100_462_31[] = { "NLG-remote", "Neuhaus remote" };

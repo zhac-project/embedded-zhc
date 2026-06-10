@@ -1185,6 +1185,13 @@ target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_robb_parity_tests tests/test_robb_parity.cpp)
 target_link_libraries(zhc_robb_parity_tests PRIVATE zhc_definitions)
 
+# Paul Neuhaus (Q-Home). The two remotes (100.462.31 Q-REMOTE, E0040006
+# JZ-RC-J4R) skipped / mis-substituted the lightingColorCtrl colour-wheel
+# actions (color_loop_set, enhanced_move_to_hue_and_saturation). Those
+# generic decoders exist now; wired them so the enum actions surface.
+add_executable(zhc_paul_neuhaus_parity_tests tests/test_paul_neuhaus_parity.cpp)
+target_link_libraries(zhc_paul_neuhaus_parity_tests PRIVATE zhc_definitions)
+
 # EcoDim (Dutch dimmers + wall remotes). The multi-button wall remotes
 # (ED-10011/12/13/14/15) emitted a bare `action` (a kAlwaysGlobalKey),
 # collapsing every button-pair onto one key. Set endpoint_map +
@@ -1934,6 +1941,7 @@ add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
+add_test(NAME zhc_paul_neuhaus_parity_tests COMMAND zhc_paul_neuhaus_parity_tests)
 add_test(NAME zhc_ecodim_parity_tests       COMMAND zhc_ecodim_parity_tests)
 add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)
 add_test(NAME zhc_konke_parity_tests        COMMAND zhc_konke_parity_tests)

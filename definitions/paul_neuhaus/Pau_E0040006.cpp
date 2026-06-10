@@ -1,30 +1,34 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: PaulNeuhaus E0040006 — hand-rewritten remote.
+// Tier 2: PaulNeuhaus E0040006 — parity fix (wrong/missing color actions).
 // Q RGBW remote controller
 // z2m-source: paul_neuhaus.ts #E0040006.
 //
-// z2m fromZigbee: command_step, command_enhanced_move_to_hue_and_saturation,
-//   command_move_to_color_temp, command_on, command_off, command_color_loop_set,
-//   command_move, command_stop, command_recall.
+// z2m fromZigbee (exact): command_step,
+//   command_enhanced_move_to_hue_and_saturation, command_move_to_color_temp,
+//   command_on, command_off, command_color_loop_set.
 //
-// PARTIAL: kFzCommandColorLoopSet and
-// kFzCommandEnhancedMoveToHueAndSaturation absent in ZHC's generic
-// bundle; those two action streams won't decode here. Substituted
-// command_move_to_hue_and_saturation (closest equivalent).
+// PARITY FIX: the prior port substituted kFzCommandMoveToHueAndSaturation
+// (emits action="move_to_hue_and_saturation") for z2m's
+// command_enhanced_move_to_hue_and_saturation, and dropped
+// command_color_loop_set entirely. Both converters exist now
+// (lightingColorCtrl cmd 0x43 / 0x44, definitions/_generic/_shared.cpp),
+// so the real `enhanced_move_to_hue_and_saturation` + `color_loop_set`
+// actions the enum declares now surface. Also removed the phantom
+// command_move/command_stop/command_recall decoders that the prior port
+// added but z2m does not list for this model (and the matching 0x0005
+// genScenes bind).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::paul_neuhaus {
 namespace {
 const FzConverter* const kFz_E0040006[] = {
     &::zhc::generic::kFzCommandStep,
-    &::zhc::generic::kFzCommandMoveToHueAndSaturation,
+    &::zhc::generic::kFzCommandEnhancedMoveToHueAndSat, // z2m command_enhanced_move_to_hue_and_saturation
     &::zhc::generic::kFzCommandMoveToColorTemp,
     &::zhc::generic::kFzCommandOn,
     &::zhc::generic::kFzCommandOff,
-    &::zhc::generic::kFzCommandMove,
-    &::zhc::generic::kFzCommandStop,
-    &::zhc::generic::kFzCommandRecall,
+    &::zhc::generic::kFzCommandColorLoopSet,            // z2m command_color_loop_set
 };
 constexpr const char* kModels_E0040006[] = { "JZ-RC-J4R" };
 
@@ -34,7 +38,7 @@ constexpr Expose kExposes_E0040006[] = {
 };
 
 constexpr BindingSpec kBindings_E0040006[] = {
-    { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 }, { 1, 0x0005 },
+    { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
 }  // namespace
 

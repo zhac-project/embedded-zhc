@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Paul Neuhaus Q-Home remotes dropped/mis-decoded colour-wheel actions.**
+  Both remotes carried stale "converter absent" port comments from before the
+  generic command bundle gained `kFzCommandColorLoopSet` /
+  `kFzCommandEnhancedMoveToHueAndSat` (lightingColorCtrl cmd 0x44 / 0x43).
+  `100.462.31` (Q-REMOTE) never wired them, so `color_loop_set` and
+  `enhanced_move_to_hue_and_saturation` were dead enum entries; `E0040006`
+  (JZ-RC-J4R) substituted `kFzCommandMoveToHueAndSaturation` (wrong action
+  string) for z2m's `command_enhanced_move_to_hue_and_saturation` and dropped
+  `command_color_loop_set` entirely (plus carried phantom move/stop/recall
+  decoders z2m never lists). Graduated both to Tier 2 and wired the correct
+  decoders. `scene_*` (z2m `fz.tint_scene`) remains an INFRA defer — the
+  genBasic Write-Attributes parser does not populate `msg.payload`, so
+  `kFzTintScene` would be inert. Added `tests/test_paul_neuhaus_parity.cpp`.
+
 - **Leviton RC-2000WH (Omnistat2) thermostat left three exposes dead.** z2m
   wires the full `fz.thermostat`, which publishes the entire hvacThermostat
   surface, but the auto-port only wired the generic `kFzThermostat`
