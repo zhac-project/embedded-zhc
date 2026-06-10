@@ -58,6 +58,15 @@ across the ZHAC platform.
   expose (on/off, brightness_step/move, color_temperature_step, recall, stop)
   and dropped the phantom state + toZigbee path.
 
+- **Shenzhen Homa LED drivers dropped the 0x0300 color/colorTemp axis.** The
+  auto-generator collapsed every `m.light()` to on/off + brightness, but three
+  drivers request the lightingColorCtrl axis that z2m wires: HOMA1001_RGB and
+  HOMA1001_RGBW (`m.light({color:true})`) regained xy color via `kFzColor` +
+  `color_x`/`color_y` exposes + 0x0300 bind (RGBW on its rgb endpoint 11, so the
+  endpoint_map suffixes the keys to `color_x_rgb`/`color_y_rgb`); HLD503-Z-CT
+  (`m.light({colorTemp:{range:[150,500]}})`) regained `color_temp` via
+  `kFzColorTemperature` + 0x0300 bind. Plain `m.light()` drivers (CT/SC/HLC610/
+  HLC821/HLC833/HLD812) carry neither axis in z2m and were left unchanged.
 - **The Light Group (SLC SmartOne) remotes were wrong-bundled as settable
   lights.** S57003 (4-channel wall remote) and S57007 (3-button remote
   control) are battery-powered scene/dimmer remotes with z2m `toZigbee: []`,

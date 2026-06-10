@@ -1922,6 +1922,14 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Shenzhen Homa LED-driver family. The auto-generator collapsed
+# every m.light() to on/off + brightness, dropping the 0x0300 color axis: RGB +
+# RGBW (m.light({color:true})) regained xy color (kFzColor); RGBW suffixes its
+# color keys via the white/rgb endpoint_map; HLD503-Z-CT regained color_temp
+# (kFzColorTemperature). Plain m.light() drivers stay on/off+brightness.
+add_executable(zhc_shenzhen_homa_parity_tests tests/test_shenzhen_homa_parity.cpp)
+target_link_libraries(zhc_shenzhen_homa_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Viessmann (ViCare) family. The ZK03840 radiator TRV decoded
 # manuSpec attr 0x4000 viessmannWindowOpenInternal as a flat `!= 0` boolean,
 # but z2m only treats raw 3/4 as window-open (0-2/5 are "unknown"). Fixed in
@@ -2197,6 +2205,7 @@ add_test(NAME zhc_acova_parity_tests        COMMAND zhc_acova_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
+add_test(NAME zhc_shenzhen_homa_parity_tests COMMAND zhc_shenzhen_homa_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)
