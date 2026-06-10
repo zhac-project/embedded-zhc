@@ -917,6 +917,16 @@ target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Somfy roller-shutter / blind family. Ysia 5 (1871154) is a
+# 5-channel remote whose port carried an endpoint_map but no
+# endpoint_action_suffix, so all five buttons collided on a bare "action";
+# added the flag so dispatch emits action_<n>. 1871215B plug uses z2m
+# m.electricityMeter() (cluster:"both") but the port wired only kFzMetering,
+# dropping the 0x0B04 electrical half (voltage/current) — added
+# kFzElectricalMeasurement + exposes + bind.
+add_executable(zhc_somfy_parity_tests tests/test_somfy_parity.cpp)
+target_link_libraries(zhc_somfy_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Climax family. SCM-5ZBS roller shutter was wired to the
 # closuresWindowCovering cluster (0x0102) it never speaks; z2m proxies
 # position through genLevelCtrl + on/off (fz/tz cover_via_brightness) — both
@@ -1909,6 +1919,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
