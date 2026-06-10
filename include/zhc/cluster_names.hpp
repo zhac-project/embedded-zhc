@@ -83,6 +83,11 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         case 0xED00: return "zosungIRTransmit";   // Tuya/Moes UFO-R11 — chunked IR file transfer
         case 0xEF00: return "manuSpecificTuya";
         case 0xFC00: return "manuSpecificPhilips";
+        // 0xFC11 (64529) — Woolley BSD29/BSD59 smart-plug metering cluster.
+        // z2m decodes it as the raw decimal cluster "64529" with attrs
+        // 0x7006/0x7005/0x7004 (power/voltage/current, each /1000). Named
+        // here so the vendor Fz selector matches by cluster string.
+        case 0xFC11: return "manuSpecificWoolley";
         case 0xFCC0: return "manuSpecificLumi";
         case 0xFCCC: return "manuSpecificClusterAduroSmart";  // Terncy / AduroSmart vendor cluster
         case 0xFF01: return "manuSpecificLumiFF01";

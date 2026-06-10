@@ -994,6 +994,14 @@ target_link_libraries(zhc_fantem_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_hzc_electric_parity_tests tests/test_hzc_electric_parity.cpp)
 target_link_libraries(zhc_hzc_electric_parity_tests PRIVATE zhc_definitions)
 
+# Woolley BSD29/BSD59 smart plug. The generated port wired the generic
+# kFzElectricalMeasurement (0x0B04) for power/voltage/current, but z2m's
+# fzLocal.BSD29 decodes a manuSpecific cluster 0xFC11 (attrs 0x7006/0x7005/
+# 0x7004, each /1000). Graduated + re-pointed at kFzWoolleyElectricity
+# (cluster "manuSpecificWoolley"); dropped the phantom 0x0B04 binding.
+add_executable(zhc_woolley_parity_tests tests/test_woolley_parity.cpp)
+target_link_libraries(zhc_woolley_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the GS (Linkind-OEM) family. The 6 IAS sensors lowered
 # the generic kFzIasZone (bare key "alarm") while exposing a semantic key —
 # graduated to the typed kFzIas<Type>Alarm converters (occupancy/contact/
@@ -2381,6 +2389,7 @@ add_test(NAME zhc_imou_parity_tests         COMMAND zhc_imou_parity_tests)
 add_test(NAME zhc_hej_parity_tests          COMMAND zhc_hej_parity_tests)
 add_test(NAME zhc_fantem_parity_tests       COMMAND zhc_fantem_parity_tests)
 add_test(NAME zhc_hzc_electric_parity_tests COMMAND zhc_hzc_electric_parity_tests)
+add_test(NAME zhc_woolley_parity_tests      COMMAND zhc_woolley_parity_tests)
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
 add_test(NAME zhc_multiterm_parity_tests    COMMAND zhc_multiterm_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
