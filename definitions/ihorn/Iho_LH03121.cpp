@@ -1,18 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ihorn HO-09ZB — auto-generated.
-// Door or window contact switch
-// z2m-source: ihorn.ts #HO-09ZB.
+// Tier 2: Ihorn LH03121 — graduated from generated/.
+// Door contact DNAKE SH-DM-S01
+// z2m-source: ihorn.ts #LH03121 (m.iasZoneAlarm zoneType:"contact" -> `contact`, bit0; m.battery).
+// Fix: generic kFzIasZone emitted the bare key "alarm" while the expose
+// declared the semantic key; swapped in typed kFzIasContactAlarm (emits `contact`).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::ihorn {
 namespace {
-const FzConverter* const kFz_HO_09ZB[] = {
+const FzConverter* const kFz_LH03121[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
-constexpr const char* kModels_HO_09ZB[] = { "HORN-MECI-A3.9-E" };
+constexpr const char* kModels_LH03121[] = { "LH03121" };
 
 }  // namespace
 
@@ -21,7 +23,7 @@ constexpr const char* kModels_HO_09ZB[] = { "HORN-MECI-A3.9-E" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +34,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_HO_09ZB{
-    .zigbee_models=kModels_HO_09ZB, .zigbee_models_count=sizeof(kModels_HO_09ZB)/sizeof(kModels_HO_09ZB[0]),
+extern const PreparedDefinition kDef_LH03121{
+    .zigbee_models=kModels_LH03121, .zigbee_models_count=sizeof(kModels_LH03121)/sizeof(kModels_LH03121[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="HO-09ZB", .vendor="Ihorn",
+    .model="LH03121", .vendor="Ihorn",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_HO_09ZB, .from_zigbee_count=sizeof(kFz_HO_09ZB)/sizeof(kFz_HO_09ZB[0]),
+    .from_zigbee=kFz_LH03121, .from_zigbee_count=sizeof(kFz_LH03121)/sizeof(kFz_LH03121[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
