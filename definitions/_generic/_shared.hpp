@@ -251,9 +251,12 @@ extern const FzConverter kFzCommandMoveColorTemperature;
 
 // ssIasAce arm / panic / emergency command decoders.
 //   kFzIasAceArm       — cmd 0x00 → action="<armMode>" + action_code + action_zone.
+//   kFzIasAceArmWithTransaction — cmd 0x00 → same + action_transaction (ZCL TSN).
+//                        z2m fz.command_arm_with_transaction.
 //   kFzIasAcePanic     — cmd 0x04 → action="panic".
 //   kFzIasAceEmergency — cmd 0x02 → action="emergency". z2m fz.command_emergency.
 extern const FzConverter kFzIasAceArm;
+extern const FzConverter kFzIasAceArmWithTransaction;
 extern const FzConverter kFzIasAcePanic;
 extern const FzConverter kFzIasAceEmergency;
 

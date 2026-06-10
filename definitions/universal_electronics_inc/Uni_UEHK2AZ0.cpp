@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: UniversalElectronicsInc UEHK2AZ0 — hand-rewritten 2026-04-29a.
+// Tier 2: UniversalElectronicsInc UEHK2AZ0 — hand-rewritten 2026-04-29a,
+//         action_transaction wired 2026-06-10.
 // Xfinity security keypad (re-branded XHK1-UE successor with the same wiring).
 // z2m-source: universal_electronics_inc.ts #UEHK2AZ0.
 //
@@ -15,10 +16,11 @@
 //   tz.arm_mode                            — outbound ssIasAce armRsp / panelStatusChanged
 //   m.iasGetPanelStatusResponse            — fixed armRsp on getPanelStatus
 //
-// Mapped: kFzBattery, kFzTemperature, kFzIasMotionAlarm, kFzIasContactAlarm, kFzIasAceArm.
+// Mapped: kFzBattery, kFzTemperature, kFzIasMotionAlarm, kFzIasContactAlarm,
+//         kFzIasAceArmWithTransaction (action + action_code + action_zone +
+//         action_transaction, mirroring z2m fz.command_arm_with_transaction).
 //
 // PARTIAL — same gaps as XHK1-UE:
-//   - action_transaction (TSN passthrough)
 //   - fz.ias_ace_occupancy_with_timeout (ssIasAce cmd 0x02)
 //   - fz.identify
 //   - tz.arm_mode + m.iasGetPanelStatusResponse outbound encoders
@@ -34,7 +36,7 @@ const FzConverter* const kFz_UEHK2AZ0[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzIasMotionAlarm,
     &::zhc::generic::kFzIasContactAlarm,
-    &::zhc::generic::kFzIasAceArm,
+    &::zhc::generic::kFzIasAceArmWithTransaction,
 };
 
 constexpr const char* kModels_UEHK2AZ0[] = { "H34450BA00-00007" };
@@ -50,6 +52,7 @@ constexpr Expose kAutoExposes[] = {
     {"action",             ExposeType::Enum,    Access::State, nullptr,      nullptr, nullptr, 0},
     {"action_code",        ExposeType::Numeric, Access::State, nullptr,      nullptr, nullptr, 0},
     {"action_zone",        ExposeType::Numeric, Access::State, nullptr,      nullptr, nullptr, 0},
+    {"action_transaction", ExposeType::Numeric, Access::State, nullptr,      nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

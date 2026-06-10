@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: UniversalElectronicsInc XHK1-UE — hand-rewritten 2026-04-29a.
+// Tier 2: UniversalElectronicsInc XHK1-UE — hand-rewritten 2026-04-29a,
+//         action_transaction wired 2026-06-10.
 // Xfinity security keypad.
 // z2m-source: universal_electronics_inc.ts #XHK1-UE.
 //
@@ -20,12 +21,14 @@
 //   kFzIasMotionAlarm           — alarm_1 → "occupancy".
 //   kFzIasContactAlarm          — alarm_1 → "contact" (zoneStatus bits decoded twice for the
 //                                 same frame; cheap, two separate keys land in the shadow).
-//   kFzIasAceArm                — ssIasAce cmd 0x00 → action / action_code / action_zone.
+//   kFzIasAceArmWithTransaction — ssIasAce cmd 0x00 → action / action_code /
+//                                 action_zone / action_transaction. Mirrors
+//                                 z2m fz.command_arm_with_transaction: the ZCL
+//                                 transaction sequence number
+//                                 (DecodedMessage.transaction_sequence) is
+//                                 copied into `action_transaction`.
 //
 // PARTIAL:
-//   - `action_transaction`: z2m's command_arm_with_transaction copies the ZCL TSN
-//     into action_transaction; ZHC's kFzIasAceArm doesn't expose the TSN yet.
-//     Single-vendor demand at the moment, so deferred.
 //   - `fz.ias_ace_occupancy_with_timeout`: ssIasAce cmd 0x02 (getPanelStatus) sets
 //     `occupancy=true` for a configurable timeout. No generic decoder; runtime
 //     gap. Live keypad still gets occupancy via the IAS-Zone status-change path.
@@ -46,7 +49,7 @@ const FzConverter* const kFz_XHK1_UE[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzIasMotionAlarm,
     &::zhc::generic::kFzIasContactAlarm,
-    &::zhc::generic::kFzIasAceArm,
+    &::zhc::generic::kFzIasAceArmWithTransaction,
 };
 
 constexpr const char* kModels_XHK1_UE[] = { "URC4450BC0-X-R" };
@@ -62,7 +65,8 @@ constexpr Expose kAutoExposes[] = {
     {"action",             ExposeType::Enum,    Access::State, nullptr,      nullptr, nullptr, 0},
     {"action_code",        ExposeType::Numeric, Access::State, nullptr,      nullptr, nullptr, 0},
     {"action_zone",        ExposeType::Numeric, Access::State, nullptr,      nullptr, nullptr, 0},
-    // action_transaction + tz.arm_mode write surface — pending runtime work.
+    {"action_transaction", ExposeType::Numeric, Access::State, nullptr,      nullptr, nullptr, 0},
+    // tz.arm_mode write surface — pending runtime work.
 };
 
 constexpr BindingSpec kAutoBindings[] = {
