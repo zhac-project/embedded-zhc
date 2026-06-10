@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Technicolor XHK1-TC (Xfinity security keypad): phantom on/off + IAS dead-key
+  + dropped temperature + dead `action_transaction`.** Sibling of the
+  UniversalElectronicsInc XHK1-UE. The auto-port wired a phantom `kFzOnOff`/
+  `kTzOnOff` (`state` expose, bound 0x0006) the keypad has no such cluster, the
+  generic dead-key `kFzIasZone` (emitting a bare `alarm` while exposes declare
+  `occupancy`/`contact`), dropped temperature entirely, and used `kFzIasAceArm`
+  which drops the ZCL TSN — leaving the declared `action_transaction` expose
+  dead. Rewired to `kFzBattery` + `kFzTemperature` + typed `kFzIasMotionAlarm`
+  (→`occupancy`) + `kFzIasContactAlarm` (→`contact`) + `kFzIasAceArmWithTransaction`
+  so the ZCL transaction sequence number now reaches `action_transaction`,
+  mirroring z2m `fz.command_arm_with_transaction`. Graduated to a Tier-2 hand
+  def. (`fz.ias_ace_occupancy_with_timeout` getPanelStatus and `tz.arm_mode` /
+  `m.iasGetPanelStatusResponse` armRsp encoders remain runtime gaps, as for the
+  XHK1-UE sibling.)
 - **Nordtronic metering dimmers/relays: dropped 0x0B04 half + dead remote.**
   The four metering devices `98424072` (rotary), `98425271` (Box Dimmer G2),
   `98425033` (ceiling micro) and `98425034` (DIN rail) are z2m `m.light()` +

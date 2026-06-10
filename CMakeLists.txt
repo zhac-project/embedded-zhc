@@ -1220,6 +1220,13 @@ target_link_libraries(zhc_linkind_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_universal_electronics_inc_parity_tests tests/test_universal_electronics_inc_parity.cpp)
 target_link_libraries(zhc_universal_electronics_inc_parity_tests PRIVATE zhc_definitions)
 
+# Technicolor XHK1-TC — Xfinity security keypad, sibling of XHK1-UE. The
+# auto-port wired phantom kFzOnOff + the generic dead-key kFzIasZone and dropped
+# temperature; rewired to typed IAS occupancy/contact + kFzIasAceArmWithTransaction
+# so the declared `action_transaction` (ZCL TSN) reaches the shadow.
+add_executable(zhc_technicolor_parity_tests tests/test_technicolor_parity.cpp)
+target_link_libraries(zhc_technicolor_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the eWeLink (Coolkit / Sonoff-OEM) vendor. The WS01
 # rainfall sensor reports rain over ssIasZone commandStatusChangeNotification
 # (zoneStatus bit 0); z2m maps it via fzLocal.WS01_rain -> {rain}. Its
@@ -2506,6 +2513,7 @@ add_test(NAME zhc_led_trading_parity_tests  COMMAND zhc_led_trading_parity_tests
 add_test(NAME zhc_woox_parity_tests         COMMAND zhc_woox_parity_tests)
 add_test(NAME zhc_linkind_parity_tests      COMMAND zhc_linkind_parity_tests)
 add_test(NAME zhc_universal_electronics_inc_parity_tests COMMAND zhc_universal_electronics_inc_parity_tests)
+add_test(NAME zhc_technicolor_parity_tests  COMMAND zhc_technicolor_parity_tests)
 add_test(NAME zhc_ewelink_parity_tests      COMMAND zhc_ewelink_parity_tests)
 add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_iluminize_parity_tests    COMMAND zhc_iluminize_parity_tests)
