@@ -31,6 +31,23 @@ across the ZHAC platform.
   The remotes (511.324/.524/.541/.544/.557, 5144.\*) and the light/onoff
   bundles were verified CLEAN; sunricher `externalSwitchType`/`minimumPWM`
   manuSpecific config attributes were deferred (no generic converter).
+- **Onesti S4RX-110 ("Relax" smart plug) — internal die-temperature channel
+  was dropped.** z2m wires `fz.device_temperature` + `e.device_temperature()`
+  and binds `genDeviceTempCfg` (0x0002), but the auto-generated port carried
+  only `kFzOnOff` + `kFzMetering` + `kFzElectricalMeasurement`, so the
+  `device_temperature` value never surfaced (same gap class as Dawon
+  PM-B540). Graduated `One_S4RX_110.cpp` from `generated/` to a Tier-2 parent
+  override wiring the generic `kFzDeviceTemperature` + the `device_temperature`
+  expose + the 0x0002 bind; bindings retargeted to endpoint 2 and
+  `default_endpoint=2` set to mirror z2m's `endpoint: () => ({default: 2})`.
+  New fixture `tests/test_onesti_parity.cpp` pins the device_temperature
+  decode (positive + negative, no `temperature` leak), the
+  metering/electrical-measurement regression, the endpoint-2 binds, and the
+  lock family's static surface. The two Onesti door locks (easyCodeTouch_v1,
+  Nimly) are CLEAN on their generic core (lock/battery/action/pincode); their
+  vendor-specific `nimly_pro_lock_actions` (closuresDoorLock attrs 256/257)
+  and `easycodetouch_action` (raw-cluster lookup) decoders are INFRA-deferred.
+
 - **Dawon DNS PM-B540-ZB (16 A metering plug) — internal die-temperature
   channel was dropped.** Alone among the Dawon metering plugs, the PM-B540
   also reports its own temperature on `genDeviceTempCfg` (0x0002); z2m wires
