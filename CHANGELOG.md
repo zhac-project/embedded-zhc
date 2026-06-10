@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
+  ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
+  dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
+  onto generic `genOnOff`/`genLevelCtrl`/`windowCovering` converters and bindings,
+  but z2m wires every one as a Tuya-MCU device on the 0xEF00 (manuSpecificTuya)
+  DP stream (`legacy.fz.tuya_switch`/`tuya_cover`/`tuya_dimmer`) — the standard
+  clusters are never used, so all four ports were DEAD (no state/position/
+  brightness ever decoded, writes went nowhere). Re-wired onto the Tuya-DP
+  read+write infra: switch DP1 → state; covers DP2+DP3 → position; dimmer DP1
+  → state + DP3 → brightness. (Dimmer brightness keeps the raw 0..1000 DP value,
+  per the existing ported-Tuya-dimmer convention; z2m's affine 0..254 remap is an
+  unsupported DP-map scaling — documented INFRA gap.)
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as

@@ -1016,6 +1016,15 @@ target_link_libraries(zhc_visonic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ihorn_parity_tests tests/test_ihorn_parity.cpp)
 target_link_libraries(zhc_ihorn_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Somgoms TS0601 / legacy-DP family (1-gang switch, dimmer, two
+# curtain motors). All 4 defs were auto-ported onto generic standard-cluster
+# converters (genOnOff / genLevelCtrl / windowCovering) but z2m wires them as
+# Tuya-MCU devices on the 0xEF00 DP stream — every port was DEAD. Re-wired onto
+# the Tuya-DP read+write infra; tests decode DP1 state / DP2+DP3 position /
+# DP3 brightness frames through the dispatcher.
+add_executable(zhc_somgoms_parity_tests tests/test_somgoms_parity.cpp)
+target_link_libraries(zhc_somgoms_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Fantem ZB003-X 4-in-1 multi sensor. Its IAS path lowered the
 # generic kFzIasZoneStatusChange (bare "alarm_1") while the expose declared
 # `occupancy`; z2m fz.ZB003X_occupancy maps zoneStatus bit0 -> occupancy, so
@@ -2769,6 +2778,7 @@ add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_aeotec_parity_tests       COMMAND zhc_aeotec_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
+add_test(NAME zhc_somgoms_parity_tests      COMMAND zhc_somgoms_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
 add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
