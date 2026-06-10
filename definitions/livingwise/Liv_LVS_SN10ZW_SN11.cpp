@@ -1,15 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Livingwise LVS-SN10ZW_SN11 — auto-generated.
+// Tier 2: LivingWise LVS-SN10ZW_SN11 — graduated from generated/ to fix the IAS key.
 // Occupancy sensor
-// z2m-source: livingwise.ts #LVS-SN10ZW_SN11.
+// z2m-source: livingwise.ts #LVS-SN10ZW_SN11 (fz.battery + fz.ias_occupancy_alarm_1_with_timeout).
+//
+// The generated stub wired the generic kFzIasZone, which emits the bare
+// key `alarm`. The expose set declares the semantic `occupancy` key (z2m
+// e.occupancy()), so the motion signal never reached the shadow — a dead
+// IAS key. z2m decodes via fz.ias_occupancy_alarm_1_with_timeout
+// (zoneStatus bit 0 -> `occupancy`, bit 2 -> tamper, bit 3 ->
+// battery_low; the _with_timeout suffix only adds a host-side no-motion
+// clear, same alarm bit). Swapped to the typed kFzIasMotionAlarm
+// converter (emits occupancy + tamper + battery_low) and renamed the
+// expose `alarm` -> `occupancy`. kFzBattery (battery + voltage) kept.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::livingwise {
 namespace {
 const FzConverter* const kFz_LVS_SN10ZW_SN11[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_LVS_SN10ZW_SN11[] = { "895a2d80097f4ae2b2d40500d5e03dcc", "700ae5aab3414ec09c1872efe7b8755a" };
@@ -21,7 +31,7 @@ constexpr const char* kModels_LVS_SN10ZW_SN11[] = { "895a2d80097f4ae2b2d40500d5e
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -36,7 +46,7 @@ extern const PreparedDefinition kDef_LVS_SN10ZW_SN11{
     .zigbee_models=kModels_LVS_SN10ZW_SN11, .zigbee_models_count=sizeof(kModels_LVS_SN10ZW_SN11)/sizeof(kModels_LVS_SN10ZW_SN11[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="LVS-SN10ZW_SN11", .vendor="Livingwise",
+    .model="LVS-SN10ZW_SN11", .vendor="LivingWise",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
     .from_zigbee=kFz_LVS_SN10ZW_SN11, .from_zigbee_count=sizeof(kFz_LVS_SN10ZW_SN11)/sizeof(kFz_LVS_SN10ZW_SN11[0]),
