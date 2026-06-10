@@ -46,6 +46,16 @@ across the ZHAC platform.
   `kFzBattery` + `kFzTemperature`, swapped the phantom `state`/to_zigbee
   for an `action` enum + `temperature` expose, dropped the bogus genOnOff
   bind, and pinned the manufacturer name (`zunzunbee`).
+- **Woolley BSD29/BSD59 smart plug: dropped metering channels.** The
+  generated def wired the generic `kFzElectricalMeasurement`
+  (haElectricalMeasurement 0x0B04) for its power/voltage/current exposes,
+  but z2m's `fzLocal.BSD29` decodes a manufacturer-specific cluster 0xFC11
+  (decimal 64529) — attrs 0x7006/0x7005/0x7004 (power/voltage/current),
+  each scaled `/1000`. Against 0x0B04 every metering report was dropped on
+  read. Named 0xFC11 as `manuSpecificWoolley` in `cluster_names.hpp`,
+  graduated the def to Tier 2 with an inline `kFzWoolleyElectricity` Fz
+  that decodes the three vendor attrs as Float = raw/1000, and dropped the
+  phantom 0x0B04 binding (z2m's `configure()` binds only genOnOff).
 
 - **Purmo/Radson Yali Parada Plus thermostat: dead thermostat extras.**
   The `PUMM01102` electric oil-filled radiator was auto-ported with only
