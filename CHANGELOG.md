@@ -32,6 +32,20 @@ across the ZHAC platform.
   Re-pointed the def at the typed `kFzIasMotionAlarm` (emits `occupancy` from
   bit 0, `tamper`/`battery_low` from bits 2/3) and graduated it out of
   `generated/`. Tuya-DP temp/humidity/calibration path was already correct.
+- **BTicino F20T60A measured via the wrong cluster + K4003C dropped its
+  button action.** The F20T60A DIN power module was ported with
+  `kFzMetering` (seMetering 0x0702) and a phantom `energy` expose, but z2m
+  uses `m.electricityMeter({cluster: "electrical"})` which is
+  haElectricalMeasurement-only (0x0B04) → power/voltage/current and NO
+  energy; re-wired to `kFzElectricalMeasurement` with the correct
+  binding/exposes (voltage + current were previously missing entirely). The
+  K4003C/L4003C/N4003C/NT4003C light switch reports its button on
+  `genBinaryInput` (0x000F) presentValue via z2m's `fz.K4003C_binary_input`
+  (`action: on/off` + state) but was ported as bare on/off, leaving the
+  `action` surface dead; added shared `bticino::kFzK4003CBinaryInput` +
+  the `action` expose + 0x000F binding. Both defs graduated out of
+  `generated/`. (Legrand 0xFC01 LED-mode config = manuSpecific INFRA,
+  deferred.)
 
 - **Inovelli Blue-series switches/dimmers/fan dropped their button-tap
   `action`.** z2m marks VZM30-SN, VZM31-SN, VZM32-SN and VZM35-SN
