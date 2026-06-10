@@ -1,8 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Spotmau SP-WS-02 — auto-generated.
+// Tier 2: Spotmau SP-WS-02 — graduated from generated/.
 // Smart wall switch - Socket
-// z2m-source: spotmau.ts #SP-WS-02.
+// z2m-source: spotmau.ts #SP-WS-02 — m.onOff(), endpoint:()=>({default:16}).
+//
+// Gap (control+read dead): same as SP-PS1-02 — z2m's single genOnOff lives on
+// endpoint 16 (bare `state`), but the auto-port bound ep1 / default_endpoint=0.
+// Fix: bind {16,0x0006} + default_endpoint=16, NO endpoint_map (the default
+// endpoint is unsuffixed; a 1-entry map would wrongly yield `state_default`).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::spotmau {
@@ -24,7 +29,7 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
+    {16, 0x0006},  // z2m endpoint:()=>({default:16}) — genOnOff on ep16
 };
 // --- end auto-generated block ---
 
@@ -39,6 +44,7 @@ extern const PreparedDefinition kDef_SP_WS_02{
     .to_zigbee=kTz_SP_WS_02, .to_zigbee_count=sizeof(kTz_SP_WS_02)/sizeof(kTz_SP_WS_02[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .default_endpoint = 16,  // outbound on/off → ep16 (z2m default endpoint)
 };
 
 }  // namespace zhc::devices::spotmau

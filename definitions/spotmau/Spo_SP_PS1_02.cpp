@@ -1,8 +1,18 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Spotmau SP-PS1-02 — auto-generated.
+// Tier 2: Spotmau SP-PS1-02 — graduated from generated/.
 // Smart wall switch - 1 gang
-// z2m-source: spotmau.ts #SP-PS1-02.
+// z2m-source: spotmau.ts #SP-PS1-02 — m.onOff(), endpoint:()=>({default:16}).
+//
+// Gap (control+read dead): z2m puts the single genOnOff on endpoint 16
+// (endpoint:{default:16}, no endpointNames → bare `state`). The auto-port
+// bound genOnOff on ep1 and left default_endpoint=0, so reporting was
+// configured on the wrong endpoint (reads dead) and outbound on/off routed
+// to ep1 (control dead). Fix: bind {16,0x0006} + default_endpoint=16. NO
+// endpoint_map — the default endpoint is unsuffixed in z2m, and a 1-entry
+// map would wrongly suffix `state`→`state_default` (dispatch does not
+// special-case the "default" label). Same shape as the ge PTAPT-WH02 /
+// frient SMRZB-153 default_endpoint fix.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::spotmau {
@@ -24,7 +34,7 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
+    {16, 0x0006},  // z2m endpoint:()=>({default:16}) — genOnOff on ep16
 };
 // --- end auto-generated block ---
 
@@ -39,6 +49,7 @@ extern const PreparedDefinition kDef_SP_PS1_02{
     .to_zigbee=kTz_SP_PS1_02, .to_zigbee_count=sizeof(kTz_SP_PS1_02)/sizeof(kTz_SP_PS1_02[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .default_endpoint = 16,  // outbound on/off → ep16 (z2m default endpoint)
 };
 
 }  // namespace zhc::devices::spotmau

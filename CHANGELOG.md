@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
+  the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
+  `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.
+  The auto-port bound genOnOff on ep1 and left `default_endpoint=0`, so
+  reporting was configured on the wrong endpoint and outbound on/off routed to
+  ep1. Graduated both to Tier-2 with `default_endpoint=16` + `{16,0x0006}`
+  binding and NO endpoint_map (the default endpoint is unsuffixed; a 1-entry
+  map would wrongly yield `state_default`). Same shape as the ge PTAPT-WH02 /
+  frient SMRZB-153 default_endpoint fix. (SP-PS2-02/PS3-02 multi-gang were
+  already correct.)
+
 - **SLV (VALETO) family: restored dropped colour axes + stripped a phantom
   remote bundle.** The four LED luminaires were auto-ported as plain dimmable
   lights (on/off + brightness only) while z2m wires `m.light({colorTemp[,

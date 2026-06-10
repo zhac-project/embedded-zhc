@@ -993,6 +993,8 @@ target_link_libraries(zhc_casaia_parity_tests PRIVATE zhc_definitions)
 # exposes + the 0x0402 (ep1) / 0x0405 (ep2) bindings. See tests/README.md.
 add_executable(zhc_akuvox_parity_tests tests/test_akuvox_parity.cpp)
 target_link_libraries(zhc_akuvox_parity_tests PRIVATE zhc_definitions)
+add_executable(zhc_spotmau_parity_tests tests/test_spotmau_parity.cpp)
+target_link_libraries(zhc_spotmau_parity_tests PRIVATE zhc_definitions)
 
 # Parity fixtures for the Heiman IAS-Zone sensor family: ~27 generated defs
 # decoded the bare "alarm" key (generic kFzIasZone) while exposing the
@@ -2791,6 +2793,7 @@ add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_lightsolutions_parity_tests COMMAND zhc_lightsolutions_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_akuvox_parity_tests       COMMAND zhc_akuvox_parity_tests)
+add_test(NAME zhc_spotmau_parity_tests      COMMAND zhc_spotmau_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_edp_parity_tests          COMMAND zhc_edp_parity_tests)
 add_test(NAME zhc_prolight_parity_tests     COMMAND zhc_prolight_parity_tests)
