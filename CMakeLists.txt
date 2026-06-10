@@ -1465,6 +1465,15 @@ target_link_libraries(zhc_third_reality_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bitron_parity_tests tests/test_bitron_parity.cpp)
 target_link_libraries(zhc_bitron_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Nyce NCZ-30xx IAS / multi-sensor family. The five
+# generated defs were lowered as battery + generic kFzIasZone (bare `alarm`,
+# wrong zoneStatus bit) and dropped the motion sensors' occupancy/temperature/
+# humidity channels. Contact defs re-wired to kFzIasContactAlarm (bit 0); motion
+# defs re-wired to kFzOccupancy + kFzTemperature + kFzHumidity +
+# kFzIasMotionAlarm2 (alarm_2 / bit 1). See tests/README.md.
+add_executable(zhc_nyce_parity_tests tests/test_nyce_parity.cpp)
+target_link_libraries(zhc_nyce_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Namron 4512752/4512753 Tuya-DP touch thermostat, whose
 # full-DP def collided with a metering-only generated stub on the same TS0601 +
 # _TZE204_p3lqqy2r fingerprint; the stub was removed and the full-DP def
@@ -2260,6 +2269,7 @@ add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
 add_test(NAME zhc_third_reality_parity_tests COMMAND zhc_third_reality_parity_tests)
 add_test(NAME zhc_bitron_parity_tests       COMMAND zhc_bitron_parity_tests)
+add_test(NAME zhc_nyce_parity_tests         COMMAND zhc_nyce_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_leviton_parity_tests      COMMAND zhc_leviton_parity_tests)
