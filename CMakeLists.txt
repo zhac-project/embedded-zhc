@@ -917,6 +917,14 @@ target_link_libraries(zhc_smarli_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_schwaiger_parity_tests tests/test_schwaiger_parity.cpp)
 target_link_libraries(zhc_schwaiger_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Ajax Online LED-bulb family. Pins the dropped
+# colour / colour-temperature axes the auto-ports carried: full-colour bulbs
+# (Aj_Zigbee_Led_Strip / AJ_ZB_GU10 / AJ_ZIGPROA60 / ZB_A60_RGBCW / the Tuya
+# AJ_RGBCCT_CTRL), CCT-only ZB-CCT_Filament, plus the AJ_RGBCCT_CTRL phantom
+# battery channel that was removed.
+add_executable(zhc_ajax_online_parity_tests tests/test_ajax_online_parity.cpp)
+target_link_libraries(zhc_ajax_online_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Atlantic Group GW003-AS-IN-TE-FC AC interface. The
 # generated def wired generic kFzThermostat + kFzFanMode but exposed
 # occupied_cooling_setpoint (hvacThermostat attr 0x0011) and
@@ -2513,6 +2521,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
+add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)

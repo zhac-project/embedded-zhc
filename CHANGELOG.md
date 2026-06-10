@@ -10,6 +10,22 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Ajax Online LED bulbs: restored dropped colour / colour-temperature
+  axes.** All six z2m `m.light(...)` / `tuyaLight(...)` defs ship colour
+  and/or colour-temperature, but every auto-port wired only
+  `kFzOnOff + kFzBrightness` and exposed just state/brightness, dropping the
+  whole `lightingColorCtrl` (0x0300) channel. Graduated all six to Tier 2:
+  the full-colour bulbs (`Aj_Zigbee_Led_Strip`, `AJ_ZB_GU10`,
+  `AJ_ZIGPROA60`, `ZB_A60_RGBCW`, and the Tuya `AJ_RGBCCT_CTRL`) now wire
+  `kFzColor + kFzColorTemperature` / `kTzColor + kTzColorTemp` with
+  `color_x/color_y/hue/saturation/color_temp` exposes; the CCT-only
+  `ZB-CCT_Filament` wires `kFzColorTemperature` / `kTzColorTemp` +
+  `color_temp` (and regains its z2m `ZB/Ajax Online` manufacturer gate).
+  `AJ_RGBCCT_CTRL` was additionally a phantom-battery sensor (`kFzBattery` +
+  battery/voltage exposes, no `to_zigbee`) on a mains RGB+CCT light — rebuilt
+  as a full controllable light and the genPowerCfg (0x0001) battery binding
+  removed.
+
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
   but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
