@@ -82,6 +82,19 @@ across the ZHAC platform.
   `current_cooling_setpoint` expose and corrected `system_mode` / `fan_mode` from
   Binary to Enum (z2m `withSystemMode` / `withFanMode`). `fan_mode` already
   matched the generic `kFzFanMode` key.
+- **Javis JS-MC-SENSOR-ZB / JS-SLK2-ZB parity.** The microwave/presence
+  sensor (TS0601 `_TZE200_lgstepha`/`_kagkgk0i`/`_i0b1dbqu`) was mis-wired
+  to the IAS-zone converter with phantom `alarm`/`tamper`/`battery_low`
+  exposes and a 0x0500 bind; z2m decodes it over the 0xEF00 Tuya DP stream
+  (`legacy.fz.javis_microwave_sensor`). Ported the real DP→key map
+  (presence_state + occupancy on DP1, illuminance, sensitivity, keep_time,
+  led_enable, illuminance_calibration) and split the `_TZE200_kagkgk0i`
+  DP102/106/107 remap into its own def. The JS-SLK2-ZB biometric lock was
+  mis-ported as a controllable on/off switch (kFzOnOff + kTzOnOff + StateSet
+  `state` + genOnOff bind); z2m has an empty toZigbee and exposes
+  `action(["unlock"])` + battery — dropped the phantom control. The raw
+  genBasic 0x4200 lock-report decode (custom UTF-8/timer shape) is deferred
+  as infra.
 
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
