@@ -1165,6 +1165,9 @@ target_link_libraries(zhc_samotech_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_climax_parity_tests tests/test_climax_parity.cpp)
 target_link_libraries(zhc_climax_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_blaupunkt_parity_tests tests/test_blaupunkt_parity.cpp)
+target_link_libraries(zhc_blaupunkt_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Lupus (LUPUSEC) family. The 12031 / LS12128 SCM-family roller
 # shutters were ported against closuresWindowCovering (0x0102) — a cluster they
 # never speak — leaving position decode and control dead; rewired to the
@@ -2796,6 +2799,7 @@ add_test(NAME zhc_woolley_parity_tests      COMMAND zhc_woolley_parity_tests)
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
 add_test(NAME zhc_multiterm_parity_tests    COMMAND zhc_multiterm_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
+add_test(NAME zhc_blaupunkt_parity_tests    COMMAND zhc_blaupunkt_parity_tests)
 add_test(NAME zhc_lupus_parity_tests        COMMAND zhc_lupus_parity_tests)
 add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
