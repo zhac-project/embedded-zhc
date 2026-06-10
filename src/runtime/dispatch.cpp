@@ -74,9 +74,14 @@ bool merge_payload(const FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& src,
 //     ("press_l1"), not the key. If a future device wants per-EP
 //     `action_l1`/`action_l2`, drop it from this list and add a
 //     per-def override.
+//   * power / energy — z2m's `e.power()` / `e.energy()` presets are
+//     device-global unless explicitly `.withEndpoint()`-tagged. Multi-
+//     load metering switches (e.g. Smartenit 4040B) expose a single
+//     aggregate `power`/`energy` while their per-load `state` switches
+//     ARE suffixed; suffixing the metering keys would diverge from z2m.
 constexpr const char* kAlwaysGlobalKeys[] = {
     "battery", "battery_low", "voltage", "linkquality",
-    "device_temperature", "tamper", "action",
+    "device_temperature", "tamper", "action", "power", "energy",
 };
 
 bool is_always_global_key(const char* key, const PreparedDefinition& def) {
