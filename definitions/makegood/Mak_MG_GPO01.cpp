@@ -1,8 +1,21 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Makegood MG-GPO01 — auto-generated.
+// Tier 2: Makegood MG-GPO01 — graduated from generated/.
 // Double Zigbee power point
 // z2m-source: makegood.ts #MG-GPO01.
+//
+// DEFERRED (INFRA, gap class f — dual-endpoint metering split): z2m declares
+// two switch endpoints (right:1, left:2) via deviceEndpoints but keeps
+// power/current/voltage/energy global through
+// `meta.multiEndpointSkip: ["power","current","voltage","energy"]`, suffixing
+// only the switch `state` per endpoint. The runtime suffix rewrite
+// (src/runtime/dispatch.cpp) has no per-def "metering-skip" hook — keeping the
+// endpoint_map {right:1,left:2} here would wrongly suffix power/current/energy
+// to `_right` (only `voltage` is in kAlwaysGlobalKeys[]), diverging from z2m's
+// bare keys. So the endpoint_map is dropped: the def ships a single bare
+// `state` + a single (EP1) metering surface, identical to the
+// structurally-equal MG-AUZG01 and Honyar U86Z223A10-ZJU01(GD) (HY0157). The
+// second-gang state split waits on the dispatch infra.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::makegood {
@@ -17,7 +30,6 @@ const TzConverter* const kTz_MG_GPO01[] = {
 };
 constexpr const char* kModels_MG_GPO01[] = { "TS011F" };
 constexpr const char* kManus_MG_GPO01[] = { "_TZ3210_bep7ccew" };
-constexpr ::zhc::EndpointLabel kEndpoints_MG_GPO01[] = { {"right", 1}, {"left", 2} };
 
 }  // namespace
 
@@ -49,8 +61,6 @@ extern const PreparedDefinition kDef_MG_GPO01{
     .to_zigbee=kTz_MG_GPO01, .to_zigbee_count=sizeof(kTz_MG_GPO01)/sizeof(kTz_MG_GPO01[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
-    .endpoint_map       = kEndpoints_MG_GPO01,
-    .endpoint_map_count = sizeof(kEndpoints_MG_GPO01)/sizeof(kEndpoints_MG_GPO01[0]),
 };
 
 }  // namespace zhc::devices::makegood

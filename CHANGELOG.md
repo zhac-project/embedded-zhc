@@ -63,7 +63,12 @@ across the ZHAC platform.
   bindings. The dual-endpoint (l1/l2) state split stays INFRA-deferred
   (z2m `multiEndpointSkip` keeps metering global; the runtime suffix
   rewrite has no per-def metering-skip hook), matching the Honyar
-  U86Z223A10-ZJU01(GD) precedent. MG-GPO01 was already correct.
+  U86Z223A10-ZJU01(GD) precedent. The sibling MG-GPO01
+  (`_TZ3210_bep7ccew`) carries the *same* `multiEndpointSkip` set but the
+  generated def kept a `{right:1,left:2}` endpoint_map — the runtime would
+  then suffix power/current/energy (`_right`), diverging from z2m's bare
+  metering keys. Graduated MG-GPO01 too, dropping the endpoint_map (same
+  INFRA defer): single bare `state` + single EP1 metering surface.
 
 - **Visonic (PowerMax/Tyco) IAS sensors lost their primary state + temperature.**
   All 8 auto-generated Visonic defs lowered the generic `kFzIasZone`

@@ -23,9 +23,15 @@
 // power/current/energy. Same defer as Honyar U86Z223A10-ZJU01(GD). The def
 // ships a single bare `state` + single (EP1) metering surface.
 //
-// Untouched (verified correct): MG-GPO01 (_TZ3210_bep7ccew) already declares
-// fz.on_off + fz.electrical_measurement + fz.metering with the right/left
-// endpoint_map in z2m; the generated def matched it exactly.
+// MG-GPO01 (_TZ3210_bep7ccew) — same dual-outlet metering plug. z2m declares
+// fz.on_off + fz.electrical_measurement + fz.metering with deviceEndpoints
+// {right:1, left:2} BUT meta.multiEndpointSkip:["power","current","voltage",
+// "energy"] keeps the metering keys bare/global. The generated def carried the
+// endpoint_map, which the runtime would apply to EVERY non-global key (only
+// `voltage` is in kAlwaysGlobalKeys[]) — suffixing power/current/energy to
+// `_right` and diverging from z2m's bare keys. Graduated to a Tier-2 override
+// with the endpoint_map dropped (same INFRA defer as MG-AUZG01 / Honyar
+// HY0157): single bare `state` + single (EP1) metering surface.
 
 #include <cassert>
 #include <cstddef>
@@ -62,15 +68,6 @@ bool def_binds_on(const PreparedDefinition& def, std::uint16_t cluster, std::uin
     return false;
 }
 
-bool def_has_endpoint(const PreparedDefinition& def, const char* label, std::uint8_t ep) {
-    for (std::size_t i = 0; i < def.endpoint_map_count; ++i)
-        if (def.endpoint_map[i].label &&
-            std::strcmp(def.endpoint_map[i].label, label) == 0 &&
-            def.endpoint_map[i].endpoint == ep)
-            return true;
-    return false;
-}
-
 bool registry_has_model(const char* model) {
     for (std::size_t i = 0; i < devices::makegood::kMakegoodRegistryCount; ++i) {
         const auto* d = devices::makegood::kMakegoodRegistry[i];
@@ -104,7 +101,7 @@ static void test_auzg01_metering_surface() {
     assert(def.endpoint_map_count == 0 && "dual-endpoint split is the documented INFRA defer");
 }
 
-// ── MG-GPO01 — already-correct dual-outlet metering plug ──────────────
+// ── MG-GPO01 — dual-outlet metering plug, endpoint_map dropped ────────
 static void test_gpo01_full_surface() {
     const auto& def = devices::makegood::kDef_MG_GPO01;
     assert(def_exposes(def, "state"));
@@ -114,13 +111,15 @@ static void test_gpo01_full_surface() {
     assert(def_exposes(def, "current"));
     assert(def_has_fz(def, &::zhc::generic::kFzMetering));
     assert(def_has_fz(def, &::zhc::generic::kFzElectricalMeasurement));
-    // z2m endpoint:{right:1, left:2}.
-    assert(def.endpoint_map_count == 2);
-    assert(def_has_endpoint(def, "right", 1));
-    assert(def_has_endpoint(def, "left", 2));
     assert(def_binds_on(def, 0x0006, 1));
     assert(def_binds_on(def, 0x0702, 1));
     assert(def_binds_on(def, 0x0B04, 1));
+    // INFRA defer: z2m's multiEndpointSkip keeps power/current/voltage/energy
+    // bare while suffixing only `state`. The runtime suffix rewrite cannot do
+    // that selectively, so the endpoint_map is dropped (would mis-suffix
+    // metering) — single bare state + single metering surface, matching
+    // MG-AUZG01 / Honyar HY0157.
+    assert(def.endpoint_map_count == 0 && "dual-endpoint split is the documented INFRA defer");
 }
 
 // ── registry sanity — both models resolve ─────────────────────────────
