@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Sylvania 74388 — contact state decoded to the dead `alarm` key.** The
+  Smart+ contact + temperature sensor lowered the generic `kFzIasZone`
+  converter (emits the bare `alarm` key) while z2m's
+  `fz.ias_contact_alarm_1` publishes the semantic key `contact` (zoneStatus
+  bit 0; tamper bit 2; battery_low bit 3). The expose declared `alarm`, so
+  the door/window state never reached the `contact` shadow key. Graduated to
+  a parent override that swaps in the typed `kFzIasContactAlarm` and renames
+  the expose to `contact`; the temperature axis (msTemperatureMeasurement
+  0x0402) was already wired. The OSRAM `set_transition`/`remember_state`
+  manuSpecific commands (cluster 0xfc0f) on the light family remain
+  INFRA-deferred.
+
 - **AduroSmart 81848 / 81998 / 81949 — phantom `energy` channel + seMetering
   (0x0702) on electrical-only power devices.** All three z2m defs use
   `electricityMeter({cluster:"electrical"})` / `fz.electrical_measurement`,
