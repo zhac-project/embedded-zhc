@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Auto-generated from z2m devices/nedis.ts (fingerprint TS0601 / _TZE284_ne4pikwm).
+// Tier 2: Nedis ZBHTR20WT TRV (fingerprint TS0601 / _TZE284_ne4pikwm).
+// z2m-source: nedis.ts #ZBHTR20WT.
+// Fix: DP27 local_temperature_calibration uses z2m valueConverter.localTempCalibration2
+//      (from: v => v, no division). The auto-port baked divisor=100 → 100x scale
+//      error. Corrected to 1 (raw int pass-through), matching z2m.
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 namespace zhc::devices::nedis {
@@ -15,7 +19,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_ne4pikwm[] = {
     { 3, "running_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_ne4pikwm_running_state_dp3, sizeof(kEnum__TZE284_ne4pikwm_running_state_dp3)/sizeof(kEnum__TZE284_ne4pikwm_running_state_dp3[0]) },
     { 8, "open_window", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 10, "frost_protection", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
-    { 27, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 27, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 40, "child_lock", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 102, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 103, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },

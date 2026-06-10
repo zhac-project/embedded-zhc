@@ -1858,6 +1858,12 @@ target_link_libraries(zhc_ynoa_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_avatto_parity_tests tests/test_avatto_parity.cpp)
 target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for Nedis (single z2m entry: ZBHTR20WT Tuya TS0601 DP TRV,
+# 3 manufacturer names). One real decode bug fixed: DP27 calibration baked
+# divisor=100 but z2m wires localTempCalibration2 (identity) -> divisor=1.
+add_executable(zhc_nedis_parity_tests tests/test_nedis_parity.cpp)
+target_link_libraries(zhc_nedis_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for Saswell (single z2m entry: SEA801/SEA802 Tuya-MCU TRV,
 # 0xEF00 DP stream). The legacy _TYST11_* fingerprints were mis-routed to the
 # generic genThermostat (0x0201) decoder via a duplicate def and decoded
@@ -2292,6 +2298,7 @@ add_test(NAME zhc_giex_parity_tests         COMMAND zhc_giex_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_ynoa_parity_tests         COMMAND zhc_ynoa_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
+add_test(NAME zhc_nedis_parity_tests        COMMAND zhc_nedis_parity_tests)
 add_test(NAME zhc_saswell_parity_tests      COMMAND zhc_saswell_parity_tests)
 add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)
 add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)

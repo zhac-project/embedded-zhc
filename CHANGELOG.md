@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Nedis ZBHTR20WT (TS0601 radiator-valve thermostat) reported local-temperature
+  calibration 100× too small.** DP27 `local_temperature_calibration` was baked with
+  divisor=100, but z2m wires `valueConverter.localTempCalibration2` whose decode is
+  identity (`from: (v) => v`) — the wire value is already in whole degrees (expose
+  range −6..6, step 1). A +3 °C offset surfaced as 0.03 °C. Corrected to divisor=1
+  (raw signed-int pass-through) across all three manufacturer-name defs
+  (`_TZE200_ne4pikwm`, `_TZE284_ne4pikwm`, `_TZE284_hcs66axl`); the three generated
+  DP tables were graduated to Tier-2. The rest of the DP map (running_state enum,
+  local_temperature & setpoint /10, child_lock, battery_low, window/frost/scale/leave
+  booleans) was already at parity; the model-only battery+onOff stub is a harmless
+  dead dup (loses Pass-1 ordering) and was left untouched.
+
 - **Siterwell GS361A-H04 (TS0601 radiator-valve thermostat) decoded nothing.**
   The auto-port misrouted it to the generic genThermostat pair (`kFzThermostat`
   / `kTzThermostat`) bound on ZCL 0x0201, but this is a Tuya-MCU TRV that z2m
