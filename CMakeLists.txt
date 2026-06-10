@@ -1251,6 +1251,9 @@ target_link_libraries(zhc_ecozy_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_adeo_parity_tests tests/test_adeo_parity.cpp)
 target_link_libraries(zhc_adeo_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_evology_parity_tests tests/test_evology_parity.cpp)
+target_link_libraries(zhc_evology_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_airam_parity_tests tests/test_airam_parity.cpp)
 target_link_libraries(zhc_airam_parity_tests PRIVATE zhc_definitions)
 
@@ -2758,6 +2761,7 @@ add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_eglo_parity_tests         COMMAND zhc_eglo_parity_tests)
 add_test(NAME zhc_ecozy_parity_tests        COMMAND zhc_ecozy_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
+add_test(NAME zhc_evology_parity_tests      COMMAND zhc_evology_parity_tests)
 add_test(NAME zhc_airam_parity_tests        COMMAND zhc_airam_parity_tests)
 add_test(NAME zhc_net2grid_parity_tests     COMMAND zhc_net2grid_parity_tests)
 add_test(NAME zhc_enocean_parity_tests      COMMAND zhc_enocean_parity_tests)
