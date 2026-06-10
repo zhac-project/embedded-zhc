@@ -131,6 +131,16 @@ across the ZHAC platform.
   `alarm` Bool to match z2m `e.binary`, DP 2 → `battery`), corrected the exposes,
   and deleted the dead IAS duplicate.
 
+- **Evology PSE03-V1.1.0 siren: dead IAS state decode.** The auto-port wired the
+  generic `kFzIasZone`, which reads ZoneStatus from an AttributeReport (attr
+  0x0002). But z2m decodes this siren via `fz.ias_siren` — an ssIasZone
+  `commandStatusChangeNotification` (Command frame, cmd 0x00) where ZoneStatus
+  rides the command body, not attr 0x0002 — so `kFzIasZone` matched nothing on
+  the real wire and the exposed `alarm`/`tamper`/`battery_low` keys were dead.
+  Re-wired onto `kFzIasGenericAlarm` (the zoneType:"alarm" siren converter):
+  bit0 → `alarm`, bit2 → `tamper`, bit3 → `battery_low`. (`fz.ias_enroll` is
+  GLOBAL IAS enrollment; `fz.ias_wd` / `tz.warning` are ssIasWd 0x0502 to-zigbee
+  warning control — both INFRA, deferred.)
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported

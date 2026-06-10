@@ -1,14 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Evology PSE03-V1.1.0 — auto-generated.
-// Sound and flash siren
-// z2m-source: evology.ts #PSE03-V1.1.0.
+// Tier 2: Evology PSE03-V1.1.0 — sound and flash siren (IAS WD).
+// z2m-source: evology.ts #PSE03-V1.1.0 (fz.ias_siren, fz.ias_enroll, fz.ias_wd).
+//
+// Parity fix: the auto-port wired the generic kFzIasZone, whose fn reads
+// ZoneStatus from AttributeReport attr 0x0002 (msg.payload key "2"). But this
+// siren reports its alarm state via z2m fz.ias_siren — an ssIasZone
+// `commandStatusChangeNotification` (Command frame, cmd 0x00), where ZoneStatus
+// rides the command body, NOT attr 0x0002. So kFzIasZone matched nothing on the
+// real wire and the exposed alarm/tamper/battery_low keys were dead. Swap to
+// kFzIasGenericAlarm (the zoneType:"alarm" siren converter) which decodes the
+// command notification: bit0 -> `alarm`, bit2 -> `tamper`, bit3 -> `battery_low`
+// — exactly fz.ias_siren's primary keys. (fz.ias_enroll = GLOBAL IAS enrollment;
+// fz.ias_wd / tz.warning = ssIasWd 0x0502 to-zigbee warning control — both INFRA,
+// no generic converter, deferred.)
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::evology {
 namespace {
 const FzConverter* const kFz_PSE03_V1_1_0[] = {
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasGenericAlarm,
 };
 const TzConverter* const kTz_PSE03_V1_1_0[] = {
     &::zhc::generic::kTzWarning,
