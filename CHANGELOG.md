@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Lellki metering sockets XF-EU-S100-1-M and WK34-EU dropped their entire
+  power-monitoring half.** z2m wires both via
+  `tuya.modernExtend.tuyaOnOff({electricalMeasurements: true})`, which pushes
+  `fz.metering` (seMetering 0x0702) + `fz.electrical_measurement`
+  (haElectricalMeasurement 0x0B04) and exposes power/current/voltage/energy, but
+  the auto port lowered each to a bare on/off with only a `state` expose.
+  Graduated both to Tier 2 and wired `kFzMetering` + `kFzElectricalMeasurement`,
+  the four numeric exposes, and the 0x0702/0x0B04 binds. Added
+  `tests/test_lellki_parity.cpp`.
 - **Insta 57008000 blinds actuator exposed a dead `tilt` channel.** z2m's
   `cover_position_tilt` reports both `currentPositionLiftPercentage` (attr
   0x0008) and `currentPositionTiltPercentage` (attr 0x0009) on EP6, and the def
