@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **EssentielB bulbs dropped colour, smart button was a dead switch.** All
+  nine `m.light()` LED bulbs (CCT + RGBW) were ported as on/off + brightness
+  only — the auto-generator collapsed `m.light({colorTemp[, color]})` and
+  dropped the colour-temp axis on every bulb plus the full colour axis on the
+  three RGBW SKUs (lightingColorCtrl 0x0300 neither decoded nor bound). The
+  EB-SB-1B smart button was mis-ported as a controllable on/off switch (dead
+  `state` + on/off TZ) instead of a `fz.command_*` remote, dropping its entire
+  seven-value `action` surface. Graduated all ten defs to Tier-2: bulbs now
+  wire `kFzColorTemperature`(+`kFzColor`) + colour exposes + the 0x0300 bind;
+  the button wires the generic command-action decoders (`action` =
+  on/off/brightness_step_up/down/stop/color_temperature_step_up/down) + battery.
+
 - **GiEX water-irrigation valves (QT06_1 / QT06_2) decoded nothing.** Both are
   Tuya-MCU (0xEF00) DP-stream devices (z2m `legacy.fromZigbee.giexWaterValve`)
   but the auto-generator ported them as bare `kFzBattery` + `kFzOnOff` stubs

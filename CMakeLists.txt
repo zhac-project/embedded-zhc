@@ -1980,6 +1980,13 @@ target_link_libraries(zhc_rgb_genie_parity_tests PRIVATE zhc_definitions)
 # bundles electrical-only. See tests/README.md.
 add_executable(zhc_adurosmart_parity_tests tests/test_adurosmart_parity.cpp)
 target_link_libraries(zhc_adurosmart_parity_tests PRIVATE zhc_definitions)
+# Parity fixtures for the EssentielB (Boulanger) family. All nine m.light()
+# bulbs dropped their colour-temp axis (and the RGBW SKUs their colour axis)
+# — kFzColorTemperature/kFzColor + the 0x0300 binding were missing. The
+# EB-SB-1B smart button was mis-ported as a controllable on/off switch with
+# a dead `state` + on/off TZ instead of a command-action remote.
+add_executable(zhc_essentialb_parity_tests tests/test_essentialb_parity.cpp)
+target_link_libraries(zhc_essentialb_parity_tests PRIVATE zhc_definitions)
 # Parity fixtures for the Sercomm (Telstra/SmartThings OEM) family. The
 # SZ-PIR04N PIR sensor dropped its illuminance channel (z2m adds
 # m.illuminance() — msIlluminanceMeasurement 0x0400 — on top of motion/temp/
@@ -2219,6 +2226,7 @@ add_test(NAME zhc_salus_controls_parity_tests COMMAND zhc_salus_controls_parity_
 add_test(NAME zhc_kmpcil_parity_tests       COMMAND zhc_kmpcil_parity_tests)
 add_test(NAME zhc_rgb_genie_parity_tests    COMMAND zhc_rgb_genie_parity_tests)
 add_test(NAME zhc_adurosmart_parity_tests   COMMAND zhc_adurosmart_parity_tests)
+add_test(NAME zhc_essentialb_parity_tests   COMMAND zhc_essentialb_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
