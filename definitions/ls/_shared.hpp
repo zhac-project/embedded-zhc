@@ -35,4 +35,11 @@ extern const FzConverter kFzLsCommandOnDouble;
 // is the emitted action label.
 extern const FzConverter kFzLsCommandOffDouble;
 
+// lightingColorCtrl cmd 0x47 commandStopMoveStep → action="stop_move_step".
+// z2m's `fz.command_stop_move_step` (commandsColorCtrl emits this for the
+// SEMOTE's `stop_move_step`). The generic catalogue has no decoder for
+// lightingColorCtrl 0x47 (only 0x4C step / 0x4B move), so this bespoke
+// converter supplies it. The command carries no payload of interest.
+extern const FzConverter kFzLsCommandStopMoveStep;
+
 }  // namespace zhc::ls

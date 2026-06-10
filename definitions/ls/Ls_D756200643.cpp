@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ls 756200643 — hand-ported (LS sweep, 2026-04-29c).
+// Tier 2: Ls 756200643 — graduated from generated/ (LS parity, 2026-06-10).
 // Zigbee remote (SEMOTE)
 // z2m-source: ls.ts #756200643.
 //
@@ -23,7 +23,7 @@
 //   brightness_step_up/_down              — kFzCommandStep (genLevelCtrl cmd 0x02)
 //   brightness_stop                       — kFzCommandStop (genLevelCtrl cmd 0x03)
 //   color_temperature_step_up/_down       — kFzCommandStepColorTemp (lightingColorCtrl cmd 0x4C)
-//   stop_move_step                        — NOT covered (lightingColorCtrl cmd 0x47, see PARTIAL).
+//   stop_move_step                        — local kFzLsCommandStopMoveStep (lightingColorCtrl cmd 0x47)
 //   battery / voltage                     — kFzBattery (genPowerCfg attr 0x0020/0x0021)
 //
 // `action_group` (the bind group id from the inbound APS frame) is
@@ -49,6 +49,7 @@ const FzConverter* const kFz_D756200643[] = {
     &::zhc::generic::kFzCommandStep,
     &::zhc::generic::kFzCommandStop,
     &::zhc::generic::kFzCommandStepColorTemp,
+    &::zhc::ls::kFzLsCommandStopMoveStep,
 };
 constexpr const char* kModels_D756200643[] = { "SEMOTE" };
 

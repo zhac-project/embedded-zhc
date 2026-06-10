@@ -29,6 +29,16 @@ bool fz_ls_command_off_double(const DecodedMessage&,
     return true;
 }
 
+bool fz_ls_command_stop_move_step(const DecodedMessage&,
+                                  const FzConverter&,
+                                  const PreparedDefinition&,
+                                  RuntimeContext&,
+                                  FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    Value v{}; v.type = ValueType::StringRef; v.str = "stop_move_step";
+    out.put("action", v);
+    return true;
+}
+
 }  // namespace
 
 extern const FzConverter kFzLsCommandOnDouble{
@@ -56,6 +66,20 @@ extern const FzConverter kFzLsCommandOffDouble{
     .frame_flags_value = 0,
     .direction         = Direction::ClientToServer,
     .fn                = { .zcl_fn = fz_ls_command_off_double },
+    .user_config       = nullptr,
+};
+
+extern const FzConverter kFzLsCommandStopMoveStep{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "lightingColorCtrl",
+    .type_mask         = type_bit(MessageType::Command),
+    .command_id        = 0x47,   // commandStopMoveStep
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ClientToServer,
+    .fn                = { .zcl_fn = fz_ls_command_stop_move_step },
     .user_config       = nullptr,
 };
 
