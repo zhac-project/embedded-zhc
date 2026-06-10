@@ -1,7 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Feibit TSKT222W-H4 — auto-generated.
-// Power Socket with Metering
+// Tier 2: Feibit TSKT222W-H4 — hand-curated (was missing electrical half).
+// Power Socket with Metering. z2m m.electricityMeter() defaults to
+// cluster:"both", wiring fz.metering (seMetering 0x0702 → energy/power) AND
+// fz.electrical_measurement (haElectricalMeasurement 0x0B04 →
+// power/voltage/current), exposing power/voltage/current/energy. The
+// auto-port lowered only kFzMetering, dropping voltage/current and the
+// 0x0B04 channel. Added kFzElectricalMeasurement + voltage/current exposes
+// + the 0x0B04 binding.
 // z2m-source: feibit.ts #TSKT222W-H4.
 #include "definitions/_generic/_shared.hpp"
 
@@ -10,6 +16,7 @@ namespace {
 const FzConverter* const kFz_TSKT222W_H4[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzElectricalMeasurement,
 };
 const TzConverter* const kTz_TSKT222W_H4[] = {
     &::zhc::generic::kTzOnOff,
@@ -24,11 +31,14 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0702},
+    {1, 0x0B04},
 };
 // --- end auto-generated block ---
 

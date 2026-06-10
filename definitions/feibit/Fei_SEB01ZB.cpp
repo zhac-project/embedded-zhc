@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Feibit SEB01ZB — auto-generated.
+// Tier 2: Feibit SEB01ZB — hand-curated (was IAS dead-key).
+// z2m fz.ias_sos_alarm_2 (zoneStatus bit 1) -> semantic key `sos`;
+// generic kFzIasZone read bit 0 + bare "alarm". Swapped to kFzIasSosAlarm2.
 // SOS button
 // z2m-source: feibit.ts #SEB01ZB.
 #include "definitions/_generic/_shared.hpp"
@@ -9,7 +11,7 @@ namespace zhc::devices::feibit {
 namespace {
 const FzConverter* const kFz_SEB01ZB[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasSosAlarm2,
 };
 
 constexpr const char* kModels_SEB01ZB[] = { "FNB56-SOS03FB1.5" };
@@ -21,7 +23,7 @@ constexpr const char* kModels_SEB01ZB[] = { "FNB56-SOS03FB1.5" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"sos", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
