@@ -1026,6 +1026,15 @@ target_link_libraries(zhc_sylvania_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_awox_parity_tests tests/test_awox_parity.cpp)
 target_link_libraries(zhc_awox_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the EGLO connect family (an AwoX rebadge). Five bulbs
+# were lowered onto on/off + brightness only, dropping the colorTemp /
+# colour channels; the 99099 + 99106 remotes were mis-ported as on/off
+# switches with a dead `state`. Graduated to Tier-2 parents: eglo/_shared CT
+# + full-RGBW light bundles, and the generic command-action decoders for the
+# remotes.
+add_executable(zhc_eglo_parity_tests tests/test_eglo_parity.cpp)
+target_link_libraries(zhc_eglo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Adeo (ENKI LEXMAN) sensor + key-fob family. Six IAS
 # sensors lowered the generic kFzIasZone behind a semantic expose (dead key);
 # the 4-in-1 (83633205) additionally dropped its illuminance/temp/humidity
@@ -2141,6 +2150,7 @@ add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
 add_test(NAME zhc_makegood_parity_tests     COMMAND zhc_makegood_parity_tests)
 add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
+add_test(NAME zhc_eglo_parity_tests         COMMAND zhc_eglo_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_enocean_parity_tests      COMMAND zhc_enocean_parity_tests)
 add_test(NAME zhc_woox_parity_tests         COMMAND zhc_woox_parity_tests)
