@@ -36,6 +36,16 @@ across the ZHAC platform.
   `occupied_cooling_setpoint` / `running_state` / `running_mode` exposes),
   and authored `tests/test_lux_parity.cpp`. The `fan_mode` channel was
   already correctly decoded by the generic `kFzFanMode` (regression-tested).
+- **iHORN sensors: IAS dead-key + dropped temp/humidity channels.** All seven
+  iHORN defs lowered the generic `kFzIasZone` (bare key `alarm`) while exposing
+  a semantic key, so the primary state never reached the shadow. Graduated each
+  to a Tier-2 override with the typed converter matching z2m's `fz.ias_*_alarm_1`
+  (all bit 0): `kFzIasMotionAlarm`→`occupancy` (LH-992ZB/LH-990ZB/LH-990F),
+  `kFzIasContactAlarm`→`contact` (HO-09ZB/LH03121), `kFzIasSmokeAlarm`→`smoke`
+  (LH-09521 siren; `tz.warning` write path unchanged). The LH-32ZB
+  temperature+humidity sensor was reduced to battery-only — restored
+  `kFzTemperature` (0x0402) + `kFzHumidity` (0x0405) decoders, both exposes, and
+  the 0x0402/0x0405 bindings. Added `tests/test_ihorn_parity.cpp`.
 
 - **FireAngel CO sensors: dead/missing carbon-monoxide channels.** The
   W2-Module (`Alarm_SD_Device`) was auto-ported battery-only — z2m wires

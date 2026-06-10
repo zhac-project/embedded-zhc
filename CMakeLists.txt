@@ -981,6 +981,15 @@ target_link_libraries(zhc_hej_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_visonic_parity_tests tests/test_visonic_parity.cpp)
 target_link_libraries(zhc_visonic_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the iHORN sensor family. Every IAS def lowered the generic
+# kFzIasZone (bare key "alarm") while exposing the semantic key — graduated to
+# Tier-2 overrides using typed kFzIasMotionAlarm (LH-992ZB/LH-990ZB/LH-990F →
+# occupancy), kFzIasContactAlarm (HO-09ZB/LH03121 → contact), kFzIasSmokeAlarm
+# (LH-09521 siren → smoke). The LH-32ZB T+H sensor was reduced to battery-only;
+# restored kFzTemperature + kFzHumidity + exposes + 0x0402/0x0405 bindings.
+add_executable(zhc_ihorn_parity_tests tests/test_ihorn_parity.cpp)
+target_link_libraries(zhc_ihorn_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Fantem ZB003-X 4-in-1 multi sensor. Its IAS path lowered the
 # generic kFzIasZoneStatusChange (bare "alarm_1") while the expose declared
 # `occupancy`; z2m fz.ZB003X_occupancy maps zoneStatus bit0 -> occupancy, so
@@ -2585,6 +2594,7 @@ add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
 add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
+add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
 add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
