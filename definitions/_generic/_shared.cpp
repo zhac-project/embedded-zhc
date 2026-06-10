@@ -3013,6 +3013,49 @@ extern const FzConverter kFzElectricalMeasurement{
     .user_config       = nullptr,
 };
 
+// ── fz_binary_input (genBinaryInput 0x000F) ─────────────────────────
+//
+// Emits "input" (Bool) from presentValue (attr 0x0055 = decimal "85").
+// Mirrors z2m's `m.binary({cluster:"genBinaryInput", attribute:
+// "presentValue", valueOn:["ON",1], valueOff:["OFF",0]})`. Tolerates
+// the present-value arriving as Bool (data-type 0x10) or as a numeric
+// (Uint/Int) and normalises to Bool. On multi-endpoint devices the
+// dispatch layer suffixes the bare key to `input_<label>` per the
+// definition's endpoint_map.
+
+bool fz_binary_input(const DecodedMessage& msg,
+                      const FzConverter&,
+                      const PreparedDefinition&,
+                      RuntimeContext&,
+                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // attr 0x0055 — PresentValue.
+    const Value* v = msg.payload.find("85");
+    if (v == nullptr) return false;
+    bool state;
+    if      (v->type == ValueType::Bool) state = v->b;
+    else if (v->type == ValueType::Uint) state = v->u != 0;
+    else if (v->type == ValueType::Int)  state = v->i != 0;
+    else return false;
+    Value o{}; o.type = ValueType::Bool; o.b = state;
+    out.put("input", o);
+    return true;
+}
+
+extern const FzConverter kFzBinaryInput{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genBinaryInput",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_binary_input },
+    .user_config       = nullptr,
+};
+
 // ── fz_thermostat (hvacThermostat 0x0201) ───────────────────────────
 //
 // Emits "local_temperature" (s16, 1/100 °C raw), "occupied_heating_
