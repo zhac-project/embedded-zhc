@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Bega LED-luminaire colour/colour-temperature parity.** `13557`
+  (E27 RGBW bulb, z2m `m.light({colorTemp:{range:[153,556]}, color:true})`)
+  and `85000` (Garden Spotlight RGBW, z2m
+  `m.light({colorTemp:{range:[50,1000]}, color:{modes:["xy","hs"],
+  enhancedHue:true}})`) had their entire lightingColorCtrl (0x0300) axis
+  dropped — both were ported as on/off+brightness only. Restored colour +
+  colour-temperature read/write (`kFzColorTemperature`/`kFzColor` +
+  `kTzColorTemp`/`kTzColor`), the `color_temp`/`color_xy` exposes and the
+  `{1,0x0300}` bind. Graduated to Tier 2; pinned by `test_bega_parity`.
+  (Bega 70049 DALI control module remains unported: z2m matches it by
+  fingerprint with an empty modelID + endpoint signature, which the
+  `PreparedDefinition` schema cannot express — INFRA defer.)
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
