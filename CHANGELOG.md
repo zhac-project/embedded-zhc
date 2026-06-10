@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **The Light Group (SLC SmartOne) remotes were wrong-bundled as settable
+  lights.** S57003 (4-channel wall remote) and S57007 (3-button remote
+  control) are battery-powered scene/dimmer remotes with z2m `toZigbee: []`,
+  but the auto-generator emitted `kFzOnOff` + `kTzOnOff` + a writable `state`
+  expose, so every button press decoded to nothing and both falsely
+  advertised a relay. S57003 also dropped its endpoint_map, collapsing all
+  four rockers onto one key. Graduated both defs to the genOnOff/genLevelCtrl
+  (S57003) and genOnOff/genScenes (S57007) command decoders, exposed `action`,
+  dropped the phantom `state` + toolbox, and added endpoint_map +
+  endpoint_action_suffix so each button keeps identity (action_1..action_N).
+
 - **LifeControl (MCLH series) ports dropped whole channels.** Three
   auto-generated defs lost half their z2m functionality: MCLH-02 "vivi
   ZLight" colour bulb (`m.light({colorTemp, color: true})`) wired only

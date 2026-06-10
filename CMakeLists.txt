@@ -1276,6 +1276,14 @@ target_link_libraries(zhc_kwikset_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_paulmann_parity_tests tests/test_paulmann_parity.cpp)
 target_link_libraries(zhc_paulmann_parity_tests PRIVATE zhc_definitions)
 
+# The Light Group (SLC SmartOne): lighting vendor whose two remotes (S57003
+# 4-channel wall remote, S57007 3-button remote) were wrong-bundled as
+# settable on/off lights. Graduated to genOnOff/genLevelCtrl/genScenes command
+# decoders + an `action` expose, dropped the phantom state, added endpoint_map
+# + endpoint_action_suffix so each button keeps identity (action_<n>).
+add_executable(zhc_the_light_group_parity_tests tests/test_the_light_group_parity.cpp)
+target_link_libraries(zhc_the_light_group_parity_tests PRIVATE zhc_definitions)
+
 # Custom devices (DiY) flower/soil sensors. ZeeFlora + b-parasite exposed
 # soil_moisture but no generic kFzSoilMoisture existed (0x0408 also missing
 # from cluster_names); soil reports dropped. Added the decoder + graduated
@@ -2055,6 +2063,7 @@ add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)
 add_test(NAME zhc_konke_parity_tests        COMMAND zhc_konke_parity_tests)
 add_test(NAME zhc_kwikset_parity_tests      COMMAND zhc_kwikset_parity_tests)
 add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
+add_test(NAME zhc_the_light_group_parity_tests COMMAND zhc_the_light_group_parity_tests)
 add_test(NAME zhc_muller_licht_parity_tests COMMAND zhc_muller_licht_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
 add_test(NAME zhc_yale_parity_tests         COMMAND zhc_yale_parity_tests)
