@@ -1879,6 +1879,14 @@ target_link_libraries(zhc_nordtronic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_owon_parity_tests tests/test_owon_parity.cpp)
 target_link_libraries(zhc_owon_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Airzone Aidoo AZAI6ZBEMHI AC controller. The def
+# exposed a cooling setpoint (z2m .withSetpoint("occupied_cooling_setpoint"))
+# decoded by fz.thermostat from hvacThermostat attr 0x0011, which the generic
+# kFzThermostat (0x0000/0x0012/0x001C only) never filled. Fixed by wiring the
+# Tier-2 kFzAirzoneThermostatExtras converter alongside the generic decoder.
+add_executable(zhc_airzone_aidoo_parity_tests tests/test_airzone_aidoo_parity.cpp)
+target_link_libraries(zhc_airzone_aidoo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Imhotep Creation heater thermostats + BRI4P bridge.
 # Both defs exposed standard hvacThermostat setpoint-limit / cooling-setpoint
 # keys the generic kFzThermostat (0x0000/0x0012/0x001C only) never filled —
@@ -2650,6 +2658,7 @@ add_test(NAME zhc_osram_parity_tests        COMMAND zhc_osram_parity_tests)
 add_test(NAME zhc_nodon_parity_tests        COMMAND zhc_nodon_parity_tests)
 add_test(NAME zhc_nordtronic_parity_tests   COMMAND zhc_nordtronic_parity_tests)
 add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
+add_test(NAME zhc_airzone_aidoo_parity_tests COMMAND zhc_airzone_aidoo_parity_tests)
 add_test(NAME zhc_imhotepcreation_parity_tests COMMAND zhc_imhotepcreation_parity_tests)
 add_test(NAME zhc_icasa_parity_tests        COMMAND zhc_icasa_parity_tests)
 add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
