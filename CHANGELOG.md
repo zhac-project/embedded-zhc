@@ -37,6 +37,22 @@ across the ZHAC platform.
   (`definitions/meazon/_shared.cpp`); raw pass-through matching z2m. Bindings
   realigned to endpoint 10 (genOnOff + seMetering) per z2m `configure`, dropping
   the phantom 0x0B04 bind.
+- **Nyce NCZ-30xx IAS / multi-sensors emitted wrong keys and dropped channels.**
+  All five generated defs were lowered as battery + the generic `kFzIasZone`,
+  which emits a bare `alarm` and reads zoneStatus bit 0. z2m wires the contact
+  sensors (NCZ-3010 hinge, NCZ-3011-HA door/window) to `fz.ias_contact_alarm_1`
+  (bit 0 → `contact`) — re-wired to typed `kFzIasContactAlarm` and corrected the
+  exposes to contact/battery_low(/tamper on 3011)/battery. The motion sensors
+  (NCZ-3041/3043/3045-HA) are multi-sensors: z2m decodes occupancy two ways —
+  `fz.occupancy` (msOccupancySensing 0x0406) **and** `fz.ias_occupancy_alarm_2`
+  (zoneStatus **bit 1** → `occupancy`) — plus `fz.temperature` (0x0402, /100)
+  and `fz.humidity` (0x0405, /100). The auto-port dropped occupancy/temperature/
+  humidity entirely and read the wrong IAS bit; re-wired `kFzOccupancy` +
+  `kFzTemperature` + `kFzHumidity` + the bit-1 `kFzIasMotionAlarm2`, added the
+  0x0402/0x0405/0x0406 bindings, and corrected the exposes. (Known deferred:
+  z2m's `dontDividePercentage` battery meta on 3041/3045 is unmodelled platform-
+  wide, so battery % reads 2× low on those two — same gap as vesternet.)
+
 - **Siterwell GS361A-H04 (TS0601 radiator-valve thermostat) decoded nothing.**
   The auto-port misrouted it to the generic genThermostat pair (`kFzThermostat`
   / `kTzThermostat`) bound on ZCL 0x0201, but this is a Tuya-MCU TRV that z2m
