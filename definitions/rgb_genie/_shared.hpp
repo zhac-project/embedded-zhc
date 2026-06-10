@@ -20,11 +20,15 @@
 //   ActionBatteryRGB | + ColorCtrl actions (move_to_color_temp,    | + 0x0300
 //                    |   move_to_hue_and_saturation, step_ct)      |
 //
-// PARTIAL note: z2m's `command_move_hue`, `command_move_to_color`,
-// `command_move_color_temperature` are not yet wired in
-// `_generic/_shared.{hpp,cpp}`. The corresponding action labels
-// ("hue_move", "color_move", "color_temperature_move") therefore do
-// not fire today. Tracked in docs/parity/RGB_GENIE_PARITY.md.
+// z2m's `command_move_hue`, `command_move_to_color`,
+// `command_move_color_temperature` ARE wired in
+// `_generic/_shared.{hpp,cpp}` (kFzCommandMoveHue /
+// kFzCommandMoveToColor / kFzCommandMoveColorTemperature) and pulled
+// into the RGB bundles below, so "hue_move/_down/_stop", "color_move",
+// and "color_temperature_move_up/_down/_stop" all fire today. Locked by
+// tests/test_rgb_genie_parity.cpp. (An older note here wrongly claimed
+// they were not yet wired — that gap closed when the generic ColorCtrl
+// move decoders landed.)
 
 #include "definitions/_generic/_shared.hpp"
 
