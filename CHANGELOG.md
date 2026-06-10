@@ -10,6 +10,12 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Light Solutions: restored dropped color/colorTemp axes on two bulbs.** The
+  auto-ported `42-032` CCT LED driver (z2m `m.light({colorTemp})`) and `91-943`
+  RGBW+CCT LED controller (z2m `m.light({color, colorTemp})`) shipped as bare
+  OnOff+Brightness dimmers. Graduated both to Tier 2 overrides wiring the
+  generic color/colorTemp converters, the `color_temp` (+ `color_xy` for 91-943)
+  exposes and the `lightingColorCtrl` (0x0300) binding.
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
   but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
