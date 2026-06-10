@@ -34,6 +34,14 @@ across the ZHAC platform.
   on/off switch (dead button presses, phantom relay); rewired to the seven
   generic command converters (on/off/step/move/stop/move_to_color_temp/
   enhanced_move_to_hue_and_saturation) + an `action` expose.
+- **TP-Link IAS sensor parity (MS100, CS100).** Both defs lowered the generic
+  `kFzIasZone` (bare `alarm` key), leaving their semantic exposes dead. MS100
+  (z2m `fz.ias_occupancy_alarm_1` + `m.illuminance()`) now lowers the typed
+  `kFzIasMotionAlarm` (`occupancy` from zoneStatus bit0) and the previously
+  dropped `kFzIlluminance` channel (0x0400). CS100 (z2m `fz.ias_contact_alarm_1`,
+  inverted) now lowers `kFzIasContactAlarm` (`contact = !bit0`). Exposes
+  realigned to z2m (occupancy/tamper/battery_low/battery/illuminance for MS100;
+  contact/battery_low/battery for CS100).
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as

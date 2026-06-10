@@ -1690,6 +1690,15 @@ target_link_libraries(zhc_third_reality_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bitron_parity_tests tests/test_bitron_parity.cpp)
 target_link_libraries(zhc_bitron_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the TP-Link IAS-Zone sensors (MS100 motion, CS100 contact).
+# Both generated defs were lowered with the generic kFzIasZone (bare `alarm`),
+# leaving the semantic occupancy/contact exposes dead, and MS100 dropped its
+# m.illuminance() channel. Graduated to Tier-2 overrides using the typed
+# kFzIasMotionAlarm (occupancy bit0) / kFzIasContactAlarm (inverted contact) +
+# kFzIlluminance. See tests/README.md.
+add_executable(zhc_tplink_parity_tests tests/test_tplink_parity.cpp)
+target_link_libraries(zhc_tplink_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Nyce NCZ-30xx IAS / multi-sensor family. The five
 # generated defs were lowered as battery + generic kFzIasZone (bare `alarm`,
 # wrong zoneStatus bit) and dropped the motion sensors' occupancy/temperature/
@@ -2686,6 +2695,7 @@ add_test(NAME zhc_sinope_parity_tests       COMMAND zhc_sinope_parity_tests)
 add_test(NAME zhc_sunricher_parity_tests    COMMAND zhc_sunricher_parity_tests)
 add_test(NAME zhc_third_reality_parity_tests COMMAND zhc_third_reality_parity_tests)
 add_test(NAME zhc_bitron_parity_tests       COMMAND zhc_bitron_parity_tests)
+add_test(NAME zhc_tplink_parity_tests       COMMAND zhc_tplink_parity_tests)
 add_test(NAME zhc_nyce_parity_tests         COMMAND zhc_nyce_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
