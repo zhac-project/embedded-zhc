@@ -1976,6 +1976,15 @@ target_link_libraries(zhc_essentials_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_giex_parity_tests tests/test_giex_parity.cpp)
 target_link_libraries(zhc_giex_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Alecto SMART-HEAT10 (Tuya-MCU TRV thermostat) and
+# SMART-SMOKE10 (Tuya-MCU smoke detector). The auto extract misrouted HEAT10
+# to the generic hvacThermostat 0x0201 cluster and SMOKE10 to a generic IAS
+# zone (0x0500) — both speak only the 0xEF00 DP stream. Graduated to Tier-2
+# overrides wiring fz_tuya_datapoints + tz_tuya_datapoints with the full DP
+# maps (HEAT10 setpoint/local_temperature /10; SMOKE10 numeric raw).
+add_executable(zhc_alecto_parity_tests tests/test_alecto_parity.cpp)
+target_link_libraries(zhc_alecto_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Simpla Home Soil Pro soil-moisture sensor. The
 # auto-generated def was a battery-only stub that dropped temperature,
 # illuminance and BOTH soil_moisture channels and placed the two soil
@@ -2509,6 +2518,7 @@ add_test(NAME zhc_siterwell_parity_tests    COMMAND zhc_siterwell_parity_tests)
 add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_essentials_parity_tests   COMMAND zhc_essentials_parity_tests)
 add_test(NAME zhc_giex_parity_tests         COMMAND zhc_giex_parity_tests)
+add_test(NAME zhc_alecto_parity_tests       COMMAND zhc_alecto_parity_tests)
 add_test(NAME zhc_simpla_home_parity_tests  COMMAND zhc_simpla_home_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_ynoa_parity_tests         COMMAND zhc_ynoa_parity_tests)
