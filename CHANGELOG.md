@@ -31,6 +31,15 @@ across the ZHAC platform.
   `DecodedMessage.transaction_sequence`), wired both keypads to it, added the
   `action_transaction` expose, and graduated both defs out of `generated/`.
 
+- **Atlantic Group GW003-AS-IN-TE-FC (Naviclim AC interface) dropped two
+  exposed thermostat reads.** The def exposes `occupied_cooling_setpoint` and
+  `programming_operation_mode`, but the generic `kFzThermostat` only decodes
+  hvacThermostat attrs `0x0000`/`0x0012`/`0x001C`, so both keys were dead on
+  read (z2m's `fz.thermostat` decodes `occupiedCoolingSetpoint` attr `0x0011`
+  and `programingOperMode` attr `0x0025`). Graduated the generated def to a
+  Tier-2 override adding `kFzAtlanticThermostatExtras` (raw values, matching
+  `kFzThermostat`'s convention) and gave `programming_operation_mode` its z2m
+  enum labels. New `tests/test_atlantic_parity.cpp`.
 - **Linptech ES1ZZ(TY) mmWave presence sensor decoded illuminance wrong and
   under a non-z2m key.** z2m's `fzLocal.TS0225_illuminance` reads the whole raw
   ZCL frame (`buffer = msg.data`), takes the little-endian u16 measuredValue at

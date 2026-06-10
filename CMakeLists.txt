@@ -900,6 +900,15 @@ target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
 add_executable(zhc_schneider_parity_tests tests/test_schneider_parity.cpp)
 target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Atlantic Group GW003-AS-IN-TE-FC AC interface. The
+# generated def wired generic kFzThermostat + kFzFanMode but exposed
+# occupied_cooling_setpoint (hvacThermostat attr 0x0011) and
+# programming_operation_mode (attr 0x0025), neither of which kFzThermostat
+# decodes — both were dead on read. Graduated to a Tier-2 override adding
+# kFzAtlanticThermostatExtras. See tests/README.md for the pattern.
+add_executable(zhc_atlantic_parity_tests tests/test_atlantic_parity.cpp)
+target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Heiman IAS-Zone sensor family: ~27 generated defs
 # decoded the bare "alarm" key (generic kFzIasZone) while exposing the
 # semantic key (smoke/gas/water_leak/occupancy/contact/vibration/co). All
@@ -1898,6 +1907,7 @@ add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
+add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
