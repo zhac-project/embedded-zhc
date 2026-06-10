@@ -66,6 +66,20 @@ across the ZHAC platform.
   `curtain_type` enum (manuSpecific attr 0x1000) and the sunricher motor/PWM
   config extends remain INFRA (no generic converter) and are deferred. New
   `test_smarli_parity`.
+- **MSH (MySmartHouse) DIY sensor parity: dropped channels + wrong class.**
+  All three generated `msh` defs were reduced to non-functional ports.
+  `msh.bme280psm` (z2m `[battery, temperature, humidity, pressure]`) and
+  `msh.ds18b20psm` (`[battery, temperature]`) were stripped to battery-only —
+  restored the generic `kFzTemperature`/`kFzHumidity`/`kFzPressure` decoders,
+  exposes, and bindings (`msTemperatureMeasurement` 0x0402, `msRelativeHumidity`
+  0x0405, `msPressureMeasurement` 0x0403). `msh.AirQMon` was mis-ported as a
+  bare on/off switch with a phantom battery; rewired to its real
+  `co2` (`fz.co2` on `msCO2` 0x040D, ppm = floor(value·1e6)) and
+  `temperature` (`msTemperatureMeasurement` on endpoint 3, suffixed
+  `temperature_l3` via `endpoint_map`) channels. The PTVO UART/analog
+  (`genAnalogInput` 0x000C) action/calibrate channels remain deferred INFRA.
+  Added `tests/test_msh_parity.cpp`.
+
 - **HZC Electric sensor parity: phantom on/off, IAS dead-keys, dropped
   channels.** Three generated sensor defs were mis-ported. `S093TH-ZG`
   (temp/humidity) was wired as a phantom on/off switch (`kFzOnOff` +
