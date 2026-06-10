@@ -1312,6 +1312,16 @@ target_link_libraries(zhc_mercator_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_develco_parity_tests tests/test_develco_parity.cpp)
 target_link_libraries(zhc_develco_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Databyte (databyte.ch) family. Touch4
+# (DTB-ED2011-014) dropped the fzLocal.DTB2011014 decoder (battery-only)
+# so key_1..key_4 (genOnOff manufacturer attrs 0xA191..0xA194) never
+# surfaced. DTB190502A1 (CC2530 IO board) fabricated a controllable
+# on/off `state` + phantom battery bundle and dropped fz.DTB190502A1
+# (led_state/key_state/cpu_temperature). Both graduated to parent
+# overrides wiring definitions/databyte/_shared.cpp converters.
+add_executable(zhc_databyte_parity_tests tests/test_databyte_parity.cpp)
+target_link_libraries(zhc_databyte_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Frient family (Develco rebrand, same silicon).
 # WISZB-131 lowered the generic kFzIasZone (bare "alarm") + dropped the
 # msTemperatureMeasurement channel; SMRZB-153 + EMIZB-151 wired only
@@ -2515,6 +2525,7 @@ add_test(NAME zhc_livingwise_parity_tests   COMMAND zhc_livingwise_parity_tests)
 add_test(NAME zhc_linptech_parity_tests     COMMAND zhc_linptech_parity_tests)
 add_test(NAME zhc_profalux_parity_tests     COMMAND zhc_profalux_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
+add_test(NAME zhc_databyte_parity_tests     COMMAND zhc_databyte_parity_tests)
 add_test(NAME zhc_frient_parity_tests       COMMAND zhc_frient_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
 add_test(NAME zhc_sengled_parity_tests      COMMAND zhc_sengled_parity_tests)
