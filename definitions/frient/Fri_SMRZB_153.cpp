@@ -38,10 +38,12 @@ constexpr Expose kAutoExposes[] = {
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
 
+// z2m endpoint:()=>({default:2}) — genOnOff + metering live on EP2, so bind
+// there (and route outbound onOff via default_endpoint=2 below).
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0702},
-    {1, 0x0B04},
+    {2, 0x0006},
+    {2, 0x0702},
+    {2, 0x0B04},
 };
 // --- end auto-generated block ---
 
@@ -56,6 +58,7 @@ extern const PreparedDefinition kDef_SMRZB_153{
     .to_zigbee=kTz_SMRZB_153, .to_zigbee_count=sizeof(kTz_SMRZB_153)/sizeof(kTz_SMRZB_153[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .default_endpoint = 2,  // z2m endpoint:()=>({default:2}); outbound onOff → EP2
 };
 
 }  // namespace zhc::devices::frient

@@ -31,9 +31,14 @@ across the ZHAC platform.
   but z2m's `m.electricityMeter()` default cluster is `"both"`, so the
   0x0B04 electrical half (`voltage`/`current`) was dead — added
   `kFzElectricalMeasurement` + the exposes + the 0x0B04 binding. All three
-  graduated generated -> Tier 2, mirroring the develco fixes. (EMIZB-151
-  three-phase/produced-energy/tariff attrs remain INFRA-deferred: no
-  generic decoder.)
+  graduated generated -> Tier 2, mirroring the develco fixes. Both also set
+  their metering/onOff bindings to **endpoint 2** to match z2m's
+  `endpoint:()=>({default:2})`; `SMRZB-153` additionally sets
+  `default_endpoint=2` so its outbound on/off control routes to the real
+  endpoint (was dead on EP1). (EMIZB-151 three-phase/produced-energy/tariff
+  attrs remain INFRA-deferred: no generic decoder. SIRZB-112 siren on EP43
+  stays INFRA-deferred — warning control is to-zigbee-only and its EP43
+  bindings are a documented follow-up.)
 - **Zunzunbee SSWZ8T scene switch: remote mis-ported as a settable
   on/off.** The 8-button battery "Slate switch" was auto-ported as a
   controllable on/off `state` (`kFzOnOff` + `kTzOnOff`), a dead control,

@@ -43,9 +43,11 @@ constexpr Expose kAutoExposes[] = {
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
 
+// z2m endpoint:()=>({default:2}) — the meter clusters report on EP2, so
+// configure reporting/bind there. (Read-only def, so no Tz routing needed.)
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0702},
-    {1, 0x0B04},
+    {2, 0x0702},
+    {2, 0x0B04},
 };
 // --- end auto-generated block ---
 

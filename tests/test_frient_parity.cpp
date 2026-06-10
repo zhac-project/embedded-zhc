@@ -167,6 +167,9 @@ static void test_smrzb153_electrical() {
     assert(def_exposes(def, "power"));
     assert(def_binds(def, 0x0B04));
     assert(def_binds(def, 0x0702));
+    // z2m endpoint:()=>({default:2}): onOff + metering live on EP2, so
+    // outbound onOff must route there (else control is dead).
+    assert(def.default_endpoint == 2);
 
     // haElectricalMeasurement rmsVoltage (0x0505) u16 -> voltage (raw Uint).
     const std::uint8_t volt[] = {0xE6, 0x00};   // 230
