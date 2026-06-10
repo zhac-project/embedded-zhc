@@ -2296,6 +2296,14 @@ target_link_libraries(zhc_vimar_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_multiterm_parity_tests tests/test_multiterm_parity.cpp)
 target_link_libraries(zhc_multiterm_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Zunzunbee SSWZ8T 8-button battery scene switch.
+# The generated def collapsed it into a settable on/off `state`; z2m packs
+# button + press type into the ssIasZone zoneStatus word and surfaces a
+# composite `action`. Graduated to a Tier-2 override + vendor zoneStatus
+# decoder (kFzZunzunbeeSlateSwitch). See tests/README.md.
+add_executable(zhc_zunzunbee_parity_tests tests/test_zunzunbee_parity.cpp)
+target_link_libraries(zhc_zunzunbee_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -2528,6 +2536,7 @@ add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
 add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
 add_test(NAME zhc_msh_parity_tests          COMMAND zhc_msh_parity_tests)
+add_test(NAME zhc_zunzunbee_parity_tests    COMMAND zhc_zunzunbee_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

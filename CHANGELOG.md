@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Zunzunbee SSWZ8T scene switch: remote mis-ported as a settable
+  on/off.** The 8-button battery "Slate switch" was auto-ported as a
+  controllable on/off `state` (`kFzOnOff` + `kTzOnOff`), a dead control,
+  which also dropped the entire button-press decode and the temperature
+  channel. z2m has no on/off; it packs the pressed button + press type
+  into the `ssIasZone` zoneStatus word (bit 0 = short/long, bits 1..8 =
+  button number one-hot) and surfaces a single composite `action`.
+  Graduated the def to Tier 2, added the vendor `kFzZunzunbeeSlateSwitch`
+  zoneStatus decoder (emits `button_<n>_<short|long>_press`), wired
+  `kFzBattery` + `kFzTemperature`, swapped the phantom `state`/to_zigbee
+  for an `action` enum + `temperature` expose, dropped the bogus genOnOff
+  bind, and pinned the manufacturer name (`zunzunbee`).
+
 - **Purmo/Radson Yali Parada Plus thermostat: dead thermostat extras.**
   The `PUMM01102` electric oil-filled radiator was auto-ported with only
   the generic `kFzThermostat`, which decodes just hvacThermostat
