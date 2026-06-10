@@ -1703,6 +1703,15 @@ target_link_libraries(zhc_adurosmart_parity_tests PRIVATE zhc_definitions)
 # guards. See tests/README.md.
 add_executable(zhc_sercomm_parity_tests tests/test_sercomm_parity.cpp)
 target_link_libraries(zhc_sercomm_parity_tests PRIVATE zhc_definitions)
+# Parity fixtures for the TERNCY AduroSmart-cluster (0xFCCC) raw-frame
+# devices (PP01 awareness switch, SD01 knob, LS01 light socket). The
+# shared terncy_raw decoder indexed the body by z2m's FULL-frame offsets
+# (raw_body[4]/[6]/[7]) — but the mfg-specific header is 5 bytes, so
+# raw_body starts at frame index 5. The discriminator is the COMMAND id
+# (msg.command_id), and the action/side values live at raw_body[1]/[2];
+# the old code read past the body and matched nothing on real frames.
+add_executable(zhc_terncy_parity_tests tests/test_terncy_parity.cpp)
+target_link_libraries(zhc_terncy_parity_tests PRIVATE zhc_definitions)
 
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
@@ -1868,6 +1877,7 @@ add_test(NAME zhc_kmpcil_parity_tests       COMMAND zhc_kmpcil_parity_tests)
 add_test(NAME zhc_rgb_genie_parity_tests    COMMAND zhc_rgb_genie_parity_tests)
 add_test(NAME zhc_adurosmart_parity_tests   COMMAND zhc_adurosmart_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
+add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

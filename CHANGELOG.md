@@ -10,6 +10,22 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **TERNCY raw-frame action/motion decoder read past the body (dead action +
+  occupancy surface).** z2m's `fzLocal.terncy_raw` reads the WHOLE raw frame
+  buffer (`msg.data`, ZCL header included): `msg.data[4]` discriminates action
+  vs motion, `msg.data[6]`/`[7]` carry the action/side value. The AduroSmart
+  cluster (0xFCCC) frame is manufacturer-specific so its header is 5 bytes and
+  ZHC's `raw_body` begins at full-frame index 5. The shared `kFzTerncyRaw*`
+  decoder re-used z2m's full-frame offsets against `raw_body` (`raw_body[4]/[6]/
+  [7]`) AND required `raw_body.size() >= 8`, so on real (~3-byte body) frames it
+  matched nothing — PP01 awareness switch / SD01 knob / LS01 socket emitted no
+  `action` and PP01 emitted no motion `occupancy`/`action_side`. Fixed to
+  discriminate on `msg.command_id` (z2m's `msg.data[4]` IS the command id) and
+  read the values at `raw_body[1]`/`raw_body[2]`. Also corrected the converter
+  direction from `ClientToServer` to `ServerToClient` — the device-originated
+  frames carry the server→client bit (z2m wire byte fc=0x0D), so even with
+  correct offsets they would never have matched.
+
 - **AduroSmart 81848 / 81998 / 81949 — phantom `energy` channel + seMetering
   (0x0702) on electrical-only power devices.** All three z2m defs use
   `electricityMeter({cluster:"electrical"})` / `fz.electrical_measurement`,

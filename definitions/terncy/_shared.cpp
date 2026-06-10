@@ -23,20 +23,27 @@ bool fz_terncy_raw(const DecodedMessage& msg,
                     const PreparedDefinition&,
                     RuntimeContext&,
                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    // The raw body is the cluster-specific command body as delivered
-    // by the device. z2m reads msg.data which spans the same bytes;
-    // ZHC exposes them via msg.raw_body.
-    if (msg.raw_body.size() < 8) return false;
-
-    const std::uint8_t discriminator = msg.raw_body[4];
+    // z2m's fzLocal.terncy_raw reads the WHOLE raw frame buffer
+    // (msg.data, including the ZCL header). For the AduroSmart cluster
+    // the header is manufacturer-specific = 5 bytes
+    // [fc, mfg_lo, mfg_hi, tsn, cmd], so z2m's index→ZHC mapping is:
+    //   z2m msg.data[4] (discriminator) == the command id  → msg.command_id
+    //   z2m msg.data[6] (action value)  == raw_body[1]
+    //   z2m msg.data[7] (motion side)   == raw_body[2]
+    // ZHC strips the header into raw_body, so we must NOT re-index by
+    // the full-frame offsets — that read past the body and the decoder
+    // matched nothing on real (~3-byte body) frames.
 
     // Default config (action only) when no user_config is supplied.
     const auto* cfg = static_cast<const TerncyRawConfig*>(self.user_config);
     if (!cfg) cfg = &kTerncyRawActionOnly;
 
+    const std::uint16_t discriminator = msg.command_id;
+
     if (discriminator == 0) {
         if (!cfg->emit_action) return false;
-        const std::uint8_t v = msg.raw_body[6];
+        if (msg.raw_body.size() < 2) return false;
+        const std::uint8_t v = msg.raw_body[1];
         const char* label = nullptr;
         switch (v) {
             case 1: label = "single";    break;
@@ -53,7 +60,8 @@ bool fz_terncy_raw(const DecodedMessage& msg,
 
     if (discriminator == 4) {
         if (!cfg->emit_motion_occupancy) return false;
-        const std::uint8_t v = msg.raw_body[7];
+        if (msg.raw_body.size() < 3) return false;
+        const std::uint8_t v = msg.raw_body[2];
         const char* side = nullptr;
         switch (v) {
             case 5:  side = "right"; break;
@@ -90,7 +98,9 @@ extern const FzConverter kFzTerncyRawAction{
     .endpoint          = WILDCARD_ENDPOINT,
     .frame_flags_mask  = 0,
     .frame_flags_value = 0,
-    .direction         = Direction::ClientToServer,
+    // Device-originated raw frames carry the server→client direction bit
+    // (z2m wire byte fc=0x0D has bit3 set), like the Orvibo scene remotes.
+    .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_terncy_raw },
     .user_config       = &kTerncyRawActionOnly,
 };
@@ -105,7 +115,9 @@ extern const FzConverter kFzTerncyRawActionMotion{
     .endpoint          = WILDCARD_ENDPOINT,
     .frame_flags_mask  = 0,
     .frame_flags_value = 0,
-    .direction         = Direction::ClientToServer,
+    // Device-originated raw frames carry the server→client direction bit
+    // (z2m wire byte fc=0x0D has bit3 set), like the Orvibo scene remotes.
+    .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_terncy_raw },
     .user_config       = &kTerncyRawActionAndMotion,
 };

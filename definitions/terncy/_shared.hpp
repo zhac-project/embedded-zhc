@@ -8,14 +8,19 @@
 // line.
 //
 // Background. TERNCY's awareness switch / knob / light socket emit a
-// custom "raw" client→server frame on the manuSpecificClusterAduroSmart
+// custom "raw" server→client frame on the manuSpecificClusterAduroSmart
 // (0xFCCC) cluster. The frame body is undecoded ZCL — z2m's
-// `fzLocal.terncy_raw` reads `msg.data[4]` to discriminate action vs
-// motion frames, then `msg.data[6]` (action 1..4) or `msg.data[7]`
-// (motion side lookup). Because ZHC classifies cluster-specific
-// commands as `MessageType::Command`, we filter on
-// `Command + ClientToServer + cluster=manuSpecificClusterAduroSmart`
-// and read the post-header span via `msg.raw_body`.
+// `fzLocal.terncy_raw` reads the WHOLE frame buffer (`msg.data`,
+// header included): `msg.data[4]` discriminates action vs motion, then
+// `msg.data[6]` (action 1..4) or `msg.data[7]` (motion side lookup).
+// The AduroSmart header is manufacturer-specific (5 bytes:
+// fc/mfg_lo/mfg_hi/tsn/cmd), so the z2m full-frame indices map onto the
+// ZHC `DecodedMessage` as: msg.data[4] == `msg.command_id` (the
+// discriminator IS the command id), msg.data[6] == `raw_body[1]`,
+// msg.data[7] == `raw_body[2]`. ZHC classifies cluster-specific
+// commands as `MessageType::Command`, so we filter on
+// `Command + ServerToClient + cluster=manuSpecificClusterAduroSmart`
+// and read the post-header span via `msg.raw_body` (offsets above).
 //
 // The knob (TERNCY-SD01) additionally emits attribute reports on
 // attribute 0x001b (`terncyRotation`, INT16) — z2m's
@@ -42,10 +47,11 @@ extern const TerncyRawConfig kTerncyRawActionOnly;
 extern const TerncyRawConfig kTerncyRawActionAndMotion;
 
 // Decode a raw ClientToServer frame on
-// `manuSpecificClusterAduroSmart`. Body layout (z2m comments):
-//   raw_body[4] == 0 → action frame; raw_body[6] in {1,2,3,4} maps to
+// `manuSpecificClusterAduroSmart`. Layout (z2m comments, remapped to
+// the ZHC header-stripped body):
+//   command_id == 0 → action frame; raw_body[1] in {1,2,3,4} maps to
 //                      "single" / "double" / "triple" / "quadruple".
-//   raw_body[4] == 4 → motion frame; raw_body[7] in {5,7,40,56} maps
+//   command_id == 4 → motion frame; raw_body[2] in {5,7,40,56} maps
 //                      to action_side "right" / "left" and emits
 //                      occupancy=true (only when emit_motion_occupancy
 //                      is set on user_config).
