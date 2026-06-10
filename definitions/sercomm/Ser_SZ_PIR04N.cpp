@@ -1,8 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sercomm SZ-PIR04N — auto-generated.
-// PIR motion & temperature sensor
+// Tier 2: Sercomm SZ-PIR04N — graduated override.
+// PIR motion & temperature sensor.
 // z2m-source: sercomm.ts #SZ-PIR04N.
+//
+// Bug fixed: z2m wires this PIR with `extend: [m.illuminance()]` on top of
+// ias_occupancy_alarm_1 + temperature + battery, exposing `illuminance`
+// (msIlluminanceMeasurement 0x0400 measuredValue). The auto-port dropped the
+// illuminance channel entirely (no decoder, no expose, no 0x0400 binding), so
+// ambient-light readings never reached the shadow. Wire the generic
+// kFzIlluminance converter, add the `illuminance` expose, and bind 0x0400.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::sercomm {
@@ -10,6 +17,7 @@ namespace {
 const FzConverter* const kFz_SZ_PIR04N[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzTemperature,
+    &::zhc::generic::kFzIlluminance,
     &::zhc::generic::kFzIasMotionAlarm,
 };
 
@@ -26,11 +34,13 @@ constexpr Expose kAutoExposes[] = {
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
     {1, 0x0402},
+    {1, 0x0400},
     {1, 0x0500},
 };
 // --- end auto-generated block ---

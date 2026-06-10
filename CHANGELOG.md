@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Sercomm SZ-PIR04N — dropped illuminance channel.** z2m wires this PIR
+  motion/temperature sensor with `extend: [m.illuminance()]` on top of
+  `ias_occupancy_alarm_1` + temperature + battery, exposing `illuminance`
+  (`msIlluminanceMeasurement` 0x0400 measuredValue). The auto-port dropped the
+  illuminance channel entirely — no `kFzIlluminance` decoder, no `illuminance`
+  expose, no 0x0400 binding — so ambient-light readings never reached the
+  shadow. Graduated to a Tier-2 parent override wiring the generic
+  `kFzIlluminance` converter, the `illuminance` expose, and a 0x0400 binding.
+
 - **Livolo TI0001-* family — every custom-cluster decoder was dead, plus
   phantom/mismatched exposes.** Livolo devices speak a bespoke raw protocol
   over genPowerCfg (0x0001) whose body starts with the magic header
