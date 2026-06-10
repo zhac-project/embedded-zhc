@@ -934,6 +934,17 @@ target_link_libraries(zhc_awox_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_adeo_parity_tests tests/test_adeo_parity.cpp)
 target_link_libraries(zhc_adeo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Woox (Tuya-OEM) family. The R7051 TS0219 siren
+# decodes its alarm via z2m fz.ias_alarm_only_alarm_1 (ssIasZone attr 0x0002
+# bit 0 -> `alarm` ONLY), but the generated def lowered the broader kFzIasZone
+# (which also emits tamper + battery_low) and declared phantom tamper /
+# battery_low exposes z2m never surfaces. Graduated to a parent override wiring
+# the new generic kFzIasZoneAlarmOnly with the two phantom exposes removed.
+# The Tuya-DP devices (R7049 smoke, R7060 irrigation, R7067 TRV) are pinned
+# against the z2m legacy semantics. See tests/README.md.
+add_executable(zhc_woox_parity_tests tests/test_woox_parity.cpp)
+target_link_libraries(zhc_woox_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the eWeLink (Coolkit / Sonoff-OEM) vendor. The WS01
 # rainfall sensor reports rain over ssIasZone commandStatusChangeNotification
 # (zoneStatus bit 0); z2m maps it via fzLocal.WS01_rain -> {rain}. Its
@@ -1710,6 +1721,7 @@ add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
+add_test(NAME zhc_woox_parity_tests         COMMAND zhc_woox_parity_tests)
 add_test(NAME zhc_ewelink_parity_tests      COMMAND zhc_ewelink_parity_tests)
 add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_iluminize_parity_tests    COMMAND zhc_iluminize_parity_tests)

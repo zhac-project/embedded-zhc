@@ -450,6 +450,12 @@ extern const FzConverter kFzMetering;
 extern const FzConverter kFzElectricalMeasurement;
 extern const FzConverter kFzThermostat;
 extern const FzConverter kFzIasZone;
+// ssIasZone ZoneStatus attribute report (attr 0x0002, u16), bit 0 → `alarm`
+// ONLY — no tamper / battery_low. Mirrors z2m `fz.ias_alarm_only_alarm_1`
+// (type: attributeReport), used by TS0216/TS0219 Tuya sirens (Woox R7051,
+// HEIMAN HS2WD-E variants) whose exposes carry just a single `alarm` binary.
+// Distinct from kFzIasZone, which additionally emits tamper + battery_low.
+extern const FzConverter kFzIasZoneAlarmOnly;
 // ssIasZone attr reports: 0x0013 currentZoneSensitivityLevel (ENUM8)
 // → `sensitivity` ("low"/"medium"/"high"); 0xF001 (61441, ENUM8)
 // → `keep_time` ("30"/"60"/"120"). Mirrors z2m `fz.ZM35HQ_attr`. Use
