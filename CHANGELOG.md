@@ -46,6 +46,17 @@ across the ZHAC platform.
   converter (emitting `contact` / `occupancy` directly). Mirrors the heiman
   IAS contact/occupancy ports. Added `tests/test_hej_parity.cpp` (also pins
   the GLSK multi-gang `endpoint_map` state-suffix path is intact).
+- **GE PTAPT-WH02 ("Quirky smart switch") on/off routed to the wrong
+  endpoint.** z2m declares `endpoint: () => ({default: 2})` — the genOnOff
+  cluster lives on endpoint 2 — but the auto-port bound genOnOff on EP1 and
+  left `default_endpoint=0`, so outbound on/off frames went to EP1 (dead
+  toggle) and reporting bound the wrong endpoint. Graduated the def to
+  Tier 2, re-endpointed the binding ep1→ep2, and set `default_endpoint=2`.
+  Confirmed the GE metering devices (45853/45856 `fz.metering`, 45857
+  `m.electricityMeter({cluster:"metering"})`) are seMetering 0x0702 only
+  with no 0x0B04 voltage/current half, and the bulbs/dimmers are plain
+  `m.light()` (on/off + brightness, no color_temp) — both regression-guarded
+  in the new `test_ge_parity` suite.
 
 - **Multiterm ZC0101 (ZeeFan fan coil unit controller) dropped its entire
   multi-endpoint binary-output half.** The auto-port modelled it as a bare
