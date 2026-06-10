@@ -57,6 +57,17 @@ across the ZHAC platform.
   with no 0x0B04 voltage/current half, and the bulbs/dimmers are plain
   `m.light()` (on/off + brightness, no color_temp) — both regression-guarded
   in the new `test_ge_parity` suite.
+- **Samotech metering relays/dimmers dropped the 0x0B04 electrical half.**
+  SM309-S, SM323_v2 (SM323 / HK_DIM_A) and SM308-2CH use z2m
+  `m.electricityMeter()` with no args, which defaults to `cluster:"both"` +
+  `electricalMeasurementType:"ac"` — decoding both seMetering (0x0702: energy)
+  AND haElectricalMeasurement (0x0B04: power/voltage/current). The auto-ports
+  wired only `kFzMetering` and exposed just energy/power, so voltage and
+  current never decoded. Graduated all three to Tier-2 overrides adding
+  `kFzElectricalMeasurement`, the voltage/current exposes and the 0x0B04 bind;
+  SM308-2CH also gained its missing 2nd-channel genOnOff bind. Its
+  (suspected-missing) per-channel endpoint_map was already present and is
+  retained.
 
 - **Multiterm ZC0101 (ZeeFan fan coil unit controller) dropped its entire
   multi-endpoint binary-output half.** The auto-port modelled it as a bare
