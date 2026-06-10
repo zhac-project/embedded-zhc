@@ -8,10 +8,12 @@ namespace zhc::devices::javis {
 
 extern const PreparedDefinition kDef_JS_SLK2_ZB;
 extern const PreparedDefinition kDef_JS_MC_SENSOR_ZB;
+extern const PreparedDefinition kDef_JS_MC_SENSOR_ZB_kagkgk0i;
 
 const PreparedDefinition* const kJavisRegistry[] = {
     &kDef_JS_SLK2_ZB,
     &kDef_JS_MC_SENSOR_ZB,
+    &kDef_JS_MC_SENSOR_ZB_kagkgk0i,
 };
 const std::size_t kJavisRegistryCount = sizeof(kJavisRegistry) / sizeof(kJavisRegistry[0]);
 
