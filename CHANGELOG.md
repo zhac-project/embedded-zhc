@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **SLV (VALETO) family: restored dropped colour axes + stripped a phantom
+  remote bundle.** The four LED luminaires were auto-ported as plain dimmable
+  lights (on/off + brightness only) while z2m wires `m.light({colorTemp[,
+  color]})`: `1001248` (CCT driver) and `1005314` (QPAR111) now expose
+  `color_temp`; `1001923` (GU10 RGBW) and `1005318` (E27 RGBW) now expose
+  `color_temp` + `color_xy`. All four wire the generic
+  `kFzColorTemperature`/`kTzColorTemp` (and, for RGBW, `kFzColor`/`kTzColor`)
+  converters and bind `lightingColorCtrl` (0x0300). The `1002994` VALETO remote
+  — a pure binder that z2m declares with `fromZigbee:[], toZigbee:[],
+  exposes:[]` — had been given a phantom controllable `state` plus `battery`/
+  `voltage` exposes and decoders; stripped to nothing to match z2m.
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported

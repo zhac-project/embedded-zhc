@@ -1173,6 +1173,13 @@ target_link_libraries(zhc_enbrighten_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_lonsonho_parity_tests tests/test_lonsonho_parity.cpp)
 target_link_libraries(zhc_lonsonho_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the SLV (VALETO) family — the four LED luminaires had their
+# colour axes dropped by the auto-port (m.light({colorTemp[,color]}) ->
+# on/off+brightness only); the VALETO remote carried a phantom
+# state/battery/voltage bundle while z2m declares exposes:[].
+add_executable(zhc_slv_parity_tests tests/test_slv_parity.cpp)
+target_link_libraries(zhc_slv_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Honyar (Tuya-OEM) family. The three multi-gang switches
 # (HY0096 2-gang, HY0097 + 00500c35 3-gang) declared multiple z2m switch
 # endpoints but the generated defs carried a single bare `state` expose and
@@ -2750,6 +2757,7 @@ add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
 add_test(NAME zhc_lupus_parity_tests        COMMAND zhc_lupus_parity_tests)
 add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
+add_test(NAME zhc_slv_parity_tests          COMMAND zhc_slv_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
 add_test(NAME zhc_makegood_parity_tests     COMMAND zhc_makegood_parity_tests)
 add_test(NAME zhc_ge_parity_tests           COMMAND zhc_ge_parity_tests)
