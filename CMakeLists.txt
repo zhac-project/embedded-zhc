@@ -2468,6 +2468,8 @@ target_link_libraries(zhc_terncy_parity_tests PRIVATE zhc_definitions)
 # button action (genBinaryInput 0x000F presentValue → action on/off).
 add_executable(zhc_bticino_parity_tests tests/test_bticino_parity.cpp)
 target_link_libraries(zhc_bticino_parity_tests PRIVATE zhc_definitions)
+add_executable(zhc_calex_parity_tests tests/test_calex_parity.cpp)
+target_link_libraries(zhc_calex_parity_tests PRIVATE zhc_definitions)
 
 # Parity fixtures for the Lellki (Tuya-OEM) family. Two single-gang metering
 # sockets (XF-EU-S100-1-M, WK34-EU) were ported as bare on/off, dropping the
@@ -2762,6 +2764,7 @@ add_test(NAME zhc_essentialb_parity_tests   COMMAND zhc_essentialb_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
+add_test(NAME zhc_calex_parity_tests        COMMAND zhc_calex_parity_tests)
 add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)

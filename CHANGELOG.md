@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Calex colour/colour-temperature + remote-action parity.** `421792`
+  (LED A60 RGB lamp, z2m `m.light({colorTemp:{range:[153,370]},
+  color:{modes:["xy","hs"]}})`) had its entire lightingColorCtrl (0x0300)
+  axis dropped — ported as on/off+brightness only. Restored colour +
+  colour-temperature read/write (`kFzColor`/`kFzColorTemperature` +
+  `kTzColor`/`kTzColorTemp`, the hue/saturation/color_x/color_y/color_temp
+  exposes, and a 0x0300 bind). `421782` ("Smart Wall Switch" RGB wall
+  controller, z2m `toZigbee:[]`, action only) was mis-ported as a settable
+  on/off switch (dead button presses, phantom relay); rewired to the seven
+  generic command converters (on/off/step/move/stop/move_to_color_temp/
+  enhanced_move_to_hue_and_saturation) + an `action` expose.
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
