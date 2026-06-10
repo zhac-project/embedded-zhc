@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **JetHome WS7 parity: phantom on/off, dead discrete-input channel.** The
+  3-channel battery discrete-input module was auto-ported with a phantom
+  genOnOff in/out (settable `state` expose + `kFzOnOff`/`kTzOnOff` +
+  0x0006 binding) and dropped the entire `genMultistateInput` channel that
+  z2m decodes via `jetHome.fz.multiStateAction`. Graduated to a Tier-2
+  override: wired `kFzBattery` + new `kFzJetHomeMultiStateAction`
+  (presentValue 0x0055 → release/single/double/triple/hold), restored the
+  `JetHome` manufacturer gate, replaced `state` with an `action` enum, and
+  set `endpoint_action_suffix` so each input surfaces as
+  `action_in1`/`action_in2`/`action_in3`. New `test_jethome_parity`.
 - **Envilar parity: metering 0x0B04 half, dead remote, missing CCT channel.**
   `1CH-HP-RELAY-7853` + `7859` use z2m `m.electricityMeter()` (default
   `cluster:"both"`, so seMetering 0x0702 energy **and**
