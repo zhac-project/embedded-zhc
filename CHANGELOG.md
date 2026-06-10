@@ -37,6 +37,18 @@ across the ZHAC platform.
   (`kFzMetering` 0x0702 + `kFzElectricalMeasurement` 0x0B04) — verified
   correct, no change.
 
+- **Lupus (LUPUSEC) roller-shutter parity: wrong-cluster cover.** The `12031`
+  and `LS12128` SCM-family roller shutters were ported with the generic
+  `kFzCoverPosition` / `kTzCoverPosition` converters against
+  `closuresWindowCovering` (0x0102) and bound 0x0102 — a cluster these devices
+  never speak. z2m drives them through the brightness/on-off proxy
+  (`fz.cover_position_via_brightness` + `fz.cover_state_via_onoff` +
+  `tz.cover_via_brightness`), so position decode and control were both dead and
+  the `cover_position()` `state` expose was dropped. Rewired both to the generic
+  via-brightness converters (genLevelCtrl 0x0008 + genOnOff 0x0006), restored
+  the `state` expose, and corrected bindings (mirrors the Climax SCM-5ZBS fix).
+  Added `tests/test_lupus_parity.cpp` (also pins the `12127` two-channel relay
+  l1/l2 endpoint_map suffixing).
 - **HZC Electric sensor parity: phantom on/off, IAS dead-keys, dropped
   channels.** Three generated sensor defs were mis-ported. `S093TH-ZG`
   (temp/humidity) was wired as a phantom on/off switch (`kFzOnOff` +
