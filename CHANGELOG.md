@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Aeotec Pico switches/shutter + range extender: metering half, cover
+  tilt, device temp, scene-button channels, and a phantom router on/off.**
+  `WG001` ("Range extender Zi") is a router (z2m `exposes:[]`,
+  `fromZigbee:[fz.linkquality_from_basic]`) but was auto-ported as a
+  controllable on/off (`kFzOnOff`/`kTzOnOff` + a `state` expose + 0x0006
+  bind) — stripped to an exposeless def. `ZGA002`/`ZGA003` use
+  `m.electricityMeter()` (default `cluster:"both"`) but the port wired only
+  `kFzMetering` (seMetering 0x0702 → energy), dropping the
+  haElectricalMeasurement 0x0B04 half (voltage/current) — added
+  `kFzElectricalMeasurement` + voltage/current exposes + the 0x0B04 bind.
+  `ZGA004` ("Pico shutter") is `m.windowCovering({controls:["lift","tilt"]})`
+  but the port wired only `kFzCoverPosition`/`kTzCoverPosition` (lift),
+  dropping the tilt channel (currentPositionTiltPercentage 0x0009) and
+  carrying a phantom on/off — added `kFzCoverTilt` + `kTzCoverPositionTilt`
+  + a `tilt` expose and removed the dead `state`/0x0006. All three `ZGA*`
+  also dropped `m.deviceTemperature()` (genDeviceTempCfg 0x0002) and the
+  `m.commandsOnOff`/`commandsLevelCtrl`/`commandsWindowCovering`
+  scene-button endpoints — added `kFzDeviceTemperature` +
+  `device_temperature` and the generic `kFzCommand*` converters + an
+  `action` enum with `endpoint_action_suffix` so each button endpoint
+  surfaces as `action_<n>`. Graduated all four defs to Tier 2.
+
 - **Prolight bulbs/remote: dropped colour axis + dead remote.** The E27
   (`5412748727371`) and GU10 (`5412748727401`) white-and-colour bulbs are
   z2m `m.light({colorTemp:{range:[153,555]}, color:true})` but were
