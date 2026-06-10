@@ -42,6 +42,16 @@ across the ZHAC platform.
   onto the Tuya-DP map (DP1→state, DP101→threshold raw, DP9→timer with the
   seconds→minutes `/60` scale z2m applies) plus the matching write path, restored
   the two lost StateSet exposes, and bound 0xEF00 instead of 0x0006.
+- **Xenon X7726 curtain motor: removed misrouted dup-fingerprint stub.** The
+  single z2m def (TS0601 / `_TZE284_hbjwgkdh`, a Tuya-MCU 0xEF00 datapoint
+  device) had been emitted as TWO defs for the same fingerprint: the correct
+  full Tuya-DP port plus a stub that misrouted to `genWindowCovering` (0x0102)
+  via `kFzCoverPosition` and dropped state/calibration/temperature. The firmware
+  only surfaces this device over 0xEF00 DPs, so the 0x0102 route was dead. The
+  stub was removed and the DP def graduated to `definitions/xenon/X7726.cpp` with
+  the z2m identity (model `X7726` / vendor `Xenon Smart`), the phantom `action`
+  expose dropped, and exposes typed to match z2m (state/calibration enums,
+  position/temperature numerics).
 
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`

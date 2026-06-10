@@ -2291,6 +2291,16 @@ target_link_libraries(zhc_ynoa_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_avatto_parity_tests tests/test_avatto_parity.cpp)
 target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for Xenon. The single z2m X7726 curtain motor (Tuya TS0601 /
+# _TZE284_hbjwgkdh, a 0xEF00 DP device) had been emitted as TWO colliding defs
+# for the same fingerprint: the correct full DP port plus a stub that misrouted
+# to genWindowCovering (0x0102) and dropped state/calibration/temperature. The
+# dead stub was removed; the DP def graduated to definitions/xenon/X7726.cpp with
+# the z2m identity and the phantom `action` expose dropped. See
+# tests/test_xenon_parity.cpp.
+add_executable(zhc_xenon_parity_tests tests/test_xenon_parity.cpp)
+target_link_libraries(zhc_xenon_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for Javis. The JS-MC-SENSOR-ZB microwave/presence sensor had
 # been mis-wired to the IAS-zone converter (phantom alarm/tamper exposes); z2m
 # decodes it via the 0xEF00 Tuya DP stream. Ported the real DP->key map and
@@ -2888,6 +2898,7 @@ add_test(NAME zhc_simpla_home_parity_tests  COMMAND zhc_simpla_home_parity_tests
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_ynoa_parity_tests         COMMAND zhc_ynoa_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
+add_test(NAME zhc_xenon_parity_tests        COMMAND zhc_xenon_parity_tests)
 add_test(NAME zhc_javis_parity_tests        COMMAND zhc_javis_parity_tests)
 add_test(NAME zhc_weten_parity_tests        COMMAND zhc_weten_parity_tests)
 add_test(NAME zhc_nedis_parity_tests        COMMAND zhc_nedis_parity_tests)

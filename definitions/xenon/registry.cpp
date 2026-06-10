@@ -7,11 +7,9 @@
 namespace zhc::devices::xenon {
 
 extern const PreparedDefinition kDefXen__TZE284_hbjwgkdh;
-extern const PreparedDefinition kDef_X7726;
 
 const PreparedDefinition* const kXenonRegistry[] = {
     &kDefXen__TZE284_hbjwgkdh,
-    &kDef_X7726,
 };
 const std::size_t kXenonRegistryCount = sizeof(kXenonRegistry) / sizeof(kXenonRegistry[0]);
 
