@@ -917,6 +917,14 @@ target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Hej (Goqual) family. The two KKZ IAS sensors
+# lowered the generic kFzIasZone (bare key "alarm") while exposing the
+# semantic key (contact/occupancy) — graduated to parent overrides using
+# the typed kFzIasContactAlarm / kFzIasMotionAlarm converters. Also pins
+# the GLSK multi-gang endpoint_map state-suffix path.
+add_executable(zhc_hej_parity_tests tests/test_hej_parity.cpp)
+target_link_libraries(zhc_hej_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Visonic (PowerMax/Tyco) IAS-Zone sensor family.
 # All 8 generated defs lowered the generic kFzIasZone (bare key "alarm") while
 # exposing the semantic key (occupancy/contact/vibration) — the primary sensor
@@ -2170,6 +2178,7 @@ add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_hej_parity_tests          COMMAND zhc_hej_parity_tests)
 add_test(NAME zhc_fantem_parity_tests       COMMAND zhc_fantem_parity_tests)
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
 add_test(NAME zhc_multiterm_parity_tests    COMMAND zhc_multiterm_parity_tests)
