@@ -1,15 +1,24 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Hej KKZ-DO021 — auto-generated.
+// Tier 2: Hej KKZ-DO021 — hand-maintained parity override.
+//
+// Graduated from generated/Hej_KKZ_DO021.cpp: the generated def lowered
+// the generic kFzIasZone converter — which emits the bare key "alarm" —
+// while the expose declares the semantic key "contact". With no rename
+// layer the primary sensor state never reached the shadow. z2m decodes
+// this via fz.ias_contact_alarm_1 (zoneStatus bit 0), so the typed
+// kFzIasContactAlarm converter — which emits "contact" directly — is at
+// parity. Mirrors the heiman HS1DS / trust / smartthings IAS contact
+// ports.
 // Door contact sensor
-// z2m-source: hej.ts #KKZ-DO021.
+// z2m-source: hej.ts #KKZ-DO021 (fz.ias_contact_alarm_1, fz.battery).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::hej {
 namespace {
 const FzConverter* const kFz_KKZ_DO021[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
 constexpr const char* kModels_KKZ_DO021[] = { "RH3001" };
@@ -21,7 +30,7 @@ constexpr const char* kModels_KKZ_DO021[] = { "RH3001" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

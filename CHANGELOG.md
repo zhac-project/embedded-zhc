@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Hej (Goqual) KKZ-DO021 door contact and KKZ-MO021 PIR sensors emitted a
+  dead `alarm` key instead of their declared `contact` / `occupancy` state.**
+  Both auto-ports lowered the generic `kFzIasZone` converter (bare key
+  `alarm`) while exposing the semantic key, so the primary sensor signal
+  never reached the shadow. z2m decodes these via `fz.ias_contact_alarm_1` /
+  `fz.ias_occupancy_alarm_1` (both zoneStatus bit 0); graduated each def to a
+  Tier-2 override wiring the typed `kFzIasContactAlarm` / `kFzIasMotionAlarm`
+  converter (emitting `contact` / `occupancy` directly). Mirrors the heiman
+  IAS contact/occupancy ports. Added `tests/test_hej_parity.cpp` (also pins
+  the GLSK multi-gang `endpoint_map` state-suffix path is intact).
+
 - **Multiterm ZC0101 (ZeeFan fan coil unit controller) dropped its entire
   multi-endpoint binary-output half.** The auto-port modelled it as a bare
   single `fan_mode` binary and never decoded the three genBinaryOutput
