@@ -1786,6 +1786,14 @@ target_link_libraries(zhc_sercomm_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_terncy_parity_tests tests/test_terncy_parity.cpp)
 target_link_libraries(zhc_terncy_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Lellki (Tuya-OEM) family. Two single-gang metering
+# sockets (XF-EU-S100-1-M, WK34-EU) were ported as bare on/off, dropping the
+# seMetering (0x0702) + haElectricalMeasurement (0x0B04) channels that z2m's
+# tuyaOnOff({electricalMeasurements:true}) surfaces. These pin the restored
+# power/current/voltage/energy decode + the unaffected siblings.
+add_executable(zhc_lellki_parity_tests tests/test_lellki_parity.cpp)
+target_link_libraries(zhc_lellki_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1940,6 +1948,7 @@ add_test(NAME zhc_dawon_dns_parity_tests    COMMAND zhc_dawon_dns_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
 add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)
+add_test(NAME zhc_lellki_parity_tests       COMMAND zhc_lellki_parity_tests)
 add_test(NAME zhc_stelpro_parity_tests      COMMAND zhc_stelpro_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
