@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **HZC Electric sensor parity: phantom on/off, IAS dead-keys, dropped
+  channels.** Three generated sensor defs were mis-ported. `S093TH-ZG`
+  (temp/humidity) was wired as a phantom on/off switch (`kFzOnOff` +
+  `state` expose + `kTzOnOff`) instead of z2m's `fz.temperature` +
+  `fz.humidity` — restored `kFzTemperature` + `kFzHumidity`, the
+  temperature/humidity exposes and 0x0402 / 0x0405 bindings, dropped the
+  dead write path. `S900W-ZG` (water leak) and `S902M-ZG` (motion) lowered
+  the generic `kFzIasZone` (bare key `alarm`) while their exposes declared
+  the semantic key — graduated to the typed `kFzIasWaterLeakAlarm` /
+  `kFzIasMotionAlarm` (`water_leak` / `occupancy`, zoneStatus bit 0).
+  `S902M-ZG` also dropped z2m's `m.illuminance()` — restored
+  `kFzIlluminance` + the `illuminance` expose + 0x0400 binding. New
+  `test_hzc_electric_parity`.
 - **JetHome WS7 parity: phantom on/off, dead discrete-input channel.** The
   3-channel battery discrete-input module was auto-ported with a phantom
   genOnOff in/out (settable `state` expose + `kFzOnOff`/`kTzOnOff` +

@@ -951,6 +951,18 @@ target_link_libraries(zhc_visonic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_fantem_parity_tests tests/test_fantem_parity.cpp)
 target_link_libraries(zhc_fantem_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the HZC Electric sensor family. The S093TH-ZG
+# temp/humidity sensor was mis-ported as a phantom on/off switch (kFzOnOff +
+# a `state` expose + kTzOnOff) — restored kFzTemperature + kFzHumidity, the
+# temperature/humidity exposes and 0x0402 / 0x0405 bindings. The S900W-ZG
+# water-leak and S902M-ZG motion sensors lowered the generic kFzIasZone (bare
+# key "alarm") while exposing the semantic key — graduated to the typed
+# kFzIasWaterLeakAlarm / kFzIasMotionAlarm (water_leak / occupancy). S902M
+# also dropped z2m's m.illuminance() — restored kFzIlluminance + the
+# illuminance expose + 0x0400 binding.
+add_executable(zhc_hzc_electric_parity_tests tests/test_hzc_electric_parity.cpp)
+target_link_libraries(zhc_hzc_electric_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the GS (Linkind-OEM) family. The 6 IAS sensors lowered
 # the generic kFzIasZone (bare key "alarm") while exposing a semantic key —
 # graduated to the typed kFzIas<Type>Alarm converters (occupancy/contact/
@@ -2287,6 +2299,7 @@ add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_hej_parity_tests          COMMAND zhc_hej_parity_tests)
 add_test(NAME zhc_fantem_parity_tests       COMMAND zhc_fantem_parity_tests)
+add_test(NAME zhc_hzc_electric_parity_tests COMMAND zhc_hzc_electric_parity_tests)
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
 add_test(NAME zhc_multiterm_parity_tests    COMMAND zhc_multiterm_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
