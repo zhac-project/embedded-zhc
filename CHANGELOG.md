@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Aubess ZXZIR-02 IR remote: rescued from a phantom on/off + battery port.**
+  The auto-generated def mis-classified this pure Zosung IR blaster/learner
+  (z2m `zosung.zosungExtend` + `fzZosung.zosung_send_ir_code_00..05` +
+  `tzZosung` + `presetsZosung`) as a bare on/off + battery device — phantom
+  `kFzOnOff`/`kFzBattery`, dead `state`/`battery`/`voltage` exposes, and
+  bindings to genOnOff (0x0006) + genPowerCfg (0x0001) the device never emits.
+  Graduated to a Tier-2 override wiring the existing Zosung IR runtime
+  (clusters 0xED00 IRTransmit + 0xE004 IRControl): the six IR-transfer
+  decoders + `ir_code_to_send`/`learn_ir_code` writers + the three IR exposes,
+  matching the Moes UFO-R11 sibling but without battery (z2m's Aubess def
+  exposes none). HARDWARE TESTING REQUIRED — the Zosung protocol is faithful
+  to z2m but not yet exercised on real hardware.
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported

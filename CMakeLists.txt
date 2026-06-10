@@ -951,6 +951,14 @@ target_link_libraries(zhc_cleverio_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_atlantic_parity_tests tests/test_atlantic_parity.cpp)
 target_link_libraries(zhc_atlantic_parity_tests PRIVATE zhc_definitions)
 
+# Aubess ZXZIR-02 IR remote: the auto-generated def mis-classified this pure
+# Zosung IR blaster/learner as a bare on/off + battery device (phantom
+# kFzOnOff/kFzBattery, bindings to genOnOff/genPowerCfg). Graduated to a
+# Tier-2 override wiring the existing Zosung IR runtime (clusters 0xED00 +
+# 0xE004), matching the Moes UFO-R11 sibling but without battery.
+add_executable(zhc_aubess_parity_tests tests/test_aubess_parity.cpp)
+target_link_libraries(zhc_aubess_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for two Light Solutions bulbs whose auto-generated defs
 # dropped a lighting axis. 42-032 (CCT driver) lost the colorTemp axis and
 # 91-943 (RGBW+CCT controller) lost BOTH color (hue/sat/xy) and colorTemp.
@@ -2733,6 +2741,7 @@ add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
 add_test(NAME zhc_cleverio_parity_tests     COMMAND zhc_cleverio_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
+add_test(NAME zhc_aubess_parity_tests       COMMAND zhc_aubess_parity_tests)
 add_test(NAME zhc_lightsolutions_parity_tests COMMAND zhc_lightsolutions_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_akuvox_parity_tests       COMMAND zhc_akuvox_parity_tests)
