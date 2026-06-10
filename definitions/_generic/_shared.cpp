@@ -1164,6 +1164,20 @@ bool fz_ias_ace_panic(const DecodedMessage&, const FzConverter&,
     return true;
 }
 
+// commandArm variant that also surfaces the ZCL transaction sequence
+// number. Mirrors z2m fz.command_arm_with_transaction, which wraps
+// fz.command_arm and copies msg.meta.zclTransactionSequenceNumber into
+// `action_transaction`. Used by Xfinity/Iris-family security keypads
+// (UEI XHK1-UE/UEHK2AZ0, centralite, linkind) that expose the field.
+bool fz_ias_ace_arm_with_transaction(const DecodedMessage& msg, const FzConverter& cv,
+                                     const PreparedDefinition& def, RuntimeContext& ctx,
+                                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (!fz_ias_ace_arm(msg, cv, def, ctx, out)) return false;
+    Value t{}; t.type = ValueType::Uint; t.u = msg.transaction_sequence;
+    out.put("action_transaction", t);
+    return true;
+}
+
 }  // namespace
 
 extern const FzConverter kFzIasAceArm{
@@ -1177,6 +1191,20 @@ extern const FzConverter kFzIasAceArm{
     .frame_flags_value = 0,
     .direction         = Direction::ClientToServer,
     .fn                = { .zcl_fn = fz_ias_ace_arm },
+    .user_config       = nullptr,
+};
+
+extern const FzConverter kFzIasAceArmWithTransaction{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "ssIasAce",
+    .type_mask         = type_bit(MessageType::Command),
+    .command_id        = 0x00,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ClientToServer,
+    .fn                = { .zcl_fn = fz_ias_ace_arm_with_transaction },
     .user_config       = nullptr,
 };
 

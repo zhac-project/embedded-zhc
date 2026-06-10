@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Universal Electronics Inc (Xfinity) XHK1-UE & UEHK2AZ0 security keypads
+  dropped `action_transaction`.** z2m wires `fz.command_arm_with_transaction`,
+  which copies the ZCL transaction sequence number into `action_transaction`;
+  the ports wired `kFzIasAceArm`, which decodes `action`/`action_code`/
+  `action_zone` but not the TSN, so the declared `action_transaction` expose
+  stayed dead. Added a reusable `kFzIasAceArmWithTransaction` generic converter
+  (emits the arm fields plus `action_transaction` from
+  `DecodedMessage.transaction_sequence`), wired both keypads to it, added the
+  `action_transaction` expose, and graduated both defs out of `generated/`.
+
 - **Linptech ES1ZZ(TY) mmWave presence sensor decoded illuminance wrong and
   under a non-z2m key.** z2m's `fzLocal.TS0225_illuminance` reads the whole raw
   ZCL frame (`buffer = msg.data`), takes the little-endian u16 measuredValue at
