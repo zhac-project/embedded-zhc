@@ -205,18 +205,18 @@ void check_contact() {
     assert(def_exposes(def, "battery"));   // z2m fz.battery → e.battery()
     assert(!def_exposes(def, "alarm"));
 
-    // IAS zone status bit 0 set → contact true.
+    // IAS zone status: z2m publishes contact = !(bit0). bit 0 set → contact FALSE.
     RuntimeContext ctx1{};
     auto c = dispatch_zcl_ep(ctx1, def, 0x0500, 1, "ssIasZone", ias_status(0x0001));
     assert(c.any_matched);
-    assert(bool_is(c, "contact", true));
+    assert(bool_is(c, "contact", false));
     assert(c.merged.find("alarm") == nullptr);
 
-    // battery_low bit (bit 3) set.
+    // battery_low bit (bit 3) set; bit 0 clear → contact TRUE (z2m !bit0).
     RuntimeContext ctx2{};
     auto bl = dispatch_zcl_ep(ctx2, def, 0x0500, 1, "ssIasZone", ias_status(0x0008));
     assert(bool_is(bl, "battery_low", true));
-    assert(bool_is(bl, "contact", false));
+    assert(bool_is(bl, "contact", true));
 
     // Battery numeric: genPowerCfg attr 0x0021 = 200 → 100%.
     RuntimeContext ctx3{};

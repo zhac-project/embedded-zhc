@@ -209,12 +209,12 @@ void test_ias_sensors() {
         assert(r.any_matched);
         assert(has_bool(r, "occupancy", true));
     }
-    // PECWS01 contact: bit0 set → contact true.
+    // PECWS01 contact: z2m publishes contact = !(bit0). bit0 set → contact FALSE.
     {
         auto rep = ias_status(0x0001);
         auto r = run(kDef_PECWS01, 0x0500, 1, rep);
         assert(r.any_matched);
-        assert(has_bool(r, "contact", true));
+        assert(has_bool(r, "contact", false));
     }
     // PECLS01 leak: bit0 clear → water_leak false; bit2 → tamper true.
     {
