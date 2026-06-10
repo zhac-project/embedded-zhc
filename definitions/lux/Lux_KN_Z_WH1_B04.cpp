@@ -1,15 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Lux KN-Z-WH1-B04 — auto-generated.
-// KONOz thermostat
+// Tier 2: Lux KN-Z-WH1-B04 — graduated from generated/ 2026-06-10.
+// KONOz HVAC thermostat (z2m fz.thermostat + fz.fan + fz.battery).
+//
+// Parity fix (real gap): z2m's climate expose carries
+// `.withSetpoint("occupied_cooling_setpoint", ...)` and
+// `.withRunningState(["idle","heat","cool"])`, decoded by
+// `fz.thermostat` from standard hvacThermostat attrs 0x0011
+// (OccupiedCoolingSetpoint) and 0x0029 (ThermostatRunningState). The
+// generic `kFzThermostat` only decodes 0x0000 / 0x0012 / 0x001C, so
+// both were dead exposes. z2m's fz.thermostat also decodes 0x001E
+// (ThermostatRunningMode). Now wired to `kFzLuxThermostatExtras`.
+// (fan_mode was already correctly decoded by the generic kFzFanMode.)
 // z2m-source: lux.ts #KN-Z-WH1-B04.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/lux/_shared.hpp"
 
 namespace zhc::devices::lux {
 namespace {
 const FzConverter* const kFz_KN_Z_WH1_B04[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzThermostat,
+    &::zhc::lux::kFzLuxThermostatExtras,
     &::zhc::generic::kFzFanMode,
 };
 const TzConverter* const kTz_KN_Z_WH1_B04[] = {
@@ -28,6 +40,10 @@ constexpr Expose kAutoExposes[] = {
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"fan_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    // Parity fix: decoded by kFzLuxThermostatExtras (attrs 0x0011/0x0029/0x001E).
+    {"occupied_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"running_mode",  ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
