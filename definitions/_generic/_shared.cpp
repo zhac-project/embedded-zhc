@@ -2081,6 +2081,36 @@ extern const TzConverter kTzBrightness{
     .user_config  = nullptr,
 };
 
+bool tz_cover_via_brightness(std::string_view key, const Value& input,
+                              const TzConverter&,
+                              const PreparedDefinition&, RuntimeContext&,
+                              std::span<std::uint8_t> out_frame,
+                              std::size_t& out_size) {
+    out_size = 0;
+    if (key != "position") return false;
+    if (input.type != ValueType::Uint || input.u > 100) return false;
+
+    // z2m `tz.cover_via_brightness`: position (0-100 %) → level (0-255),
+    // moveToLevelWithOnOff (cmd 0x04) — payload: level u8, transtime u16 LE.
+    const std::uint32_t level = (static_cast<std::uint32_t>(input.u) * 255u + 50u) / 100u;
+    if (!write_header(out_frame, 0x04, /*payload_len=*/3, out_size)) {
+        return false;
+    }
+    out_frame[3] = static_cast<std::uint8_t>(level);
+    out_frame[4] = 0x00;     // transition time LSB
+    out_frame[5] = 0x00;     // transition time MSB
+    return true;
+}
+
+extern const TzConverter kTzCoverViaBrightness{
+    .key          = "position",
+    .cluster      = "genLevelCtrl",
+    .cluster_id   = 0x0008,
+    .command_id   = 0x04,
+    .fn           = tz_cover_via_brightness,
+    .user_config  = nullptr,
+};
+
 bool tz_color_temp(std::string_view key, const Value& input,
                     const TzConverter&,
                     const PreparedDefinition&, RuntimeContext&,
@@ -2776,6 +2806,84 @@ extern const FzConverter kFzCoverTilt{
     .frame_flags_value = 0,
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_cover_tilt },
+    .user_config       = nullptr,
+};
+
+// ── fz_cover_position_via_brightness (genLevelCtrl 0x0008) ──────────
+//
+// z2m `fz.cover_position_via_brightness`: reads `currentLevel` (attr
+// 0x0000, u8 0-255) and maps it onto a 0-100 % `position`, deriving
+// `state` ("OPEN" when position > 0, else "CLOSE"). Used by covers that
+// proxy lift through the level cluster (Climax SCM-5ZBS). No invert
+// option support — matches the default (non-inverted) z2m path.
+
+bool fz_cover_position_via_brightness(const DecodedMessage& msg,
+                                       const FzConverter&,
+                                       const PreparedDefinition&,
+                                       RuntimeContext&,
+                                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");   // attr 0x0000 currentLevel
+    if (!v || v->type != ValueType::Uint) return false;
+    // mapNumberRange(level, 0,255, 0,100) — round to nearest, like z2m.
+    const std::uint32_t level = static_cast<std::uint32_t>(v->u);
+    const std::uint32_t pos = (level * 100u + 127u) / 255u;
+    Value p{}; p.type = ValueType::Uint; p.u = pos;
+    out.put("position", p);
+    Value s{}; s.type = ValueType::StringRef; s.str = pos > 0 ? "OPEN" : "CLOSE";
+    out.put("state", s);
+    return true;
+}
+
+extern const FzConverter kFzCoverPositionViaBrightness{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genLevelCtrl",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_cover_position_via_brightness },
+    .user_config       = nullptr,
+};
+
+// ── fz_cover_state_via_onoff (genOnOff 0x0006) ──────────────────────
+//
+// z2m `fz.cover_state_via_onoff`: `onOff` attr (0x0000) 1 → "OPEN",
+// 0 → "CLOSE". Complements fz_cover_position_via_brightness on covers
+// that report open/close through the on/off cluster.
+
+bool fz_cover_state_via_onoff(const DecodedMessage& msg,
+                               const FzConverter&,
+                               const PreparedDefinition&,
+                               RuntimeContext&,
+                               FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");   // attr 0x0000 onOff
+    if (!v) return false;
+    bool on;
+    if (v->type == ValueType::Bool)      on = v->b;
+    else if (v->type == ValueType::Uint) on = v->u != 0;
+    else return false;
+    Value s{}; s.type = ValueType::StringRef;
+    s.str = on ? "OPEN" : "CLOSE";
+    out.put("state", s);
+    return true;
+}
+
+extern const FzConverter kFzCoverStateViaOnOff{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genOnOff",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_cover_state_via_onoff },
     .user_config       = nullptr,
 };
 

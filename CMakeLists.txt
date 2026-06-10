@@ -908,6 +908,17 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Climax family. SCM-5ZBS roller shutter was wired to the
+# closuresWindowCovering cluster (0x0102) it never speaks; z2m proxies
+# position through genLevelCtrl + on/off (fz/tz cover_via_brightness) — both
+# decode and control were dead, rewired to the new generic via-brightness
+# converters. SRAC-23B-ZBSR siren wired kFzIasZone (attribute-only) against
+# z2m fz.ias_siren (commandStatusChangeNotification) so `alarm` was dead;
+# swapped to kFzIasGenericAlarm and regained the dropped ias_wd max_duration
+# channel + warning/squawk/max_duration exposes. See tests/README.md.
+add_executable(zhc_climax_parity_tests tests/test_climax_parity.cpp)
+target_link_libraries(zhc_climax_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Lonsonho (Tuya-OEM) family. X701A (1-gang switch) dropped
 # the "_TZ3000_ehgouyvu" manufacturer name from its TS0001 fingerprint, so
 # that variant never matched; graduated to a parent override restoring both
@@ -1846,6 +1857,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
 add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)
