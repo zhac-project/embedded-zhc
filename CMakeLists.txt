@@ -954,6 +954,17 @@ target_link_libraries(zhc_hornbach_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_somfy_parity_tests tests/test_somfy_parity.cpp)
 target_link_libraries(zhc_somfy_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Samotech relay/dimmer + metering family. SM309-S, SM323_v2
+# (SM323 / HK_DIM_A) and SM308-2CH all use z2m m.electricityMeter() with no
+# args -> cluster:"both" + ac, decoding seMetering (0x0702: energy) AND
+# haElectricalMeasurement (0x0B04: power/voltage/current). The auto-ports
+# wired only kFzMetering, dropping voltage/current; added
+# kFzElectricalMeasurement + the voltage/current exposes + 0x0B04 bind.
+# SM308-2CH keeps its (correct) per-channel endpoint_map {l1,l2} and gains a
+# 2nd-channel genOnOff bind. See tests/README.md for the pattern.
+add_executable(zhc_samotech_parity_tests tests/test_samotech_parity.cpp)
+target_link_libraries(zhc_samotech_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Climax family. SCM-5ZBS roller shutter was wired to the
 # closuresWindowCovering cluster (0x0102) it never speaks; z2m proxies
 # position through genLevelCtrl + on/off (fz/tz cover_via_brightness) — both
@@ -2276,6 +2287,7 @@ add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik
 add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
+add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
