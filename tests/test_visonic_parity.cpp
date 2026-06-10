@@ -102,23 +102,30 @@ bool def_binds(const PreparedDefinition& def, std::uint16_t cluster) {
 // tamper/battery_low reflect bits 2/3. The semantic key must also be a
 // declared expose (regression guard against generic kFzIasZone, whose
 // "alarm" key never matched the expose).
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+//
+// `invert`: z2m publishes `contact = !(zoneStatus bit0)` for zoneType:"contact"
+// devices (kFzIasContactAlarm). For those, a bit-0-set frame yields the
+// semantic key FALSE and a bit-0-clear frame yields TRUE. occupancy /
+// vibration read raw bit 0, so default `invert=false`. tamper/battery_low
+// (bits 2/3) are never inverted.
+void check_alarm1(const PreparedDefinition& def, const char* sem,
+                  bool invert = false) {
     assert(def_exposes(def, sem));
 
-    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
+    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only (bit 0)
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert(invert ? b_false(on.merged.find(sem)) : b_true(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);       // bare key must be gone
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
-    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
+    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear (bit 0 low)
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert(invert ? b_true(off.merged.find(sem)) : b_false(off.merged.find(sem)));
 
-    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
+    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3), bit0 low
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    assert(invert ? b_true(tb.merged.find(sem)) : b_false(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -155,12 +162,12 @@ void check_temperature(const PreparedDefinition& def) {
 // ── per-type alarm_1 (bit 0) decoders ────────────────────────────────
 static void test_mp840_occupancy()  { check_alarm1(devices::visonic::kDef_MP_840,      "occupancy"); }
 static void test_mp841_occupancy()  { check_alarm1(devices::visonic::kDef_MP_841,      "occupancy"); }
-static void test_mct370_contact()   { check_alarm1(devices::visonic::kDef_MCT_370_SMA, "contact"); }
-static void test_mct350_contact()   { check_alarm1(devices::visonic::kDef_MCT_350_SMA, "contact"); }
-static void test_mct340e_contact()  { check_alarm1(devices::visonic::kDef_MCT_340_E,   "contact"); }
-static void test_mct340sma_contact(){ check_alarm1(devices::visonic::kDef_MCT_340_SMA, "contact"); }
+static void test_mct370_contact()   { check_alarm1(devices::visonic::kDef_MCT_370_SMA, "contact", /*invert=*/true); }
+static void test_mct350_contact()   { check_alarm1(devices::visonic::kDef_MCT_350_SMA, "contact", /*invert=*/true); }
+static void test_mct340e_contact()  { check_alarm1(devices::visonic::kDef_MCT_340_E,   "contact", /*invert=*/true); }
+static void test_mct340sma_contact(){ check_alarm1(devices::visonic::kDef_MCT_340_SMA, "contact", /*invert=*/true); }
 static void test_gb540_vibration()  { check_alarm1(devices::visonic::kDef_GB_540,      "vibration"); }
-static void test_mct302_contact()   { check_alarm1(devices::visonic::kDef_MCT_302_SMA, "contact"); }
+static void test_mct302_contact()   { check_alarm1(devices::visonic::kDef_MCT_302_SMA, "contact", /*invert=*/true); }
 
 // ── restored temperature channels ────────────────────────────────────
 static void test_mp840_temp()    { check_temperature(devices::visonic::kDef_MP_840); }
