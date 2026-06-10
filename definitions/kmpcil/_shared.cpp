@@ -7,6 +7,10 @@
 // z2m-source: zigbee-herdsman-converters/src/devices/kmpcil.ts and
 //             src/converters/{from,to}Zigbee.ts
 //             (kmpcil_res005_occupancy / kmpcil_res005_on_off).
+#include <algorithm>
+#include <cmath>
+#include <cstdint>
+
 #include "definitions/kmpcil/_shared.hpp"
 #include "definitions/_generic/_shared.hpp"
 
@@ -34,6 +38,16 @@ namespace {
 // Attribute 0x0055 (presentValue) is keyed as decimal "85" by the
 // runtime's payload map.
 constexpr const char* kAttrPresentValue = "85";
+
+// z2m batteryVoltageToPercentage(voltage_mV, "3V_1500_2800"):
+//   percentage = clamp(round(235 - 370000 / (voltage_mV + 1)), 0, 100)
+// KMPCIL-tag-001 sets meta {battery: {voltageToPercentage: "3V_1500_2800"}}
+// so its presence_power converter publishes `battery` alongside `voltage`.
+std::uint64_t kmpcil_battery_pct_3v_1500_2800(std::uint32_t voltage_mv) {
+    const double pct = 235.0 - 370000.0 / (static_cast<double>(voltage_mv) + 1.0);
+    const double clamped = std::clamp(pct, 0.0, 100.0);
+    return static_cast<std::uint64_t>(std::lround(clamped));
+}
 
 bool fz_kmpcil_res005_on_off(const DecodedMessage& msg,
                               const FzConverter&,
@@ -99,12 +113,19 @@ bool fz_kmpcil_presence_power(const DecodedMessage& msg,
                                RuntimeContext&,
                                FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     // genPowerCfg attr 0x20 batteryVoltage (u8, units of 100 mV) →
-    // emit voltage in mV. KMPCIL also publishes presence=true here in
-    // z2m; we mirror so battery-only frames keep the device "live".
+    // emit voltage in mV AND battery %. KMPCIL also publishes presence=true
+    // here in z2m; we mirror so battery-only frames keep the device "live".
     const Value* v = msg.payload.find("32");
     if (!v || v->type != ValueType::Uint) return false;
-    Value volt{}; volt.type = ValueType::Uint; volt.u = v->u * 100;
+    const std::uint32_t voltage_mv = static_cast<std::uint32_t>(v->u * 100);
+    Value volt{}; volt.type = ValueType::Uint; volt.u = voltage_mv;
     out.put("voltage", volt);
+    // z2m: meta.battery.voltageToPercentage "3V_1500_2800" → publishes
+    // `battery`. The tag-001 def declares e.battery(); without this the
+    // expose was dead (no decoder filled it).
+    Value bat{}; bat.type = ValueType::Uint;
+    bat.u = kmpcil_battery_pct_3v_1500_2800(voltage_mv);
+    out.put("battery", bat);
     Value pres{}; pres.type = ValueType::Bool; pres.b = true;
     out.put("presence", pres);
     return true;

@@ -41,10 +41,12 @@ extern const FzConverter kFzKmpcilRES005Occupancy;
 // occupancy + presence=true. Used by KMPCIL-tag-001.
 extern const FzConverter kFzKmpcilPresenceBinaryInput;
 
-// genPowerCfg batteryVoltage (attr 0x20) → voltage(mV). Companion to the
-// presence_binary_input decoder; emits voltage in mV like kFzBattery
-// does, minus the percentage estimate (KMPCIL doesn't ship the
-// `voltageToPercentage` table on-device).
+// genPowerCfg batteryVoltage (attr 0x20) → voltage(mV) + battery(%) +
+// presence=true. Companion to the presence_binary_input decoder. z2m's
+// presence_power converter applies meta.battery.voltageToPercentage
+// "3V_1500_2800" to publish `battery`; we mirror the non-linear formula
+// (235 - 370000/(voltage_mV+1), clamped 0..100) so the device's
+// e.battery() expose is actually filled.
 extern const FzConverter kFzKmpcilPresencePower;
 
 // state ∈ {ON, OFF, TOGGLE} → writeAttributes genBinaryOutput attr 0x55

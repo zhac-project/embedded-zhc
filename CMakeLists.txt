@@ -1630,6 +1630,19 @@ target_link_libraries(zhc_viessmann_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_salus_controls_parity_tests tests/test_salus_controls_parity.cpp)
 target_link_libraries(zhc_salus_controls_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the KMPCIL multi-sensor family. The KMPCIL-tag-001
+# arrival sensor declared e.battery() and z2m's presence_power converter
+# applies meta.battery.voltageToPercentage "3V_1500_2800" to publish
+# `battery`, but the ported kFzKmpcilPresencePower emitted only `voltage`
+# — the battery expose was dead. The shared converter now also derives
+# battery % from the non-linear 3V_1500_2800 formula. The def was
+# graduated to a Tier-2 parent. The presentValue bitfield decoders
+# (tag-001 presence/power_state/vibration/occupancy) and the RES005
+# genBinaryInput/Output occupancy/state bespoke decoders are pinned as
+# regression guards. See tests/README.md.
+add_executable(zhc_kmpcil_parity_tests tests/test_kmpcil_parity.cpp)
+target_link_libraries(zhc_kmpcil_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1787,6 +1800,7 @@ add_test(NAME zhc_datek_parity_tests        COMMAND zhc_datek_parity_tests)
 add_test(NAME zhc_mercator_parity_tests     COMMAND zhc_mercator_parity_tests)
 add_test(NAME zhc_viessmann_parity_tests    COMMAND zhc_viessmann_parity_tests)
 add_test(NAME zhc_salus_controls_parity_tests COMMAND zhc_salus_controls_parity_tests)
+add_test(NAME zhc_kmpcil_parity_tests       COMMAND zhc_kmpcil_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

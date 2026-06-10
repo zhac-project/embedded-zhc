@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **KMPCIL-tag-001 arrival sensor — dead `battery` expose.** The def declares
+  `e.battery()` and z2m's `presence_power` converter applies
+  `meta.battery.voltageToPercentage: "3V_1500_2800"` to publish `battery`, but
+  the ported `kFzKmpcilPresencePower` emitted only `voltage` (mV) from
+  `genPowerCfg` batteryVoltage — the battery expose was never filled. The
+  shared converter now also derives battery % from the z2m-faithful non-linear
+  curve `round(clamp(235 - 370000/(voltage_mV+1), 0, 100))`. Graduated
+  `Kmp_KMPCIL_tag_001.cpp` to a Tier-2 parent. The presentValue bitfield
+  decoders (presence/power_state/vibration/occupancy) and the RES005
+  genBinaryInput/Output occupancy/state bespoke decoders are pinned as
+  regression guards in `tests/test_kmpcil_parity.cpp`.
+
 - **Viessmann ViCare radiator TRV (ZK03840) — false `window_open` flag and
   dead `occupied_heating_setpoint`.** Two decode bugs against z2m's
   `fzLocal.viessmann_thermostat`: (1) the manuSpec attr 0x4000
