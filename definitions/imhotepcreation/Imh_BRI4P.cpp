@@ -7,12 +7,13 @@
 // Parity fix 2026-06-10: the auto-port carried only local_temperature /
 // current_heating_setpoint / system_mode and the generic kFzThermostat
 // (0x0000/0x0012/0x001C). z2m's BRI4P exposes per endpoint a cooling
-// setpoint plus min/max heat AND cool setpoint limits, all decoded by
-// fz.thermostat (attrs 0x0011/0x0015/0x0016/0x0017/0x0018) — so those
-// were entirely missing (no expose + no decoder). Added the cooling
-// setpoint + four limit exposes, wired kFzImhotepThermostatExtras for the
-// read path, and wired the generic min/max heat/cool setpoint-limit tz
-// converters to mirror z2m's toZigbee. (Cooling-setpoint write mirrors
+// setpoint plus min/max heat and cool setpoint limits — previously
+// entirely missing (no expose + no decoder). Added the cooling setpoint +
+// four limit exposes. kFzImhotepThermostatExtras read-decodes only the
+// three keys z2m's fz.thermostat actually reports (0x0011/0x0015/0x0016);
+// the min/max cool limits (0x0017/0x0018) have no fz.thermostat report
+// branch in z2m (write-path-only there) so they are driven by the generic
+// min/max cool setpoint-limit tz converters only, mirroring z2m's toZigbee. (Cooling-setpoint write mirrors
 // the Owon precedent: no generic occupied_cooling_setpoint encoder, so
 // kTzThermostat covers heating + system_mode only.)
 // z2m-source: imhotepcreation.ts #BRI4P + fromZigbee.ts fz.thermostat.

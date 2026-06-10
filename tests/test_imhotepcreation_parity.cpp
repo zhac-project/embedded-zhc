@@ -15,13 +15,16 @@
 //   * BRI4P (16-channel underfloor-heating bridge) carried only
 //     local_temperature / current_heating_setpoint / system_mode, while
 //     z2m exposes per endpoint a cooling setpoint (0x0011) plus min/max
-//     heat AND cool setpoint limits (0x0015-0x0018), all via fz.thermostat.
-//     Those exposes + decoder were entirely missing.
+//     heat and cool setpoint limits. The cooling setpoint + heat limits
+//     (0x0011/0x0015/0x0016) are decoded by fz.thermostat; the cool limits
+//     (0x0017/0x0018) are write-path-only in z2m. Those exposes + the read
+//     decoder were entirely missing.
 //
-// Fixed by wiring a vendor-local `kFzImhotepThermostatExtras` (attrs
-// 0x0011 / 0x0015 / 0x0016 / 0x0017 / 0x0018, raw s16 pass-through,
-// runtime /100 downstream) alongside the generic kFzThermostat, and by
-// adding the missing BRI4P exposes. The core surface (local_temperature
+// Fixed by wiring a vendor-local `kFzImhotepThermostatExtras` (read-decodes
+// the three fz.thermostat report attrs 0x0011 / 0x0015 / 0x0016, raw s16
+// pass-through, runtime /100 downstream) alongside the generic
+// kFzThermostat, and by adding the missing BRI4P exposes (the cool-limit
+// exposes are settable, driven by the tz write/get path as in z2m). The core surface (local_temperature
 // / current_heating_setpoint / system_mode) is still decoded by the
 // generic converter and regression-checked here.
 //
@@ -188,18 +191,10 @@ void check_bri4p() {
     const Value* hmx = rh2.merged.find("max_heat_setpoint_limit_l1");
     assert(hmx && hmx->type == ValueType::Int && hmx->i == 3000);
 
-    // ── attr 0x0017 MinCoolSetpointLimit = 500, 0x0018 Max = 3800. ──
-    const std::uint8_t clo[] = {0xF4, 0x01};
-    auto rc1 = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
-                            attr_report(0x0017, 0x29, clo));
-    const Value* cmn = rc1.merged.find("min_cool_setpoint_limit_l1");
-    assert(cmn && cmn->type == ValueType::Int && cmn->i == 500);
-
-    const std::uint8_t chi[] = {0xD8, 0x0E};  // 0x0ED8 = 3800
-    auto rc2 = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
-                            attr_report(0x0018, 0x29, chi));
-    const Value* cmx = rc2.merged.find("max_cool_setpoint_limit_l1");
-    assert(cmx && cmx->type == ValueType::Int && cmx->i == 3800);
+    // NB: min/max_cool_setpoint_limit (0x0017/0x0018) are write-path-only in
+    // z2m (fz.thermostat has no cool-limit report branch) so they are NOT
+    // read-decoded — the settable exposes (asserted above) are driven by the
+    // tz write/get path, matching z2m's optimistic-state behaviour.
 
     // ── A report on endpoint 3 suffixes _l3 (per-channel routing). ──
     const std::uint8_t cool3[] = {0x10, 0x0E};  // 0x0E10 = 3600

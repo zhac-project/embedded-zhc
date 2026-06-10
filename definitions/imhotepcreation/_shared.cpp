@@ -28,13 +28,16 @@ bool fz_imhotep_thermostat_extras(const DecodedMessage& msg,
         const char* attr;  // decimal-string attribute id
         const char* key;   // emitted semantic key
     };
-    // attr 0x0011 = 17, 0x0015 = 21, 0x0016 = 22, 0x0017 = 23, 0x0018 = 24.
+    // Only the three setpoint keys z2m's fz.thermostat actually decodes
+    // from reports: attr 0x0011 = 17, 0x0015 = 21, 0x0016 = 22.
+    // NB: min/max_cool_setpoint_limit (0x0017/0x0018) are NOT read-decoded
+    // by z2m's fz.thermostat — z2m only populates those keys optimistically
+    // from the tz write path — so we do not emit them on report either
+    // (the settable exposes remain, driven by the write/get path).
     static constexpr AttrKey kMap[] = {
         {"17", "current_cooling_setpoint"},  // OccupiedCoolingSetpoint
         {"21", "min_heat_setpoint_limit"},   // MinHeatSetpointLimit
         {"22", "max_heat_setpoint_limit"},   // MaxHeatSetpointLimit
-        {"23", "min_cool_setpoint_limit"},   // MinCoolSetpointLimit
-        {"24", "max_cool_setpoint_limit"},   // MaxCoolSetpointLimit
     };
 
     for (const auto& m : kMap) {

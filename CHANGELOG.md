@@ -37,12 +37,16 @@ across the ZHAC platform.
   0x0015/0x0016) with no decoder — dead keys. The BRI4P 16-channel
   underfloor-heating bridge carried only local_temperature /
   current_heating_setpoint / system_mode, while z2m exposes per endpoint a
-  cooling setpoint (0x0011) plus min/max heat AND cool setpoint limits
-  (0x0015-0x0018) — entirely missing exposes + decoder. Added a
-  vendor-local `kFzImhotepThermostatExtras` (raw s16 pass-through, runtime
-  /100) wired alongside the generic decoder, added the missing BRI4P
-  exposes + the generic min/max heat/cool setpoint-limit tz converters, and
-  graduated both ports to Tier-2 parent overrides.
+  cooling setpoint (0x0011) plus min/max heat and cool setpoint limits —
+  entirely missing exposes + decoder. Added a vendor-local
+  `kFzImhotepThermostatExtras` (raw s16 pass-through, runtime /100) that
+  read-decodes the three keys z2m's `fz.thermostat` actually reports
+  (0x0011/0x0015/0x0016) wired alongside the generic decoder; added the
+  missing BRI4P exposes + the generic min/max heat/cool setpoint-limit tz
+  converters; and graduated both ports to Tier-2 parent overrides. The
+  min/max cool setpoint-limit keys (0x0017/0x0018) are write-path-only in
+  z2m (no `fz.thermostat` report branch), so their settable exposes are
+  driven by the tz write/get path — not read-decoded.
 
 - **Iluminize 5128.10 roller shutter + 5715/5717 metering dimmers — dead
   decoders.** The 5128.10 "switch shutter with level control" is a
