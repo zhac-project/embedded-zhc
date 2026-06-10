@@ -961,6 +961,15 @@ target_link_libraries(zhc_lightsolutions_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_casaia_parity_tests tests/test_casaia_parity.cpp)
 target_link_libraries(zhc_casaia_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Akuvox M423-9E temperature & humidity sensor (TS0201).
+# The generated def reduced it to battery-only (kFzBattery + battery/voltage),
+# dropping z2m's fz.temperature + fz.humidity decoders and the e.temperature()
+# + e.humidity() exposes (the whole sensor purpose). Graduated to a Tier-2
+# override adding kFzTemperature + kFzHumidity + the temperature & humidity
+# exposes + the 0x0402 (ep1) / 0x0405 (ep2) bindings. See tests/README.md.
+add_executable(zhc_akuvox_parity_tests tests/test_akuvox_parity.cpp)
+target_link_libraries(zhc_akuvox_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Heiman IAS-Zone sensor family: ~27 generated defs
 # decoded the bare "alarm" key (generic kFzIasZone) while exposing the
 # semantic key (smoke/gas/water_leak/occupancy/contact/vibration/co). All
@@ -2598,6 +2607,7 @@ add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_lightsolutions_parity_tests COMMAND zhc_lightsolutions_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
+add_test(NAME zhc_akuvox_parity_tests       COMMAND zhc_akuvox_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_prolight_parity_tests     COMMAND zhc_prolight_parity_tests)
 add_test(NAME zhc_imou_parity_tests         COMMAND zhc_imou_parity_tests)

@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Akuvox M423-9E temperature & humidity parity.** The generated def for the
+  `TS0201` / `_TYZB01_ujfk3xd9` sensor was reduced to battery-only (only
+  `kFzBattery`, exposing `battery`/`voltage`), dropping z2m's `fz.temperature`
+  + `fz.humidity` decoders and the `temperature` + `humidity` exposes — the
+  entire purpose of the sensor. Graduated to a Tier-2 override adding
+  `kFzTemperature` (0x0402, /100) + `kFzHumidity` (0x0405, /100) + the
+  temperature & humidity exposes and the matching `msTemperatureMeasurement`
+  (ep1) / `msRelativeHumidity` (ep2) bindings.
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
