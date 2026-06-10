@@ -83,6 +83,15 @@ inline constexpr std::uint8_t kTuyaDpFlagInvertPosition = 0x02;
 // on the wire). tz encode is not implemented yet — see §T2 in the
 // parity plan.
 inline constexpr std::uint8_t kTuyaDpFlagScheduleDay    = 0x04;
+// Bool DP fanned out to a string key via `enum_table` — z2m
+// `valueConverterBasic.lookup({heat: true, off: false})` over a boolean
+// datapoint. The DP arrives as a 1-byte Bool on the wire (decode produces
+// ValueType::Bool), so a plain Enum entry would abstain (it expects Uint).
+// With this flag set on a `type == Bool` entry, the boolean is matched
+// against `enum_table` keyed 0 (false) / 1 (true) and the StringRef label
+// is emitted. Honours kTuyaDpFlagInvertBool first. Lets a single bool DP
+// fan to both an on/off `state` row and a "heat"/"off" `system_mode` row.
+inline constexpr std::uint8_t kTuyaDpFlagBoolEnum       = 0x08;
 
 struct TuyaDatapointMap {
     const TuyaDpMapEntry* entries;

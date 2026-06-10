@@ -1455,6 +1455,15 @@ target_link_libraries(zhc_slacky_therm_r08_tests PRIVATE zhc_definitions)
 add_executable(zhc_engo_parity_tests tests/test_engo_parity.cpp)
 target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the TECH Controllers VNTH-T2 smart radiator valves (TS0601 Tuya
+# DP TRVs). z2m fans DP 101 to BOTH `state` (on/off) AND `system_mode`
+# (lookup {heat:true, off:false}); the auto extract kept only `state`, so the
+# heat/off system_mode channel was undecoded + unexposed. A second DP-101 row
+# now emits system_mode via the new kTuyaDpFlagBoolEnum (bool DP fanned to a
+# string label). See tests/README.md.
+add_executable(zhc_tech_parity_tests tests/test_tech_parity.cpp)
+target_link_libraries(zhc_tech_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Zemismart curtain/blind-motor + switch family. Six
 # generic-cover stubs (kFzCoverPosition on the 0x0102 cluster) shadowed TS0601
 # Tuya-DP devices that only speak 0xEF00; five duplicated a kDefZem__TZE* DP
@@ -1699,6 +1708,7 @@ add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
+add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
 add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)

@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **TECH Controllers VNTH-T2 radiator valves — dropped `system_mode`
+  channel.** Both TS0601 TRVs (`VNTH-T2_v1` `_TZE204_r7brscr6`, `VNTH-T2_v2`
+  `_TZE204_p1qrtljn`) map z2m DP 101 to BOTH `state` (on/off) AND `system_mode`
+  (`lookup({heat: true, off: false})`), but the auto-generated DP extract kept
+  only the `state` row, so the heat/off mode was never decoded or exposed.
+  Added a reusable `kTuyaDpFlagBoolEnum` flag to the Tuya DP infra (a boolean
+  DP fanned to a string label via its `enum_table`), graduated both ports out
+  of `generated/` and added a second DP-101 row + `system_mode` enum expose to
+  each. The signed-int32 numeric decode already matches z2m's
+  `localTempCalibration1` sign-correction (no separate fix needed).
 - **Iluminize 5128.10 roller shutter + 5715/5717 metering dimmers — dead
   decoders.** The 5128.10 "switch shutter with level control" is a
   brightness-driven cover in z2m (`fz.cover_position_via_brightness` +

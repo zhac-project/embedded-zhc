@@ -178,8 +178,24 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
         }
         case TuyaDpType::Bool: {
             if (raw.type != ValueType::Bool) return false;
-            Value v = raw;
-            if (e.flags & kTuyaDpFlagInvertBool) v.b = !v.b;
+            bool b = raw.b;
+            if (e.flags & kTuyaDpFlagInvertBool) b = !b;
+            // Bool→string fan-out (z2m lookup over a boolean DP): match the
+            // boolean (keyed 0/1) against the enum table and emit StringRef.
+            if ((e.flags & kTuyaDpFlagBoolEnum) && e.enum_table &&
+                e.enum_count != 0) {
+                const std::uint64_t key = b ? 1u : 0u;
+                for (std::uint8_t j = 0; j < e.enum_count; ++j) {
+                    if (e.enum_table[j].value == key) {
+                        Value v{}; v.type = ValueType::StringRef;
+                        v.str = e.enum_table[j].label;
+                        out.put(e.out_key, v);
+                        return true;
+                    }
+                }
+                return false;  // unmapped boolean — abstain
+            }
+            Value v{}; v.type = ValueType::Bool; v.b = b;
             out.put(e.out_key, v);
             return true;
         }
