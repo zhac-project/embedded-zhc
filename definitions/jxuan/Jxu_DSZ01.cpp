@@ -1,15 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Jxuan DSZ01 — auto-generated.
-// Door or window contact switch
-// z2m-source: jxuan.ts #DSZ01.
+// Tier 2: Jxuan DSZ01 — IAS dead-key fix.
+// Door or window contact switch.
+// z2m wires fz.ias_contact_alarm_1 (zoneStatus bit0, contact = !bit0) and
+// exposes e.contact(); the generic kFzIasZone emitted bare alarm_1/alarm_2
+// keys the expose never declared, so the `contact` state was dead. Wire the
+// typed kFzIasContactAlarm — it emits `contact` already z2m-inverted
+// (contact = !bit0) plus tamper/battery_low. Do NOT add extra inversion.
+// z2m-source: jxuan.ts #DSZ01 + converters/fromZigbee.ts ias_contact_alarm_1.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::jxuan {
 namespace {
 const FzConverter* const kFz_DSZ01[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
 constexpr const char* kModels_DSZ01[] = { "door sensor" };
@@ -21,7 +26,7 @@ constexpr const char* kModels_DSZ01[] = { "door sensor" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

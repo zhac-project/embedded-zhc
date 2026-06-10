@@ -1,15 +1,22 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Jxuan PRZ01 — auto-generated.
-// Human body movement sensor
-// z2m-source: jxuan.ts #PRZ01.
+// Tier 2: Jxuan PRZ01 — IAS dead-key fix.
+// Human body movement sensor.
+// z2m wires fz.ias_occupancy_alarm_1_with_timeout (zoneStatus bit0) and
+// exposes e.occupancy(); the generic kFzIasZone emitted bare alarm_1/alarm_2
+// keys the expose never declared, so the `occupancy` state was dead. Wire the
+// typed kFzIasMotionAlarm — it emits `occupancy` (bit0) plus tamper/battery_low.
+// (The z2m off-timeout publish of occupancy:false is a host-side timer, not a
+// decode concern.)
+// z2m-source: jxuan.ts #PRZ01 + converters/fromZigbee.ts
+//             ias_occupancy_alarm_1_with_timeout.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::jxuan {
 namespace {
 const FzConverter* const kFz_PRZ01[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_PRZ01[] = { "wall pir" };
@@ -21,7 +28,7 @@ constexpr const char* kModels_PRZ01[] = { "wall pir" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

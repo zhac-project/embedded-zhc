@@ -1367,6 +1367,11 @@ target_link_libraries(zhc_frient_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smartthings_parity_tests tests/test_smartthings_parity.cpp)
 target_link_libraries(zhc_smartthings_parity_tests PRIVATE zhc_definitions)
 
+# jxuan — IAS dead-key (PRZ01 occupancy / DSZ01 contact) + WSZ01 phantom
+# on/off -> button action (manuSpecific 0xFE05 attr 1) fixes.
+add_executable(zhc_jxuan_parity_tests tests/test_jxuan_parity.cpp)
+target_link_libraries(zhc_jxuan_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_sengled_parity_tests tests/test_sengled_parity.cpp)
 target_link_libraries(zhc_sengled_parity_tests PRIVATE zhc_definitions)
 
@@ -2573,6 +2578,7 @@ add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
 add_test(NAME zhc_databyte_parity_tests     COMMAND zhc_databyte_parity_tests)
 add_test(NAME zhc_frient_parity_tests       COMMAND zhc_frient_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
+add_test(NAME zhc_jxuan_parity_tests        COMMAND zhc_jxuan_parity_tests)
 add_test(NAME zhc_sengled_parity_tests      COMMAND zhc_sengled_parity_tests)
 add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)
 add_test(NAME zhc_halemeier_parity_tests    COMMAND zhc_halemeier_parity_tests)

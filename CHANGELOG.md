@@ -36,6 +36,19 @@ across the ZHAC platform.
   battery/voltage exposes, no `to_zigbee`) on a mains RGB+CCT light — rebuilt
   as a full controllable light and the genPowerCfg (0x0001) battery binding
   removed.
+- **J.XUAN sensor/button IAS dead-keys + WSZ01 phantom on/off.** PRZ01
+  (occupancy) and DSZ01 (contact) wired the generic `kFzIasZone` (bare
+  `alarm_1`/`alarm_2`) while z2m decodes them via
+  `fz.ias_occupancy_alarm_1_with_timeout` / `fz.ias_contact_alarm_1` into
+  semantic `occupancy` / `contact` keys — the advertised state was dead.
+  Now wired to typed `kFzIasMotionAlarm` / `kFzIasContactAlarm` (the latter
+  emitting z2m-inverted `contact = !bit0`). WSZ01 is a battery button
+  (z2m `fz.WSZ01_on_off_action`, manuSpecific cluster `0xFE05` attr 1 →
+  `action`) but was mis-ported as a controllable genOnOff switch with a
+  phantom `state` and no action; now decodes `action`
+  (release/single/double/hold) via the new `jxuan::kFzWsz01Action` over the
+  newly-named `manuSpecificJxuan` cluster, with the phantom on/off + its
+  toZigbee dropped and the truncated `JD-SWITCH02` model id restored.
 
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
