@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **PEQ 3300-P contact sensor: dead IAS contact key + dropped temperature
+  channel.** The auto-port lowered the generic `kFzIasZone` converter (emits
+  the bare `alarm` key, which never matched the declared expose) and dropped
+  the z2m `fz.temperature` channel entirely. Graduated to a parent override
+  wiring the typed `kFzIasContactAlarm` (emits `contact`, z2m-inverted
+  `contact = !(zoneStatus bit0)`) and restoring the `kFzTemperature` decoder
+  (msTemperatureMeasurement 0x0402, /100), the `temperature` expose, and the
+  0x0402 binding — matching z2m `[fz.temperature, fz.ias_contact_alarm_1,
+  fz.battery]`.
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
