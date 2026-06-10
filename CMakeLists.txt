@@ -1756,6 +1756,17 @@ target_link_libraries(zhc_slacky_therm_r08_tests PRIVATE zhc_definitions)
 add_executable(zhc_engo_parity_tests tests/test_engo_parity.cpp)
 target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Siterwell GS361A-H04 TS0601 radiator-valve thermostat. The
+# auto-port MISROUTED the decoder: it wired the generic genThermostat pair
+# (kFzThermostat / kTzThermostat) + bound ZCL 0x0201, but z2m decodes this
+# Tuya-MCU TRV entirely over the 0xEF00 DP stream (legacy.fz.tuya_thermostat),
+# so setpoint / local_temperature / system_mode / child_lock / window+valve
+# detection / battery / valve-position were all dead. Graduated to a Tier-2
+# DP map with z2m-matching scale (setpoint+local_temp /10) and enum order
+# (system_mode {0:off,1:auto,2:heat}). See tests/README.md.
+add_executable(zhc_siterwell_parity_tests tests/test_siterwell_parity.cpp)
+target_link_libraries(zhc_siterwell_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the TECH Controllers VNTH-T2 smart radiator valves (TS0601 Tuya
 # DP TRVs). z2m fans DP 101 to BOTH `state` (on/off) AND `system_mode`
 # (lookup {heat:true, off:false}); the auto extract kept only `state`, so the
@@ -2230,6 +2241,7 @@ add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
+add_test(NAME zhc_siterwell_parity_tests    COMMAND zhc_siterwell_parity_tests)
 add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_essentials_parity_tests   COMMAND zhc_essentials_parity_tests)
 add_test(NAME zhc_giex_parity_tests         COMMAND zhc_giex_parity_tests)

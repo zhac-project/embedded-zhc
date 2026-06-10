@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Siterwell GS361A-H04 (TS0601 radiator-valve thermostat) decoded nothing.**
+  The auto-port misrouted it to the generic genThermostat pair (`kFzThermostat`
+  / `kTzThermostat`) bound on ZCL 0x0201, but this is a Tuya-MCU TRV that z2m
+  decodes entirely over the 0xEF00 DP stream (`legacy.fz.tuya_thermostat`), so
+  setpoint / local_temperature / system_mode / child_lock / window+valve
+  detection / battery / valve-position were all dead. Graduated to a Tier-2
+  Tuya DP map (`factory::TuyaRw`) with z2m-matching per-DP scale (setpoint DP2
+  + local_temperature DP3 both `/10`) and enum order (system_mode DP4
+  `{0:off,1:auto,2:heat}` per `thermostatSystemModes4`); dropped the phantom
+  0x0201 binding. Flat thermostat exposes replace the genThermostat shape.
+
 - **Multiterm ZC0101 (ZeeFan fan coil unit controller) dropped its entire
   multi-endpoint binary-output half.** The auto-port modelled it as a bare
   single `fan_mode` binary and never decoded the three genBinaryOutput
