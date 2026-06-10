@@ -1,11 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 3: Kmpcil KMPCIL-tag-001 — arrival sensor (presence + vibration).
+// Tier 2: Kmpcil KMPCIL-tag-001 — arrival sensor (presence + vibration).
 //
 // z2m-source: kmpcil.ts #KMPCIL-tag-001 (zigbeeModel "tagv1").
+//
+// Graduated from generated/ to fix a dead `battery` expose: z2m's
+// presence_power converter applies meta.battery.voltageToPercentage
+// "3V_1500_2800" to publish `battery` (%), but the ported
+// kFzKmpcilPresencePower previously emitted only `voltage`, so the
+// declared e.battery() expose was never filled. The shared converter now
+// also emits battery % (see definitions/kmpcil/_shared.cpp).
+//
 // Single-endpoint device on EP 1. Wires:
 //   - msTemperatureMeasurement → temperature                  [generic kFzTemperature]
-//   - genPowerCfg              → voltage + presence=true      [shared kFzKmpcilPresencePower]
+//   - genPowerCfg              → voltage + battery +
+//                                presence=true                [shared kFzKmpcilPresencePower]
 //   - genBinaryInput attr 0x55 → presence + power_state +
 //                                vibration + occupancy        [shared kFzKmpcilPresenceBinaryInput]
 //
