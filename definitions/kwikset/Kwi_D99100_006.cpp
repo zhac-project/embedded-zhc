@@ -1,27 +1,30 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Kwikset 66492-001 — generic lock-PIN runtime wired
+// Tier 2 (2026-06-10): bindings re-endpointed ep1->ep2 to match z2m
+// device.getEndpoint(2) — closuresDoorLock(0x0101)+genPowerCfg(0x0001)
+// live on endpoint 2; binding ep1 left reporting unconfigured.
+// Tier 2: Kwikset 99100-006 — generic lock-PIN runtime wired
 // (operation-event decoder via _generic/_shared) landed 2026-04-29a.
-// Home connect smart lock conversion kit
-// z2m-source: kwikset.ts #66492-001.
+// 910 SmartCode traditional electronic deadbolt
+// z2m-source: kwikset.ts #99100-006.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::kwikset {
 namespace {
-const FzConverter* const kFz_D66492_001[] = {
+const FzConverter* const kFz_D99100_006[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzLock,
     &::zhc::generic::kFzLockProgrammingEvent,
     &::zhc::generic::kFzLockOperationEvent,
     &::zhc::generic::kFzLockUserStatusResponse,
 };
-const TzConverter* const kTz_D66492_001[] = {
+const TzConverter* const kTz_D99100_006[] = {
     &::zhc::generic::kTzLock,
     &::zhc::generic::kTzLockPinCode,
     &::zhc::generic::kTzLockSoundVolume,
     &::zhc::generic::kTzLockAutoRelockTime,
 };
-constexpr const char* kModels_D66492_001[] = { "SMARTCODE_CONVERT_GEN1", "Smartcode" };
+constexpr const char* kModels_D99100_006[] = { "SMARTCODE_DEADBOLT_5_L" };
 
 }  // namespace
 
@@ -38,22 +41,23 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0001},
-    {1, 0x0101},
+    {2, 0x0001},  // genPowerCfg  (z2m device.getEndpoint(2))
+    {2, 0x0101},  // closuresDoorLock
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_D66492_001{
-    .zigbee_models=kModels_D66492_001, .zigbee_models_count=sizeof(kModels_D66492_001)/sizeof(kModels_D66492_001[0]),
+extern const PreparedDefinition kDef_D99100_006{
+    .zigbee_models=kModels_D99100_006, .zigbee_models_count=sizeof(kModels_D99100_006)/sizeof(kModels_D99100_006[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="66492-001", .vendor="Kwikset",
+    .model="99100-006", .vendor="Kwikset",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_D66492_001, .from_zigbee_count=sizeof(kFz_D66492_001)/sizeof(kFz_D66492_001[0]),
-    .to_zigbee=kTz_D66492_001, .to_zigbee_count=sizeof(kTz_D66492_001)/sizeof(kTz_D66492_001[0]),
+    .from_zigbee=kFz_D99100_006, .from_zigbee_count=sizeof(kFz_D99100_006)/sizeof(kFz_D99100_006[0]),
+    .to_zigbee=kTz_D99100_006, .to_zigbee_count=sizeof(kTz_D99100_006)/sizeof(kTz_D99100_006[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+.default_endpoint=2,
 };
 
 }  // namespace zhc::devices::kwikset

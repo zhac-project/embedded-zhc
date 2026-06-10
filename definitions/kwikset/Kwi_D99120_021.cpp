@@ -1,27 +1,31 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Kwikset 99140-139 — generic lock-PIN runtime wired
-// (operation-event decoder via _generic/_shared) landed 2026-04-29a.
-// Home connect smart lock conversion kit
-// z2m-source: kwikset.ts #99140-139.
+// Tier 2 (2026-06-10): bindings re-endpointed ep1->ep2 to match z2m
+// device.getEndpoint(2) — closuresDoorLock(0x0101)+genPowerCfg(0x0001)
+// live on endpoint 2; binding ep1 left reporting unconfigured.
+// Tier 2: Kwikset 99120-021 — generic lock-PIN runtime wired (PIN
+// encoder + programming/operation event decoders via _generic/_shared)
+// landed 2026-04-29a. 30-slot pin code count.
+// 912 SmartCode traditional electronic lever
+// z2m-source: kwikset.ts #99120-021.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::kwikset {
 namespace {
-const FzConverter* const kFz_D99140_139[] = {
+const FzConverter* const kFz_D99120_021[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzLock,
     &::zhc::generic::kFzLockProgrammingEvent,
     &::zhc::generic::kFzLockOperationEvent,
     &::zhc::generic::kFzLockUserStatusResponse,
 };
-const TzConverter* const kTz_D99140_139[] = {
+const TzConverter* const kTz_D99120_021[] = {
     &::zhc::generic::kTzLock,
     &::zhc::generic::kTzLockPinCode,
     &::zhc::generic::kTzLockSoundVolume,
     &::zhc::generic::kTzLockAutoRelockTime,
 };
-constexpr const char* kModels_D99140_139[] = { "SMARTCODE_CONVERT_GEN1_W3" };
+constexpr const char* kModels_D99120_021[] = { "SMARTCODE_LEVER_5" };
 
 }  // namespace
 
@@ -31,6 +35,7 @@ constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"lock_state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"pin_code", ExposeType::String, Access::Set, nullptr, nullptr, nullptr, 0},
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
     {"action_user", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"action_source", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
@@ -38,22 +43,23 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0001},
-    {1, 0x0101},
+    {2, 0x0001},  // genPowerCfg  (z2m device.getEndpoint(2))
+    {2, 0x0101},  // closuresDoorLock
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_D99140_139{
-    .zigbee_models=kModels_D99140_139, .zigbee_models_count=sizeof(kModels_D99140_139)/sizeof(kModels_D99140_139[0]),
+extern const PreparedDefinition kDef_D99120_021{
+    .zigbee_models=kModels_D99120_021, .zigbee_models_count=sizeof(kModels_D99120_021)/sizeof(kModels_D99120_021[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="99140-139", .vendor="Kwikset",
+    .model="99120-021", .vendor="Kwikset",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_D99140_139, .from_zigbee_count=sizeof(kFz_D99140_139)/sizeof(kFz_D99140_139[0]),
-    .to_zigbee=kTz_D99140_139, .to_zigbee_count=sizeof(kTz_D99140_139)/sizeof(kTz_D99140_139[0]),
+    .from_zigbee=kFz_D99120_021, .from_zigbee_count=sizeof(kFz_D99120_021)/sizeof(kFz_D99120_021[0]),
+    .to_zigbee=kTz_D99120_021, .to_zigbee_count=sizeof(kTz_D99120_021)/sizeof(kTz_D99120_021[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+.default_endpoint=2,
 };
 
 }  // namespace zhc::devices::kwikset

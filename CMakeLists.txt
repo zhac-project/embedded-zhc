@@ -1159,6 +1159,9 @@ target_link_libraries(zhc_vesternet_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_konke_parity_tests tests/test_konke_parity.cpp)
 target_link_libraries(zhc_konke_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_kwikset_parity_tests tests/test_kwikset_parity.cpp)
+target_link_libraries(zhc_kwikset_parity_tests PRIVATE zhc_definitions)
+
 # Paulmann remote family (501.37/501.34/500.67/501.40/501.41): all five are
 # battery scene/RGB remotes (toZigbee: []) that the generator wrong-bundled
 # as settable on/off lights, killing every button press. Graduated each def,
@@ -1841,6 +1844,7 @@ add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
 add_test(NAME zhc_ecodim_parity_tests       COMMAND zhc_ecodim_parity_tests)
 add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)
 add_test(NAME zhc_konke_parity_tests        COMMAND zhc_konke_parity_tests)
+add_test(NAME zhc_kwikset_parity_tests      COMMAND zhc_kwikset_parity_tests)
 add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
 add_test(NAME zhc_muller_licht_parity_tests COMMAND zhc_muller_licht_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)

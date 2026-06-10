@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **KWIKSET SmartCode locks bound reporting on the wrong endpoint (no lock-state
+  / battery reports).** All 7 Kwikset defs in z2m configure via
+  `device.getEndpoint(2)` and bind `closuresDoorLock` (0x0101) + `genPowerCfg`
+  (0x0001) on endpoint 2. The generated defs bound both clusters on endpoint 1,
+  and `run_configure()` passes the bind endpoint verbatim to `configure_bind`,
+  so the coordinator bound an absent endpoint and the lock never set up
+  lock-state or battery reporting. Graduated all 7 to Tier-2 parents,
+  re-endpointed bindings to `{2, 0x0001}` + `{2, 0x0101}`, and added
+  `.default_endpoint=2` (the onesti S4RX-110 precedent). The fz/tz surface
+  (lock_state, battery, action stream, lock/unlock + PIN encoders) was already
+  correct and is now pinned by `tests/test_kwikset_parity.cpp`.
+
 - **TERNCY raw-frame action/motion decoder read past the body (dead action +
   occupancy surface).** z2m's `fzLocal.terncy_raw` reads the WHOLE raw frame
   buffer (`msg.data`, ZCL header included): `msg.data[4]` discriminates action
