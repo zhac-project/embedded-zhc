@@ -2350,6 +2350,14 @@ target_link_libraries(zhc_acova_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_intuis_parity_tests tests/test_intuis_parity.cpp)
 target_link_libraries(zhc_intuis_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for IT Commander. The ITCMDR_Contact sensor wired the
+# generic kFzIasZone (bare `alarm`, dead `contact` expose); swapped to
+# kFzIasContactAlarm (inverted bit-0 → `contact`). The ITCMDR_Click
+# button was mis-ported as a controllable genOnOff switch; re-ported to
+# the vendor kFzItcmdrClicks (genMultistateInput PresentValue → action).
+add_executable(zhc_ITCommander_parity_tests tests/test_ITCommander_parity.cpp)
+target_link_libraries(zhc_ITCommander_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Nobø (Glen Dimplex) SWT-IZ / SPC-IZ electric-heater
 # thermostats. Both use z2m m.thermostat() but were mis-ported as a bare
 # on/off + battery class (kFzBattery + kFzOnOff) — the whole thermostat
@@ -2819,6 +2827,7 @@ add_test(NAME zhc_msh_parity_tests          COMMAND zhc_msh_parity_tests)
 add_test(NAME zhc_zunzunbee_parity_tests    COMMAND zhc_zunzunbee_parity_tests)
 add_test(NAME zhc_smartenit_parity_tests    COMMAND zhc_smartenit_parity_tests)
 add_test(NAME zhc_blitzwolf_parity_tests    COMMAND zhc_blitzwolf_parity_tests)
+add_test(NAME zhc_ITCommander_parity_tests  COMMAND zhc_ITCommander_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
