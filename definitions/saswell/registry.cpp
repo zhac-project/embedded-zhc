@@ -7,11 +7,9 @@
 namespace zhc::devices::saswell {
 
 extern const PreparedDefinition kDef_SEA801;
-extern const PreparedDefinition kDef_SEA801_Zigbee_SEA802_Zigbee;
 
 const PreparedDefinition* const kSaswellRegistry[] = {
     &kDef_SEA801,
-    &kDef_SEA801_Zigbee_SEA802_Zigbee,
 };
 const std::size_t kSaswellRegistryCount = sizeof(kSaswellRegistry) / sizeof(kSaswellRegistry[0]);
 

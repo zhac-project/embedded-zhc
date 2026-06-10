@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Saswell TRV legacy `_TYST11_*` variants decoded nothing.** The
+  SEA801/SEA802 thermostatic radiator valve (z2m `legacy.fz.saswell_thermostat`,
+  a Tuya-MCU 0xEF00 DP device) had two ez defs sharing the same model: a correct
+  full DP-map def plus a duplicate that was the *only* def carrying the legacy
+  `_TYST11_*` fingerprints (GbxAXL2 / uhszj9s / 88teujp / w7cahqs / aj4jz0i) and
+  wired the generic genThermostat (0x0201) decoder — a cluster the device never
+  speaks, so those variants decoded nothing (dead def). Folded the `_TYST11_*`
+  fingerprints into the Tuya-DP def (now routed through `fz_tuya_datapoints` with
+  setpoint/local-temperature /10 and identity calibration) and removed the dead
+  duplicate plus its registry reference. Added `tests/test_saswell_parity.cpp`.
 - **GiEX water-irrigation valves (QT06_1 / QT06_2) decoded nothing.** Both are
   Tuya-MCU (0xEF00) DP-stream devices (z2m `legacy.fromZigbee.giexWaterValve`)
   but the auto-generator ported them as bare `kFzBattery` + `kFzOnOff` stubs
