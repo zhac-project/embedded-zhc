@@ -1,10 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: uses shared stelpro converters.
+// Tier 2: uses shared stelpro converters. Graduated from generated/ to
+// wire keypad_lockout decode+write (z2m fz.hvac_user_interface +
+// tz.thermostat_keypad_lockout); the expose was declared StateSet but
+// neither converter was wired, so it was a dead attribute.
 // Stello STLO-34 — Hilo thermostat.
-// z2m-source: stello.ts #STLO-34. Hilo edition: power/energy live on
-// hvacThermostat 0x4008/0x4009 (NOT seMetering); peak-demand-icon and
-// outdoor-temp manuSpec writes at mfgcode 0x1185; configure binds EP25.
+// z2m-source: stello.ts #STLO-34. fromZigbee = stelpro_thermostat +
+// fz.hvac_user_interface + power + energy. Hilo edition: power/energy
+// live on hvacThermostat 0x4008/0x4009 (NOT seMetering); peak-demand-icon
+// and outdoor-temp manuSpec writes at mfgcode 0x1185; configure binds EP25.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/stelpro/_shared.hpp"
 
@@ -12,11 +16,13 @@ namespace zhc::devices::stello {
 namespace {
 const FzConverter* const kFz_STLO_34[] = {
     &::zhc::stelpro::kFzStelproThermostat,
+    &::zhc::stelpro::kFzStelproKeypadLockout,  // z2m fz.hvac_user_interface
     &::zhc::stelpro::kFzStelproPower,
     &::zhc::stelpro::kFzStelproEnergy,
 };
 const TzConverter* const kTz_STLO_34[] = {
     &::zhc::generic::kTzThermostat,
+    &::zhc::stelpro::kTzStelproKeypadLockout,  // z2m tz.thermostat_keypad_lockout
     &::zhc::stelpro::kTzStelproOutdoorTemp,
     &::zhc::stelpro::kTzStelproPeakDemandIcon,
 };
