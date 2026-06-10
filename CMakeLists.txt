@@ -1427,6 +1427,9 @@ target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_robb_parity_tests tests/test_robb_parity.cpp)
 target_link_libraries(zhc_robb_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_repenic_ltd_parity_tests tests/test_repenic_ltd_parity.cpp)
+target_link_libraries(zhc_repenic_ltd_parity_tests PRIVATE zhc_definitions)
+
 # Paul Neuhaus (Q-Home). The two remotes (100.462.31 Q-REMOTE, E0040006
 # JZ-RC-J4R) skipped / mis-substituted the lightingColorCtrl colour-wheel
 # actions (color_loop_set, enhanced_move_to_hue_and_saturation). Those
@@ -2515,6 +2518,7 @@ add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
 add_test(NAME zhc_inovelli_parity_tests     COMMAND zhc_inovelli_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
+add_test(NAME zhc_repenic_ltd_parity_tests  COMMAND zhc_repenic_ltd_parity_tests)
 add_test(NAME zhc_paul_neuhaus_parity_tests COMMAND zhc_paul_neuhaus_parity_tests)
 add_test(NAME zhc_ecodim_parity_tests       COMMAND zhc_ecodim_parity_tests)
 add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)

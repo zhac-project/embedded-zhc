@@ -1,8 +1,22 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: RepenicLtd RD-250ZG — auto-generated.
+// Tier 2: RepenicLtd RD-250ZG — dimmer + electricity meter.
 // Dimmer
 // z2m-source: repenic_ltd.ts #RD-250ZG.
+//
+// z2m wires `m.light({configureReporting:true})` + `m.electricityMeter()`.
+// electricityMeter() defaults to cluster:"both" (seMetering 0x0702 energy +
+// haElectricalMeasurement 0x0B04 power/voltage/current), ac type, with
+// acFrequency/powerFactor OFF — so z2m exposes power, voltage, current,
+// energy. The auto-port wired only kFzMetering (0x0702) and exposed
+// energy+power, dropping the 0x0B04 half: voltage + current had no decoder
+// and no expose, and power had no decoder either because z2m sources power
+// from haElectricalMeasurement (it deletes seMetering.power in "both" mode).
+// Fix: add the generic kFzElectricalMeasurement (0x0B04) converter, the
+// voltage/current exposes, and the 0x0B04 reporting bind.
+// (The genLevelCtrl manuSpecific config attrs — min/max/start brightness,
+// boost, dimming_mode, default_move_rate — need a write/read of arbitrary
+// attribute IDs with no generic converter; INFRA, deferred.)
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::repenic_ltd {
@@ -11,6 +25,7 @@ const FzConverter* const kFz_RD_250ZG[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzElectricalMeasurement,
 };
 const TzConverter* const kTz_RD_250ZG[] = {
     &::zhc::generic::kTzOnOff,
@@ -27,12 +42,15 @@ constexpr Expose kAutoExposes[] = {
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
     {1, 0x0702},
+    {1, 0x0B04},
 };
 // --- end auto-generated block ---
 

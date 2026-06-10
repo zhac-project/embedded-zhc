@@ -48,6 +48,19 @@ across the ZHAC platform.
   `device_temperature` and the generic `kFzCommand*` converters + an
   `action` enum with `endpoint_action_suffix` so each button endpoint
   surfaces as `action_<n>`. Graduated all four defs to Tier 2.
+- **Repenic RD-250ZG: dropped electrical-measurement half of the meter.** The
+  dimmer is z2m `m.light()` + `m.electricityMeter()`, whose default
+  `cluster:"both"` decodes both seMetering 0x0702 (energy) and
+  haElectricalMeasurement 0x0B04 (power/voltage/current), with z2m sourcing
+  `power` from 0x0B04 (it deletes `seMetering.power` in "both" mode). The
+  auto-port wired only the generic `kFzMetering` (0x0702) and exposed
+  energy+power, so `voltage`/`current` had neither decoder nor expose and
+  `power` had no live decoder. Graduated `Rep_RD_250ZG` to Tier 2, added the
+  generic `kFzElectricalMeasurement` (0x0B04) converter, the `voltage`/
+  `current` exposes, and the 0x0B04 reporting bind. (The genLevelCtrl
+  manufacturer-specific config attributes — min/max/start brightness, boost,
+  dimming_mode, default_move_rate — need read/write of arbitrary attribute
+  IDs with no generic converter; left as INFRA defer.)
 
 - **Prolight bulbs/remote: dropped colour axis + dead remote.** The E27
   (`5412748727371`) and GU10 (`5412748727401`) white-and-colour bulbs are
