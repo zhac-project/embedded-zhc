@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Futurehome TS0601 thermostat (Co020 / FH-clones) exposed a dead
+  `running_state` channel.** z2m maps DP 104 `running_state` via
+  `lookup({idle: false, heat: true})` and exposes it through
+  `withRunningState(["idle", "heat"])`, but the hand-ported Tier-2 DP map
+  dropped DP 104 entirely — the thermostat declared a running-state surface
+  that never decoded. Graduated the def out of `generated/` and restored DP
+  104 as a boolean DP fanned to an `idle`/`heat` string via
+  `kTuyaDpFlagBoolEnum`, plus the `running_state` expose. Added
+  `tests/test_futurehome_parity.cpp`.
 - **Insta 57008000 blinds actuator exposed a dead `tilt` channel.** z2m's
   `cover_position_tilt` reports both `currentPositionLiftPercentage` (attr
   0x0008) and `currentPositionTiltPercentage` (attr 0x0009) on EP6, and the def
