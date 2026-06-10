@@ -36,6 +36,19 @@ across the ZHAC platform.
   battery, and added an inline `kFzNeticaThermostatExtras` converter decoding
   running_state, control_sequence_of_operation and the two manuSpec read-backs
   alongside the generic decoder. Added `tests/test_netica_parity.cpp`.
+- **Somfy Ysia 5 remote (1871154) collided all five channels onto one
+  `action`, and the 1871215B plug dropped its electrical-measurement half.**
+  z2m wires the Ysia 5 via `m.commandsOnOff` + `m.commandsWindowCovering`, both
+  with `endpointNames ["1".."5"]`, so each command is postfixed per endpoint
+  (`on_1`, `open_2`, …); the auto-port carried an `endpoint_map` for EPs 1-5 but
+  not `endpoint_action_suffix`, so dispatch kept `action` global and the
+  per-button identity was lost — set the flag so it emits `action_<n>`. The
+  1871215B plug uses `m.electricityMeter()` (defaults to `cluster:"both"`,
+  decoding seMetering 0x0702 energy **and** haElectricalMeasurement 0x0B04
+  power/voltage/current), but the port wired only `kFzMetering`, dropping
+  `voltage`/`current`; added `kFzElectricalMeasurement`, the two exposes and the
+  0x0B04 binding. Both files graduated to Tier 2; added
+  `tests/test_somfy_parity.cpp`.
 
 - **Leviton RC-2000WH (Omnistat2) thermostat left three exposes dead.** z2m
   wires the full `fz.thermostat`, which publishes the entire hvacThermostat
