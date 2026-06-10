@@ -10,6 +10,29 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Datek HSE2927E "Motion Sensor" (Eva motion) — illuminance channel was
+  dropped.** z2m wires `extend: [m.illuminance()]`, adding a
+  `msIlluminanceMeasurement` (0x0400) `measuredValue` -> `illuminance`
+  decoder + expose, but the generated port carried only
+  battery/temperature/IAS-motion/`led_on_motion`. Wired the existing
+  generic `kFzIlluminance`, added the `illuminance` expose and the 0x0400
+  bind, and graduated the def to a Tier-2 parent.
+- **Datek HSE2905E "Meter Reader" (Eva AMS HAN power-meter) — produced
+  energy and the three-phase / frequency / power-factor channels were
+  dropped.** z2m stacks two `m.electricityMeter` bundles: `metering`
+  (`producedEnergy: true`) and `electrical` (`threePhase: true,
+  power: false`), giving `produced_energy`, per-phase B/C voltage/current,
+  `ac_frequency` and `power_factor` on top of the phase-A core. The
+  generated port wired only the generic `kFzMetering` (energy 0x0000 /
+  power 0x0400) + `kFzElectricalMeasurement` (power 0x050B / voltage 0x0505
+  / current 0x0508), so all the extra channels were dead exposes. Added
+  Datek `kFzMeteringExtras` (seMetering `produced_energy` 0x0001) +
+  `kFzElectricalMeasurementExtras` (haElectricalMeasurement `ac_frequency`
+  0x0300, `power_factor` 0x0510, `voltage/current_phase_b` 0x0905/0x0908,
+  `voltage/current_phase_c` 0x0A05/0x0A08) in
+  `definitions/datek/_shared.cpp`, wired ALONGSIDE the generics, added the
+  missing exposes, and graduated the def to a Tier-2 parent. Mirrors the
+  `definitions/bituo_technik` approach (raw pass-through; runtime scales).
 - **Dawon DNS PM-B540-ZB (16 A metering plug) — internal die-temperature
   channel was dropped.** Alone among the Dawon metering plugs, the PM-B540
   also reports its own temperature on `genDeviceTempCfg` (0x0002); z2m wires

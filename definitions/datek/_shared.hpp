@@ -89,4 +89,23 @@ extern const TzConverter kTzLedOnMotion;
 // converters because that's the only Datek device that exposes it.
 extern const TzConverter kTzOccupancyTimeout;
 
+// ── fz: electricity-meter extras (HSE2905E "Meter Reader") ─────────
+//
+// z2m's HSE2905E stacks two `m.electricityMeter` bundles:
+//   metering  (producedEnergy: true)  → energy + produced_energy + power
+//   electrical(threePhase: true, power: false)
+//             → voltage/current phase A + phase B/C + ac_frequency
+//               + power_factor (power_factor/ac_frequency default true)
+// The generic kFzMetering (seMetering energy 0x0000 / power 0x0400) and
+// kFzElectricalMeasurement (power 0x050B / voltage 0x0505 / current
+// 0x0508) decode only the phase-A core; these two converters add the
+// rest, ALONGSIDE the generics (mirrors definitions/bituo_technik).
+// Raw pass-through — runtime scales downstream.
+//
+// z2m-source: lib/modernExtend.ts genericMeter (electricityMeter)
+//             + converters/fromZigbee.ts electrical_measurement /
+//             metering / metering_datek.
+extern const FzConverter kFzMeteringExtras;            // seMetering 0x0702
+extern const FzConverter kFzElectricalMeasurementExtras;  // haElectricalMeasurement 0x0B04
+
 }  // namespace zhc::datek

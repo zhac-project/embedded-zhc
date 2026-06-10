@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Datek HSE2927E — hand-upgraded for full z2m parity.
-// Eva motion sensor — battery + temperature + IAS motion + mfg-spec
-//                     led_on_motion (ssIasZone 0x4000) + standard
-//                     occupancy_timeout (msOccupancySensing 0x0010).
+// Eva motion sensor — battery + temperature + illuminance + IAS motion
+//                     + mfg-spec led_on_motion (ssIasZone 0x4000) +
+//                     standard occupancy_timeout (msOccupancySensing 0x0010).
+// z2m wires `extend: [m.illuminance()]` (msIlluminanceMeasurement 0x0400
+// measuredValue -> "illuminance"); the generic kFzIlluminance covers it.
 // z2m-source: datek.ts #HSE2927E.
 // Mfg-spec writes route through tz_zcl_write_attr with mfg=0x1337.
 #include "definitions/_generic/_shared.hpp"
@@ -14,6 +16,7 @@ namespace {
 const FzConverter* const kFz_HSE2927E[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzTemperature,
+    &::zhc::generic::kFzIlluminance,
     &::zhc::generic::kFzIasMotionAlarm,
     &::zhc::datek::kFzLedOnMotion,
 };
@@ -32,6 +35,7 @@ constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
@@ -42,6 +46,7 @@ constexpr Expose kAutoExposes[] = {
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},  // genPowerCfg
     {1, 0x0402},  // msTemperatureMeasurement
+    {1, 0x0400},  // msIlluminanceMeasurement (m.illuminance())
     {1, 0x0406},  // msOccupancySensing
     {1, 0x0500},  // ssIasZone
 };
