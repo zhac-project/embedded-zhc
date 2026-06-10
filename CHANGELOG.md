@@ -65,6 +65,15 @@ across the ZHAC platform.
   collapsed onto one bare `action` (a 2-button remote looked like 1). Set
   `endpoint_action_suffix` so the key is rewritten `action_1`/`action_2`.
   Graduated both defs to Tier 2; added `tests/test_dresden_elektronik_parity.cpp`.
+- **L&S Lighting SEMOTE (756200643) remote dropped its `stop_move_step`
+  action.** z2m's `m.commandsColorCtrl({commands:[..., "stop_move_step"]})`
+  decodes a lightingColorCtrl `commandStopMoveStep` (cmd 0x47) to
+  `action="stop_move_step"`, but the generic catalogue had no decoder for
+  0x47, so the auto-port declared the action in its enum while emitting it
+  from no converter — a dead action key. Graduated `Ls_D756200643.cpp` to
+  Tier 2 and added the bespoke `kFzLsCommandStopMoveStep`
+  (`definitions/ls/_shared.{hpp,cpp}`).
+
 - **Leviton RC-2000WH (Omnistat2) thermostat left three exposes dead.** z2m
   wires the full `fz.thermostat`, which publishes the entire hvacThermostat
   surface, but the auto-port only wired the generic `kFzThermostat`

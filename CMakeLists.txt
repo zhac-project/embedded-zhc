@@ -1382,6 +1382,14 @@ target_link_libraries(zhc_yandex_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ctm_parity_tests tests/test_ctm_parity.cpp)
 target_link_libraries(zhc_ctm_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the L&S Lighting (ls) family. The SEMOTE remote
+# (756200643) declared a `stop_move_step` action in its enum but emitted
+# it from NO converter (lightingColorCtrl cmd 0x47 had no decoder); fixed
+# with the bespoke kFzLsCommandStopMoveStep. The three L&S lights are
+# spot-checked for correct sink shape. See tests/README.md.
+add_executable(zhc_ls_parity_tests tests/test_ls_parity.cpp)
+target_link_libraries(zhc_ls_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Livolo TI0001-* family. Every device speaks a
 # bespoke raw protocol over genPowerCfg [0x7A 0xD1]; those frames decode
 # to MessageType::Raw, but the custom decoders gated only on Command so
@@ -1995,6 +2003,7 @@ add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_leviton_parity_tests      COMMAND zhc_leviton_parity_tests)
 add_test(NAME zhc_yandex_parity_tests       COMMAND zhc_yandex_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
+add_test(NAME zhc_ls_parity_tests           COMMAND zhc_ls_parity_tests)
 add_test(NAME zhc_livolo_parity_tests       COMMAND zhc_livolo_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
