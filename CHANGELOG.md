@@ -46,6 +46,18 @@ across the ZHAC platform.
   temperature+humidity sensor was reduced to battery-only — restored
   `kFzTemperature` (0x0402) + `kFzHumidity` (0x0405) decoders, both exposes, and
   the 0x0402/0x0405 bindings. Added `tests/test_ihorn_parity.cpp`.
+- **Qoto QT-05M watering timer: dead on/off+battery stub, all 7 watering
+  datapoints dropped.** The solar garden watering timer (TS0601 /
+  `_TZE200_arge1ptm`, `_TZE200_anv5ujhv`, `_TZE200_xlppj4f5`) was auto-ported
+  as a bare `kFzBattery` + `kFzOnOff` stub binding ZCL `0x0001`/`0x0006` it
+  never speaks, with phantom `state`/`voltage` exposes. It is a Tuya-MCU
+  (`0xEF00`) device — z2m decodes via `legacy.fromZigbee.watering_timer`.
+  Graduated to a Tier-2 DP-map override (`fz_tuya_datapoints` +
+  `tz_tuya_datapoints`) restoring `water_flow` (DP 3), `last_watering_duration`
+  (DP 107), `remaining_watering_time` (DP 101), `valve_state` (DP 102),
+  `valve_state_auto_shutdown` (DP 2), `shutdown_timer` (DP 11) and `battery`
+  (DP 110). Per the giex precedent, the float-divisor suspect was FALSE: z2m
+  passes every value DP through raw, so all DPs decode at divisor 1.
 
 - **FireAngel CO sensors: dead/missing carbon-monoxide channels.** The
   W2-Module (`Alarm_SD_Device`) was auto-ported battery-only — z2m wires
