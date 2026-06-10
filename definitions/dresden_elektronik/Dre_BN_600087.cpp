@@ -1,14 +1,18 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: DresdenElektronik BN-600087 (Lighting Switch) — hand-edited 2026-04-29c.
+// Tier 2: DresdenElektronik BN-600087 (Lighting Switch) — hand-edited 2026-06-10.
 // 2-part Zigbee-powered light switch (battery-powered remote, 2 endpoints).
 // z2m: m.deviceEndpoints({1:1, 2:2}) +
 //      m.commandsOnOff(["1","2"]) + m.commandsLevelCtrl(["1","2"])
 //      + m.commandsColorCtrl(["1","2"]) + m.battery().
 //
-// FULL on the OnOff/LevelCtrl/ColorCtrl command stream — generic
-// kFzCommand* converters surface `action` (e.g. `on_1`, `brightness_step_up_2`)
-// once paired with endpoint_map. No m.commandsScenes()/Tz here.
+// z2m's commandsOnOff/LevelCtrl/ColorCtrl with endpointNames postfix the
+// action per button (on_1 / on_2 / brightness_step_up_2 …) so the two
+// rockers keep identity. `action` is a kAlwaysGlobalKey, so the endpoint_map
+// alone is NOT enough — without endpoint_action_suffix the dispatcher leaves
+// `action` bare and both buttons collapse onto one key (a 2-button remote
+// looks like 1 button). Set endpoint_action_suffix so the dispatcher rewrites
+// the key to action_<label> (action_1 / action_2). No m.commandsScenes()/Tz here.
 // z2m-source: dresden_elektronik.ts #BN-600087.
 #include "definitions/_generic/_shared.hpp"
 
@@ -55,6 +59,7 @@ extern const PreparedDefinition kDef_BN_600087{
     .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
     .endpoint_map       = kEndpoints_BN_600087,
     .endpoint_map_count = sizeof(kEndpoints_BN_600087)/sizeof(kEndpoints_BN_600087[0]),
+    .endpoint_action_suffix = true,  // action → action_1 / action_2 (per-button identity)
 };
 
 }  // namespace zhc::devices::dresden_elektronik
