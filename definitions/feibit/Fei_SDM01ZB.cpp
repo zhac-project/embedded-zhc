@@ -1,18 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Feibit SBM01ZB — auto-generated.
-// Human body movement sensor
-// z2m-source: feibit.ts #SBM01ZB.
+// Tier 2: Feibit SDM01ZB — hand-curated (was IAS dead-key).
+// z2m fz.ias_contact_alarm_1 (bit 0) -> key `contact`;
+// generic kFzIasZone emitted bare "alarm". Swapped to kFzIasContactAlarm.
+// Door or window contact switch
+// z2m-source: feibit.ts #SDM01ZB.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::feibit {
 namespace {
-const FzConverter* const kFz_SBM01ZB[] = {
+const FzConverter* const kFz_SDM01ZB[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
-constexpr const char* kModels_SBM01ZB[] = { "FNB56-BOT06FB2.3", "FNB56-BOT06FB2.8", "FB56-BOT02HM1.2" };
+constexpr const char* kModels_SDM01ZB[] = { "FNB56-DOS07FB2.4", "FB56-DOS02HM1.2" };
 
 }  // namespace
 
@@ -21,7 +23,7 @@ constexpr const char* kModels_SBM01ZB[] = { "FNB56-BOT06FB2.3", "FNB56-BOT06FB2.
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -32,14 +34,14 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_SBM01ZB{
-    .zigbee_models=kModels_SBM01ZB, .zigbee_models_count=sizeof(kModels_SBM01ZB)/sizeof(kModels_SBM01ZB[0]),
+extern const PreparedDefinition kDef_SDM01ZB{
+    .zigbee_models=kModels_SDM01ZB, .zigbee_models_count=sizeof(kModels_SDM01ZB)/sizeof(kModels_SDM01ZB[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="SBM01ZB", .vendor="Feibit",
+    .model="SDM01ZB", .vendor="Feibit",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_SBM01ZB, .from_zigbee_count=sizeof(kFz_SBM01ZB)/sizeof(kFz_SBM01ZB[0]),
+    .from_zigbee=kFz_SDM01ZB, .from_zigbee_count=sizeof(kFz_SDM01ZB)/sizeof(kFz_SDM01ZB[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),

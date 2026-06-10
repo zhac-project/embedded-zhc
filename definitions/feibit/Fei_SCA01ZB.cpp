@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Feibit SCA01ZB — auto-generated.
+// Tier 2: Feibit SCA01ZB — hand-curated (was IAS dead-key).
+// z2m fz.ias_carbon_monoxide_alarm_1 (bit 0) -> key `carbon_monoxide`;
+// generic kFzIasZone emitted bare "alarm". Swapped to kFzIasCoAlarm.
 // Smart carbon monoxide sensor
 // z2m-source: feibit.ts #SCA01ZB.
 #include "definitions/_generic/_shared.hpp"
@@ -9,7 +11,7 @@ namespace zhc::devices::feibit {
 namespace {
 const FzConverter* const kFz_SCA01ZB[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasCoAlarm,
 };
 
 constexpr const char* kModels_SCA01ZB[] = { "FNB56-COS06FB1.7", "FNB56-COS06FB2.1" };
@@ -21,7 +23,7 @@ constexpr const char* kModels_SCA01ZB[] = { "FNB56-COS06FB1.7", "FNB56-COS06FB2.
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"carbon_monoxide", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

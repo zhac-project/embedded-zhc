@@ -307,6 +307,10 @@ extern const FzConverter kFzIasGasAlarm2;
 // alarm bits onto the single `alarm` key. Used by generic sirens (adeo
 // LDSENK06 indoor 85 dB siren).
 extern const FzConverter kFzIasGenericAlarm;
+// SOS / emergency-button alarm: zoneStatus bit 1 → "sos" bool (+ tamper,
+// battery_low). Matches z2m `fz.ias_sos_alarm_2`, used by panic buttons
+// (Feibit SEB01ZB SOS button).
+extern const FzConverter kFzIasSosAlarm2;
 
 // ── genOnOff power-on behaviour (standard ZCL attribute 0x4003) ─────
 //
@@ -438,6 +442,10 @@ extern const TzConverter kTzCoverPositionTilt;
 // `fz.cover_position_tilt` / `fz.metering` / `fz.electrical_measurement`
 // / `fz.thermostat` over vanilla ZCL (no manuspecific quirks).
 extern const FzConverter kFzCoverPosition;
+// closuresWindowCovering attr 0x0009 currentPositionTiltPercentage (u8) →
+// "tilt". The lift half lives in kFzCoverPosition (attr 0x0008). Pair both
+// on tilt-capable covers (z2m m.windowCovering({controls:["lift","tilt"]})).
+extern const FzConverter kFzCoverTilt;
 extern const FzConverter kFzMetering;
 extern const FzConverter kFzElectricalMeasurement;
 extern const FzConverter kFzThermostat;

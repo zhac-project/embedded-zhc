@@ -1062,6 +1062,9 @@ constexpr IasAlarmLabel kLbl_Gas2        { "gas",             1 };  // z2m fz.ia
 // (both alarm_1/alarm_2 collapse onto it). Used by generic sirens (adeo
 // LDSENK06). bit 0 → `alarm`.
 constexpr IasAlarmLabel kLbl_Alarm       { "alarm",           0 };
+// z2m fz.ias_sos_alarm_2: SOS / panic button reports on zoneStatus bit 1,
+// published as `sos` (Feibit SEB01ZB SOS button).
+constexpr IasAlarmLabel kLbl_Sos2        { "sos",             1 };
 
 }  // namespace
 
@@ -1092,6 +1095,7 @@ ZHC_IAS_TYPED_CVT(kFzIasRainAlarm,      &kLbl_Rain);
 ZHC_IAS_TYPED_CVT(kFzIasGasAlarm,       &kLbl_Gas);
 ZHC_IAS_TYPED_CVT(kFzIasGasAlarm2,      &kLbl_Gas2);
 ZHC_IAS_TYPED_CVT(kFzIasGenericAlarm,   &kLbl_Alarm);
+ZHC_IAS_TYPED_CVT(kFzIasSosAlarm2,      &kLbl_Sos2);
 
 // ── ssIasAce arm / panic command decoders ───────────────────────────
 //
@@ -2705,6 +2709,37 @@ extern const FzConverter kFzCoverPosition{
     .frame_flags_value = 0,
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_cover_position },
+    .user_config       = nullptr,
+};
+
+// ── fz_cover_tilt (closuresWindowCovering attr 0x0009) ──────────────
+// currentPositionTiltPercentage (u8) → "tilt". Mirrors fz_cover_position;
+// the lift/tilt halves coexist on a tilt-capable cover.
+// z2m-source: fromZigbee.ts `cover_position_tilt` (tilt half).
+bool fz_cover_tilt(const DecodedMessage& msg,
+                    const FzConverter&,
+                    const PreparedDefinition&,
+                    RuntimeContext&,
+                    FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("9");
+    if (!v || v->type != ValueType::Uint) return false;
+    Value o{}; o.type = ValueType::Uint; o.u = v->u;
+    out.put("tilt", o);
+    return true;
+}
+
+extern const FzConverter kFzCoverTilt{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "closuresWindowCovering",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_cover_tilt },
     .user_config       = nullptr,
 };
 

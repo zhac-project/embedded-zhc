@@ -48,6 +48,26 @@ across the ZHAC platform.
   vendor-specific `nimly_pro_lock_actions` (closuresDoorLock attrs 256/257)
   and `easycodetouch_action` (raw-cluster lookup) decoders are INFRA-deferred.
 
+- **Feibit (Heiman-OEM) family — IAS dead-keys, dropped sensor channels,
+  missing cover tilt, and dead-control remotes.** A vendor-wide parity pass
+  fixed 17 definitions. Six IAS sensors (SBM01ZB motion→`occupancy`, SSA01ZB
+  →`smoke`, SCA01ZB→`carbon_monoxide`, SGA01ZB→`gas` [alarm_2/bit 1], SWA01ZB
+  →`water_leak`, SDM01ZB→`contact`) and the SEB01ZB SOS button (→`sos`,
+  alarm_2/bit 1) wired the generic `kFzIasZone` (bare `alarm`) against semantic
+  exposes the converter never produced; swapped to the typed
+  `kFzIas<Type>Alarm` converters and added a new generic `kFzIasSosAlarm2`.
+  STH01ZB regained `temperature`/`humidity` (only `kFzBattery` was lowered);
+  TSKT222W-H4 regained the `haElectricalMeasurement` (0x0B04) half
+  (`voltage`/`current`) of `m.electricityMeter()` `cluster:"both"`. Two
+  lift+tilt curtain motors (SZT211_AW-P1, TCUR218W-V1) regained their `tilt`
+  channel via a new generic `kFzCoverTilt` (attr 0x0009); TCUR218W-V1 also had
+  its endpoint IDs corrected to z2m's `{top:15, bottom:14}`. Five
+  remotes/scene-switches mis-modelled as dead settable on/off switches were
+  rebuilt as action devices: SZSN325W-Q (`command_recall`), NZRC106W-M2
+  (IAS-ACE arm/panic + battery), TZSN408W-V1 / NZSN421W-Q (4-gang
+  `commandsOnOff` → `action_1..4`), FMRC209W (`commandsOnOff` +
+  `commandsLevelCtrl`); SSS401ZB regained its scene-recall `action` while
+  keeping its controllable switch.
 - **Dawon DNS PM-B540-ZB (16 A metering plug) — internal die-temperature
   channel was dropped.** Alone among the Dawon metering plugs, the PM-B540
   also reports its own temperature on `genDeviceTempCfg` (0x0002); z2m wires

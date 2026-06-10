@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Feibit STH01ZB — auto-generated.
-// Smart temperature & humidity Sensor
+// Tier 2: Feibit STH01ZB — hand-curated (was missing-decoder).
+// Smart temperature & humidity Sensor. z2m wires fz.temperature +
+// fz.humidity + fz.battery and exposes temperature/humidity/battery, but
+// the auto-port lowered only kFzBattery, dropping both environmental
+// channels. Added kFzTemperature (msTemperatureMeasurement 0x0402) +
+// kFzHumidity (msRelativeHumidity 0x0405), their exposes and bindings.
 // z2m-source: feibit.ts #STH01ZB.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,6 +13,8 @@ namespace zhc::devices::feibit {
 namespace {
 const FzConverter* const kFz_STH01ZB[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzTemperature,
+    &::zhc::generic::kFzHumidity,
 };
 
 constexpr const char* kModels_STH01ZB[] = { "FNB56-THM14FB2.4", "FNB54-THM17ML1.1", "FB56-THM12HM1.2", "FNB56-THM14FB2.5" };
@@ -20,10 +26,14 @@ constexpr const char* kModels_STH01ZB[] = { "FNB56-THM14FB2.4", "FNB54-THM17ML1.
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
+    {1, 0x0405},
 };
 // --- end auto-generated block ---
 

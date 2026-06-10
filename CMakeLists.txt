@@ -1542,6 +1542,21 @@ target_link_libraries(zhc_aurora_lighting_parity_tests PRIVATE zhc_definitions)
 # (z2m default:2). See tests/README.md.
 add_executable(zhc_onesti_parity_tests tests/test_onesti_parity.cpp)
 target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
+# Parity fixtures for the Feibit (Heiman-OEM) family. Six IAS sensors
+# (motion/smoke/CO/gas/water/contact) + the SEB01ZB SOS button wired the
+# generic kFzIasZone against semantic exposes that the converter never
+# produced; graduated to typed kFzIas<Type>Alarm (+ a new generic
+# kFzIasSosAlarm2 for the SOS bit-1 key). STH01ZB dropped temperature +
+# humidity (only kFzBattery lowered); TSKT222W-H4 dropped the 0x0B04
+# electrical half of m.electricityMeter() cluster:"both". Two lift+tilt
+# covers (SZT211_AW-P1, TCUR218W-V1) dropped the tilt channel — added a new
+# generic kFzCoverTilt (attr 0x0009); TCUR218W-V1 also had wrong endpoint IDs.
+# Five remotes/scene-switches (SZSN325W-Q, NZRC106W-M2, TZSN408W-V1,
+# NZSN421W-Q, FMRC209W) were mis-modelled as dead settable on/off switches;
+# graduated to command-action / IAS-ACE decoders. SSS401ZB regained its scene
+# recall action while keeping its controllable switch. See tests/README.md.
+add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
+target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
@@ -1685,6 +1700,7 @@ add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)
 add_test(NAME zhc_stelpro_parity_tests      COMMAND zhc_stelpro_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
+add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)
