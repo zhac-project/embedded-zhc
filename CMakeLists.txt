@@ -2515,6 +2515,17 @@ target_link_libraries(zhc_zunzunbee_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smartenit_parity_tests tests/test_smartenit_parity.cpp)
 target_link_libraries(zhc_smartenit_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for two BlitzWolf sensors the auto-port misrouted. BW-IS3
+# (PIR) was wired to generic kFzIasZone (0x0500) with phantom
+# alarm/tamper/battery_low, but z2m decodes it via
+# fz.blitzwolf_occupancy_with_timeout — a Tuya 0xEF00 DP stream (DP3 ->
+# occupancy); graduated to a Tier-2 Tuya-DP override. BW-IS9 (water leak) used
+# generic kFzIasZone (bare alarm) while z2m's iasZoneAlarm bothAlarms config
+# exposes water_leak_alarm_1 (bit0) + water_leak_alarm_2 (bit1); repointed to
+# the new typed kFzIasWaterLeakAlarm1/2 converters.
+add_executable(zhc_blitzwolf_parity_tests tests/test_blitzwolf_parity.cpp)
+target_link_libraries(zhc_blitzwolf_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -2775,6 +2786,7 @@ add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
 add_test(NAME zhc_msh_parity_tests          COMMAND zhc_msh_parity_tests)
 add_test(NAME zhc_zunzunbee_parity_tests    COMMAND zhc_zunzunbee_parity_tests)
 add_test(NAME zhc_smartenit_parity_tests    COMMAND zhc_smartenit_parity_tests)
+add_test(NAME zhc_blitzwolf_parity_tests    COMMAND zhc_blitzwolf_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
