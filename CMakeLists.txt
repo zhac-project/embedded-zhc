@@ -909,6 +909,9 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_securifi_parity_tests tests/test_securifi_parity.cpp)
 target_link_libraries(zhc_securifi_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_senoro_parity_tests tests/test_senoro_parity.cpp)
+target_link_libraries(zhc_senoro_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for three smarli. devices whose auto-generated defs dropped a
 # real channel. PDM1 dimmer + 1RE1 relay + COV1 curtain all use
 # m.electricityMeter() (cluster:"both" → 0x0702 energy + 0x0B04 power/voltage/
@@ -2728,6 +2731,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
+add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)

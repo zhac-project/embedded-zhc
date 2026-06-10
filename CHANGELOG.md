@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Senoro.Win window alarm (TS0601 / `_TZE200_ytx9fudw`): restored the missing
+  `opening_state` channel and removed a misrouted IAS duplicate.** The fingerprint
+  carried two defs: a Tuya-DP port that dropped DP 101 `opening_state` (the
+  device's primary channel) and exposed two phantom keys (`state`, `action`) no
+  DP drives, plus a same-fingerprint stub misrouted onto the generic IAS-zone
+  (ssIasZone 0x0500) emitting bare alarm/tamper/battery_low. z2m has no IAS path —
+  it is a pure Tuya-MCU 0xEF00 DP-stream device. Graduated the Tuya-DP def to a
+  Tier-2 override (DP 101 → `opening_state` enum {open/closed/tilted}, DP 16 →
+  `alarm` Bool to match z2m `e.binary`, DP 2 → `battery`), corrected the exposes,
+  and deleted the dead IAS duplicate.
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
