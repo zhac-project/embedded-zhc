@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Ecolink sensors: IAS contact dead-key + dropped temperature channel.**
+  The `4655BC0-R` contact sensor lowered the generic `kFzIasZone` (bare
+  `alarm` key) while its expose declared `contact`, so the door state never
+  reached the shadow; swapped in `kFzIasContactAlarm` (z2m polarity:
+  `contact = !zoneStatus bit0`, plus tamper/battery_low) to match
+  `fz.ias_contact_alarm_1`. Both `4655BC0-R` and `FFZB1-SM-ECO` dropped the
+  temperature channel that z2m wires via `fz.temperature` / `m.temperature()`;
+  restored `kFzTemperature` (msTemperatureMeasurement 0x0402) + the
+  `temperature` expose + the 0x0402 binding on each. `FFZB1-SM-ECO`'s bare
+  `alarm` key is left unchanged (z2m `m.iasZoneAlarm({zoneType:"alarm"})`).
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as

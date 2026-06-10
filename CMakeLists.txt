@@ -1016,6 +1016,14 @@ target_link_libraries(zhc_visonic_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ihorn_parity_tests tests/test_ihorn_parity.cpp)
 target_link_libraries(zhc_ihorn_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Ecolink sensors. The 4655BC0-R contact sensor lowered the
+# generic kFzIasZone (bare "alarm") while the expose declared "contact";
+# swapped in kFzIasContactAlarm (inverted contact). Both 4655BC0-R and
+# FFZB1-SM-ECO dropped the temperature channel; restored kFzTemperature +
+# expose + 0x0402 binding. FFZB1-SM-ECO keeps its correct bare "alarm" key.
+add_executable(zhc_ecolink_parity_tests tests/test_ecolink_parity.cpp)
+target_link_libraries(zhc_ecolink_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Fantem ZB003-X 4-in-1 multi sensor. Its IAS path lowered the
 # generic kFzIasZoneStatusChange (bare "alarm_1") while the expose declared
 # `occupancy`; z2m fz.ZB003X_occupancy maps zoneStatus bit0 -> occupancy, so
@@ -2769,6 +2777,7 @@ add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_aeotec_parity_tests       COMMAND zhc_aeotec_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
+add_test(NAME zhc_ecolink_parity_tests      COMMAND zhc_ecolink_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
 add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
