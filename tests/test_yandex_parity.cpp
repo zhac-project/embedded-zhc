@@ -96,25 +96,31 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
-// Assert: alarm_1 (bit 0) asserted -> semantic key true, "alarm" absent,
-// tamper / battery_low reflect bits 2 / 3.
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+// Assert: alarm_1 (bit 0) -> semantic key, "alarm" absent, tamper /
+// battery_low reflect bits 2 / 3.
+//   invert=false (default, e.g. water_leak): bit0 SET -> key true.
+//   invert=true  (zoneType:"contact"): z2m publishes contact = !bit0, so
+//     bit0 SET (open) -> contact:false; bit0 CLEAR (closed) -> contact:true.
+//   Only the `contact` converter inverts; occupancy/smoke/water_leak/gas/co/
+//   vibration stay raw bit0 — pass invert=false for those.
+void check_alarm1(const PreparedDefinition& def, const char* sem,
+                  bool invert = false) {
     assert(def_exposes(def, sem));            // regression guard vs bare "alarm"
 
-    auto on = dispatch_ias(def, ias_notif(0x0001));
+    auto on = dispatch_ias(def, ias_notif(0x0001));   // bit0 SET
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert((invert ? b_false : b_true)(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
-    auto off = dispatch_ias(def, ias_notif(0x0000));
+    auto off = dispatch_ias(def, ias_notif(0x0000));  // bit0 CLEAR
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert((invert ? b_true : b_false)(off.merged.find(sem)));
 
-    auto tb = dispatch_ias(def, ias_notif(0x000C));  // tamper(bit2)+battery_low(bit3)
+    auto tb = dispatch_ias(def, ias_notif(0x000C));  // bit0 clear + tamper(bit2)+battery_low(bit3)
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    assert((invert ? b_true : b_false)(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -122,7 +128,7 @@ void check_alarm1(const PreparedDefinition& def, const char* sem) {
 }  // namespace
 
 // ── IAS sensors: semantic key, not bare "alarm" ─────────────────────
-static void test_contact()    { check_alarm1(devices::yandex::kDef_YNDX_00526, "contact"); }
+static void test_contact()    { check_alarm1(devices::yandex::kDef_YNDX_00526, "contact", /*invert=*/true); }
 static void test_water_leak() { check_alarm1(devices::yandex::kDef_YNDX_00527, "water_leak"); }
 
 static void test_no_bare_alarm_exposed() {
