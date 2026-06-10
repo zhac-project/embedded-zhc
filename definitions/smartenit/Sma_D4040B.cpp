@@ -4,14 +4,20 @@
 // z2m-source: smartenit.ts #4040B — fz.on_off, fz.metering;
 //             endpoint: {l1: 1, l2: 2}; exposes switch(l1)+switch(l2)+power+energy.
 //
-// Bug fixed: the Tier-1 auto-port omitted the {l1:1, l2:2} endpoint_map,
-// so genOnOff reports from both loads collided on the bare "state" key
-// (last-writer-wins → the two relays were indistinguishable). z2m maps
-// l1→ep1, l2→ep2; with the endpoint_map the dispatcher now suffixes the
-// per-load switch to state_l1 / state_l2. power/energy stay device-global
-// (z2m's untagged e.power()/e.energy()), kept un-suffixed via the
-// dispatch blocklist. Also bind genOnOff + seMetering on ep2 to match
-// z2m configure (which binds both clusters on endpoints 1 and 2).
+// Real gap: the Tier-1 auto-port dropped the seMetering bind on ep2. Restored
+// genOnOff + seMetering binds on ep1 AND ep2 (z2m configure binds both clusters
+// on both endpoints).
+//
+// DEFERRED (INFRA, dual-load state split): z2m maps l1→ep1, l2→ep2 with
+// switch().withEndpoint() (per-load state) BUT keeps power/energy as a single
+// untagged e.power()/e.energy(). The runtime suffix rewrite can only suffix
+// ALL non-global keys or none — there is no per-def metering-skip hook — so an
+// endpoint_map here would wrongly suffix power/energy to power_l1/energy_l1
+// (diverging from z2m's bare keys; only `voltage` is in kAlwaysGlobalKeys[]).
+// The def therefore ships MAPLESS: a single bare `state` (the two loads
+// collapse, last-writer-wins) + bare power/energy (correct), identical to the
+// structurally-equal Makegood GPO01/AUZG01 and Honyar HY0157. The per-load
+// state split waits on the dispatch infra.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::smartenit {
@@ -38,8 +44,6 @@ constexpr BindingSpec kAutoBindings[] = {
     {2, 0x0702},  // seMetering ep2
 };
 
-constexpr ::zhc::EndpointLabel kEndpoints_D4040B[] = { {"l1", 1}, {"l2", 2} };
-
 }  // namespace
 
 extern const PreparedDefinition kDef_D4040B{
@@ -53,8 +57,6 @@ extern const PreparedDefinition kDef_D4040B{
     .to_zigbee=kTz_D4040B, .to_zigbee_count=sizeof(kTz_D4040B)/sizeof(kTz_D4040B[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
-    .endpoint_map       = kEndpoints_D4040B,
-    .endpoint_map_count = sizeof(kEndpoints_D4040B)/sizeof(kEndpoints_D4040B[0]),
 };
 
 }  // namespace zhc::devices::smartenit

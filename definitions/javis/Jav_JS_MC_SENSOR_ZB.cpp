@@ -10,7 +10,7 @@
 // 0xEF00 (manuSpecificTuya) datapoint stream. Ported the real DP->key map.
 //
 // z2m DPs (legacy.fz.javis_microwave_sensor):
-//   DP1   presence state enum -> `presence_state` + `occupancy` (true for 1..4)
+//   DP1   presence state enum -> `states` + `occupancy` (true for 1..4)
 //   DP2   `sensitivity`
 //   DP101 `illuminance`
 //   DP102 `keep_time`               (this variant)
@@ -48,8 +48,8 @@ constexpr ::zhc::tuya::TuyaEnumEntry kOccupied[] = {
 
 struct cfg {
     static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
-        // DP1 fans out to both the presence_state string and the occupancy bool.
-        ::zhc::tuya::dp::enum_lookup(1, "presence_state", kPresence,
+        // DP1 fans out to both the states string and the occupancy bool.
+        ::zhc::tuya::dp::enum_lookup(1, "states", kPresence,
                                      sizeof(kPresence) / sizeof(kPresence[0])),
         {1, "occupancy", ::zhc::TuyaDpType::Enum, 1, kOccupied,
          sizeof(kOccupied) / sizeof(kOccupied[0]), ::zhc::tuya::kTuyaDpFlagEnumBool},
@@ -71,7 +71,7 @@ constexpr const char* kManus_JS_MC_SENSOR_ZB[] = { "_TZE200_lgstepha", "_TZE200_
 
 constexpr Expose kAutoExposes[] = {
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"presence_state", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"states", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
     {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
     {"led_enable", ExposeType::Binary, Access::StateSet, nullptr, "Enabled LED", nullptr, 0},
     {"keep_time", ExposeType::Enum, Access::StateSet, nullptr, "PIR keep time", nullptr, 0},

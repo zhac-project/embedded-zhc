@@ -37,7 +37,7 @@ constexpr ::zhc::tuya::TuyaEnumEntry kOccupiedK[] = {
 
 struct cfgK {
     static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
-        ::zhc::tuya::dp::enum_lookup(1, "presence_state", kPresenceK,
+        ::zhc::tuya::dp::enum_lookup(1, "states", kPresenceK,
                                      sizeof(kPresenceK) / sizeof(kPresenceK[0])),
         {1, "occupancy", ::zhc::TuyaDpType::Enum, 1, kOccupiedK,
          sizeof(kOccupiedK) / sizeof(kOccupiedK[0]), ::zhc::tuya::kTuyaDpFlagEnumBool},
@@ -61,7 +61,7 @@ constexpr const char* kManus_JS_MC_SENSOR_ZB_K[] = { "_TZE200_kagkgk0i" };
 
 constexpr Expose kAutoExposesK[] = {
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"presence_state", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"states", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
     {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
     {"led_enable", ExposeType::Binary, Access::StateSet, nullptr, "Enabled LED", nullptr, 0},
     {"keep_time", ExposeType::Enum, Access::StateSet, nullptr, "PIR keep time", nullptr, 0},

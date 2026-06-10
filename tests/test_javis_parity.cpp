@@ -92,7 +92,7 @@ TuyaDpRecord enum_rec(std::uint8_t dp, const std::uint8_t* store) {
 
 }  // namespace
 
-// --- Bug 1a: DP1 presence enum -> presence_state string + occupancy bool ----
+// --- Bug 1a: DP1 presence enum -> states string + occupancy bool ----
 static void test_dp1_presence_and_occupancy() {
     const auto& d = resolve("_TZE200_lgstepha");
 
@@ -101,7 +101,7 @@ static void test_dp1_presence_and_occupancy() {
     const TuyaDpRecord r1[] = { enum_rec(1, &w1) };
     auto res1 = dispatch_dp(d, std::span<const TuyaDpRecord>(r1, 1));
     assert(res1.any_matched);
-    const Value* ps = res1.merged.find("presence_state");
+    const Value* ps = res1.merged.find("states");
     assert(ps && ps->type == ValueType::StringRef &&
            std::strcmp(ps->str, "big_motion") == 0);
     const Value* occ = res1.merged.find("occupancy");
@@ -112,7 +112,7 @@ static void test_dp1_presence_and_occupancy() {
     const TuyaDpRecord r0[] = { enum_rec(1, &w0) };
     auto res0 = dispatch_dp(d, std::span<const TuyaDpRecord>(r0, 1));
     assert(res0.any_matched);
-    const Value* ps0 = res0.merged.find("presence_state");
+    const Value* ps0 = res0.merged.find("states");
     assert(ps0 && std::strcmp(ps0->str, "no_motion") == 0);
     const Value* occ0 = res0.merged.find("occupancy");
     assert(occ0 && occ0->type == ValueType::Bool && occ0->b == false);
@@ -198,7 +198,7 @@ static void test_sensor_not_ias() {
     assert(has_expose(d, "illuminance"));
     // A real motion-state alarm DP would never decode through IAS; assert the
     // device exposes the real sensor channels instead.
-    assert(has_expose(d, "presence_state"));
+    assert(has_expose(d, "states"));
 }
 
 // --- Bug 2: JS-SLK2-ZB lock is NOT a controllable on/off switch -------------

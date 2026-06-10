@@ -10,11 +10,12 @@
 //    a temp/humidity sensor to battery-only. Re-wired the generic
 //    msTemperatureMeasurement / msRelativeHumidity decoders + exposes.
 //  * 4040B (wireless metering 30A dual-load switch) — the auto-port
-//    omitted the z2m endpoint map {l1:1, l2:2}, so genOnOff reports
-//    from both loads collided on the bare "state" key. Added the
-//    endpoint_map so the per-load switch surfaces as state_l1 / state_l2,
-//    while the device-global power / energy (z2m's untagged presets)
-//    stay un-suffixed via the dispatch global-key blocklist.
+//    dropped the seMetering bind on ep2; restored genOnOff + seMetering on
+//    both endpoints. The dual-load state split is INFRA-deferred (z2m keeps
+//    power/energy untagged while only `state` is per-endpoint, which the
+//    runtime suffix rewrite can't do selectively) — the def ships MAPLESS:
+//    bare `state` (loads collapse) + bare power/energy, same as Makegood
+//    GPO01/AUZG01 / Honyar HY0157.
 //
 // These tests pin the decoders on real ZCL attribute-report wire shapes.
 
@@ -115,13 +116,17 @@ void test_zbht1() {
     }
 }
 
-// ── 4040B: per-load state_l1/state_l2 + device-global power/energy ───
+// ── 4040B: MAPLESS — bare state (dual-load split deferred) + bare power/energy
 void test_4040b() {
     using namespace zhc::devices::smartenit;
 
-    // endpoint_map must be present with l1->1, l2->2.
-    assert(kDef_D4040B.endpoint_map != nullptr);
-    assert(kDef_D4040B.endpoint_map_count == 2);
+    // INFRA defer (Makegood GPO01/AUZG01 / Honyar HY0157 precedent): z2m keeps
+    // power/energy untagged while only `state` is per-endpoint. The runtime
+    // suffix rewrite can't do that selectively, so the def is MAPLESS — no
+    // endpoint_map, so metering stays bare. The per-load state split waits on
+    // the dispatch infra.
+    assert(kDef_D4040B.endpoint_map == nullptr);
+    assert(kDef_D4040B.endpoint_map_count == 0);
 
     // genOnOff (0x0006) attr 0x0000 onOff = 1 (bool, type 0x10).
     //   fc=0x18 | tsn | cmd=0x0A | attr 0x0000 LE | type 0x10 | val 0x01.
@@ -132,29 +137,20 @@ void test_4040b() {
                    std::span<const std::uint8_t>(rep.data(), rep.size()));
     };
 
-    // ep1 → suffixed to state_l1; bare "state" must NOT appear.
-    {
-        auto r = onoff_report(1);
+    // Mapless: both loads decode to the bare `state` key (they collapse —
+    // the documented dual-load defer), never a suffixed key.
+    for (std::uint8_t ep : {std::uint8_t{1}, std::uint8_t{2}}) {
+        auto r = onoff_report(ep);
         assert(r.any_matched);
-        const Value* s = r.merged.find("state_l1");
+        const Value* s = r.merged.find("state");
         assert(s && s->type == ValueType::Bool && s->b == true);
-        assert(r.merged.find("state") == nullptr);
-        assert(r.merged.find("state_l2") == nullptr);
-    }
-    // ep2 → suffixed to state_l2 (the two loads no longer collide).
-    {
-        auto r = onoff_report(2);
-        assert(r.any_matched);
-        const Value* s = r.merged.find("state_l2");
-        assert(s && s->type == ValueType::Bool && s->b == true);
-        assert(r.merged.find("state") == nullptr);
         assert(r.merged.find("state_l1") == nullptr);
+        assert(r.merged.find("state_l2") == nullptr);
     }
 
     // seMetering (0x0702): currentSummDelivered (attr 0x0000, u48 type 0x25)
-    // + instantaneousDemand (attr 0x0400, s24 type 0x2A) — divisor set on
-    // ep2 in z2m, so the meaningful report arrives on ep2. power/energy are
-    // device-global → must stay UN-suffixed even with the endpoint_map.
+    // + instantaneousDemand (attr 0x0400, s24 type 0x2A). power/energy stay
+    // bare (no endpoint_map → no suffixing), matching z2m's untagged presets.
     {
         // Two attribute records back-to-back in one report frame:
         //   attr 0x0000 LE | type 0x25 | u48 value (6 bytes, =1000)
