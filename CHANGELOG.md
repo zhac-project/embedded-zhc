@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Wally WallyHome multi-sensor (`U02I007C.01`): restored four broken channels.**
+  The generated def degraded the device to an on/off relay + battery + dead
+  bare-`alarm` IAS. z2m decodes it very differently: `fz.temperature` +
+  `fz.humidity` (both DROPPED in the port), `fz.command_on`/`fz.command_off`
+  (genOnOff On/Off *commands* → `action`, not a controllable `state`; the
+  phantom `kFzOnOff`/`kTzOnOff` + `state` were removed, no toZigbee), and two
+  PER-ENDPOINT custom IAS converters over `ssIasZone` status_change — endpoint 1
+  → `contact = !(zoneStatus bit0)`, endpoint 2 → `water_leak = (bit0)`. Added
+  endpoint-pinned `kFzContactEp1`/`kFzWaterLeakEp2` (`definitions/wally/_shared.cpp`)
+  so each zone routes to exactly one semantic key — the generic wildcard-endpoint
+  typed IAS converters would cross-fire both `contact` and `water_leak` on every
+  report. Graduated the generated def to a Tier 2 override; added
+  `tests/test_wally_parity.cpp`.
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
