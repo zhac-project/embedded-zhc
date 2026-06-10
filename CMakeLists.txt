@@ -1250,6 +1250,15 @@ target_link_libraries(zhc_yandex_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ctm_parity_tests tests/test_ctm_parity.cpp)
 target_link_libraries(zhc_ctm_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Livolo TI0001-* family. Every device speaks a
+# bespoke raw protocol over genPowerCfg [0x7A 0xD1]; those frames decode
+# to MessageType::Raw, but the custom decoders gated only on Command so
+# none ever fired. Plus a phantom IAS bundle on the PIR, a bare-"state"
+# expose on the 4-gang switch, and dead generic on/off/cover converters
+# on the curtain/dimmer/cover ports.
+add_executable(zhc_livolo_parity_tests tests/test_livolo_parity.cpp)
+target_link_libraries(zhc_livolo_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Bosch Smart Home family: a row of non-light
 # devices (contacts/water/smoke/siren/plug/thermostats) were mis-classed
 # onto the Bosch "Light" bundle, and the IAS sensors emitted a bare
@@ -1747,6 +1756,7 @@ add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_yandex_parity_tests       COMMAND zhc_yandex_parity_tests)
 add_test(NAME zhc_ctm_parity_tests          COMMAND zhc_ctm_parity_tests)
+add_test(NAME zhc_livolo_parity_tests       COMMAND zhc_livolo_parity_tests)
 add_test(NAME zhc_bosch_parity_tests        COMMAND zhc_bosch_parity_tests)
 add_test(NAME zhc_ubisys_parity_tests       COMMAND zhc_ubisys_parity_tests)
 add_test(NAME zhc_osram_parity_tests        COMMAND zhc_osram_parity_tests)

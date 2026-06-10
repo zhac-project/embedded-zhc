@@ -10,6 +10,28 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Livolo TI0001-* family — every custom-cluster decoder was dead, plus
+  phantom/mismatched exposes.** Livolo devices speak a bespoke raw protocol
+  over genPowerCfg (0x0001) whose body starts with the magic header
+  `[0x7A 0xD1]`. Those frames decode to `MessageType::Raw` (frame control
+  0x7A is not cluster-specific), but every Livolo `FzConverter` gated only on
+  `MessageType::Command`, so none ever matched — added `type_bit(Raw)` to all
+  of them (matching the terncy/orvibo raw-cluster precedent). The 4-gang
+  TI0001 decoded `state_left/_right/_bottom_left/_bottom_right` but exposed
+  only a bare `state`; corrected to the four keyed switches. TI0001-pir
+  carried a phantom IAS bundle (`alarm`/`tamper`/`battery_low` + ssIasZone
+  binding) while its decoder emits `occupancy`; fixed to occupancy +
+  genPowerCfg binding. TI0001-curtain-switch / -dimmer / -cover were wired to
+  dead generic on/off / brightness / cover-position converters (standard
+  0x0006/0x0008/0x0102) that never match the raw frame; ported the custom
+  `livolo_curtain_switch_state` (state_left/state_right, non-bitmask
+  polarity), `livolo_dimmer_state` (state + brightness) and
+  `livolo_cover_state` (position/state/moving/motor_speed/motor_direction)
+  decoders. Cover/dimmer *write* paths (livolo_cover_* / livolo_dimmer_level
+  bespoke manuSpec encoders) remain INFRA-deferred — those exposes are
+  read-only. Graduated the five affected defs to Tier-2 parents. Covered by
+  `tests/test_livolo_parity.cpp`.
+
 - **Viessmann ViCare radiator TRV (ZK03840) — false `window_open` flag and
   dead `occupied_heating_setpoint`.** Two decode bugs against z2m's
   `fzLocal.viessmann_thermostat`: (1) the manuSpec attr 0x4000

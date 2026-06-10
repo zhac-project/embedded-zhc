@@ -32,6 +32,18 @@ extern const ::zhc::FzConverter kFzLivoloNewSwitchState2Gang;
 extern const ::zhc::FzConverter kFzLivoloNewSwitchState4Gang;
 extern const ::zhc::FzConverter kFzLivoloPirState;
 
+// 2026-06-10 parity pass — curtain-switch / dimmer / cover decoders that
+// were previously wired to dead generic on/off/cover converters.
+//   kFzLivoloCurtainState — gate data[10] in {5,2}; state_left=(s==1),
+//                           state_right=(s==0) (non-bitmask polarity).
+//   kFzLivoloDimmerState  — data[10]==7/13 -> "state"; ==5 -> "brightness".
+//   kFzLivoloCoverState   — dp 0x0c/0x0f, reportType 0x04 -> position/
+//                           state/moving; 0x12 -> motor_speed;
+//                           0x13 -> motor_direction.
+extern const ::zhc::FzConverter kFzLivoloCurtainState;
+extern const ::zhc::FzConverter kFzLivoloDimmerState;
+extern const ::zhc::FzConverter kFzLivoloCoverState;
+
 // 2026-04-28r post-sweep — state encoder for switch / socket / cover /
 // dimmer ports. Accepts keys `state`, `state_left`, `state_right`,
 // `state_bottom_left`, `state_bottom_right`. Input may be a Bool, a

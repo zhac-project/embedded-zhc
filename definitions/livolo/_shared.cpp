@@ -37,7 +37,8 @@ bool fz_livolo_hygrometer(const ::zhc::DecodedMessage& msg,
 extern const ::zhc::FzConverter kFzLivoloHygrometer{
     .family            = ::zhc::FrameFamily::Zcl,
     .cluster           = "genPowerCfg",
-    .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command),
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command) |
+                         ::zhc::type_bit(::zhc::MessageType::Raw),
     .command_id        = ::zhc::WILDCARD_CMD_ID,
     .attr_id           = ::zhc::WILDCARD_ATTR_ID,
     .endpoint          = ::zhc::WILDCARD_ENDPOINT,
@@ -80,7 +81,8 @@ bool fz_livolo_illuminance(const ::zhc::DecodedMessage& msg,
 extern const ::zhc::FzConverter kFzLivoloIlluminance{
     .family            = ::zhc::FrameFamily::Zcl,
     .cluster           = "genPowerCfg",
-    .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command),
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command) |
+                         ::zhc::type_bit(::zhc::MessageType::Raw),
     .command_id        = ::zhc::WILDCARD_CMD_ID,
     .attr_id           = ::zhc::WILDCARD_ATTR_ID,
     .endpoint          = ::zhc::WILDCARD_ENDPOINT,
@@ -162,7 +164,8 @@ bool fz_livolo_pir(const ::zhc::DecodedMessage& msg,
     extern const ::zhc::FzConverter NAME{                                      \
         .family            = ::zhc::FrameFamily::Zcl,                          \
         .cluster           = "genPowerCfg",                                    \
-        .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command),     \
+        .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command) |    \
+                             ::zhc::type_bit(::zhc::MessageType::Raw),         \
         .command_id        = ::zhc::WILDCARD_CMD_ID,                           \
         .attr_id           = ::zhc::WILDCARD_ATTR_ID,                          \
         .endpoint          = ::zhc::WILDCARD_ENDPOINT,                         \
@@ -181,6 +184,159 @@ ZHC_LIVOLO_FZ_RAW(kFzLivoloNewSwitchState4Gang, fz_livolo_state_4g);
 ZHC_LIVOLO_FZ_RAW(kFzLivoloPirState,            fz_livolo_pir);
 
 #undef ZHC_LIVOLO_FZ_RAW
+
+// ── Curtain switch / dimmer / cover decoders ────────────────────────
+//
+// z2m-source: fromZigbee.ts `livolo_curtain_switch_state`,
+//             `livolo_dimmer_state`, `livolo_cover_state`.
+
+namespace {
+
+bool livolo_magic_header(const ::zhc::DecodedMessage& msg) {
+    return msg.raw_data.size() >= 2 &&
+           msg.raw_data[0] == 0x7A &&
+           msg.raw_data[1] == 0xD1;
+}
+
+void put_str(::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out,
+             const char* key, const char* s) {
+    ::zhc::Value v{}; v.type = ::zhc::ValueType::StringRef; v.str = s;
+    out.put(key, v);
+}
+
+void put_uint(::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out,
+              const char* key, std::uint64_t u) {
+    ::zhc::Value v{}; v.type = ::zhc::ValueType::Uint; v.u = u;
+    out.put(key, v);
+}
+
+// Curtain switch: gate data[10] in {5,2}, status at data[14].
+//   state_left  = (status == 1) ? ON : OFF
+//   state_right = (status == 0) ? ON : OFF   (note: non-bitmask polarity)
+bool fz_livolo_curtain(const ::zhc::DecodedMessage& msg,
+                        const ::zhc::FzConverter&,
+                        const ::zhc::PreparedDefinition&,
+                        ::zhc::RuntimeContext&,
+                        ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (!livolo_magic_header(msg) || msg.raw_data.size() < 15) return false;
+    if (msg.raw_data[10] != 5 && msg.raw_data[10] != 2) return false;
+    const std::uint8_t s = msg.raw_data[14];
+    put_str(out, "state_left",  s == 1 ? "ON" : "OFF");
+    put_str(out, "state_right", s == 0 ? "ON" : "OFF");
+    return true;
+}
+
+// Dimmer:
+//   data[10]==7  -> state = data[14] & 1
+//   data[10]==13 -> state = data[13] & 1
+//   data[10]==5  -> brightness = map(data[14]*10, 0..1000 -> 0..255)
+bool fz_livolo_dimmer(const ::zhc::DecodedMessage& msg,
+                       const ::zhc::FzConverter&,
+                       const ::zhc::PreparedDefinition&,
+                       ::zhc::RuntimeContext&,
+                       ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (!livolo_magic_header(msg) || msg.raw_data.size() < 15) return false;
+    const std::uint8_t dp = msg.raw_data[10];
+    if (dp == 7) {
+        put_str(out, "state", (msg.raw_data[14] & 0x01) ? "ON" : "OFF");
+        return true;
+    }
+    if (dp == 13) {
+        put_str(out, "state", (msg.raw_data[13] & 0x01) ? "ON" : "OFF");
+        return true;
+    }
+    if (dp == 5) {
+        // value = data[14] * 10 (0..1000) -> brightness 0..255.
+        const std::uint32_t value = static_cast<std::uint32_t>(msg.raw_data[14]) * 10u;
+        const std::uint32_t bri = value > 1000u ? 255u : (value * 255u) / 1000u;
+        put_uint(out, "brightness", bri);
+        return true;
+    }
+    return false;
+}
+
+// Cover (roller blind): dp at data[10], reportType at data[12].
+//   dp 0x0c/0x0f + reportType 0x04 -> position = 100 - data[13],
+//       state OPEN/CLOSE, moving = (dp == 0x0f)
+//   dp 0x0c/0x0f + reportType 0x12 -> motor_speed = data[13]
+//   dp 0x0c/0x0f + reportType 0x13 -> motor_direction (data[13] < 0x80 ? FORWARD : REVERSE)
+bool fz_livolo_cover(const ::zhc::DecodedMessage& msg,
+                      const ::zhc::FzConverter&,
+                      const ::zhc::PreparedDefinition&,
+                      ::zhc::RuntimeContext&,
+                      ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (!livolo_magic_header(msg) || msg.raw_data.size() < 14) return false;
+    const std::uint8_t dp = msg.raw_data[10];
+    if (dp != 0x0C && dp != 0x0F) return false;
+    const std::uint8_t report_type = msg.raw_data[12];
+    if (report_type == 0x04) {
+        const int pos = 100 - static_cast<int>(msg.raw_data[13]);
+        const std::uint8_t position =
+            static_cast<std::uint8_t>(pos < 0 ? 0 : (pos > 100 ? 100 : pos));
+        put_uint(out, "position", position);
+        put_str(out, "state", position > 0 ? "OPEN" : "CLOSE");
+        ::zhc::Value mv{}; mv.type = ::zhc::ValueType::Bool; mv.b = (dp == 0x0F);
+        out.put("moving", mv);
+        return true;
+    }
+    if (report_type == 0x12) {
+        put_uint(out, "motor_speed", msg.raw_data[13]);
+        return true;
+    }
+    if (report_type == 0x13) {
+        put_str(out, "motor_direction",
+                msg.raw_data[13] < 0x80 ? "FORWARD" : "REVERSE");
+        return true;
+    }
+    return false;
+}
+
+}  // namespace
+
+extern const ::zhc::FzConverter kFzLivoloCurtainState{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "genPowerCfg",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command) |
+                         ::zhc::type_bit(::zhc::MessageType::Raw),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_livolo_curtain },
+    .user_config       = nullptr,
+};
+
+extern const ::zhc::FzConverter kFzLivoloDimmerState{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "genPowerCfg",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command) |
+                         ::zhc::type_bit(::zhc::MessageType::Raw),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_livolo_dimmer },
+    .user_config       = nullptr,
+};
+
+extern const ::zhc::FzConverter kFzLivoloCoverState{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "genPowerCfg",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::Command) |
+                         ::zhc::type_bit(::zhc::MessageType::Raw),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_livolo_cover },
+    .user_config       = nullptr,
+};
 
 // ── State encoder (manuSpec writeAttribute mfg 0x1AD2) ──────────────
 
