@@ -1094,6 +1094,14 @@ target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_robb_parity_tests tests/test_robb_parity.cpp)
 target_link_libraries(zhc_robb_parity_tests PRIVATE zhc_definitions)
 
+# EcoDim (Dutch dimmers + wall remotes). The multi-button wall remotes
+# (ED-10011/12/13/14/15) emitted a bare `action` (a kAlwaysGlobalKey),
+# collapsing every button-pair onto one key. Set endpoint_map +
+# endpoint_action_suffix so each keeps identity (action_<n>) — same fix as
+# robb / vesternet. ED-10010 stays unsuffixed (z2m has no _n suffix there).
+add_executable(zhc_ecodim_parity_tests tests/test_ecodim_parity.cpp)
+target_link_libraries(zhc_ecodim_parity_tests PRIVATE zhc_definitions)
+
 # Vesternet (rebranded Sunricher). The multi-endpoint scene remotes (REM-013
 # 12-button, WAL-011 4-button, WAL-012 8-button) emitted a bare `action`
 # (a kAlwaysGlobalKey), collapsing every button onto one key. Set
@@ -1692,6 +1700,7 @@ add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
 add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
+add_test(NAME zhc_ecodim_parity_tests       COMMAND zhc_ecodim_parity_tests)
 add_test(NAME zhc_vesternet_parity_tests    COMMAND zhc_vesternet_parity_tests)
 add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
 add_test(NAME zhc_muller_licht_parity_tests COMMAND zhc_muller_licht_parity_tests)

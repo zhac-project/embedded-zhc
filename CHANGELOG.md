@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **EcoDim ED-10011/12/13/14/15 wall remotes — buttons collapsed onto one
+  `action` key.** z2m decodes these 2-/4-/8-button remotes with
+  `fz.command_on/off/move/stop` + `fz.battery` and distinguishes each
+  button-pair per endpoint (`on_1` … `brightness_stop_4`). The auto-port emitted
+  a bare `action` (a `kAlwaysGlobalKey`), so every button on every endpoint
+  collapsed onto a single key and the originating endpoint was lost. Graduated
+  the five defs out of `generated/` and added an `endpoint_map` (label = the
+  digit) + `endpoint_action_suffix` so the dispatcher rewrites the key to
+  `action_<n>` per endpoint — same convention as robb / vesternet. ED-10010 is
+  intentionally left unsuffixed (z2m exposes `action` with no `_n` suffix
+  there). Covered by `tests/test_ecodim_parity.cpp`.
 - **Mercator Ikuü SSWF01G AC fan controller — dead `fan_state` key.** z2m's
   `fz.fan` decodes `hvacFanCtrl` attr 0x0000 (fanMode) and publishes BOTH
   `fan_mode` and `fan_state` ("OFF"/"ON"), but the generated port wired the
