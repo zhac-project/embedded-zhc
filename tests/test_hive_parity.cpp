@@ -13,7 +13,10 @@
 //     kFzIasContactAlarm / kFzIasMotionAlarm converter. KEYPAD001 declares
 //     BOTH occupancy and contact (z2m wires both alarm-1 decoders), so it
 //     carries both typed converters; its IAS-ACE arm/panic path stays
-//     unwired (no generic converter — INFRA).
+//     unwired (no generic converter — INFRA). NB: z2m publishes contact with
+//     inverted polarity (contact = !bit0) for zoneType:"contact"
+//     (fz.ias_contact_alarm_1), so the contact key is the logical NOT of the
+//     raw alarm_1 bit; occupancy stays raw bit 0.
 //
 //  2. Thermostat running_state. Every Hive heating receiver (SLR1/1b/1c/1d,
 //     SLR2/2b/2c, OTR1) is wired upstream with fz.thermostat, which decodes
@@ -123,31 +126,37 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def, std::uint16_t cluster
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
-// Assert: alarm_1 (bit 0) asserted -> semantic key true, bare "alarm_1"
-// absent, tamper/battery_low reflect bits 2/3.
-void check_ias_alarm1(const PreparedDefinition& def, const char* sem) {
+// Assert: alarm_1 (bit 0) drives the semantic key, bare "alarm_1" absent,
+// tamper/battery_low reflect bits 2/3.
+//   invert=false (default — occupancy via fz.ias_occupancy_alarm_1): bit0 SET
+//     -> key true.
+//   invert=true  (contact via fz.ias_contact_alarm_1): z2m publishes
+//     contact = !bit0, so bit0 SET (open) -> contact:false; bit0 CLEAR
+//     (closed) -> contact:true. Only `contact` inverts.
+void check_ias_alarm1(const PreparedDefinition& def, const char* sem,
+                      bool invert = false) {
     assert(def_exposes(def, sem));   // regression guard vs generic kFzIasZone
 
-    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
+    auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 / bit0 SET
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    assert((invert ? b_false : b_true)(on.merged.find(sem)));
     assert(on.merged.find("alarm_1") == nullptr);     // bare key must be gone
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
-    auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
+    auto off = dispatch_ias(def, ias_notif(0x0000));  // bit0 clear
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    assert((invert ? b_true : b_false)(off.merged.find(sem)));
 
-    auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
+    auto tb = dispatch_ias(def, ias_notif(0x000C));   // bit0 clear + tamper(bit2)+battery_low(bit3)
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    assert((invert ? b_true : b_false)(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
 
 // ── DWS003 contact + MOT003 occupancy ────────────────────────────────
-void check_contact_sensor()  { check_ias_alarm1(devices::hive::kDef_DWS003, "contact"); }
+void check_contact_sensor()  { check_ias_alarm1(devices::hive::kDef_DWS003, "contact", /*invert=*/true); }
 void check_motion_sensor()   { check_ias_alarm1(devices::hive::kDef_MOT003, "occupancy"); }
 
 // ── KEYPAD001: ONE status-change frame fills BOTH occupancy and contact ─
@@ -156,17 +165,18 @@ void check_keypad() {
     assert(def_exposes(def, "occupancy"));
     assert(def_exposes(def, "contact"));
 
-    // bit 0 set: both typed decoders read bit 0 -> occupancy AND contact true.
+    // bit 0 set: occupancy reads raw bit0 -> true; contact follows z2m
+    // polarity (contact = !bit0) -> false. (alarm_1 bare key gone.)
     auto on = dispatch_ias(def, ias_notif(0x0001));
     assert(on.any_matched);
     assert(b_true(on.merged.find("occupancy")));
-    assert(b_true(on.merged.find("contact")));
+    assert(b_false(on.merged.find("contact")));
     assert(on.merged.find("alarm_1") == nullptr);
 
-    // clear -> both false.
+    // bit 0 clear -> occupancy false; contact true (closed).
     auto off = dispatch_ias(def, ias_notif(0x0000));
     assert(b_false(off.merged.find("occupancy")));
-    assert(b_false(off.merged.find("contact")));
+    assert(b_true(off.merged.find("contact")));
 
     // tamper(bit2)+battery_low(bit3) preserved through both converters.
     auto tb = dispatch_ias(def, ias_notif(0x000C));

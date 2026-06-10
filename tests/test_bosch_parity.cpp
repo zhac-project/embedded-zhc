@@ -22,7 +22,10 @@
 //     emits the *semantic* key for the zone type: contact / occupancy /
 //     smoke / water_leak. Fixed with the typed bundles kFzBoschContact /
 //     kFzBoschMotion / kFzBoschSmoke / kFzBoschWaterLeak (bit 0 → semantic
-//     key, bit 2 → tamper, bit 3 → battery_low).
+//     key, bit 2 → tamper, bit 3 → battery_low). NB: contact follows z2m
+//     polarity contact = !(bit0) — z2m's m.iasZoneAlarm(zoneType:"contact")
+//     inverts the payload — so the port wires the inverting generic
+//     kFzIasContactAlarm. occupancy/smoke/water_leak stay raw bit 0.
 //
 // Deferred (INFRA, manuSpec custom cluster, no generic converter):
 // Twinguard (8750001213, 0xE000 air-quality+smoke), BSIR-EZ siren command
@@ -111,40 +114,46 @@ bool def_binds(const PreparedDefinition& def, std::uint16_t cluster_id) {
     return false;
 }
 
-// Generic check for a typed IAS sensor: the semantic key fires on
+// Generic check for a typed IAS sensor: the semantic key fires off
 // zoneStatus bit 0, the dead generic `alarm` key is gone, and tamper /
 // battery_low ride bits 2 / 3.
-void check_typed_ias(const PreparedDefinition& def, const char* sem_key) {
+//   invert=false (default — occupancy/smoke/water_leak): bit0 SET -> key true.
+//   invert=true  (zoneType:"contact"): z2m's m.iasZoneAlarm inverts the
+//     contact payload, so the port wires the now-inverting generic
+//     kFzIasContactAlarm. bit0 SET (open) -> contact:false; bit0 CLEAR
+//     (closed) -> contact:true. Only `contact` inverts.
+void check_typed_ias(const PreparedDefinition& def, const char* sem_key,
+                     bool invert = false) {
     assert(def_exposes(def, sem_key));
     assert(!def_exposes(def, "alarm"));   // dead generic key must be gone
     assert(def_binds(def, 0x0500));       // ssIasZone
     assert(def_binds(def, 0x0001));       // genPowerCfg (battery)
 
-    // bit 0 set -> semantic key true; never a bare `alarm`.
+    // bit 0 SET -> semantic key (true unless inverted contact); never bare `alarm`.
     auto on = dispatch_ias(def, ias_notif(0x0001));
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem_key)));
+    assert((invert ? b_false : b_true)(on.merged.find(sem_key)));
     assert(on.merged.find("alarm") == nullptr);
 
-    // bit 0 clear -> semantic key false.
+    // bit 0 CLEAR -> semantic key (false unless inverted contact).
     auto off = dispatch_ias(def, ias_notif(0x0000));
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem_key)));
+    assert((invert ? b_true : b_false)(off.merged.find(sem_key)));
 
-    // bits 2+3 -> tamper + battery_low, semantic key clear.
+    // bits 2+3 (bit0 clear) -> tamper + battery_low; semantic key per polarity.
     auto tb = dispatch_ias(def, ias_notif(0x000C));
     assert(tb.any_matched);
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
-    assert(b_false(tb.merged.find(sem_key)));
+    assert((invert ? b_true : b_false)(tb.merged.find(sem_key)));
 }
 
 }  // namespace
 
-// ── contacts: zoneStatus bit 0 -> `contact` (not bare `alarm`) ───────
-static void test_contact_c2()  { check_typed_ias(devices::bosch::kDef_BSEN_C2,  "contact"); }
-static void test_contact_cv()  { check_typed_ias(devices::bosch::kDef_BSEN_CV,  "contact"); }
-static void test_contact_c2d() { check_typed_ias(devices::bosch::kDef_BSEN_C2D, "contact"); }
+// ── contacts: zoneStatus bit 0 -> `contact`, z2m polarity contact=!bit0 ──
+static void test_contact_c2()  { check_typed_ias(devices::bosch::kDef_BSEN_C2,  "contact", /*invert=*/true); }
+static void test_contact_cv()  { check_typed_ias(devices::bosch::kDef_BSEN_CV,  "contact", /*invert=*/true); }
+static void test_contact_c2d() { check_typed_ias(devices::bosch::kDef_BSEN_C2D, "contact", /*invert=*/true); }
 
 // ── motion: zoneStatus bit 0 -> `occupancy` ──────────────────────────
 static void test_motion_m()    { check_typed_ias(devices::bosch::kDef_BSEN_M,            "occupancy"); }

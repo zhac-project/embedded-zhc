@@ -20,8 +20,9 @@
 //     variant emitting `occupancy`).
 //
 // These tests pin, on real wire shapes:
-//   1. Contact decodes `contact` from IAS bit 0 (and exposes `contact`, not
-//      `alarm`); tamper/battery_low ride the shared bits.
+//   1. Contact decodes `contact` from IAS bit 0 with z2m polarity
+//      (contact = !bit0: bit0 SET -> open/false, clear -> closed/true) and
+//      exposes `contact`, not `alarm`; tamper/battery_low ride the shared bits.
 //   2. Motion decodes `occupancy` from IAS bit 1 (alarm_2) and NOT from bit 0
 //      — the wrong-bit guard.
 //   3. Motion also decodes occupancy from msOccupancySensing 0x0406, plus
@@ -127,7 +128,9 @@ bool def_exposes(const PreparedDefinition& def, const char* key) {
     return false;
 }
 
-// Contact: bit 0 (alarm_1) -> `contact`; never `alarm`.
+// Contact: z2m publishes `contact = !(zoneStatus bit0)` for zoneType:"contact"
+// (fz.ias_contact_alarm_1) — bit0 SET (alarmed/open) -> contact:false; bit0
+// CLEAR (closed) -> contact:true. Never `alarm`.
 void test_contact(const PreparedDefinition& def, bool expect_tamper_expose) {
     assert(def_exposes(def, "contact"));
     assert(def_exposes(def, "battery"));
@@ -136,14 +139,14 @@ void test_contact(const PreparedDefinition& def, bool expect_tamper_expose) {
     assert(!def_exposes(def, "voltage"));
     assert(def_exposes(def, "tamper") == expect_tamper_expose);
 
-    auto on = dispatch_ias(def, 0x0001);   // alarm_1 / bit 0
+    auto on = dispatch_ias(def, 0x0001);   // alarm_1 / bit 0 SET -> open -> contact:false
     assert(on.any_matched);
-    assert(b_true(on.merged.find("contact")));
+    assert(b_false(on.merged.find("contact")));
     assert(on.merged.find("alarm") == nullptr);
 
-    auto off = dispatch_ias(def, 0x0000);
+    auto off = dispatch_ias(def, 0x0000);  // bit 0 CLEAR -> closed -> contact:true
     assert(off.any_matched);
-    assert(b_false(off.merged.find("contact")));
+    assert(b_true(off.merged.find("contact")));
 
     // tamper(bit2)+battery_low(bit3) ride the shared bits.
     auto tb = dispatch_ias(def, 0x000C);
