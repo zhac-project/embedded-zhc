@@ -149,6 +149,14 @@ across the ZHAC platform.
   (roller blind) was verified already correct (its single `kTzCoverPosition`
   already claims both `position` and `state`, covering z2m's
   `[tz.cover_state, tz.cover_position_tilt]`).
+- **EDP re:dy plug bind-endpoint parity.** `PLUG EDP RE:DY` (z2m `fz.on_off`
+  + `fz.metering`) configures genOnOff + seMetering on `device.getEndpoint(85)`
+  ("re:dy plug uses ep relay"), but the auto-port bound both clusters on
+  endpoint 1, so the coordinator never bound the device's relay/metering
+  endpoint and state/power/energy never reported. Repointed both bindings to
+  endpoint 85. Metering stays 0x0702-only — z2m does not use
+  `fz.electrical_measurement`, so there is no 0x0B04 (voltage/current) channel.
+
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as
