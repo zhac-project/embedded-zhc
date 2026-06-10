@@ -25,6 +25,17 @@ across the ZHAC platform.
   (no phantom `current_heating_setpoint`). Graduated `Vie_ZK03840.cpp` to a
   Tier-2 parent. Covered by `tests/test_viessmann_parity.cpp`.
 
+- **Salus Controls RE600 Zigbee router — phantom on/off + battery bundle.**
+  z2m declares the RE600 with `fromZigbee:[]`, `toZigbee:[]`, `exposes:[]` (a
+  pure mains repeater with no reportable state), but the auto-generated port
+  carried a phantom `state` (on/off) plus a `battery`/`voltage` bundle, wired
+  `kFzOnOff`/`kFzBattery`, and bound `genOnOff` (0x0006) + `genPowerCfg`
+  (0x0001). Graduated `Sal_RE600.cpp` to a Tier-2 parent stripping all
+  exposes/decoders/toZigbee/bindings to match z2m exactly. Added
+  `tests/test_salus_controls_parity.cpp`, which also guards the already-correct
+  SW600/OS600/WLS600 typed-IAS decode, the FC600 flat thermostat surface, and
+  the SP600/SPE600/SX885ZB metering plugs (seMetering 0x0702 only, no phantom
+  haElectricalMeasurement 0x0B04).
 - **Mercator Ikuü SSWF01G AC fan controller — dead `fan_state` key.** z2m's
   `fz.fan` decodes `hvacFanCtrl` attr 0x0000 (fanMode) and publishes BOTH
   `fan_mode` and `fan_state` ("OFF"/"ON"), but the generated port wired the
