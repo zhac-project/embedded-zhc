@@ -1021,6 +1021,15 @@ target_link_libraries(zhc_samotech_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_climax_parity_tests tests/test_climax_parity.cpp)
 target_link_libraries(zhc_climax_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Lupus (LUPUSEC) family. The 12031 / LS12128 SCM-family roller
+# shutters were ported against closuresWindowCovering (0x0102) — a cluster they
+# never speak — leaving position decode and control dead; rewired to the
+# via-brightness converters (genLevelCtrl 0x0008 + genOnOff 0x0006) and the
+# z2m cover_position() `state` expose restored. Also pins the 12127 two-channel
+# relay's l1/l2 endpoint_map key suffixing. See tests/README.md.
+add_executable(zhc_lupus_parity_tests tests/test_lupus_parity.cpp)
+target_link_libraries(zhc_lupus_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Enbrighten (GE/Jasco) switch/outlet/dimmer family. Every
 # device pairs its controllable surface with z2m commandsOnOff (+ dimmers:
 # commandsLevelCtrl), which decode the device's physical button presses
@@ -2337,6 +2346,7 @@ add_test(NAME zhc_hzc_electric_parity_tests COMMAND zhc_hzc_electric_parity_test
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
 add_test(NAME zhc_multiterm_parity_tests    COMMAND zhc_multiterm_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
+add_test(NAME zhc_lupus_parity_tests        COMMAND zhc_lupus_parity_tests)
 add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
