@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Airzone Aidoo AZAI6ZBEMHI (Mitsubishi Heavy AC controller): dead cooling
+  setpoint.** z2m's `e.climate()...withSetpoint("occupied_cooling_setpoint", ...)`
+  is decoded by `fz.thermostat` from hvacThermostat attr 0x0011, but the generic
+  `kFzThermostat` decodes only 0x0000/0x0012/0x001C, so the cooling setpoint was
+  absent/dead. Graduated the def to a Tier-2 override and wired a new
+  `kFzAirzoneThermostatExtras` (attr 0x0011 → `current_cooling_setpoint`)
+  alongside the generic decoder, mirroring the Owon HVAC pattern. Also added the
+  `current_cooling_setpoint` expose and corrected `system_mode` / `fan_mode` from
+  Binary to Enum (z2m `withSystemMode` / `withFanMode`). `fan_mode` already
+  matched the generic `kFzFanMode` key.
+
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
   but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
