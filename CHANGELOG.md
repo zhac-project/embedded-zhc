@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **CLIMAX SCM-5ZBS cover and SRAC-23B-ZBSR siren had dead decode/control
+  surfaces.** The SCM-5ZBS roller shutter was wired to the
+  `closuresWindowCovering` cluster (0x0102) it never speaks; z2m proxies
+  position through `genLevelCtrl` `currentLevel` + `genOnOff` (z2m
+  `fz.cover_position_via_brightness` / `fz.cover_state_via_onoff` /
+  `tz.cover_via_brightness`), so both position decode and control were dead.
+  Added reusable generic `kFzCoverPositionViaBrightness` /
+  `kFzCoverStateViaOnOff` / `kTzCoverViaBrightness` converters and rewired the
+  shutter (bindings genLevelCtrl 0x0008 + genOnOff 0x0006). The SRAC-23B-ZBSR
+  siren wired the generic `kFzIasZone`, which only reads the `ssIasZone`
+  ZoneStatus *attribute* report — but z2m `fz.ias_siren` decodes the
+  `commandStatusChangeNotification` *command*, so the `alarm` key was dead on a
+  real siren trigger. Swapped to `kFzIasGenericAlarm` (command-path bit0 →
+  `alarm`) and regained the dropped `ias_wd` `max_duration` channel
+  (`kFzIasWdMaxDuration` / `kTzIasWdMaxDuration`, ssIasWd 0x0502) plus the
+  missing `warning` / `squawk` / `max_duration` exposes.
+
 - **TERNCY raw-frame action/motion decoder read past the body (dead action +
   occupancy surface).** z2m's `fzLocal.terncy_raw` reads the WHOLE raw frame
   buffer (`msg.data`, ZCL header included): `msg.data[4]` discriminates action

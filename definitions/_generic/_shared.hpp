@@ -446,6 +446,14 @@ extern const FzConverter kFzCoverPosition;
 // "tilt". The lift half lives in kFzCoverPosition (attr 0x0008). Pair both
 // on tilt-capable covers (z2m m.windowCovering({controls:["lift","tilt"]})).
 extern const FzConverter kFzCoverTilt;
+// Position-via-brightness covers: the device has no closuresWindowCovering
+// cluster and instead proxies position through genLevelCtrl `currentLevel`
+// (attr 0x0000, u8 0-255 mapped to 0-100 %) and open/close state through
+// genOnOff `onOff` (1=OPEN, 0=CLOSE). Mirrors z2m
+// `fz.cover_position_via_brightness` + `fz.cover_state_via_onoff` (Climax
+// SCM-5ZBS roller shutter). Pair both; drive with kTzCoverViaBrightness.
+extern const FzConverter kFzCoverPositionViaBrightness;
+extern const FzConverter kFzCoverStateViaOnOff;
 extern const FzConverter kFzMetering;
 extern const FzConverter kFzElectricalMeasurement;
 extern const FzConverter kFzThermostat;
@@ -556,6 +564,12 @@ extern const TzConverter kTzColor;
 
 // closuresWindowCovering (0x0102) position/state setter.
 extern const TzConverter kTzCoverPosition;
+
+// genLevelCtrl (0x0008) position setter for position-via-brightness covers.
+// Accepts input key `position` (0-100 %), scales to a 0-255 level and emits
+// moveToLevelWithOnOff (cmd 0x04). Mirrors z2m `tz.cover_via_brightness`
+// (Climax SCM-5ZBS). Pair with kFzCoverPositionViaBrightness on decode.
+extern const TzConverter kTzCoverViaBrightness;
 
 // ssIasWd (0x0502) warning/siren startWarning (cmd 0x00) encoder.
 extern const TzConverter kTzWarning;
