@@ -166,6 +166,15 @@ across the ZHAC platform.
   `#54668161` (12 in. LED smart puff, z2m `m.light({colorTemp})`) had its
   color_temp axis dropped — restored `kFzColorTemperature`/`kTzColorTemp`,
   the `color_temp` expose, and the lightingColorCtrl (0x0300) bind.
+- **Netvox ZB02A remote-action parity.** The `ZB02A` wireless wall switch
+  (z2m `fromZigbee:[fz.command_toggle]`, `toZigbee:[]`,
+  `exposes:[e.action(["toggle"])]`) was mis-ported as a controllable on/off
+  switch — `kFzOnOff` + `kTzOnOff` + a dead `state` expose — so button
+  presses were dropped and the UI showed a non-functional toggle target.
+  Rewired to the generic `kFzCommandToggle` publishing `action: toggle`,
+  with no write path and no phantom state. `Z809A` (metering socket) was
+  verified correct: z2m's `fz.electrical_measurement` is the 0x0B04 half
+  only (no seMetering/energy), matching the existing port.
 
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)

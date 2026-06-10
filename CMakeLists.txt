@@ -1605,6 +1605,9 @@ target_link_libraries(zhc_gewiss_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_aeotec_parity_tests tests/test_aeotec_parity.cpp)
 target_link_libraries(zhc_aeotec_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_netvox_parity_tests tests/test_netvox_parity.cpp)
+target_link_libraries(zhc_netvox_parity_tests PRIVATE zhc_definitions)
+
 # Konke family parity fixtures. The 2AJZ4KPFT and KK-ES-J01W sensors were
 # auto-ported as battery-only — the generator dropped every msTemperature /
 # msRelativeHumidity / msIlluminance channel z2m surfaces. Restored the
@@ -2894,6 +2897,7 @@ add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
 add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_aeotec_parity_tests       COMMAND zhc_aeotec_parity_tests)
+add_test(NAME zhc_netvox_parity_tests       COMMAND zhc_netvox_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
 add_test(NAME zhc_somgoms_parity_tests      COMMAND zhc_somgoms_parity_tests)
