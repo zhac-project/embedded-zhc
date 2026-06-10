@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Schwaiger parity: restored dropped LED colour/CCT channels.** The
+  HAL300/HAL550/HAL800 (`m.light({colorTemp, color})`) and HAL500
+  (`m.light({colorTemp})`) bulbs were auto-ported as bare on/off +
+  brightness, dropping the entire `lightingColorCtrl` (0x0300) channel.
+  Graduated to Tier 2 + wired `kFzColorTemperature`/`kTzColorTemp` (all
+  four) and `kFzColor`/`kTzColor` (the three RGB models), added the
+  `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes and the
+  0x0300 binding. ZHS-15 verified already correct (z2m
+  `fz.electrical_measurement` = 0x0B04 power/voltage/current only, no
+  0x0702 energy) and pinned by a regression test.
+
 - **Envilar parity: metering 0x0B04 half, dead remote, missing CCT channel.**
   `1CH-HP-RELAY-7853` + `7859` use z2m `m.electricityMeter()` (default
   `cluster:"both"`, so seMetering 0x0702 energy **and**
