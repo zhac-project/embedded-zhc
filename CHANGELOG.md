@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Securifi Almond Click (B01M7Y8BP9 / ZB2-BU01): mis-ported as a dead
+  on/off switch.** The auto-port wired `kFzOnOff` + `kTzOnOff` + a bare
+  `state` expose, but the button never speaks genOnOff — it reports clicks
+  on `ssIasAce` `commandArm`, reusing the `armmode` byte with a
+  device-specific lookup (z2m `fz.almond_click`: 3 = single, 0 = double,
+  2 = long; NOT the standard IAS-ACE arm-mode names). Graduated to a parent
+  override wired onto a new vendor `kFzAlmondClick` decoder that emits
+  `action`, with no on/off state and no writeable path (z2m `toZigbee:[]`).
+  The Peanut Smart Plug (PP-WHT-US) was verified clean (z2m
+  `fz.electrical_measurement`, 0x0B04 power/voltage/current, no 0x0702
+  energy — already matched).
+
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
   but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
