@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Halemeier S-Mitter / X-Mitter remotes were mis-ported as on/off
+  switches.** HA-ZSM-MW2, HA-ZBM-MW2 and HA-ZX1 are battery remotes that emit
+  genOnOff / genLevelCtrl / lightingColorCtrl / genScenes cluster commands, but
+  the auto-generator wired `kFzOnOff` + `kTzOnOff` (a controllable switch with a
+  dead `state` attribute). Rewired to `kFzCommand*` converters with an `action`
+  expose (on/off, brightness_step/move, color_temperature_step, recall, stop)
+  and dropped the phantom state + toZigbee path.
+
 - **The Light Group (SLC SmartOne) remotes were wrong-bundled as settable
   lights.** S57003 (4-channel wall remote) and S57007 (3-button remote
   control) are battery-powered scene/dimmer remotes with z2m `toZigbee: []`,

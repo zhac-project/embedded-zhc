@@ -1163,6 +1163,9 @@ target_link_libraries(zhc_sengled_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_halo_parity_tests tests/test_halo_parity.cpp)
 target_link_libraries(zhc_halo_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_halemeier_parity_tests tests/test_halemeier_parity.cpp)
+target_link_libraries(zhc_halemeier_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Datek Eva AMS HAN power-meter (HSE2905E "Meter
 # Reader"). z2m stacks two m.electricityMeter bundles (metering +
 # producedEnergy, electrical + threePhase) but the generated port wired
@@ -2086,6 +2089,7 @@ add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
 add_test(NAME zhc_sengled_parity_tests      COMMAND zhc_sengled_parity_tests)
 add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)
+add_test(NAME zhc_halemeier_parity_tests    COMMAND zhc_halemeier_parity_tests)
 add_test(NAME zhc_legrand_parity_tests      COMMAND zhc_legrand_parity_tests)
 add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
