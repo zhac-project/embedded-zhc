@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **WMUN ZS05 universal IR remote (TS1201): rescued from battery-only port.**
+  The auto-port reduced this IR remote to a battery-only device — it kept only
+  `kFzBattery` and dropped the entire Zosung IR channel that z2m wires
+  (`wmun.ts` #ZS05: `addZosungIRTransmitCluster`/`addZosungIRControlCluster` +
+  the six `fzZosung.zosung_send_ir_code_00..05` fz handlers + the two `tzZosung`
+  handlers, exposing `learn_ir_code`/`learned_ir_code`/`ir_code_to_send`).
+  Graduated to a parent override wired against the shared Zosung IR runtime
+  (`definitions/zosung/_shared`, the same infra the Moes UFO-R11 uses): restored
+  all 6 IRTransmit fz handlers + 2 tz handlers + the 3 IR exposes, bound both
+  Zosung clusters (0xED00 / 0xE004), and restored the missing
+  `_TZ3290_u9xac5rv` manufacturer fingerprint. (Hardware testing of the Zosung
+  state machine still pending, per the shared runtime's standing note.)
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
