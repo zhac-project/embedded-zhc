@@ -1,15 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Meazon MEAZON_DINRAIL — auto-generated.
+// Tier 2: uses shared meazon converters.
 // DinRail 1-phase meter
-// z2m-source: meazon.ts #MEAZON_DINRAIL.
+// z2m-source: meazon.ts #MEAZON_DINRAIL (fz.meazon_meter).
+//
+// z2m drives power/voltage/current via the vendor `fz.meazon_meter`
+// (manufacturer-specific seMetering attrs 0x2001/0x2004/0x2015/0x2007/
+// 0x2018), NOT the standard metering path. The auto-generated port
+// wired generic kFzElectricalMeasurement (standard haElectricalMeasurement
+// 0x0B04 attrs the device never reports), leaving every channel dead.
+// Replaced with kFzMeazonMeter; bindings realigned to endpoint 10
+// (genOnOff + seMetering) per z2m configure. (No energy expose — DINRAIL
+// reports none.)
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/meazon/_shared.hpp"
 
 namespace zhc::devices::meazon {
 namespace {
 const FzConverter* const kFz_MEAZON_DINRAIL[] = {
     &::zhc::generic::kFzOnOff,
-    &::zhc::generic::kFzElectricalMeasurement,
+    &::zhc::meazon::kFzMeazonMeter,
 };
 const TzConverter* const kTz_MEAZON_DINRAIL[] = {
     &::zhc::generic::kTzOnOff,
@@ -28,8 +38,8 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0B04},
+    {10, 0x0006},
+    {10, 0x0702},
 };
 // --- end auto-generated block ---
 

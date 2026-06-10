@@ -1703,6 +1703,18 @@ target_link_libraries(zhc_innr_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_bituo_technik_parity_tests tests/test_bituo_technik_parity.cpp)
 target_link_libraries(zhc_bituo_technik_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the MEAZON metering plugs (BIZY_PLUG, DINRAIL). Both run
+# z2m fz.meazon_meter, which decodes MANUFACTURER-SPECIFIC (MEAZON_S_A)
+# attributes carried inside seMetering 0x0702 (power 0x2001, voltage 0x2004/
+# 0x2015, current 0x2007/0x2018, energy 0x3000) — proprietary IDs that the
+# generic kFzMetering (0x0000/0x0400) + kFzElectricalMeasurement (0x0B04) never
+# read, so every channel was a dead expose. Added kFzMeazonMeter
+# (definitions/meazon/_shared.cpp) replacing the generic pair on both graduated
+# Tier-2 defs; bindings realigned to endpoint 10 (genOnOff + seMetering). See
+# tests/README.md.
+add_executable(zhc_meazon_parity_tests tests/test_meazon_parity.cpp)
+target_link_libraries(zhc_meazon_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the LifeControl (MCLH series). The sweep restored
 # three dropped channels: MCLH-02 colour bulb (lightingColorCtrl half),
 # MCLH-03 socket (haElectricalMeasurement voltage/current), and MCLH-08
@@ -2278,6 +2290,7 @@ add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)
+add_test(NAME zhc_meazon_parity_tests       COMMAND zhc_meazon_parity_tests)
 add_test(NAME zhc_lifecontrol_parity_tests  COMMAND zhc_lifecontrol_parity_tests)
 add_test(NAME zhc_amina_parity_tests        COMMAND zhc_amina_parity_tests)
 add_test(NAME zhc_xyzroe_parity_tests       COMMAND zhc_xyzroe_parity_tests)

@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Meazon BIZY_PLUG / DINRAIL metering plugs reported no power/voltage/current/
+  energy.** Both run z2m's vendor `fz.meazon_meter`, which decodes
+  manufacturer-specific (MEAZON_S_A) attributes carried *inside* the seMetering
+  (0x0702) cluster — proprietary IDs (power 0x2001, voltage 0x2004/0x2015,
+  current 0x2007/0x2018, energy 0x3000) that do not overlap the standard
+  metering slots. The auto-ports wired the generic `kFzMetering` (0x0000/0x0400)
+  + `kFzElectricalMeasurement` (0x0B04) instead, so every electrical channel was
+  a dead expose (and the device reports on no 0x0B04 cluster at all). Graduated
+  both defs to Tier-2 and replaced the generic pair with a shared `kFzMeazonMeter`
+  (`definitions/meazon/_shared.cpp`); raw pass-through matching z2m. Bindings
+  realigned to endpoint 10 (genOnOff + seMetering) per z2m `configure`, dropping
+  the phantom 0x0B04 bind.
 - **Siterwell GS361A-H04 (TS0601 radiator-valve thermostat) decoded nothing.**
   The auto-port misrouted it to the generic genThermostat pair (`kFzThermostat`
   / `kTzThermostat`) bound on ZCL 0x0201, but this is a Tuya-MCU TRV that z2m
