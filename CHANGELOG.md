@@ -49,6 +49,18 @@ across the ZHAC platform.
   `action` expose + the `{1,0x0008}` genLevelCtrl bind, dropped the phantom
   state and toolbox; kept the `Z3-1BRL` battery.
 
+- **Databyte Touch4 + DTB190502A1: dropped custom genOnOff manufacturer-attr decoders.**
+  Both databyte.ch devices hang vendor attributes off the standard genOnOff
+  cluster (0xA191..0xA194) and the auto-ports dropped them. `Touch4`
+  (DTB-ED2011-014) was battery-only so the four touch keys never surfaced; it
+  now wires a vendor converter emitting `key_1`..`key_4` (z2m `fzLocal.DTB2011014`).
+  `DTB190502A1` (CC2530 IO board) fabricated a controllable on/off `state` + a
+  phantom battery/voltage bundle; it now wires `fz.DTB190502A1` emitting
+  `led_state`/`key_state`/`cpu_temperature` and carries z2m's exposes (no
+  battery, no `state`). New shared converters in `definitions/databyte/_shared.{hpp,cpp}`;
+  both defs graduated to Tier-2 parent overrides. (The suspected 4-gang
+  endpoint_map collision was a false flag — z2m uses four manufacturer
+  attributes on one endpoint, not per-endpoint genOnOff state.)
 - **Nordtronic metering dimmers/relays: dropped 0x0B04 half + dead remote.**
   The four metering devices `98424072` (rotary), `98425271` (Box Dimmer G2),
   `98425033` (ceiling micro) and `98425034` (DIN rail) are z2m `m.light()` +
