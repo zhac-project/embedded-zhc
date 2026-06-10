@@ -1,8 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Gs BDHM8E27W70-I1 — auto-generated.
+// Tier 2: Gs BDHM8E27W70-I1 — graduated from generated/ for a parity fix.
 // Smart light bulb
-// z2m-source: gs.ts #BDHM8E27W70-I1.
+// z2m-source: gs.ts #BDHM8E27W70-I1 —
+//   m.light({colorTemp:{range:[153,370]}}) + m.identify().
+//
+// Parity fix (light completeness): the auto-port collapsed a tunable-white
+// (colorTemp) light to on/off + brightness only, dropping the colorTemp
+// axis. Restored colorTemp (kFzColorTemperature / kTzColorTemp →
+// color_temp) plus the lightingColorCtrl (0x0300) binding.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::gs {
@@ -10,10 +16,12 @@ namespace {
 const FzConverter* const kFz_BDHM8E27W70_I1[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzColorTemperature,
 };
 const TzConverter* const kTz_BDHM8E27W70_I1[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzColorTemp,
 };
 constexpr const char* kModels_BDHM8E27W70_I1[] = { "BDHM8E27W70-I1" };
 
@@ -24,11 +32,13 @@ constexpr const char* kModels_BDHM8E27W70_I1[] = { "BDHM8E27W70-I1" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
+    {1, 0x0300},
 };
 // --- end auto-generated block ---
 

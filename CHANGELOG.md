@@ -64,6 +64,19 @@ across the ZHAC platform.
   booleans) was already at parity; the model-only battery+onOff stub is a harmless
   dead dup (loses Pass-1 ordering) and was left untouched.
 
+- **GS (Linkind-OEM) family: IAS dead-keys, dropped socket metering half, and
+  incomplete bulbs.** The 6 IAS sensors lowered the generic `kFzIasZone` (bare
+  key `alarm`, bit 0) while exposing a semantic key, so the primary sensor
+  state never reached the shadow; graduated each to the typed
+  `kFzIas<Type>Alarm` converter — `occupancy` (SMHM-I1), `contact` (SOHM-I1),
+  `smoke` (SSHM-I1), `water_leak` (SWHM-I1), and `gas` for the methane/propane
+  sensors (SGMHM-I1 / SGPHM-I1, which read `alarm_2`/zoneStatus bit 1 via
+  `kFzIasGasAlarm2`). The SKHMP30-I1 smart socket dropped the `electricityMeter()`
+  `cluster:"both"` 0x0B04 half — restored `kFzElectricalMeasurement` plus the
+  `voltage`/`current` exposes and the 0x0B04 binding. The BRHM8E27W70-I1 (RGB+CT)
+  and BDHM8E27W70-I1 (CT) bulbs were collapsed to on/off+brightness — restored
+  `color_temp` (and `hue`/`saturation` on BRHM) plus the lightingColorCtrl
+  (0x0300) binding.
 - **Siterwell GS361A-H04 (TS0601 radiator-valve thermostat) decoded nothing.**
   The auto-port misrouted it to the generic genThermostat pair (`kFzThermostat`
   / `kTzThermostat`) bound on ZCL 0x0201, but this is a Tuya-MCU TRV that z2m

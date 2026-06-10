@@ -1,8 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Gs SKHMP30-I1 — auto-generated.
+// Tier 2: Gs SKHMP30-I1 — graduated from generated/ for a parity fix.
 // Smart socket
-// z2m-source: gs.ts #SKHMP30-I1.
+// z2m-source: gs.ts #SKHMP30-I1 — m.onOff({powerOnBehavior:false}) +
+//   m.electricityMeter() + m.identify().
+//
+// Parity fix (metering 0x0B04 half): z2m's electricityMeter() defaults to
+// cluster "both" — fz.metering (seMetering 0x0702 → energy) AND
+// fz.electrical_measurement (haElectricalMeasurement 0x0B04 → power /
+// voltage / current; power is sourced from 0x0B04 by default). The
+// auto-port only wired kFzMetering (0x0702) and dropped the entire 0x0B04
+// half, so voltage + current never reached the shadow. Added
+// kFzElectricalMeasurement, the voltage + current exposes, and the
+// 0x0B04 binding. (acFrequency / powerFactor are disabled in the GS args,
+// so they are intentionally absent.)
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::gs {
@@ -10,6 +21,7 @@ namespace {
 const FzConverter* const kFz_SKHMP30_I1[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzElectricalMeasurement,
 };
 const TzConverter* const kTz_SKHMP30_I1[] = {
     &::zhc::generic::kTzOnOff,
@@ -24,11 +36,14 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0702},
+    {1, 0x0B04},
 };
 // --- end auto-generated block ---
 

@@ -1,8 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Gs BRHM8E27W70-I1 — auto-generated.
+// Tier 2: Gs BRHM8E27W70-I1 — graduated from generated/ for a parity fix.
 // Smart color light bulb
-// z2m-source: gs.ts #BRHM8E27W70-I1.
+// z2m-source: gs.ts #BRHM8E27W70-I1 —
+//   m.light({colorTemp:{range:undefined}, color:true}) + m.identify().
+//
+// Parity fix (light completeness): the auto-port collapsed a full RGB +
+// colorTemp light to on/off + brightness only, dropping the colour axes.
+// Restored colorTemp (kFzColorTemperature / kTzColorTemp → color_temp)
+// and the HS colour axis (kFzColor / kTzColor → hue + saturation) plus
+// the lightingColorCtrl (0x0300) binding.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::gs {
@@ -10,10 +17,14 @@ namespace {
 const FzConverter* const kFz_BRHM8E27W70_I1[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzColorTemperature,
+    &::zhc::generic::kFzColor,
 };
 const TzConverter* const kTz_BRHM8E27W70_I1[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzColorTemp,
+    &::zhc::generic::kTzColor,
 };
 constexpr const char* kModels_BRHM8E27W70_I1[] = { "BRHM8E27W70-I1" };
 
@@ -24,11 +35,15 @@ constexpr const char* kModels_BRHM8E27W70_I1[] = { "BRHM8E27W70-I1" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0},
+    {"hue", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"saturation", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
+    {1, 0x0300},
 };
 // --- end auto-generated block ---
 
