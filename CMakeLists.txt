@@ -900,6 +900,14 @@ target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
 add_executable(zhc_schneider_parity_tests tests/test_schneider_parity.cpp)
 target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Schwaiger HAL3xx/5xx/8xx LED bulbs. The auto-ports
+# flattened every m.light({colorTemp, color}) bulb to bare on/off +
+# brightness, dropping the lightingColorCtrl 0x0300 colour-temp + XY/HS
+# colour channels. HAL500 = CCT only; HAL300/HAL550/HAL800 = full colour.
+# Also pins the ZHS-15 plug shape (0x0B04 power/voltage/current, NO 0x0702).
+add_executable(zhc_schwaiger_parity_tests tests/test_schwaiger_parity.cpp)
+target_link_libraries(zhc_schwaiger_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Atlantic Group GW003-AS-IN-TE-FC AC interface. The
 # generated def wired generic kFzThermostat + kFzFanMode but exposed
 # occupied_cooling_setpoint (hvacThermostat attr 0x0011) and
@@ -2257,6 +2265,7 @@ add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
+add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_hej_parity_tests          COMMAND zhc_hej_parity_tests)
