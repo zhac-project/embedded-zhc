@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Qmotion QZR-ZIG2400 remote: stop modelling it as a controllable cover.**
+  The "5 channel remote" (z2m `fromZigbee:[fz.identify, fz.cover_position_tilt]`,
+  `toZigbee:[]`) was auto-ported as an on/off cover — `kFzOnOff`, a writable
+  `state` Binary expose, and phantom `kTzOnOff` + `kTzCoverPosition` write
+  paths. Rewired to match z2m: a vendor-local `kFzIdentifyAction`
+  (genIdentify 0x0003 → `action="identify"`) + the read-only
+  `kFzCoverPosition` decoder, no `toZigbee`, exposes `action` + read-only
+  `position`, and the phantom genOnOff (0x0006) binding dropped. HDM40PV620
+  (roller blind) was verified already correct (its single `kTzCoverPosition`
+  already claims both `position` and `state`, covering z2m's
+  `[tz.cover_state, tz.cover_position_tilt]`).
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
   had its entire lightingColorCtrl (0x0300) axis dropped — ported as

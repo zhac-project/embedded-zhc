@@ -2515,6 +2515,17 @@ target_link_libraries(zhc_zunzunbee_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smartenit_parity_tests tests/test_smartenit_parity.cpp)
 target_link_libraries(zhc_smartenit_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the two Qmotion blind/shade defs. QZR-ZIG2400
+# ("5 channel remote") was mis-ported as a controllable on/off cover —
+# kFzOnOff, a writable `state` Binary expose, and phantom kTzOnOff +
+# kTzCoverPosition write paths — whereas z2m's remote has an EMPTY
+# toZigbee. Graduated to a Tier-2 override matching z2m: fz.identify
+# (genIdentify → action) + read-only fz.cover_position_tilt position, no
+# toZigbee, genOnOff binding dropped. HDM40PV620 verified already correct
+# (single kTzCoverPosition claims both position + state).
+add_executable(zhc_qmotion_parity_tests tests/test_qmotion_parity.cpp)
+target_link_libraries(zhc_qmotion_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -2775,6 +2786,7 @@ add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
 add_test(NAME zhc_msh_parity_tests          COMMAND zhc_msh_parity_tests)
 add_test(NAME zhc_zunzunbee_parity_tests    COMMAND zhc_zunzunbee_parity_tests)
 add_test(NAME zhc_smartenit_parity_tests    COMMAND zhc_smartenit_parity_tests)
+add_test(NAME zhc_qmotion_parity_tests      COMMAND zhc_qmotion_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
