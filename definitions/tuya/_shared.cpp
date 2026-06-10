@@ -133,6 +133,19 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
                 return true;
             }
             if (raw.type != ValueType::Uint) return false;
+            // Enum→bool fan-out: emit Bool true when the raw enum value is
+            // listed in the table (the "alarm" set), false otherwise. Lets a
+            // state enum DP feed a boolean alarm key alongside its string row.
+            if (e.flags & kTuyaDpFlagEnumBool) {
+                bool hit = false;
+                for (std::uint8_t j = 0; j < e.enum_count; ++j) {
+                    if (e.enum_table[j].value == raw.u) { hit = true; break; }
+                }
+                if (e.flags & kTuyaDpFlagInvertBool) hit = !hit;
+                Value v{}; v.type = ValueType::Bool; v.b = hit;
+                out.put(e.out_key, v);
+                return true;
+            }
             for (std::uint8_t j = 0; j < e.enum_count; ++j) {
                 if (e.enum_table[j].value == raw.u) {
                     Value v{}; v.type = ValueType::StringRef;
