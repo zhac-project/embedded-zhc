@@ -1536,6 +1536,15 @@ target_link_libraries(zhc_kwikset_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_paulmann_parity_tests tests/test_paulmann_parity.cpp)
 target_link_libraries(zhc_paulmann_parity_tests PRIVATE zhc_definitions)
 
+# EVN: ZB24100VS multicolor controller dropped the entire lightingColorCtrl
+# (0x0300) colour + colour-temperature axis (ported as on/off+brightness
+# only); the ZBHS4RGBW 4-channel RGBW remote was wrong-bundled as a settable
+# on/off switch (dead action). Color/CT restored on the light; the remote
+# rewired to genOnOff/genLevelCtrl/lightingColorCtrl command decoders + an
+# `action` expose with endpoint_map {ep1..ep4} + endpoint_action_suffix.
+add_executable(zhc_evn_parity_tests tests/test_evn_parity.cpp)
+target_link_libraries(zhc_evn_parity_tests PRIVATE zhc_definitions)
+
 # Lutron: both ZHA entries (LZL4BWHL01 Connected Bulb Remote, Z3-1BRL Aurora
 # rotary dimmer) are battery remotes that drive a paired bulb via genLevelCtrl
 # commands (Step/MoveToLevel/Stop) with toZigbee: []. The generator
@@ -2572,6 +2581,7 @@ add_test(NAME zhc_konke_parity_tests        COMMAND zhc_konke_parity_tests)
 add_test(NAME zhc_multir_parity_tests       COMMAND zhc_multir_parity_tests)
 add_test(NAME zhc_kwikset_parity_tests      COMMAND zhc_kwikset_parity_tests)
 add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
+add_test(NAME zhc_evn_parity_tests          COMMAND zhc_evn_parity_tests)
 add_test(NAME zhc_lutron_parity_tests       COMMAND zhc_lutron_parity_tests)
 add_test(NAME zhc_hornbach_parity_tests     COMMAND zhc_hornbach_parity_tests)
 add_test(NAME zhc_the_light_group_parity_tests COMMAND zhc_the_light_group_parity_tests)

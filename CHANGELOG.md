@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
+  (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)
+  had its entire lightingColorCtrl (0x0300) axis dropped — ported as
+  on/off+brightness only. Restored colour + colour-temperature read/write
+  (`kFzColor`/`kFzColorTemperature` + `kTzColor`/`kTzColorTemp`, the colour
+  exposes, and a 0x0300 bind). `ZBHS4RGBW`, a 4-channel RGBW battery remote
+  (`toZigbee:[]`, action only), was wrong-bundled as a settable on/off
+  switch (dead button presses, phantom relay); rewired to the genOnOff /
+  genLevelCtrl / lightingColorCtrl command decoders + an `action` expose
+  with `endpoint_map {ep1..ep4}` + `endpoint_action_suffix` (z2m
+  multiEndpoint). `ZBPD23400` (plain dimmer) was already correct.
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
   but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
