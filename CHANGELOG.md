@@ -20,6 +20,19 @@ across the ZHAC platform.
   `JetHome` manufacturer gate, replaced `state` with an `action` enum, and
   set `endpoint_action_suffix` so each input surfaces as
   `action_in1`/`action_in2`/`action_in3`. New `test_jethome_parity`.
+- **LED-Trading 9133 parity: Green Power pushbutton mis-ported as on/off relay.**
+  The `9133` "Pushbutton transmitter module" (fingerprint modelID
+  `GreenPower_2`) is a self-powered Green Power transmitter — z2m gives it
+  `toZigbee: []` and a single `e.action([press_1, hold_1, … hold_4])` decoded
+  via `cluster:"greenPower"` `commandNotification`. The auto-port mis-classified
+  it as a controllable relay (`kFzOnOff`/`kTzOnOff` + dead `state` Binary +
+  genOnOff 0x0006 bind). Graduated to Tier 2 and re-shaped to the z2m role: a
+  semantic `action` enum, non-controllable, no bindings. The commandID→action
+  decode stays a documented Green Power INFRA defer (no Green Power frame
+  family in the parser yet), mirroring the enocean PTM 21x precedent. The 9134
+  5-gang powerstrip (l1..l5 `endpoint_map`), 9135 cover and HK-LN-DIM-A dimmer
+  were verified parity-correct and pinned with regression tests.
+
 - **Envilar parity: metering 0x0B04 half, dead remote, missing CCT channel.**
   `1CH-HP-RELAY-7853` + `7859` use z2m `m.electricityMeter()` (default
   `cluster:"both"`, so seMetering 0x0702 energy **and**

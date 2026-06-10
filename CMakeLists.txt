@@ -1093,6 +1093,16 @@ target_link_libraries(zhc_adeo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_enocean_parity_tests tests/test_enocean_parity.cpp)
 target_link_libraries(zhc_enocean_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the LED-Trading family. The 9133 "Pushbutton
+# transmitter module" is a self-powered Green Power transmitter that was
+# mis-ported as a controllable on/off relay (kFzOnOff/kTzOnOff + dead `state`
+# + genOnOff bind); it now exposes the semantic `action` enum, is
+# non-controllable, and binds nothing (action decoder stays a documented
+# Green Power INFRA defer, as for enocean). The 9134 5-gang powerstrip,
+# 9135 cover and HK-LN-DIM-A dimmer are pinned as parity-correct regressions.
+add_executable(zhc_led_trading_parity_tests tests/test_led_trading_parity.cpp)
+target_link_libraries(zhc_led_trading_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Woox (Tuya-OEM) family. The R7051 TS0219 siren
 # decodes its alarm via z2m fz.ias_alarm_only_alarm_1 (ssIasZone attr 0x0002
 # bit 0 -> `alarm` ONLY), but the generated def lowered the broader kFzIasZone
@@ -2264,6 +2274,7 @@ add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_eglo_parity_tests         COMMAND zhc_eglo_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
 add_test(NAME zhc_enocean_parity_tests      COMMAND zhc_enocean_parity_tests)
+add_test(NAME zhc_led_trading_parity_tests  COMMAND zhc_led_trading_parity_tests)
 add_test(NAME zhc_woox_parity_tests         COMMAND zhc_woox_parity_tests)
 add_test(NAME zhc_linkind_parity_tests      COMMAND zhc_linkind_parity_tests)
 add_test(NAME zhc_universal_electronics_inc_parity_tests COMMAND zhc_universal_electronics_inc_parity_tests)
