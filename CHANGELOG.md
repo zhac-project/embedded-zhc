@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Alecto SMART-HEAT10 / SMART-SMOKE10: Tuya-DP misroute (IAS/standard-cluster instead of 0xEF00).**
+  Both TS0601 Tuya-MCU devices were auto-ported to the wrong decode path:
+  the SMART-HEAT10 TRV to the generic `kFzThermostat` (standard hvacThermostat
+  0x0201) and the SMART-SMOKE10 to a generic IAS zone (ssIasZone 0x0500). Both
+  speak only the 0xEF00 manuSpecificTuya DP stream, so every channel was dead.
+  z2m decodes them via `legacy.fz.tuya_thermostat` / `legacy.fz.tuya_alecto_smoke`.
+  Graduated both defs to Tier 2 and wired `fz_tuya_datapoints` + `tz_tuya_datapoints`
+  with the full DP maps — HEAT10: setpoint (DP2 /10), local_temperature (DP3 /10),
+  system_mode (DP4 enum off/auto/heat), child_lock (DP7), window_detection (DP18),
+  battery (DP21); SMOKE10: smoke_state (DP1), smoke_value (DP2), self_checking (DP8),
+  checking_result (DP9), lifecycle (DP12), battery_state (DP14), battery (DP15),
+  silence (DP16). New `tests/test_alecto_parity.cpp` covers both.
 - **Purmo/Radson Yali Parada Plus thermostat: dead thermostat extras.**
   The `PUMM01102` electric oil-filled radiator was auto-ported with only
   the generic `kFzThermostat`, which decodes just hvacThermostat
