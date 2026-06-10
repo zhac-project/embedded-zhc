@@ -1,8 +1,18 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Edp PLUG EDP RE:DY — auto-generated.
+// Tier 2: Edp PLUG EDP RE:DY — graduated from generated/ to fix bind endpoint.
 // re:dy plug
 // z2m-source: edp.ts #PLUG EDP RE:DY.
+//
+// Bug: z2m configures on `device.getEndpoint(85)` and binds genOnOff +
+// seMetering there ("re:dy plug uses ep relay"). The auto-port bound on
+// endpoint 1 ({1,0x0006}/{1,0x0702}), so the coordinator never bound the
+// relay/metering endpoint the device actually reports on → no onOff /
+// metering reports flow and state/power/energy stay dead. Repointed both
+// bindings to the device's relay endpoint 85. Decode is endpoint-agnostic
+// (WILDCARD_ENDPOINT) so the single-endpoint exposes stay bare (no
+// endpoint_map). Metering stays 0x0702-only — z2m uses fz.metering, NOT
+// fz.electrical_measurement, so there is no 0x0B04 channel to add.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::edp {
@@ -27,8 +37,8 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0702},
+    {85, 0x0006},  // genOnOff   — re:dy relay endpoint (z2m getEndpoint(85))
+    {85, 0x0702},  // seMetering — re:dy relay endpoint (z2m getEndpoint(85))
 };
 // --- end auto-generated block ---
 

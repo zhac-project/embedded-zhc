@@ -969,6 +969,14 @@ target_link_libraries(zhc_casaia_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# EDP re:dy plug — z2m configures genOnOff + seMetering on getEndpoint(85)
+# ("re:dy plug uses ep relay") but the auto-port bound those clusters on
+# endpoint 1, so state/power/energy never reported. Repointed both bindings
+# to endpoint 85. Metering stays 0x0702-only (z2m uses fz.metering, not
+# fz.electrical_measurement). See tests/README.md.
+add_executable(zhc_edp_parity_tests tests/test_edp_parity.cpp)
+target_link_libraries(zhc_edp_parity_tests PRIVATE zhc_definitions)
+
 # Prolight — white-and-colour bulbs (E27 5412748727371 / GU10 5412748727401)
 # had the 0x0300 color/colorTemp axis dropped (color_temp + color_xy + bind);
 # the remote (5412748727388) was mis-ported as a controllable on/off switch
@@ -2599,6 +2607,7 @@ add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_lightsolutions_parity_tests COMMAND zhc_lightsolutions_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_edp_parity_tests          COMMAND zhc_edp_parity_tests)
 add_test(NAME zhc_prolight_parity_tests     COMMAND zhc_prolight_parity_tests)
 add_test(NAME zhc_imou_parity_tests         COMMAND zhc_imou_parity_tests)
 add_test(NAME zhc_hej_parity_tests          COMMAND zhc_hej_parity_tests)
