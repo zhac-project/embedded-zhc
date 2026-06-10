@@ -1,15 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Imou ZD1-EN — auto-generated.
+// Tier 2: Imou ZD1-EN — door/window sensor (IAS dead-key fix).
 // Door & window sensor
-// z2m-source: imou.ts #ZD1-EN.
+// z2m-source: imou.ts #ZD1-EN — m.iasZoneAlarm({zoneType:"alarm",
+//   zoneAttributes:["alarm_1","tamper","battery_low"]}).
+//
+// NOTE: z2m declares zoneType `alarm` (not `contact`) for this contact
+// sensor, so the key is `alarm` and the payload is NOT inverted (only the
+// `contact` zoneType inverts). The generated def lowered generic
+// kFzIasZone, which emits `alarm_1`/`alarm_2` — never the declared
+// `alarm` expose, so the door state was dead. Swap in kFzIasGenericAlarm
+// (emits bare `alarm`).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::imou {
 namespace {
 const FzConverter* const kFz_ZD1_EN[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasGenericAlarm,
 };
 
 constexpr const char* kModels_ZD1_EN[] = { "ZD1-EN" };

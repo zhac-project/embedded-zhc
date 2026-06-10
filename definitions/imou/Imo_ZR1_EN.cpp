@@ -1,15 +1,26 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Imou ZR1-EN — auto-generated.
+// Tier 2: Imou ZR1-EN — siren (IAS dead-key fix).
 // Zigbee ZR1 siren
-// z2m-source: imou.ts #ZR1-EN.
+// z2m-source: imou.ts #ZR1-EN — m.iasZoneAlarm({zoneType:"alarm",
+//   zoneAttributes:["alarm_1","tamper","battery_low"]}) + m.iasWarning().
+//
+// z2m's `alarm` zoneType collapses both alarm bits onto the single key
+// `alarm` (bit 0). The generated def lowered the generic kFzIasZone,
+// which emits `alarm_1`/`alarm_2` — never the declared `alarm` expose,
+// so the alarm state was dead. Swap in kFzIasGenericAlarm (emits the
+// bare `alarm` key).
+//
+// INFRA defer: m.iasWarning() is a to-zigbee siren control (ssIasWd
+// startWarning); generic kTzIasWdWarningSimple exists but the `warning`
+// composite expose + plumbing is out of scope for this decode-parity pass.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::imou {
 namespace {
 const FzConverter* const kFz_ZR1_EN[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasGenericAlarm,
 };
 
 constexpr const char* kModels_ZR1_EN[] = { "ZR1-EN" };
