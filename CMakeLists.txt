@@ -1007,6 +1007,17 @@ target_link_libraries(zhc_honyar_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_makegood_parity_tests tests/test_makegood_parity.cpp)
 target_link_libraries(zhc_makegood_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the GE (Jasco) light + switch + metering family. The one real
+# gap: PTAPT-WH02 declares z2m endpoint default:2 (genOnOff lives on EP2);
+# the auto-port bound onOff on EP1 with default_endpoint=0, so on/off frames
+# routed to the wrong endpoint (dead toggle). Fixed by re-endpointing the
+# binding ep1->ep2 + setting default_endpoint=2. Regression guards: the GE
+# metering devices are seMetering 0x0702 only (fz.metering /
+# electricityMeter cluster:"metering") with NO 0x0B04 voltage/current half;
+# bulbs/dimmers are plain m.light() = on/off + brightness, no color_temp.
+add_executable(zhc_ge_parity_tests tests/test_ge_parity.cpp)
+target_link_libraries(zhc_ge_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Sylvania (OSRAM Lightify US) family. The 74388 contact +
 # temperature sensor lowered the generic kFzIasZone converter (bare "alarm"
 # key) while z2m's fz.ias_contact_alarm_1 publishes the semantic key
@@ -2155,6 +2166,7 @@ add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
 add_test(NAME zhc_makegood_parity_tests     COMMAND zhc_makegood_parity_tests)
+add_test(NAME zhc_ge_parity_tests           COMMAND zhc_ge_parity_tests)
 add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_eglo_parity_tests         COMMAND zhc_eglo_parity_tests)

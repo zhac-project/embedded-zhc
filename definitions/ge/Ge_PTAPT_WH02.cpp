@@ -1,8 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
+// Tier 2 (2026-06-10): genOnOff lives on endpoint 2, not endpoint 1.
+// z2m declares `endpoint: () => ({default: 2})`, so the controllable
+// onOff cluster + its reporting binding belong on EP2. The auto-port
+// bound genOnOff on EP1 and left default_endpoint=0, which routes
+// outbound on/off frames to the wrong endpoint (dead toggle) and
+// configures reporting on the wrong endpoint. Re-endpointed the binding
+// ep1->ep2 and set default_endpoint=2 to mirror z2m.
 // Tier 1: Ge PTAPT-WH02 — auto-generated.
 // Quirky smart switch
-// z2m-source: ge.ts #PTAPT-WH02.
+// z2m-source: ge.ts #PTAPT-WH02 (endpoint default:2).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::ge {
@@ -24,7 +31,7 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
+    {2, 0x0006},  // genOnOff on endpoint 2 (z2m endpoint default:2)
 };
 // --- end auto-generated block ---
 
@@ -39,6 +46,7 @@ extern const PreparedDefinition kDef_PTAPT_WH02{
     .to_zigbee=kTz_PTAPT_WH02, .to_zigbee_count=sizeof(kTz_PTAPT_WH02)/sizeof(kTz_PTAPT_WH02[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+.default_endpoint=2,
 };
 
 }  // namespace zhc::devices::ge
