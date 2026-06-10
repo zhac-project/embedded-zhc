@@ -37,6 +37,17 @@ across the ZHAC platform.
   the real climate-flat surface (Enum `system_mode`/`running_state` + the
   three keys). keypad_lockout (hvacUserInterfaceCfg 0x0204) is bound by z2m
   but never decoded/exposed there, so it is not a gap.
+- **Lutron remotes: dead `action`, phantom relay.** Both Lutron ZHA entries —
+  `LZL4BWHL01` (Connected Bulb Remote) and `Z3-1BRL` (Aurora rotary dimmer) —
+  are battery remotes that drive a paired bulb by emitting `genLevelCtrl`
+  commands (`fz.command_step` / `command_move_to_level` / `command_stop`) with
+  `toZigbee: []`, exposing only `action`. The auto-generator wrong-bundled both
+  as settable on/off lights (`kFzOnOff` + `kTzOnOff` + a writable `state`),
+  dropping the `action` decode entirely so every rotary turn / button press was
+  dead and the device falsely advertised a relay. Graduated both to Tier 2:
+  wired `kFzCommandStep` / `kFzCommandMoveToLevel` / `kFzCommandStop`, added an
+  `action` expose + the `{1,0x0008}` genLevelCtrl bind, dropped the phantom
+  state and toolbox; kept the `Z3-1BRL` battery.
 
 - **Nordtronic metering dimmers/relays: dropped 0x0B04 half + dead remote.**
   The four metering devices `98424072` (rotary), `98425271` (Box Dimmer G2),
