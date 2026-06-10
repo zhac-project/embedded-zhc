@@ -98,31 +98,37 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
-// Assert: alarm_1 (bit 0) -> semantic key true, bare `alarm` absent,
-// tamper/battery_low track bits 2/3.
-void check_alarm1(const PreparedDefinition& def, const char* sem) {
+// Assert: alarm_1 (bit 0) -> semantic key, bare `alarm` absent,
+// tamper/battery_low track bits 2/3. `invert` follows z2m's contact polarity
+// (zoneType:"contact" publishes contact = !bit0: closed door = magnet present
+// = bit0 clear = contact:true). occupancy stays raw bit0 (invert=false).
+void check_alarm1(const PreparedDefinition& def, const char* sem,
+                  bool invert = false) {
     check(def_exposes(def, sem), "semantic key is a declared expose");
     check(!def_exposes(def, "alarm"), "bare alarm key not exposed");
 
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
     check(on.any_matched, "alarm_1 frame matched");
-    check(b_true(on.merged.find(sem)), "semantic key true on alarm_1");
+    // bit0 set → raw key true; inverted (contact) key false.
+    check((invert ? b_false : b_true)(on.merged.find(sem)), "semantic key polarity on alarm_1");
     check(on.merged.find("alarm") == nullptr, "bare alarm key gone");
     check(b_false(on.merged.find("tamper")), "tamper clear on alarm_1");
     check(b_false(on.merged.find("battery_low")), "battery_low clear on alarm_1");
 
     auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
     check(off.any_matched, "clear frame matched");
-    check(b_false(off.merged.find(sem)), "semantic key false on clear");
+    // bit0 clear → raw key false; inverted (contact) key true.
+    check((invert ? b_true : b_false)(off.merged.find(sem)), "semantic key polarity on clear");
 
     auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper(bit2)+battery_low(bit3)
     check(tb.any_matched, "tamper+batt frame matched");
-    check(b_false(tb.merged.find(sem)), "semantic key false when only tamper/batt");
+    // bit0 clear → raw key false; inverted (contact) key true.
+    check((invert ? b_true : b_false)(tb.merged.find(sem)), "semantic key polarity when only tamper/batt");
     check(b_true(tb.merged.find("tamper")), "tamper set on bit2");
     check(b_true(tb.merged.find("battery_low")), "battery_low set on bit3");
 }
 
-void test_contact()   { check_alarm1(devices::livingwise::kDef_LVS_SM10ZW,      "contact"); }
+void test_contact()   { check_alarm1(devices::livingwise::kDef_LVS_SM10ZW,      "contact", /*invert=*/true); }
 void test_occupancy() { check_alarm1(devices::livingwise::kDef_LVS_SN10ZW_SN11, "occupancy"); }
 
 // ── SC7 — fz.orvibo_raw_2 scene controller ──────────────────────────

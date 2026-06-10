@@ -12,8 +12,10 @@
 //    converter (bare key "alarm") and dropped the msTemperatureMeasurement
 //    channel. z2m wires m.iasZoneAlarm({zoneType:"contact",
 //    zoneAttributes:["alarm_1","battery_low"]}) + m.temperature(): the
-//    semantic key is "contact" (zoneStatus bit 0) and temperature lives on
-//    0x0402. Now uses the typed kFzIasContactAlarm + kFzTemperature.
+//    semantic key is "contact" and temperature lives on 0x0402. Per z2m the
+//    contact key is INVERTED (contact = !bit0): bit0 set → contact:false
+//    (open), bit0 clear → contact:true (closed). Now uses the typed
+//    kFzIasContactAlarm + kFzTemperature.
 //
 //  * Lost 0x0B04 electrical half: SMRZB-153 (m.electricityMeter() default
 //    "both") and EMIZB-151 (m.electricityMeter({threePhase,producedEnergy,
@@ -135,12 +137,12 @@ static void test_wiszb131_contact() {
 
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 bit 0
     assert(on.any_matched);
-    assert(b_true(on.merged.find("contact")));
+    assert(b_false(on.merged.find("contact")));   // z2m: contact = !bit0 → open
     assert(on.merged.find("alarm") == nullptr);
 
     auto off = dispatch_ias(def, ias_notif(0x0000));
     assert(off.any_matched);
-    assert(b_false(off.merged.find("contact")));
+    assert(b_true(off.merged.find("contact")));   // z2m: contact = !bit0 → closed
 
     auto bl = dispatch_ias(def, ias_notif(0x0008));   // battery_low bit 3
     assert(bl.any_matched);

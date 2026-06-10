@@ -153,26 +153,33 @@ DispatchResult dispatch_onoff_cmd(const PreparedDefinition& def, std::uint8_t cm
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
-// Assert: alarm_1 (bit 0) asserted -> semantic key true, bare "alarm"
-// absent, tamper/battery_low reflect bits 2/3.
-void check_ias_alarm1(const PreparedDefinition& def, const char* sem) {
+// Assert: alarm_1 (bit 0) asserted -> semantic key, bare "alarm" absent,
+// tamper/battery_low reflect bits 2/3. `invert` follows z2m's contact
+// polarity (zoneType:"contact" publishes contact = !bit0: closed door =
+// magnet present = bit0 clear = contact:true). water_leak/smoke/occupancy/
+// vibration stay raw bit0 (invert=false).
+void check_ias_alarm1(const PreparedDefinition& def, const char* sem,
+                      bool invert = false) {
     assert(def_exposes(def, sem));               // regression guard
     assert(!def_exposes(def, "alarm"));           // bare key must be gone
 
     auto on = dispatch_ias(def, ias_notif(0x0001));
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    // bit0 set → raw key true; inverted (contact) key false.
+    assert((invert ? b_false : b_true)(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
 
     auto off = dispatch_ias(def, ias_notif(0x0000));
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    // bit0 clear → raw key false; inverted (contact) key true.
+    assert((invert ? b_true : b_false)(off.merged.find(sem)));
 
     auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper + battery_low
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    // bit0 clear → raw key false; inverted (contact) key true.
+    assert((invert ? b_true : b_false)(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -208,9 +215,9 @@ static void test_smszb_smoke()  { check_ias_alarm1(devices::develco::kDef_SMSZB_
 static void test_moszb130_occ() { check_ias_alarm1(devices::develco::kDef_MOSZB_130, "occupancy"); }
 static void test_moszb140_occ() { check_ias_alarm1(devices::develco::kDef_MOSZB_140, "occupancy"); }
 static void test_moszb153_occ() { check_ias_alarm1(devices::develco::kDef_MOSZB_153, "occupancy"); }
-static void test_wiszb120_con() { check_ias_alarm1(devices::develco::kDef_WISZB_120, "contact"); }
-static void test_wiszb134_con() { check_ias_alarm1(devices::develco::kDef_WISZB_134, "contact"); }
-static void test_wiszb138_con() { check_ias_alarm1(devices::develco::kDef_WISZB_138, "contact"); }
+static void test_wiszb120_con() { check_ias_alarm1(devices::develco::kDef_WISZB_120, "contact", /*invert=*/true); }
+static void test_wiszb134_con() { check_ias_alarm1(devices::develco::kDef_WISZB_134, "contact", /*invert=*/true); }
+static void test_wiszb138_con() { check_ias_alarm1(devices::develco::kDef_WISZB_138, "contact", /*invert=*/true); }
 static void test_wiszb137_vib() { check_ias_alarm1(devices::develco::kDef_WISZB_137, "vibration"); }
 
 // ── temperature channel restored on IAS sensors ─────────────────────

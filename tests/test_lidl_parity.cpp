@@ -114,22 +114,29 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
 
 // Assert: a typed IAS converter surfaces the semantic key from alarm_1
 // (bit 0) and NEVER the bare "alarm" key the generic kFzIasZone emits.
-void check_ias_alarm1(const PreparedDefinition& def, const char* sem) {
+// `invert` follows z2m's contact polarity: zoneType:"contact" publishes
+// contact = !bit0 (closed door = magnet present = bit0 clear = contact:true).
+// occupancy and the other alarm types stay raw bit0 (invert=false).
+void check_ias_alarm1(const PreparedDefinition& def, const char* sem,
+                      bool invert = false) {
     assert(def_exposes(def, sem));
     assert(!def_exposes(def, "alarm"));   // bare key must be gone from exposes
 
     auto on = dispatch_ias(def, ias_notif(0x0001));   // alarm_1 only
     assert(on.any_matched);
-    assert(b_true(on.merged.find(sem)));
+    // bit0 set → raw key true; inverted (contact) key false.
+    assert((invert ? b_false : b_true)(on.merged.find(sem)));
     assert(on.merged.find("alarm") == nullptr);       // bare key never emitted
 
     auto off = dispatch_ias(def, ias_notif(0x0000));  // clear
     assert(off.any_matched);
-    assert(b_false(off.merged.find(sem)));
+    // bit0 clear → raw key false; inverted (contact) key true.
+    assert((invert ? b_true : b_false)(off.merged.find(sem)));
 
     auto tb = dispatch_ias(def, ias_notif(0x000C));   // tamper + battery_low
     assert(tb.any_matched);
-    assert(b_false(tb.merged.find(sem)));
+    // bit0 clear → raw key false; inverted (contact) key true.
+    assert((invert ? b_true : b_false)(tb.merged.find(sem)));
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
@@ -279,7 +286,7 @@ int main() {
 
     // 1. IAS sensors decode their semantic key (not the bare "alarm").
     check_ias_alarm1(kDef_HG06335_HG07310, "occupancy");
-    check_ias_alarm1(kDef_HG06336, "contact");
+    check_ias_alarm1(kDef_HG06336, "contact", /*invert=*/true);  // z2m: contact = !bit0
 
     // 2. Command remotes emit `action`, not `state`.
     check_command_remote(kDef_FB20_002);

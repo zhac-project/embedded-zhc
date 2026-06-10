@@ -16,7 +16,9 @@
 // Coverage:
 //   * ssIasZone status-change (bit0) → semantic `occupancy` AND `contact`
 //     (both typed converters run on the same frame), plus tamper/battery_low;
-//     never the bare `alarm`/`alarm_1` keys.
+//     never the bare `alarm`/`alarm_1` keys. Per z2m the `contact` key is
+//     INVERTED (contact = !bit0): bit0 set → contact:false (open), bit0 clear
+//     → contact:true (closed). `occupancy` stays raw bit0.
 //   * ssIasAce commandArm (cluster 0x0501, cmd 0x00) → action / action_code /
 //     action_zone / action_transaction (the fixed channel: ZCL TSN passthrough).
 //   * Def shape: no `state` expose, no genOnOff bind, no toZigbee, binds 0x0501.
@@ -128,10 +130,11 @@ static void test_ias_occupancy_and_contact() {
     assert(def_exposes(def, "contact"));
 
     // bit0 set: BOTH typed converters fire on the same status-change frame.
+    // occupancy is raw bit0 (true); contact is z2m-inverted (false on bit0).
     auto on = dispatch_ias(def, ias_notif(0x0001));
     assert(on.any_matched);
     assert(b_true(on.merged.find("occupancy")));
-    assert(b_true(on.merged.find("contact")));
+    assert(b_false(on.merged.find("contact")));   // z2m: contact = !bit0 → open
     assert(b_false(on.merged.find("tamper")));
     assert(b_false(on.merged.find("battery_low")));
     // The generic dead-key must NOT leak.
@@ -141,13 +144,13 @@ static void test_ias_occupancy_and_contact() {
     auto off = dispatch_ias(def, ias_notif(0x0000));
     assert(off.any_matched);
     assert(b_false(off.merged.find("occupancy")));
-    assert(b_false(off.merged.find("contact")));
+    assert(b_true(off.merged.find("contact")));   // z2m: contact = !bit0 → closed
 
-    // tamper(bit2) + battery_low(bit3), no alarm bit.
+    // tamper(bit2) + battery_low(bit3), no alarm bit. bit0 clear → contact:true.
     auto tb = dispatch_ias(def, ias_notif(0x000C));
     assert(tb.any_matched);
     assert(b_false(tb.merged.find("occupancy")));
-    assert(b_false(tb.merged.find("contact")));
+    assert(b_true(tb.merged.find("contact")));     // z2m: contact = !bit0 → closed
     assert(b_true(tb.merged.find("tamper")));
     assert(b_true(tb.merged.find("battery_low")));
 }
