@@ -30,6 +30,8 @@ extern const FzConverter kFzOnOff;
 // Decode `genPowerCfg` battery reports. Raw pass-through:
 //   attr 0x0020 (u8, 100 mV units) → "voltage"  as u8
 //   attr 0x0021 (u8, half-percent) → "battery"  as u8
+//   attr 0x0035 (bitmap32 batteryAlarmState) → "battery_low" as bool
+//     (any per-cell low bit set: bits 0..3 / 10..13 / 20..23)
 //
 // No derivation: per-device `meta.battery` curves live in the
 // meta-aware path. z2m's behaviour is to derive battery % from voltage

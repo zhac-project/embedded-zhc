@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Ynoa (Lytimages) remotes were dead and bulbs lost their colour axes.**
+  The two action-only remotes (LA-5KEY-RGBW, 8718801528334) were auto-ported
+  as settable on/off lights — kFzOnOff + kTzOnOff + a writable `state` — so
+  every key press was dead and they falsely advertised a relay; z2m drives a
+  bound light via genOnOff/genLevelCtrl/lightingColorCtrl commands surfaced on
+  `action` (toZigbee:[]). The four bulbs (8718801528204/8718801528273/
+  LA-A60-CCT CCT, LA-GU10-RGBW RGB+CCT) wired only OnOff + Brightness and
+  dropped the colour-temperature axis (and xy/hs colour on the RGBW). Graduated
+  all six defs to Tier 2: remotes → the command decoders + an `action` expose,
+  no toolbox; bulbs → kFzColorTemperature (+ kFzColor on the RGBW) + the
+  color_temp/color_xy exposes + the lightingColorCtrl (0x0300) binding. Also
+  extended the generic `kFzBattery` to decode genPowerCfg batteryAlarmState
+  (attr 0x0035 → `battery_low`, mirroring z2m fz.battery) so the 5KEY's
+  `battery_low` is no longer a dead expose. The LA-PLUG-10Amp metering plug was
+  already correct (z2m electricityMeter "both" = 0x0702 + 0x0B04, both wired)
+  and is pinned as a regression guard.
+
 - **Multiterm ZC0101 (ZeeFan fan coil unit controller) dropped its entire
   multi-endpoint binary-output half.** The auto-port modelled it as a bare
   single `fan_mode` binary and never decoded the three genBinaryOutput
