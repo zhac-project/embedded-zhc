@@ -938,6 +938,18 @@ target_link_libraries(zhc_somfy_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_climax_parity_tests tests/test_climax_parity.cpp)
 target_link_libraries(zhc_climax_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Enbrighten (GE/Jasco) switch/outlet/dimmer family. Every
+# device pairs its controllable surface with z2m commandsOnOff (+ dimmers:
+# commandsLevelCtrl), which decode the device's physical button presses
+# (genOnOff commandOn/commandOff, genLevelCtrl Move/Stop) into an `action`
+# enum. The auto-generated ports kept only the controllable half and dropped
+# that action channel; this graduates all four to Tier-2 overrides wiring
+# kFzCommandOn/Off (+ kFzCommandMove/Stop for dimmers) and an `action`
+# expose. electricityMeter(cluster:"metering") stays 0x0702-only (no
+# voltage/current). See tests/README.md.
+add_executable(zhc_enbrighten_parity_tests tests/test_enbrighten_parity.cpp)
+target_link_libraries(zhc_enbrighten_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Lonsonho (Tuya-OEM) family. X701A (1-gang switch) dropped
 # the "_TZ3000_ehgouyvu" manufacturer name from its TS0001 fingerprint, so
 # that variant never matched; graduated to a parent override restoring both
@@ -1986,6 +1998,7 @@ add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
+add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
 add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)

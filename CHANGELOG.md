@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Enbrighten (GE/Jasco) switches/outlets/dimmers dropped their physical
+  button `action`.** z2m pairs every device with
+  `m.commandsOnOff({commands:["on","off"], bind:true})` and (the dimmers)
+  `m.commandsLevelCtrl({commands:["brightness_move_up","brightness_move_down",
+  "brightness_stop"], bind:true})`, which bind genOnOff/genLevelCtrl output
+  and decode the device's physical presses into an `action` enum. The
+  generated ports kept only the controllable surface (on/off, brightness,
+  metering) so the `action` expose and its decoders were missing. Graduated
+  all four defs (43076 switch + whitelabels, 43078 switch+energy, 43080
+  dimmer + whitelabels, 43082 dimmer+energy) out of `generated/` and wired
+  the generic `kFzCommandOn`/`kFzCommandOff` (+ `kFzCommandMove`/
+  `kFzCommandStop` for dimmers) + an `action` expose. `electricityMeter`
+  stays `cluster:"metering"` (seMetering 0x0702 only — no phantom
+  voltage/current half).
 - **Inovelli Blue-series switches/dimmers/fan dropped their button-tap
   `action`.** z2m marks VZM30-SN, VZM31-SN, VZM32-SN and VZM35-SN
   `supportsButtonTaps: true`, decoding a manufacturer-specific raw frame on

@@ -1,8 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Enbrighten 43078 — auto-generated.
-// Zigbee in-wall smart switch with energy monitoring
-// z2m-source: enbrighten.ts #43078.
+// Tier 2: Enbrighten 43078 — hand-curated (was missing action channel).
+// Zigbee in-wall smart switch with energy monitoring. z2m drives it with
+//   m.onOff(...) + m.electricityMeter({cluster:"metering"})
+//   + m.commandsOnOff({commands:["on","off"], bind:true})
+// electricityMeter cluster:"metering" = seMetering 0x0702 only (energy +
+// power) — already wired via kFzMetering, matches z2m. The auto-port
+// dropped the commandsOnOff action channel: the switch binds genOnOff
+// output and reports physical presses as genOnOff commandOn / commandOff,
+// surfaced as an `action` enum ["on","off"]. Added kFzCommandOn /
+// kFzCommandOff + an `action` expose; controllable on/off + energy
+// surfaces unchanged.
+// z2m-source: enbrighten.ts #43078 (commandsOnOff).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::enbrighten {
@@ -10,6 +19,8 @@ namespace {
 const FzConverter* const kFz_D43078[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzCommandOn,
+    &::zhc::generic::kFzCommandOff,
 };
 const TzConverter* const kTz_D43078[] = {
     &::zhc::generic::kTzOnOff,
@@ -24,6 +35,7 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
