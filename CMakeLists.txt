@@ -943,6 +943,13 @@ target_link_libraries(zhc_casaia_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Prolight — white-and-colour bulbs (E27 5412748727371 / GU10 5412748727401)
+# had the 0x0300 color/colorTemp axis dropped (color_temp + color_xy + bind);
+# the remote (5412748727388) was mis-ported as a controllable on/off switch
+# instead of an action-only command transmitter. See tests/README.md.
+add_executable(zhc_prolight_parity_tests tests/test_prolight_parity.cpp)
+target_link_libraries(zhc_prolight_parity_tests PRIVATE zhc_definitions)
+
 # MSH / MySmartHouse DIY ESP sensors — multi-channel restored. bme280psm
 # (temp/humidity/pressure) and ds18b20psm (temp) were reduced to
 # battery-only; AirQMon was mis-ported as a bare on/off switch instead of a
@@ -2417,6 +2424,7 @@ add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_prolight_parity_tests     COMMAND zhc_prolight_parity_tests)
 add_test(NAME zhc_imou_parity_tests         COMMAND zhc_imou_parity_tests)
 add_test(NAME zhc_hej_parity_tests          COMMAND zhc_hej_parity_tests)
 add_test(NAME zhc_fantem_parity_tests       COMMAND zhc_fantem_parity_tests)

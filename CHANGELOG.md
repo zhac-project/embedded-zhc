@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Prolight bulbs/remote: dropped colour axis + dead remote.** The E27
+  (`5412748727371`) and GU10 (`5412748727401`) white-and-colour bulbs are
+  z2m `m.light({colorTemp:{range:[153,555]}, color:true})` but were
+  auto-ported as on/off + brightness only — the 0x0300 lightingColorCtrl
+  axis (`color_temp` + `color_xy` exposes and the cluster bind) was missing,
+  so colour and colour-temperature reports decoded to nothing. The remote
+  (`5412748727388`) is an action-only ZLL transmitter (`toZigbee:[]`) but
+  was mis-ported as a controllable on/off switch (`kFzOnOff` + `kTzOnOff` +
+  a `state` expose), leaving the action stream dead. Graduated all three to
+  Tier 2: wired `kFzColorTemperature`/`kFzColor` (+ `kTzColorTemp`/`kTzColor`)
+  on the bulbs, and the generic Client→Server command converters
+  (`kFzCommandOn`/`Off`/`MoveToLevel`/`Move`/`Stop`/`MoveToColorTemp`/
+  `MoveToColor`/`MoveColorTemperature` + `kFzBattery`) plus an `action` enum
+  on the remote, dropping its phantom on/off state and `to_zigbee` setter.
+
 - **FireAngel CO sensors: dead/missing carbon-monoxide channels.** The
   W2-Module (`Alarm_SD_Device`) was auto-ported battery-only — z2m wires
   `fz.W2_module_carbon_monoxide` and reports CO on ssIasZone zoneStatus
