@@ -2500,6 +2500,14 @@ target_link_libraries(zhc_multiterm_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_zunzunbee_parity_tests tests/test_zunzunbee_parity.cpp)
 target_link_libraries(zhc_zunzunbee_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the two Smartenit defs. ZBHT-1 (temp/humidity sensor)
+# was auto-ported to battery-only — restored fz.temperature (0x0402) +
+# fz.humidity (0x0405). 4040B (dual-load metering switch) lost the z2m
+# endpoint map {l1:1, l2:2}, collapsing both relays onto a bare "state";
+# added endpoint_map (state_l1/state_l2) and kept power/energy device-global.
+add_executable(zhc_smartenit_parity_tests tests/test_smartenit_parity.cpp)
+target_link_libraries(zhc_smartenit_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -2758,6 +2766,7 @@ add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
 add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
 add_test(NAME zhc_msh_parity_tests          COMMAND zhc_msh_parity_tests)
 add_test(NAME zhc_zunzunbee_parity_tests    COMMAND zhc_zunzunbee_parity_tests)
+add_test(NAME zhc_smartenit_parity_tests    COMMAND zhc_smartenit_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

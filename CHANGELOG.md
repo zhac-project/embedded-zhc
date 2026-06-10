@@ -102,6 +102,16 @@ across the ZHAC platform.
   OnOff+Brightness dimmers. Graduated both to Tier 2 overrides wiring the
   generic color/colorTemp converters, the `color_temp` (+ `color_xy` for 91-943)
   exposes and the `lightingColorCtrl` (0x0300) binding.
+- **Smartenit ZBHT-1 + 4040B parity.** The ZBHT-1 temperature & humidity
+  sensor was auto-ported to battery-only, silently dropping `fz.temperature`
+  (0x0402) and `fz.humidity` (0x0405); restored both decoders, exposes, and
+  report bindings. The 4040B dual-load metering switch lost the z2m endpoint
+  map `{l1:1, l2:2}`, so genOnOff reports from both relays collided on a
+  single bare `state`; added the `endpoint_map` (per-load `state_l1`/
+  `state_l2`) plus ep2 genOnOff+seMetering bindings. `power`/`energy` are now
+  in the dispatch always-global blocklist so multi-load metering switches
+  keep z2m's single un-suffixed `e.power()`/`e.energy()` exposes.
+
 - **Contact-sensor polarity matched to z2m (systemic).** The generic
   `kFzIasContactAlarm` emitted the raw IAS zoneStatus bit 0 as `contact`,
   but z2m publishes `contact = !(bit0)` for every `zoneType:"contact"`
