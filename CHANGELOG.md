@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **EGLO connect family (AwoX rebadge): five bulbs lost their colour
+  channels and two remotes were ported as on/off switches.** All five EGLO
+  bulbs are z2m `m.light({colorTemp, …})` — 12242 + 98847 tunable-white,
+  300686 + 900091 + 900024/12253 full RGBW — but the auto-generator lowered
+  every one onto on/off + brightness only, leaving the lightingColorCtrl
+  (0x0300) `color_temp` and colour (hue/sat/xy) reports dead and dropping the
+  colour set-path. Graduated to Tier-2 parents wired to a new `eglo/_shared`
+  CT and full-RGBW bundle (kFzColorTemperature / kFzColor + matching TZ +
+  0x0300 bind + the colour exposes). The 99099 (3-groups remote) and 99106
+  (TLSR82xx) were both modelled by z2m as pure command transmitters exposing
+  `action`, but were ported as `kFzOnOff` + on/off TZ + a dead settable
+  `state`; re-wired to the generic command-action decoders (on/off, brightness
+  step/move/move_to_level/stop, scene recall, color-temp move/step) with an
+  `action` expose (plus `action_group` on 99099) and no TZ. The AwoX-specific
+  raw colour/refresh frames (awox_colors / awox_refresh / awox_refreshColored)
+  have no generic equivalent and are intentionally deferred (INFRA), mirroring
+  the AwoX 33952 precedent.
 - **GiEX water-irrigation valves (QT06_1 / QT06_2) decoded nothing.** Both are
   Tuya-MCU (0xEF00) DP-stream devices (z2m `legacy.fromZigbee.giexWaterValve`)
   but the auto-generator ported them as bare `kFzBattery` + `kFzOnOff` stubs
