@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Gewiss ports dropped contact channels and the electrical-meter half.**
+  GWA1201 used `m.electricityMeter()` (default cluster "both") but the port
+  wired only `seMetering` (0x0702) energy, dropping the
+  `haElectricalMeasurement` (0x0B04) voltage/current half — added
+  `kFzElectricalMeasurement` + voltage/current exposes + 0x0B04 bind. GWA1502
+  (mains 230V contact interface) was mis-ported as a phantom battery + phantom
+  on/off; it is actually two `genBinaryInput.presentValue` channels — rewired
+  to a new generic `kFzBinaryInput` (0x000F attr 0x0055 → `input`) on ep1/ep2
+  with an endpoint_map (no battery, no on/off). GWA1501 kept its battery but
+  dropped the same two `input` channels — added `kFzBinaryInput` on both
+  endpoints. New reusable `::zhc::generic::kFzBinaryInput` added for any
+  genBinaryInput presentValue device.
+
 - **LifeControl (MCLH series) ports dropped whole channels.** Three
   auto-generated defs lost half their z2m functionality: MCLH-02 "vivi
   ZLight" colour bulb (`m.light({colorTemp, color: true})`) wired only

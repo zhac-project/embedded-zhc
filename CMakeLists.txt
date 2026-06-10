@@ -1255,6 +1255,17 @@ target_link_libraries(zhc_vesternet_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_dresden_elektronik_parity_tests tests/test_dresden_elektronik_parity.cpp)
 target_link_libraries(zhc_dresden_elektronik_parity_tests PRIVATE zhc_definitions)
 
+# Gewiss family parity fixtures. GWA1201 used m.electricityMeter() (default
+# cluster:"both") but the port wired only kFzMetering (0x0702), dropping the
+# 0x0B04 electrical half (voltage/current) — added kFzElectricalMeasurement +
+# exposes + bind. GWA1502 (mains 230V contact) was mis-ported as a phantom
+# battery + phantom on/off; it is actually two genBinaryInput.presentValue
+# channels — rewired to the new generic kFzBinaryInput on ep1/ep2 (no battery,
+# no on/off). GWA1501 kept its battery but dropped the same two input channels
+# — added kFzBinaryInput on both endpoints. See tests/README.md.
+add_executable(zhc_gewiss_parity_tests tests/test_gewiss_parity.cpp)
+target_link_libraries(zhc_gewiss_parity_tests PRIVATE zhc_definitions)
+
 # Konke family parity fixtures. The 2AJZ4KPFT and KK-ES-J01W sensors were
 # auto-ported as battery-only — the generator dropped every msTemperature /
 # msRelativeHumidity / msIlluminance channel z2m surfaces. Restored the
@@ -2134,6 +2145,7 @@ add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
 add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
+add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

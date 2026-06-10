@@ -459,6 +459,11 @@ extern const FzConverter kFzCoverPositionViaBrightness;
 extern const FzConverter kFzCoverStateViaOnOff;
 extern const FzConverter kFzMetering;
 extern const FzConverter kFzElectricalMeasurement;
+// genBinaryInput (0x000F) presentValue (attr 0x0055) → "input" (Bool).
+// Mirrors z2m `m.binary({cluster:"genBinaryInput",
+// attribute:"presentValue", valueOn:["ON",1], valueOff:["OFF",0]})`.
+// Multi-endpoint contact interfaces suffix to `input_<label>`.
+extern const FzConverter kFzBinaryInput;
 extern const FzConverter kFzThermostat;
 extern const FzConverter kFzIasZone;
 // ssIasZone ZoneStatus attribute report (attr 0x0002, u16), bit 0 → `alarm`
