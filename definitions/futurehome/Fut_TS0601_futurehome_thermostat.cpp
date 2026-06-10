@@ -5,6 +5,11 @@
 // fingerprints (`_TZE200_4hbx5cvx`, `_TZE200_e5hpkc6d`,
 // `_TZE204_e5hpkc6d`) into one PreparedDefinition; the three per-manu
 // `Fut__TZ*` Gen stubs are neutered.
+//
+// Parity fix: the original port dropped z2m DP 104 running_state
+// (lookup{idle:false, heat:true}, exposed via withRunningState) — the
+// thermostat declared a running-state surface that never decoded. Restored
+// as a Bool→string lookup DP + running_state expose.
 // z2m-source: futurehome.ts #TS0601_futurehome_thermostat.
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/dp.hpp"
@@ -32,6 +37,14 @@ constexpr ::zhc::tuya::TuyaEnumEntry kSensor[] = {
     { 2, "max_guard" },
 };
 
+// z2m lookup({idle: false, heat: true}) over the boolean running_state DP
+// (dp 104). Fanned to a string label via kTuyaDpFlagBoolEnum (keyed 0/1) so
+// it decodes whether the device wire-types the DP as bool or enum.
+constexpr ::zhc::tuya::TuyaEnumEntry kRunningState[] = {
+    { 0, "idle" },
+    { 1, "heat" },
+};
+
 struct cfg {
     static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
         // dp 1 — system_mode (z2m: bool→enum lookup off/heat). We
@@ -46,6 +59,12 @@ struct cfg {
         ::zhc::tuya::dp::numeric(101, "local_temperature_floor", 1),
         ::zhc::tuya::dp::enum_lookup(102, "sensor", kSensor, 3),
         ::zhc::tuya::dp::numeric(103, "hysteresis", 1),
+        // dp 104 — running_state (z2m: bool→string lookup idle/heat). Mapped
+        // as a Bool DP fanned to a string label via kTuyaDpFlagBoolEnum so it
+        // decodes regardless of the device wire-typing it bool or enum.
+        { 104, "running_state", ::zhc::TuyaDpType::Bool, 1, kRunningState,
+          sizeof(kRunningState) / sizeof(kRunningState[0]),
+          ::zhc::tuya::kTuyaDpFlagBoolEnum },
         ::zhc::tuya::dp::binary(106, "window_detection"),
         ::zhc::tuya::dp::numeric(107, "max_temperature_protection", 1),
         // dp 123 — energy (kWh × 100). z2m wraps this in a custom
@@ -53,7 +72,7 @@ struct cfg {
         // counter and let the shadow handle deduping.
         ::zhc::tuya::dp::numeric(123, "energy", 100),
     };
-    static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{ e, 12 };
+    static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{ e, 13 };
 };
 
 using FX = ::zhc::tuya::factory::TuyaOnOff<cfg>;
@@ -78,6 +97,8 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature_floor", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"sensor", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"hysteresis", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    // z2m withRunningState(["idle","heat"], ea.STATE) — read-only enum.
+    {"running_state", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"max_temperature_protection", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},

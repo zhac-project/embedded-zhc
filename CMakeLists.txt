@@ -1117,6 +1117,14 @@ target_link_libraries(zhc_datek_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_legrand_parity_tests tests/test_legrand_parity.cpp)
 target_link_libraries(zhc_legrand_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Futurehome TS0601 thermostat (Co020 / FH-clones).
+# The hand-ported Tier-2 DP map aggregated z2m's datapoints but dropped DP 104
+# running_state (z2m lookup{idle:false, heat:true}, exposed via
+# withRunningState) — a declared-but-dead channel. Restored as a Bool→string
+# lookup DP (kTuyaDpFlagBoolEnum) + running_state expose.
+add_executable(zhc_futurehome_parity_tests tests/test_futurehome_parity.cpp)
+target_link_libraries(zhc_futurehome_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the IKEA non-light family: several generated defs
 # wired the full kFzIkeaLight bundle (state/brightness/color_temp) onto
 # devices that are not lights — TRADFRI motion (E1525/E1745), VINDSTYRKA
@@ -1969,6 +1977,7 @@ add_test(NAME zhc_adurosmart_parity_tests   COMMAND zhc_adurosmart_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
+add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
