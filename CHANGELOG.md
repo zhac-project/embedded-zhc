@@ -10,6 +10,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **smarli. parity: dropped 0x0B04 electrical-measurement half + cover tilt.**
+  All three smarli. devices use z2m `m.electricityMeter()`, which defaults to
+  `cluster:"both"` — `seMetering` 0x0702 (energy) **plus**
+  `haElectricalMeasurement` 0x0B04 (power/voltage/current). The auto-ports
+  wired only `kFzMetering` (0x0702) and dropped the 0x0B04 half, so on
+  `S-ZB-PDM1-R251` (phase dimmer), `S-ZB-1RE1-R251` (2ch relay) and
+  `S-ZB-COV1-R251` (curtain) the `current`/`voltage` channels were absent and
+  `power` had no decoder. Added `kFzElectricalMeasurement` + `current`/`voltage`
+  exposes + the 0x0B04 binding to all three (on 1RE1/COV1 the meter lives on
+  endpoint 3, so its runtime keys are suffixed `_3` via the endpoint_map; the
+  meter bindings were re-pointed to ep3). `S-ZB-COV1-R251` additionally declared
+  z2m `m.windowCovering({controls:["lift","tilt"]})` but was wired with only
+  `kFzCoverPosition` (attr 0x0008), dropping the tilt channel — added
+  `kFzCoverTilt` (attr 0x0009) + `kTzCoverPositionTilt` + the `tilt` expose. The
+  `curtain_type` enum (manuSpecific attr 0x1000) and the sunricher motor/PWM
+  config extends remain INFRA (no generic converter) and are deferred. New
+  `test_smarli_parity`.
 - **HZC Electric sensor parity: phantom on/off, IAS dead-keys, dropped
   channels.** Three generated sensor defs were mis-ported. `S093TH-ZG`
   (temp/humidity) was wired as a phantom on/off switch (`kFzOnOff` +

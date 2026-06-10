@@ -1,8 +1,16 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Smarli S-ZB-PDM1-R251 — auto-generated.
+// Tier 2: Smarli S-ZB-PDM1-R251 — phase dimmer + electricity meter.
 // Phase dimmer gen 1
-// z2m-source: smarli.ts #S-ZB-PDM1-R251.
+// z2m-source: smarli.ts #S-ZB-PDM1-R251 — m.light() + m.electricityMeter().
+//
+// Gap fixed: m.electricityMeter() defaults to cluster:"both" (genericMeter,
+// electricityMeter args), i.e. seMetering 0x0702 (energy) PLUS
+// haElectricalMeasurement 0x0B04 (power/voltage/current). The auto-port
+// wired only kFzMetering (0x0702) and dropped the 0x0B04 half: the
+// current/voltage channels were absent and "power" had no decoder (in the
+// "both" path power comes from haElectricalMeasurement, not seMetering).
+// Add kFzElectricalMeasurement + current/voltage exposes + 0x0B04 binding.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::smarli {
@@ -10,6 +18,7 @@ namespace {
 const FzConverter* const kFz_S_ZB_PDM1_R251[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzElectricalMeasurement,
     &::zhc::generic::kFzMetering,
 };
 const TzConverter* const kTz_S_ZB_PDM1_R251[] = {
@@ -25,13 +34,16 @@ constexpr const char* kModels_S_ZB_PDM1_R251[] = { "S-ZB-PDM1-R251" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
+    {1, 0x0B04},
     {1, 0x0702},
 };
 // --- end auto-generated block ---
