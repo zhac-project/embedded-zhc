@@ -1285,6 +1285,14 @@ target_link_libraries(zhc_mercator_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_develco_parity_tests tests/test_develco_parity.cpp)
 target_link_libraries(zhc_develco_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Frient family (Develco rebrand, same silicon).
+# WISZB-131 lowered the generic kFzIasZone (bare "alarm") + dropped the
+# msTemperatureMeasurement channel; SMRZB-153 + EMIZB-151 wired only
+# kFzMetering (0x0702) and dropped the 0x0B04 electrical half
+# (voltage/current). All graduated to parent overrides mirroring develco.
+add_executable(zhc_frient_parity_tests tests/test_frient_parity.cpp)
+target_link_libraries(zhc_frient_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Samsung SmartThings sensor family. Motion
 # sensors 3305-S / 3325-S read occupancy from fz.ias_occupancy_alarm_2
 # (zoneStatus bit 1) but the generated ports wired kFzIasMotionAlarm
@@ -2415,6 +2423,7 @@ add_test(NAME zhc_livingwise_parity_tests   COMMAND zhc_livingwise_parity_tests)
 add_test(NAME zhc_linptech_parity_tests     COMMAND zhc_linptech_parity_tests)
 add_test(NAME zhc_profalux_parity_tests     COMMAND zhc_profalux_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
+add_test(NAME zhc_frient_parity_tests       COMMAND zhc_frient_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
 add_test(NAME zhc_sengled_parity_tests      COMMAND zhc_sengled_parity_tests)
 add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)

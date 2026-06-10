@@ -1,8 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Frient SMRZB-153 — auto-generated.
-// Smart Cable - Power switch with power measurement
-// z2m-source: frient.ts #SMRZB-153.
+// Tier 2: Frient SMRZB-153 smart cable — graduated from generated.
+// Smart Cable - Power switch with power measurement.
+//
+// Parity fix: z2m wires m.electricityMeter() with no args, whose default
+// cluster is "both" → fromZigbee = [fz.electrical_measurement (0x0B04),
+// fz.metering (0x0702)] exposing power, voltage, current, energy. The
+// generated port wired only kFzMetering (0x0702) so the 0x0B04 electrical
+// half (voltage/current) was dead. Add kFzElectricalMeasurement plus the
+// voltage/current exposes and the 0x0B04 binding.
+//
+// z2m-source: frient.ts #SMRZB-153 — m.onOff({configureReporting:false}) +
+//             m.electricityMeter() (cluster default "both").
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::frient {
@@ -10,6 +19,7 @@ namespace {
 const FzConverter* const kFz_SMRZB_153[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzElectricalMeasurement,
 };
 const TzConverter* const kTz_SMRZB_153[] = {
     &::zhc::generic::kTzOnOff,
@@ -24,11 +34,14 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0702},
+    {1, 0x0B04},
 };
 // --- end auto-generated block ---
 

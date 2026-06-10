@@ -1,14 +1,33 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Frient EMIZB-151 — auto-generated.
-// Electricity Meter Interface 2 P1
-// z2m-source: frient.ts #EMIZB-151.
+// Tier 2: Frient EMIZB-151 P1 electricity-meter interface — graduated from generated.
+// Electricity Meter Interface 2 P1.
+//
+// Parity fix: z2m wires m.electricityMeter({threePhase:true,
+// producedEnergy:true, tariffs:true}) whose default cluster is "both" →
+// fromZigbee = [fz.electrical_measurement (0x0B04), fz.metering (0x0702)]
+// exposing power, voltage, current, energy. The generated port wired only
+// kFzMetering (0x0702) so the 0x0B04 electrical half (voltage/current) was
+// dead. Add kFzElectricalMeasurement plus the voltage/current exposes and
+// the 0x0B04 binding.
+//
+// Deferred (INFRA): the threePhase phase-b/c attrs (haElectricalMeasurement
+// 0x090x), the producedEnergy summation (seMetering currentSummReceived)
+// and the tariff tiers (currentTier1/2 Summ*) have no generic decoder — the
+// shared kFzElectricalMeasurement/kFzMetering converters only decode the
+// single-phase power/voltage/current/energy core. Those extra channels stay
+// dead pending dedicated converters.
+//
+// z2m-source: frient.ts #EMIZB-151 —
+//             m.electricityMeter({threePhase:true, producedEnergy:true,
+//             tariffs:true}) (cluster default "both").
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::frient {
 namespace {
 const FzConverter* const kFz_EMIZB_151[] = {
     &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzElectricalMeasurement,
 };
 
 constexpr const char* kModels_EMIZB_151[] = { "EMIZB-151" };
@@ -20,10 +39,13 @@ constexpr const char* kModels_EMIZB_151[] = { "EMIZB-151" };
 constexpr Expose kAutoExposes[] = {
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0702},
+    {1, 0x0B04},
 };
 // --- end auto-generated block ---
 
