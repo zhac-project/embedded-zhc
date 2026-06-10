@@ -1,27 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Linkind ZS230002 — hand-rewritten 2026-04-28q.
+// Tier 2: Linkind ZS230002 — hand-rewritten 2026-04-28q; converters corrected 2026-06-10.
 // 5-key smart bulb dimmer switch light remote control (battery, sender).
 // z2m bundle: fz.command_on + fz.command_off + fz.command_step + fz.command_move
 //             + fz.command_stop + fz.command_move_to_color_temp
 //             + fz.command_move_to_color + fz.command_move_to_level
 //             + fz.command_move_color_temperature + fz.battery.
-// Mapped:
+// Mapped (each generic kFz matches the z2m fz it ports, 1:1):
 //   kFzCommandOn / Off / Step / Move / Stop                — basic on/off + dim ramp.
-//   kFzCommandMoveToLevel                                  — 0x04 moveToLevelWithOnOff.
-//   kFzCommandMoveToColorTemp                              — 0x0A moveToColorTemp.
-//   kFzCommandMoveToHueAndSaturation                       — 0x06 (covers move_to_color hs path).
-//   kFzCommandStepColorTemp                                — color_temperature_move_up/_down.
+//   kFzCommandMoveToLevel                                  — genLevelCtrl 0x00 → brightness_move_to_level.
+//   kFzCommandMoveToColorTemp        (lightingColorCtrl 0x0A) — fz.command_move_to_color_temp → "color_temperature_move".
+//   kFzCommandMoveToColor            (lightingColorCtrl 0x07) — fz.command_move_to_color → "color_move".
+//   kFzCommandMoveColorTemperature   (lightingColorCtrl 0x4B) — fz.command_move_color_temperature → "color_temperature_move_up/_down/_stop".
 //   kFzBattery                                             — battery + voltage.
 // NOTE: previous port wired kFzOnOff/kTzOnOff and exposed `state`. ZS230002 is
 //   a battery-powered remote (sender), not a sink — removed.
-// PARTIAL: z2m's `fz.command_move_color_temperature` (cluster 0x0300 cmd 0x4B,
-//   continuous color-temp move) maps to action "color_temperature_move" with no
-//   matching kFz today; kFzCommandStepColorTemp covers the discrete step variant
-//   (cmd 0x4C) which is what most remotes report. See linkind parity doc.
-// NOTE: `fz.command_move_to_color` action key is "color_move"; we don't have a
-//   dedicated kFzCommandMoveToColor — kFzCommandMoveToHueAndSaturation handles
-//   the HSV form and is the closest match in our generic set.
+// FIX 2026-06-10: prior port wired kFzCommandStepColorTemp (cmd 0x4C →
+//   "color_temperature_step_*", a DIFFERENT z2m converter not in this bundle)
+//   and kFzCommandMoveToHueAndSaturation (cmd 0x06 → phantom
+//   "move_to_hue_and_saturation"). z2m's actual fz are command_move_color_temperature
+//   (cmd 0x4B) and command_move_to_color (cmd 0x07); both generic converters
+//   already exist, so the discrete color_temperature_move_up/_down + color_move
+//   actions now decode and the phantom action is gone.
 // z2m-source: linkind.ts #ZS230002.
 #include "definitions/_generic/_shared.hpp"
 
@@ -36,9 +36,8 @@ constexpr const char* kActions_ZS230002[] = {
     "brightness_move_up", "brightness_move_down", "brightness_stop",
     "brightness_move_to_level",
     "color_temperature_move",
-    "color_temperature_move_up", "color_temperature_move_down",
+    "color_temperature_move_up", "color_temperature_move_down", "color_temperature_move_stop",
     "color_move",
-    "move_to_hue_and_saturation",
 };
 
 const FzConverter* const kFz_ZS230002[] = {
@@ -49,8 +48,8 @@ const FzConverter* const kFz_ZS230002[] = {
     &::zhc::generic::kFzCommandStop,
     &::zhc::generic::kFzCommandMoveToLevel,
     &::zhc::generic::kFzCommandMoveToColorTemp,
-    &::zhc::generic::kFzCommandStepColorTemp,
-    &::zhc::generic::kFzCommandMoveToHueAndSaturation,
+    &::zhc::generic::kFzCommandMoveColorTemperature,
+    &::zhc::generic::kFzCommandMoveToColor,
     &::zhc::generic::kFzBattery,
 };
 

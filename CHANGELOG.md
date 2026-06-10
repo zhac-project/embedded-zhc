@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Linkind ZS230002 5-key smart-bulb dimmer remote — wrong color
+  converters.** The hand-port wired `kFzCommandStepColorTemp`
+  (lightingColorCtrl cmd 0x4C → `color_temperature_step_*`, a converter z2m
+  does not use here) and `kFzCommandMoveToHueAndSaturation` (cmd 0x06 → a
+  phantom `move_to_hue_and_saturation` action), with a stale comment claiming
+  the correct generic converters were missing. z2m's actual fz are
+  `command_move_color_temperature` (cmd 0x4B → `color_temperature_move_up/_down/_stop`)
+  and `command_move_to_color` (cmd 0x07 → `color_move`); both generic
+  converters (`kFzCommandMoveColorTemperature`, `kFzCommandMoveToColor`)
+  already exist and are now wired, so the discrete color-temp move + color_move
+  actions decode and the phantom action is dropped from the expose enum.
+  Graduated `Lin_ZS230002.cpp` to a parent override. Added
+  `tests/test_linkind_parity.cpp`.
+
 - **Viessmann ViCare radiator TRV (ZK03840) — false `window_open` flag and
   dead `occupied_heating_setpoint`.** Two decode bugs against z2m's
   `fzLocal.viessmann_thermostat`: (1) the manuSpec attr 0x4000

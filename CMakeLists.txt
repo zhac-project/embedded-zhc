@@ -934,6 +934,17 @@ target_link_libraries(zhc_awox_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_adeo_parity_tests tests/test_adeo_parity.cpp)
 target_link_libraries(zhc_adeo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Linkind family. The ZS230002 5-key smart-bulb
+# dimmer remote wired the wrong color converters: kFzCommandStepColorTemp
+# (cmd 0x4C, a z2m converter not in this bundle) and
+# kFzCommandMoveToHueAndSaturation (cmd 0x06, a phantom action). z2m uses
+# fz.command_move_color_temperature (cmd 0x4B -> color_temperature_move_*)
+# and fz.command_move_to_color (cmd 0x07 -> color_move); both generic
+# converters already exist and are now wired. Guards the IAS sensors
+# (typed bit-0 keys) and the senders (action, no settable state) too.
+add_executable(zhc_linkind_parity_tests tests/test_linkind_parity.cpp)
+target_link_libraries(zhc_linkind_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the eWeLink (Coolkit / Sonoff-OEM) vendor. The WS01
 # rainfall sensor reports rain over ssIasZone commandStatusChangeNotification
 # (zoneStatus bit 0); z2m maps it via fzLocal.WS01_rain -> {rain}. Its
@@ -1710,6 +1721,7 @@ add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)
+add_test(NAME zhc_linkind_parity_tests      COMMAND zhc_linkind_parity_tests)
 add_test(NAME zhc_ewelink_parity_tests      COMMAND zhc_ewelink_parity_tests)
 add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_iluminize_parity_tests    COMMAND zhc_iluminize_parity_tests)
