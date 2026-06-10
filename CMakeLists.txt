@@ -1001,6 +1001,12 @@ target_link_libraries(zhc_edp_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_prolight_parity_tests tests/test_prolight_parity.cpp)
 target_link_libraries(zhc_prolight_parity_tests PRIVATE zhc_definitions)
 
+# Plaid Systems Spruce PS-SPRZMS-SLP3 temp+moisture sensor — the auto-port
+# dropped the temperature (0x0402) + humidity (0x0405) channels and added a
+# phantom on/off bundle, reducing the moisture sensor to battery-only.
+add_executable(zhc_plaid_parity_tests tests/test_plaid_parity.cpp)
+target_link_libraries(zhc_plaid_parity_tests PRIVATE zhc_definitions)
+
 # Bega LED luminaires — 13557 (E27 RGBW) + 85000 (Garden Spotlight RGBW)
 # were z2m m.light({colorTemp, color}) but the auto-port dropped the
 # 0x0300 lightingColorCtrl axis (color_temp/color_xy exposes + bind).
@@ -2840,6 +2846,7 @@ add_test(NAME zhc_airzone_aidoo_parity_tests COMMAND zhc_airzone_aidoo_parity_te
 add_test(NAME zhc_imhotepcreation_parity_tests COMMAND zhc_imhotepcreation_parity_tests)
 add_test(NAME zhc_icasa_parity_tests        COMMAND zhc_icasa_parity_tests)
 add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
+add_test(NAME zhc_plaid_parity_tests        COMMAND zhc_plaid_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)
