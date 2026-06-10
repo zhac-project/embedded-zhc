@@ -52,6 +52,19 @@ across the ZHAC platform.
   the z2m identity (model `X7726` / vendor `Xenon Smart`), the phantom `action`
   expose dropped, and exposes typed to match z2m (state/calibration enums,
   position/temperature numerics).
+- **Plaid Systems Spruce `PS-SPRZMS-SLP3`: restored dropped temperature +
+  humidity channels.** z2m wires this temp/moisture sensor as
+  `fromZigbee:[fz.temperature, fz.humidity, fz.plaid_battery]` (exposes
+  temperature + humidity + battery + battery_voltage), but the auto-port
+  emitted a phantom on/off bundle (`kFzOnOff` + a `state` expose + a 0x0006
+  genOnOff bind) plus battery-only, dropping BOTH sensor channels and leaving
+  the moisture sensor unable to report temperature or humidity. Re-wired onto
+  generic `kFzTemperature` (0x0402, /100) + `kFzHumidity` (0x0405, /100) and a
+  new shared `kFzPlaidBattery` that reads `mainsVoltage` (genPowerCfg attr
+  0x0000, raw mV — NOT batteryVoltage, which the generic kFzBattery expects)
+  and derives `battery` via z2m's `voltageToPercentage {min:2500, max:3000}`.
+  Bindings corrected to genPowerCfg + msTemperatureMeasurement +
+  msRelativeHumidity; phantom genOnOff bind + `state` expose removed.
 
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
