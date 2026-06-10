@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **AduroSmart 81848 / 81998 / 81949 — phantom `energy` channel + seMetering
+  (0x0702) on electrical-only power devices.** All three z2m defs use
+  `electricityMeter({cluster:"electrical"})` / `fz.electrical_measurement`,
+  which reads the haElectricalMeasurement cluster (0x0B04) ONLY —
+  power/voltage/current with NO `energy`. The shared `kFzAdu*EM` bundles also
+  wired the generic `kFzMetering` (seMetering 0x0702) decoder, declared a
+  phantom `energy` (kWh) expose and bound 0x0702, none of which z2m surfaces.
+  Made the EM bundles electrical-only (kFzElectricalMeasurement only; no
+  `energy` expose; no 0x0702 binding). The 81949 dimmer's 9 vendor-specific
+  genBasic config extends remain INFRA-deferred (manuSpecific attributes, no
+  existing converter).
+
 - **Livolo TI0001-* family — every custom-cluster decoder was dead, plus
   phantom/mismatched exposes.** Livolo devices speak a bespoke raw protocol
   over genPowerCfg (0x0001) whose body starts with the magic header

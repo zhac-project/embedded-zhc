@@ -1685,6 +1685,16 @@ target_link_libraries(zhc_kmpcil_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_rgb_genie_parity_tests tests/test_rgb_genie_parity.cpp)
 target_link_libraries(zhc_rgb_genie_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the AduroSmart ERIA power-measuring family. All three
+# (81848 plug, 81998 relay, 81949 dimmer) use z2m electricityMeter
+# ({cluster:"electrical"}) / fz.electrical_measurement — haElectricalMeasurement
+# (0x0B04) ONLY: power/voltage/current, NO energy. The shared "EM" bundle
+# wrongly also wired the generic seMetering (0x0702) decoder, declared a
+# phantom `energy` expose and bound 0x0702. Fixed by making the kFzAdu*EM
+# bundles electrical-only. See tests/README.md.
+add_executable(zhc_adurosmart_parity_tests tests/test_adurosmart_parity.cpp)
+target_link_libraries(zhc_adurosmart_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -1847,6 +1857,7 @@ add_test(NAME zhc_viessmann_parity_tests    COMMAND zhc_viessmann_parity_tests)
 add_test(NAME zhc_salus_controls_parity_tests COMMAND zhc_salus_controls_parity_tests)
 add_test(NAME zhc_kmpcil_parity_tests       COMMAND zhc_kmpcil_parity_tests)
 add_test(NAME zhc_rgb_genie_parity_tests    COMMAND zhc_rgb_genie_parity_tests)
+add_test(NAME zhc_adurosmart_parity_tests   COMMAND zhc_adurosmart_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

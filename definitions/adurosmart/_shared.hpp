@@ -18,11 +18,17 @@
 //   Tier         | feature set                               | bindings
 //   -------------+-------------------------------------------+----------------
 //   OnOff        | m.onOff() — relay/plug                    | 0x0006
-//   OnOffEM      | + electrical_measurement + metering       | 0x0006 0x0702 0x0B04
+//   OnOffEM      | + electrical_measurement (electrical-only)| 0x0006 0x0B04
 //   Light        | m.light() — brightness only               | 0x0006 0x0008
-//   LightEM      | + electrical_measurement + metering       | + 0x0702 0x0B04
+//   LightEM      | + electrical_measurement (electrical-only)| + 0x0B04
 //   CTLight      | m.light({colorTemp})                      | + 0x0300
 //   ColorCTLight | m.light({colorTemp, color})               | + 0x0300
+//
+// NOTE: every AduroSmart power device in z2m uses electricityMeter
+// ({cluster:"electrical"}) / fz.electrical_measurement — i.e. the
+// haElectricalMeasurement (0x0B04) cluster ONLY, exposing power/
+// voltage/current and NO `energy`. The EM bundles therefore omit
+// seMetering (0x0702) and the `energy` expose.
 
 #include "definitions/_generic/_shared.hpp"
 

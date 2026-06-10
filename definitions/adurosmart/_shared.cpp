@@ -35,10 +35,16 @@ const ::zhc::BindingSpec kBindingsAduOnOff[] = {
 const std::uint8_t kBindingsAduOnOffCount =
     static_cast<std::uint8_t>(sizeof(kBindingsAduOnOff) / sizeof(kBindingsAduOnOff[0]));
 
-// ── On/off + electricity meter (m.onOff() + m.electricityMeter) ─────
+// ── On/off + electrical-only meter (m.onOff() + m.electricityMeter
+//    ({cluster:"electrical"})) ─────────────────────────────────────
+// z2m's `cluster:"electrical"` reads ONLY haElectricalMeasurement
+// (0x0B04) → power/voltage/current. It does NOT read seMetering
+// (0x0702) and exposes NO `energy` (genericMeter electrical branch,
+// modernExtend.ts L2296-2322). 81848 additionally uses the legacy
+// fz.electrical_measurement (same 0x0B04 surface). So no kFzMetering,
+// no `energy` expose, no 0x0702 binding.
 const ::zhc::FzConverter* const kFzAduOnOffEM[] = {
     &::zhc::generic::kFzOnOff,
-    &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzElectricalMeasurement,
 };
 const std::uint8_t kFzAduOnOffEMCount =
@@ -53,8 +59,6 @@ const std::uint8_t kTzAduOnOffEMCount =
 const ::zhc::Expose kExposesAduOnOffEM[] = {
     { "state",   ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
-    { "energy",  ::zhc::ExposeType::Numeric, ::zhc::Access::State,
-      "kWh", nullptr, nullptr, 0 },
     { "power",   ::zhc::ExposeType::Numeric, ::zhc::Access::State,
       "W",   nullptr, nullptr, 0 },
     { "voltage", ::zhc::ExposeType::Numeric, ::zhc::Access::State,
@@ -66,7 +70,7 @@ const std::uint8_t kExposesAduOnOffEMCount =
     static_cast<std::uint8_t>(sizeof(kExposesAduOnOffEM) / sizeof(kExposesAduOnOffEM[0]));
 
 const ::zhc::BindingSpec kBindingsAduOnOffEM[] = {
-    { 1, 0x0006 }, { 1, 0x0702 }, { 1, 0x0B04 },
+    { 1, 0x0006 }, { 1, 0x0B04 },
 };
 const std::uint8_t kBindingsAduOnOffEMCount =
     static_cast<std::uint8_t>(sizeof(kBindingsAduOnOffEM) / sizeof(kBindingsAduOnOffEM[0]));
@@ -101,11 +105,13 @@ const ::zhc::BindingSpec kBindingsAduLight[] = {
 const std::uint8_t kBindingsAduLightCount =
     static_cast<std::uint8_t>(sizeof(kBindingsAduLight) / sizeof(kBindingsAduLight[0]));
 
-// ── Dimmable + electricity meter (m.light() + m.electricityMeter) ───
+// ── Dimmable + electrical-only meter (m.light() + m.electricityMeter
+//    ({cluster:"electrical"})) ─────────────────────────────────────
+// Same electrical-only surface as kFzAduOnOffEM: 0x0B04 power/voltage/
+// current, NO seMetering 0x0702, NO `energy`.
 const ::zhc::FzConverter* const kFzAduLightEM[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
-    &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzElectricalMeasurement,
 };
 const std::uint8_t kFzAduLightEMCount =
@@ -123,8 +129,6 @@ const ::zhc::Expose kExposesAduLightEM[] = {
       nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
-    { "energy",     ::zhc::ExposeType::Numeric, ::zhc::Access::State,
-      "kWh", nullptr, nullptr, 0 },
     { "power",      ::zhc::ExposeType::Numeric, ::zhc::Access::State,
       "W",   nullptr, nullptr, 0 },
     { "voltage",    ::zhc::ExposeType::Numeric, ::zhc::Access::State,
@@ -136,7 +140,7 @@ const std::uint8_t kExposesAduLightEMCount =
     static_cast<std::uint8_t>(sizeof(kExposesAduLightEM) / sizeof(kExposesAduLightEM[0]));
 
 const ::zhc::BindingSpec kBindingsAduLightEM[] = {
-    { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0702 }, { 1, 0x0B04 },
+    { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0B04 },
 };
 const std::uint8_t kBindingsAduLightEMCount =
     static_cast<std::uint8_t>(sizeof(kBindingsAduLightEM) / sizeof(kBindingsAduLightEM[0]));
