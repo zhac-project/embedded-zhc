@@ -2487,6 +2487,12 @@ target_link_libraries(zhc_purmo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_acova_parity_tests tests/test_acova_parity.cpp)
 target_link_libraries(zhc_acova_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Espressif ESP32-C6/H2 range extender. z2m defines
+# it as a pure router (exposes:[], fromZigbee:[], toZigbee:[]); the Tier-1
+# auto-port carried a phantom on/off + battery bundle. Pinned stripped.
+add_executable(zhc_espressif_parity_tests tests/test_espressif_parity.cpp)
+target_link_libraries(zhc_espressif_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Intuis (Muller Intuitiv) intuisradiator electric
 # heater. The generic kFzThermostat only decodes 0x0000 / 0x0012 / 0x001C
 # (emitting 0x0012 as current_heating_setpoint), so occupied/unoccupied
@@ -2962,6 +2968,7 @@ add_test(NAME zhc_stello_parity_tests       COMMAND zhc_stello_parity_tests)
 add_test(NAME zhc_netica_parity_tests       COMMAND zhc_netica_parity_tests)
 add_test(NAME zhc_purmo_parity_tests        COMMAND zhc_purmo_parity_tests)
 add_test(NAME zhc_acova_parity_tests        COMMAND zhc_acova_parity_tests)
+add_test(NAME zhc_espressif_parity_tests    COMMAND zhc_espressif_parity_tests)
 add_test(NAME zhc_intuis_parity_tests       COMMAND zhc_intuis_parity_tests)
 add_test(NAME zhc_nobo_parity_tests         COMMAND zhc_nobo_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
