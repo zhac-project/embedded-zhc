@@ -33,6 +33,15 @@ across the ZHAC platform.
   color_temp (+ lightingColorCtrl 0x0300), with `kTzOnOff`/`kTzBrightness`/
   `kTzColorTemp` write-back, bindings, and configure-reporting. rgbcct was
   already correct and is now regression-guarded.
+- **FrankEver FK_V02 water valve: rescued from misrouted genOnOff.** The
+  TS0601 `_TZE200_wt9agwf3` / `_5uodvhgc` / `_1n2zev06` smart water valve was
+  auto-ported onto bare `genOnOff` (cluster 0x0006) with only a `state` expose,
+  but z2m drives it entirely over the 0xEF00 (manuSpecificTuya) DP stream
+  (`legacy.fz.frankever_valve`) — the genOnOff wiring never matched, so nothing
+  decoded and the `threshold` + `timer` channels were dropped entirely. Re-wired
+  onto the Tuya-DP map (DP1→state, DP101→threshold raw, DP9→timer with the
+  seconds→minutes `/60` scale z2m applies) plus the matching write path, restored
+  the two lost StateSet exposes, and bound 0xEF00 instead of 0x0006.
 
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
