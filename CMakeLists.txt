@@ -1218,6 +1218,15 @@ target_link_libraries(zhc_ecodim_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_vesternet_parity_tests tests/test_vesternet_parity.cpp)
 target_link_libraries(zhc_vesternet_parity_tests PRIVATE zhc_definitions)
 
+# Dresden Elektronik scene-remote parity. BN-600085 ("Scene Switch") is a
+# 3-part battery scene remote: z2m wires m.commandsScenes(), so genScenes
+# (0x0005) recall/store presses surface as action "recall_<scene>" /
+# "store_<scene>". The port dropped both scene decoders (stale "no generic
+# decoder" comment — kFzCommandRecall/kFzCommandStore already exist), so every
+# scene button was silent. Wired both; remote is single-EP so actions stay bare.
+add_executable(zhc_dresden_elektronik_parity_tests tests/test_dresden_elektronik_parity.cpp)
+target_link_libraries(zhc_dresden_elektronik_parity_tests PRIVATE zhc_definitions)
+
 # Konke family parity fixtures. The 2AJZ4KPFT and KK-ES-J01W sensors were
 # auto-ported as battery-only — the generator dropped every msTemperature /
 # msRelativeHumidity / msIlluminance channel z2m surfaces. Restored the
@@ -2038,6 +2047,7 @@ add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
+add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

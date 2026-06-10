@@ -50,6 +50,21 @@ across the ZHAC platform.
   0x0B04 binding. Both files graduated to Tier 2; added
   `tests/test_somfy_parity.cpp`.
 
+- **Dresden Elektronik scene remotes lost button presses (BN-600085 &
+  BN-600087).** *BN-600085 ("Scene Switch")* — the 3-part battery scene remote
+  wires z2m's `m.commandsScenes()`, which decodes genScenes (0x0005)
+  `commandRecall`/`commandStore` into `action: "recall_<scene>"` /
+  `"store_<scene>"`. The auto-port wired only the OnOff/LevelCtrl/ColorCtrl
+  command stream plus battery and carried a stale "no generic decoder yet"
+  comment — but `kFzCommandRecall`/`kFzCommandStore` already exist in
+  `_generic/_shared`, so the scene buttons were silent. Wired both (single
+  endpoint, actions stay bare). *BN-600087 ("Lighting Switch")* — the
+  2-endpoint remote (z2m `m.commandsOnOff/LevelCtrl/ColorCtrl(["1","2"])`
+  postfix actions per button) carried an `endpoint_map` but not
+  `endpoint_action_suffix`; since `action` is a kAlwaysGlobalKey both rockers
+  collapsed onto one bare `action` (a 2-button remote looked like 1). Set
+  `endpoint_action_suffix` so the key is rewritten `action_1`/`action_2`.
+  Graduated both defs to Tier 2; added `tests/test_dresden_elektronik_parity.cpp`.
 - **Leviton RC-2000WH (Omnistat2) thermostat left three exposes dead.** z2m
   wires the full `fz.thermostat`, which publishes the entire hvacThermostat
   surface, but the auto-port only wired the generic `kFzThermostat`

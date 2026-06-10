@@ -1,16 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: DresdenElektronik BN-600085 (Scene Switch) — hand-edited 2026-04-29c.
+// Tier 2: DresdenElektronik BN-600085 (Scene Switch) — hand-edited 2026-06-10.
 // 3-part Zigbee-powered scene switch (battery-powered remote).
 // z2m: m.commandsOnOff() + m.commandsLevelCtrl() + m.commandsColorCtrl()
 //      + m.commandsScenes() + m.battery().
 //
-// PARTIAL: ZHC's generic kFzCommand* covers OnOff / LevelCtrl / ColorCtrl;
-// `commandsScenes` (cluster 0x0005 commandRecall / commandStore) has no
-// generic decoder yet — scene button presses will not surface as
-// `action` events until a generic kFzCommandRecallScene lands.
-// Bound clusters still expose state/battery; the runtime gap is
-// documented in DRESDEN_ELEKTRONIK_PARITY.md.
+// FULL on the command stream: ZHC's generic kFzCommand* covers OnOff /
+// LevelCtrl / ColorCtrl, and the generic genScenes (0x0005) decoders
+// kFzCommandRecall (cmd 0x05 → action "recall_<scene>") + kFzCommandStore
+// (cmd 0x04 → action "store_<scene>") cover m.commandsScenes()'s recall /
+// store buttons. (The earlier "no generic decoder" note was stale — both
+// converters already live in _generic/_shared; they were simply not wired.)
+// z2m's add / remove / remove_all scene commands have no generic decoder
+// yet — rarely surfaced by a scene remote, deferred (INFRA).
+// All actions stay bare (single-endpoint remote, no endpoint_map).
 // z2m-source: dresden_elektronik.ts #BN-600085.
 #include "definitions/_generic/_shared.hpp"
 
@@ -25,6 +28,8 @@ const FzConverter* const kFz_BN_600085[] = {
     &::zhc::generic::kFzCommandMoveToHueAndSaturation,
     &::zhc::generic::kFzCommandStep,
     &::zhc::generic::kFzCommandMove,
+    &::zhc::generic::kFzCommandRecall,   // genScenes recall → action "recall_<scene>"
+    &::zhc::generic::kFzCommandStore,    // genScenes store  → action "store_<scene>"
     &::zhc::generic::kFzBattery,
 };
 // Remote control sends commands; no toZigbee converters needed.
