@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Konke 2AJZ4KPFT / KK-ES-J01W — sensor channels reduced to battery-only.**
+  Both temperature/humidity sensors were auto-ported with only `kFzBattery`
+  wired, silently dropping every measurement channel. z2m surfaces
+  `fz.temperature` + `fz.humidity` on 2AJZ4KPFT and additionally
+  `m.illuminance()` on KK-ES-J01W. Graduated both defs and restored the generic
+  msTemperatureMeasurement (0x0402), msRelativeHumidity (0x0405) and
+  msIlluminanceMeasurement (0x0400) decoders + the matching exposes/bindings.
+  (Per-model fingerprint gating of KK-ES-J01W's `TS0222` to
+  `_TYZB01_fi5yftwv` is left INFRA-deferred — the matcher's manufacturer
+  gating is whole-def, so it cannot be applied to one model without also
+  gating the ungated `3AFE090103021000` variant.)
+
 - **AduroSmart 81848 / 81998 / 81949 — phantom `energy` channel + seMetering
   (0x0702) on electrical-only power devices.** All three z2m defs use
   `electricityMeter({cluster:"electrical"})` / `fz.electrical_measurement`,
