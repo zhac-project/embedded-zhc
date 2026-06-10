@@ -978,6 +978,16 @@ target_link_libraries(zhc_lonsonho_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_honyar_parity_tests tests/test_honyar_parity.cpp)
 target_link_libraries(zhc_honyar_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the MakeGood (Tuya-OEM) family. MG-AUZG01 (TS011F) is a metering
+# double power point whose z2m tuyaOnOff({electricalMeasurements:true}) was not
+# expanded by the auto-port, dropping the whole power/energy/voltage/current
+# surface (0x0702 + 0x0B04); graduated to a parent override wiring the generic
+# seMetering + haElectricalMeasurement decoders + exposes + bindings. The
+# dual-endpoint (l1/l2) split is INFRA-deferred (multiEndpointSkip metering has
+# no per-def runtime hook), same as Honyar HY0157. MG-GPO01 was already correct.
+add_executable(zhc_makegood_parity_tests tests/test_makegood_parity.cpp)
+target_link_libraries(zhc_makegood_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Sylvania (OSRAM Lightify US) family. The 74388 contact +
 # temperature sensor lowered the generic kFzIasZone converter (bare "alarm"
 # key) while z2m's fz.ias_contact_alarm_1 publishes the semantic key
@@ -2026,6 +2036,7 @@ add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
 add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
+add_test(NAME zhc_makegood_parity_tests     COMMAND zhc_makegood_parity_tests)
 add_test(NAME zhc_sylvania_parity_tests     COMMAND zhc_sylvania_parity_tests)
 add_test(NAME zhc_awox_parity_tests         COMMAND zhc_awox_parity_tests)
 add_test(NAME zhc_adeo_parity_tests         COMMAND zhc_adeo_parity_tests)

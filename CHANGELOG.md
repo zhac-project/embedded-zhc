@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **MakeGood MG-AUZG01 metering plug dropped its whole power-monitoring
+  surface.** The TS011F `_TZ3000_dd8wwzcy` double power point uses z2m
+  `tuya.modernExtend.tuyaOnOff({electricalMeasurements: true})`, whose
+  `electricalMeasurements` branch adds `fz.electrical_measurement` +
+  `fz.metering` and exposes power/current/voltage/energy. The auto-port
+  did not expand that modernExtend, so the generated def wired on/off
+  only — dropping the entire metering surface (`seMetering` 0x0702 energy
+  + `haElectricalMeasurement` 0x0B04 power/voltage/current). Graduated to
+  a Tier-2 parent override wiring the generic metering + electrical
+  decoders, the four exposes, and the 0x0702/0x0B04 (+EP2 genOnOff)
+  bindings. The dual-endpoint (l1/l2) state split stays INFRA-deferred
+  (z2m `multiEndpointSkip` keeps metering global; the runtime suffix
+  rewrite has no per-def metering-skip hook), matching the Honyar
+  U86Z223A10-ZJU01(GD) precedent. MG-GPO01 was already correct.
+
 - **LifeControl (MCLH series) ports dropped whole channels.** Three
   auto-generated defs lost half their z2m functionality: MCLH-02 "vivi
   ZLight" colour bulb (`m.light({colorTemp, color: true})`) wired only
