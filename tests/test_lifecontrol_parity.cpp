@@ -179,19 +179,32 @@ void check_mclh08() {
     assert(def_exposes(def, "voc"));
     assert(def_exposes(def, "battery"));
 
-    // measuredValue 0x0000 (s16) → temperature (centi-°C raw, positive).
-    expect_int(def, TEMP_MEAS, "msTemperatureMeasurement", 0x0000, 0x29, u16(2150), "temperature", 2150);
-    // minMeasuredValue 0x0001 (u16) → humidity (centi-% raw).
-    expect_int(def, TEMP_MEAS, "msTemperatureMeasurement", 0x0001, 0x21, u16(4500), "humidity", 4500);
+    // measuredValue 0x0000 (s16) → temperature 21.5 °C (z2m /100 → Float).
+    {
+        auto r = dispatch_zcl(def, TEMP_MEAS, "msTemperatureMeasurement", 1, attr_report(0x0000, 0x29, u16(2150)));
+        assert(r.any_matched);
+        const Value* v = r.merged.find("temperature");
+        assert(v && v->type == ValueType::Float && v->f > 21.49f && v->f < 21.51f);
+    }
+    // minMeasuredValue 0x0001 (u16) → humidity 45.0 % (z2m /100 → Float).
+    {
+        auto r = dispatch_zcl(def, TEMP_MEAS, "msTemperatureMeasurement", 1, attr_report(0x0001, 0x21, u16(4500)));
+        const Value* v = r.merged.find("humidity");
+        assert(v && v->type == ValueType::Float && v->f > 44.99f && v->f < 45.01f);
+    }
     // maxMeasuredValue 0x0002 (u16) → eco2 (ppm raw).
     expect_uint(def, TEMP_MEAS, "msTemperatureMeasurement", 0x0002, 0x21, u16(800), "eco2", 800);
     // tolerance 0x0003 (u16) → voc (ppb raw).
     expect_uint(def, TEMP_MEAS, "msTemperatureMeasurement", 0x0003, 0x21, u16(125), "voc", 125);
 
-    // Negative-temperature wrap: measuredValue < -1000 → -(v+32767)*5/3.
-    // s16 value -2000 = 0xF830. Expected centi = -(-2000 + 32767)*5/3 =
-    // -(30767)*5/3 = -153835/3 = -51278 (integer truncation toward zero).
-    expect_int(def, TEMP_MEAS, "msTemperatureMeasurement", 0x0000, 0x29, u16(0xF830), "temperature", -51278);
+    // Negative-temperature wrap: measuredValue < -1000 → -(v+32767)*5/3,
+    // then /100. s16 -2000 = 0xF830 → centi -(-2000+32767)*5/3 = -51278
+    // → -512.78 °C.
+    {
+        auto r = dispatch_zcl(def, TEMP_MEAS, "msTemperatureMeasurement", 1, attr_report(0x0000, 0x29, u16(0xF830)));
+        const Value* v = r.merged.find("temperature");
+        assert(v && v->type == ValueType::Float && v->f > -512.79f && v->f < -512.77f);
+    }
 
     // Regression: battery via genPowerCfg still decodes.
     const std::uint8_t batt[] = {0xC8};  // batteryPercentageRemaining 0x0021, 200 → dontDivide → 200/.. raw 200

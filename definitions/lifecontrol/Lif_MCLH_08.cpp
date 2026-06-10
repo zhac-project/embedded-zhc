@@ -6,15 +6,16 @@
 //
 // LifeControl packs FOUR readings into ONE msTemperatureMeasurement
 // (0x0402) report — a non-standard layout no generic converter handles:
-//   measuredValue     (0x0000) → temperature (with a negative-value
-//                                 wrap: v < -1000 → -(v+32767)*5/3)
-//   minMeasuredValue  (0x0001) → humidity      (centi-%, downstream /100)
+//   measuredValue     (0x0000) → temperature  (centi-°C, /100 → °C; with a
+//                                 negative wrap: v < -1000 → -(v+32767)*5/3)
+//   minMeasuredValue  (0x0001) → humidity      (centi-%, /100 → %)
 //   maxMeasuredValue  (0x0002) → eco2          (ppm, raw)
 //   tolerance         (0x0003) → voc           (ppb, raw)
 // The auto-generated port wired only kFzBattery, so all four air-quality
 // channels were dead. Wire a vendor converter that mirrors z2m's
-// airQuality() decode (raw pass-through, runtime scales temp/humidity
-// /100 downstream like the generic temp/humidity converters).
+// airQuality() decode. temperature/humidity are divided /100 and emitted
+// as Float HERE (exactly like the generic fz_temperature/fz_humidity — the
+// runtime does NO post-converter scaling); eco2/voc are raw pass-through.
 #include "definitions/_generic/_shared.hpp"
 
 #include "zhc/runtime/definition.hpp"
@@ -30,22 +31,24 @@ bool fz_lifecontrol_air_quality(const ::zhc::DecodedMessage& msg,
                                 ::zhc::RuntimeContext&,
                                 ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     bool emitted = false;
-    // attr 0x0000 — measuredValue → temperature (centi-°C raw).
+    // attr 0x0000 — measuredValue → temperature (°C). z2m divides /100.
     if (const ::zhc::Value* v = msg.payload.find("0")) {
         std::int64_t raw = (v->type == ::zhc::ValueType::Int)
                                ? v->i
                                : static_cast<std::int64_t>(v->u);
-        // z2m: v < -1000 ? -(v + 32767) * 5 / 3 : v  (still centi-°C).
+        // z2m: v < -1000 ? -(v + 32767) * 5 / 3 : v  (centi-°C), then /100.
         std::int64_t centi = (raw < -1000) ? (-(raw + 32767) * 5) / 3 : raw;
-        ::zhc::Value t{}; t.type = ::zhc::ValueType::Int; t.i = centi;
+        ::zhc::Value t{}; t.type = ::zhc::ValueType::Float;
+        t.f = static_cast<float>(centi) / 100.0f;
         out.put("temperature", t); emitted = true;
     }
-    // attr 0x0001 — minMeasuredValue → humidity (centi-% raw).
+    // attr 0x0001 — minMeasuredValue → humidity (%). z2m divides /100.
     if (const ::zhc::Value* v = msg.payload.find("1")) {
-        ::zhc::Value h{}; h.type = ::zhc::ValueType::Int;
-        h.i = (v->type == ::zhc::ValueType::Int)
+        std::int64_t raw = (v->type == ::zhc::ValueType::Int)
                   ? v->i
                   : static_cast<std::int64_t>(v->u);
+        ::zhc::Value h{}; h.type = ::zhc::ValueType::Float;
+        h.f = static_cast<float>(raw) / 100.0f;
         out.put("humidity", h); emitted = true;
     }
     // attr 0x0002 — maxMeasuredValue → eco2 (ppm raw).

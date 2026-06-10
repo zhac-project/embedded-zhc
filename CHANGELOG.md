@@ -22,8 +22,10 @@ across the ZHAC platform.
   packs temperature/humidity/eco2/voc into ONE `msTemperatureMeasurement`
   (0x0402) report. Graduated all three to Tier 2: MCLH-02 + MCLH-03 wire
   the generic colour / electrical-measurement converters; MCLH-08 gets a
-  vendor `kFzLifecontrolAirQuality` converter (incl. the negative-
-  temperature wrap). Covered by `tests/test_lifecontrol_parity.cpp`.
+  vendor `kFzLifecontrolAirQuality` converter (temperature/humidity divided
+  /100 to Float to match z2m + the generic temp/humidity converters; eco2/
+  voc raw; incl. the negative-temperature wrap). Covered by
+  `tests/test_lifecontrol_parity.cpp`.
 - **Fantem ZB003-X 4-in-1 multi sensor never reported `occupancy`.** The IAS
   motion path lowered the generic `kFzIasZoneStatusChange`, which emits the
   bare key `alarm_1` for zoneStatus bit 0, while the expose declared the
