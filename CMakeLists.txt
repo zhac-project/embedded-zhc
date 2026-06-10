@@ -938,6 +938,14 @@ target_link_libraries(zhc_schwaiger_parity_tests PRIVATE zhc_definitions)
 # guard for the full RGB+CCT axis.
 add_executable(zhc_ysrsai_parity_tests tests/test_ysrsai_parity.cpp)
 target_link_libraries(zhc_ysrsai_parity_tests PRIVATE zhc_definitions)
+# Parity for the WMUN ZS05 universal IR remote (TS1201). The auto-port
+# reduced this IR remote to a battery-only device, dropping the entire
+# Zosung IR channel (6 fzZosung handlers + 2 tzZosung + the
+# learn/learned/to_send exposes + the 0xED00/0xE004 cluster binds) that
+# z2m wires via zosungExtend. Graduated to a parent override wired
+# against the shared Zosung IR runtime (sibling of Moes UFO-R11).
+add_executable(zhc_wmun_parity_tests tests/test_wmun_parity.cpp)
+target_link_libraries(zhc_wmun_parity_tests PRIVATE zhc_definitions)
 
 # Parity fixture for the Ajax Online LED-bulb family. Pins the dropped
 # colour / colour-temperature axes the auto-ports carried: full-colour bulbs
@@ -2808,6 +2816,7 @@ add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
+add_test(NAME zhc_wmun_parity_tests         COMMAND zhc_wmun_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
 add_test(NAME zhc_cleverio_parity_tests     COMMAND zhc_cleverio_parity_tests)
 add_test(NAME zhc_atlantic_parity_tests     COMMAND zhc_atlantic_parity_tests)
