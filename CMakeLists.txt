@@ -1694,6 +1694,15 @@ target_link_libraries(zhc_rgb_genie_parity_tests PRIVATE zhc_definitions)
 # bundles electrical-only. See tests/README.md.
 add_executable(zhc_adurosmart_parity_tests tests/test_adurosmart_parity.cpp)
 target_link_libraries(zhc_adurosmart_parity_tests PRIVATE zhc_definitions)
+# Parity fixtures for the Sercomm (Telstra/SmartThings OEM) family. The
+# SZ-PIR04N PIR sensor dropped its illuminance channel (z2m adds
+# m.illuminance() — msIlluminanceMeasurement 0x0400 — on top of motion/temp/
+# battery); graduated to a parent override wiring the generic kFzIlluminance
+# converter, the `illuminance` expose, and a 0x0400 binding. The rest of the
+# family (contact/motion/water IAS sensors + metering plugs) are structural
+# guards. See tests/README.md.
+add_executable(zhc_sercomm_parity_tests tests/test_sercomm_parity.cpp)
+target_link_libraries(zhc_sercomm_parity_tests PRIVATE zhc_definitions)
 
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
@@ -1858,6 +1867,7 @@ add_test(NAME zhc_salus_controls_parity_tests COMMAND zhc_salus_controls_parity_
 add_test(NAME zhc_kmpcil_parity_tests       COMMAND zhc_kmpcil_parity_tests)
 add_test(NAME zhc_rgb_genie_parity_tests    COMMAND zhc_rgb_genie_parity_tests)
 add_test(NAME zhc_adurosmart_parity_tests   COMMAND zhc_adurosmart_parity_tests)
+add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

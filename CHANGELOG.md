@@ -21,6 +21,14 @@ across the ZHAC platform.
   `energy` expose; no 0x0702 binding). The 81949 dimmer's 9 vendor-specific
   genBasic config extends remain INFRA-deferred (manuSpecific attributes, no
   existing converter).
+- **Sercomm SZ-PIR04N — dropped illuminance channel.** z2m wires this PIR
+  motion/temperature sensor with `extend: [m.illuminance()]` on top of
+  `ias_occupancy_alarm_1` + temperature + battery, exposing `illuminance`
+  (`msIlluminanceMeasurement` 0x0400 measuredValue). The auto-port dropped the
+  illuminance channel entirely — no `kFzIlluminance` decoder, no `illuminance`
+  expose, no 0x0400 binding — so ambient-light readings never reached the
+  shadow. Graduated to a Tier-2 parent override wiring the generic
+  `kFzIlluminance` converter, the `illuminance` expose, and a 0x0400 binding.
 
 - **Livolo TI0001-* family — every custom-cluster decoder was dead, plus
   phantom/mismatched exposes.** Livolo devices speak a bespoke raw protocol
