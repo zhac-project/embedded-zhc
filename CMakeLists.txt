@@ -2501,6 +2501,9 @@ target_link_libraries(zhc_nobo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_aurora_lighting_parity_tests tests/test_aurora_lighting_parity.cpp)
 target_link_libraries(zhc_aurora_lighting_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_wally_parity_tests tests/test_wally_parity.cpp)
+target_link_libraries(zhc_wally_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Onesti (EasyAccess / Nimly / Relax) vendor. The two
 # door locks are clean on their generic core surface (lock state / battery /
 # action / pincode); the vendor-specific last_action / last_used_pin_code
@@ -2935,6 +2938,7 @@ add_test(NAME zhc_acova_parity_tests        COMMAND zhc_acova_parity_tests)
 add_test(NAME zhc_intuis_parity_tests       COMMAND zhc_intuis_parity_tests)
 add_test(NAME zhc_nobo_parity_tests         COMMAND zhc_nobo_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
+add_test(NAME zhc_wally_parity_tests        COMMAND zhc_wally_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
 add_test(NAME zhc_domraem_parity_tests      COMMAND zhc_domraem_parity_tests)
