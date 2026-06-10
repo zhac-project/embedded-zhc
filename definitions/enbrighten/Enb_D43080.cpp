@@ -1,8 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Enbrighten 43080 — auto-generated.
-// Zigbee in-wall smart dimmer
-// z2m-source: enbrighten.ts #43080.
+// Tier 2: Enbrighten 43080 — hand-curated (was missing action channel).
+// Zigbee in-wall smart dimmer. z2m drives it with
+//   m.light(...) + m.commandsOnOff({commands:["on","off"], bind:true})
+//   + m.commandsLevelCtrl({commands:["brightness_move_up",
+//       "brightness_move_down","brightness_stop"], bind:true})
+// Besides the controllable light (state + brightness), it binds genOnOff +
+// genLevelCtrl output and reports physical presses as genOnOff commandOn /
+// commandOff and genLevelCtrl Move / Stop, surfaced as an `action` enum
+// ["on","off","brightness_move_up","brightness_move_down",
+// "brightness_stop"]. The auto-port kept only the controllable half and
+// dropped the command/action channel. Added kFzCommandOn / kFzCommandOff /
+// kFzCommandMove / kFzCommandStop + an `action` expose; the light surface
+// is unchanged.
+// z2m-source: enbrighten.ts #43080 (commandsOnOff + commandsLevelCtrl).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::enbrighten {
@@ -10,6 +21,10 @@ namespace {
 const FzConverter* const kFz_D43080[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzCommandOn,
+    &::zhc::generic::kFzCommandOff,
+    &::zhc::generic::kFzCommandMove,
+    &::zhc::generic::kFzCommandStop,
 };
 const TzConverter* const kTz_D43080[] = {
     &::zhc::generic::kTzOnOff,
@@ -24,6 +39,7 @@ constexpr const char* kModels_D43080[] = { "43080", "43113", "43090", "43096" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

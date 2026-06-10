@@ -1,8 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Enbrighten 43082 — auto-generated.
-// Zigbee in-wall smart dimmer
-// z2m-source: enbrighten.ts #43082.
+// Tier 2: Enbrighten 43082 — hand-curated (was missing action channel).
+// Zigbee in-wall smart dimmer with energy monitoring. z2m drives it with
+//   m.light(...) + m.electricityMeter({cluster:"metering"})
+//   + m.commandsOnOff({commands:["on","off"], bind:true})
+//   + m.commandsLevelCtrl({commands:["brightness_move_up",
+//       "brightness_move_down","brightness_stop"], bind:true})
+// electricityMeter cluster:"metering" = seMetering 0x0702 only (energy +
+// power) — already wired via kFzMetering, matches z2m. The auto-port
+// dropped the command/action channel: the dimmer binds genOnOff +
+// genLevelCtrl output and reports physical presses as genOnOff commandOn /
+// commandOff and genLevelCtrl Move / Stop, surfaced as an `action` enum.
+// Added kFzCommandOn / kFzCommandOff / kFzCommandMove / kFzCommandStop +
+// an `action` expose; light + energy surfaces unchanged.
+// z2m-source: enbrighten.ts #43082 (commandsOnOff + commandsLevelCtrl).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::enbrighten {
@@ -11,6 +22,10 @@ const FzConverter* const kFz_D43082[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzCommandOn,
+    &::zhc::generic::kFzCommandOff,
+    &::zhc::generic::kFzCommandMove,
+    &::zhc::generic::kFzCommandStop,
 };
 const TzConverter* const kTz_D43082[] = {
     &::zhc::generic::kTzOnOff,
@@ -27,6 +42,7 @@ constexpr Expose kAutoExposes[] = {
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
