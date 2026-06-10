@@ -5,6 +5,16 @@
 //
 // z2m-source: atlantic.ts #GW003-AS-IN-TE-FC.
 //
+// 2026-06-10 parity pass: graduated from generated/ to add a vendor-extras
+// Fz decoder. The generic kFzThermostat decodes ONLY hvacThermostat attrs
+// 0x0000 (local_temperature), 0x0012 (occupied_heating_setpoint) and 0x001C
+// (system_mode). z2m's fz.thermostat additionally decodes
+// occupiedCoolingSetpoint (attr 0x0011) -> occupied_cooling_setpoint and
+// programingOperMode (attr 0x0025) -> programming_operation_mode, both of
+// which this def EXPOSES. Without the extras converter those two reports were
+// dead on read. kFzAtlanticThermostatExtras closes that gap (raw values, same
+// convention as kFzThermostat — downstream scales /100 and maps the enum).
+//
 // Wire format notes:
 //   * Default device endpoint is 1 for all hvacFanCtrl/hvacThermostat
 //     traffic. z2m additionally binds endpoint 232 → haDiagnostic
@@ -144,6 +154,60 @@ extern const TzConverter kTzAtlanticPresetEcoOper{
     .user_config = &kSpecPresetEcoOper,
 };
 
+// ── vendor-extras Fz: cooling setpoint + programming_operation_mode ──
+//
+// Mirrors the two legs of z2m fz.thermostat that the generic
+// kFzThermostat omits. Standard hvacThermostat attrs (NOT manuSpec):
+//   * 0x0011 OccupiedCoolingSetpoint (s16) → occupied_cooling_setpoint
+//   * 0x0025 ProgrammingOperationMode (u8 map) → programming_operation_mode
+// Emits RAW values to match kFzThermostat's convention (local_temperature /
+// setpoints are raw s16 scaled /100 downstream; system_mode is raw u8 with
+// the SPA mapping the enum). programming_operation_mode raw map (z2m
+// thermostatProgrammingOperationModes): 0 setpoint / 1 schedule /
+// 3 schedule_with_preheat / 4 eco.
+bool fz_atlantic_thermostat_extras(
+        const ::zhc::DecodedMessage& msg,
+        const FzConverter&,
+        const PreparedDefinition&,
+        ::zhc::RuntimeContext&,
+        ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool emitted = false;
+    // attr 0x0011 (decimal 17) — OccupiedCoolingSetpoint (s16).
+    if (const ::zhc::Value* v = msg.payload.find("17")) {
+        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
+            ::zhc::Value o{}; o.type = ::zhc::ValueType::Int;
+            o.i = v->type == ::zhc::ValueType::Int
+                    ? v->i : static_cast<std::int64_t>(v->u);
+            out.put("occupied_cooling_setpoint", o); emitted = true;
+        }
+    }
+    // attr 0x0025 (decimal 37) — ProgrammingOperationMode (u8 enum).
+    if (const ::zhc::Value* v = msg.payload.find("37")) {
+        if (v->type == ::zhc::ValueType::Uint || v->type == ::zhc::ValueType::Int) {
+            ::zhc::Value o{}; o.type = ::zhc::ValueType::Uint;
+            o.u = v->type == ::zhc::ValueType::Uint
+                    ? v->u : static_cast<std::uint64_t>(v->i);
+            out.put("programming_operation_mode", o); emitted = true;
+        }
+    }
+    return emitted;
+}
+
+extern const FzConverter kFzAtlanticThermostatExtras{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "hvacThermostat",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::AttributeReport) |
+                         ::zhc::type_bit(::zhc::MessageType::ReadResponse),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_atlantic_thermostat_extras },
+    .user_config       = nullptr,
+};
+
 // ── enum value strings for exposes ──────────────────────────────────
 
 constexpr const char* kSystemModeValues[] = {
@@ -161,12 +225,19 @@ constexpr const char* kPresetBoostValues[] = {
 constexpr const char* kLouverPosValues[] = {
     "quarter_open", "half_open", "three_quarters_open", "fully_open",
 };
+// z2m thermostatProgrammingOperationModes (raw map): 0/1/3/4.
+constexpr const char* kProgOperModeValues[] = {
+    "setpoint", "schedule", "schedule_with_preheat", "eco",
+};
 
 // ── converter tables ────────────────────────────────────────────────
 
 const FzConverter* const kFz_GW003_AS_IN_TE_FC[] = {
     &::zhc::generic::kFzThermostat,
     &::zhc::generic::kFzFanMode,
+    // Adds occupied_cooling_setpoint (attr 0x0011) +
+    // programming_operation_mode (attr 0x0025) that kFzThermostat drops.
+    &kFzAtlanticThermostatExtras,
 };
 const TzConverter* const kTz_GW003_AS_IN_TE_FC[] = {
     // kTzThermostat covers occupied_heating_setpoint +
@@ -192,7 +263,8 @@ constexpr Expose kAutoExposes[] = {
     {"current_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "C",
         nullptr, nullptr, 0},
     {"occupied_cooling_setpoint",  ExposeType::Numeric, Access::StateSet, "C",
-        "z2m: setpoint 18..30 step 0.5 — outbound write not yet wired (kTzThermostat is heat-only)",
+        "z2m: setpoint 18..30 step 0.5 — INBOUND read now decoded (attr 0x0011 via "
+        "kFzAtlanticThermostatExtras); outbound write not yet wired (kTzThermostat is heat-only)",
         nullptr, 0},
     {"system_mode",                ExposeType::Enum,    Access::StateSet, nullptr,
         "off / heat / cool / auto / dry / fan_only — kTzThermostat covers off/heat/cool/auto only",
@@ -213,8 +285,9 @@ constexpr Expose kAutoExposes[] = {
         "Boost leg of TS preset (attr 0x4270). Activity (attr 0x4275) + eco (programingOperMode) legs not wired",
         nullptr, 0},
     {"programming_operation_mode", ExposeType::Enum,    Access::State,    nullptr,
-        "z2m exposes programmingOperationMode but ZHC has no generic Tz for it",
-        nullptr, 0},
+        "Decoded from hvacThermostat attr 0x0025 via kFzAtlanticThermostatExtras "
+        "(raw u8 enum). Outbound Tz still rides the preset legs only",
+        kProgOperModeValues, sizeof(kProgOperModeValues)/sizeof(kProgOperModeValues[0])},
 };
 
 // ── bindings ────────────────────────────────────────────────────────
