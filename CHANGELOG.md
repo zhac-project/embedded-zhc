@@ -23,6 +23,19 @@ across the ZHAC platform.
   setpoint, max-heat limit, local-temp calibration, occupancy), restored
   the full flat expose surface, re-typed `system_mode` from Binary to
   Enum, and pinned the manufacturer name (`computime`).
+- **Casaia CTHS-317-ET parity: dropped temperature channel.** The
+  generated def for this remote temperature probe was reduced to
+  battery-only (`kFzBattery` + battery/voltage exposes), dropping z2m's
+  `fz.temperature` decoder and `e.temperature()` expose — the entire
+  purpose of the device — plus the `e.battery_low()` expose. Graduated to
+  a Tier-2 override adding `kFzTemperature` (msTemperatureMeasurement
+  0x0402, /100), the `temperature` + `battery_low` exposes, and the 0x0402
+  binding on endpoint 3. `battery_low` already decodes via `kFzBattery`
+  (batteryAlarmState attr 0x0035). New `test_casaia_parity`. The two AC
+  relay modules (CSLC601-D-E, CSAC451-WTC-E) are plain `m.onOff()` in z2m
+  and the CCB432 energy meter already wires both metering halves
+  (`kFzMetering` 0x0702 + `kFzElectricalMeasurement` 0x0B04) — verified
+  correct, no change.
 
 - **HZC Electric sensor parity: phantom on/off, IAS dead-keys, dropped
   channels.** Three generated sensor defs were mis-ported. `S093TH-ZG`
