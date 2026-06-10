@@ -164,13 +164,16 @@ static void test_fz_humidity_33_40pct_from_diy_ep2() {
 // 2. Registry introspection — document the gap the fallback fills.
 // ─────────────────────────────────────────────────────────────────────
 //
-// The registry entry for this DIY device covers only onOff + battery;
-// temp/humidity clusters are not in its from_zigbee list. If z2m ever
-// ships an updated definition that covers temp/humidity, this test
-// will flip to a diagnostic to remind us that the firmware fallback
-// is now redundant for this fingerprint.
+// The registry entry for this device is a PURE ROUTER: z2m's
+// Espressif-ZigbeeRangeExtender has fromZigbee:[] + exposes:[] (configure
+// binds genBasic only), so the def declares NO converters at all. The
+// earlier auto-port carried a phantom kFzOnOff + kFzBattery bundle; the
+// parity sweep stripped it to match z2m. This test now documents that the
+// def covers NOTHING — so for this fingerprint the firmware's cluster-aware
+// fallback (section 3) must synthesise every channel the device actually
+// reports (temp/humidity/etc.), not just the gap above onOff+battery.
 
-static void test_registry_def_covers_only_onoff_and_battery() {
+static void test_registry_def_is_empty_router() {
     const PreparedDefinition* def = nullptr;
     for (std::size_t i = 0; i < devices::espressif::kEspressifRegistryCount; ++i) {
         const auto* d = devices::espressif::kEspressifRegistry[i];
@@ -183,23 +186,10 @@ static void test_registry_def_covers_only_onoff_and_battery() {
     assert(def->zigbee_models_count == 1);
     assert(std::strcmp(def->zigbee_models[0], "ZigbeeRangeExtender") == 0);
 
-    // Registry def's from_zigbee list — only onOff + battery.
-    bool has_on_off   = false;
-    bool has_battery  = false;
-    bool has_temp     = false;
-    bool has_humidity = false;
-    for (std::uint8_t i = 0; i < def->from_zigbee_count; ++i) {
-        const FzConverter* fz = def->from_zigbee[i];
-        if (!fz || !fz->cluster) continue;
-        if (std::strcmp(fz->cluster, "genOnOff") == 0)                has_on_off   = true;
-        if (std::strcmp(fz->cluster, "genPowerCfg") == 0)             has_battery  = true;
-        if (std::strcmp(fz->cluster, "msTemperatureMeasurement") == 0) has_temp     = true;
-        if (std::strcmp(fz->cluster, "msRelativeHumidity") == 0)      has_humidity = true;
-    }
-    assert(has_on_off);
-    assert(has_battery);
-    assert(!has_temp);       // ← gap the cluster-aware fallback fills
-    assert(!has_humidity);   // ← gap the cluster-aware fallback fills
+    // Pure router (z2m exposes:[] / fromZigbee:[]): no converters, no exposes.
+    // Regression guard against the old phantom onOff + battery bundle.
+    assert(def->from_zigbee_count == 0);
+    assert(def->exposes_count == 0);
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -316,7 +306,7 @@ int main() {
     test_fz_temperature_15_02c_from_diy_ep2();
     test_fz_humidity_33_40pct_from_diy_ep2();
 
-    test_registry_def_covers_only_onoff_and_battery();
+    test_registry_def_is_empty_router();
 
     test_dispatch_temp_frame_through_synthetic_fallback_def();
     test_dispatch_humidity_frame_through_synthetic_fallback_def();
