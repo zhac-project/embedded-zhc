@@ -1750,6 +1750,14 @@ target_link_libraries(zhc_perenio_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_stelpro_parity_tests tests/test_stelpro_parity.cpp)
 target_link_libraries(zhc_stelpro_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Stello (Hilo) family. Pins the STLO-34
+# keypad_lockout dead-attribute fix (decode + write via the shared
+# stelpro converters, graduated to parent), the Hilo power/energy
+# decoders (hvacThermostat 0x4008/0x4009) + thermostat surface, and the
+# STLO-23 onOff/metering/peak-demand-icon surface.
+add_executable(zhc_stello_parity_tests tests/test_stello_parity.cpp)
+target_link_libraries(zhc_stello_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Netica FRZ1 ("FreezBee") Frisquet-boiler
 # thermostat. Pins the graduated-def fixes: phantom battery removed,
 # running_state (0x0029) + control_sequence_of_operation (0x001B) +
@@ -2035,6 +2043,7 @@ add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
 add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)
 add_test(NAME zhc_lellki_parity_tests       COMMAND zhc_lellki_parity_tests)
 add_test(NAME zhc_stelpro_parity_tests      COMMAND zhc_stelpro_parity_tests)
+add_test(NAME zhc_stello_parity_tests       COMMAND zhc_stello_parity_tests)
 add_test(NAME zhc_netica_parity_tests       COMMAND zhc_netica_parity_tests)
 add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)

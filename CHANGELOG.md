@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Stello STLO-34 (Hilo thermostat) `keypad_lockout` was a dead attribute.**
+  The auto-generated port declared `keypad_lockout` as a read+write expose but
+  wired neither a decoder nor an encoder, so the value never decoded and could
+  not be set — z2m wires `fz.hvac_user_interface` (hvacUserInterfaceCfg 0x0204
+  attr 0x0001 keypadLockout ENUM8) and `tz.thermostat_keypad_lockout`. Graduated
+  the def to the parent dir and wired the shared `kFzStelproKeypadLockout` /
+  `kTzStelproKeypadLockout` (same gap previously fixed for the Stelpro siblings).
+  Pinned by the new `tests/test_stello_parity.cpp`.
+
 - **Paul Neuhaus Q-Home remotes dropped/mis-decoded colour-wheel actions.**
   Both remotes carried stale "converter absent" port comments from before the
   generic command bundle gained `kFzCommandColorLoopSet` /
