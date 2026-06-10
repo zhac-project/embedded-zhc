@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Blaupunkt SCM-S1 roller shutter: wrong-cluster cover fix.** z2m drives this
+  shutter through the brightness/on-off proxy (`fz.cover_position_via_brightness`
+  + `fz.cover_state_via_onoff` + `tz.cover_via_brightness`), but the auto-port
+  wired the generic `kFzCoverPosition`/`kTzCoverPosition` against
+  closuresWindowCovering (0x0102) — a cluster this device never speaks — so
+  position decode AND control were both dead, and the `state` channel was
+  dropped. Rewired to the generic via-brightness converters (genLevelCtrl 0x0008
+  currentLevel → position+state, genOnOff 0x0006 → state, moveToLevelWithOnOff
+  for writes) + bindings 0x0008/0x0006, and added the `state` expose. Mirrors the
+  Climax SCM-5ZBS fix (same SCM roller-shutter family).
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported
