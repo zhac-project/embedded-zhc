@@ -6,16 +6,12 @@
 
 namespace zhc::devices::weten {
 
-extern const PreparedDefinition kDefWet__TZE204_6fk3gewc;
-extern const PreparedDefinition kDefWet__TZE284_6fk3gewc;
-extern const PreparedDefinition kDef_D1GNNTS;
 extern const PreparedDefinition kDef_PCI_E;
+extern const PreparedDefinition kDef_D1GNNTS;
 
 const PreparedDefinition* const kWetenRegistry[] = {
-    &kDefWet__TZE204_6fk3gewc,
-    &kDefWet__TZE284_6fk3gewc,
-    &kDef_D1GNNTS,
     &kDef_PCI_E,
+    &kDef_D1GNNTS,
 };
 const std::size_t kWetenRegistryCount = sizeof(kWetenRegistry) / sizeof(kWetenRegistry[0]);
 

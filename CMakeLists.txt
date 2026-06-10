@@ -1927,6 +1927,14 @@ target_link_libraries(zhc_ynoa_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_avatto_parity_tests tests/test_avatto_parity.cpp)
 target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for Weten. The single z2m "PCI E" Tuya TS0601 DP device had
+# been emitted as three colliding artifacts (a misrouted genOnOff dup + two
+# model-only DP defs split per manufacturer name); consolidated into one def
+# carrying both _TZE* names + white-label. Real fix: DP101 restart_mode kept
+# only 1 of 3 enum values ("force restart"/"–" were silently dropped on decode).
+add_executable(zhc_weten_parity_tests tests/test_weten_parity.cpp)
+target_link_libraries(zhc_weten_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for Nedis (single z2m entry: ZBHTR20WT Tuya TS0601 DP TRV,
 # 3 manufacturer names). One real decode bug fixed: DP27 calibration baked
 # divisor=100 but z2m wires localTempCalibration2 (identity) -> divisor=1.
@@ -2383,6 +2391,7 @@ add_test(NAME zhc_simpla_home_parity_tests  COMMAND zhc_simpla_home_parity_tests
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_ynoa_parity_tests         COMMAND zhc_ynoa_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
+add_test(NAME zhc_weten_parity_tests        COMMAND zhc_weten_parity_tests)
 add_test(NAME zhc_nedis_parity_tests        COMMAND zhc_nedis_parity_tests)
 add_test(NAME zhc_saswell_parity_tests      COMMAND zhc_saswell_parity_tests)
 add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)

@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Weten PCI E parity: misrouted/split Tuya-DP def + truncated enum.** The
+  single z2m "PCI E" (Remote Control PCI E Card, Tuya TS0601 0xEF00 DP) device
+  had been auto-ported as three colliding artifacts — a misrouted bare genOnOff
+  def (cluster 0x0006) carrying both `_TZE204_6fk3gewc`/`_TZE284_6fk3gewc`
+  names, plus two model-only DP defs split one-per-manufacturer-name (so neither
+  matched a manufacturer fingerprint). Consolidated into one `kDef_PCI_E`
+  carrying both manufacturer names, the "Weten / Tuya PRO" white-label and the
+  real model "PCI E", wired to the DP map. Real decode fix: DP101 `restart_mode`
+  shipped only `{0:"restart"}` while z2m maps `{restart:0, "force restart":1,
+  "–":2}`, so `force restart` and `–` reports silently dropped.
+
 - **JetHome WS7 parity: phantom on/off, dead discrete-input channel.** The
   3-channel battery discrete-input module was auto-ported with a phantom
   genOnOff in/out (settable `state` expose + `kFzOnOff`/`kTzOnOff` +
