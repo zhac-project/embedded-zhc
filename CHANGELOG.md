@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Titan Products TPZRCO2HT-Z3: restored dropped temperature/humidity/CO2
+  channels.** The auto-generated port had been reduced to battery-only
+  (`from_zigbee:[kFzBattery]`, exposes `battery`/`voltage`). z2m wires
+  `fz.battery + fz.humidity + fz.temperature + fz.co2`. Graduated to a Tier-2
+  override wiring `kFzTemperature` (0x0402), `kFzHumidity` (0x0405, ep2) and
+  `kFzCO2` (0x040D) plus the `temperature`/`humidity`/`co2`/`battery_low`
+  exposes and the matching bindings.
+
 - **Somgoms TS0601 / legacy-DP family: rescued from dead standard-cluster
   ports.** All four defs (`ZSTY-SM-11ZG-US-W` 1-gang switch, `ZSTY-SM-1DMZG-US-W`
   dimmer, `ZSTY-SM-1CTZG-US-W` + `SM-1CTW-EU` curtain motors) were auto-ported

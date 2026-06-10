@@ -2651,6 +2651,14 @@ target_link_libraries(zhc_blitzwolf_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_qmotion_parity_tests tests/test_qmotion_parity.cpp)
 target_link_libraries(zhc_qmotion_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Titan Products TPZRCO2HT-Z3 room CO2/humidity/temperature
+# sensor. The auto-generated def was reduced to battery-only — it dropped the
+# temperature (0x0402), humidity (0x0405, ep2) and CO2 (0x040D) channels that
+# z2m wires via fz.temperature/fz.humidity/fz.co2. The graduated def restores
+# the three generic decoders + exposes + bindings.
+add_executable(zhc_titan_products_parity_tests tests/test_titan_products_parity.cpp)
+target_link_libraries(zhc_titan_products_parity_tests PRIVATE zhc_definitions)
+
 # Behavioural-parity fixture tests for devices wired in the 2026-04-25
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
@@ -2920,6 +2928,7 @@ add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)
 add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
 add_test(NAME zhc_somgoms_parity_tests      COMMAND zhc_somgoms_parity_tests)
 add_test(NAME zhc_ecolink_parity_tests      COMMAND zhc_ecolink_parity_tests)
+add_test(NAME zhc_titan_products_parity_tests COMMAND zhc_titan_products_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
 add_test(NAME zhc_gs_parity_tests           COMMAND zhc_gs_parity_tests)
