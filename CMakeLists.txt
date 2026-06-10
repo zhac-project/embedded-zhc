@@ -1786,6 +1786,9 @@ target_link_libraries(zhc_slacky_therm_r08_tests PRIVATE zhc_definitions)
 add_executable(zhc_engo_parity_tests tests/test_engo_parity.cpp)
 target_link_libraries(zhc_engo_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_envilar_parity_tests tests/test_envilar_parity.cpp)
+target_link_libraries(zhc_envilar_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Siterwell GS361A-H04 TS0601 radiator-valve thermostat. The
 # auto-port MISROUTED the decoder: it wired the generic genThermostat pair
 # (kFzThermostat / kTzThermostat) + bound ZCL 0x0201, but z2m decodes this
@@ -2285,6 +2288,7 @@ add_test(NAME zhc_hive_parity_tests         COMMAND zhc_hive_parity_tests)
 add_test(NAME zhc_lytko_parity_tests        COMMAND zhc_lytko_parity_tests)
 add_test(NAME zhc_slacky_therm_r08_tests    COMMAND zhc_slacky_therm_r08_tests)
 add_test(NAME zhc_engo_parity_tests         COMMAND zhc_engo_parity_tests)
+add_test(NAME zhc_envilar_parity_tests      COMMAND zhc_envilar_parity_tests)
 add_test(NAME zhc_siterwell_parity_tests    COMMAND zhc_siterwell_parity_tests)
 add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_essentials_parity_tests   COMMAND zhc_essentials_parity_tests)

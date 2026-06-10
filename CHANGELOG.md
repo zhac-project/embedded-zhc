@@ -10,6 +10,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Envilar parity: metering 0x0B04 half, dead remote, missing CCT channel.**
+  `1CH-HP-RELAY-7853` + `7859` use z2m `m.electricityMeter()` (default
+  `cluster:"both"`, so seMetering 0x0702 energy **and**
+  haElectricalMeasurement 0x0B04 power/voltage/current); the auto-ports wired
+  only `kFzMetering` and exposed energy+power, dropping the 0x0B04 half —
+  restored `kFzElectricalMeasurement` + voltage/current exposes + the 0x0B04
+  binding. `ZGR904-S` is a battery scene/dimmer remote (a sender) that z2m
+  drives via `command_recall/on/off/move/stop` → `action`, but the auto-port
+  mis-ported it as a controllable on/off load (`kFzOnOff`/`kTzOnOff` + phantom
+  `state`) so every press was dropped — rewired to the generic command
+  converters and an `action` enum, dropped the phantom state. `ZG50CC-CCT-
+  DRIVER` + `5463` + `5491` use `m.light({colorTemp})` but were ported as
+  on/off+brightness only, dropping the lightingColorCtrl 0x0300 colour-temp
+  channel — restored `kFzColorTemperature`/`kTzColorTemp` + `color_temp`
+  expose + 0x0300 binding. New `tests/test_envilar_parity.cpp`.
 - **Siterwell GS361A-H04 (TS0601 radiator-valve thermostat) decoded nothing.**
   The auto-port misrouted it to the generic genThermostat pair (`kFzThermostat`
   / `kTzThermostat`) bound on ZCL 0x0201, but this is a Tuya-MCU TRV that z2m
