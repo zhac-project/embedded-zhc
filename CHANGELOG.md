@@ -109,6 +109,17 @@ across the ZHAC platform.
   restored `kFzTemperature` (msTemperatureMeasurement 0x0402) + the
   `temperature` expose + the 0x0402 binding on each. `FFZB1-SM-ECO`'s bare
   `alarm` key is left unchanged (z2m `m.iasZoneAlarm({zoneType:"alarm"})`).
+- **Automaton AUT000069: restored 5-zone multi-endpoint routing.** The TS011F
+  underfloor-heating / irrigation valve controller (`_TZ3000_j0ktmul1`) is a
+  z2m `tuya.modernExtend.tuyaOnOff({endpoints:["l1".."l5"]})` device with
+  `endpoint:{l1:1..l5:5}` + `meta.multiEndpoint` — five independent genOnOff
+  channels. The auto-port collapsed it to a single bare `state` expose with
+  one EP1 binding and no `endpoint_map`, so all five zones collided on one key
+  and zones 2..5 were never bound. Graduated the def and added the
+  `endpoint_map` (l1..l5), per-EP `state_l1..state_l5` exposes and genOnOff
+  bindings on EP1..EP5 so each zone routes to its own suffixed key. (The Tuya
+  manuSpecific `power_on_behavior`/`child_lock`/`countdown` extras lack a
+  generic decoder and are deferred.)
 
 - **EVN colour/colour-temperature + remote-action parity.** `ZB24100VS`
   (z2m `m.light({colorTemp:{range:[160,450]}, color:{modes:["xy","hs"]}})`)

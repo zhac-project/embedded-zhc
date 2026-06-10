@@ -2272,6 +2272,13 @@ target_link_libraries(zhc_neo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_nous_parity_tests tests/test_nous_parity.cpp)
 target_link_libraries(zhc_nous_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for Automaton AUT000069 (TS011F 5-zone valve controller).
+# The auto-port collapsed z2m's 5-endpoint tuyaOnOff into a single bare
+# "state" with one EP1 binding and no endpoint_map, so zones 2..5 collided
+# and never bound. This pins the per-endpoint suffixed keys (state_l1..l5).
+add_executable(zhc_automaton_parity_tests tests/test_automaton_parity.cpp)
+target_link_libraries(zhc_automaton_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the ShinaSystem (SiHAS) family. Generator misses left
 # several primary sensor/control channels dead: USM/OSM/DMS exposed
 # occupancy with no decoder (and USM dropped illuminance), and GCM-300Z's
@@ -2800,6 +2807,7 @@ add_test(NAME zhc_saswell_parity_tests      COMMAND zhc_saswell_parity_tests)
 add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)
 add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)
 add_test(NAME zhc_nous_parity_tests         COMMAND zhc_nous_parity_tests)
+add_test(NAME zhc_automaton_parity_tests    COMMAND zhc_automaton_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_fireangel_parity_tests    COMMAND zhc_fireangel_parity_tests)
 add_test(NAME zhc_dawon_dns_parity_tests    COMMAND zhc_dawon_dns_parity_tests)
