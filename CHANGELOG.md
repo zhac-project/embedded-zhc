@@ -23,6 +23,23 @@ across the ZHAC platform.
   `S902M-ZG` also dropped z2m's `m.illuminance()` — restored
   `kFzIlluminance` + the `illuminance` expose + 0x0400 binding. New
   `test_hzc_electric_parity`.
+- **LivingWise LVS parity: dead IAS keys + scene controller mis-ported as a switch.**
+  The LVS-SM10ZW contact and LVS-SN10ZW_SN11 occupancy sensors were
+  auto-ported with the generic `kFzIasZone` (which emits the bare `alarm`
+  key) while exposing the semantic `contact` / `occupancy` keys, so the
+  alarm signal never reached the shadow. Swapped to the typed
+  `kFzIasContactAlarm` / `kFzIasMotionAlarm` converters (matching z2m
+  `fz.ias_contact_alarm_1` / `fz.ias_occupancy_alarm_1_with_timeout`,
+  zoneStatus bit 0 → semantic key + bit 2 tamper + bit 3 battery_low) and
+  renamed the `alarm` expose to `contact` / `occupancy`. The LVS-SC7 7-button
+  scene controller was generated as a controllable on/off switch (phantom
+  `state` + `kFzOnOff`/`kTzOnOff`); it is a stateless remote that z2m
+  decodes via `fz.orvibo_raw_2` (vendor-private raw frame on cluster 0x0017
+  → `action` = `button_<n>_<click|hold|release>` for buttons 1..7). Reused
+  the existing shared `kFzOrviboRaw2Action` converter, dropped the dead
+  `state`, and added an `action` expose. All three defs graduated to Tier-2
+  parents; new `tests/test_livingwise_parity.cpp` fixture.
+
 - **JetHome WS7 parity: phantom on/off, dead discrete-input channel.** The
   3-channel battery discrete-input module was auto-ported with a phantom
   genOnOff in/out (settable `state` expose + `kFzOnOff`/`kTzOnOff` +

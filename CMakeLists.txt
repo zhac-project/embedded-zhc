@@ -1205,6 +1205,15 @@ target_link_libraries(zhc_lidl_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_orvibo_parity_tests tests/test_orvibo_parity.cpp)
 target_link_libraries(zhc_orvibo_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the LivingWise LVS series. The IAS contact + occupancy
+# sensors were generated with the generic kFzIasZone (bare `alarm` key)
+# while exposing the semantic contact/occupancy keys (dead IAS key); the
+# LVS-SC7 scene controller was generated as a controllable on/off switch
+# but is a stateless orvibo_raw_2 button remote. Graduated to Tier-2 parents
+# wiring kFzIasContactAlarm / kFzIasMotionAlarm / kFzOrviboRaw2Action.
+add_executable(zhc_livingwise_parity_tests tests/test_livingwise_parity.cpp)
+target_link_libraries(zhc_livingwise_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_linptech_parity_tests tests/test_linptech_parity.cpp)
 target_link_libraries(zhc_linptech_parity_tests PRIVATE zhc_definitions)
 
@@ -2322,6 +2331,7 @@ add_test(NAME zhc_immax_parity_tests        COMMAND zhc_immax_parity_tests)
 add_test(NAME zhc_iluminize_parity_tests    COMMAND zhc_iluminize_parity_tests)
 add_test(NAME zhc_lidl_parity_tests         COMMAND zhc_lidl_parity_tests)
 add_test(NAME zhc_orvibo_parity_tests       COMMAND zhc_orvibo_parity_tests)
+add_test(NAME zhc_livingwise_parity_tests   COMMAND zhc_livingwise_parity_tests)
 add_test(NAME zhc_linptech_parity_tests     COMMAND zhc_linptech_parity_tests)
 add_test(NAME zhc_profalux_parity_tests     COMMAND zhc_profalux_parity_tests)
 add_test(NAME zhc_develco_parity_tests      COMMAND zhc_develco_parity_tests)
