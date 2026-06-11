@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Tapestry THPZ1 sensor: temperature + humidity + occupancy channels dropped, mis-ported as an IAS-zone stub.**
+  z2m (`tapestry.ts`) wires `fz.temperature` + `fz.humidity` + `fz.occupancy`
+  and exposes occupancy/temperature/humidity. The auto-port instead wired the
+  generic `kFzIasZone` (cluster 0x0500) with a phantom alarm/tamper/battery_low
+  bundle, reducing a tri-channel sensor to a dead IAS stub. Re-ported to the
+  three generic measurement decoders (`kFzTemperature` 0x0402, `kFzHumidity`
+  0x0405, `kFzOccupancy` 0x0406) with matching exposes and binds.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:

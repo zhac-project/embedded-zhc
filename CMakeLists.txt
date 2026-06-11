@@ -988,6 +988,8 @@ target_link_libraries(zhc_schwaiger_parity_tests PRIVATE zhc_definitions)
 # guard against a phantom color/color_temp axis.
 add_executable(zhc_tci_parity_tests tests/test_tci_parity.cpp)
 target_link_libraries(zhc_tci_parity_tests PRIVATE zhc_definitions)
+add_executable(zhc_tapestry_parity_tests tests/test_tapestry_parity.cpp)
+target_link_libraries(zhc_tapestry_parity_tests PRIVATE zhc_definitions)
 
 # Parity fixture for the YSRSAI LED-controller family. z2m drives all three
 # with tuya.modernExtend.tuyaLight() (a mains-powered ZCL light), but the
@@ -3053,6 +3055,7 @@ add_test(NAME zhc_current_products_corp_parity_tests COMMAND zhc_current_product
 add_test(NAME zhc_smartwings_parity_tests   COMMAND zhc_smartwings_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_tci_parity_tests          COMMAND zhc_tci_parity_tests)
+add_test(NAME zhc_tapestry_parity_tests     COMMAND zhc_tapestry_parity_tests)
 add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
 add_test(NAME zhc_wmun_parity_tests         COMMAND zhc_wmun_parity_tests)
 add_test(NAME zhc_wyze_parity_tests         COMMAND zhc_wyze_parity_tests)
