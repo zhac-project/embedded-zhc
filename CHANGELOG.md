@@ -81,6 +81,17 @@ across the ZHAC platform.
   match z2m configure. (z2m uses `command_emergency` cmd 0x02, NOT `command_panic`
   cmd 0x04 — so `kFzIasAceEmergency`, not `kFzIasAcePanic`.) Same key-fob shape
   as the securifi Almond Click / linkind / climax keypad fixes.
+- **M-ELEC "Stitchy" family (ML-ST-D200 / -D200-NF / -BP-DIM dimmers +
+  ML-ST-R200 relay): dropped `power_on_behavior` axis.** All four use z2m
+  `m.light()` / `m.onOff()`, which default `powerOnBehavior=true` and wire
+  `fz.power_on_behavior` (genOnOff `0x4003` startUpOnOff enum8) +
+  `tz.power_on_behavior` + the `power_on_behavior` enum expose. The auto-ports
+  wired only on/off (+ brightness on the dimmers), dropping the axis entirely.
+  Graduated all four to Tier-2 overrides with `kFzPowerOnBehavior` /
+  `kTzPowerOnBehavior1` + the expose. The suspected colour/colorTemp drop is a
+  FALSE flag: `m.light()` adds the `0x0300` axis only when passed
+  `color`/`colorTemp` args, and none of these do; the parity test pins the
+  absence so a future colour sweep cannot bolt one on.
 
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single

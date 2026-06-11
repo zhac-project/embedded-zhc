@@ -1,8 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: MElec ML-ST-D200 — auto-generated.
-// Stitchy dim switchable wall module
-// z2m-source: m_elec.ts #ML-ST-D200.
+// Tier 2: MElec ML-ST-D200 — dimmer, power_on_behavior restored.
+// Stitchy dim switchable wall module.
+// z2m-source: m_elec.ts #ML-ST-D200 = m.light().
+// m.light() defaults powerOnBehavior=true, wiring fz.power_on_behavior
+// (genOnOff 0x4003 startUpOnOff) + tz.power_on_behavior + the
+// power_on_behavior enum expose. The Tier-1 auto-port dropped that axis;
+// restored via kFzPowerOnBehavior / kTzPowerOnBehavior1. No color/colorTemp
+// axis exists (m.light() with no color/colorTemp args).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::m_elec {
@@ -10,10 +15,12 @@ namespace {
 const FzConverter* const kFz_ML_ST_D200[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzPowerOnBehavior,
 };
 const TzConverter* const kTz_ML_ST_D200[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzPowerOnBehavior1,
 };
 constexpr const char* kModels_ML_ST_D200[] = { "ML-ST-D200" };
 
@@ -24,6 +31,7 @@ constexpr const char* kModels_ML_ST_D200[] = { "ML-ST-D200" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
