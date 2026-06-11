@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Jiawen K2RGBW01 RGBW bulb: dropped color + colorTemp axes.** z2m wires this
+  E27 9W bulb as `m.light({colorTemp: {range: undefined}, color: true})`, i.e. an
+  RGBW bulb with both a CCT (mireds) axis and an xy-color axis. The auto-generator
+  collapsed `m.light()` to on/off + brightness only — `color_temp` and the xy
+  color channels were unexposed and undecoded (no `lightingColorCtrl` 0x0300
+  binding). Graduated to a Tier-2 override restoring the `color_temp` + `color_xy`
+  exposes, the 0x0300 binding, the `kFzColorTemperature` + `kFzColor` decoders and
+  the `kTzColorTemp` + `kTzColor` write paths. Sibling JW-A04-CT (plain
+  `m.light()`) is correctly on/off + brightness only and stays unchanged.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
