@@ -909,6 +909,17 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 # 0x0300 axis. All graduated to parent overrides.
 add_executable(zhc_m_elec_parity_tests tests/test_m_elec_parity.cpp)
 target_link_libraries(zhc_m_elec_parity_tests PRIVATE zhc_definitions)
+# Parity fixture for the Micro Matic Norge AS ZB250 (SZ1000) LED dimmer. z2m is
+# m.light({configureReporting:true}) + m.electricityMeter(). m.electricityMeter()
+# defaults cluster:"both" → fz.metering (0x0702 energy) + fz.electrical_measurement
+# (0x0B04 power/voltage/current); the Tier-1 auto-port wired only kFzMetering,
+# dropping the entire 0x0B04 half (no voltage/current, power source wrong).
+# Restored kFzElectricalMeasurement + voltage/current exposes + the 0x0B04 bind.
+# m.light() also defaults powerOnBehavior=true (genOnOff 0x4003) which the port
+# dropped — restored via kFzPowerOnBehavior / kTzPowerOnBehavior1. FALSE colour
+# suspect: m.light() with no color/colorTemp args has NO 0x0300 axis — asserted absent.
+add_executable(zhc_micromatic_parity_tests tests/test_micromatic_parity.cpp)
+target_link_libraries(zhc_micromatic_parity_tests PRIVATE zhc_definitions)
 # Hoftronic HD300W-ZB rotary LED dimmer is z2m m.light({powerOnBehavior:true,
 # ...}); the auto-port dropped the power_on_behavior axis (genOnOff 0x4003).
 # Restored via kFzPowerOnBehavior / kTzPowerOnBehavior1 + the enum expose.
@@ -3252,6 +3263,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_m_elec_parity_tests       COMMAND zhc_m_elec_parity_tests)
+add_test(NAME zhc_micromatic_parity_tests   COMMAND zhc_micromatic_parity_tests)
 add_test(NAME zhc_hoftronic_parity_tests    COMMAND zhc_hoftronic_parity_tests)
 add_test(NAME zhc_scanproducts_parity_tests COMMAND zhc_scanproducts_parity_tests)
 add_test(NAME zhc_matcall_bv_parity_tests   COMMAND zhc_matcall_bv_parity_tests)
