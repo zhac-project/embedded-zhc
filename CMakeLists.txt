@@ -932,6 +932,15 @@ target_link_libraries(zhc_securifi_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smart9_parity_tests tests/test_smart9_parity.cpp)
 target_link_libraries(zhc_smart9_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Oz Smart Things DL41-03-10-R-ZB RGBW downlight. z2m is
+# tuya.modernExtend.tuyaLight({colorTemp:{range:[153,500]}, color:true}) →
+# on/off + brightness + colorTemp + color (xy + hs). The auto-port collapsed it
+# to a battery + on/off sensor stub (phantom battery/voltage exposes). Graduated
+# the def + restored the full light bundle (kFzOnOff/kFzBrightness/
+# kFzColorTemperature/kFzColor + kTz*, bind 0x0006/0x0008/0x0300).
+add_executable(zhc_ozsmartthings_parity_tests tests/test_ozsmartthings_parity.cpp)
+target_link_libraries(zhc_ozsmartthings_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_senoro_parity_tests tests/test_senoro_parity.cpp)
 target_link_libraries(zhc_senoro_parity_tests PRIVATE zhc_definitions)
 # Parity fixtures for the Swann security family. The auto-port emitted dead
@@ -3045,6 +3054,7 @@ add_test(NAME zhc_m_elec_parity_tests       COMMAND zhc_m_elec_parity_tests)
 add_test(NAME zhc_lds_parity_tests          COMMAND zhc_lds_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_smart9_parity_tests       COMMAND zhc_smart9_parity_tests)
+add_test(NAME zhc_ozsmartthings_parity_tests COMMAND zhc_ozsmartthings_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)

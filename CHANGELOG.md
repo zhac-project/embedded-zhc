@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Oz Smart Things DL41-03-10-R-ZB RGBW downlight: ported as a battery/on-off
+  sensor stub.** z2m wires this TS0505B device as
+  `tuya.modernExtend.tuyaLight({colorTemp:{range:[153,500]}, color:true})` →
+  `modernExtend.light()` with both the colorTemp and color axes → on/off +
+  brightness + colorTemp (mireds) + color (xy + hs). The auto-port collapsed it
+  to a battery + on/off sensor stub (`kFzBattery` + `kFzOnOff`, genPowerCfg
+  binding, phantom `battery`/`voltage` exposes), dropping the entire light.
+  Graduated to a Tier-2 override restoring the full RGBW light bundle
+  (`kFzOnOff` + `kFzBrightness` + `kFzColorTemperature` + `kFzColor` + the
+  matching `kTz*` write path, bind 0x0006/0x0008/0x0300) with
+  state/brightness/color_temp/color_x/color_y/hue/saturation exposes and no
+  battery.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
