@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Acuity Brands Lighting (Juno) downlights: restored dropped colour axes.**
+  All three luminaires were auto-ported as plain dimmable lights (on/off +
+  brightness only) while z2m wires `m.light({colorTemp[, color]})`: `WF4C_WF6C`
+  (wafer downlight) now exposes `color_temp`; `RB56SC` and `RB56AC`
+  (Retrobasics downlights) now expose `color_temp` + `color_x`/`color_y`. All
+  three wire the generic `kFzColorTemperature`/`kTzColorTemp` (and, for the two
+  colour bulbs, `kFzColor`/`kTzColor`) and bind `lightingColorCtrl` (0x0300);
+  `color_temp` carries the z2m mireds range 200-370.
+
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.
