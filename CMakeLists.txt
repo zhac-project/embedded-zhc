@@ -2379,6 +2379,9 @@ target_link_libraries(zhc_lifecontrol_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_dawon_dns_parity_tests tests/test_dawon_dns_parity.cpp)
 target_link_libraries(zhc_dawon_dns_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_dqsmart_parity_tests tests/test_dqsmart_parity.cpp)
+target_link_libraries(zhc_dqsmart_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Amina amina S EV Charger. Its AC metering rides
 # standard haElectricalMeasurement 0x0B04 via z2m's m.electricityMeter
 # (cluster:"electrical", acFrequency, threePhase) + a standalone
@@ -3323,6 +3326,7 @@ add_test(NAME zhc_automaton_parity_tests    COMMAND zhc_automaton_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
 add_test(NAME zhc_fireangel_parity_tests    COMMAND zhc_fireangel_parity_tests)
 add_test(NAME zhc_dawon_dns_parity_tests    COMMAND zhc_dawon_dns_parity_tests)
+add_test(NAME zhc_dqsmart_parity_tests      COMMAND zhc_dqsmart_parity_tests)
 add_test(NAME zhc_wirenboard_parity_tests   COMMAND zhc_wirenboard_parity_tests)
 add_test(NAME zhc_niko_parity_tests         COMMAND zhc_niko_parity_tests)
 add_test(NAME zhc_perenio_parity_tests      COMMAND zhc_perenio_parity_tests)

@@ -1,8 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Dqsmart dqhome.re4 — auto-generated.
-// DQSmart Switch 4 Gang
-// z2m-source: dqsmart.ts #dqhome.re4.
+// Tier 2: Dqsmart dqhome.re4 — graduated from generated/.
+// DQSmart Switch 4 Gang (DQHOME dqhome.re4).
+// z2m-source: dqsmart.ts #dqhome.re4 —
+//   m.deviceEndpoints({l1:1, l2:2, l3:3, l4:4}) +
+//   m.onOff({powerOnBehavior:false, endpointNames:["l1","l2","l3","l4"]}).
+//
+// FIX: incomplete per-endpoint bindings. The auto-port bound genOnOff
+// (0x0006) only on endpoint 1, so gangs l2/l3/l4 never got reporting
+// configured and would not push their state changes. z2m's m.onOff with
+// endpointNames runs setupAttributes() per endpoint carrying the cluster
+// (getEndpointsWithCluster → ep1..ep4), binding + configuring 0x0006 on
+// every gang. Bind 0x0006 on all four endpoints to match. Decode already
+// works for every gang via the present endpoint_map (key suffixing
+// state → state_l<n> by src_endpoint); only the binding table was short.
+// powerOnBehavior:false → no power_on_behavior expose/converter (correct).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::dqsmart {
@@ -25,8 +37,10 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
+// FIX: bind genOnOff (0x0006) on all four gang endpoints (z2m parity),
+// not just ep1. See header note.
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
+    {1, 0x0006}, {2, 0x0006}, {3, 0x0006}, {4, 0x0006},
 };
 // --- end auto-generated block ---
 
