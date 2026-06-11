@@ -2850,6 +2850,9 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_gumax_parity_tests tests/test_gumax_parity.cpp)
+target_link_libraries(zhc_gumax_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_aldi_parity_tests tests/test_aldi_parity.cpp)
 target_link_libraries(zhc_aldi_parity_tests PRIVATE zhc_definitions)
 # TNCE TNCE_CLIMATE temp/humidity sensor: restored temperature (0x0402) +
@@ -3366,6 +3369,7 @@ add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parit
 add_test(NAME zhc_wally_parity_tests        COMMAND zhc_wally_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
+add_test(NAME zhc_gumax_parity_tests        COMMAND zhc_gumax_parity_tests)
 add_test(NAME zhc_aldi_parity_tests         COMMAND zhc_aldi_parity_tests)
 add_test(NAME zhc_tnce_parity_tests         COMMAND zhc_tnce_parity_tests)
 add_test(NAME zhc_hilux_parity_tests        COMMAND zhc_hilux_parity_tests)
