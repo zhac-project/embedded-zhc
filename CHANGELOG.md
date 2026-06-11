@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **TIS Control BEE PIR 1 (ED6XX): IAS occupancy dead-key.** The auto-port
+  lowered the generic `kFzIasZone` converter (bare `alarm` key) while z2m's
+  `m.iasZoneAlarm({zoneType:"occupancy", zoneAttributes:["alarm_1","tamper",
+  "battery_low"]})` (no `alarm_2`, so `bothAlarms=false`) publishes the semantic
+  `occupancy` key from zoneStatus bit0. The expose was also mis-named `alarm`,
+  so the motion state never reached the shadow. Graduated to a Tier-2 override
+  swapping in `kFzIasMotionAlarm` (bare `occupancy` from bit0 + `tamper` bit2 +
+  `battery_low` bit3) and renaming the expose `alarm` -> `occupancy`. Battery
+  (`%`/`voltage` via `kFzBattery`) was already wired and is preserved.
+
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the

@@ -1287,6 +1287,12 @@ target_link_libraries(zhc_somgoms_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ecolink_parity_tests tests/test_ecolink_parity.cpp)
 target_link_libraries(zhc_ecolink_parity_tests PRIVATE zhc_definitions)
 
+# TIS Control BEE PIR 1 (ED6XX): pins the (c) IAS dead-key fix — kFzIasZone
+# (bare "alarm") -> kFzIasMotionAlarm (semantic "occupancy" from zoneStatus
+# bit0) + expose rename, matching z2m iasZoneAlarm zoneType "occupancy".
+add_executable(zhc_tis_control_parity_tests tests/test_tis_control_parity.cpp)
+target_link_libraries(zhc_tis_control_parity_tests PRIVATE zhc_definitions)
+
 # Roome contact sensor (HSC1-WD-0): pins the (c) IAS dead-key fix — kFzIasZone
 # emitted the bare "alarm" key while z2m's fz.ias_contact_alarm_1 publishes the
 # inverted semantic "contact" key. Now uses kFzIasContactAlarm + contact expose.
@@ -3411,6 +3417,7 @@ add_test(NAME zhc_peq_parity_tests          COMMAND zhc_peq_parity_tests)
 add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
 add_test(NAME zhc_somgoms_parity_tests      COMMAND zhc_somgoms_parity_tests)
 add_test(NAME zhc_ecolink_parity_tests      COMMAND zhc_ecolink_parity_tests)
+add_test(NAME zhc_tis_control_parity_tests  COMMAND zhc_tis_control_parity_tests)
 add_test(NAME zhc_roome_parity_tests        COMMAND zhc_roome_parity_tests)
 add_test(NAME zhc_titan_products_parity_tests COMMAND zhc_titan_products_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)

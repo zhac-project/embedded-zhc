@@ -1,15 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: TisControl BEE PIR 1 — auto-generated.
+// Tier 2: TisControl BEE PIR 1 — IAS dead-key fix.
 // PIR Sensor
-// z2m-source: tis_control.ts #BEE PIR 1.
+// z2m-source: tis_control.ts #BEE PIR 1
+//   extend: [m.battery(),
+//            m.iasZoneAlarm({zoneType:"occupancy",
+//                            zoneAttributes:["alarm_1","tamper","battery_low"]})]
+//
+// z2m's iasZoneAlarm with zoneType "occupancy" and NO alarm_2 (bothAlarms=false)
+// collapses alarm_1 onto the SEMANTIC key "occupancy" (zoneStatus bit0), plus
+// tamper (bit2) and battery_low (bit3). The auto-port lowered the generic
+// kFzIasZone (bare "alarm") while the expose declared "alarm" — so the motion
+// state never matched the semantic occupancy expose z2m publishes. Swap in
+// kFzIasMotionAlarm (emits bare "occupancy" from bit0 + tamper + battery_low)
+// and rename the expose "alarm" -> "occupancy". Battery (%/voltage via
+// kFzBattery / m.battery()) was already wired and is preserved.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::tis_control {
 namespace {
 const FzConverter* const kFz_BEE_PIR_1[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_BEE_PIR_1[] = { "ED6XX" };
@@ -21,7 +33,7 @@ constexpr const char* kModels_BEE_PIR_1[] = { "ED6XX" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
