@@ -2372,6 +2372,15 @@ target_link_libraries(zhc_onenuo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_giex_parity_tests tests/test_giex_parity.cpp)
 target_link_libraries(zhc_giex_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the IOTPerfect PF-PM02D-TYZ smart water/gas valve (TS0601 /
+# 6× _TZE2xx). The auto-port mis-routed this Tuya-MCU (0xEF00) valve as a bare
+# kFzOnOff / kTzOnOff stub bound to genOnOff 0x0006, leaving the `state` expose
+# dead. z2m decodes via legacy.fz.tuya_switch (DP 1 state, bool -> ON/OFF) and
+# writes via legacy.tz.tuya_switch_state. Graduated to a Tier-2 override wiring
+# fz_tuya_datapoints + tz_tuya_datapoints over the 0xEF00 DP map.
+add_executable(zhc_iotperfect_parity_tests tests/test_iotperfect_parity.cpp)
+target_link_libraries(zhc_iotperfect_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Qoto QT-05M solar garden watering timer. A Tuya-MCU (0xEF00)
 # DP-stream device (z2m legacy.fromZigbee.watering_timer) auto-ported as a bare
 # kFzBattery + kFzOnOff stub binding ZCL 0x0001/0x0006 it never speaks, with
@@ -3095,6 +3104,7 @@ add_test(NAME zhc_tech_parity_tests         COMMAND zhc_tech_parity_tests)
 add_test(NAME zhc_essentials_parity_tests   COMMAND zhc_essentials_parity_tests)
 add_test(NAME zhc_onenuo_parity_tests       COMMAND zhc_onenuo_parity_tests)
 add_test(NAME zhc_giex_parity_tests         COMMAND zhc_giex_parity_tests)
+add_test(NAME zhc_iotperfect_parity_tests   COMMAND zhc_iotperfect_parity_tests)
 add_test(NAME zhc_qoto_parity_tests         COMMAND zhc_qoto_parity_tests)
 add_test(NAME zhc_alecto_parity_tests       COMMAND zhc_alecto_parity_tests)
 add_test(NAME zhc_simpla_home_parity_tests  COMMAND zhc_simpla_home_parity_tests)
