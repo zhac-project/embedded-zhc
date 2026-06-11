@@ -1072,6 +1072,12 @@ target_link_libraries(zhc_spotmau_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Hommyn MS-20-Z / WS-20-Z — both auto-ports wired kFzIasZone (bare "alarm")
+# against a semantic expose key. Repointed to typed kFzIasMotionAlarm
+# (occupancy) / kFzIasWaterLeakAlarm (water_leak). See tests/README.md.
+add_executable(zhc_hommyn_parity_tests tests/test_hommyn_parity.cpp)
+target_link_libraries(zhc_hommyn_parity_tests PRIVATE zhc_definitions)
+
 # EDP re:dy plug — z2m configures genOnOff + seMetering on getEndpoint(85)
 # ("re:dy plug uses ep relay") but the auto-port bound those clusters on
 # endpoint 1, so state/power/energy never reported. Repointed both bindings
@@ -2944,6 +2950,7 @@ add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_akuvox_parity_tests       COMMAND zhc_akuvox_parity_tests)
 add_test(NAME zhc_spotmau_parity_tests      COMMAND zhc_spotmau_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_hommyn_parity_tests       COMMAND zhc_hommyn_parity_tests)
 add_test(NAME zhc_edp_parity_tests          COMMAND zhc_edp_parity_tests)
 add_test(NAME zhc_prolight_parity_tests     COMMAND zhc_prolight_parity_tests)
 add_test(NAME zhc_imou_parity_tests         COMMAND zhc_imou_parity_tests)
