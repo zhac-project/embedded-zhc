@@ -101,6 +101,13 @@ across the ZHAC platform.
   `kFzCommandOnState` / `kFzCommandOffState` (genOnOff cmd → `state` Bool,
   converging on the same key as the attribute path). 43132 (metering = 0x0702
   only) and ZB3102 dimmer verified unaffected.
+- **Wyze WLCKG1 ("Ford") lock: dropped lock operation-event decoder.** z2m wires
+  `[fz.lock, fz.lock_operation_event, fz.battery]`, but the auto-port wired only
+  `fz.lock` + `fz.battery` and dropped `fz.lock_operation_event` — the
+  closuresDoorLock (0x0101) cluster-specific command 0x21 (ServerToClient) that
+  reports how the lock was operated (`action`/`action_user`/`action_source`/
+  `action_source_name`). Graduated to a Tier-2 parent override wiring the generic
+  `kFzLockOperationEvent` alongside the existing converters.
 
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
