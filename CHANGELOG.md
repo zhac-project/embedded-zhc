@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Bubendorff MONO iD4 roller shutter: dropped tilt channel.** z2m models it
+  with `m.windowCovering({controls:["lift","tilt"]})`, exposing both `position`
+  and `tilt` and decoding both via `fz.cover_position_tilt`
+  (`currentPositionLiftPercentage` 0x0008 → position,
+  `currentPositionTiltPercentage` 0x0009 → tilt). The Tier-1 auto-port wired
+  only `kFzCoverPosition` / `kTzCoverPosition` (lift), dropping tilt. Graduated
+  to Tier 2, adding the generic `kFzCoverTilt` decoder + `kTzCoverPositionTilt`
+  encoder + a `tilt` expose. (No battery in the z2m def, so its absence is
+  correct, not a gap.)
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
