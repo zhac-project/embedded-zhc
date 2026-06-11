@@ -2591,6 +2591,13 @@ target_link_libraries(zhc_purmo_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_acova_parity_tests tests/test_acova_parity.cpp)
 target_link_libraries(zhc_acova_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the VAV (NodOn-derived) modules (MOD1 pilot-wire
+# heater, MOD2 metering relay). The Tier-1 auto-port dropped
+# power_on_behavior (genOnOff 0x4003) on both, and the entire NodOn
+# pilot-wire cluster (0xFC00 attr 0x0000 → pilot_wire_mode) on MOD1.
+add_executable(zhc_vav_parity_tests tests/test_vav_parity.cpp)
+target_link_libraries(zhc_vav_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Espressif ESP32-C6/H2 range extender. z2m defines
 # it as a pure router (exposes:[], fromZigbee:[], toZigbee:[]); the Tier-1
 # auto-port carried a phantom on/off + battery bundle. Pinned stripped.
@@ -3122,6 +3129,7 @@ add_test(NAME zhc_stello_parity_tests       COMMAND zhc_stello_parity_tests)
 add_test(NAME zhc_netica_parity_tests       COMMAND zhc_netica_parity_tests)
 add_test(NAME zhc_purmo_parity_tests        COMMAND zhc_purmo_parity_tests)
 add_test(NAME zhc_acova_parity_tests        COMMAND zhc_acova_parity_tests)
+add_test(NAME zhc_vav_parity_tests          COMMAND zhc_vav_parity_tests)
 add_test(NAME zhc_espressif_parity_tests    COMMAND zhc_espressif_parity_tests)
 add_test(NAME zhc_tubeszb_parity_tests      COMMAND zhc_tubeszb_parity_tests)
 add_test(NAME zhc_intuis_parity_tests       COMMAND zhc_intuis_parity_tests)
