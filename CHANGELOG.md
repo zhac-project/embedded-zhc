@@ -56,6 +56,14 @@ across the ZHAC platform.
   to Tier 2, adding the generic `kFzCoverTilt` decoder + `kTzCoverPositionTilt`
   encoder + a `tilt` expose. (No battery in the z2m def, so its absence is
   correct, not a gap.)
+- **HFH Solutions 303-0136 LED controller: dropped color-temperature axis.**
+  z2m drives this tunable-white luminaire with `m.light({colorTemp:{range:
+  [155,495]}})`, which adds the lightingColorCtrl (0x0300) colour-temperature
+  channel plus a `color_temp` expose (mireds). The Tier-1 auto-port wired only
+  kFzOnOff + kFzBrightness and exposed state + brightness, dropping the entire
+  CCT channel. Graduated the generated def and restored kFzColorTemperature /
+  kTzColorTemp, the `color_temp` expose, and the 0x0300 binding.
+
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
