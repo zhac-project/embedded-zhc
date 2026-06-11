@@ -950,6 +950,15 @@ target_link_libraries(zhc_swann_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smarli_parity_tests tests/test_smarli_parity.cpp)
 target_link_libraries(zhc_smarli_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Soanalarm SNT858Z TS0601 Tuya-MCU soil moisture sensor. The
+# auto-port mis-classified it as a phantom on/off + battery device (kFzOnOff +
+# kFzBattery, genOnOff/genPowerCfg bindings) and decoded nothing real. It is a
+# 0xEF00 DP device: dp3 soil_moisture, dp5 temperature (raw /1), dp9
+# temperature_unit enum, dp15 battery — graduated to a parent override wiring
+# the Tuya DP map via factory::TuyaRw.
+add_executable(zhc_soanalarm_parity_tests tests/test_soanalarm_parity.cpp)
+target_link_libraries(zhc_soanalarm_parity_tests PRIVATE zhc_definitions)
+
 # Parity for Current Products Corp CP180335E-01 ("E-Wand") tilt blind. The
 # auto-port wired the LIFT cover channel (kFzCoverPosition/kTzCoverPosition ->
 # "position") but z2m decodes via TILT (fz.cover_position_tilt 0x0009,
@@ -2951,6 +2960,7 @@ add_test(NAME zhc_smart9_parity_tests       COMMAND zhc_smart9_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
+add_test(NAME zhc_soanalarm_parity_tests    COMMAND zhc_soanalarm_parity_tests)
 add_test(NAME zhc_current_products_corp_parity_tests COMMAND zhc_current_products_corp_parity_tests)
 add_test(NAME zhc_smartwings_parity_tests   COMMAND zhc_smartwings_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)

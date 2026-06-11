@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
+  z2m wires this TS0601 device as a Tuya-MCU sensor
+  (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
+  dp3 `soil_moisture` (raw /1), dp5 `temperature` (`valueConverter.raw`, /1 — not
+  the /10 default), dp9 `temperature_unit` enum {celsius,fahrenheit}, dp15
+  `battery` (raw /1). The auto-port mis-classified it as a phantom on/off +
+  battery device (`kFzOnOff` + `kFzBattery`, `genOnOff`/`genPowerCfg` bindings,
+  state/battery/voltage exposes) so it decoded nothing real and carried a dead
+  controllable switch. Graduated to a Tier-2 override wiring the Tuya DP map via
+  `factory::TuyaRw` (temperature_unit is STATE_SET) with the four sensor exposes.
+
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
