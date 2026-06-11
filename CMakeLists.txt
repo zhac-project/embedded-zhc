@@ -934,6 +934,12 @@ target_link_libraries(zhc_smarli_parity_tests PRIVATE zhc_definitions)
 # parent override that swaps to kFzCoverTilt + kTzCoverState/kTzCoverPositionTilt.
 add_executable(zhc_current_products_corp_parity_tests tests/test_current_products_corp_parity.cpp)
 target_link_libraries(zhc_current_products_corp_parity_tests PRIVATE zhc_definitions)
+# Parity for the Smartwings WM25L-Z roller shade. z2m declares meta
+# {battery:{dontDividePercentage:true}} so batteryPercentageRemaining is a
+# whole 0..100 % value, but the auto-port wired the default kFzBattery which
+# always halves it (read 2x low). Override uses the new kFzBatteryNoDivide.
+add_executable(zhc_smartwings_parity_tests tests/test_smartwings_parity.cpp)
+target_link_libraries(zhc_smartwings_parity_tests PRIVATE zhc_definitions)
 
 # Parity for the Schwaiger HAL3xx/5xx/8xx LED bulbs. The auto-ports
 # flattened every m.light({colorTemp, color}) bulb to bare on/off +
@@ -2855,6 +2861,7 @@ add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_current_products_corp_parity_tests COMMAND zhc_current_products_corp_parity_tests)
+add_test(NAME zhc_smartwings_parity_tests   COMMAND zhc_smartwings_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
 add_test(NAME zhc_wmun_parity_tests         COMMAND zhc_wmun_parity_tests)

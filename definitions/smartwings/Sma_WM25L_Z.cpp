@@ -1,14 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Smartwings WM25L-Z — auto-generated.
-// Roller shade
+// Tier 2: Smartwings WM25L-Z — battery scale fix.
+// Roller shade (battery-powered, coverInverted).
 // z2m-source: smartwings.ts #WM25L-Z.
+//
+// z2m sets meta {battery:{dontDividePercentage:true}} for this model, so
+// batteryPercentageRemaining is already a whole 0..100 % value and must
+// NOT be halved. The default kFzBattery always divides by 2, which read
+// 2x low here — use kFzBatteryNoDivide instead. (coverInverted:true means
+// z2m emits the lift percentage raw, which matches kFzCoverPosition.)
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::smartwings {
 namespace {
 const FzConverter* const kFz_WM25L_Z[] = {
-    &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzBatteryNoDivide,
     &::zhc::generic::kFzCoverPosition,
 };
 const TzConverter* const kTz_WM25L_Z[] = {

@@ -112,6 +112,72 @@ extern const FzConverter kFzBattery{
     .user_config       = nullptr,
 };
 
+// ── fz_battery_no_divide ────────────────────────────────────────────
+//
+// Same as fz_battery, but does NOT halve batteryPercentageRemaining
+// (attr 0x0021). Mirrors z2m `fz.battery` when a device declares
+// meta {battery:{dontDividePercentage:true}} — i.e. it already reports
+// 0..100 % rather than the ZCL half-percent 0..200 encoding. Voltage
+// (0x0020) and alarm-state (0x0035) handling are identical to fz_battery.
+//
+// z2m-source: converters/fromZigbee.ts `battery` (dontDividePercentage path).
+bool fz_battery_no_divide(const DecodedMessage& msg,
+                           const FzConverter&,
+                           const PreparedDefinition&,
+                           RuntimeContext&,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool emitted = false;
+
+    // attr 0x0020 — batteryVoltage (u8 in units of 100 mV → emit in mV).
+    if (const Value* v = msg.payload.find("32")) {
+        if (v->type == ValueType::Uint) {
+            Value volt{}; volt.type = ValueType::Uint; volt.u = v->u * 100;
+            out.put("voltage", volt);
+            emitted = true;
+        }
+    }
+
+    // attr 0x0021 — batteryPercentageRemaining, reported as a whole
+    // percent already (dontDividePercentage). Emit verbatim, no /2.
+    if (const Value* v = msg.payload.find("33")) {
+        if (v->type == ValueType::Uint) {
+            Value bat{}; bat.type = ValueType::Uint; bat.u = v->u;
+            out.put("battery", bat);
+            emitted = true;
+        }
+    }
+
+    // attr 0x0035 — batteryAlarmState (bitmap32), same bank decode as
+    // fz_battery.
+    if (const Value* v = msg.payload.find("53")) {
+        if (v->type == ValueType::Uint) {
+            const std::uint32_t st = static_cast<std::uint32_t>(v->u);
+            const bool low = (st & 0x0000000Fu) || (st & 0x00003C00u) ||
+                             (st & 0x00F00000u);
+            Value bl{}; bl.type = ValueType::Bool; bl.b = low;
+            out.put("battery_low", bl);
+            emitted = true;
+        }
+    }
+
+    return emitted;
+}
+
+extern const FzConverter kFzBatteryNoDivide{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genPowerCfg",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_battery_no_divide },
+    .user_config       = nullptr,
+};
+
 // ── fz_brightness ───────────────────────────────────────────────────
 
 bool fz_brightness(const DecodedMessage& msg,
