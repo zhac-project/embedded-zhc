@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Enkin ZDM150 dimmer: mis-classified as battery-only on/off, brightness
+  dropped.** z2m drives this 150W dimmer with `m.light()` +
+  `m.forcePowerSource("Mains (single phase)")`, giving on/off + brightness
+  (genLevelCtrl 0x0008) plus the matching writers. The auto-port wired
+  `kFzBattery` + phantom `battery`/`voltage` exposes + a genPowerCfg (0x0001)
+  binding and dropped brightness entirely. Graduated to a Tier-2 override:
+  `kFzOnOff`+`kFzBrightness` / `kTzOnOff`+`kTzBrightness`, `state`+`brightness`
+  exposes, bindings on genOnOff (0x0006)+genLevelCtrl (0x0008), no phantom
+  battery, and `power_source_override` = Mains (single phase).
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the

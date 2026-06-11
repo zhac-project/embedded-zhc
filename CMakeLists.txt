@@ -2318,6 +2318,14 @@ target_link_libraries(zhc_imhotepcreation_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_icasa_parity_tests tests/test_icasa_parity.cpp)
 target_link_libraries(zhc_icasa_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Enkin ZDM150 dimmer. The auto-port mis-classified
+# this 150W dimmer (z2m m.light()) as a battery-only on/off device, wiring
+# kFzBattery + phantom battery/voltage exposes and DROPPING brightness. The
+# fix re-ports it as a proper light (kFzOnOff + kFzBrightness + tz) with a
+# Mains power_source_override.
+add_executable(zhc_enkin_parity_tests tests/test_enkin_parity.cpp)
+target_link_libraries(zhc_enkin_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Plugwise heating family + plug. The Tom (106-03)
 # and Emma (170-01) thermostat ports declared standard hvacThermostat
 # exposes that the generic kFzThermostat (0x0000/0x0012/0x001C only) never
@@ -3304,6 +3312,7 @@ add_test(NAME zhc_owon_parity_tests         COMMAND zhc_owon_parity_tests)
 add_test(NAME zhc_airzone_aidoo_parity_tests COMMAND zhc_airzone_aidoo_parity_tests)
 add_test(NAME zhc_imhotepcreation_parity_tests COMMAND zhc_imhotepcreation_parity_tests)
 add_test(NAME zhc_icasa_parity_tests        COMMAND zhc_icasa_parity_tests)
+add_test(NAME zhc_enkin_parity_tests        COMMAND zhc_enkin_parity_tests)
 add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
 add_test(NAME zhc_plaid_parity_tests        COMMAND zhc_plaid_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
