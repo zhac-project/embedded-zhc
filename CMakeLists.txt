@@ -900,6 +900,17 @@ target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
 add_executable(zhc_schneider_parity_tests tests/test_schneider_parity.cpp)
 target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the LDS (Hive / Ynoa OEM) family. ZBT-RGBWLight-A0000 is
+# z2m m.light({colorTemp:{range:[153,555]}, color:true}) but the auto-port
+# collapsed it to on/off + brightness, dropping the colorTemp + XY/HS colour
+# axis (restored via kFzColorTemperature + kFzColor, bind 0x0300). PFMOT001
+# (Hive Pet Friendly Motion sensor, m.battery()+m.iasZoneAlarm zoneType
+# "occupancy") was dropped entirely by the auto-port; added as battery +
+# kFzIasMotionAlarm (occupancy/tamper/battery_low). FWBulb03UK (bare m.light())
+# is dimmable-only and verified correct.
+add_executable(zhc_lds_parity_tests tests/test_lds_parity.cpp)
+target_link_libraries(zhc_lds_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Securifi Almond Click button. The auto-port mis-ported
 # it as a controllable on/off switch (kFzOnOff + kTzOnOff + bare `state`); z2m
 # wires fz.almond_click (ssIasAce commandArm, device-specific armmode lookup
@@ -2842,6 +2853,7 @@ add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
+add_test(NAME zhc_lds_parity_tests          COMMAND zhc_lds_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
