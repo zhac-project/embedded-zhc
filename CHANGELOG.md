@@ -119,6 +119,14 @@ across the ZHAC platform.
   The suspected dropped color/colorTemp axis is a FALSE flag: `m.light()` adds
   the lightingColorCtrl 0x0300 axis only when called with color/colorTemp args,
   and these plain dimmer drivers pass neither — no colour axis exists to drop.
+- **Brimate FZB8708HD-S1 motion sensor: IAS dead-key (motion never reached the
+  shadow).** z2m wires `fz.ias_occupancy_alarm_1` and exposes `e.occupancy()` +
+  `e.battery_low()`, decoding `occupancy` from zoneStatus bit 0 (plus `tamper`
+  bit 2 / `battery_low` bit 3). The auto-port lowered the generic `kFzIasZone`,
+  which emits a bare `alarm` key, and declared an `alarm` expose — so motion
+  events landed under a key the SPA/shadow never reads. Graduated to a Tier-2
+  override using the typed `kFzIasMotionAlarm` (`kLbl_Motion` = "occupancy",
+  bit 0) and renamed the dead `alarm` expose to `occupancy`.
 
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
