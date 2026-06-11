@@ -109,6 +109,17 @@ across the ZHAC platform.
   converters `kami::kFzKamiContact` / `kami::kFzKamiOccupancy`
   (`definitions/kami/_shared.{hpp,cpp}`), and fixed exposes to `contact` +
   `action: ["motion"]` (no TZ, no genOnOff binding).
+- **Matcall BV LED dimmer drivers (ZG401224, ZG430700): dropped
+  power_on_behavior axis.** Both are z2m `m.light()` with no arguments, which
+  defaults `powerOnBehavior=true` — wiring `fz.power_on_behavior` (genOnOff
+  0x4003 startUpOnOff enum8) + `tz.power_on_behavior` + a `power_on_behavior`
+  enum expose. The Tier-1 auto-ports wired only `kFzOnOff` + `kFzBrightness`,
+  dropping the entire power_on_behavior axis. Graduated both to Tier-2 overrides
+  restoring it via `kFzPowerOnBehavior` / `kTzPowerOnBehavior1` + the expose.
+  The suspected dropped color/colorTemp axis is a FALSE flag: `m.light()` adds
+  the lightingColorCtrl 0x0300 axis only when called with color/colorTemp args,
+  and these plain dimmer drivers pass neither — no colour axis exists to drop.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:

@@ -924,6 +924,15 @@ target_link_libraries(zhc_hoftronic_parity_tests PRIVATE zhc_definitions)
 # passes no color/colorTemp args, so there is NO 0x0300 axis.
 add_executable(zhc_scanproducts_parity_tests tests/test_scanproducts_parity.cpp)
 target_link_libraries(zhc_scanproducts_parity_tests PRIVATE zhc_definitions)
+# Parity fixtures for the Matcall BV LED dimmer drivers (ZG401224, ZG430700).
+# Both are z2m m.light() with no args: on/off + brightness + power_on_behavior
+# (m.light() defaults powerOnBehavior=true → fz.power_on_behavior on genOnOff
+# 0x4003 startUpOnOff + the enum expose). The Tier-1 auto-ports dropped the
+# power_on_behavior axis; restored via kFzPowerOnBehavior / kTzPowerOnBehavior1.
+# Also pins the FALSE colour suspect: m.light() with no color/colorTemp args
+# has NO 0x0300 axis. Both graduated to parent overrides.
+add_executable(zhc_matcall_bv_parity_tests tests/test_matcall_bv_parity.cpp)
+target_link_libraries(zhc_matcall_bv_parity_tests PRIVATE zhc_definitions)
 # Parity fixtures for the LDS (Hive / Ynoa OEM) family. ZBT-RGBWLight-A0000 is
 # z2m m.light({colorTemp:{range:[153,555]}, color:true}) but the auto-port
 # collapsed it to on/off + brightness, dropping the colorTemp + XY/HS colour
@@ -3124,6 +3133,7 @@ add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_m_elec_parity_tests       COMMAND zhc_m_elec_parity_tests)
 add_test(NAME zhc_hoftronic_parity_tests    COMMAND zhc_hoftronic_parity_tests)
 add_test(NAME zhc_scanproducts_parity_tests COMMAND zhc_scanproducts_parity_tests)
+add_test(NAME zhc_matcall_bv_parity_tests   COMMAND zhc_matcall_bv_parity_tests)
 add_test(NAME zhc_lds_parity_tests          COMMAND zhc_lds_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_smart9_parity_tests       COMMAND zhc_smart9_parity_tests)
