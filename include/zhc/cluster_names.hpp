@@ -56,6 +56,14 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         case 0x0405: return "msRelativeHumidity";
         case 0x0406: return "msOccupancySensing";
         case 0x0408: return "msSoilMoisture";
+        // 0x0409 (pHMeasurement) + 0x040A — abused by BYUN M415 gas/smoke
+        // sensors as the alarm-CLEAR channel. z2m byun.ts decodes
+        // `byun_smoke_false` from pHMeasurement measuredValue==0 and
+        // `byun_gas_false` from the raw 0x040A frame (data[0]==0x18). Named
+        // here so the vendor Fz selectors (definitions/byun/_shared.cpp)
+        // match by cluster string.
+        case 0x0409: return "pHMeasurement";
+        case 0x040A: return "byunGasRaw";  // BYUN M415-5C gas-clear raw cluster (1034)
         case 0x040D: return "msCO2";
 
         // Security & safety
