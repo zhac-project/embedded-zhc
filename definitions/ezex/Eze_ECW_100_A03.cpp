@@ -1,8 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Ezex ECW-100-A03 — auto-generated.
+// Tier 2: Ezex ECW-100-A03 — 3-gang switch, per-endpoint genOnOff binds.
 // Zigbee switch 3 gang
-// z2m-source: ezex.ts #ECW-100-A03.
+// z2m-source: ezex.ts #ECW-100-A03 — m.deviceEndpoints({top:1,center:2,bottom:3})
+//   + m.onOff({endpointNames:["top","center","bottom"]}). z2m's m.onOff()
+//   configure runs setupAttributes(device,...) → iterates
+//   getEndpointsWithCluster(device,"genOnOff","input") and binds genOnOff on
+//   EVERY endpoint exposing it (top/center/bottom = 1/2/3), not just ep1. The
+//   auto-port bound only {1,0x0006}, so the center/bottom gangs were never
+//   bound at join and never reported state changes — bind all 3 endpoints.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::ezex {
@@ -26,7 +32,7 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
+    {1, 0x0006}, {2, 0x0006}, {3, 0x0006},
 };
 // --- end auto-generated block ---
 

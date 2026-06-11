@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **eZEX ECW-100-A03 3-gang switch: only the top gang was bound at join.** z2m
+  drives it with `m.deviceEndpoints({top:1,center:2,bottom:3})` +
+  `m.onOff({endpointNames:["top","center","bottom"]})`, whose configure binds
+  genOnOff on every endpoint exposing the cluster (1/2/3). The auto-port bound
+  only `{1,0x0006}`, so the center/bottom gangs were never bound and never
+  reported state changes. Graduated to a Tier-2 override binding all three
+  endpoints. The `{top,center,bottom}` `endpoint_map` was already present and
+  correctly suffixes decoded `state` → `state_top`/`state_center`/`state_bottom`.
+
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the
