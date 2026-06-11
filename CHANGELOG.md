@@ -109,6 +109,15 @@ across the ZHAC platform.
   `action_source_name`). Graduated to a Tier-2 parent override wiring the generic
   `kFzLockOperationEvent` alongside the existing converters.
 
+- **Echostar SAGE206611 / SAGE206612 (SAGE by Hughes) remotes: dead on/off
+  control instead of `action`.** Both are battery controllers that EMIT
+  genOnOff On/Off commands and surface them as an `action` (z2m toZigbee
+  empty), but the auto-port mis-modelled both as a settable on/off `state`
+  (kFzOnOff + kTzOnOff) and dropped the action. Graduated both to Tier-2:
+  SAGE206611 (switch) wires generic kFzCommandOn/Off → `action` "on"/"off";
+  SAGE206612 (doorbell) wires a new vendor `kFzSageBellAction`
+  (echostar/_shared.cpp, mirroring z2m `SAGE206612_state`: commandOn→"bell1",
+  commandOff→"bell2") + kFzBattery. Single endpoint → no endpoint_map.
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.
