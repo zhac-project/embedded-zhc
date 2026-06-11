@@ -10,6 +10,13 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Zipato rgbw2.zbee27 RGBW bulb: dropped color/colorTemp axis.** z2m is
+  `m.light({colorTemp:{range:undefined}, color:true})` (on/off + brightness +
+  colorTemp in mireds + color xy/hs), but the Tier-1 auto-port collapsed it to
+  on/off + brightness only. Graduated to Tier 2 and restored the colour axis:
+  added `kFzColor` + `kFzColorTemperature` (+ `kTzColor` / `kTzColorTemp`),
+  `color_x`/`color_y`/`hue`/`saturation`/`color_temp` exposes, and bind 0x0300
+  (lightingColorCtrl). Pinned by `tests/test_zipato_parity.cpp`.
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
