@@ -935,6 +935,14 @@ target_link_libraries(zhc_smarli_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_schwaiger_parity_tests tests/test_schwaiger_parity.cpp)
 target_link_libraries(zhc_schwaiger_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the TCI LED-driver family. "TCI - Mini ZLL I" is a
+# Dali driver that is both a settable light AND a controller; the auto-
+# port dropped its m.commandsOnOff/commandsLevelCtrl action stream. The
+# three plain drivers are bare m.light() (dimmable only) — regression
+# guard against a phantom color/color_temp axis.
+add_executable(zhc_tci_parity_tests tests/test_tci_parity.cpp)
+target_link_libraries(zhc_tci_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the YSRSAI LED-controller family. z2m drives all three
 # with tuya.modernExtend.tuyaLight() (a mains-powered ZCL light), but the
 # auto-port mis-classified the dimmer (ZB-DL01) and the WW/CW (ZB-CT01) as
@@ -2847,6 +2855,7 @@ add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
+add_test(NAME zhc_tci_parity_tests          COMMAND zhc_tci_parity_tests)
 add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
 add_test(NAME zhc_wmun_parity_tests         COMMAND zhc_wmun_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
