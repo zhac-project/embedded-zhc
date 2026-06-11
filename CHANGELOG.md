@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Aldi (MEGOS) 141L100RC switch/dimming remote: dead action, phantom
+  control.** z2m models this remote as `e.action([on, off, brightness_stop,
+  brightness_step_up/down, brightness_move_up/down])`, decoding genOnOff +
+  genLevelCtrl COMMANDS via `fz.command_on/off/step/move/stop` with an empty
+  `toZigbee`. The auto-port mis-modelled it as a settable on/off `state`
+  (`kFzOnOff` + `kTzOnOff`) — a dead control whose button presses produced no
+  `action`. Graduated to a Tier-2 override wiring the command decoder set
+  (`kFzCommandOn/Off/Step/Move/Stop`) + an `action` enum, dropping the bogus
+  to_zigbee and binding genLevelCtrl (0x0008) alongside genOnOff (0x0006).
+
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
