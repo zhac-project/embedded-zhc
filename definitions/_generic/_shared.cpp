@@ -1139,6 +1139,11 @@ constexpr IasAlarmLabel kLbl_Contact     { "contact",         0, true };  // z2m
 constexpr IasAlarmLabel kLbl_ContactNI   { "contact",         0, false }; // invertAlarm:true devices (vsmart HS-SEDR) → raw bit0
 constexpr IasAlarmLabel kLbl_Motion      { "occupancy",       0 };
 constexpr IasAlarmLabel kLbl_Motion2     { "occupancy",       1 };  // z2m fz.ias_occupancy_alarm_2
+// z2m m.iasZoneAlarm({zoneType:"occupancy", zoneAttributes:["alarm_1","alarm_2",…]})
+// `bothAlarms` split: occupancy_alarm_1 (bit 0) + occupancy_alarm_2 (bit 1).
+// iLightsIn HSSA18-Z-MID.
+constexpr IasAlarmLabel kLbl_OccAlarm1   { "occupancy_alarm_1", 0 };
+constexpr IasAlarmLabel kLbl_OccAlarm2   { "occupancy_alarm_2", 1 };
 constexpr IasAlarmLabel kLbl_WaterLeak   { "water_leak",      0 };
 // z2m m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:["alarm_1","alarm_2",…]})
 // sets `bothAlarms`, splitting the alarm into two keys: `water_leak_alarm_1`
@@ -1183,6 +1188,8 @@ ZHC_IAS_TYPED_CVT(kFzIasContactAlarm,   &kLbl_Contact);
 ZHC_IAS_TYPED_CVT(kFzIasContactAlarmNI, &kLbl_ContactNI);
 ZHC_IAS_TYPED_CVT(kFzIasMotionAlarm,    &kLbl_Motion);
 ZHC_IAS_TYPED_CVT(kFzIasMotionAlarm2,   &kLbl_Motion2);
+ZHC_IAS_TYPED_CVT(kFzIasOccupancyAlarm1, &kLbl_OccAlarm1);
+ZHC_IAS_TYPED_CVT(kFzIasOccupancyAlarm2, &kLbl_OccAlarm2);
 ZHC_IAS_TYPED_CVT(kFzIasWaterLeakAlarm, &kLbl_WaterLeak);
 ZHC_IAS_TYPED_CVT(kFzIasWaterLeakAlarm1, &kLbl_WaterLeak1);
 ZHC_IAS_TYPED_CVT(kFzIasWaterLeakAlarm2, &kLbl_WaterLeak2);

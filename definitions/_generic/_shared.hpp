@@ -254,6 +254,13 @@ extern const FzConverter kFzIasMotionAlarm;
 // bit 0. Matches z2m's `fz.ias_occupancy_alarm_2`. Used by iris
 // IL07_1, iris 3326-L, centralite 3328-G.
 extern const FzConverter kFzIasMotionAlarm2;
+// z2m m.iasZoneAlarm({zoneType:"occupancy", zoneAttributes:["alarm_1","alarm_2",…]})
+// sets `bothAlarms`, splitting the alarm into two distinct keys:
+// `occupancy_alarm_1` (zoneStatus bit 0) and `occupancy_alarm_2` (bit 1) —
+// unlike kFzIasMotionAlarm/2 which both emit the bare `occupancy` key.
+// iLightsIn HSSA18-Z-MID (Zhaga module).
+extern const FzConverter kFzIasOccupancyAlarm1;
+extern const FzConverter kFzIasOccupancyAlarm2;
 
 // ColorCtrl move-style command decoders (z2m fz.command_move_hue /
 // fz.command_move_to_color / fz.command_move_color_temperature).
