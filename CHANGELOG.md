@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Novo C10-3E-1.2 curtain switch (TS0601 / _TZE200_swhwv3k3): Tuya-MCU
+  misroute, cover dead.** z2m decodes this device via `legacy.fz.tuya_cover` /
+  `legacy.tz.tuya_cover_control` — the 0xEF00 (manuSpecificTuya) datapoint
+  stream — but the auto-port wired the GENERIC windowCovering converters
+  (`kFzCoverPosition`/`kTzCoverPosition`, cluster 0x0102) and bound endpoint 1
+  to 0x0102. A TS0601 Tuya MCU never speaks 0x0102, so position, state and the
+  set path were all dead. Graduated to a Tier-2 override that ports the DP map
+  to `fz_tuya_datapoints`/`tz_tuya_datapoints`: DP1 state {0:OPEN,1:STOP,2:CLOSE},
+  DP2/DP3 position (coverPosition/coverArrived), DP105 motor_speed; binds 0xEF00.
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
