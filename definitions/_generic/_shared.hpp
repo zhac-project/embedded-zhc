@@ -249,6 +249,14 @@ extern const FzConverter kFzIasZoneStatusChange;
 // smoke,co,vibration}_alarm_1`.
 extern const FzConverter kFzIasContactAlarm;
 extern const FzConverter kFzIasContactAlarmNI;
+// z2m m.iasZoneAlarm({zoneType:"contact", zoneAttributes:["alarm_1","alarm_2",…]})
+// sets `bothAlarms`, splitting the alarm into two distinct keys:
+// `contact_alarm_1` and `contact_alarm_2`. zoneType:"contact" inverts the
+// payload, so both keys read INVERTED bits (alarm_1 = !bit0, alarm_2 = !bit1) —
+// matching z2m's invertAlarmPayload path. Distinct from kFzIasContactAlarm,
+// which emits the single bare `contact` key. EZVIZ CS-T2C.
+extern const FzConverter kFzIasContactAlarm1;
+extern const FzConverter kFzIasContactAlarm2;
 extern const FzConverter kFzIasMotionAlarm;
 // Variant of `kFzIasMotionAlarm` reading zoneStatus bit 1 instead of
 // bit 0. Matches z2m's `fz.ias_occupancy_alarm_2`. Used by iris

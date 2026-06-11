@@ -62,6 +62,19 @@ across the ZHAC platform.
   lightingColorCtrl (0x0300) channel. Graduated to a Tier-2 override that
   restores the `color_temp` / `color_xy` exposes, the colorTemp + colour
   converters, and the 0x0300 binding. Pinned by `test_sowilo_parity.cpp`.
+- **EZVIZ CS-T2C open/close sensor: IAS dead-key + inverted contact.** The
+  Tier-1 auto-port wired the generic `kFzIasZone`, which emits a bare,
+  non-inverted `alarm` boolean. z2m ships this device via
+  `m.iasZoneAlarm({zoneType:"contact", zoneAttributes:["alarm_1","alarm_2",
+  "tamper","battery_low"]})`: `zoneType:"contact"` inverts the payload and both
+  alarms present take z2m's `bothAlarms` branch, publishing two semantic INVERTED
+  keys `contact_alarm_1` (=!bit0) + `contact_alarm_2` (=!bit1) plus tamper /
+  battery_low. The auto-port's `alarm` key was both the wrong name and the wrong
+  polarity. Added reusable two-key inverted contact converters
+  `kFzIasContactAlarm1`/`kFzIasContactAlarm2` to `_generic/_shared` and graduated
+  the def to a Tier-2 override using them, with matching `contact_alarm_1`/
+  `contact_alarm_2` exposes.
+
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the

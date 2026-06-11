@@ -1137,6 +1137,12 @@ bool fz_ias_typed(const DecodedMessage& msg, const FzConverter& self,
 
 constexpr IasAlarmLabel kLbl_Contact     { "contact",         0, true };  // z2m inverts contact: contact = !bit0
 constexpr IasAlarmLabel kLbl_ContactNI   { "contact",         0, false }; // invertAlarm:true devices (vsmart HS-SEDR) → raw bit0
+// z2m m.iasZoneAlarm({zoneType:"contact", zoneAttributes:["alarm_1","alarm_2",…]})
+// `bothAlarms` split: contact_alarm_1 (!bit0) + contact_alarm_2 (!bit1).
+// zoneType:"contact" sets invertAlarmPayload, so BOTH alarm keys are inverted.
+// EZVIZ CS-T2C.
+constexpr IasAlarmLabel kLbl_Contact1    { "contact_alarm_1", 0, true };
+constexpr IasAlarmLabel kLbl_Contact2    { "contact_alarm_2", 1, true };
 constexpr IasAlarmLabel kLbl_Motion      { "occupancy",       0 };
 constexpr IasAlarmLabel kLbl_Motion2     { "occupancy",       1 };  // z2m fz.ias_occupancy_alarm_2
 // z2m m.iasZoneAlarm({zoneType:"occupancy", zoneAttributes:["alarm_1","alarm_2",…]})
@@ -1186,6 +1192,8 @@ constexpr IasAlarmLabel kLbl_Sos2        { "sos",             1 };
 
 ZHC_IAS_TYPED_CVT(kFzIasContactAlarm,   &kLbl_Contact);
 ZHC_IAS_TYPED_CVT(kFzIasContactAlarmNI, &kLbl_ContactNI);
+ZHC_IAS_TYPED_CVT(kFzIasContactAlarm1,  &kLbl_Contact1);
+ZHC_IAS_TYPED_CVT(kFzIasContactAlarm2,  &kLbl_Contact2);
 ZHC_IAS_TYPED_CVT(kFzIasMotionAlarm,    &kLbl_Motion);
 ZHC_IAS_TYPED_CVT(kFzIasMotionAlarm2,   &kLbl_Motion2);
 ZHC_IAS_TYPED_CVT(kFzIasOccupancyAlarm1, &kLbl_OccAlarm1);
