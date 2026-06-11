@@ -2459,6 +2459,8 @@ target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
 # tests/test_xenon_parity.cpp.
 add_executable(zhc_xenon_parity_tests tests/test_xenon_parity.cpp)
 target_link_libraries(zhc_xenon_parity_tests PRIVATE zhc_definitions)
+add_executable(zhc_xal_parity_tests tests/test_xal_parity.cpp)
+target_link_libraries(zhc_xal_parity_tests PRIVATE zhc_definitions)
 
 # Parity fixtures for Javis. The JS-MC-SENSOR-ZB microwave/presence sensor had
 # been mis-wired to the IAS-zone converter (phantom alarm/tamper exposes); z2m
@@ -3136,6 +3138,7 @@ add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_ynoa_parity_tests         COMMAND zhc_ynoa_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
 add_test(NAME zhc_xenon_parity_tests        COMMAND zhc_xenon_parity_tests)
+add_test(NAME zhc_xal_parity_tests          COMMAND zhc_xal_parity_tests)
 add_test(NAME zhc_javis_parity_tests        COMMAND zhc_javis_parity_tests)
 add_test(NAME zhc_weten_parity_tests        COMMAND zhc_weten_parity_tests)
 add_test(NAME zhc_nedis_parity_tests        COMMAND zhc_nedis_parity_tests)

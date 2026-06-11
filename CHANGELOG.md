@@ -64,6 +64,16 @@ across the ZHAC platform.
   `action`. Graduated to a Tier-2 override wiring the command decoder set
   (`kFzCommandOn/Off/Step/Move/Stop`) + an `action` enum, dropping the bogus
   to_zigbee and binding genLevelCtrl (0x0008) alongside genOnOff (0x0006).
+- **XAL "Just MOVE IT 25" luminaires (050-0131558M, 050-0511558F,
+  050-1212558H): dropped `power_on_behavior` channel.** All three are z2m
+  `m.light()` (no color/colorTemp args) = plain dimmable lights, so the
+  reported "RGBW/CCT color axis" was a false flag (bare `m.light()` emits
+  neither a color expose nor `fz.color_colortemp`). The real gap: `m.light()`
+  also exposes `power_on_behavior` (`e.power_on_behavior(["off","on","toggle",
+  "previous"])` backed by `fz`/`tz.power_on_behavior` on genOnOff attr 0x4003
+  startUpOnOff), which the auto-port dropped. Graduated the three defs out of
+  `generated/` and wired the generic `kFz`/`kTzPowerOnBehavior1` pair plus the
+  `power_on_behavior` expose.
 
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
