@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Hommyn MS-20-Z / WS-20-Z sensors: primary IAS state never reached the
+  shadow (dead-key).** Both auto-ports wired the generic `kFzIasZone` (which
+  emits the bare key `alarm`) while z2m decodes the semantic state via a typed
+  `fz.ias_*_alarm_1` (zoneStatus bit 0): MS-20-Z's
+  `ias_occupancy_alarm_1_with_timeout` → `occupancy`, WS-20-Z's
+  `ias_water_leak_alarm_1` → `water_leak`. Graduated both to Tier-2, swapped to
+  `kFzIasMotionAlarm` (emits `occupancy`) / `kFzIasWaterLeakAlarm` (emits
+  `water_leak`), and repointed the expose `alarm` → the semantic key. tamper +
+  battery_low co-decode unchanged; MS-20-Z keeps `kFzBattery`, WS-20-Z (no
+  `fz.battery` in z2m) keeps `battery_low` only — both at parity.
+
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.

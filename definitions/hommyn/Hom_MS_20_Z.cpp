@@ -1,6 +1,16 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Hommyn MS-20-Z — auto-generated.
+// Tier 2: Hommyn MS-20-Z — hand-maintained parity override (was IAS dead-key).
+//
+// Graduated from generated/Hom_MS_20_Z.cpp: the generated def lowered the
+// generic kFzIasZone (which emits the bare key "alarm") while z2m decodes
+// the occupancy state via fz.ias_occupancy_alarm_1_with_timeout — zoneStatus
+// bit 0 → semantic key "occupancy" (plus tamper bit2 / battery_low bit3).
+// With no rename layer the primary sensor state never reached the shadow.
+// Swapped to the typed kFzIasMotionAlarm (kLbl_Motion emits "occupancy",
+// bit 0) and repointed the expose "alarm" → "occupancy". The timeout reset
+// (publish occupancy:false after N s) is a z2m host-side timer with no
+// device frame; firmware models occupancy purely from zoneStatus reports.
 // Occupancy sensor
 // z2m-source: hommyn.ts #MS-20-Z.
 #include "definitions/_generic/_shared.hpp"
@@ -9,7 +19,7 @@ namespace zhc::devices::hommyn {
 namespace {
 const FzConverter* const kFz_MS_20_Z[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_MS_20_Z[] = { "5e56b9c85b6e4fcaaaad3c1319e16c57" };
@@ -21,7 +31,7 @@ constexpr const char* kModels_MS_20_Z[] = { "5e56b9c85b6e4fcaaaad3c1319e16c57" }
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
