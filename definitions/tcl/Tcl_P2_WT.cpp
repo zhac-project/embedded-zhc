@@ -1,15 +1,26 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Tcl P2-WT — auto-generated.
-// Water leak detector
-// z2m-source: tcl.ts #P2-WT.
+// Tier 2: Tcl P2-WT — IAS dead-key fix.
+// Water leak detector.
+//
+// z2m wires m.iasZoneAlarm({zoneType:"water_leak",
+//   zoneAttributes:["alarm_1","tamper","battery_low"]}) + m.battery().
+// With a single alarm bit (no alarm_2) the modernExtend uses the zoneType
+// itself as the key, so it publishes the semantic `water_leak` (zoneStatus
+// bit 0, NOT inverted — only contact inverts) plus `tamper` (bit 2) and
+// `battery_low` (bit 3). The auto-port wired the generic kFzIasZone, which
+// emits a bare `alarm` key against an `alarm` expose — the declared
+// semantic water_leak key never populated. Repointed to the typed
+// kFzIasWaterLeakAlarm converter and renamed the expose to `water_leak`.
+//
+// z2m-source: tcl.ts #P2-WT + lib/modernExtend.ts iasZoneAlarm.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::tcl {
 namespace {
 const FzConverter* const kFz_P2_WT[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
 constexpr const char* kModels_P2_WT[] = { "P2-WT" };
@@ -21,7 +32,7 @@ constexpr const char* kModels_P2_WT[] = { "P2-WT" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

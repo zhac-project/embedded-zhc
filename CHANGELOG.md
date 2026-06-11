@@ -106,6 +106,14 @@ across the ZHAC platform.
   swapping in `kFzIasMotionAlarm` (bare `occupancy` from bit0 + `tamper` bit2 +
   `battery_low` bit3) and renaming the expose `alarm` -> `occupancy`. Battery
   (`%`/`voltage` via `kFzBattery`) was already wired and is preserved.
+- **TCL P2-WT water-leak sensor: dead IAS alarm key.** The auto-port wired the
+  generic `kFzIasZone` (which emits a bare `alarm` key) against an `alarm`
+  expose, so z2m's semantic `water_leak` key never populated. z2m drives it with
+  `m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:["alarm_1","tamper",
+  "battery_low"]})`, which (single alarm bit) publishes the bare `water_leak`
+  key (zoneStatus bit 0, not inverted) + `tamper` + `battery_low`. Graduated to
+  a Tier-2 override: repointed to the typed `kFzIasWaterLeakAlarm` converter and
+  renamed the expose `alarm` → `water_leak`.
 
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,

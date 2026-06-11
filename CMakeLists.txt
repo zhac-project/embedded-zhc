@@ -3127,6 +3127,12 @@ target_link_libraries(zhc_smartenit_parity_tests PRIVATE zhc_definitions)
 # the new typed kFzIasWaterLeakAlarm1/2 converters.
 add_executable(zhc_blitzwolf_parity_tests tests/test_blitzwolf_parity.cpp)
 target_link_libraries(zhc_blitzwolf_parity_tests PRIVATE zhc_definitions)
+# TCL P2-WT water-leak sensor: the auto-port wired the generic kFzIasZone
+# (bare `alarm` key) against an `alarm` expose, leaving z2m's semantic
+# `water_leak` key dead. Repointed to the typed kFzIasWaterLeakAlarm
+# converter + renamed the expose to `water_leak`.
+add_executable(zhc_tcl_parity_tests tests/test_tcl_parity.cpp)
+target_link_libraries(zhc_tcl_parity_tests PRIVATE zhc_definitions)
 # Parity fixture for the two Qmotion blind/shade defs. QZR-ZIG2400
 # ("5 channel remote") was mis-ported as a controllable on/off cover —
 # kFzOnOff, a writable `state` Binary expose, and phantom kTzOnOff +
@@ -3498,6 +3504,7 @@ add_test(NAME zhc_msh_parity_tests          COMMAND zhc_msh_parity_tests)
 add_test(NAME zhc_zunzunbee_parity_tests    COMMAND zhc_zunzunbee_parity_tests)
 add_test(NAME zhc_smartenit_parity_tests    COMMAND zhc_smartenit_parity_tests)
 add_test(NAME zhc_blitzwolf_parity_tests    COMMAND zhc_blitzwolf_parity_tests)
+add_test(NAME zhc_tcl_parity_tests          COMMAND zhc_tcl_parity_tests)
 add_test(NAME zhc_ITCommander_parity_tests  COMMAND zhc_ITCommander_parity_tests)
 add_test(NAME zhc_qmotion_parity_tests      COMMAND zhc_qmotion_parity_tests)
 add_test(NAME zhc_bega_parity_tests         COMMAND zhc_bega_parity_tests)
