@@ -60,6 +60,15 @@ across the ZHAC platform.
   never reached the shadow. Graduated the def to Tier 2, swapping in
   `kFzIasContactAlarm` and renaming the dead `alarm` expose to `contact`.
 
+- **Quotra QV-RGBCCT (B07JHL6DRV) RGB WW LED strip: dropped colour + colour-temperature axes.**
+  z2m defines this strip as `m.light({colorTemp:{range:[150,500]}, color:true,
+  powerOnBehavior:false})` — a full RGB + CCT light. The auto-generated def
+  reduced it to a plain on/off + brightness dimmer (exposes state/brightness
+  only). Graduated to a Tier-2 override that restores the colour surface:
+  `kFzColorTemperature` + `kFzColor` decoders, `kTzColorTemp` + `kTzColor`
+  writers, the `color_temp`/`color_xy` exposes, and the lightingColorCtrl
+  (0x0300) bind. The B07CVL9SZF plain dimmer is verified colourless. Pinned by
+  `tests/test_quotra_parity.cpp`.
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
