@@ -42,6 +42,19 @@ across the ZHAC platform.
   `kFzLockUserStatusResponse`, `kTzLock`/`kTzLockPinCode`/`kTzLockSoundVolume`/
   `kTzLockAutoRelockTime`), re-endpointed bindings ep1→ep2, and set
   `.default_endpoint=2`. Same hardware as the Kwikset SmartCode family.
+- **VAV (NodOn-derived) modules: dropped `power_on_behavior` + `pilot_wire_mode`.**
+  z2m extends both VAV-256215-MOD1 (pilot-wire heater) and VAV-256215-MOD2
+  (metering relay) with `m.onOff({powerOnBehavior:true})`, which decodes the
+  genOnOff `startUpOnOff` attribute (0x4003) into `power_on_behavior` — the
+  auto-port dropped it on both. MOD1 additionally extends with
+  `...nodonPilotWire(true)`, which decodes the NodOn custom pilot-wire cluster
+  (0xFC00 attr 0x0000 `mode`, UINT8) into a `pilot_wire_mode` enum
+  (off/comfort/eco/frost_protection/comfort_-1/comfort_-2) — that whole cluster
+  was dropped. Graduated both defs out of `generated/`, wired generic
+  `kFzPowerOnBehavior`/`kTzPowerOnBehavior1` and a new `vav::kFzPilotWireMode`
+  (in `definitions/vav/_shared.{hpp,cpp}`), and added `power_on_behavior` /
+  `pilot_wire_mode` exposes. Metering stays energy+power only (z2m
+  `cluster:"metering"` = seMetering 0x0702, no 0x0B04 current/voltage half).
 
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
