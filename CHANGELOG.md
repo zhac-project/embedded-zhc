@@ -117,6 +117,19 @@ across the ZHAC platform.
   `m.battery()` defaults `voltage=false`, and there is no `tamper` attribute).
   Graduated to a Tier-2 override using typed `kFzIasContactAlarm` and aligned
   exposes to `battery`/`contact`/`battery_low`. Pinned by `test_homeseer_parity`.
+- **BSEED BSEED_TS0601_cover curtain switch: Tuya-DP misroute (dead
+  position).** This TS0601 `_TZE200_yenbr4om` / `_TZE204_bdblidq3` /
+  `_TZE200_bdblidq3` curtain switch is decoded by z2m via
+  `legacy.fz.tuya_cover` over the `manuSpecificTuya` (0xEF00) DP stream
+  (dp 2 coverPosition + dp 3 coverArrived → `position`, dp 105 coverSpeed →
+  `motor_speed`), but the auto-port wired it to the generic ZCL
+  windowCovering cluster (`kFzCoverPosition`/`kTzCoverPosition` on 0x0102)
+  with a 0x0102 binding. A TS0601 Tuya device never speaks ZCL 0x0102, so the
+  generic converter matched nothing and `position` was a dead key. Graduated
+  to a Tier-2 override wiring the Tuya-DP map (`fz_tuya_datapoints` /
+  `tz_tuya_datapoints`) and the 0xEF00 binding, adding the `motor_speed`
+  expose. No position inversion (none of the three manufacturerNames are in
+  z2m's `coverPositionInvert` list).
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
