@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Direct Signs DS-Z-001DE RGB+CCT LED controller: dropped colorTemp + colour
+  axis.** The `m.light({colorTemp:{range:[158,500]}, color:{modes:["xy","hs"],
+  enhancedHue:true}})` def was auto-ported to on/off + brightness only, dropping
+  the entire lightingColorCtrl (0x0300) channel (no color/color_temp decode,
+  control, or binding). Graduated to a Tier-2 override that wires
+  `kFzColorTemperature`/`kFzColor` + `kTzColorTemp`/`kTzColor`, adds the
+  `color_temp` (range [158,500] mired) + `color_xy` exposes, and binds 0x0300.
+
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the
