@@ -2871,6 +2871,12 @@ target_link_libraries(zhc_byun_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_calex_parity_tests tests/test_calex_parity.cpp)
 target_link_libraries(zhc_calex_parity_tests PRIVATE zhc_definitions)
 
+# Villeroy & Boch — two CCT (tunable-white) lights, m.light({colorTemp:...}).
+# Auto-port dropped the lightingColorCtrl (0x0300) colour-temp axis; this
+# pins the restored color_temp expose + decode (no colour xy/hs axis).
+add_executable(zhc_villeroy_boch_parity_tests tests/test_villeroy_boch_parity.cpp)
+target_link_libraries(zhc_villeroy_boch_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Lellki (Tuya-OEM) family. Two single-gang metering
 # sockets (XF-EU-S100-1-M, WK34-EU) were ported as bare on/off, dropping the
 # seMetering (0x0702) + haElectricalMeasurement (0x0B04) channels that z2m's
@@ -3250,6 +3256,7 @@ add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
 add_test(NAME zhc_byun_parity_tests         COMMAND zhc_byun_parity_tests)
 add_test(NAME zhc_calex_parity_tests        COMMAND zhc_calex_parity_tests)
+add_test(NAME zhc_villeroy_boch_parity_tests COMMAND zhc_villeroy_boch_parity_tests)
 add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
