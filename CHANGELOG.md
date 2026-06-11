@@ -108,6 +108,15 @@ across the ZHAC platform.
   wiring `kFzIlluminance` + `kFzOccupancy` + the new typed
   `kFzIasOccupancyAlarm1`/`kFzIasOccupancyAlarm2` converters, with the
   0x0400/0x0406 bindings restored. (HLC610 plain `m.light()` is correct.)
+- **HomeSeer DS150ZB door sensor: IAS dead-key + phantom exposes.** z2m wires
+  `m.iasZoneAlarm({zoneType:"contact", zoneAttributes:["alarm_1","battery_low"]})`,
+  publishing the semantic, inverted key `contact` (= `!zoneStatus` bit0, since
+  `invertAlarmPayload = zoneType==="contact"`). The auto-port instead lowered the
+  generic `kFzIasZone` (bare key `alarm`), so the contact state never reached the
+  shadow, and declared phantom `alarm`/`tamper`/`voltage` exposes (z2m has none:
+  `m.battery()` defaults `voltage=false`, and there is no `tamper` attribute).
+  Graduated to a Tier-2 override using typed `kFzIasContactAlarm` and aligned
+  exposes to `battery`/`contact`/`battery_low`. Pinned by `test_homeseer_parity`.
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`

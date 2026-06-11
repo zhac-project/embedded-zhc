@@ -1091,6 +1091,13 @@ target_link_libraries(zhc_spotmau_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# HomeSeer DS150ZB door sensor — the auto-port wired kFzIasZone (bare "alarm")
+# against z2m's iasZoneAlarm({zoneType:"contact"}) semantic+inverted "contact"
+# key, and declared phantom alarm/tamper/voltage exposes. Repointed to typed
+# kFzIasContactAlarm and aligned exposes to battery/contact/battery_low.
+add_executable(zhc_homeseer_parity_tests tests/test_homeseer_parity.cpp)
+target_link_libraries(zhc_homeseer_parity_tests PRIVATE zhc_definitions)
+
 # Hommyn MS-20-Z / WS-20-Z — both auto-ports wired kFzIasZone (bare "alarm")
 # against a semantic expose key. Repointed to typed kFzIasMotionAlarm
 # (occupancy) / kFzIasWaterLeakAlarm (water_leak). See tests/README.md.
@@ -3018,6 +3025,7 @@ add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_akuvox_parity_tests       COMMAND zhc_akuvox_parity_tests)
 add_test(NAME zhc_spotmau_parity_tests      COMMAND zhc_spotmau_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_homeseer_parity_tests     COMMAND zhc_homeseer_parity_tests)
 add_test(NAME zhc_hommyn_parity_tests       COMMAND zhc_hommyn_parity_tests)
 add_test(NAME zhc_edp_parity_tests          COMMAND zhc_edp_parity_tests)
 add_test(NAME zhc_prolight_parity_tests     COMMAND zhc_prolight_parity_tests)
