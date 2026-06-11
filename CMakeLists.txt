@@ -2391,6 +2391,14 @@ target_link_libraries(zhc_qoto_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_alecto_parity_tests tests/test_alecto_parity.cpp)
 target_link_libraries(zhc_alecto_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the iLightsIn HSSA18-Z-MID (Zhaga light + multi-sensor).
+# The auto-port dropped m.illuminance() + m.occupancy() entirely and wired the
+# IAS alarm to the generic kFzIasZone (dead bare `alarm`, bit 1 lost). Tier-2
+# override restores illuminance/occupancy decoders+bindings and the split
+# occupancy_alarm_1/occupancy_alarm_2 typed IAS converters.
+add_executable(zhc_ilightsin_parity_tests tests/test_ilightsin_parity.cpp)
+target_link_libraries(zhc_ilightsin_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Simpla Home Soil Pro soil-moisture sensor. The
 # auto-generated def was a battery-only stub that dropped temperature,
 # illuminance and BOTH soil_moisture channels and placed the two soil
@@ -3097,6 +3105,7 @@ add_test(NAME zhc_onenuo_parity_tests       COMMAND zhc_onenuo_parity_tests)
 add_test(NAME zhc_giex_parity_tests         COMMAND zhc_giex_parity_tests)
 add_test(NAME zhc_qoto_parity_tests         COMMAND zhc_qoto_parity_tests)
 add_test(NAME zhc_alecto_parity_tests       COMMAND zhc_alecto_parity_tests)
+add_test(NAME zhc_ilightsin_parity_tests    COMMAND zhc_ilightsin_parity_tests)
 add_test(NAME zhc_simpla_home_parity_tests  COMMAND zhc_simpla_home_parity_tests)
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_ynoa_parity_tests         COMMAND zhc_ynoa_parity_tests)

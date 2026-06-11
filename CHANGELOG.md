@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **iLightsIn HSSA18-Z-MID (Zhaga module): dropped illuminance + occupancy
+  channels and dead IAS key.** The auto-port dropped `m.illuminance()`
+  (msIlluminanceMeasurement 0x0400) and `m.occupancy()` (msOccupancySensing
+  0x0406) entirely, and wired the IAS alarm to the generic `kFzIasZone` (bare
+  `alarm`, bit 0 only). z2m's `iasZoneAlarm({zoneType:"occupancy"})` with both
+  alarm_1+alarm_2 publishes the split keys `occupancy_alarm_1` (zoneStatus
+  bit 0) + `occupancy_alarm_2` (bit 1). Graduated the def to a Tier-2 override
+  wiring `kFzIlluminance` + `kFzOccupancy` + the new typed
+  `kFzIasOccupancyAlarm1`/`kFzIasOccupancyAlarm2` converters, with the
+  0x0400/0x0406 bindings restored. (HLC610 plain `m.light()` is correct.)
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
