@@ -90,6 +90,13 @@ across the ZHAC platform.
   `kFzColorTemperature`/`kFzColor` + `kTzColorTemp`/`kTzColor`, adds the
   `color_temp` (range [158,500] mired) + `color_xy` exposes, and binds 0x0300.
 
+- **Task Lighting T-TWAV-60W-PSR (WAV Smart Receiver): dropped colorTemp +
+  colour axis.** The `m.light({colorTemp:{range:[150,500]}, color:true})` def was
+  auto-ported to on/off + brightness only, dropping the entire lightingColorCtrl
+  (0x0300) channel. Restored `color_temp` plus the xy colour surface
+  (`color_x`/`color_y`; `color:true` defaults to `modes:["xy"]`, so no
+  hue/saturation) via the generic `kFzColorTemperature`/`kFzColor` (+ matching
+  Tz) converters and the 0x0300 binding. Graduated to Tier 2.
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the
