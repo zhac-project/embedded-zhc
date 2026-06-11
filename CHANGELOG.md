@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Smartwings WM25L-Z roller shade: battery level reported 2x low.** z2m sets
+  meta `{battery:{dontDividePercentage:true}}` for this model, so it reports
+  `batteryPercentageRemaining` as a whole 0..100 % value, but the auto-port
+  wired the default `kFzBattery` which always halves the ZCL half-percent
+  encoding. Added a reusable generic `kFzBatteryNoDivide` converter and pointed
+  the graduated WM25L-Z override at it (cover position via `kFzCoverPosition`
+  already matched z2m's `coverInverted:true` raw-percentage path).
+
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.

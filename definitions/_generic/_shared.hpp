@@ -47,6 +47,16 @@ bool fz_battery(const DecodedMessage& msg,
 
 extern const FzConverter kFzBattery;
 
+// As fz_battery but skips the /2 on batteryPercentageRemaining — for
+// devices declaring z2m meta {battery:{dontDividePercentage:true}}.
+bool fz_battery_no_divide(const DecodedMessage& msg,
+                           const FzConverter& self,
+                           const PreparedDefinition& def,
+                           RuntimeContext& ctx,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
+extern const FzConverter kFzBatteryNoDivide;
+
 // genLevelCtrl attr 0x0000 u8 → "brightness" (0-254 raw).
 bool fz_brightness(const DecodedMessage& msg,
                     const FzConverter& self,
