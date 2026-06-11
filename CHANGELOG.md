@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Giderwel GD-ZCRGB012 Smart Zigbee RGB LED strip controller: dropped color
+  axis.** z2m models this as `m.light({color: {modes: ["xy", "hs"]}})` — an RGB
+  controller exposing on/off + brightness + color (xy/hs) on lightingColorCtrl
+  (0x0300). The Tier-1 auto-port dropped the entire color axis: only
+  `kFzOnOff`/`kFzBrightness` were wired, it exposed only `state`/`brightness`,
+  and bound only 0x0006/0x0008 — color was dead. Graduated to a Tier-2 override
+  that wires `kFzColor`/`kTzColor`, declares the `color_xy` expose, and binds
+  lightingColorCtrl (0x0300). No colorTemp axis (z2m declares only xy/hs modes).
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
