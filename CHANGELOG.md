@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Oujiabao CR701-YZ gas + carbon-monoxide alarm: dead IAS keys.** The
+  auto-port lowered the generic `kFzIasZone` (bare `alarm` key) plus a phantom
+  `alarm` expose, while z2m wires `fz.ias_carbon_monoxide_alarm_1_gas_alarm_2`
+  which decodes one ssIasZone notification into `carbon_monoxide` (zoneStatus
+  bit 0) and `gas` (bit 1). Neither key ever reached the shadow. Graduated to a
+  Tier-2 override wiring both typed converters — `kFzIasCoAlarm` (bit 0) and
+  `kFzIasGasAlarm2` (bit 1) — and aligned exposes to
+  carbon_monoxide/gas/tamper/battery_low.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
