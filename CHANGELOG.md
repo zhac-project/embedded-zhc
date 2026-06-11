@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Silicon Labs RB-ElectricityDsp-061-3 metering plug: dropped the 0x0B04
+  half.** z2m wires `m.onOff()` + `m.electricityMeter()`, and
+  `electricityMeter()` defaults to `cluster:"both"` — energy from seMetering
+  (0x0702) plus power/voltage/current from haElectricalMeasurement (0x0B04,
+  `fz.electrical_measurement`). The auto-port wired only `kFzMetering` (0x0702)
+  and exposed state/energy/power, dropping the 0x0B04 decoder, the
+  voltage/current exposes, and the 0x0B04 binding, so RMSVoltage/RMSCurrent
+  reports were never decoded. Graduated to a Tier-2 override that adds
+  `kFzElectricalMeasurement`, the `voltage`+`current` exposes, and the 0x0B04
+  binding.
+
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the
