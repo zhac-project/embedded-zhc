@@ -1,15 +1,24 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Roome HSC1-WD-0 — auto-generated.
+// Tier 2: Roome HSC1-WD-0 — door/window contact sensor.
 // Door or window contact switch
-// z2m-source: roome.ts #HSC1-WD-0.
+// z2m-source: roome.ts #HSC1-WD-0
+//   fromZigbee: [fz.ias_contact_alarm_1, fz.battery, fz.ignore_iaszone_attreport]
+//   exposes: contact, battery_low, tamper (+ battery from fz.battery)
+//
+// Bug (c) IAS dead-key: the auto-port lowered the generic kFzIasZone converter,
+// which emits the bare key "alarm", while z2m's fz.ias_contact_alarm_1 publishes
+// the semantic key "contact" (inverted: contact = !(zoneStatus bit0)), plus
+// tamper (bit2) and battery_low (bit3). With no rename layer the contact state
+// never reached the shadow. Swap in kFzIasContactAlarm (ssIasZone command 0x00,
+// z2m polarity) and rename the dead "alarm" expose to "contact".
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::roome {
 namespace {
 const FzConverter* const kFz_HSC1_WD_0[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasContactAlarm,
 };
 
 constexpr const char* kModels_HSC1_WD_0[] = { "MULTI-MECI--EA01" };
@@ -21,7 +30,7 @@ constexpr const char* kModels_HSC1_WD_0[] = { "MULTI-MECI--EA01" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

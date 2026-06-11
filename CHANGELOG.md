@@ -10,6 +10,13 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Roome HSC1-WD-0 contact sensor: IAS dead-key.** The auto-port lowered the
+  generic `kFzIasZone` converter (bare `alarm` key) while z2m's
+  `fz.ias_contact_alarm_1` publishes the semantic `contact` key (inverted:
+  `contact = !(zoneStatus bit0)`) plus tamper/battery_low — so contact state
+  never reached the shadow. Graduated the def to Tier 2, swapping in
+  `kFzIasContactAlarm` and renaming the dead `alarm` expose to `contact`.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
