@@ -74,6 +74,19 @@ across the ZHAC platform.
   startUpOnOff), which the auto-port dropped. Graduated the three defs out of
   `generated/` and wired the generic `kFz`/`kTzPowerOnBehavior1` pair plus the
   `power_on_behavior` expose.
+- **BYUN M415-5C gas / M415-6C smoke sensors: dead alarm key + dropped
+  alarm-clear channel.** These sensors abuse standard clusters and z2m drives
+  them with four bespoke converters (`byun.ts` → `fz.byun_{smoke,gas}_{true,
+  false}`) producing a single boolean expose (`smoke` / `gas`). The auto-ports
+  wired the generic `kFzIasZone`, which emits the unrelated keys
+  `alarm`/`tamper`/`battery_low` (dead-key) and — fatally — never reads the
+  alarm-CLEAR channel, so the sensor could latch ON forever (dropped channel).
+  Graduated both to Tier-2 + a shared `definitions/byun/_shared.{hpp,cpp}` that
+  reproduces z2m exactly: ALARM = `ssIasZone` commandStatusChangeNotification
+  fired only when `zoneStatus == 33`; CLEAR = `pHMeasurement` (0x0409)
+  `measuredValue == 0` (smoke) / raw cluster 0x040A frame-control `0x18` (gas).
+  Exposes corrected to the single boolean `gas` / `smoke`. Added clusters
+  0x0409/0x040A to the cluster-name table.
 
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
