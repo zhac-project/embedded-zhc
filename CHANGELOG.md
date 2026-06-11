@@ -53,6 +53,12 @@ across the ZHAC platform.
   `kFzColorTemperature`/`kTzColorTemp` + `kFzColor`/`kTzColor`, the
   `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes and the 0x0300
   binding. The HGZB-20-DE plug (`m.onOff()`) is verified clean.
+- **Roome HSC1-WD-0 contact sensor: IAS dead-key.** The auto-port lowered the
+  generic `kFzIasZone` converter (bare `alarm` key) while z2m's
+  `fz.ias_contact_alarm_1` publishes the semantic `contact` key (inverted:
+  `contact = !(zoneStatus bit0)`) plus tamper/battery_low — so contact state
+  never reached the shadow. Graduated the def to Tier 2, swapping in
+  `kFzIasContactAlarm` and renaming the dead `alarm` expose to `contact`.
 
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor

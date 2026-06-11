@@ -1237,6 +1237,12 @@ target_link_libraries(zhc_somgoms_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_ecolink_parity_tests tests/test_ecolink_parity.cpp)
 target_link_libraries(zhc_ecolink_parity_tests PRIVATE zhc_definitions)
 
+# Roome contact sensor (HSC1-WD-0): pins the (c) IAS dead-key fix — kFzIasZone
+# emitted the bare "alarm" key while z2m's fz.ias_contact_alarm_1 publishes the
+# inverted semantic "contact" key. Now uses kFzIasContactAlarm + contact expose.
+add_executable(zhc_roome_parity_tests tests/test_roome_parity.cpp)
+target_link_libraries(zhc_roome_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Fantem ZB003-X 4-in-1 multi sensor. Its IAS path lowered the
 # generic kFzIasZoneStatusChange (bare "alarm_1") while the expose declared
 # `occupancy`; z2m fz.ZB003X_occupancy maps zoneStatus bit0 -> occupancy, so
@@ -3322,6 +3328,7 @@ add_test(NAME zhc_peq_parity_tests          COMMAND zhc_peq_parity_tests)
 add_test(NAME zhc_ihorn_parity_tests        COMMAND zhc_ihorn_parity_tests)
 add_test(NAME zhc_somgoms_parity_tests      COMMAND zhc_somgoms_parity_tests)
 add_test(NAME zhc_ecolink_parity_tests      COMMAND zhc_ecolink_parity_tests)
+add_test(NAME zhc_roome_parity_tests        COMMAND zhc_roome_parity_tests)
 add_test(NAME zhc_titan_products_parity_tests COMMAND zhc_titan_products_parity_tests)
 add_test(NAME zhc_vimar_parity_tests        COMMAND zhc_vimar_parity_tests)
 add_test(NAME zhc_samotech_parity_tests     COMMAND zhc_samotech_parity_tests)
