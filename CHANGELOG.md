@@ -63,6 +63,16 @@ across the ZHAC platform.
   kFzOnOff + kFzBrightness and exposed state + brightness, dropping the entire
   CCT channel. Graduated the generated def and restored kFzColorTemperature /
   kTzColorTemp, the `color_temp` expose, and the 0x0300 binding.
+- **SOMA SmartShades3 smart shade: dropped cover tilt channel (0x0009).**
+  z2m drives it with `m.windowCovering({controls:["lift","tilt"]})`, which
+  exposes BOTH `position` (lift, attr 0x0008) AND `tilt`
+  (currentPositionTiltPercentage, attr 0x0009) and decodes/writes both via
+  `fz/tz.cover_position_tilt`. The Tier-1 auto-port wired only
+  `kFzCoverPosition`/`kTzCoverPosition` (lift) and exposed only `position`,
+  dropping the tilt channel entirely. Graduated to a Tier-2 override adding
+  `kFzCoverTilt` + `kTzCoverPositionTilt` + a `tilt` expose; both halves report
+  on the same closuresWindowCovering (0x0102) cluster so the existing bind
+  already covers tilt. Battery (battery + voltage) was already correctly ported.
 
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
