@@ -2767,6 +2767,13 @@ target_link_libraries(zhc_tnce_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_hilux_parity_tests tests/test_hilux_parity.cpp)
 target_link_libraries(zhc_hilux_parity_tests PRIVATE zhc_definitions)
 
+# Jiawen RGBW bulb K2RGBW01 (m.light({colorTemp, color:true})): restored the
+# dropped colorTemp + xy-color axes (exposes color_temp/color_xy, 0x0300 bind,
+# kFzColorTemperature + kFzColor decoders, kTzColorTemp + kTzColor writes).
+# JW-A04-CT (plain m.light) is a negative control. See tests/README.md.
+add_executable(zhc_jiawen_parity_tests tests/test_jiawen_parity.cpp)
+target_link_libraries(zhc_jiawen_parity_tests PRIVATE zhc_definitions)
+
 # Brun Holding "Fire Fence" stove guard: restored short_override on EP2 (was
 # colliding on EP1), regained the dropped m.temperature() decoder/expose/bind,
 # and removed the phantom `voltage` expose (z2m disables voltage + current).
@@ -3252,6 +3259,7 @@ add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
 add_test(NAME zhc_aldi_parity_tests         COMMAND zhc_aldi_parity_tests)
 add_test(NAME zhc_tnce_parity_tests         COMMAND zhc_tnce_parity_tests)
 add_test(NAME zhc_hilux_parity_tests        COMMAND zhc_hilux_parity_tests)
+add_test(NAME zhc_jiawen_parity_tests       COMMAND zhc_jiawen_parity_tests)
 add_test(NAME zhc_brun_holding_parity_tests COMMAND zhc_brun_holding_parity_tests)
 add_test(NAME zhc_rademacher_parity_tests   COMMAND zhc_rademacher_parity_tests)
 add_test(NAME zhc_domraem_parity_tests      COMMAND zhc_domraem_parity_tests)
