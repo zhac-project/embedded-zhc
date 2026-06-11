@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **TubesZB `tubeszb.router` (CC2652 Router): stripped a phantom on/off bundle
+  from a pure repeater.** z2m defines this as a pure router — `exposes:[]`,
+  `toZigbee:[]`, `fromZigbee:[fz.linkquality_from_basic]` — whose only
+  `configure()` binds `genBasic` on endpoint 8. The Tier-1 auto-port carried a
+  phantom `kFzOnOff`/`kTzOnOff` pair, a `state` Binary expose, and a `genOnOff`
+  (0x0006) bind on ep1, creating a dead controllable toggle in the shadow on a
+  device with no on/off endpoint. Graduated to Tier-2: no exposes, no fz/tz,
+  only the `{8,0x0000}` genBasic bind. Same shape as the Espressif
+  ZigbeeRangeExtender / SMLIGHT router phantom fixes.
+
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.
