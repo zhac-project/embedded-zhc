@@ -28,6 +28,16 @@ across the ZHAC platform.
   exposes, the 0x0300 binding, the `kFzColorTemperature` + `kFzColor` decoders and
   the `kTzColorTemp` + `kTzColor` write paths. Sibling JW-A04-CT (plain
   `m.light()`) is correctly on/off + brightness only and stays unchanged.
+- **Hoftronic HD300W-ZB rotary LED dimmer: dropped `power_on_behavior` axis.**
+  z2m wires this dimmer as `m.light({powerOnBehavior:true, ...})`, which adds a
+  `power_on_behavior` enum expose and the `fz.power_on_behavior` /
+  `tz.power_on_behavior` converters (genOnOff 0x4003 `startUpOnOff`,
+  off/on/toggle/previous). The Tier-1 auto-port collapsed the device to bare
+  on/off + brightness, dropping the entire power-on-behavior axis. Graduated
+  the def and restored read+write via generic `kFzPowerOnBehavior` /
+  `kTzPowerOnBehavior1` plus the enum expose. Verified the FALSE colour
+  suspect: z2m `m.light()` is called without `color`/`colorTemp` args, so there
+  is no lightingColorCtrl 0x0300 axis — none added (asserted absent in test).
 
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
