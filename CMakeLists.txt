@@ -1330,6 +1330,13 @@ target_link_libraries(zhc_enbrighten_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_lonsonho_parity_tests tests/test_lonsonho_parity.cpp)
 target_link_libraries(zhc_lonsonho_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Quotra LED family — the QV-RGBCCT strip (B07JHL6DRV) had
+# its colour axes dropped by the auto-port (m.light({colorTemp,color}) ->
+# on/off+brightness only); graduated to restore color_temp/color_xy +
+# the lightingColorCtrl bind. The B07CVL9SZF dimmer is pinned colourless.
+add_executable(zhc_quotra_parity_tests tests/test_quotra_parity.cpp)
+target_link_libraries(zhc_quotra_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the SLV (VALETO) family — the four LED luminaires had their
 # colour axes dropped by the auto-port (m.light({colorTemp[,color]}) ->
 # on/off+brightness only); the VALETO remote carried a phantom
@@ -3083,6 +3090,7 @@ add_test(NAME zhc_blaupunkt_parity_tests    COMMAND zhc_blaupunkt_parity_tests)
 add_test(NAME zhc_lupus_parity_tests        COMMAND zhc_lupus_parity_tests)
 add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
+add_test(NAME zhc_quotra_parity_tests       COMMAND zhc_quotra_parity_tests)
 add_test(NAME zhc_slv_parity_tests          COMMAND zhc_slv_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
 add_test(NAME zhc_makegood_parity_tests     COMMAND zhc_makegood_parity_tests)
