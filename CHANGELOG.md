@@ -82,6 +82,14 @@ across the ZHAC platform.
   and bound only 0x0006/0x0008 — color was dead. Graduated to a Tier-2 override
   that wires `kFzColor`/`kTzColor`, declares the `color_xy` expose, and binds
   lightingColorCtrl (0x0300). No colorTemp axis (z2m declares only xy/hs modes).
+- **CWD HLL6948V1 (Collingwood H2 pro) CCT downlight: dropped color_temp
+  axis.** z2m models this as `m.light({colorTemp:{range:[153,370]}})` (a CCT
+  light with a mireds axis but no xy/hs color), but the auto-generator
+  collapsed `m.light()` to on/off + brightness only, dropping the
+  lightingColorCtrl (0x0300) color-temperature channel. Graduated to a Tier-2
+  override: restored `kFzColorTemperature` / `kTzColorTemp`, the `color_temp`
+  expose, and the 0x0300 binding. No `color` arg in z2m, so no xy/hs axis was
+  added.
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding

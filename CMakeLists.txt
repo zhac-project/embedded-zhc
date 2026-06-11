@@ -951,6 +951,8 @@ target_link_libraries(zhc_matcall_bv_parity_tests PRIVATE zhc_definitions)
 # graduated to a parent override stripped to the canonical router shape.
 add_executable(zhc_cel_parity_tests tests/test_cel_parity.cpp)
 target_link_libraries(zhc_cel_parity_tests PRIVATE zhc_definitions)
+add_executable(zhc_cwd_parity_tests tests/test_cwd_parity.cpp)
+target_link_libraries(zhc_cwd_parity_tests PRIVATE zhc_definitions)
 # Parity fixtures for the LDS (Hive / Ynoa OEM) family. ZBT-RGBWLight-A0000 is
 # z2m m.light({colorTemp:{range:[153,555]}, color:true}) but the auto-port
 # collapsed it to on/off + brightness, dropping the colorTemp + XY/HS colour
@@ -3315,6 +3317,7 @@ add_test(NAME zhc_hoftronic_parity_tests    COMMAND zhc_hoftronic_parity_tests)
 add_test(NAME zhc_scanproducts_parity_tests COMMAND zhc_scanproducts_parity_tests)
 add_test(NAME zhc_matcall_bv_parity_tests   COMMAND zhc_matcall_bv_parity_tests)
 add_test(NAME zhc_cel_parity_tests          COMMAND zhc_cel_parity_tests)
+add_test(NAME zhc_cwd_parity_tests          COMMAND zhc_cwd_parity_tests)
 add_test(NAME zhc_lds_parity_tests          COMMAND zhc_lds_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_gmy_parity_tests          COMMAND zhc_gmy_parity_tests)
