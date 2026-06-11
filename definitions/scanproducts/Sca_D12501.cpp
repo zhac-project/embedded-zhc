@@ -1,8 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Scanproducts 12501 — auto-generated.
-// Zigbee push dimmer
-// z2m-source: scanproducts.ts #12501.
+// Tier 2: Scanproducts 12501 — Zigbee push dimmer, power_on_behavior restored.
+// Zigbee push dimmer.
+// z2m-source: scanproducts.ts #12501 = m.light({configureReporting: true}).
+// m.light() defaults powerOnBehavior=true, so z2m wires fz.power_on_behavior
+// (genOnOff 0x4003 startUpOnOff) + tz.power_on_behavior + the power_on_behavior
+// enum expose. The bare m.light() call passes no color/colorTemp, so NO color/CT
+// axis exists (that suspect is a false flag). The Tier-1 auto-port dropped the
+// power_on_behavior axis; restored via kFzPowerOnBehavior / kTzPowerOnBehavior1.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::scanproducts {
@@ -10,10 +15,12 @@ namespace {
 const FzConverter* const kFz_D12501[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzPowerOnBehavior,
 };
 const TzConverter* const kTz_D12501[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzPowerOnBehavior1,
 };
 constexpr const char* kModels_D12501[] = { "12501" };
 
@@ -24,6 +31,7 @@ constexpr const char* kModels_D12501[] = { "12501" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

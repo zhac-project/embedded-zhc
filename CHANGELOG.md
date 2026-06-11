@@ -87,6 +87,16 @@ across the ZHAC platform.
   (bit1) entirely. Graduated to a Tier-2 override wiring
   `kFzIasZoneStatusChange` (emits alarm_1/alarm_2/tamper/battery_low) and
   declaring both bare alarm exposes.
+- **Scan Products 12501 push dimmer + 12502 switch: dropped power_on_behavior.**
+  z2m wires 12501 as `m.light({configureReporting:true})` and 12502 as
+  `m.onOff()`; both modernExtend helpers default `powerOnBehavior=true`, adding
+  `fz.power_on_behavior` (genOnOff 0x4003 startUpOnOff enum8) + `tz.power_on_behavior`
+  + a `power_on_behavior` enum expose. The Tier-1 auto-ports wired only on/off
+  (+ brightness on 12501), dropping that axis. Graduated both to Tier-2 overrides
+  restoring it via `kFzPowerOnBehavior` / `kTzPowerOnBehavior1` + the expose. The
+  flagged "dropped color/CT" suspect is FALSE: the bare `m.light()` call passes no
+  color/colorTemp args, so z2m never adds the lightingColorCtrl 0x0300 axis (no
+  color expose is correct). Pinned by `test_scanproducts_parity`.
 
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
