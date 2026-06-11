@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
+  axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
+  dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the
+  AL8TC13W-AP with `m.light({colorTemp:{range:[153,370]}})` (tuneable white) and
+  the AL8RGB13W-AP with `m.light({colorTemp:{range:[153,370]}, color:true})`
+  (RGBW). Graduated both to Tier-2 overrides: TC restores `kFzColorTemperature`
+  /`kTzColorTemp` + the `color_temp` expose; RGB restores
+  `kFzColor`+`kFzColorTemperature` /`kTzColor`+`kTzColorTemp` + the `color_temp`
+  /`color_xy` (hue/saturation/color_x/color_y) surface, plus the 0x0300 binding.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:

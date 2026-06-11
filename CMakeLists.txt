@@ -1091,6 +1091,15 @@ target_link_libraries(zhc_akuvox_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_spotmau_parity_tests tests/test_spotmau_parity.cpp)
 target_link_libraries(zhc_spotmau_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the Alchemy LED-luminaire family: both m.light()
+# defs (AL8TC13W-AP tuneable-white, AL8RGB13W-AP RGBW) were auto-ported
+# to on/off + brightness only, dropping the lightingColorCtrl (0x0300)
+# colorTemp + colour axis. Graduated to Tier-2 overrides restoring
+# kFzColorTemperature / kFzColor (+ matching Tz) and the color_temp /
+# color_xy exposes.
+add_executable(zhc_alchemy_parity_tests tests/test_alchemy_parity.cpp)
+target_link_libraries(zhc_alchemy_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Heiman IAS-Zone sensor family: ~27 generated defs
 # decoded the bare "alarm" key (generic kFzIasZone) while exposing the
 # semantic key (smoke/gas/water_leak/occupancy/contact/vibration/co). All
@@ -3063,6 +3072,7 @@ add_test(NAME zhc_aubess_parity_tests       COMMAND zhc_aubess_parity_tests)
 add_test(NAME zhc_lightsolutions_parity_tests COMMAND zhc_lightsolutions_parity_tests)
 add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_akuvox_parity_tests       COMMAND zhc_akuvox_parity_tests)
+add_test(NAME zhc_alchemy_parity_tests      COMMAND zhc_alchemy_parity_tests)
 add_test(NAME zhc_spotmau_parity_tests      COMMAND zhc_spotmau_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
 add_test(NAME zhc_homeseer_parity_tests     COMMAND zhc_homeseer_parity_tests)
