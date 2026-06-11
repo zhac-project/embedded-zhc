@@ -1947,6 +1947,9 @@ target_link_libraries(zhc_dresden_elektronik_parity_tests PRIVATE zhc_definition
 add_executable(zhc_gewiss_parity_tests tests/test_gewiss_parity.cpp)
 target_link_libraries(zhc_gewiss_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_gidealed_parity_tests tests/test_gidealed_parity.cpp)
+target_link_libraries(zhc_gidealed_parity_tests PRIVATE zhc_definitions)
+
 # Aeotec family parity fixtures. WG001 ("Range extender Zi") is a router
 # (z2m exposes:[]) but was mis-ported as a controllable on/off — stripped to
 # exposeless. ZGA002/ZGA003 used m.electricityMeter() (default cluster:"both")
@@ -3510,6 +3513,7 @@ add_test(NAME zhc_insta_parity_tests        COMMAND zhc_insta_parity_tests)
 add_test(NAME zhc_futurehome_parity_tests   COMMAND zhc_futurehome_parity_tests)
 add_test(NAME zhc_dresden_elektronik_parity_tests COMMAND zhc_dresden_elektronik_parity_tests)
 add_test(NAME zhc_gewiss_parity_tests       COMMAND zhc_gewiss_parity_tests)
+add_test(NAME zhc_gidealed_parity_tests     COMMAND zhc_gidealed_parity_tests)
 add_test(NAME zhc_aeotec_parity_tests       COMMAND zhc_aeotec_parity_tests)
 add_test(NAME zhc_netvox_parity_tests       COMMAND zhc_netvox_parity_tests)
 add_test(NAME zhc_visonic_parity_tests      COMMAND zhc_visonic_parity_tests)

@@ -138,6 +138,15 @@ across the ZHAC platform.
   channel. Graduated the def and restored `kFzColorTemperature` /
   `kTzColorTemp`, the `color_temp` expose, and the 0x0300 binding (CCT-only,
   no phantom colour axis since `color` is unset). Added `test_gmy_parity.cpp`.
+- **Gidealed ZC05M (model "A11") RGB LED strip controller: dropped colour +
+  colour-temperature axes.** z2m drives it with
+  `m.light({colorTemp:{range:[153,370]}, color:{modes:["xy","hs"]}})` (full
+  RGB+CCT), but the auto-port wired only on/off + brightness and bound only
+  0x0006 + 0x0008, silently dropping every colour / colour-temperature report.
+  Graduated to a Tier-2 override restoring `kFzColor`+`kFzColorTemperature` /
+  `kTzColor`+`kTzColorTemp`, the `color_temp` (153–370 mired) + `color_xy`
+  (hue/saturation/color_x/color_y) surface, and the lightingColorCtrl (0x0300)
+  binding to match z2m.
 
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
