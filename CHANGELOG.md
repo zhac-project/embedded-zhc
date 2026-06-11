@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Weiser SmartCode 10 / 10 Touch (9GED18000-009, 9GED21500-005) locks:
+  dropped lock channel + wrong binding endpoint.** Both generated defs were
+  battery-only stubs (`kFzBattery` + battery/voltage exposes, binding
+  `{1,0x0001}`). z2m wires `m.lock({pinCodeCount:30,
+  readPinCodeOnProgrammingEvent:true})` + `m.battery()` with
+  `endpoint: () => ({default: 2})`, so the entire `closuresDoorLock` (0x0101)
+  channel was missing and both clusters live on endpoint 2, not 1. Graduated
+  to Tier-2: wired the generic lock-PIN runtime (`kFzLock` → `lock_state`,
+  `kFzLockOperationEvent`/`kFzLockProgrammingEvent` → action stream,
+  `kFzLockUserStatusResponse`, `kTzLock`/`kTzLockPinCode`/`kTzLockSoundVolume`/
+  `kTzLockAutoRelockTime`), re-endpointed bindings ep1→ep2, and set
+  `.default_endpoint=2`. Same hardware as the Kwikset SmartCode family.
+
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
