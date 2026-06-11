@@ -1689,6 +1689,13 @@ target_link_libraries(zhc_frient_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smartthings_parity_tests tests/test_smartthings_parity.cpp)
 target_link_libraries(zhc_smartthings_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the KAMI (Yi) N20 contact/motion sensor: graduated
+# from a phantom on/off + generic kFzIasZone port to vendor raw byte-7
+# decoders (kami::kFzKamiContact -> contact, kami::kFzKamiOccupancy ->
+# action "motion"), matching z2m fz.KAMI_contact / fz.KAMI_occupancy.
+add_executable(zhc_kami_parity_tests tests/test_kami_parity.cpp)
+target_link_libraries(zhc_kami_parity_tests PRIVATE zhc_definitions)
+
 # jxuan — IAS dead-key (PRZ01 occupancy / DSZ01 contact) + WSZ01 phantom
 # on/off -> button action (manuSpecific 0xFE05 attr 1) fixes.
 add_executable(zhc_jxuan_parity_tests tests/test_jxuan_parity.cpp)
@@ -3194,6 +3201,7 @@ add_test(NAME zhc_dlink_parity_tests        COMMAND zhc_dlink_parity_tests)
 add_test(NAME zhc_databyte_parity_tests     COMMAND zhc_databyte_parity_tests)
 add_test(NAME zhc_frient_parity_tests       COMMAND zhc_frient_parity_tests)
 add_test(NAME zhc_smartthings_parity_tests  COMMAND zhc_smartthings_parity_tests)
+add_test(NAME zhc_kami_parity_tests         COMMAND zhc_kami_parity_tests)
 add_test(NAME zhc_jxuan_parity_tests        COMMAND zhc_jxuan_parity_tests)
 add_test(NAME zhc_sengled_parity_tests      COMMAND zhc_sengled_parity_tests)
 add_test(NAME zhc_halo_parity_tests         COMMAND zhc_halo_parity_tests)

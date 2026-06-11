@@ -98,6 +98,17 @@ across the ZHAC platform.
   color/colorTemp args, so z2m never adds the lightingColorCtrl 0x0300 axis (no
   color expose is correct). Pinned by `test_scanproducts_parity`.
 
+- **KAMI (Yi) N20 contact/motion sensor: phantom on/off + dead IAS decode.**
+  The auto-port wired a phantom on/off (`kFzOnOff` + `kTzOnOff`, `genOnOff`
+  0x0006 binding, controllable `state` expose) plus the generic `kFzIasZone`
+  (alarm/tamper/battery_low keys) — but z2m has no on/off and the device runs
+  non-standard Yi firmware. z2m's `fz.KAMI_contact` reads the raw `ssIasZone`
+  frame byte 7 (`{contact: data[7] === 0}`) and `fz.KAMI_occupancy` reads the
+  raw `msOccupancySensing` frame byte 7 (`{action: "motion"}` when
+  `data[7] === 1`). Graduated `Kam_N20` to a Tier-2 parent, added vendor
+  converters `kami::kFzKamiContact` / `kami::kFzKamiOccupancy`
+  (`definitions/kami/_shared.{hpp,cpp}`), and fixed exposes to `contact` +
+  `action: ["motion"]` (no TZ, no genOnOff binding).
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
