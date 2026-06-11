@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Commercial Electric 53170161 CCT downlight: dropped colour-temperature axis.**
+  z2m wires this "Zigbee CCT Downlight" as `m.light({colorTemp: {range: undefined}})`,
+  exposing `state` + `brightness` + `color_temp`, binding `lightingColorCtrl` (0x0300),
+  and decoding/setting the colour-temperature axis. The auto-port dropped the CCT
+  axis entirely — it carried only on/off + brightness (`kFzOnOff`/`kFzBrightness`,
+  exposes `state`/`brightness`, bindings 0x0006+0x0008), so colorTemperature reports
+  were never decoded and the SPA could never set CCT. Restored
+  `kFzColorTemperature`/`kTzColorTemp`, the `color_temp` expose (unit `mired`), and
+  the `lightingColorCtrl` (0x0300) binding. Graduated to a Tier 2 override.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:

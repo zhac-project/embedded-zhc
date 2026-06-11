@@ -934,6 +934,14 @@ target_link_libraries(zhc_smart9_parity_tests PRIVATE zhc_definitions)
 
 add_executable(zhc_senoro_parity_tests tests/test_senoro_parity.cpp)
 target_link_libraries(zhc_senoro_parity_tests PRIVATE zhc_definitions)
+
+# Parity fixture for Commercial Electric. The 53170161 CCT downlight is a
+# colour-temperature tunable m.light({colorTemp}), but the auto-port dropped
+# the CCT axis (on/off + brightness only). Restored kFzColorTemperature /
+# kTzColorTemp, the color_temp expose, and the lightingColorCtrl (0x0300) bind.
+add_executable(zhc_commercial_electric_parity_tests tests/test_commercial_electric_parity.cpp)
+target_link_libraries(zhc_commercial_electric_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Swann security family. The auto-port emitted dead
 # channels: SWO-MOS1PA/SWO-WDS1PA used generic kFzIasZone (bare `alarm` key)
 # instead of typed occupancy/contact, and SWO-KEF1PA was mis-ported as a
@@ -3046,6 +3054,7 @@ add_test(NAME zhc_lds_parity_tests          COMMAND zhc_lds_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_smart9_parity_tests       COMMAND zhc_smart9_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
+add_test(NAME zhc_commercial_electric_parity_tests COMMAND zhc_commercial_electric_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_soanalarm_parity_tests    COMMAND zhc_soanalarm_parity_tests)

@@ -1,8 +1,10 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: CommercialElectric 53170161 — auto-generated.
+// Tier 2: CommercialElectric 53170161 — CCT downlight (color_temp axis restored).
 // Matte White Recessed Retrofit Smart Led Downlight - 4 Inch
-// z2m-source: commercial_electric.ts #53170161.
+// z2m-source: commercial_electric.ts #53170161 — m.light({colorTemp:{range:undefined}}).
+// Fix: generator dropped the CCT (color_temp) axis. z2m m.light() with colorTemp
+//      exposes color_temp, binds lightingColorCtrl (0x0300), and decodes/sets CCT.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::commercial_electric {
@@ -10,10 +12,12 @@ namespace {
 const FzConverter* const kFz_D53170161[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzColorTemperature,
 };
 const TzConverter* const kTz_D53170161[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzColorTemp,
 };
 constexpr const char* kModels_D53170161[] = { "Zigbee CCT Downlight" };
 
@@ -24,11 +28,13 @@ constexpr const char* kModels_D53170161[] = { "Zigbee CCT Downlight" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
+    {1, 0x0300},  // lightingColorCtrl (color temperature)
 };
 // --- end auto-generated block ---
 
