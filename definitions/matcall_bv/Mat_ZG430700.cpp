@@ -1,8 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: MatcallBv ZG430700 — auto-generated.
+// Tier 2: MatcallBv ZG430700 — LED dimmer driver, power_on_behavior restored.
 // LED dimmer driver
-// z2m-source: matcall_bv.ts #ZG430700.
+// z2m-source: matcall_bv.ts #ZG430700 = m.light().
+// m.light() with no color/colorTemp args exposes only on/off + brightness
+// (no color/colorTemp axis — the "dropped color" suspicion is FALSE), but it
+// defaults powerOnBehavior=true, wiring fz.power_on_behavior (genOnOff 0x4003
+// startUpOnOff) + tz.power_on_behavior + the power_on_behavior enum expose.
+// The Tier-1 auto-port dropped that axis; restored via kFzPowerOnBehavior /
+// kTzPowerOnBehavior1. z2m's tz.effect (write-only command) has no generic
+// converter and is deferred as INFRA.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::matcall_bv {
@@ -10,10 +17,12 @@ namespace {
 const FzConverter* const kFz_ZG430700[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzPowerOnBehavior,
 };
 const TzConverter* const kTz_ZG430700[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzPowerOnBehavior1,
 };
 constexpr const char* kModels_ZG430700[] = { "ZG 430700", "ZG  430700" };
 
@@ -24,6 +33,7 @@ constexpr const char* kModels_ZG430700[] = { "ZG 430700", "ZG  430700" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
