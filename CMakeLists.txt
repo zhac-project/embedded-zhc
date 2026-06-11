@@ -1126,6 +1126,15 @@ target_link_libraries(zhc_alchemy_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Oujiabao CR701-YZ gas + CO alarm — the auto-port lowered the generic
+# kFzIasZone (bare "alarm") and a phantom "alarm" expose against z2m's
+# fz.ias_carbon_monoxide_alarm_1_gas_alarm_2 (carbon_monoxide=bit0,
+# gas=bit1). Graduated to a Tier-2 override wiring kFzIasCoAlarm +
+# kFzIasGasAlarm2 and aligning exposes to carbon_monoxide/gas/tamper/
+# battery_low.
+add_executable(zhc_oujiabao_parity_tests tests/test_oujiabao_parity.cpp)
+target_link_libraries(zhc_oujiabao_parity_tests PRIVATE zhc_definitions)
+
 # HomeSeer DS150ZB door sensor — the auto-port wired kFzIasZone (bare "alarm")
 # against z2m's iasZoneAlarm({zoneType:"contact"}) semantic+inverted "contact"
 # key, and declared phantom alarm/tamper/voltage exposes. Repointed to typed
@@ -3116,6 +3125,7 @@ add_test(NAME zhc_akuvox_parity_tests       COMMAND zhc_akuvox_parity_tests)
 add_test(NAME zhc_alchemy_parity_tests      COMMAND zhc_alchemy_parity_tests)
 add_test(NAME zhc_spotmau_parity_tests      COMMAND zhc_spotmau_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_oujiabao_parity_tests     COMMAND zhc_oujiabao_parity_tests)
 add_test(NAME zhc_homeseer_parity_tests     COMMAND zhc_homeseer_parity_tests)
 add_test(NAME zhc_spacetronik_parity_tests  COMMAND zhc_spacetronik_parity_tests)
 add_test(NAME zhc_hommyn_parity_tests       COMMAND zhc_hommyn_parity_tests)
