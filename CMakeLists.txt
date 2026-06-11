@@ -2864,6 +2864,14 @@ target_link_libraries(zhc_tnce_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_hilux_parity_tests tests/test_hilux_parity.cpp)
 target_link_libraries(zhc_hilux_parity_tests PRIVATE zhc_definitions)
 
+# Eaton/Halo LED downlight RL460WHZHA69 (zigbeeModel Halo_RL5601) is z2m
+# m.light({colorTemp:{range:[200,370]}}) but the auto-port collapsed it to
+# on/off + brightness, dropping the CCT axis. Restored color_temp expose +
+# lightingColorCtrl (0x0300) binding + kFzColorTemperature/kTzColorTemp.
+# See tests/README.md.
+add_executable(zhc_eatonhalo_led_parity_tests tests/test_eatonhalo_led_parity.cpp)
+target_link_libraries(zhc_eatonhalo_led_parity_tests PRIVATE zhc_definitions)
+
 # Jiawen RGBW bulb K2RGBW01 (m.light({colorTemp, color:true})): restored the
 # dropped colorTemp + xy-color axes (exposes color_temp/color_xy, 0x0300 bind,
 # kFzColorTemperature + kFzColor decoders, kTzColorTemp + kTzColor writes).
@@ -3369,6 +3377,7 @@ add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
 add_test(NAME zhc_aldi_parity_tests         COMMAND zhc_aldi_parity_tests)
 add_test(NAME zhc_tnce_parity_tests         COMMAND zhc_tnce_parity_tests)
 add_test(NAME zhc_hilux_parity_tests        COMMAND zhc_hilux_parity_tests)
+add_test(NAME zhc_eatonhalo_led_parity_tests COMMAND zhc_eatonhalo_led_parity_tests)
 add_test(NAME zhc_jiawen_parity_tests       COMMAND zhc_jiawen_parity_tests)
 add_test(NAME zhc_brun_holding_parity_tests COMMAND zhc_brun_holding_parity_tests)
 add_test(NAME zhc_rademacher_parity_tests   COMMAND zhc_rademacher_parity_tests)
