@@ -28,6 +28,18 @@ across the ZHAC platform.
   the graduated WM25L-Z override at it (cover position via `kFzCoverPosition`
   already matched z2m's `coverInverted:true` raw-percentage path).
 
+- **TCI "TCI - Mini ZLL I" Dali driver: controller action stream dropped.**
+  z2m wires `m.light() + m.commandsOnOff() + m.commandsLevelCtrl()`, so the
+  driver is both a settable light AND a controller that emits genOnOff /
+  genLevelCtrl commands as a composite `action`. The auto-port kept only the
+  light half (state + brightness) and dropped the `action` expose plus every
+  command converter, so the device's controller role was dead. Graduated the
+  def and additively wired the generic genOnOff/genLevelCtrl command
+  converters (`on`/`off`/`toggle`/`brightness_move_to_level`/`*_move_*`/
+  `*_step_*`/`brightness_stop`) + an `action` expose, keeping the settable
+  state/brightness write path. The three plain TCI drivers (122576, 151570,
+  676-00301024955Z) are bare `m.light()` (dimmable only) and were verified
+  FALSE for the suspected dropped color/colorTemp axis (regression-guarded).
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.
