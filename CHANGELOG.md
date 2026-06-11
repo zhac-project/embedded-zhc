@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
+  exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
+  right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
+  genOnOff (0x0006) on all three endpoints. The Tier-1 auto-port bound 0x0006
+  on endpoint 1 only (so the center/right gangs never had reporting
+  configured) and collapsed the three per-gang exposes into a single bare
+  `state` — but with the endpoint_map present, dispatch suffixes inbound onOff
+  keys to `state_<label>`, so the bare expose matched no runtime key. Graduated
+  to a Tier-2 override that binds 0x0006 on endpoints 1/2/3 and declares
+  `state_left`/`state_center`/`state_right`.
+
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the

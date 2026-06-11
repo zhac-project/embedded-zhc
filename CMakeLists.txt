@@ -1096,6 +1096,16 @@ target_link_libraries(zhc_frankever_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_seastar_intelligence_parity_tests tests/test_seastar_intelligence_parity.cpp)
 target_link_libraries(zhc_seastar_intelligence_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Atsmart Z6 3-gang wall switch. z2m m.deviceEndpoints
+# ({left:1,center:2,right:3}) + m.onOff({endpointNames:["left","center","right"]}).
+# The auto-port bound genOnOff (0x0006) on endpoint 1 ONLY (center/right gangs
+# unconfigured) and collapsed the per-gang exposes into a single bare "state"
+# (dispatch suffixes onOff keys to state_<label> via the endpoint_map, so the
+# bare key matched nothing). Graduated to a parent override that binds 0x0006 on
+# endpoints 1/2/3 and declares state_left/state_center/state_right.
+add_executable(zhc_atsmart_parity_tests tests/test_atsmart_parity.cpp)
+target_link_libraries(zhc_atsmart_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Cleverio SA100 siren + SS300 temp/humidity sensor.
 # SA100 swapped kFzIasZone for kFzIasZoneAlarmOnly (z2m fz.ias_alarm_only_alarm_1
 # emits bare `alarm` only) and dropped phantom tamper/battery_low exposes.
@@ -3426,6 +3436,7 @@ add_test(NAME zhc_bega_parity_tests         COMMAND zhc_bega_parity_tests)
 add_test(NAME zhc_frankever_parity_tests    COMMAND zhc_frankever_parity_tests)
 add_test(NAME zhc_seastar_intelligence_parity_tests COMMAND zhc_seastar_intelligence_parity_tests)
 add_test(NAME zhc_shyugj_parity_tests       COMMAND zhc_shyugj_parity_tests)
+add_test(NAME zhc_atsmart_parity_tests      COMMAND zhc_atsmart_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
