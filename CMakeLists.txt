@@ -991,6 +991,13 @@ target_link_libraries(zhc_shyugj_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_commercial_electric_parity_tests tests/test_commercial_electric_parity.cpp)
 target_link_libraries(zhc_commercial_electric_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for Silicon Labs. The auto-port of RB-ElectricityDsp-061-3
+# (z2m m.onOff()+m.electricityMeter(), cluster:"both") dropped the 0x0B04 half:
+# no kFzElectricalMeasurement, no voltage/current exposes, no 0x0B04 bind.
+# Test asserts the restored 0x0B04 decode + exposes + binding.
+add_executable(zhc_silicon_labs_parity_tests tests/test_silicon_labs_parity.cpp)
+target_link_libraries(zhc_silicon_labs_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Swann security family. The auto-port emitted dead
 # channels: SWO-MOS1PA/SWO-WDS1PA used generic kFzIasZone (bare `alarm` key)
 # instead of typed occupancy/contact, and SWO-KEF1PA was mis-ported as a
@@ -3239,6 +3246,7 @@ add_test(NAME zhc_smart_home_pty_parity_tests COMMAND zhc_smart_home_pty_parity_
 add_test(NAME zhc_ozsmartthings_parity_tests COMMAND zhc_ozsmartthings_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_commercial_electric_parity_tests COMMAND zhc_commercial_electric_parity_tests)
+add_test(NAME zhc_silicon_labs_parity_tests COMMAND zhc_silicon_labs_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
 add_test(NAME zhc_soanalarm_parity_tests    COMMAND zhc_soanalarm_parity_tests)

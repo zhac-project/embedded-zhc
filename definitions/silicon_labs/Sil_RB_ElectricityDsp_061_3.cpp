@@ -1,15 +1,28 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: SiliconLabs RB-ElectricityDsp-061-3 — auto-generated.
+// Tier 2: SiliconLabs RB-ElectricityDsp-061-3 — restored the 0x0B04 half.
 // Electricity meter
-// z2m-source: silicon_labs.ts #RB-ElectricityDsp-061-3.
+//
+// z2m wires m.onOff() + m.electricityMeter(); electricityMeter() defaults to
+// cluster:"both" → energy from seMetering (0x0702) AND power/voltage/current
+// from haElectricalMeasurement (0x0B04, fz.electrical_measurement). The
+// auto-generated port wired only kFzMetering (0x0702) and exposed only
+// state/energy/power, dropping the 0x0B04 decoder plus the voltage/current
+// exposes and the 0x0B04 binding. Without it RMSVoltage/RMSCurrent reports
+// were never decoded and z2m's "both"-mode power (ActivePower 0x050B on
+// 0x0B04) had no converter. Fixed by adding kFzElectricalMeasurement,
+// publishing voltage+current exposes, and binding 0x0B04.
+//
+// z2m-source: silicon_labs.ts #RB-ElectricityDsp-061-3 (m.electricityMeter()
+// → genericMeter cluster:"both").
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::silicon_labs {
 namespace {
 const FzConverter* const kFz_RB_ElectricityDsp_061_3[] = {
     &::zhc::generic::kFzOnOff,
-    &::zhc::generic::kFzMetering,
+    &::zhc::generic::kFzMetering,             // seMetering 0x0702 → energy (+power)
+    &::zhc::generic::kFzElectricalMeasurement, // haElectricalMeasurement 0x0B04 → power/voltage/current
 };
 const TzConverter* const kTz_RB_ElectricityDsp_061_3[] = {
     &::zhc::generic::kTzOnOff,
@@ -24,11 +37,14 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0702},
+    {1, 0x0B04},
 };
 // --- end auto-generated block ---
 
