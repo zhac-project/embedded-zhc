@@ -38,6 +38,14 @@ across the ZHAC platform.
   `kFzOnOff`+`kFzBrightness` / `kTzOnOff`+`kTzBrightness`, `state`+`brightness`
   exposes, bindings on genOnOff (0x0006)+genLevelCtrl (0x0008), no phantom
   battery, and `power_source_override` = Mains (single phase).
+- **Eaton/Halo LED RL460WHZHA69 downlight: dropped colorTemp axis.** z2m drives
+  this "Wireless Controlled LED retrofit downlight" (zigbeeModel `Halo_RL5601`)
+  with `m.light({colorTemp:{range:[200,370]}})`, i.e. a CCT-only (tuneable white)
+  bulb. The auto-generator collapsed `m.light()` to on/off + brightness only, so
+  `color_temp` was both unexposed and undecoded (no `lightingColorCtrl` 0x0300
+  binding). Graduated to a Tier-2 override restoring the `color_temp` expose, the
+  0x0300 binding, the `kFzColorTemperature` decoder and the `kTzColorTemp` write
+  path. No xy/hs color axis (z2m has no `color:{}`).
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the
