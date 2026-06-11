@@ -2340,6 +2340,12 @@ target_link_libraries(zhc_plugwise_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_vsmart_parity_tests tests/test_vsmart_parity.cpp)
 target_link_libraries(zhc_vsmart_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the EZVIZ CS-T2C open/close sensor: verifies the typed
+# two-key inverted contact converters (contact_alarm_1/_2) replaced the bare,
+# non-inverted generic kFzIasZone "alarm" key, plus genPowerCfg battery.
+add_executable(zhc_ezviz_parity_tests tests/test_ezviz_parity.cpp)
+target_link_libraries(zhc_ezviz_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Innr smart-plug family. Innr is otherwise a pure
 # lighting/remote vendor (CLEAN), but the metering plugs SP 120/234/240 and
 # OSP 240 use z2m m.electricityMeter() — which defaults to cluster:"both"
@@ -3307,6 +3313,7 @@ add_test(NAME zhc_icasa_parity_tests        COMMAND zhc_icasa_parity_tests)
 add_test(NAME zhc_plugwise_parity_tests     COMMAND zhc_plugwise_parity_tests)
 add_test(NAME zhc_plaid_parity_tests        COMMAND zhc_plaid_parity_tests)
 add_test(NAME zhc_vsmart_parity_tests       COMMAND zhc_vsmart_parity_tests)
+add_test(NAME zhc_ezviz_parity_tests        COMMAND zhc_ezviz_parity_tests)
 add_test(NAME zhc_innr_parity_tests         COMMAND zhc_innr_parity_tests)
 add_test(NAME zhc_bituo_technik_parity_tests COMMAND zhc_bituo_technik_parity_tests)
 add_test(NAME zhc_meazon_parity_tests       COMMAND zhc_meazon_parity_tests)
