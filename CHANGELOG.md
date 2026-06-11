@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **DQSmart dqhome.re4 4-gang switch: reporting bound only on gang 1.**
+  The auto-port bound genOnOff (0x0006) on endpoint 1 only, so gangs
+  l2/l3/l4 never had reporting configured and would not push their state
+  changes. z2m's `m.onOff({endpointNames:["l1".."l4"]})` runs
+  `setupAttributes` per endpoint carrying the cluster (`getEndpointsWithCluster`
+  → ep1..ep4), binding 0x0006 on every gang. Graduated to a Tier-2 override
+  binding 0x0006 on all four endpoints. Decode was already correct (the
+  endpoint_map suffixes `state` → `state_l<n>` by source endpoint); only the
+  binding table was short. Pinned by `tests/test_dqsmart_parity.cpp`.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
