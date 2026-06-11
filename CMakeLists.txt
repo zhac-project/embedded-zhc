@@ -2669,6 +2669,14 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+# Hilux LED bulbs: DZ8 ("Spot 7W") is z2m m.light({colorTemp:{range:[153,370]}})
+# but the auto-port collapsed it to on/off + brightness, dropping the CCT axis.
+# Restored color_temp expose + lightingColorCtrl (0x0300) binding +
+# kFzColorTemperature/kTzColorTemp. D160-ZG (plain m.light) is a negative
+# control. See tests/README.md.
+add_executable(zhc_hilux_parity_tests tests/test_hilux_parity.cpp)
+target_link_libraries(zhc_hilux_parity_tests PRIVATE zhc_definitions)
+
 # Brun Holding "Fire Fence" stove guard: restored short_override on EP2 (was
 # colliding on EP1), regained the dropped m.temperature() decoder/expose/bind,
 # and removed the phantom `voltage` expose (z2m disables voltage + current).
@@ -3130,6 +3138,7 @@ add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parit
 add_test(NAME zhc_wally_parity_tests        COMMAND zhc_wally_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
+add_test(NAME zhc_hilux_parity_tests        COMMAND zhc_hilux_parity_tests)
 add_test(NAME zhc_brun_holding_parity_tests COMMAND zhc_brun_holding_parity_tests)
 add_test(NAME zhc_rademacher_parity_tests   COMMAND zhc_rademacher_parity_tests)
 add_test(NAME zhc_domraem_parity_tests      COMMAND zhc_domraem_parity_tests)

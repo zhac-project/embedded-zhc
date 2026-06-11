@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Hilux DZ8 ("Spot 7W") LED bulb: dropped color-temperature axis.** z2m models
+  this as `m.light({colorTemp: {range: [153, 370]}})` (a CCT-tunable bulb), but
+  the auto-generator collapsed `m.light()` to on/off + brightness only — leaving
+  `color_temp` unexposed, undecoded and unbound. Restored the CCT axis:
+  `kFzColorTemperature` + `kTzColorTemp`, the `color_temp` (mired) expose and the
+  `lightingColorCtrl` (0x0300) binding. D160-ZG (plain `m.light()`) is correctly
+  left as on/off + brightness. Added `tests/test_hilux_parity.cpp`.
+
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
