@@ -1,7 +1,12 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: DirectSigns DS-Z-001DE — auto-generated.
-// RGB + CCT LED Controller
+// Tier 2: DirectSigns DS-Z-001DE — RGB + CCT LED Controller.
+// z2m: m.light({colorTemp:{range:[158,500]}, color:{modes:["xy","hs"],
+//   enhancedHue:true}}) — a full RGB+CCT light. The auto-port dropped the
+//   colour axis: it wired only OnOff + Brightness and exposed only
+//   state + brightness, so color / color_temp were dead. Restore the
+//   lightingColorCtrl (0x0300) decode + control + binding and the
+//   color_temp / color_xy exposes (colorTemp range [158,500] mired).
 // z2m-source: direct_signs.ts #DS-Z-001DE.
 #include "definitions/_generic/_shared.hpp"
 
@@ -10,10 +15,14 @@ namespace {
 const FzConverter* const kFz_DS_Z_001DE[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzColorTemperature,
+    &::zhc::generic::kFzColor,
 };
 const TzConverter* const kTz_DS_Z_001DE[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzColorTemp,
+    &::zhc::generic::kTzColor,
 };
 constexpr const char* kModels_DS_Z_001DE[] = { "DS-Z-001DE" };
 
@@ -24,11 +33,16 @@ constexpr const char* kModels_DS_Z_001DE[] = { "DS-Z-001DE" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    // colorTemp range [158,500] mired (z2m colorTemp.range).
+    {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0,
+     ExposeCategory::State, 158, 500, 0},
+    {"color_xy", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0008},
+    {1, 0x0300},
 };
 // --- end auto-generated block ---
 

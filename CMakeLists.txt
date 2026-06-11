@@ -1433,6 +1433,13 @@ target_link_libraries(zhc_enbrighten_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_lonsonho_parity_tests tests/test_lonsonho_parity.cpp)
 target_link_libraries(zhc_lonsonho_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Direct Signs DS-Z-001DE RGB+CCT LED controller — the
+# auto-port dropped the colour axis (lightingColorCtrl 0x0300): only
+# OnOff + Brightness were wired, color / color_temp were dead. The
+# Tier-2 override restores the colour decode + control + binding.
+add_executable(zhc_direct_signs_parity_tests tests/test_direct_signs_parity.cpp)
+target_link_libraries(zhc_direct_signs_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Quotra LED family — the QV-RGBCCT strip (B07JHL6DRV) had
 # its colour axes dropped by the auto-port (m.light({colorTemp,color}) ->
 # on/off+brightness only); graduated to restore color_temp/color_xy +
@@ -3256,6 +3263,7 @@ add_test(NAME zhc_blaupunkt_parity_tests    COMMAND zhc_blaupunkt_parity_tests)
 add_test(NAME zhc_lupus_parity_tests        COMMAND zhc_lupus_parity_tests)
 add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
+add_test(NAME zhc_direct_signs_parity_tests COMMAND zhc_direct_signs_parity_tests)
 add_test(NAME zhc_quotra_parity_tests       COMMAND zhc_quotra_parity_tests)
 add_test(NAME zhc_slv_parity_tests          COMMAND zhc_slv_parity_tests)
 add_test(NAME zhc_honyar_parity_tests       COMMAND zhc_honyar_parity_tests)
