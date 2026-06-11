@@ -67,6 +67,20 @@ across the ZHAC platform.
   (tagged to main_switch -> `power_main_switch` / `energy_main_switch`); no
   0x0B04 electrical half exists on this device. Graduated to Tier-2 with a
   parity test.
+- **Smart9 S9ZGBRC01 (TS0215) key fob: arm/emergency actions dead, phantom
+  on/off control.** The "Smart remote controller" is a battery panic remote —
+  z2m wires `fz.command_arm + fz.command_emergency + fz.battery` and exposes
+  `action([disarm, arm_day_zones, arm_night_zones, arm_all_zones, exit_delay,
+  emergency])`. The auto-port mis-ported it as a controllable on/off switch
+  (`kFzOnOff`/`kTzOnOff` + a phantom `state` Binary StateSet + a spurious
+  genOnOff 0x0006 bind): the IAS ACE actions never decoded and the on/off state
+  was a dead sink. Graduated to Tier-2 wiring `kFzIasAceArm` (commandArm 0x00 →
+  `action=<armMode>` + `action_code` + `action_zone`) + `kFzIasAceEmergency`
+  (commandEmergency 0x02 → `action="emergency"`) + `kFzBattery`, replaced
+  `state` with the `action` enum, and narrowed the bind to genPowerCfg 0x0001 to
+  match z2m configure. (z2m uses `command_emergency` cmd 0x02, NOT `command_panic`
+  cmd 0x04 — so `kFzIasAceEmergency`, not `kFzIasAcePanic`.) Same key-fob shape
+  as the securifi Almond Click / linkind / climax keypad fixes.
 
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
