@@ -20,6 +20,14 @@ across the ZHAC platform.
   keys to `state_<label>`, so the bare expose matched no runtime key. Graduated
   to a Tier-2 override that binds 0x0006 on endpoints 1/2/3 and declares
   `state_left`/`state_center`/`state_right`.
+- **Letsled HLC929-Z-RGBW-4C-IA-OTA-3.0 RGBW down light: dropped color +
+  colorTemp axes.** z2m models this as `m.light({colorTemp:{range:[153,370]},
+  color:true})` (RGBW with both a CCT/mireds axis and an xy/hs color axis), but
+  the auto-generator collapsed `m.light()` to on/off + brightness only, dropping
+  the entire lightingColorCtrl (0x0300) channel. Graduated to a Tier-2 override:
+  restored `kFzColorTemperature`+`kFzColor` / `kTzColorTemp`+`kTzColor`, the
+  `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes, and the 0x0300
+  binding.
 
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
