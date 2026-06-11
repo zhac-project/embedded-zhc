@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Jasco / GE 43095 smart plug-in switch: physical button presses dropped.**
+  z2m wires `fz.command_on_state` / `fz.command_off_state`, which fold genOnOff
+  *commands* (commandOn 0x01 / commandOff 0x00) into the `state` property — the
+  43095 reports button presses as cluster commands, not onOff attribute reports.
+  The auto-port carried only `kFzOnOff` (attribute 0x0000) + `kFzMetering`, so
+  every toggle was dead. Graduated the def to Tier-2 and added jasco
+  `kFzCommandOnState` / `kFzCommandOffState` (genOnOff cmd → `state` Bool,
+  converging on the same key as the attribute path). 43132 (metering = 0x0702
+  only) and ZB3102 dimmer verified unaffected.
+
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.

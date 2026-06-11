@@ -1,15 +1,26 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Jasco 43095 — auto-generated.
+// Tier 2: Jasco 43095 — graduated to wire command_on_state/command_off_state.
 // Zigbee smart plug-in switch with energy metering
-// z2m-source: jasco.ts #43095.
+// z2m-source: jasco.ts #43095
+//   fromZigbee: [fz.command_on_state, fz.command_off_state]
+//   extend:     [m.onOff(), m.electricityMeter({cluster: "metering"})]
+//
+// The 43095 reports button presses as genOnOff *commands* (commandOn/Off),
+// which z2m folds into `state` via fz.command_on_state / command_off_state.
+// The auto-port carried only kFzOnOff (attribute 0x0000) + kFzMetering, so
+// every physical toggle was dropped. Add the jasco kFzCommandOnState /
+// kFzCommandOffState command-to-state decoders alongside the attribute path.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/jasco/_shared.hpp"
 
 namespace zhc::devices::jasco {
 namespace {
 const FzConverter* const kFz_D43095[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
+    &kFzCommandOnState,
+    &kFzCommandOffState,
 };
 const TzConverter* const kTz_D43095[] = {
     &::zhc::generic::kTzOnOff,
