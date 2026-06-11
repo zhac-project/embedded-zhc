@@ -1482,6 +1482,14 @@ target_link_libraries(zhc_enbrighten_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_lonsonho_parity_tests tests/test_lonsonho_parity.cpp)
 target_link_libraries(zhc_lonsonho_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Giderwel GD-ZCRGB012 Smart Zigbee RGB LED strip controller —
+# z2m m.light({color: {modes: ["xy","hs"]}}). The auto-port dropped the whole
+# colour axis (lightingColorCtrl 0x0300): only OnOff + Brightness were wired,
+# color was dead (no kFzColor/kTzColor, no color_xy expose, no 0x0300 bind).
+# Restored; the test pins the surface AND live-decodes the xy/hs axes.
+add_executable(zhc_giderwel_parity_tests tests/test_giderwel_parity.cpp)
+target_link_libraries(zhc_giderwel_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Direct Signs DS-Z-001DE RGB+CCT LED controller — the
 # auto-port dropped the colour axis (lightingColorCtrl 0x0300): only
 # OnOff + Brightness were wired, color / color_temp were dead. The
@@ -3357,6 +3365,7 @@ add_test(NAME zhc_blaupunkt_parity_tests    COMMAND zhc_blaupunkt_parity_tests)
 add_test(NAME zhc_lupus_parity_tests        COMMAND zhc_lupus_parity_tests)
 add_test(NAME zhc_enbrighten_parity_tests   COMMAND zhc_enbrighten_parity_tests)
 add_test(NAME zhc_lonsonho_parity_tests     COMMAND zhc_lonsonho_parity_tests)
+add_test(NAME zhc_giderwel_parity_tests     COMMAND zhc_giderwel_parity_tests)
 add_test(NAME zhc_direct_signs_parity_tests COMMAND zhc_direct_signs_parity_tests)
 add_test(NAME zhc_quotra_parity_tests       COMMAND zhc_quotra_parity_tests)
 add_test(NAME zhc_slv_parity_tests          COMMAND zhc_slv_parity_tests)
