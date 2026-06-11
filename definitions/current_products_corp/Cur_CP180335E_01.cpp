@@ -1,18 +1,37 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: CurrentProductsCorp CP180335E-01 — auto-generated.
-// Gen. 2 hybrid E-Wand
-// z2m-source: current_products_corp.ts #CP180335E-01.
+// Tier 2: CurrentProductsCorp CP180335E-01 — Gen. 2 hybrid E-Wand (tilt blind).
+// z2m-source: current_products_corp.ts #CP180335E-01 —
+//   fromZigbee: [fz.cover_position_tilt, fz.battery]
+//   toZigbee:   [tz.cover_state, tz.cover_position_tilt]
+//   meta: {coverStateFromTilt: true}
+//   exposes: [e.battery(), e.cover_tilt()]   // cover_tilt = state + tilt
+//
+// Gap fixed (class b — wrong/missing channel):
+//   The E-Wand is a tilt-only hybrid covering: configure() reports
+//   currentPositionTiltPercentage (attr 0x0009) and meta.coverStateFromTilt
+//   derives state from tilt. z2m exposes `e.cover_tilt()` = state + tilt
+//   (NOT position). The auto-port wired the LIFT channel instead:
+//     - fz kFzCoverPosition (attr 0x0008 -> "position") — dead; the device
+//       reports tilt (0x0009), so "position" never decodes and the declared
+//       "position" expose is phantom while the real "tilt" channel is missing.
+//     - tz kTzCoverPosition (goToLiftPercentage 0x05) — wrong command; z2m
+//       writes tz.cover_position_tilt (goToTiltPercentage 0x08) + tz.cover_state.
+//   Fix: swap to kFzCoverTilt (0x0009 -> "tilt"), wire kTzCoverState (open/
+//   close/stop) + kTzCoverPositionTilt (goToTiltPercentage), and replace the
+//   phantom "position" expose with "state" + "tilt". Battery (genPowerCfg
+//   0x0001) decode/expose retained via kFzBattery (battery + voltage).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::current_products_corp {
 namespace {
 const FzConverter* const kFz_CP180335E_01[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzCoverPosition,
+    &::zhc::generic::kFzCoverTilt,
 };
 const TzConverter* const kTz_CP180335E_01[] = {
-    &::zhc::generic::kTzCoverPosition,
+    &::zhc::generic::kTzCoverState,
+    &::zhc::generic::kTzCoverPositionTilt,
 };
 constexpr const char* kModels_CP180335E_01[] = { "E-Wand" };
 
@@ -23,7 +42,8 @@ constexpr const char* kModels_CP180335E_01[] = { "E-Wand" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
+    {"state",   ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"tilt",    ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

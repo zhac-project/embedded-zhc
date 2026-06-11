@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
+  channel.** z2m decodes this hybrid blind via the tilt channel
+  (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
+  attr 0x0009) and exposes `e.cover_tilt()` = state + tilt, controlling it with
+  `tz.cover_state` + `tz.cover_position_tilt` (goToTiltPercentage 0x08). The
+  auto-port wired the LIFT channel instead (`kFzCoverPosition`/`kTzCoverPosition`
+  → "position", goToLiftPercentage 0x05), so the real tilt reports never
+  decoded and the device exposed a phantom `position`. Graduated to a Tier-2
+  override that swaps to `kFzCoverTilt` + `kTzCoverState` + `kTzCoverPositionTilt`
+  and exposes state + tilt (battery/voltage retained).
+
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.

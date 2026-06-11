@@ -927,6 +927,14 @@ target_link_libraries(zhc_swann_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smarli_parity_tests tests/test_smarli_parity.cpp)
 target_link_libraries(zhc_smarli_parity_tests PRIVATE zhc_definitions)
 
+# Parity for Current Products Corp CP180335E-01 ("E-Wand") tilt blind. The
+# auto-port wired the LIFT cover channel (kFzCoverPosition/kTzCoverPosition ->
+# "position") but z2m decodes via TILT (fz.cover_position_tilt 0x0009,
+# coverStateFromTilt) and exposes e.cover_tilt() = state + tilt. Graduated to a
+# parent override that swaps to kFzCoverTilt + kTzCoverState/kTzCoverPositionTilt.
+add_executable(zhc_current_products_corp_parity_tests tests/test_current_products_corp_parity.cpp)
+target_link_libraries(zhc_current_products_corp_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Schwaiger HAL3xx/5xx/8xx LED bulbs. The auto-ports
 # flattened every m.light({colorTemp, color}) bulb to bare on/off +
 # brightness, dropping the lightingColorCtrl 0x0300 colour-temp + XY/HS
@@ -2846,6 +2854,7 @@ add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
+add_test(NAME zhc_current_products_corp_parity_tests COMMAND zhc_current_products_corp_parity_tests)
 add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
 add_test(NAME zhc_wmun_parity_tests         COMMAND zhc_wmun_parity_tests)
