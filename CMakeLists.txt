@@ -1628,6 +1628,15 @@ target_link_libraries(zhc_inovelli_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_easyiot_parity_tests tests/test_easyiot_parity.cpp)
 target_link_libraries(zhc_easyiot_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for Echostar "SAGE by Hughes" remotes. Both SAGE devices
+# are battery controllers that EMIT genOnOff On/Off commands as an `action`
+# (z2m toZigbee empty), but the auto-port mis-modelled both as a settable
+# on/off `state` (kFzOnOff + kTzOnOff) — a dead control — losing the action
+# stream. SAGE206611 -> generic kFzCommandOn/Off ("on"/"off"); SAGE206612
+# (doorbell) -> vendor kFzSageBellAction (commandOn->"bell1"/off->"bell2").
+add_executable(zhc_echostar_parity_tests tests/test_echostar_parity.cpp)
+target_link_libraries(zhc_echostar_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for ROBB (ROBB Smarrt / rebranded Sunricher). The
 # auto-generated port misclassified several devices: the 4-button wireless
 # switches (081/084) became controllable on/off relays (dead `state` +
@@ -2912,6 +2921,7 @@ add_test(NAME zhc_ikea_parity_tests         COMMAND zhc_ikea_parity_tests)
 add_test(NAME zhc_siglis_parity_tests       COMMAND zhc_siglis_parity_tests)
 add_test(NAME zhc_inovelli_parity_tests     COMMAND zhc_inovelli_parity_tests)
 add_test(NAME zhc_easyiot_parity_tests      COMMAND zhc_easyiot_parity_tests)
+add_test(NAME zhc_echostar_parity_tests     COMMAND zhc_echostar_parity_tests)
 add_test(NAME zhc_robb_parity_tests         COMMAND zhc_robb_parity_tests)
 add_test(NAME zhc_repenic_ltd_parity_tests  COMMAND zhc_repenic_ltd_parity_tests)
 add_test(NAME zhc_paul_neuhaus_parity_tests COMMAND zhc_paul_neuhaus_parity_tests)
