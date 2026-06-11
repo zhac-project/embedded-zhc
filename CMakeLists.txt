@@ -2612,6 +2612,12 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+# Brun Holding "Fire Fence" stove guard: restored short_override on EP2 (was
+# colliding on EP1), regained the dropped m.temperature() decoder/expose/bind,
+# and removed the phantom `voltage` expose (z2m disables voltage + current).
+add_executable(zhc_brun_holding_parity_tests tests/test_brun_holding_parity.cpp)
+target_link_libraries(zhc_brun_holding_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Domraem DOM-Z-105P "5 in 1" LED controller family. The
 # auto-generator collapsed every m.light() to on/off + brightness, dropping the
 # 0x0300 axes: RGB regained hs color (kFzColor); RGBW/RGBCCT regained colorTemp
@@ -3052,6 +3058,7 @@ add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parit
 add_test(NAME zhc_wally_parity_tests        COMMAND zhc_wally_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
+add_test(NAME zhc_brun_holding_parity_tests COMMAND zhc_brun_holding_parity_tests)
 add_test(NAME zhc_domraem_parity_tests      COMMAND zhc_domraem_parity_tests)
 add_test(NAME zhc_istar_parity_tests        COMMAND zhc_istar_parity_tests)
 add_test(NAME zhc_shenzhen_homa_parity_tests COMMAND zhc_shenzhen_homa_parity_tests)

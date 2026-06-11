@@ -55,6 +55,18 @@ across the ZHAC platform.
   Restored `kFzColorTemperature`/`kFzColor` (+ tz peers), the
   `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes and the 0x0300
   binding. SCCV2401-1 (plain dimmer) was already correct and is unchanged.
+- **Brun Holding "Fire Fence" stove guard: relays collided, temperature
+  dropped, phantom voltage.** z2m maps `m.deviceEndpoints({main_switch:1,
+  short_override:2})` but the auto-port placed `short_override` on EP1, so both
+  relays collided on the bare `state` key. Restored EP2 (`state_main_switch` /
+  `state_short_override`). The port also dropped `m.temperature()`
+  (msTemperatureMeasurement 0x0402) — re-added the decoder, expose, and bind
+  (EP1 report suffixes to `temperature_main_switch`). Finally removed a phantom
+  `voltage` expose: z2m's `m.electricityMeter` sets `voltage:false` +
+  `current:false`, so only power + energy stream from seMetering 0x0702
+  (tagged to main_switch -> `power_main_switch` / `energy_main_switch`); no
+  0x0B04 electrical half exists on this device. Graduated to Tier-2 with a
+  parity test.
 
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
