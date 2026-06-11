@@ -900,6 +900,16 @@ target_link_libraries(zhc_sonoff_snzb02_tests PRIVATE zhc_definitions)
 add_executable(zhc_schneider_parity_tests tests/test_schneider_parity.cpp)
 target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixtures for the M-ELEC "Stitchy" family (3 dimmers + 1 relay).
+# The auto-ports dropped the power_on_behavior axis that z2m's m.light() /
+# m.onOff() modernExtend add by default (powerOnBehavior=true →
+# fz.power_on_behavior on genOnOff 0x4003 startUpOnOff + the enum expose).
+# Restored via kFzPowerOnBehavior / kTzPowerOnBehavior1. Also pins the
+# FALSE colour suspect: m.light() with no color/colorTemp args has NO
+# 0x0300 axis. All graduated to parent overrides.
+add_executable(zhc_m_elec_parity_tests tests/test_m_elec_parity.cpp)
+target_link_libraries(zhc_m_elec_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Securifi Almond Click button. The auto-port mis-ported
 # it as a controllable on/off switch (kFzOnOff + kTzOnOff + bare `state`); z2m
 # wires fz.almond_click (ssIasAce commandArm, device-specific armmode lookup
@@ -2842,6 +2852,7 @@ add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
+add_test(NAME zhc_m_elec_parity_tests       COMMAND zhc_m_elec_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
