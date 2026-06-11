@@ -1,15 +1,28 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Philio PAT04-A — auto-generated.
-// Water leak detector
-// z2m-source: philio.ts #PAT04-A.
+// Tier 2: Philio PAT04-A — water leak detector (IAS dead-key fix).
+//
+// z2m-source: philio.ts #PAT04-A —
+//   m.iasZoneAlarm({zoneType: "water_leak",
+//                   zoneAttributes: ["alarm_1", "tamper", "battery_low"]})
+//   + m.battery()
+//
+// Bug fixed (z2m<->embedded-zhc parity pass):
+//   The auto-port wired the generic kFzIasZone (bare `alarm` key, decoded from
+//   AttributeReport attr 0x0002) and exposed a bare `alarm` binary. But z2m's
+//   m.iasZoneAlarm with zoneType:"water_leak" (single alarm_1, not bothAlarms)
+//   publishes the semantic `water_leak` key (zoneStatus bit 0) via a
+//   `commandStatusChangeNotification` — so the exposed key was dead and the
+//   semantic channel was missing. Now wires the typed kFzIasWaterLeakAlarm
+//   (command notification: bit0 -> water_leak, bit2 -> tamper, bit3 ->
+//   battery_low) and exposes `water_leak` to match z2m exactly.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::philio {
 namespace {
 const FzConverter* const kFz_PAT04_A[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
 constexpr const char* kModels_PAT04_A[] = { "PAT04A-v1.1.5" };
@@ -21,7 +34,7 @@ constexpr const char* kModels_PAT04_A[] = { "PAT04A-v1.1.5" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

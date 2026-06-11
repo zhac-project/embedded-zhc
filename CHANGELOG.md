@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Philio PAT04-A (Evology PAT04-A) water leak detector: IAS dead-key.**
+  The auto-port wired the generic `kFzIasZone` (bare `alarm` key from
+  AttributeReport attr 0x0002) and exposed a bare `alarm` binary. But z2m wires
+  `m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:["alarm_1","tamper",
+  "battery_low"]})`, which publishes the semantic `water_leak` key (zoneStatus
+  bit 0) via a `commandStatusChangeNotification` — so the exposed key was dead
+  and the leak channel was missing. Now wires the typed `kFzIasWaterLeakAlarm`
+  (bit0 → `water_leak`, bit2 → `tamper`, bit3 → `battery_low`) and exposes
+  `water_leak`. Graduated the generated def to a Tier-2 override; added
+  `test_philio_parity.cpp`.
+
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
   (`tuya.modernExtend.tuyaBase({dp:true})`) decoding the 0xEF00 datapoint stream:
