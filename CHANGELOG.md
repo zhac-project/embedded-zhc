@@ -10,6 +10,13 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Sowilo DS L258 "Heimdall Pro" RGBWW controller: dropped colorTemp + colour
+  axis.** z2m drives it with `m.light({colorTemp:{range:[150,575]},
+  color:{modes:["xy","hs"]}})` (full RGB + tuneable white), but the
+  auto-generated port wired only on/off + brightness, dropping the entire
+  lightingColorCtrl (0x0300) channel. Graduated to a Tier-2 override that
+  restores the `color_temp` / `color_xy` exposes, the colorTemp + colour
+  converters, and the 0x0300 binding. Pinned by `test_sowilo_parity.cpp`.
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
   dropping the entire lightingColorCtrl (0x0300) channel. z2m drives the
