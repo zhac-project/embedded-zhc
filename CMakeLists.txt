@@ -909,6 +909,9 @@ target_link_libraries(zhc_schneider_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_securifi_parity_tests tests/test_securifi_parity.cpp)
 target_link_libraries(zhc_securifi_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_smart9_parity_tests tests/test_smart9_parity.cpp)
+target_link_libraries(zhc_smart9_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_senoro_parity_tests tests/test_senoro_parity.cpp)
 target_link_libraries(zhc_senoro_parity_tests PRIVATE zhc_definitions)
 # Parity fixtures for the Swann security family. The auto-port emitted dead
@@ -2843,6 +2846,7 @@ add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
 add_test(NAME zhc_schneider_parity_tests    COMMAND zhc_schneider_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
+add_test(NAME zhc_smart9_parity_tests       COMMAND zhc_smart9_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)
