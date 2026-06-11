@@ -8,10 +8,12 @@ namespace zhc::devices::lds {
 
 extern const PreparedDefinition kDef_FWBulb03UK;
 extern const PreparedDefinition kDef_ZBT_RGBWLight_A0000;
+extern const PreparedDefinition kDef_PFMOT001;
 
 const PreparedDefinition* const kLdsRegistry[] = {
     &kDef_FWBulb03UK,
     &kDef_ZBT_RGBWLight_A0000,
+    &kDef_PFMOT001,
 };
 const std::size_t kLdsRegistryCount = sizeof(kLdsRegistry) / sizeof(kLdsRegistry[0]);
 

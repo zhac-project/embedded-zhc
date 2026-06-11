@@ -146,6 +146,17 @@ across the ZHAC platform.
   device with no on/off endpoint. Graduated to Tier-2: no exposes, no fz/tz,
   only the `{8,0x0000}` genBasic bind. Same shape as the Espressif
   ZigbeeRangeExtender / SMLIGHT router phantom fixes.
+- **LDS lights/sensor: dropped colour axis + missing motion sensor.**
+  `ZBT-RGBWLight-A0000` is z2m `m.light({colorTemp:{range:[153,555]}, color:true})`
+  but the auto-port collapsed it to on/off + brightness, dropping the colorTemp +
+  XY/HS colour channels — restored `kFzColorTemperature` + `kFzColor`
+  (`kTzColorTemp`/`kTzColor`), colour exposes, and the `lightingColorCtrl` (0x0300)
+  binding. `PFMOT001` (Hive Pet Friendly Motion sensor, `m.battery()` +
+  `m.iasZoneAlarm({zoneType:"occupancy", zoneAttributes:["alarm_1","tamper",
+  "battery_low"]})`) was dropped entirely by the auto-port — added as battery +
+  `kFzIasMotionAlarm` (semantic `occupancy` on zoneStatus bit 0, plus
+  tamper/battery_low) and registered. `FWBulb03UK` (bare `m.light()`) is
+  dimmable-only and verified correct.
 
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
