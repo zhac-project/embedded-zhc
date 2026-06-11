@@ -939,6 +939,15 @@ target_link_libraries(zhc_securifi_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_smart9_parity_tests tests/test_smart9_parity.cpp)
 target_link_libraries(zhc_smart9_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Smart Home Pty HGZB-07A RGBW downlight. z2m extend is
+# m.light({colorTemp: {range: undefined}, color: true}) but the auto-generator
+# collapsed m.light() to on/off + brightness only, dropping the color-temperature
+# and colour (xy) axes (lightingColorCtrl 0x0300). Graduated to a parent override
+# restoring kFzColorTemperature/kFzColor + tz + exposes + the 0x0300 binding. The
+# HGZB-20-DE plug (m.onOff()) is verified clean (no phantom colour/metering).
+add_executable(zhc_smart_home_pty_parity_tests tests/test_smart_home_pty_parity.cpp)
+target_link_libraries(zhc_smart_home_pty_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_senoro_parity_tests tests/test_senoro_parity.cpp)
 target_link_libraries(zhc_senoro_parity_tests PRIVATE zhc_definitions)
 # Parity fixtures for the Swann security family. The auto-port emitted dead
@@ -3071,6 +3080,7 @@ add_test(NAME zhc_hoftronic_parity_tests    COMMAND zhc_hoftronic_parity_tests)
 add_test(NAME zhc_lds_parity_tests          COMMAND zhc_lds_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
 add_test(NAME zhc_smart9_parity_tests       COMMAND zhc_smart9_parity_tests)
+add_test(NAME zhc_smart_home_pty_parity_tests COMMAND zhc_smart_home_pty_parity_tests)
 add_test(NAME zhc_senoro_parity_tests       COMMAND zhc_senoro_parity_tests)
 add_test(NAME zhc_swann_parity_tests        COMMAND zhc_swann_parity_tests)
 add_test(NAME zhc_smarli_parity_tests       COMMAND zhc_smarli_parity_tests)

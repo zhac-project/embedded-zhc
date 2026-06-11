@@ -45,6 +45,14 @@ across the ZHAC platform.
   bundle, reducing a tri-channel sensor to a dead IAS stub. Re-ported to the
   three generic measurement decoders (`kFzTemperature` 0x0402, `kFzHumidity`
   0x0405, `kFzOccupancy` 0x0406) with matching exposes and binds.
+- **Smart Home Pty HGZB-07A RGBW downlight: dropped colour + colour-temperature
+  axes.** z2m models it as `m.light({colorTemp: {range: undefined}, color: true})`
+  (on/off + level + colorTemp + colour), but the auto-generator collapsed
+  `m.light()` to on/off + brightness only, dropping the lightingColorCtrl
+  (0x0300) channels. Graduated to a parent override that restores
+  `kFzColorTemperature`/`kTzColorTemp` + `kFzColor`/`kTzColor`, the
+  `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes and the 0x0300
+  binding. The HGZB-20-DE plug (`m.onOff()`) is verified clean.
 
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
