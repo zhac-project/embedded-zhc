@@ -1029,6 +1029,14 @@ target_link_libraries(zhc_ajax_online_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_frankever_parity_tests tests/test_frankever_parity.cpp)
 target_link_libraries(zhc_frankever_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the Seastar Intelligence 020B0B (Fischer & Honsel LED
+# Tischleuchte Beta Zig). z2m m.light({colorTemp:{range:[153,370]}, color:true})
+# but the auto-port collapsed it to on/off + brightness, dropping the
+# colorTemp + XY/HS colour axis (restored via kFzColorTemperature + kFzColor,
+# bind 0x0300). Graduated to a parent override.
+add_executable(zhc_seastar_intelligence_parity_tests tests/test_seastar_intelligence_parity.cpp)
+target_link_libraries(zhc_seastar_intelligence_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixture for the Cleverio SA100 siren + SS300 temp/humidity sensor.
 # SA100 swapped kFzIasZone for kFzIasZoneAlarmOnly (z2m fz.ias_alarm_only_alarm_1
 # emits bare `alarm` only) and dropped phantom tamper/battery_low exposes.
@@ -3265,6 +3273,7 @@ add_test(NAME zhc_ITCommander_parity_tests  COMMAND zhc_ITCommander_parity_tests
 add_test(NAME zhc_qmotion_parity_tests      COMMAND zhc_qmotion_parity_tests)
 add_test(NAME zhc_bega_parity_tests         COMMAND zhc_bega_parity_tests)
 add_test(NAME zhc_frankever_parity_tests    COMMAND zhc_frankever_parity_tests)
+add_test(NAME zhc_seastar_intelligence_parity_tests COMMAND zhc_seastar_intelligence_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

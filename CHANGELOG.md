@@ -159,6 +159,14 @@ across the ZHAC platform.
   two enum exposes. (Not a TS0601 0xEF00 Tuya-DP device — config rides standard
   attribute reports.)
 
+- **Seastar Intelligence 020B0B (Fischer & Honsel LED Tischleuchte Beta Zig):
+  dropped color/colorTemp axis.** z2m drives this bulb via
+  `m.light({colorTemp:{range:[153,370]}, color:true})` (on/off + brightness +
+  colorTemp mireds + XY/HS color), but the auto-port collapsed it to on/off +
+  brightness only, dropping the entire `lightingColorCtrl` (0x0300) axis.
+  Restored `kFzColorTemperature` + `kFzColor` (+ `kTzColorTemp`/`kTzColor`),
+  the `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes, and the
+  0x0300 bind. Graduated to a parent override.
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
