@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Villeroy & Boch C5850000 + C0040000 (Subway 3.0 / mirror kits): dropped
+  colour-temperature axis.** Both are tunable-white (CCT) lights driven in z2m
+  by `m.light({colorTemp:{range:[160,450]}})` — on/off + brightness +
+  colorTemperature on `lightingColorCtrl` (0x0300). The auto-port wired only
+  `kFzOnOff` + `kFzBrightness` and dropped the entire 0x0300 channel, so
+  `color_temp` never decoded and was missing from the exposes/bindings.
+  Graduated both to Tier-2 overrides that restore `kFzColorTemperature` +
+  `kTzColorTemp`, the `color_temp` expose ([160,450] mireds), and the 0x0300
+  binding. No colour (xy/hs) axis is added — z2m has no `color:` arg.
+
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
