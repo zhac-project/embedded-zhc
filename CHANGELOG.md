@@ -35,6 +35,18 @@ across the ZHAC platform.
   added `kFzColor` + `kFzColorTemperature` (+ `kTzColor` / `kTzColorTemp`),
   `color_x`/`color_y`/`hue`/`saturation`/`color_temp` exposes, and bind 0x0300
   (lightingColorCtrl). Pinned by `tests/test_zipato_parity.cpp`.
+- **Micro Matic ZB250 LED dimmer: dropped electricityMeter 0x0B04 half +
+  power_on_behavior.** z2m drives the ZB250 (SZ1000) with
+  `m.light({configureReporting:true})` + `m.electricityMeter()`, the latter
+  defaulting `cluster:"both"` so it wires both seMetering (0x0702, energy) and
+  haElectricalMeasurement (0x0B04, power/voltage/current). The Tier-1 auto-port
+  wired only `kFzMetering` (0x0702), dropping the entire 0x0B04 half (no
+  voltage, no current, and power only via the 0x0702 fallback). Graduated to a
+  Tier-2 override that adds `kFzElectricalMeasurement`, the `voltage`/`current`
+  exposes and the 0x0B04 binding. `m.light()` also defaults
+  `powerOnBehavior=true` (genOnOff 0x4003), which the port dropped — restored
+  via `kFzPowerOnBehavior`/`kTzPowerOnBehavior1` + the enum expose. No
+  color/colorTemp axis (m.light() called with neither arg).
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
