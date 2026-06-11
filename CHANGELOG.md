@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Spacetronik ZB-DG02 gas leakage sensor: IAS-vs-Tuya-DP misroute.** The
+  TS0601 / `_TZE204_uc0iv1hb` was auto-ported as a generic IAS-zone
+  (`ssIasZone` 0x0500) emitting bare `alarm`/`tamper`/`battery_low`. The device
+  speaks none of that — z2m decodes it via `tuya.modernExtend.tuyaBase({dp:true})`
+  + a single datapoint `[1, "gas", trueFalse0]` on the 0xEF00 manuSpecificTuya DP
+  stream. The misroute left the only real channel (`gas`) dead. Graduated to a
+  Tier-2 override wiring `fz_tuya_datapoints` with `dp::binary_inv(1,"gas")`
+  (matching z2m `trueFalse0`: wire 0 → gas detected), the `gas` expose, and a
+  0xEF00 binding.
+
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`

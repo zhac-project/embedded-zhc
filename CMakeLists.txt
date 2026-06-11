@@ -1082,6 +1082,13 @@ target_link_libraries(zhc_spotmau_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_heiman_parity_tests tests/test_heiman_parity.cpp)
 target_link_libraries(zhc_heiman_parity_tests PRIVATE zhc_definitions)
 
+# Spacetronik ZB-DG02 gas leakage sensor — auto-ported as a generic IAS-zone
+# (ssIasZone 0x0500) emitting bare alarm/tamper/battery_low; z2m decodes it via
+# a Tuya 0xEF00 DP stream ([1,"gas",trueFalse0]). Graduated to a Tier-2 override
+# wiring fz_tuya_datapoints. See tests/README.md.
+add_executable(zhc_spacetronik_parity_tests tests/test_spacetronik_parity.cpp)
+target_link_libraries(zhc_spacetronik_parity_tests PRIVATE zhc_definitions)
+
 # Hommyn MS-20-Z / WS-20-Z — both auto-ports wired kFzIasZone (bare "alarm")
 # against a semantic expose key. Repointed to typed kFzIasMotionAlarm
 # (occupancy) / kFzIasWaterLeakAlarm (water_leak). See tests/README.md.
@@ -2967,6 +2974,7 @@ add_test(NAME zhc_casaia_parity_tests       COMMAND zhc_casaia_parity_tests)
 add_test(NAME zhc_akuvox_parity_tests       COMMAND zhc_akuvox_parity_tests)
 add_test(NAME zhc_spotmau_parity_tests      COMMAND zhc_spotmau_parity_tests)
 add_test(NAME zhc_heiman_parity_tests       COMMAND zhc_heiman_parity_tests)
+add_test(NAME zhc_spacetronik_parity_tests  COMMAND zhc_spacetronik_parity_tests)
 add_test(NAME zhc_hommyn_parity_tests       COMMAND zhc_hommyn_parity_tests)
 add_test(NAME zhc_edp_parity_tests          COMMAND zhc_edp_parity_tests)
 add_test(NAME zhc_prolight_parity_tests     COMMAND zhc_prolight_parity_tests)
