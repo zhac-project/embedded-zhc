@@ -1,7 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Soma SmartShades3 — auto-generated.
-// Smart shades 3
+// Tier 2: Soma SmartShades3 — graduated (cover tilt 0x0009 added).
+// "Smart shades 3". z2m extend =
+//   m.battery() + m.windowCovering({controls:["lift","tilt"]})
+// One gap in the auto-port:
+//   m.windowCovering({controls:["lift","tilt"]}) exposes BOTH position
+//   (lift, attr 0x0008) AND tilt (currentPositionTiltPercentage, attr
+//   0x0009), decodes both via fz.cover_position_tilt and writes both via
+//   tz.cover_position_tilt. The port wired only kFzCoverPosition /
+//   kTzCoverPosition (lift) and exposed only `position`, dropping the tilt
+//   channel. Added kFzCoverTilt + kTzCoverPositionTilt + a `tilt` expose.
+//   Lift and tilt both report on the same closuresWindowCovering (0x0102)
+//   cluster, so the existing {1, 0x0102} bind already covers tilt.
+//   Battery (battery + voltage via m.battery() / kFzBattery) was already
+//   correctly ported — not a gap.
 // z2m-source: soma.ts #SmartShades3.
 #include "definitions/_generic/_shared.hpp"
 
@@ -10,9 +22,11 @@ namespace {
 const FzConverter* const kFz_SmartShades3[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzCoverPosition,
+    &::zhc::generic::kFzCoverTilt,
 };
 const TzConverter* const kTz_SmartShades3[] = {
     &::zhc::generic::kTzCoverPosition,
+    &::zhc::generic::kTzCoverPositionTilt,
 };
 constexpr const char* kModels_SmartShades3[] = { "SmartShades3" };
 
@@ -24,6 +38,7 @@ constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
+    {"tilt", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
