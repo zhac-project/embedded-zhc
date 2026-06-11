@@ -1123,6 +1123,14 @@ target_link_libraries(zhc_seastar_intelligence_parity_tests PRIVATE zhc_definiti
 # endpoints 1/2/3 and declares state_left/state_center/state_right.
 add_executable(zhc_atsmart_parity_tests tests/test_atsmart_parity.cpp)
 target_link_libraries(zhc_atsmart_parity_tests PRIVATE zhc_definitions)
+# Parity fixture for OpenLumi GWRJN5169 (Lumi Router JN5169). z2m is a single
+# m.deviceTemperature() router (genDeviceTempCfg 0x0002 currentTemperature, NO
+# on/off, NO battery). The Tier-1 auto-port invented a phantom on/off + phantom
+# battery and dropped device_temperature entirely. Graduated to a Tier-2
+# override wiring the generic kFzDeviceTemperature + the 0x0002 bind, exposing
+# only device_temperature (phantom channels removed).
+add_executable(zhc_openlumi_parity_tests tests/test_openlumi_parity.cpp)
+target_link_libraries(zhc_openlumi_parity_tests PRIVATE zhc_definitions)
 
 # Parity fixture for the Cleverio SA100 siren + SS300 temp/humidity sensor.
 # SA100 swapped kFzIasZone for kFzIasZoneAlarmOnly (z2m fz.ias_alarm_only_alarm_1
@@ -3539,6 +3547,7 @@ add_test(NAME zhc_frankever_parity_tests    COMMAND zhc_frankever_parity_tests)
 add_test(NAME zhc_seastar_intelligence_parity_tests COMMAND zhc_seastar_intelligence_parity_tests)
 add_test(NAME zhc_shyugj_parity_tests       COMMAND zhc_shyugj_parity_tests)
 add_test(NAME zhc_atsmart_parity_tests      COMMAND zhc_atsmart_parity_tests)
+add_test(NAME zhc_openlumi_parity_tests     COMMAND zhc_openlumi_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)

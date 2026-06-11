@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **OpenLumi GWRJN5169 (Lumi Router JN5169): phantom on/off + battery and a
+  dropped device_temperature.** z2m models this device as a mains-powered
+  router with a single `m.deviceTemperature()` modernExtend (genDeviceTempCfg
+  0x0002 currentTemperature) and no on/off, no battery. The Tier-1 auto-port
+  invented a phantom on/off (`kFzOnOff` + a `state` expose + a 0x0006 bind)
+  and a phantom battery (`kFzBattery` + battery/voltage exposes + a 0x0001
+  bind), while dropping the one real channel entirely. Graduated to a Tier-2
+  override that wires the generic `kFzDeviceTemperature` (raw whole-°C, signed),
+  exposes only `device_temperature`, and binds genDeviceTempCfg (0x0002) — with
+  the phantom channels removed.
+
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
