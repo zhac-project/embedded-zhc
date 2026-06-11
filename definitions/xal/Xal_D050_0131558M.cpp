@@ -1,8 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Xal 050-0131558M — auto-generated.
+// Tier 2: Xal 050-0131558M — graduated from generated/.
 // Spotlight for Just MOVE IT 25 track
-// z2m-source: xal.ts #050-0131558M.
+// z2m-source: xal.ts #050-0131558M (m.light(), no color/colorTemp args).
+//
+// z2m's bare m.light() exposes state + brightness + power_on_behavior
+// (e.power_on_behavior(["off","on","toggle","previous"]) backed by
+// fz/tz.power_on_behavior on genOnOff attr 0x4003 startUpOnOff). The
+// auto-port dropped that decodable channel; restored via the generic
+// kFz/kTzPowerOnBehavior1 pair. No color/colorTemp axis exists — bare
+// m.light() omits both (the dimmable-only luminaire is NOT RGBW/CCT).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::xal {
@@ -10,10 +17,12 @@ namespace {
 const FzConverter* const kFz_D050_0131558M[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzPowerOnBehavior1,
 };
 const TzConverter* const kTz_D050_0131558M[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzPowerOnBehavior1,
 };
 constexpr const char* kModels_D050_0131558M[] = { "050-0131558M" };
 
@@ -24,6 +33,7 @@ constexpr const char* kModels_D050_0131558M[] = { "050-0131558M" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
