@@ -21,6 +21,15 @@ across the ZHAC platform.
   controllable switch. Graduated to a Tier-2 override wiring the Tuya DP map via
   `factory::TuyaRw` (temperature_unit is STATE_SET) with the four sensor exposes.
 
+- **IOTPerfect PF-PM02D-TYZ smart water/gas valve: Tuya-MCU misroute (dead
+  state).** The auto-port wired this TS0601 / `_TZE2xx` valve as a bare
+  genOnOff stub (`kFzOnOff` / `kTzOnOff`, bound to cluster 0x0006) — a cluster
+  the device never speaks — leaving its single `state` expose dead in both
+  directions. z2m decodes via `legacy.fz.tuya_switch` (0xEF00 DP 1 `state`,
+  bool → "ON"/"OFF") and writes via `legacy.tz.tuya_switch_state`. Graduated to
+  a Tier-2 override wiring `fz_tuya_datapoints` + `tz_tuya_datapoints` over the
+  0xEF00 DP map (DP 1 → `state`, `kTuyaDpFlagBoolEnum`), bound to 0xEF00 with
+  the shared `tuya_base_configure()`. Covered by `test_iotperfect_parity`.
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
