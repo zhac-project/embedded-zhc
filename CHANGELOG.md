@@ -77,6 +77,16 @@ across the ZHAC platform.
   Tier-2 override wiring both typed converters — `kFzIasCoAlarm` (bit 0) and
   `kFzIasGasAlarm2` (bit 1) — and aligned exposes to
   carbon_monoxide/gas/tamper/battery_low.
+- **Shyugj S901D-ZG door sensor: wrong IAS key + dropped alarm_2 channel.**
+  z2m wires `m.iasZoneAlarm({zoneType:"generic", zoneAttributes:["alarm_1",
+  "alarm_2","tamper","battery_low"]})`, which keeps the bare zone keys and, with
+  both alarms requested, exposes BOTH alarm bits: `alarm_1` = zoneStatus bit0,
+  `alarm_2` = bit1, `tamper` = bit2, `battery_low` = bit3. The auto-port wired
+  the generic `kFzIasZone`, which emits a single `alarm` (bit0) + tamper +
+  battery_low — the WRONG key (`alarm` vs `alarm_1`) AND dropping `alarm_2`
+  (bit1) entirely. Graduated to a Tier-2 override wiring
+  `kFzIasZoneStatusChange` (emits alarm_1/alarm_2/tamper/battery_low) and
+  declaring both bare alarm exposes.
 
 - **Soanalarm SNT858Z soil moisture sensor: dead, mis-classified Tuya-DP map.**
   z2m wires this TS0601 device as a Tuya-MCU sensor
