@@ -1353,6 +1353,14 @@ target_link_libraries(zhc_gs_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_hornbach_parity_tests tests/test_hornbach_parity.cpp)
 target_link_libraries(zhc_hornbach_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Sowilo DS L258 "Heimdall Pro" 5-channel RGBWW controller.
+# z2m's m.light({colorTemp, color:{modes:["xy","hs"]}}) is a full RGB+CCT
+# light, but the generated port wired only kFzOnOff + kFzBrightness
+# (0x0006/0x0008), dropping the lightingColorCtrl (0x0300) axis — both
+# color_temp and the colour surface. Graduated to a Tier-2 override.
+add_executable(zhc_sowilo_parity_tests tests/test_sowilo_parity.cpp)
+target_link_libraries(zhc_sowilo_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Somfy roller-shutter / blind family. Ysia 5 (1871154) is a
 # 5-channel remote whose port carried an endpoint_map but no
 # endpoint_action_suffix, so all five buttons collided on a bare "action";
@@ -3297,6 +3305,7 @@ add_test(NAME zhc_paulmann_parity_tests     COMMAND zhc_paulmann_parity_tests)
 add_test(NAME zhc_evn_parity_tests          COMMAND zhc_evn_parity_tests)
 add_test(NAME zhc_lutron_parity_tests       COMMAND zhc_lutron_parity_tests)
 add_test(NAME zhc_hornbach_parity_tests     COMMAND zhc_hornbach_parity_tests)
+add_test(NAME zhc_sowilo_parity_tests       COMMAND zhc_sowilo_parity_tests)
 add_test(NAME zhc_the_light_group_parity_tests COMMAND zhc_the_light_group_parity_tests)
 add_test(NAME zhc_muller_licht_parity_tests COMMAND zhc_muller_licht_parity_tests)
 add_test(NAME zhc_custom_devices_diy_parity_tests COMMAND zhc_custom_devices_diy_parity_tests)
