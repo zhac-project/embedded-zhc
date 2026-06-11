@@ -1,8 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Hoftronic HD300W-ZB — auto-generated.
-// Rotary smart zigbee LED dimmer
-// z2m-source: hoftronic.ts #HD300W-ZB.
+// Tier 2: Hoftronic HD300W-ZB — graduated from generated/ for parity fix.
+// Rotary smart zigbee LED dimmer.
+// z2m-source: hoftronic.ts #HD300W-ZB — m.light({powerOnBehavior:true,...}).
+// Parity fix: z2m m.light() with powerOnBehavior:true exposes
+// `power_on_behavior` and wires fz.power_on_behavior / tz.power_on_behavior
+// (genOnOff 0x4003 startUpOnOff). The auto-port dropped this axis, reducing
+// the dimmer to bare on/off + brightness. Restore the read+write converters
+// (generic kFzPowerOnBehavior / kTzPowerOnBehavior1, both genOnOff 0x4003)
+// and the enum expose. No color/colorTemp axis exists in z2m (m.light called
+// without color/colorTemp args) — none added.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::hoftronic {
@@ -10,10 +17,12 @@ namespace {
 const FzConverter* const kFz_HD300W_ZB[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzPowerOnBehavior,   // genOnOff 0x4003 startUpOnOff
 };
 const TzConverter* const kTz_HD300W_ZB[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &::zhc::generic::kTzPowerOnBehavior1,  // genOnOff 0x4003 writeAttributes
 };
 constexpr const char* kModels_HD300W_ZB[] = { "HD300W-ZB" };
 
@@ -24,6 +33,7 @@ constexpr const char* kModels_HD300W_ZB[] = { "HD300W-ZB" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
