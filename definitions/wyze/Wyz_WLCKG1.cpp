@@ -1,8 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Wyze WLCKG1 — auto-generated.
+// Tier 2: Wyze WLCKG1 — graduated to wire the dropped lock operation-event decoder.
 // Lock
-// z2m-source: wyze.ts #WLCKG1.
+// z2m-source: wyze.ts #WLCKG1
+//   fromZigbee: [fz.lock, fz.lock_operation_event, fz.battery]
+// The auto-port wired only fz.lock + fz.battery and DROPPED
+// fz.lock_operation_event (closuresDoorLock cmd 0x21, ServerToClient),
+// which emits the action / action_user / action_source[_name] runtime
+// keys reporting how the lock was operated. Generic kFzLockOperationEvent
+// already decodes it; wire it back alongside the existing converters.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::wyze {
@@ -10,6 +16,7 @@ namespace {
 const FzConverter* const kFz_WLCKG1[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzLock,
+    &::zhc::generic::kFzLockOperationEvent,
 };
 const TzConverter* const kTz_WLCKG1[] = {
     &::zhc::generic::kTzLock,
