@@ -1247,6 +1247,13 @@ target_link_libraries(zhc_hornbach_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_somfy_parity_tests tests/test_somfy_parity.cpp)
 target_link_libraries(zhc_somfy_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Chacon roller-shutter / on-off family. ZB-ERSM-01 wires
+# m.windowCovering + m.commandsWindowCovering; the auto-port kept only the
+# position half and dropped the action commands (closuresWindowCovering
+# 0x00/0x01/0x02) — restored kFzCommandCoverOpen/Close/Stop + action expose.
+add_executable(zhc_chacon_parity_tests tests/test_chacon_parity.cpp)
+target_link_libraries(zhc_chacon_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Samotech relay/dimmer + metering family. SM309-S, SM323_v2
 # (SM323 / HK_DIM_A) and SM308-2CH all use z2m m.electricityMeter() with no
 # args -> cluster:"both" + ac, decoding seMetering (0x0702: energy) AND
@@ -3012,6 +3019,7 @@ add_test(NAME zhc_fantem_parity_tests       COMMAND zhc_fantem_parity_tests)
 add_test(NAME zhc_hzc_electric_parity_tests COMMAND zhc_hzc_electric_parity_tests)
 add_test(NAME zhc_woolley_parity_tests      COMMAND zhc_woolley_parity_tests)
 add_test(NAME zhc_somfy_parity_tests        COMMAND zhc_somfy_parity_tests)
+add_test(NAME zhc_chacon_parity_tests       COMMAND zhc_chacon_parity_tests)
 add_test(NAME zhc_multiterm_parity_tests    COMMAND zhc_multiterm_parity_tests)
 add_test(NAME zhc_climax_parity_tests       COMMAND zhc_climax_parity_tests)
 add_test(NAME zhc_blaupunkt_parity_tests    COMMAND zhc_blaupunkt_parity_tests)

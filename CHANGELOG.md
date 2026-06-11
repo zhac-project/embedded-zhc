@@ -88,6 +88,16 @@ across the ZHAC platform.
   Exposes corrected to the single boolean `gas` / `smoke`. Added clusters
   0x0409/0x040A to the cluster-name table.
 
+- **Chacon ZB-ERSM-01 roller shutter: missing window-cover action.** z2m wires
+  `m.windowCovering` PLUS `m.commandsWindowCovering({commands:["open","close",
+  "stop"]})`, the latter adding an `action` enum decoded from
+  `closuresWindowCovering` cluster-specific commands 0x00 upOpen / 0x01
+  downClose / 0x02 stop (the module's own button presses). The auto-port kept
+  only the position half and dropped the command block, so those frames decoded
+  to nothing. Graduated to a Tier-2 override wiring
+  `kFzCommandCoverOpen/Close/Stop` + an `action` expose (single channel → bare
+  action). Position decode retained. `coverMode` (write-only Composite via
+  `tz.cover_mode`) deferred as config infra.
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
