@@ -2484,6 +2484,9 @@ target_link_libraries(zhc_mazda_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_neo_parity_tests tests/test_neo_parity.cpp)
 target_link_libraries(zhc_neo_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_bseed_parity_tests tests/test_bseed_parity.cpp)
+target_link_libraries(zhc_bseed_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for the Nous (Tuya-OEM) family. The E6 and SZ-T04 LCD
 # temperature/humidity sensors are TS0601 Tuya-DP devices but the generated
 # defs wired a genPowerCfg-only battery converter, so temperature, humidity
@@ -3108,6 +3111,7 @@ add_test(NAME zhc_nedis_parity_tests        COMMAND zhc_nedis_parity_tests)
 add_test(NAME zhc_saswell_parity_tests      COMMAND zhc_saswell_parity_tests)
 add_test(NAME zhc_mazda_parity_tests        COMMAND zhc_mazda_parity_tests)
 add_test(NAME zhc_neo_parity_tests          COMMAND zhc_neo_parity_tests)
+add_test(NAME zhc_bseed_parity_tests        COMMAND zhc_bseed_parity_tests)
 add_test(NAME zhc_nous_parity_tests         COMMAND zhc_nous_parity_tests)
 add_test(NAME zhc_automaton_parity_tests    COMMAND zhc_automaton_parity_tests)
 add_test(NAME zhc_shinasystem_parity_tests  COMMAND zhc_shinasystem_parity_tests)
