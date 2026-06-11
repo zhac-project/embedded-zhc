@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Girier JR-ZDS01 1-gang mini switch: dropped `power_on_behavior` +
+  `switch_type` config channels.** z2m builds this device with
+  `tuya.modernExtend.tuyaOnOff({switchType: true})`, which surfaces three
+  states: `state` (genOnOff on/off), `power_on_behavior` (genOnOff attr
+  0x8002 `moesStartUpOnOff`) and `switch_type` (manuSpecificTuya2/0xE001 attr
+  0xD030 `switchType`, `{0:toggle,1:state,2:momentary}`). The auto-port carried
+  only `state`, so both config-attr decoders and their write paths were dead.
+  Graduated to a Tier-2 override wiring the existing `tuya/_shared` converters
+  (`kFzTuyaPowerOnBehavior`/`kFzTuyaSwitchType` + `kTz*` twins) and adding the
+  two enum exposes. (Not a TS0601 0xEF00 Tuya-DP device — config rides standard
+  attribute reports.)
+
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`

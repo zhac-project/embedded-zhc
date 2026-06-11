@@ -2429,6 +2429,9 @@ target_link_libraries(zhc_ynoa_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_avatto_parity_tests tests/test_avatto_parity.cpp)
 target_link_libraries(zhc_avatto_parity_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_girier_parity_tests tests/test_girier_parity.cpp)
+target_link_libraries(zhc_girier_parity_tests PRIVATE zhc_definitions)
+
 # Parity fixtures for Xenon. The single z2m X7726 curtain motor (Tuya TS0601 /
 # _TZE284_hbjwgkdh, a 0xEF00 DP device) had been emitted as TWO colliding defs
 # for the same fingerprint: the correct full DP port plus a stub that misrouted
@@ -3101,6 +3104,7 @@ add_test(NAME zhc_simpla_home_parity_tests  COMMAND zhc_simpla_home_parity_tests
 add_test(NAME zhc_zemismart_parity_tests    COMMAND zhc_zemismart_parity_tests)
 add_test(NAME zhc_ynoa_parity_tests         COMMAND zhc_ynoa_parity_tests)
 add_test(NAME zhc_avatto_parity_tests       COMMAND zhc_avatto_parity_tests)
+add_test(NAME zhc_girier_parity_tests       COMMAND zhc_girier_parity_tests)
 add_test(NAME zhc_xenon_parity_tests        COMMAND zhc_xenon_parity_tests)
 add_test(NAME zhc_javis_parity_tests        COMMAND zhc_javis_parity_tests)
 add_test(NAME zhc_weten_parity_tests        COMMAND zhc_weten_parity_tests)
