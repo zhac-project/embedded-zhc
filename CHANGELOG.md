@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **TNCE TNCE_CLIMATE temperature & humidity sensor: missing decoders.** z2m
+  wires `m.temperature()` + `m.humidity()` + `m.battery()` and the TELINK
+  TLSR82xx fingerprint declares inputClusters `[0,3,32,1026,1029,1]`
+  (1026=`msTemperatureMeasurement`, 1029=`msRelativeHumidity`,
+  1=`genPowerCfg`). The auto-port lowered only `kFzBattery`, dropping BOTH
+  environmental channels (their decoders, exposes and bindings). Graduated to a
+  Tier-2 override adding `kFzTemperature` (0x0402) + `kFzHumidity` (0x0405),
+  their `temperature`/`humidity` exposes and the 0x0402/0x0405 bindings.
+
 - **Current Products Corp CP180335E-01 ("E-Wand") tilt blind: wrong cover
   channel.** z2m decodes this hybrid blind via the tilt channel
   (`fz.cover_position_tilt` + `meta.coverStateFromTilt`, `currentPositionTilt`
