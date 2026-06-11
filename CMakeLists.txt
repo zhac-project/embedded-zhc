@@ -934,6 +934,15 @@ target_link_libraries(zhc_smart9_parity_tests PRIVATE zhc_definitions)
 
 add_executable(zhc_senoro_parity_tests tests/test_senoro_parity.cpp)
 target_link_libraries(zhc_senoro_parity_tests PRIVATE zhc_definitions)
+
+# Parity for the Shyugj S901D-ZG door sensor. z2m wires m.iasZoneAlarm with
+# zoneType:"generic" + zoneAttributes:["alarm_1","alarm_2","tamper",
+# "battery_low"], exposing BOTH alarm bits (bit0/bit1). The auto-port wired
+# generic kFzIasZone (single `alarm` key = bit0 + tamper + battery_low),
+# emitting the WRONG key (`alarm` vs `alarm_1`) and dropping alarm_2 (bit1).
+# Graduated to a parent override wiring kFzIasZoneStatusChange.
+add_executable(zhc_shyugj_parity_tests tests/test_shyugj_parity.cpp)
+target_link_libraries(zhc_shyugj_parity_tests PRIVATE zhc_definitions)
 # Parity fixtures for the Swann security family. The auto-port emitted dead
 # channels: SWO-MOS1PA/SWO-WDS1PA used generic kFzIasZone (bare `alarm` key)
 # instead of typed occupancy/contact, and SWO-KEF1PA was mis-ported as a
@@ -3296,6 +3305,7 @@ add_test(NAME zhc_qmotion_parity_tests      COMMAND zhc_qmotion_parity_tests)
 add_test(NAME zhc_bega_parity_tests         COMMAND zhc_bega_parity_tests)
 add_test(NAME zhc_frankever_parity_tests    COMMAND zhc_frankever_parity_tests)
 add_test(NAME zhc_seastar_intelligence_parity_tests COMMAND zhc_seastar_intelligence_parity_tests)
+add_test(NAME zhc_shyugj_parity_tests       COMMAND zhc_shyugj_parity_tests)
 add_test(NAME zhc_fixtures
          COMMAND zhc_fixture_runner
                  ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures)
