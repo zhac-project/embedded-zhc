@@ -19,6 +19,15 @@ across the ZHAC platform.
   bare on/off, dropping that axis AND the power-source override. Graduated to a
   Tier-2 override that restores `kFzPowerOnBehavior` / `kTzPowerOnBehavior1` +
   the enum expose and sets `power_source_override = 0x01` (Mains, single phase).
+- **CEL (Cortet) CGW-Z-0010 range extender: phantom on/off control.** z2m wires
+  this MeshConnect "Z10" router as a pure repeater
+  (`fromZigbee:[fz.linkquality_from_basic]`, `toZigbee:[]`, `exposes:[]`;
+  linkquality is stack-level metadata, not a device expose). The Tier-1
+  auto-port mis-ported it as a controllable on/off switch — a phantom `state`
+  expose plus `kFzOnOff`/`kTzOnOff` and a genOnOff (0x0006) bind — a dead
+  control the extender never speaks. Graduated to a Tier-2 override stripped to
+  the canonical router shape: no converters, no exposes, no bindings.
+
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
