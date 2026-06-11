@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Bouffalo Lab RMC002 US plug smart socket: dropped power_on_behavior axis +
+  forcePowerSource override.** z2m drives it with `[m.onOff(),
+  m.forcePowerSource({powerSource:"Mains (single phase)"})]`. `m.onOff()`
+  defaults `powerOnBehavior=true`, wiring `fz.power_on_behavior` /
+  `tz.power_on_behavior` (genOnOff 0x4003 startUpOnOff) plus the
+  `power_on_behavior` enum expose; the Tier-1 auto-port collapsed the socket to
+  bare on/off, dropping that axis AND the power-source override. Graduated to a
+  Tier-2 override that restores `kFzPowerOnBehavior` / `kTzPowerOnBehavior1` +
+  the enum expose and sets `power_source_override = 0x01` (Mains, single phase).
 - **Atsmart Z6 3-gang wall switch: missing per-endpoint bindings + collapsed
   exposes.** z2m drives the Z6 with `m.deviceEndpoints({left:1,center:2,
   right:3})` + `m.onOff({endpointNames:["left","center","right"]})`, binding
