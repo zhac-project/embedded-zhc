@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Quirky POFLW-WH02 ("Overflow") water-leak sensor: IAS dead-key.** z2m
+  drives it with `m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:
+  ["alarm_1","battery_low"]})`, which publishes the alarm under the semantic
+  key `water_leak` (zoneStatus bit 0). The Tier-1 auto-port wired the generic
+  `kFzIasZone` (which emits the bare `alarm` key) against an `alarm` expose the
+  device never names, so the leak signal was dead. Swapped to the typed
+  `kFzIasWaterLeakAlarm` (bit 0 → `water_leak`, bit 2 → `tamper`, bit 3 →
+  `battery_low`) and renamed the expose `alarm` → `water_leak`. Graduated to a
+  Tier-2 override; pinned by `tests/test_quirky_parity.cpp`.
 - **Bouffalo Lab RMC002 US plug smart socket: dropped power_on_behavior axis +
   forcePowerSource override.** z2m drives it with `[m.onOff(),
   m.forcePowerSource({powerSource:"Mains (single phase)"})]`. `m.onOff()`

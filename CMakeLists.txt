@@ -2983,6 +2983,13 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+# Quirky POFLW-WH02 ("Overflow"): water-leak sensor whose auto-port wired the
+# generic kFzIasZone (bare "alarm") against an `alarm` expose the device never
+# names. z2m's m.iasZoneAlarm({zoneType:"water_leak"}) publishes the semantic
+# key `water_leak` (bit0). Swapped to the typed kFzIasWaterLeakAlarm.
+add_executable(zhc_quirky_parity_tests tests/test_quirky_parity.cpp)
+target_link_libraries(zhc_quirky_parity_tests PRIVATE zhc_definitions)
+
 # Bubendorff MONO iD4: lift+tilt roller shutter whose auto-port wired only
 # kFzCoverPosition (lift), dropping the tilt channel (attr 0x0009). Added the
 # generic kFzCoverTilt decoder + kTzCoverPositionTilt encoder + a tilt expose.
@@ -3545,6 +3552,7 @@ add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parit
 add_test(NAME zhc_wally_parity_tests        COMMAND zhc_wally_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
+add_test(NAME zhc_quirky_parity_tests       COMMAND zhc_quirky_parity_tests)
 add_test(NAME zhc_bubendorff_parity_tests   COMMAND zhc_bubendorff_parity_tests)
 add_test(NAME zhc_letsled_parity_tests      COMMAND zhc_letsled_parity_tests)
 add_test(NAME zhc_task_lighting_parity_tests COMMAND zhc_task_lighting_parity_tests)
