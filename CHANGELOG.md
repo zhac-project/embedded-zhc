@@ -132,6 +132,12 @@ across the ZHAC platform.
   restoring `kFzColorTemperature`+`kFzColor` /`kTzColorTemp`+`kTzColor`, the
   `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes, and the 0x0300
   binding. Covered by `tests/test_gumax_parity.cpp`.
+- **GMY Smart Bulb B07KG5KF5R ("CCT box"): dropped colorTemp axis.** The
+  `m.light({colorTemp:{range:undefined}})` def was auto-ported to on/off +
+  brightness only, dropping the lightingColorCtrl (0x0300) colorTemperature
+  channel. Graduated the def and restored `kFzColorTemperature` /
+  `kTzColorTemp`, the `color_temp` expose, and the 0x0300 binding (CCT-only,
+  no phantom colour axis since `color` is unset). Added `test_gmy_parity.cpp`.
 
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,

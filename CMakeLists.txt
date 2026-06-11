@@ -953,6 +953,17 @@ target_link_libraries(zhc_lds_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_securifi_parity_tests tests/test_securifi_parity.cpp)
 target_link_libraries(zhc_securifi_parity_tests PRIVATE zhc_definitions)
 
+# Parity fixture for the GMY Smart Bulb B07KG5KF5R ("CCT box"). z2m extend is
+# m.light({colorTemp: {range: undefined}}) → a tunable-white (CCT) bulb:
+# on/off + brightness + color_temp on lightingColorCtrl 0x0300. The Tier-1
+# auto-port collapsed m.light() to on/off + brightness only, dropping the
+# colorTemp axis (no kFzColorTemperature, no color_temp expose, no 0x0300 bind).
+# Graduated to a parent override restoring kFzColorTemperature/kTzColorTemp +
+# color_temp expose + the 0x0300 binding. range:undefined = CCT-only (no
+# color:true), so NO phantom hue/sat/xy axis — pinned by the regression guard.
+add_executable(zhc_gmy_parity_tests tests/test_gmy_parity.cpp)
+target_link_libraries(zhc_gmy_parity_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_smart9_parity_tests tests/test_smart9_parity.cpp)
 target_link_libraries(zhc_smart9_parity_tests PRIVATE zhc_definitions)
 
@@ -3243,6 +3254,7 @@ add_test(NAME zhc_scanproducts_parity_tests COMMAND zhc_scanproducts_parity_test
 add_test(NAME zhc_matcall_bv_parity_tests   COMMAND zhc_matcall_bv_parity_tests)
 add_test(NAME zhc_lds_parity_tests          COMMAND zhc_lds_parity_tests)
 add_test(NAME zhc_securifi_parity_tests     COMMAND zhc_securifi_parity_tests)
+add_test(NAME zhc_gmy_parity_tests          COMMAND zhc_gmy_parity_tests)
 add_test(NAME zhc_smart9_parity_tests       COMMAND zhc_smart9_parity_tests)
 add_test(NAME zhc_smart_home_pty_parity_tests COMMAND zhc_smart_home_pty_parity_tests)
 add_test(NAME zhc_ozsmartthings_parity_tests COMMAND zhc_ozsmartthings_parity_tests)
