@@ -2590,6 +2590,14 @@ target_link_libraries(zhc_onesti_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_feibit_parity_tests tests/test_feibit_parity.cpp)
 target_link_libraries(zhc_feibit_parity_tests PRIVATE zhc_definitions)
 
+# Parity for the Rademacher addZ colour-LED bulbs (35104001 / 35144001 /
+# RDM-35274001). All three are full RGB+CCT m.light() devices that the
+# auto-generator collapsed to on/off + brightness only — the colour-temperature
+# and colour axes were dropped. The fix re-wires kFzColorTemperature + kFzColor
+# and restores the matching exposes + lightingColorCtrl (0x0300) binding.
+add_executable(zhc_rademacher_parity_tests tests/test_rademacher_parity.cpp)
+target_link_libraries(zhc_rademacher_parity_tests PRIVATE zhc_definitions)
+
 # Parity for the Domraem DOM-Z-105P "5 in 1" LED controller family. The
 # auto-generator collapsed every m.light() to on/off + brightness, dropping the
 # 0x0300 axes: RGB regained hs color (kFzColor); RGBW/RGBCCT regained colorTemp
@@ -3017,6 +3025,7 @@ add_test(NAME zhc_aurora_lighting_parity_tests COMMAND zhc_aurora_lighting_parit
 add_test(NAME zhc_wally_parity_tests        COMMAND zhc_wally_parity_tests)
 add_test(NAME zhc_onesti_parity_tests       COMMAND zhc_onesti_parity_tests)
 add_test(NAME zhc_feibit_parity_tests       COMMAND zhc_feibit_parity_tests)
+add_test(NAME zhc_rademacher_parity_tests   COMMAND zhc_rademacher_parity_tests)
 add_test(NAME zhc_domraem_parity_tests      COMMAND zhc_domraem_parity_tests)
 add_test(NAME zhc_shenzhen_homa_parity_tests COMMAND zhc_shenzhen_homa_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)

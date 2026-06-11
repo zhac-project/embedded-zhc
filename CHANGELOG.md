@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Rademacher addZ colour LEDs (35104001 / 35144001 / RDM-35274001): restored
+  dropped colour-temperature + colour axes.** All three z2m defs are full
+  RGB+CCT bulbs (`m.light({colorTemp:{range:[153,555]}, color:...})`) but the
+  auto-port collapsed each `m.light()` to on/off + brightness only, dropping
+  both the CCT and colour channels. Graduated all three to Tier-2, wiring the
+  generic `kFzColorTemperature`/`kTzColorTemp` + `kFzColor`/`kTzColor` decoders,
+  restoring the `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes and
+  the `lightingColorCtrl` (0x0300) binding. Same dropped-axes class as the
+  SLV/Feibit colour-light fixes.
+
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.
