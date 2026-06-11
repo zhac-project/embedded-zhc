@@ -125,6 +125,13 @@ across the ZHAC platform.
   reports were never decoded. Graduated to a Tier-2 override that adds
   `kFzElectricalMeasurement`, the `voltage`+`current` exposes, and the 0x0B04
   binding.
+- **Gumax LST103 lighting system: dropped colorTemp + colour axis.** The
+  `m.light({colorTemp:{range:[153,370]}, color:{modes:["xy","hs"],
+  enhancedHue:true}})` def was auto-ported to on/off + brightness only, dropping
+  the entire lightingColorCtrl (0x0300) channel. Graduated to a Tier-2 override
+  restoring `kFzColorTemperature`+`kFzColor` /`kTzColorTemp`+`kTzColor`, the
+  `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes, and the 0x0300
+  binding. Covered by `tests/test_gumax_parity.cpp`.
 
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
