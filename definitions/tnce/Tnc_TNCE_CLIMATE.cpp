@@ -1,7 +1,12 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Tnce TNCE_CLIMATE — auto-generated.
-// Temperature and humidity sensor
+// Tier 2: Tnce TNCE_CLIMATE — hand-curated (was missing-decoder).
+// Temperature and humidity sensor (TELINK TLSR82xx end-device). z2m wires
+// m.temperature() + m.humidity() + m.battery() and the fingerprint declares
+// inputClusters [0,3,32,1026,1029,1] (1026=msTemperatureMeasurement,
+// 1029=msRelativeHumidity, 1=genPowerCfg). The auto-port lowered only
+// kFzBattery, dropping BOTH environmental channels (their decoders, exposes
+// and bindings). Added kFzTemperature (0x0402) + kFzHumidity (0x0405).
 // z2m-source: tnce.ts #TNCE_CLIMATE.
 #include "definitions/_generic/_shared.hpp"
 
@@ -9,6 +14,8 @@ namespace zhc::devices::tnce {
 namespace {
 const FzConverter* const kFz_TNCE_CLIMATE[] = {
     &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzTemperature,
+    &::zhc::generic::kFzHumidity,
 };
 
 constexpr const char* kModels_TNCE_CLIMATE[] = { "TLSR82xx" };
@@ -20,10 +27,14 @@ constexpr const char* kModels_TNCE_CLIMATE[] = { "TLSR82xx" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
+    {1, 0x0402},
+    {1, 0x0405},
 };
 // --- end auto-generated block ---
 
