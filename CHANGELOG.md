@@ -10,6 +10,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **iStar SCCV2403-2 (CCT) / SCCV2401-4 (RGBW) LED controllers: colour axes
+  dropped.** The auto-port collapsed both z2m `m.light(...)` bundles to on/off +
+  brightness only. SCCV2403-2 lost its `colorTemp:{range:[153,370]}` channel;
+  SCCV2401-4 lost both `colorTemp:{range:[275,295]}` and `color:{modes:[xy,hs]}`.
+  Restored `kFzColorTemperature`/`kFzColor` (+ tz peers), the
+  `color_temp`/`color_x`/`color_y`/`hue`/`saturation` exposes and the 0x0300
+  binding. SCCV2401-1 (plain dimmer) was already correct and is unchanged.
+
 - **Spotmau SP-PS1-02 / SP-WS-02 single-gang switches: control + reads dead on
   the wrong endpoint.** z2m declares `endpoint:()=>({default:16})` with a single
   `m.onOff()`, so genOnOff lives on endpoint 16 and publishes a bare `state`.
