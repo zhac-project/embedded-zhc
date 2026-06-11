@@ -74,6 +74,14 @@ across the ZHAC platform.
   `kFzIasContactAlarm1`/`kFzIasContactAlarm2` to `_generic/_shared` and graduated
   the def to a Tier-2 override using them, with matching `contact_alarm_1`/
   `contact_alarm_2` exposes.
+- **Nexelec Open'R air-quality sensor: dropped temperature/humidity/CO2
+  channels.** z2m drives it with `[m.temperature(), m.humidity(), m.co2(),
+  m.battery(), m.identify()]` (msTemperatureMeasurement 0x0402 /100,
+  msRelativeHumidity 0x0405 /100, msCO2 0x040D ppm, genPowerCfg 0x0001), but
+  the auto-port wired ONLY `kFzBattery`, reducing the sensor to battery-only.
+  Graduated to a Tier-2 override that re-wires `kFzTemperature` +
+  `kFzHumidity` + `kFzCO2`, adds the `temperature`/`humidity`/`co2` exposes,
+  and binds the three measurement clusters.
 
 - **Alchemy AL8TC13W-AP / AL8RGB13W-AP downlights: dropped colorTemp + colour
   axis.** Both `m.light()` defs were auto-ported to on/off + brightness only,
