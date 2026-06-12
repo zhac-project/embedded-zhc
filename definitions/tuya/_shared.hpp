@@ -102,6 +102,17 @@ inline constexpr std::uint8_t kTuyaDpFlagBoolEnum       = 0x08;
 // one Tuya enum DP on smoke / gas / leak detectors. Honours
 // kTuyaDpFlagInvertBool (inverts the final boolean) for symmetry.
 inline constexpr std::uint8_t kTuyaDpFlagEnumBool       = 0x10;
+// Moes weekly "Program" schedule (Tuya DP101 `moesSchedule`, BHT-002 family).
+// The raw DP is a 36-byte payload = 3 day-groups [weekdays, saturday, sunday],
+// each group = 4 periods, each period = 3 bytes [hour:1][minute:1][temp*2:1]
+// (temperature = byte / 2.0, 0.5 °C steps). Decode emits ONE round-trippable
+// string under key `program`:
+//   "<wd_p1..p4> | <sat_p1..p4> | <sun_p1..p4>"
+// with each period formatted "HH:MM/T.t" (same shape as kTuyaDpFlagScheduleDay)
+// and groups joined by " | ". Encode parses that string back to the 36 bytes
+// and sends the whole DP atomically (stateless — no shadow merge). Works on a
+// Raw DP (BytesRef on the wire). See codec in tuya/_shared.cpp.
+inline constexpr std::uint8_t kTuyaDpFlagMoesSchedule   = 0x20;
 
 struct TuyaDatapointMap {
     const TuyaDpMapEntry* entries;

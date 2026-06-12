@@ -213,6 +213,50 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
             return true;
         }
         default:
+            // Moes weekly Program (DP101 moesSchedule, BHT-002 family): a
+            // 36-byte Raw payload = 3 day-groups [weekdays, saturday, sunday],
+            // each 4 periods × [hour, minute, temp*2]. Emit ONE round-trippable
+            // string `program` = three 4-period groups joined by " | ", each
+            // period "HH:MM/T.t" (reuses the kTuyaDpFlagScheduleDay shape).
+            if (e.flags & kTuyaDpFlagMoesSchedule) {
+                if (raw.type != ValueType::BytesRef ||
+                    raw.bytes.size() < 36) {
+                    return false;  // wrong shape — abstain, no partial emit
+                }
+                const auto* b = raw.bytes.data();
+                // 12 periods: ~138 chars canonical, <=172 worst-case when
+                // garbage bytes widen %02u to 3 digits. tmp[192] keeps margin.
+                char tmp[192];
+                int off = 0;
+                bool ok = true;
+                for (int g = 0; g < 3 && ok; ++g) {
+                    if (g != 0) {
+                        const int n = std::snprintf(tmp + off,
+                            sizeof(tmp) - static_cast<std::size_t>(off), " | ");
+                        if (n <= 0) { ok = false; break; }
+                        off += n;
+                    }
+                    for (int p = 0; p < 4 && ok; ++p) {
+                        const int base = (g * 4 + p) * 3;
+                        const int n = std::snprintf(tmp + off,
+                            sizeof(tmp) - static_cast<std::size_t>(off),
+                            p == 0 ? "%02u:%02u/%.1f" : " %02u:%02u/%.1f",
+                            b[base], b[base + 1], b[base + 2] / 2.0);
+                        if (n <= 0 ||
+                            static_cast<std::size_t>(off + n) >= sizeof(tmp)) {
+                            ok = false; break;
+                        }
+                        off += n;
+                    }
+                }
+                if (!ok || off <= 0) return false;
+                const char* s = ctx.alloc_str(tmp,
+                    static_cast<std::size_t>(off));
+                if (!s) return false;
+                Value v{}; v.type = ValueType::StringRef; v.str = s;
+                out.put(e.out_key, v);
+                return true;
+            }
             // Schedule day: 4 × [h, m, t*2]. Some devices reuse the same DP
             // for schedule frames and a short non-schedule value (e.g. TRV26
             // DP17 carries either open_window_time or schedule_monday). Use
@@ -770,6 +814,86 @@ bool encode_enum(const TuyaDpMapEntry& e, const Value& in,
     return false;
 }
 
+// Strict parser for the Moes weekly `program` string → packed 36 bytes.
+// Inverse of the kTuyaDpFlagMoesSchedule decode branch. Layout:
+//   3 day-groups [weekdays, saturday, sunday] joined by " | ", each group
+//   = exactly 4 periods joined by " " (single space), each period
+//   "HH:MM/T.t" → [hour, minute, round(temp*2)]. 12 periods → 36 bytes.
+// Returns false (writing nothing) on ANY deviation: wrong group/period
+// count, stray characters, bad numeric syntax, hour>23, minute>59, or a
+// temperature whose ×2 value falls outside 0..255. No locale / atof: ints
+// are parsed by hand and the temperature ×2 is computed with exact integer
+// rounding so a canonical decode→encode round-trip is byte-identical.
+bool parse_moes_schedule(const char* s, std::uint8_t out[36]) {
+    if (!s) return false;
+    const char* p = s;
+
+    // Parse an unsigned decimal integer of 1+ digits; advance p; cap the
+    // accumulator so a long run of digits can't overflow (caller range-checks).
+    auto take_uint = [&p](std::uint32_t& v) -> bool {
+        if (*p < '0' || *p > '9') return false;
+        std::uint32_t acc = 0;
+        while (*p >= '0' && *p <= '9') {
+            if (acc < 100000U) acc = acc * 10U + static_cast<std::uint32_t>(*p - '0');
+            ++p;
+        }
+        v = acc;
+        return true;
+    };
+    auto take_char = [&p](char c) -> bool {
+        if (*p != c) return false;
+        ++p;
+        return true;
+    };
+
+    for (int g = 0; g < 3; ++g) {
+        if (g != 0) {
+            // Group separator " | " (space-pipe-space), exactly.
+            if (!take_char(' ') || !take_char('|') || !take_char(' ')) {
+                return false;
+            }
+        }
+        for (int prd = 0; prd < 4; ++prd) {
+            if (prd != 0 && !take_char(' ')) return false;  // intra-group space
+
+            std::uint32_t hour = 0, minute = 0, whole = 0;
+            if (!take_uint(hour) || !take_char(':')) return false;
+            if (!take_uint(minute) || !take_char('/')) return false;
+            if (!take_uint(whole)) return false;
+
+            // Optional single fractional part "<digits>"; decode emits exactly
+            // one decimal but accept N digits and round ×2 exactly.
+            std::uint32_t frac_num = 0, frac_den = 1;
+            if (*p == '.') {
+                ++p;
+                if (*p < '0' || *p > '9') return false;  // "." with no digits
+                while (*p >= '0' && *p <= '9') {
+                    if (frac_den < 1000000U) {
+                        frac_num = frac_num * 10U + static_cast<std::uint32_t>(*p - '0');
+                        frac_den *= 10U;
+                    }
+                    ++p;
+                }
+            }
+            if (hour > 23 || minute > 59) return false;
+
+            // temp*2 = round((whole + frac_num/frac_den) * 2). Exact integer
+            // nearest-rounding of A/B with A=(whole*frac_den+frac_num)*2, B=frac_den.
+            const std::uint64_t a =
+                (static_cast<std::uint64_t>(whole) * frac_den + frac_num) * 2ULL;
+            const std::uint64_t temp_x2 = (a + frac_den / 2ULL) / frac_den;
+            if (temp_x2 > 255ULL) return false;
+
+            const int slot = (g * 4 + prd) * 3;
+            out[slot]     = static_cast<std::uint8_t>(hour);
+            out[slot + 1] = static_cast<std::uint8_t>(minute);
+            out[slot + 2] = static_cast<std::uint8_t>(temp_x2);
+        }
+    }
+    // Reject trailing garbage — the cursor must sit exactly on the NUL.
+    return *p == '\0';
+}
+
 }  // namespace
 
 bool tz_tuya_datapoints(std::string_view key,
@@ -800,8 +924,40 @@ bool tz_tuya_datapoints(std::string_view key,
             if (!encode_enum(*entry, input, val)) return false;
             val_len = 1;
             break;
+        case TuyaDpType::Raw:
+            // Moes weekly Program (DP101 moesSchedule, BHT-002 family) — the
+            // write-path inverse of the decode branch above. Parse the
+            // round-trippable `program` string back into the packed 36-byte
+            // Raw payload and emit the full DP101 frame here (val[4] above is
+            // too small for a 36-byte body, so this path builds its own
+            // frame and returns directly). Any other Raw DP still abstains.
+            if (entry->flags & kTuyaDpFlagMoesSchedule) {
+                if (input.type != ValueType::StringRef || !input.str) {
+                    return false;  // not a string — abstain, emit nothing
+                }
+                std::uint8_t sched[36];
+                if (!parse_moes_schedule(input.str, sched)) {
+                    return false;  // malformed program — emit nothing
+                }
+                // 3 ZCL header + 2 tuya seq + 1 dp_id + 1 dp_type +
+                // 2 len_be + 36 payload = 45.
+                constexpr std::size_t kTotal = 9 + 36;
+                if (out.size() < kTotal) return false;
+                out[0] = 0x01;                       // fc: cluster-specific c→s
+                out[1] = 0x00;                       // tsn — platform patches
+                out[2] = 0x00;                       // cmd: setData
+                out[3] = 0x00; out[4] = 0x01;        // tuya seq (big-endian, 1)
+                out[5] = entry->dp_id;               // 101
+                out[6] = static_cast<std::uint8_t>(TuyaDpType::Raw);  // 0x00
+                out[7] = 0x00;                       // len_be high
+                out[8] = 36;                         // len_be low
+                for (std::size_t i = 0; i < 36; ++i) out[9 + i] = sched[i];
+                out_size = kTotal;
+                return true;
+            }
+            return false;   // other Raw payloads — not yet
         default:
-            return false;   // String / Raw / Bitmap — not yet
+            return false;   // String / Bitmap — not yet
     }
 
     // Total size: 3 ZCL header + 2 tuya seq + 1 dp_id + 1 dp_type +
