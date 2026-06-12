@@ -8,6 +8,24 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Added
+
+- **Moes BHT-002 family: weekly schedule (DP101 `moesSchedule`) read + write.**
+  z2m's `legacy.fz.moes_thermostat` carries a packed 36-byte weekly program on
+  DP101 (3 day-groups [weekdays, saturday, sunday] × 4 periods ×
+  `[hour, minute, temp*2]`) that the Tier-1 auto-port had stubbed out. Added a
+  symmetric codec in `tuya/_shared.cpp` behind a new `kTuyaDpFlagMoesSchedule`
+  (`0x20`) flag: the fz side decodes DP101 into one round-trippable `program`
+  string (periods `"HH:MM/T.t"`, groups joined by `" | "`); the tz side
+  (`tz_tuya_datapoints` `Raw` branch) strictly parses that string back into the
+  45-byte DP101 frame, rejecting any malformed input (wrong group/period count,
+  bad syntax, hour > 23, minute > 59, or `temp*2` out of `0..255`). Graduated
+  the three BHT-002 defs (`kDef_BHT_002`, `kDefMoes__TZE200_aoclfnxz`,
+  `kDefMoes__TZE204_aoclfnxz`) out of `generated/` to add the DP101 map entry
+  and a read+write `program` (Text) expose so the SPA can edit the schedule.
+  Decode/encode/round-trip + malformed-reject pinned by
+  `tests/test_moes_bht002.cpp`.
+
 ### Fixed
 
 - **Quirky POFLW-WH02 ("Overflow") water-leak sensor: IAS dead-key.** z2m
