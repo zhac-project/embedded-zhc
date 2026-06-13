@@ -10,6 +10,26 @@ across the ZHAC platform.
 
 ### Added
 
+- **Ysrsai YSR-MINI-01_rgbcct: tuyaLight write-only control parity (`effect`,
+  `do_not_disturb`, `color_power_on_behavior`).** z2m defines this RGB+CCT
+  controller with `tuya.modernExtend.tuyaLight({colorTemp:{range:[160,370]},
+  color:true})`, which layers three settable/command exposes on top of the
+  standard light that the Tier-1 auto-port dropped. Added them as vendor-local
+  write-only command converters (no fz — optimistic SPA state):
+  `color_power_on_behavior` (enum initial/previous/customized) →
+  lightingColorCtrl `0x0300` cmd `0xf9` (`tuyaOnStartUp`), body = `mode` u16 LE
+  (`value*256`) + 10 zero bytes; `do_not_disturb` (binary) → `0x0300` cmd `0xfa`
+  (`tuyaDoNotDisturb`), 1-byte enable; `effect` (enum, write-only `Access::Set`)
+  → genIdentify `0x0003` cmd `0x40` (`triggerEffect`, `[effect_id, variant=0]`)
+  for the six standard effects (blink/breathe/okay/channel_change/finish_effect/
+  stop_effect) **and** `0x0300` cmd `0x44` (`colorLoopSet`) for
+  `colorloop`/`stop_colorloop` — wired as two converters sharing the `effect`
+  key (the dispatcher falls through to colorLoopSet when the genIdentify
+  converter declines), so all eight effect values ship. The def was graduated
+  out of `generated/` to the parent `definitions/ysrsai/` to carry these (same
+  `kDef_YSR_MINI_01_rgbcct` symbol; the vendor GLOB already covers the parent
+  dir). Command frames pinned by `tests/test_ysrsai_rgbcct_tz.cpp`.
+
 - **Moes BHT-002 family: weekly schedule (DP101 `moesSchedule`) read + write.**
   z2m's `legacy.fz.moes_thermostat` carries a packed 36-byte weekly program on
   DP101 (3 day-groups [weekdays, saturday, sunday] × 4 periods ×
@@ -27,6 +47,15 @@ across the ZHAC platform.
   `tests/test_moes_bht002.cpp`.
 
 ### Fixed
+
+- **Ysrsai YSR-MINI-01_rgbcct: drop the wrong generic `power_on_behavior`.**
+  z2m's `tuyaLight` sets `powerOnBehavior:false` for this device — it does NOT
+  use the standard genOnOff `startUpOnOff` (`0x4003`); power-on is driven by the
+  Tuya `color_power_on_behavior` command (see Added). Removed the mis-mapped
+  `power_on_behavior` expose, the `kFzPowerOnBehavior` converter, and the
+  `0x4003` attribute from the initial-state read (`onOff 0x0000` is kept). This
+  change is write-only control parity; it does not address the device's missing
+  live state values (a separate rejoin-path issue).
 
 - **Quirky POFLW-WH02 ("Overflow") water-leak sensor: IAS dead-key.** z2m
   drives it with `m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:
