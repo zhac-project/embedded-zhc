@@ -1102,6 +1102,14 @@ target_link_libraries(zhc_tapestry_parity_tests PRIVATE zhc_definitions)
 # guard for the full RGB+CCT axis.
 add_executable(zhc_ysrsai_parity_tests tests/test_ysrsai_parity.cpp)
 target_link_libraries(zhc_ysrsai_parity_tests PRIVATE zhc_definitions)
+# Write-path encode tests for the YSR-MINI-01_rgbcct tuyaLight control
+# parity (effect / do_not_disturb / color_power_on_behavior) added when
+# the def was graduated out of generated/. Pins the exact command frames
+# (0x0300/0xf9, 0x0300/0xfa, 0x0003/0x40, 0x0300/0x44) + the two-converter
+# "effect" dispatcher fall-through, and that the wrong power_on_behavior
+# is gone.
+add_executable(zhc_ysrsai_rgbcct_tz_tests tests/test_ysrsai_rgbcct_tz.cpp)
+target_link_libraries(zhc_ysrsai_rgbcct_tz_tests PRIVATE zhc_definitions)
 # Parity for the WMUN ZS05 universal IR remote (TS1201). The auto-port
 # reduced this IR remote to a battery-only device, dropping the entire
 # Zosung IR channel (6 fzZosung handlers + 2 tzZosung + the
@@ -3351,6 +3359,7 @@ add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_tci_parity_tests          COMMAND zhc_tci_parity_tests)
 add_test(NAME zhc_tapestry_parity_tests     COMMAND zhc_tapestry_parity_tests)
 add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
+add_test(NAME zhc_ysrsai_rgbcct_tz_tests    COMMAND zhc_ysrsai_rgbcct_tz_tests)
 add_test(NAME zhc_wmun_parity_tests         COMMAND zhc_wmun_parity_tests)
 add_test(NAME zhc_wyze_parity_tests         COMMAND zhc_wyze_parity_tests)
 add_test(NAME zhc_ajax_online_parity_tests  COMMAND zhc_ajax_online_parity_tests)
