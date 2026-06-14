@@ -80,10 +80,15 @@ bool fz_lumi_basic(const DecodedMessage& msg,
             continue;
         }
 
-        // Tag 0x04 — power outage counter (u16).
-        if (std::strcmp(kv.key, "4") == 0 &&
+        // Tag 0x05 — power outage counter (u16). z2m reports `value - 1`
+        // (lib/lumi.ts numericAttributes2Payload, case "5"). Tag 0x04 is
+        // mode_switch and only on wall-switch models — it yields nothing for
+        // WXKG01LM — so the old tag-4-no-offset read was both the wrong tag and
+        // missing the -1. Guard the unsigned subtraction against a 0 input.
+        if (std::strcmp(kv.key, "5") == 0 &&
             kv.value.type == ValueType::Uint) {
-            Value cv{}; cv.type = ValueType::Uint; cv.u = kv.value.u;
+            Value cv{}; cv.type = ValueType::Uint;
+            cv.u = (kv.value.u > 0) ? (kv.value.u - 1) : 0;
             out.put("power_outage_count", cv);
             emitted_anything = true;
             continue;
