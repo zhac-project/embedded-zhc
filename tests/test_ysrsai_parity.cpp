@@ -165,6 +165,16 @@ void check_rgbcct() {
     // Mains LED controller — never a battery device.
     assert(!def_exposes(def, "battery"));
 
+    // Write-only command exposes (z2m parity, commit 0524a1f1). These are
+    // access=Set, so the SPA renders them on the Commands tab (not States) —
+    // assert they're present in the def so a future re-port can't silently drop
+    // them again (this guard was missing when they first went unnoticed).
+    assert(def_exposes(def, "effect"));
+    assert(def_exposes(def, "do_not_disturb"));
+    assert(def_exposes(def, "color_power_on_behavior"));
+    // z2m tuyaLight uses color_power_on_behavior, NOT the generic startup attr.
+    assert(!def_exposes(def, "power_on_behavior"));
+
     // lightingColorCtrl currentX (attr 0x0003, u16) → color_x.
     auto rx = dispatch_zcl(def, COLOR_CTRL, 1, attr_report(0x0003, 0x21, u16(32768)));
     assert(rx.any_matched);

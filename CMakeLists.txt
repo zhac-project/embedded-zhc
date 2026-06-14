@@ -1102,6 +1102,9 @@ target_link_libraries(zhc_tapestry_parity_tests PRIVATE zhc_definitions)
 # guard for the full RGB+CCT axis.
 add_executable(zhc_ysrsai_parity_tests tests/test_ysrsai_parity.cpp)
 target_link_libraries(zhc_ysrsai_parity_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_ts0044_parity_tests tests/test_tuya_ts0044_parity.cpp)
+target_link_libraries(zhc_tuya_ts0044_parity_tests PRIVATE zhc_definitions)
 # Write-path encode tests for the YSR-MINI-01_rgbcct tuyaLight control
 # parity (effect / do_not_disturb / color_power_on_behavior) added when
 # the def was graduated out of generated/. Pins the exact command frames
@@ -3359,6 +3362,7 @@ add_test(NAME zhc_schwaiger_parity_tests    COMMAND zhc_schwaiger_parity_tests)
 add_test(NAME zhc_tci_parity_tests          COMMAND zhc_tci_parity_tests)
 add_test(NAME zhc_tapestry_parity_tests     COMMAND zhc_tapestry_parity_tests)
 add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
+add_test(NAME zhc_tuya_ts0044_parity_tests  COMMAND zhc_tuya_ts0044_parity_tests)
 add_test(NAME zhc_ysrsai_rgbcct_tz_tests    COMMAND zhc_ysrsai_rgbcct_tz_tests)
 add_test(NAME zhc_wmun_parity_tests         COMMAND zhc_wmun_parity_tests)
 add_test(NAME zhc_wyze_parity_tests         COMMAND zhc_wyze_parity_tests)

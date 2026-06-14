@@ -17,7 +17,7 @@ namespace zhc::lumi {
 //   tag 0x01 (u16 mV)  → "voltage"  + derived "battery" (0-100 via
 //                         2850-3000 mV curve — z2m default for coin cells)
 //   tag 0x03 (i8 °C)   → "device_temperature"
-//   tag 0x04 (u16)     → "power_outage_count"
+//   tag 0x05 (u16)     → "power_outage_count" (reported as value-1, per z2m)
 //
 // z2m-source: zigbee-herdsman-converters/src/lib/lumi.ts lumi_basic.
 bool fz_lumi_basic(const DecodedMessage& msg,

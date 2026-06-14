@@ -9,7 +9,7 @@
 //   Record:      attr_id=0xFF01, type=0x42 (char string w/ 1-byte len)
 //   Struct body: tag=0x01 u16 2984  (battery voltage mV)
 //                tag=0x03 i8  0x1D  (device temperature 29 °C)
-//                tag=0x04 u16 0x0012 (power outage count 18)
+//                tag=0x05 u16 0x0012 (power outage count raw 18 → reported 17)
 
 #include <cassert>
 #include <cstdint>
@@ -38,7 +38,7 @@ constexpr std::uint8_t kBatteryFrame[] = {
     // MI-struct body (11 bytes)
     0x01, 0x21, 0xA8, 0x0B,     // tag 1, u16, 2984  (4 bytes)
     0x03, 0x28, 0x1D,            // tag 3, i8, 29    (3 bytes)
-    0x04, 0x21, 0x12, 0x00,      // tag 4, u16, 18   (4 bytes)
+    0x05, 0x21, 0x12, 0x00,      // tag 5, u16, 18 → power_outage_count 17 (value-1)
 };
 
 // Press: genOnOff attr 0x0000 type 0x10 (bool), value 0x00.
@@ -144,7 +144,7 @@ static void test_battery_report() {
 
     const Value* outages = result.merged.find("power_outage_count");
     assert(outages && outages->type == ValueType::Uint);
-    assert(outages->u == 18);
+    assert(outages->u == 17);   // z2m reports value-1 (lib/lumi.ts case "5")
 }
 
 // Short press+release (<1000 ms) → action="single", duration reported.
