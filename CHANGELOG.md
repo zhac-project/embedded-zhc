@@ -8,6 +8,23 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Fixed
+
+- **TS0044 battery (z2m parity).** The def was hand-trimmed to action-only and
+  dropped z2m's `fz.battery` half for *every* TS0044 (it matches all
+  manufacturers via an unrestricted `zigbeeModel`). Re-added the genPowerCfg
+  battery decode (`::zhc::generic::kFzBattery`), `battery`/`voltage` exposes, and
+  the `{1, 0x0001}` binding. New parity test.
+- **WXKG01LM `power_outage_count` (z2m parity).** `fz_lumi_basic` read the lumi
+  `0xFF01` struct's tag 0x04 with no offset; z2m's `numericAttributes2Payload`
+  uses tag "5" with `value - 1` (tag 0x04 is `mode_switch`, on wall-switch models
+  only — nothing for WXKG01LM). Fixed the tag + the offset (underflow-guarded);
+  updated the unit test + fixture. Note: battery/voltage decode was already
+  present and host-tested, so "no battery in the UI" is a runtime reporting
+  matter (the device must send the `0xFF01` struct), not a missing decoder.
+
+## [v2026061302] - 2026-06-13
+
 ### Added
 
 - **Ysrsai YSR-MINI-01_rgbcct: tuyaLight write-only control parity (`effect`,
