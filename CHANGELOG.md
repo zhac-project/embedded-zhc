@@ -10,6 +10,20 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **WSD500A / TS0201 temperature & humidity (z2m parity).** The auto-generated
+  def wired battery + `genOnOff` and DROPPED temperature + humidity, so the
+  sensor's `msTemperatureMeasurement` (0x0402) / `msRelativeHumidity` (0x0405)
+  reports came in as "(no match)" and never decoded (a stale shadow cache masked
+  it until the VAL_FLOAT NVS-v9 wipe). Graduated out of `generated/`: wire the
+  generic ZCL `kFzTemperature`/`kFzHumidity` (both /100 → VAL_FLOAT) + battery,
+  drop the spurious onOff `state`, bind 0x0402/0x0405. + parity test. (Generator
+  class-smell — a temp/humidity sensor mis-ported as battery+onOff — for
+  zhac-tools.)
+
+## [v2026061402]
+
+### Fixed
+
 - **TS0044 battery (z2m parity).** The def was hand-trimmed to action-only and
   dropped z2m's `fz.battery` half for *every* TS0044 (it matches all
   manufacturers via an unrestricted `zigbeeModel`). Re-added the genPowerCfg
