@@ -901,7 +901,7 @@ extern const PreparedDefinition kDefGen__TZE204_tzreobvu;
 extern const PreparedDefinition kDefGen__TZE204_ugekduaj;
 extern const PreparedDefinition kDefGen__TZE204_unsxl4ir;
 extern const PreparedDefinition kDefGen__TZE204_uo8qcagc;
-extern const PreparedDefinition kDefGen__TZE204_upagmta9;
+extern const PreparedDefinition kDef_TS0601_TZE204_upagmta9;  // graduated from Gen__TZE204_upagmta9 (added exposes+units)
 extern const PreparedDefinition kDefGen__TZE204_utkemkbs;
 extern const PreparedDefinition kDefGen__TZE204_uxllnywp;
 extern const PreparedDefinition kDefGen__TZE204_v6iczj35;
@@ -2324,7 +2324,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_ugekduaj,
     &kDefGen__TZE204_unsxl4ir,
     &kDefGen__TZE204_uo8qcagc,
-    &kDefGen__TZE204_upagmta9,
+    &kDef_TS0601_TZE204_upagmta9,
     &kDefGen__TZE204_utkemkbs,
     &kDefGen__TZE204_uxllnywp,
     &kDefGen__TZE204_v6iczj35,

@@ -29,11 +29,21 @@ struct cfg { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
 using FX=::zhc::tuya::factory::TuyaOnOff<cfg>;
 constexpr const char* kM[]={"TS0601"};
 constexpr const char* kN[]={"_TZE200_dwcarsat","_TZE204_dwcarsat"};
+// Exposes WITH UNITS so the local web-ui + cloud (which render units from device exposes)
+// show them. Multi-sensor: keep all five readouts (the cloud archetype classifier treats a
+// temperature+air-quality device as a multi-sensor `generic`, not a temp/humidity climate_sensor).
+constexpr Expose kExp[]={
+    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "C",     nullptr, nullptr, 0 },
+    { "humidity",    ExposeType::Numeric, ::zhc::Access::State, "%",     nullptr, nullptr, 0 },
+    { "voc",         ExposeType::Numeric, ::zhc::Access::State, "ppb",   nullptr, nullptr, 0 },
+    { "co2",         ExposeType::Numeric, ::zhc::Access::State, "ppm",   nullptr, nullptr, 0 },
+    { "pm25",        ExposeType::Numeric, ::zhc::Access::State, "ug/m3", nullptr, nullptr, 0 },
+};
 }
 extern const PreparedDefinition kDefTS0601_air_house_keeper{
     .zigbee_models=kM,.zigbee_models_count=1,.manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN,.manufacturer_names_count=2,.model="TS0601_air_house_keeper",
-    .vendor="Tuya",.meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .vendor="Tuya",.meta=nullptr,.exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,

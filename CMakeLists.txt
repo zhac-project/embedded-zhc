@@ -99,6 +99,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS004F.cpp
     definitions/tuya/TS004F_knob.cpp
     definitions/tuya/WSD500A.cpp
+    definitions/tuya/TS0601_TZE204_upagmta9.cpp
     definitions/tuya/TS0202.cpp
     definitions/tuya/TS0205.cpp
     definitions/tuya/TZE200_pir_illum.cpp
@@ -1109,6 +1110,9 @@ target_link_libraries(zhc_tuya_ts0044_parity_tests PRIVATE zhc_definitions)
 
 add_executable(zhc_tuya_wsd500a_parity_tests tests/test_tuya_wsd500a_parity.cpp)
 target_link_libraries(zhc_tuya_wsd500a_parity_tests PRIVATE zhc_definitions)
+
+add_executable(zhc_tuya_weather_exposes_tests tests/test_tuya_weather_exposes.cpp)
+target_link_libraries(zhc_tuya_weather_exposes_tests PRIVATE zhc_definitions)
 # Write-path encode tests for the YSR-MINI-01_rgbcct tuyaLight control
 # parity (effect / do_not_disturb / color_power_on_behavior) added when
 # the def was graduated out of generated/. Pins the exact command frames
@@ -3368,6 +3372,7 @@ add_test(NAME zhc_tapestry_parity_tests     COMMAND zhc_tapestry_parity_tests)
 add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
 add_test(NAME zhc_tuya_ts0044_parity_tests  COMMAND zhc_tuya_ts0044_parity_tests)
 add_test(NAME zhc_tuya_wsd500a_parity_tests COMMAND zhc_tuya_wsd500a_parity_tests)
+add_test(NAME zhc_tuya_weather_exposes_tests COMMAND zhc_tuya_weather_exposes_tests)
 add_test(NAME zhc_ysrsai_rgbcct_tz_tests    COMMAND zhc_ysrsai_rgbcct_tz_tests)
 add_test(NAME zhc_wmun_parity_tests         COMMAND zhc_wmun_parity_tests)
 add_test(NAME zhc_wyze_parity_tests         COMMAND zhc_wyze_parity_tests)
