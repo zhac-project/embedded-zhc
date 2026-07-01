@@ -20,7 +20,7 @@ const FzConverter* const kFz_AC221[] = {
 const TzConverter* const kTz_AC221[] = {
     &::zhc::generic::kTzThermostat,
 };
-constexpr const char* kModels_AC221[] = { "AC221" };
+constexpr const char* kModels_AC221[] = { "AC221", "AC221_019E" };
 
 }  // namespace
 

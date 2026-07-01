@@ -87,21 +87,28 @@ const FzConverter* const kFz_BSD29_BSD59[] = {
     &::zhc::generic::kFzOnOff,
     // z2m fzLocal.BSD29 — manuSpecific cluster 0xFC11, NOT 0x0B04.
     &kFzWoolleyElectricity,
+    // z2m v26.48 added fz.power_on_behavior — genOnOff 0x4003 startUpOnOff.
+    &::zhc::generic::kFzPowerOnBehavior1,
 };
 const TzConverter* const kTz_BSD29_BSD59[] = {
     &::zhc::generic::kTzOnOff,
+    // z2m v26.48 added tz.power_on_behavior — genOnOff 0x4003 write.
+    &::zhc::generic::kTzPowerOnBehavior1,
 };
 constexpr const char* kModels_BSD29_BSD59[] = { "CK-BL702-SWP-01(7020)" };
 
 }  // namespace
 
 
-// --- exposes (hand-aligned to z2m: switch + power + voltage + current) ---
+// --- exposes (hand-aligned to z2m: switch + power + voltage + current
+//     + power_on_behavior [added z2m v26.48]) ---
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    // genOnOff 0x4003 startUpOnOff (off/on/toggle/previous) — settable config.
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
 // z2m configure(): bind genOnOff + onOff reporting only. Metering rides

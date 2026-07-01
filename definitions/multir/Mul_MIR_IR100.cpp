@@ -24,7 +24,8 @@ const FzConverter* const kFz_MIR_IR100[] = {
     &::zhc::generic::kFzIasMotionAlarm,
 };
 
-constexpr const char* kModels_MIR_IR100[] = { "MIR-IL100", "MIR-IR100" };
+// z2m added the "MIR-IR100-E" zigbeeModel (also white-labelled Intelbras MSM 1001).
+constexpr const char* kModels_MIR_IR100[] = { "MIR-IL100", "MIR-IR100", "MIR-IR100-E" };
 
 }  // namespace
 

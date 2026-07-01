@@ -42,7 +42,8 @@ const FzConverter* const kFz_ZC0101[] = {
     &::zhc::generic::kFzBinaryOutput,
 };
 
-constexpr const char* kModels_ZC0101[] = { "ZC0101" };
+// z2m added "ZeeFan" as a second zigbeeModel for the same controller.
+constexpr const char* kModels_ZC0101[] = { "ZC0101", "ZeeFan" };
 
 // z2m e.fan().withModes(["off","low","medium","high","on"]); kFzFanMode
 // emits the raw hvacFanCtrl FanMode value (constants.fanMode 0=off..4=on),

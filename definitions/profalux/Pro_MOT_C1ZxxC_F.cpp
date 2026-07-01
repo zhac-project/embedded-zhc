@@ -44,7 +44,9 @@ const TzConverter* const kTz_MOT_C1ZxxC_F[] = {
     &::zhc::generic::kTzCoverPosition,
     &::zhc::generic::kTzCoverPositionTilt,
 };
-constexpr const char* kModels_MOT_C1ZxxC_F[] = { "MOT-C1Z06C", "MOT-C1Z10C", "MOT-C1Z20C", "MOT-C1Z30C", "MOT-C1Z06F", "MOT-C1Z10F", "MOT-C1Z20F", "MOT-C1Z30F" };
+// z2m v26.xx added the MOT-C2Z10 variant (bare + null-padded zigbeeModel);
+// ez strips trailing nulls at match time, so the bare form covers both.
+constexpr const char* kModels_MOT_C1ZxxC_F[] = { "MOT-C1Z06C", "MOT-C1Z10C", "MOT-C1Z20C", "MOT-C1Z30C", "MOT-C1Z06F", "MOT-C1Z10F", "MOT-C1Z20F", "MOT-C1Z30F", "MOT-C2Z10" };
 
 constexpr Expose kExp_MOT_C1ZxxC_F[] = {
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
