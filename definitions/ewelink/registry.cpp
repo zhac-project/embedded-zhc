@@ -10,6 +10,7 @@ extern const PreparedDefinition kDef_AM25B_1_25_ES_E_Z;
 extern const PreparedDefinition kDef_CK_BL702_MSW_01_7010_;
 extern const PreparedDefinition kDef_CK_BL702_ROUTER_01_7018_;
 extern const PreparedDefinition kDef_CK_MG22_JLDJ_01_7015_;
+extern const PreparedDefinition kDef_CK_TLSR8656_SS5_02_7014_;
 extern const PreparedDefinition kDef_MYRX25Z_1;
 extern const PreparedDefinition kDef_SA_003_Zigbee;
 extern const PreparedDefinition kDef_SA_030_1;
@@ -30,6 +31,7 @@ const PreparedDefinition* const kEwelinkRegistry[] = {
     &kDef_CK_BL702_MSW_01_7010_,
     &kDef_CK_BL702_ROUTER_01_7018_,
     &kDef_CK_MG22_JLDJ_01_7015_,
+    &kDef_CK_TLSR8656_SS5_02_7014_,
     &kDef_MYRX25Z_1,
     &kDef_SA_003_Zigbee,
     &kDef_SA_030_1,
