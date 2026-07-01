@@ -16,6 +16,7 @@ extern const PreparedDefinition kDef_C210;
 extern const PreparedDefinition kDef_C_RFZB_SM1;
 extern const PreparedDefinition kDef_C_ZB_DM201_2G;
 extern const PreparedDefinition kDef_C_ZB_DM204;
+extern const PreparedDefinition kDef_C_ZB_DM204v2;
 extern const PreparedDefinition kDef_C_ZB_LC20_CCT;
 extern const PreparedDefinition kDef_C_ZB_LC20_Dim;
 extern const PreparedDefinition kDef_C_ZB_LC20_RGB;
@@ -25,6 +26,7 @@ extern const PreparedDefinition kDef_C_ZB_RD1;
 extern const PreparedDefinition kDef_C_ZB_RD1P_DIM;
 extern const PreparedDefinition kDef_C_ZB_RD1P_DPM;
 extern const PreparedDefinition kDef_C_ZB_SM205_2G;
+extern const PreparedDefinition kDef_C_ZB_SM30_2G;
 extern const PreparedDefinition kDef_C_ZB_SR5BR;
 extern const PreparedDefinition kDef_C_ZB_RD1P_REM;
 extern const PreparedDefinition kDef_C_ZB_SEDC;
@@ -43,6 +45,7 @@ const PreparedDefinition* const kCandeoRegistry[] = {
     &kDef_C_RFZB_SM1,
     &kDef_C_ZB_DM201_2G,
     &kDef_C_ZB_DM204,
+    &kDef_C_ZB_DM204v2,
     &kDef_C_ZB_LC20_CCT,
     &kDef_C_ZB_LC20_Dim,
     &kDef_C_ZB_LC20_RGB,
@@ -52,6 +55,7 @@ const PreparedDefinition* const kCandeoRegistry[] = {
     &kDef_C_ZB_RD1P_DIM,
     &kDef_C_ZB_RD1P_DPM,
     &kDef_C_ZB_SM205_2G,
+    &kDef_C_ZB_SM30_2G,
     &kDef_C_ZB_SR5BR,
     &kDef_C_ZB_RD1P_REM,
     &kDef_C_ZB_SEDC,
