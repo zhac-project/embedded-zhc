@@ -8,6 +8,9 @@
 #include "zhc/runtime/definition.hpp"
 
 namespace zhc::devices::lumi {
+extern const PreparedDefinition kDefC200;
+extern const PreparedDefinition kDefFP310;
+extern const PreparedDefinition kDefSSWQD22LM;
 extern const PreparedDefinition kDefPS_S04D;
 extern const PreparedDefinition kDefUT_A01E;
 extern const PreparedDefinition kDefWT_A03E;
@@ -479,6 +482,9 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefWT_A03E,
     &kDefUT_A01E,
     &kDefPS_S04D,
+    &kDefC200,
+    &kDefFP310,
+    &kDefSSWQD22LM,
 };
 
 extern const std::size_t kLumiRegistryCount =

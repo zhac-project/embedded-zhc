@@ -1215,6 +1215,24 @@ extern const PreparedDefinition kDefTS0601_zg205z;
 extern const PreparedDefinition kDefTS0601_switch_3g;
 extern const PreparedDefinition kDefTS0601_thermostat;
 extern const PreparedDefinition kDefTS0601_cover;
+// --- z2m v26.76.0 catch-up (Phase A) new Tuya-DP defs ---
+extern const PreparedDefinition kDef_TS0601_1gang_switch;
+extern const PreparedDefinition kDef_TS0601_2gang_switch;
+extern const PreparedDefinition kDef_TS0601_3gang_switch;
+extern const PreparedDefinition kDef_TS0601_6gang_switch;
+extern const PreparedDefinition kDef_TS0601_stairwell_switch;
+extern const PreparedDefinition kDef_QZ_4x4_6;
+extern const PreparedDefinition kDef_TS0601_power_monitoring_switch;
+extern const PreparedDefinition kDef_TS0601_multifunction_switch;
+extern const PreparedDefinition kDef_TS0601_cover_13;
+extern const PreparedDefinition kDef_TS0601_cover_switch_2;
+extern const PreparedDefinition kDef_ZSM_01;
+extern const PreparedDefinition kDef_ZG_301Z_MOTO;
+extern const PreparedDefinition kDef_TS0601_TZE284_gnpflcoq;
+extern const PreparedDefinition kDef_TZE284_aaeasoll;
+extern const PreparedDefinition kDef_ZG_210Z;
+extern const PreparedDefinition kDef_HZ_SL10;
+extern const PreparedDefinition kDef_ZIS_03;
 extern const PreparedDefinition kDefTS0601_cover_inv;
 extern const PreparedDefinition kDefTS0601_garage;
 extern const PreparedDefinition kDefTS0601_garage_matsee;
@@ -2638,6 +2656,23 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTS0601_switch_3g,
     &kDefTS0601_thermostat,
     &kDefTS0601_cover,
+    &kDef_TS0601_1gang_switch,
+    &kDef_TS0601_2gang_switch,
+    &kDef_TS0601_3gang_switch,
+    &kDef_TS0601_6gang_switch,
+    &kDef_TS0601_stairwell_switch,
+    &kDef_QZ_4x4_6,
+    &kDef_TS0601_power_monitoring_switch,
+    &kDef_TS0601_multifunction_switch,
+    &kDef_TS0601_cover_13,
+    &kDef_TS0601_cover_switch_2,
+    &kDef_ZSM_01,
+    &kDef_ZG_301Z_MOTO,
+    &kDef_TS0601_TZE284_gnpflcoq,
+    &kDef_TZE284_aaeasoll,
+    &kDef_ZG_210Z,
+    &kDef_HZ_SL10,
+    &kDef_ZIS_03,
     &kDefTS0601_cover_inv,
     &kDefTS0601_garage,
     &kDefTS0601_garage_matsee,

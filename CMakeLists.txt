@@ -586,6 +586,26 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNWXKG01LM.cpp
     definitions/lumi/SP_WP01.cpp
     definitions/lumi/WGLZ00LM.cpp
+    definitions/lumi/C200.cpp
+    definitions/lumi/FP310.cpp
+    definitions/lumi/SSWQD22LM.cpp
+    definitions/tuya/TS0601_1gang_switch.cpp
+    definitions/tuya/TS0601_2gang_switch.cpp
+    definitions/tuya/TS0601_3gang_switch.cpp
+    definitions/tuya/TS0601_6gang_switch.cpp
+    definitions/tuya/TS0601_stairwell_switch.cpp
+    definitions/tuya/QZ_4x4_6.cpp
+    definitions/tuya/TS0601_power_monitoring_switch.cpp
+    definitions/tuya/TS0601_multifunction_switch.cpp
+    definitions/tuya/TS0601_cover_13.cpp
+    definitions/tuya/TS0601_cover_switch_2.cpp
+    definitions/tuya/ZSM_01.cpp
+    definitions/tuya/ZG_301Z_MOTO.cpp
+    definitions/tuya/TS0601_TZE284_gnpflcoq.cpp
+    definitions/tuya/TZE284_aaeasoll.cpp
+    definitions/tuya/ZG_210Z.cpp
+    definitions/tuya/HZ_SL10.cpp
+    definitions/tuya/ZIS_03.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)
