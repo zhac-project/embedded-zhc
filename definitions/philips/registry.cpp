@@ -598,6 +598,16 @@ extern const PreparedDefinition kDef_D929004611002;
 extern const PreparedDefinition kDef_D929004582001;
 extern const PreparedDefinition kDef_D8718696743133;
 
+// Phase A catch-up (z2m v26.76.0): new Philips Hue light definitions.
+extern const PreparedDefinition kDef_D929003052701;
+extern const PreparedDefinition kDef_D9290038022;
+extern const PreparedDefinition kDef_D929003809001;
+extern const PreparedDefinition kDef_D929003812701;
+extern const PreparedDefinition kDef_D929004294901;
+extern const PreparedDefinition kDef_D929004308401;
+extern const PreparedDefinition kDef_D929004611301;
+extern const PreparedDefinition kDef_D929004308301;
+
 const PreparedDefinition* const kPhilipsRegistry[] = {
     &kDef_D046677476816,
     &kDef_D046677551780,
@@ -1187,6 +1197,14 @@ const PreparedDefinition* const kPhilipsRegistry[] = {
     &kDef_D929004611002,
     &kDef_D929004582001,
     &kDef_D8718696743133,
+    &kDef_D929003052701,
+    &kDef_D9290038022,
+    &kDef_D929003809001,
+    &kDef_D929003812701,
+    &kDef_D929004294901,
+    &kDef_D929004308401,
+    &kDef_D929004611301,
+    &kDef_D929004308301,
 };
 const std::size_t kPhilipsRegistryCount =
     sizeof(kPhilipsRegistry) / sizeof(kPhilipsRegistry[0]);
