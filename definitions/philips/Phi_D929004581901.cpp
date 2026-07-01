@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Philips 929004581901 — auto-generated.
-// Hue Festavia globe outdoor string lights (14 meter with 20 bulbs)
-// z2m-source: philips.ts #929004581901.
+// Tier 3: hand-authored z2m v26.76.0 parity port (Phase B2 — graduated generated stub).
+// Philips 929004581901 — Hue Festavia globe outdoor string lights (14 meter with 20 bulbs)
+// z2m-source: philips.ts #929004581901
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/philips/_shared.hpp"
 
 namespace zhc::devices::philips {
 namespace {
 
-constexpr const char* kModels_D929004581901[] = { "LCX028" };
+constexpr const char* kModels_D929004581901[] = { "LCX028", "LCX025", "LCX024" };
 
 }  // namespace
 

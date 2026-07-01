@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Philips 046677590161 — auto-generated.
-// Hue Play wall washer
-// z2m-source: philips.ts #046677590161.
+// Tier 3: hand-authored z2m v26.76.0 parity port (Phase B2 — graduated generated stub).
+// Philips 046677590161 — Hue Play wall washer
+// z2m-source: philips.ts #046677590161
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/philips/_shared.hpp"
 
 namespace zhc::devices::philips {
 namespace {
 
-constexpr const char* kModels_D046677590161[] = { "LGT009", "LGT010", "LGT012", "046677590161", "046677590130" };
+constexpr const char* kModels_D046677590161[] = { "LGT009", "LGT010", "LGT012", "LGT016", "046677590161", "046677590130" };
 
 }  // namespace
 

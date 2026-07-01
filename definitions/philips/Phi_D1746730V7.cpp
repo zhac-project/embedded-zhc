@@ -1,25 +1,25 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Philips 929004611002 — auto-generated.
-// Hue Flux Outdoor strip light (6m)
-// z2m-source: philips.ts #929004611002.
+// Tier 3: hand-authored z2m v26.76.0 parity port (Phase B2 — graduated generated stub).
+// Philips 1746730V7 — Hue Lily outdoor spot light
+// z2m-source: philips.ts #1746730V7
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/philips/_shared.hpp"
 
 namespace zhc::devices::philips {
 namespace {
 
-constexpr const char* kModels_D929004611002[] = { "929004611002" };
+constexpr const char* kModels_D1746730V7[] = { "1746730V7", "1746730V7-HC3" };
 
 }  // namespace
 
-extern const PreparedDefinition kDef_D929004611002{
-    .zigbee_models           = kModels_D929004611002,
-    .zigbee_models_count     = sizeof(kModels_D929004611002)/sizeof(kModels_D929004611002[0]),
+extern const PreparedDefinition kDef_D1746730V7{
+    .zigbee_models           = kModels_D1746730V7,
+    .zigbee_models_count     = sizeof(kModels_D1746730V7)/sizeof(kModels_D1746730V7[0]),
     .manufacturer_name_prefix= nullptr,
     .manufacturer_names      = nullptr,
     .manufacturer_names_count= 0,
-    .model                   = "929004611002",
+    .model                   = "1746730V7",
     .vendor                  = "Philips",
     .meta                    = nullptr,
     .exposes                 = kExposesPhilipsColorCTLight,

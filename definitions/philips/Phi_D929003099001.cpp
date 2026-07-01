@@ -1,15 +1,15 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Philips 929003099001 — auto-generated.
-// Hue white ambiance Aurelle square panel light
-// z2m-source: philips.ts #929003099001.
+// Tier 3: hand-authored z2m v26.76.0 parity port (Phase B2 — graduated generated stub).
+// Philips 929003099001 — Hue white ambiance Aurelle square panel light
+// z2m-source: philips.ts #929003099001
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/philips/_shared.hpp"
 
 namespace zhc::devices::philips {
 namespace {
 
-constexpr const char* kModels_D929003099001[] = { "929003099001", "929003099201", "929003099002" };
+constexpr const char* kModels_D929003099001[] = { "929003099001", "929003099201", "929003099002", "929003099202" };
 
 }  // namespace
 
