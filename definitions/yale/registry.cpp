@@ -11,6 +11,7 @@ extern const PreparedDefinition kDef_SOLIS01;
 extern const PreparedDefinition kDef_YAYRD256HA2619;
 extern const PreparedDefinition kDef_YDD_D4F0_TSDB;
 extern const PreparedDefinition kDef_YDF40;
+extern const PreparedDefinition kDef_YDM60;
 extern const PreparedDefinition kDef_YMC420_W;
 extern const PreparedDefinition kDef_YMF30;
 extern const PreparedDefinition kDef_YMF40A_RL;
@@ -41,6 +42,7 @@ const PreparedDefinition* const kYaleRegistry[] = {
     &kDef_YAYRD256HA2619,
     &kDef_YDD_D4F0_TSDB,
     &kDef_YDF40,
+    &kDef_YDM60,
     &kDef_YMC420_W,
     &kDef_YMF30,
     &kDef_YMF40A_RL,
