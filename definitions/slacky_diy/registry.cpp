@@ -39,6 +39,8 @@ extern const PreparedDefinition kDef_AirQ_Monitor_S01;
 extern const PreparedDefinition kDef_SLACKY_DIY_CO2_SENSOR_R01;
 extern const PreparedDefinition kDef_SLACKY_DIY_CO2_SENSOR_R02;
 extern const PreparedDefinition kDef_THERM_SLACKY_DIY_R08;
+extern const PreparedDefinition kDef_RCS_ST16_z_SlD;
+extern const PreparedDefinition kDef_LDR_GU10_Mod;
 
 const PreparedDefinition* const kSlackyDiyRegistry[] = {
     &kDef_QS_Zigbee_SEC01_Mod,
@@ -74,6 +76,8 @@ const PreparedDefinition* const kSlackyDiyRegistry[] = {
     &kDef_SLACKY_DIY_CO2_SENSOR_R01,
     &kDef_SLACKY_DIY_CO2_SENSOR_R02,
     &kDef_THERM_SLACKY_DIY_R08,
+    &kDef_RCS_ST16_z_SlD,
+    &kDef_LDR_GU10_Mod,
 };
 const std::size_t kSlackyDiyRegistryCount = sizeof(kSlackyDiyRegistry) / sizeof(kSlackyDiyRegistry[0]);
 
