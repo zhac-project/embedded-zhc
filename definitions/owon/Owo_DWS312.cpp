@@ -1,7 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Owon DWS312 — auto-generated.
-// Door/window sensor
+// Tier 3: Owon DWS312 — graduated from generated stub for a fingerprint delta.
+// Door/window sensor.
+//
+// Parity delta (z2m v26.35 -> v26.76): z2m added the "DWS332-E" hardware
+// variant to this definition's zigbeeModel list
+// (`zigbeeModel: ["DWS312", "DWS332-E"]`). Same behaviour/exposes as DWS312
+// (m.battery() + m.iasZoneAlarm zoneType "contact"), so the only change is the
+// extra modelID alias so a DWS332-E device matches this def. Converters and
+// exposes are carried over verbatim from the former generated stub.
 // z2m-source: owon.ts #DWS312.
 #include "definitions/_generic/_shared.hpp"
 
@@ -13,7 +20,7 @@ const FzConverter* const kFz_DWS312[] = {
     &::zhc::generic::kFzIasContactAlarm,
 };
 
-constexpr const char* kModels_DWS312[] = { "DWS312" };
+constexpr const char* kModels_DWS312[] = { "DWS312", "DWS332-E" };
 
 }  // namespace
 
@@ -30,7 +37,6 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
     {1, 0x0500},
 };
-// --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_DWS312{
     .zigbee_models=kModels_DWS312, .zigbee_models_count=sizeof(kModels_DWS312)/sizeof(kModels_DWS312[0]),

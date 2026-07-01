@@ -1,10 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Somfy 1871157 — hand-rewritten 2026-04-29e.
-// Ysia 1 channel blinds remote. z2m uses `m.commandsOnOff` +
-// `m.commandsWindowCovering` — wire command-receiver Fz, no Tz state
-// path (no local relay/motor).
-// z2m-source: somfy.ts #1871157.
+// Tier 3: hand-authored z2m v26.76.0 parity port (Phase B).
+// Somfy 1871157 — Ysia 1 channel blinds remote (z2m v26.76.0 parity).
+//
+// z2m-source: somfy.ts #1871157. Graduated from the hand-edited generated stub
+// to add the second zigbeeModel spelling "Ysia 1 HP Zigbee" (delta v26.35->
+// v26.76 added it to the def's zigbeeModel list). Converter surface unchanged:
+// z2m uses m.commandsOnOff + m.commandsWindowCovering + m.battery — wire the
+// command-receiver Fz set, no Tz state path (no local relay/motor).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::somfy {
@@ -18,12 +21,10 @@ const FzConverter* const kFz_D1871157[] = {
     &::zhc::generic::kFzCommandCoverStop,
     &::zhc::generic::kFzBattery,
 };
-constexpr const char* kModels_D1871157[] = { "Ysia 1 Zigbee Europe" };
+constexpr const char* kModels_D1871157[] = { "Ysia 1 Zigbee Europe", "Ysia 1 HP Zigbee" };
 
 }  // namespace
 
-
-// --- hand-edited exposes/bindings ---
 constexpr Expose kAutoExposes[] = {
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
@@ -35,7 +36,6 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
     {1, 0x0102},
 };
-// --- end hand-edited block ---
 
 extern const PreparedDefinition kDef_D1871157{
     .zigbee_models=kModels_D1871157, .zigbee_models_count=sizeof(kModels_D1871157)/sizeof(kModels_D1871157[0]),
@@ -47,7 +47,7 @@ extern const PreparedDefinition kDef_D1871157{
     .from_zigbee=kFz_D1871157, .from_zigbee_count=sizeof(kFz_D1871157)/sizeof(kFz_D1871157[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::somfy

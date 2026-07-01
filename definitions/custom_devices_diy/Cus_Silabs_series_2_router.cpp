@@ -1,13 +1,19 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: CustomDevicesDiy Silabs series 2 router — auto-generated.
-// Silabs series 2 adapter with router firmware
+// Tier 3: CustomDevicesDiy Silabs series 2 router — graduated from generated stub.
+// Silabs series 2 adapter with router firmware.
 // z2m-source: custom_devices_diy.ts #Silabs series 2 router.
+//
+// Graduation reason (z2m v26.35 -> v26.76 catch-up): z2m added modelID
+// "ZBM-MG24" (Inswift) to the fingerprint list. "SLZB-06MG26U" was already
+// carried here; the two removed tokens (EFR32MG21-V1 / EFR32MG21-V2) were
+// never part of this router's zigbee_models set in ez (unrelated to the
+// standalone kDef_EFR32MG21_Router_1/2 defs). Only "ZBM-MG24" is new.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::custom_devices_diy {
 namespace {
-// z2m: TS uses fingerprint match on 19 modelIDs (all running Nerivec/silabs-firmware-builder
+// z2m: TS uses fingerprint match on 20 modelIDs (all running Nerivec/silabs-firmware-builder
 // router image with appVer=200). toZigbee=[tz.factory_reset], exposes=[e.enum("reset", SET,
 // ["reset"])], extend=[m.linkQuality({reporting: true})], meta={disableDefaultResponse:true}.
 // TODO(parity): no fingerprint matching implemented (only zigbee_models). Models fall back
@@ -17,7 +23,7 @@ constexpr const char* kModels_Silabs_series_2_router[] = {
     "ZGA008", "ZB-GW04", "ZB-GW04-1v1", "ZB-GW04-1v2", "SkyConnect", "ZBT-2",
     "SLZB-06M", "SLZB-06MG24", "SLZB-06MG26", "SLZB-06MG26U", "SLZB-07", "SLZB-07MG24",
     "DONGLE-E", "Dongle-LMG21", "Dongle-M", "Dongle-PMG24",
-    "MGM240P", "MGM24", "BM24",
+    "MGM240P", "MGM24", "BM24", "ZBM-MG24",
 };
 }  // namespace
 extern const PreparedDefinition kDef_Silabs_series_2_router{
