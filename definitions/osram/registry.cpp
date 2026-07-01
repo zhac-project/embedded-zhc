@@ -50,6 +50,7 @@ extern const PreparedDefinition kDef_D73699;
 extern const PreparedDefinition kDef_D73741_LIGHTIFY;
 extern const PreparedDefinition kDef_D73889;
 extern const PreparedDefinition kDef_ST8AU_CON;
+extern const PreparedDefinition kDef_D4099854461767_4099854461774;
 
 const PreparedDefinition* const kOsramRegistry[] = {
     &kDef_AC0251100NJ_AC0251600NJ_AC0251700NJ,
@@ -96,6 +97,7 @@ const PreparedDefinition* const kOsramRegistry[] = {
     &kDef_D73741_LIGHTIFY,
     &kDef_D73889,
     &kDef_ST8AU_CON,
+    &kDef_D4099854461767_4099854461774,
 };
 const std::size_t kOsramRegistryCount = sizeof(kOsramRegistry) / sizeof(kOsramRegistry[0]);
 
