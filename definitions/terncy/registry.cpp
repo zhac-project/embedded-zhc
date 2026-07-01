@@ -8,6 +8,7 @@ namespace zhc::devices::terncy {
 
 extern const PreparedDefinition kDef_CL001;
 extern const PreparedDefinition kDef_DL001;
+extern const PreparedDefinition kDef_DIM003;
 extern const PreparedDefinition kDef_TERNCY_LS01;
 extern const PreparedDefinition kDef_TERNCY_PP01;
 extern const PreparedDefinition kDef_TERNCY_SD01;
@@ -17,6 +18,7 @@ extern const PreparedDefinition kDef_TERNCY_DC01;
 const PreparedDefinition* const kTerncyRegistry[] = {
     &kDef_CL001,
     &kDef_DL001,
+    &kDef_DIM003,
     &kDef_TERNCY_LS01,
     &kDef_TERNCY_PP01,
     &kDef_TERNCY_SD01,
