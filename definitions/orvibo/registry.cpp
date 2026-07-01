@@ -25,6 +25,7 @@ extern const PreparedDefinition kDef_SE21;
 extern const PreparedDefinition kDef_T18W3Z;
 extern const PreparedDefinition kDef_T21W1Z;
 extern const PreparedDefinition kDef_T21W2Z;
+extern const PreparedDefinition kDef_T20S3Z;
 extern const PreparedDefinition kDef_T30W3Z;
 extern const PreparedDefinition kDef_T40S6Z;
 extern const PreparedDefinition kDef_T40W1Z;
@@ -65,6 +66,7 @@ const PreparedDefinition* const kOrviboRegistry[] = {
     &kDef_T18W3Z,
     &kDef_T21W1Z,
     &kDef_T21W2Z,
+    &kDef_T20S3Z,
     &kDef_T30W3Z,
     &kDef_T40S6Z,
     &kDef_T40W1Z,
