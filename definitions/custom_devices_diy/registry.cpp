@@ -26,6 +26,7 @@ extern const PreparedDefinition kDef_MHO_C401N;
 extern const PreparedDefinition kDef_MiCASAGasCounter;
 extern const PreparedDefinition kDef_ZeeFlora;
 extern const PreparedDefinition kDef_b_parasite;
+extern const PreparedDefinition kDef_ZG_204ZL_z;
 extern const PreparedDefinition kDef_CC2530_ROUTER;
 extern const PreparedDefinition kDef_CC2538_ROUTER_V1;
 extern const PreparedDefinition kDef_CC2538_ROUTER_V2;
@@ -55,6 +56,7 @@ const PreparedDefinition* const kCustomDevicesDiyRegistry[] = {
     &kDef_MiCASAGasCounter,
     &kDef_ZeeFlora,
     &kDef_b_parasite,
+    &kDef_ZG_204ZL_z,
     &kDef_CC2530_ROUTER,
     &kDef_CC2538_ROUTER_V1,
     &kDef_CC2538_ROUTER_V2,
