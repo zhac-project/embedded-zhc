@@ -8,6 +8,7 @@ namespace zhc::devices::nyce {
 
 extern const PreparedDefinition kDef_NCZ_3010;
 extern const PreparedDefinition kDef_NCZ_3011_HA;
+extern const PreparedDefinition kDef_NCZ_3014_HA;
 extern const PreparedDefinition kDef_NCZ_3041_HA;
 extern const PreparedDefinition kDef_NCZ_3043_HA;
 extern const PreparedDefinition kDef_NCZ_3045_HA;
@@ -15,6 +16,7 @@ extern const PreparedDefinition kDef_NCZ_3045_HA;
 const PreparedDefinition* const kNyceRegistry[] = {
     &kDef_NCZ_3010,
     &kDef_NCZ_3011_HA,
+    &kDef_NCZ_3014_HA,
     &kDef_NCZ_3041_HA,
     &kDef_NCZ_3043_HA,
     &kDef_NCZ_3045_HA,
