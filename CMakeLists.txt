@@ -606,6 +606,9 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/ZG_210Z.cpp
     definitions/tuya/HZ_SL10.cpp
     definitions/tuya/ZIS_03.cpp
+    definitions/tuya/RM28_LE.cpp
+    definitions/tuya/TS0601_cover_5.cpp
+    definitions/tuya/ZIS_01P.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)

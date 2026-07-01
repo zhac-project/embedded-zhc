@@ -1,7 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: SlackyDiy TS0201-z-SlD — auto-generated.
+// Tier 3: SlackyDiy TS0201-z-SlD — graduated from generated/.
 // Tuya temperature and humidity sensor with custom Firmware
+//
+// Parity (z2m v26.35->v26.76): the z2m zigbeeModel list gained two new
+// custom-firmware variants "TS0201-z28-SlD" and "TS0201-z29-SlD". Added them to the
+// match list so those units bind to this def.
+//
+// z2m TS0201-z-SlD wires m.temperature() + m.humidity() + m.battery({voltage:true})
+// plus four numeric extends against custom 0xFXXX attrs (temperature_offset/on_off/
+// low/high) and the matching humidity quartet, m.deviceEndpoints, and an enum
+// repeat_command lookup. None of the custom 0xFXXX attrs decode in this runtime; the
+// standard temp/hum/battery do.
 // z2m-source: slacky_diy.ts #TS0201-z-SlD.
 #include "definitions/_generic/_shared.hpp"
 
@@ -13,15 +23,11 @@ const FzConverter* const kFz_TS0201_z_SlD[] = {
     &::zhc::generic::kFzHumidity,
 };
 
-constexpr const char* kModels_TS0201_z_SlD[] = { "TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD" };
+constexpr const char* kModels_TS0201_z_SlD[] = { "TS0201-z-SlD", "TS0201-z15-SlD", "TS0201-z21-SlD", "TS0201-z22-SlD", "TS0201-z23-SlD", "TS0201-z24-SlD", "TS0201-z28-SlD", "TS0201-z29-SlD" };
 
 }  // namespace
 
 
-// z2m TS0201-z-SlD wires m.temperature() + m.humidity() + m.battery({voltage:true}) plus four
-// numeric extends against custom 0xFXXX attrs (temperature_offset/on_off/low/high) and the
-// matching humidity quartet, m.deviceEndpoints, and an enum repeat_command lookup. None of the
-// custom 0xFXXX attrs decode in this runtime; the standard temp/hum/battery do.
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},

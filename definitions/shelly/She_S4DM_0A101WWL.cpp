@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Shelly S4DM-0A101WWL — auto-generated.
+// Tier 3: Shelly S4DM-0A101WWL — graduated from generated/.
 // Dimmer Gen4
+//
+// Parity (z2m v26.35->v26.76): the z2m fingerprint gained a second modelID
+// "Dimmer US" (US variant, manufacturerName "Shelly") alongside the existing
+// "Dimmer". Added it to the match list so US-variant dimmers bind to this def.
 // z2m-source: shelly.ts #S4DM-0A101WWL.
 #include "definitions/_generic/_shared.hpp"
 
@@ -16,7 +20,7 @@ const TzConverter* const kTz_S4DM_0A101WWL[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-constexpr const char* kModels_S4DM_0A101WWL[] = { "Dimmer" };
+constexpr const char* kModels_S4DM_0A101WWL[] = { "Dimmer", "Dimmer US" };
 
 }  // namespace
 

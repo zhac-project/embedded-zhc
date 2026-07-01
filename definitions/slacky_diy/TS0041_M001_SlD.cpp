@@ -1,7 +1,12 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: SlackyDiy TS0041-M001-SlD — auto-generated.
+// Tier 3: SlackyDiy TS0041-M001-SlD — graduated from generated/.
 // Tuya wireless switch with 1 buttons with custom firmware
+//
+// Parity (z2m v26.35->v26.76): the z2m fingerprint gained a new custom-firmware
+// modelID "TS0041-M005-SlD" (added alongside the existing M001/M002). Added it to
+// the match list so M005 units bind to this def. The z2m commandsColorCtrl helper
+// only enriches the generic `action` enum (already exposed) — no runtime change.
 // z2m-source: slacky_diy.ts #TS0041-M001-SlD.
 #include "definitions/_generic/_shared.hpp"
 
@@ -14,7 +19,7 @@ const FzConverter* const kFz_TS0041_M001_SlD[] = {
 const TzConverter* const kTz_TS0041_M001_SlD[] = {
     &::zhc::generic::kTzOnOff,
 };
-constexpr const char* kModels_TS0041_M001_SlD[] = { "TS0041-M001-SlD", "TS0041-M002-SlD" };
+constexpr const char* kModels_TS0041_M001_SlD[] = { "TS0041-M001-SlD", "TS0041-M002-SlD", "TS0041-M005-SlD" };
 
 constexpr ::zhc::EndpointLabel kEndpoints_TS0041_M001_SlD[] = { {"1", 1} };
 
