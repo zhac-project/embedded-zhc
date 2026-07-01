@@ -6,10 +6,12 @@
 
 namespace zhc::devices::klikaanklikuit {
 
+extern const PreparedDefinition kDef_ZCC_250;
 extern const PreparedDefinition kDef_ZCC_3500;
 extern const PreparedDefinition kDef_ZCM_1800;
 
 const PreparedDefinition* const kKlikaanklikuitRegistry[] = {
+    &kDef_ZCC_250,
     &kDef_ZCC_3500,
     &kDef_ZCM_1800,
 };
