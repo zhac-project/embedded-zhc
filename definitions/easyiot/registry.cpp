@@ -19,6 +19,7 @@ extern const PreparedDefinition kDef_ZB_WC01;
 extern const PreparedDefinition kDef_ZB_ZL01;
 extern const PreparedDefinition kDef_ZB_SP1000;
 extern const PreparedDefinition kDef_ZB_TTS01;
+extern const PreparedDefinition kDef_ZB_LTH01;
 
 const PreparedDefinition* const kEasyiotRegistry[] = {
     &kDef_ZB_IR01,
@@ -34,6 +35,7 @@ const PreparedDefinition* const kEasyiotRegistry[] = {
     &kDef_ZB_ZL01,
     &kDef_ZB_SP1000,
     &kDef_ZB_TTS01,
+    &kDef_ZB_LTH01,
 };
 const std::size_t kEasyiotRegistryCount = sizeof(kEasyiotRegistry) / sizeof(kEasyiotRegistry[0]);
 
