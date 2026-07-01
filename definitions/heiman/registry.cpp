@@ -68,6 +68,13 @@ extern const PreparedDefinition kDef_HS2FD_EF1_3_0;
 extern const PreparedDefinition kDef_HS2IRC;
 extern const PreparedDefinition kDef_HS8MIS_EF1_3_0;
 extern const PreparedDefinition kDef_HS8OS_EF1_3_0;
+extern const PreparedDefinition kDef_HM_5HA_E;
+extern const PreparedDefinition kDef_HM_636THV_AC_M;
+extern const PreparedDefinition kDef_HM_722ESY_E_Plus;
+extern const PreparedDefinition kDef_HS1CA_E_PLUS;
+extern const PreparedDefinition kDef_HS1SA_E_Lover;
+extern const PreparedDefinition kDef_HS9MS_E;
+extern const PreparedDefinition kDef_M1_PE;
 
 const PreparedDefinition* const kHeimanRegistry[] = {
     &kDef_HM1RC_2_E,
@@ -132,6 +139,13 @@ const PreparedDefinition* const kHeimanRegistry[] = {
     &kDef_HS2IRC,
     &kDef_HS8MIS_EF1_3_0,
     &kDef_HS8OS_EF1_3_0,
+    &kDef_HM_5HA_E,
+    &kDef_HM_636THV_AC_M,
+    &kDef_HM_722ESY_E_Plus,
+    &kDef_HS1CA_E_PLUS,
+    &kDef_HS1SA_E_Lover,
+    &kDef_HS9MS_E,
+    &kDef_M1_PE,
 };
 const std::size_t kHeimanRegistryCount = sizeof(kHeimanRegistry) / sizeof(kHeimanRegistry[0]);
 
