@@ -46,6 +46,7 @@ extern const PreparedDefinition kDef_OPL_130_C;
 extern const PreparedDefinition kDef_OSL_130_C;
 extern const PreparedDefinition kDef_OSL_132_C;
 extern const PreparedDefinition kDef_OSL_140_C;
+extern const PreparedDefinition kDef_OSL_232_C;
 extern const PreparedDefinition kDef_OSP_210;
 extern const PreparedDefinition kDef_OSP_240;
 extern const PreparedDefinition kDef_PL_110;
@@ -164,6 +165,7 @@ const PreparedDefinition* const kInnrRegistry[] = {
     &kDef_OSL_130_C,
     &kDef_OSL_132_C,
     &kDef_OSL_140_C,
+    &kDef_OSL_232_C,
     &kDef_OSP_210,
     &kDef_OSP_240,
     &kDef_PL_110,
