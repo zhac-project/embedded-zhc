@@ -11,6 +11,7 @@ extern const PreparedDefinition kDef_Dongle_LMG21;
 extern const PreparedDefinition kDef_Dongle_M;
 extern const PreparedDefinition kDef_Dongle_PMG24;
 extern const PreparedDefinition kDef_MG1_5RZ;
+extern const PreparedDefinition kDef_MINI_ZB1GS;
 extern const PreparedDefinition kDef_MINI_ZB2GS;
 extern const PreparedDefinition kDef_MINI_ZB2GS_L;
 extern const PreparedDefinition kDef_MINI_ZBD;
@@ -34,6 +35,8 @@ extern const PreparedDefinition kDef_SNZB_02DR2;
 extern const PreparedDefinition kDef_SNZB_02LD;
 extern const PreparedDefinition kDef_SNZB_02P;
 extern const PreparedDefinition kDef_SNZB_02WD;
+extern const PreparedDefinition kDef_SNZB_02M;
+extern const PreparedDefinition kDef_SNZB_02UL;
 extern const PreparedDefinition kDef_SNZB_03;
 extern const PreparedDefinition kDef_SNZB_03P;
 extern const PreparedDefinition kDef_SNZB_04;
@@ -64,6 +67,7 @@ const PreparedDefinition* const kSonoffRegistry[] = {
     &kDef_Dongle_M,
     &kDef_Dongle_PMG24,
     &kDef_MG1_5RZ,
+    &kDef_MINI_ZB1GS,
     &kDef_MINI_ZB2GS,
     &kDef_MINI_ZB2GS_L,
     &kDef_MINI_ZBD,
@@ -87,6 +91,8 @@ const PreparedDefinition* const kSonoffRegistry[] = {
     &kDef_SNZB_02LD,
     &kDef_SNZB_02P,
     &kDef_SNZB_02WD,
+    &kDef_SNZB_02M,
+    &kDef_SNZB_02UL,
     &kDef_SNZB_03,
     &kDef_SNZB_03P,
     &kDef_SNZB_04,
