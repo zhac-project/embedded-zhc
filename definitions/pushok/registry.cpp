@@ -22,6 +22,7 @@ extern const PreparedDefinition kDef_POK011;
 extern const PreparedDefinition kDef_POK012;
 extern const PreparedDefinition kDef_POK014;
 extern const PreparedDefinition kDef_POK015;
+extern const PreparedDefinition kDef_POK019;
 extern const PreparedDefinition kDef_POK021;
 
 const PreparedDefinition* const kPushokRegistry[] = {
@@ -41,6 +42,7 @@ const PreparedDefinition* const kPushokRegistry[] = {
     &kDef_POK012,
     &kDef_POK014,
     &kDef_POK015,
+    &kDef_POK019,
     &kDef_POK021,
 };
 const std::size_t kPushokRegistryCount = sizeof(kPushokRegistry) / sizeof(kPushokRegistry[0]);
