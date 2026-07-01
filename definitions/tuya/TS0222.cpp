@@ -16,6 +16,11 @@ const FzConverter* const kFz[] = { &Lux::converter };
 constexpr const char* kModels[] = { "TS0222", "ZG-106Z" };
 }
 
+// z2m TS0222 configure: m.illuminance() binds msIlluminanceMeasurement (0x0400).
+constexpr BindingSpec kAutoBindings[] = {
+    {1, 0x0400},
+};
+
 constexpr WhiteLabel kWhiteLabels_TS0222[] = {
     {"HOBEIAN", "ZG-106Z"},
 };
@@ -29,5 +34,6 @@ extern const PreparedDefinition kDefTS0222{
     .white_labels_count=sizeof(kWhiteLabels_TS0222)/sizeof(kWhiteLabels_TS0222[0]),
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
-    .configure=nullptr,.on_event=nullptr };
+    .configure=nullptr,.on_event=nullptr,
+    .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]) };
 }
