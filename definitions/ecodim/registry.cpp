@@ -7,6 +7,7 @@
 namespace zhc::devices::ecodim {
 
 extern const PreparedDefinition kDef_ECO_DIM_13;
+extern const PreparedDefinition kDef_ECO_DIM_06_ZGB;
 extern const PreparedDefinition kDef_ED_10010;
 extern const PreparedDefinition kDef_ED_10011;
 extern const PreparedDefinition kDef_ED_10012;
@@ -20,6 +21,7 @@ extern const PreparedDefinition kDef_ED_10042;
 
 const PreparedDefinition* const kEcodimRegistry[] = {
     &kDef_ECO_DIM_13,
+    &kDef_ECO_DIM_06_ZGB,
     &kDef_ED_10010,
     &kDef_ED_10011,
     &kDef_ED_10012,
