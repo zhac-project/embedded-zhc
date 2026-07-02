@@ -1,5 +1,7 @@
 build/
 build_*/
+build*/
+build-parity/
 CMakeCache.txt
 CMakeFiles/
 CMakeUserPresets.json
