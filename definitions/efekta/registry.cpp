@@ -78,6 +78,9 @@ extern const PreparedDefinition kDef_zFlora_X_Max;
 extern const PreparedDefinition kDef_DIYRuZ_AirSense_Reloaded;
 extern const PreparedDefinition kDef_EFEKTA_iAQ_S_I;
 extern const PreparedDefinition kDef_EFEKTA_iAQ2_R2;
+extern const PreparedDefinition kDef_EFEKTA_Air_Quality_Station_2;
+extern const PreparedDefinition kDef_EFEKTA_Air_Quality_Station_2c;
+extern const PreparedDefinition kDef_EFEKTA_Air_Quality_Station_2o;
 
 const PreparedDefinition* const kEfektaRegistry[] = {
     &kDef_EFEKTA_AQ_Smart_Monitor_Gen2,
@@ -152,6 +155,9 @@ const PreparedDefinition* const kEfektaRegistry[] = {
     &kDef_DIYRuZ_AirSense_Reloaded,
     &kDef_EFEKTA_iAQ_S_I,
     &kDef_EFEKTA_iAQ2_R2,
+    &kDef_EFEKTA_Air_Quality_Station_2,
+    &kDef_EFEKTA_Air_Quality_Station_2c,
+    &kDef_EFEKTA_Air_Quality_Station_2o,
 };
 const std::size_t kEfektaRegistryCount = sizeof(kEfektaRegistry) / sizeof(kEfektaRegistry[0]);
 

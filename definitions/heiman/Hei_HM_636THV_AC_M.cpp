@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Heiman HM-636THV-AC-M — smoke detector (with temperature + humidity).
 // Ported (Tier 1, generic converters only): battery/voltage, temperature,
-// humidity, IAS smoke alarm (key "smoke") with battery_low, and the tz.warning
-// siren control.
-// Deferred: the "co" numeric (msCarbonMonoxide 0x040C has no generic decoder in
-// _shared.hpp), the "test" sub-flag, and all heimanClusterSpecial (0xFC90)
+// humidity, IAS smoke alarm (key "smoke") with battery_low, the "co" numeric
+// (msCarbonMonoxide 0x040C, key "co", ppm), and the tz.warning siren control.
+// Deferred: the "test" sub-flag, and all heimanClusterSpecial (0xFC90)
 // extras — device mute/state, indicator light, initiate-test-mode, sensor fault
 // state, interconnectable, smoke-concentration level/unit, chamber-contamination
 // level, temperature offset, preheating/endoflife/alarm_state enums, and the
@@ -20,6 +19,7 @@ const FzConverter* const kFz_HM_636THV_AC_M[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzIasSmokeAlarm,
+    &::zhc::generic::kFzCO,
 };
 const TzConverter* const kTz_HM_636THV_AC_M[] = {
     &::zhc::generic::kTzWarning,
@@ -34,6 +34,7 @@ constexpr Expose kExposes_HM_636THV_AC_M[] = {
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "\xC2\xB0""C", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"co", ExposeType::Numeric, Access::State, "ppm", nullptr, nullptr, 0},
     {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -41,6 +42,7 @@ constexpr Expose kExposes_HM_636THV_AC_M[] = {
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
     {1, 0x0402},
+    {1, 0x040C},
     {1, 0x0405},
     {1, 0x0500},
 };

@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Heiman HM-722ESY-E Plus — carbon monoxide detector.
 // Ported (Tier 1, generic converters only): battery/voltage, temperature,
-// IAS CO alarm (key "carbon_monoxide") with battery_low, and the tz.warning
-// siren control.
-// Deferred: the "co" numeric (msCarbonMonoxide 0x040C has no generic decoder in
-// _shared.hpp), the "test" sub-flag, and all heimanClusterSpecial (0xFC90)
+// IAS CO alarm (key "carbon_monoxide") with battery_low, the "co" numeric
+// (msCarbonMonoxide 0x040C, key "co", ppm), and the tz.warning siren control.
+// Deferred: the "test" sub-flag, and all heimanClusterSpecial (0xFC90)
 // extras — device mute/state, indicator light, initiate-test-mode, sensor fault
 // state, interconnectable, smoke-concentration level/unit, chamber-contamination
 // level, temperature offset, endoflife/alarm_state/preheating enums, and the
@@ -19,6 +18,7 @@ const FzConverter* const kFz_HM_722ESY_E_Plus[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzIasCoAlarm,
+    &::zhc::generic::kFzCO,
 };
 const TzConverter* const kTz_HM_722ESY_E_Plus[] = {
     &::zhc::generic::kTzWarning,
@@ -32,6 +32,7 @@ constexpr Expose kExposes_HM_722ESY_E_Plus[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "\xC2\xB0""C", nullptr, nullptr, 0},
+    {"co", ExposeType::Numeric, Access::State, "ppm", nullptr, nullptr, 0},
     {"carbon_monoxide", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -39,6 +40,7 @@ constexpr Expose kExposes_HM_722ESY_E_Plus[] = {
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0001},
     {1, 0x0402},
+    {1, 0x040C},
     {1, 0x0500},
 };
 
