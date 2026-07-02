@@ -58,9 +58,6 @@ extern const PreparedDefinition kDefGen_ZG_227ZL;
 extern const PreparedDefinition kDefGen_ZG_228Z;
 extern const PreparedDefinition kDefGen_ZG_229Z;
 extern const PreparedDefinition kDefGen_ZG_301Z;
-extern const PreparedDefinition kDefGen_ZG_302Z1;
-extern const PreparedDefinition kDefGen_ZG_302Z2;
-extern const PreparedDefinition kDefGen_ZG_302Z3;
 extern const PreparedDefinition kDefGen_ZG_302ZL;
 extern const PreparedDefinition kDefGen_ZG_302ZM;
 extern const PreparedDefinition kDefGen_ZG_305Z;
@@ -1500,9 +1497,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_228Z,
     &kDefGen_ZG_229Z,
     &kDefGen_ZG_301Z,
-    &kDefGen_ZG_302Z1,
-    &kDefGen_ZG_302Z2,
-    &kDefGen_ZG_302Z3,
     &kDefGen_ZG_302ZL,
     &kDefGen_ZG_302ZM,
     &kDefGen_ZG_305Z,
