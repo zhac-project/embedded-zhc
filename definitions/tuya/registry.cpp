@@ -1368,7 +1368,7 @@ extern const PreparedDefinition kDefTZE200_snow;
 extern const PreparedDefinition kDefTZE200_socket_v3;
 extern const PreparedDefinition kDefTZE200_soil;
 extern const PreparedDefinition kDefTZE200_soil_ec;
-extern const PreparedDefinition kDefTZE200_soil_th;
+extern const PreparedDefinition kDef_TLC2206;
 extern const PreparedDefinition kDefTZE200_solar;
 extern const PreparedDefinition kDefTZE200_solar_inv;
 extern const PreparedDefinition kDefTZE200_solenoid;
@@ -2808,7 +2808,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_socket_v3,
     &kDefTZE200_soil,
     &kDefTZE200_soil_ec,
-    &kDefTZE200_soil_th,
+    &kDef_TLC2206,
     &kDefTZE200_solar,
     &kDefTZE200_solar_inv,
     &kDefTZE200_solenoid,
