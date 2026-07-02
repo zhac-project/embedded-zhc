@@ -176,6 +176,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0203.cpp
     definitions/tuya/TZE200_clamp.cpp
     definitions/tuya/TLC2206.cpp
+    definitions/tuya/GX03.cpp
     definitions/tuya/TZE200_greenhouse.cpp
     definitions/tuya/TS0601_air_house_keeper.cpp
     definitions/tuya/TS0601_air_quality.cpp
