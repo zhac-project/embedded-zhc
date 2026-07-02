@@ -2228,6 +2228,8 @@ target_link_libraries(zhc_nyce_parity_tests PRIVATE zhc_definitions)
 # graduated to a Tier-2 parent override. See tests/README.md for the pattern.
 add_executable(zhc_namron_parity_tests tests/test_namron_parity.cpp)
 target_link_libraries(zhc_namron_parity_tests PRIVATE zhc_definitions)
+add_executable(zhc_namron_remote_tests tests/test_namron_remote.cpp)
+target_link_libraries(zhc_namron_remote_tests PRIVATE zhc_definitions)
 
 # Parity fixture for the Danfoss Ally TRV 014G2461, which declared a
 # pi_heating_demand expose (z2m danfossThermostat piHeatingDemand → standard
@@ -3513,6 +3515,7 @@ add_test(NAME zhc_brimate_parity_tests      COMMAND zhc_brimate_parity_tests)
 add_test(NAME zhc_tplink_parity_tests       COMMAND zhc_tplink_parity_tests)
 add_test(NAME zhc_nyce_parity_tests         COMMAND zhc_nyce_parity_tests)
 add_test(NAME zhc_namron_parity_tests       COMMAND zhc_namron_parity_tests)
+add_test(NAME zhc_namron_remote_tests       COMMAND zhc_namron_remote_tests)
 add_test(NAME zhc_danfoss_parity_tests      COMMAND zhc_danfoss_parity_tests)
 add_test(NAME zhc_leviton_parity_tests      COMMAND zhc_leviton_parity_tests)
 add_test(NAME zhc_zen_parity_tests          COMMAND zhc_zen_parity_tests)
