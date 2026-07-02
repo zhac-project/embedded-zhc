@@ -332,6 +332,10 @@
 #include "zhc/devices/zigbeetlc_registry.hpp"
 #include "zhc/devices/zipato_registry.hpp"
 #include "zhc/devices/zunzunbee_registry.hpp"
+#include "zhc/devices/ensystec_registry.hpp"
+#include "zhc/devices/handshake_finland_registry.hpp"
+#include "zhc/devices/megaman_registry.hpp"
+#include "zhc/devices/nodieby_registry.hpp"
 
 namespace zhc::devices::tier_e {
 

@@ -652,6 +652,10 @@ const VendorEntry kTierERegistries[] = {
       ::zhc::devices::zipato::kZipatoRegistryCount },
     { ::zhc::devices::zunzunbee::kZunzunbeeRegistry,
       ::zhc::devices::zunzunbee::kZunzunbeeRegistryCount },
+    { ::zhc::devices::ensystec::kEnsystecRegistry, ::zhc::devices::ensystec::kEnsystecRegistryCount },
+    { ::zhc::devices::handshake_finland::kHandshakeFinlandRegistry, ::zhc::devices::handshake_finland::kHandshakeFinlandRegistryCount },
+    { ::zhc::devices::megaman::kMegamanRegistry, ::zhc::devices::megaman::kMegamanRegistryCount },
+    { ::zhc::devices::nodieby::kNodiebyRegistry, ::zhc::devices::nodieby::kNodiebyRegistryCount },
 };
 const std::size_t kTierERegistriesCount = sizeof(kTierERegistries) / sizeof(kTierERegistries[0]);
 
