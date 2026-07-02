@@ -37,6 +37,10 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries_PF_PM02D_TYZ[] = {
     { 1, "state", ::zhc::TuyaDpType::Bool, 1, kEnum_PF_PM02D_state_dp1,
       sizeof(kEnum_PF_PM02D_state_dp1)/sizeof(kEnum_PF_PM02D_state_dp1[0]),
       ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    // z2m v26.77.0: [26, "fault", tvc.fault] (Bitmap -> !!v). te.fault() is a
+    // read-only diagnostic binary that publishes a plain boolean (true/false),
+    // so decode to a bare Bool (no ON/OFF string fan-out).
+    { 26, "fault", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
 };
 constexpr ::zhc::tuya::TuyaDatapointMap kMap_PF_PM02D_TYZ{
     kEntries_PF_PM02D_TYZ,
@@ -74,9 +78,11 @@ constexpr const char* kManus_PF_PM02D_TYZ[] = {
     "_TZE200_vrjkcam9", "_TZE200_d0ypnbvn", "_TZE204_v5xjyphj",
     "_TZE204_d0ypnbvn", "_TZE284_v5xjyphj", "_TZE284_d0ypnbvn" };
 
-// z2m: exposes:[e.switch().setAccess("state", ea.STATE_SET)].
+// z2m: exposes:[te.switch(), te.fault()]. switch = STATE_SET binary; fault =
+// STATE diagnostic binary.
 constexpr Expose kExp_PF_PM02D_TYZ[] = {
     { "state", ExposeType::Binary, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
+    { "fault", ExposeType::Binary, ::zhc::Access::State, nullptr, "Indicates whether a fault was detected", nullptr, 0 },
 };
 
 constexpr BindingSpec kBind_PF_PM02D_TYZ[] = {

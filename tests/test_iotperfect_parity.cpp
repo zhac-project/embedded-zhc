@@ -101,15 +101,17 @@ static void test_manu_resolves_to_full_dp_def() {
     assert(find_definition("TS0601", "_TZE284_d0ypnbvn", iotperfect_registry()) == d);
 }
 
-// The `state` expose is declared; no phantom Light/electrical channels remain.
+// The `state` + `fault` exposes are declared; no phantom Light/electrical
+// channels remain. (z2m v26.77.0: exposes = [te.switch(), te.fault()].)
 static void test_state_expose_declared() {
     const auto* d = valve();
     assert(def_exposes(*d, "state"));
+    assert(def_exposes(*d, "fault"));
     assert(!def_exposes(*d, "brightness"));
     assert(!def_exposes(*d, "color_temp"));
     assert(!def_exposes(*d, "voltage"));
-    // Exactly one expose (the switch).
-    assert(d->exposes_count == 1);
+    // Exactly two exposes (the switch + the fault diagnostic).
+    assert(d->exposes_count == 2);
 }
 
 // DP 1 state = bool -> "ON"/"OFF" (z2m tuya_switch: value ? "ON" : "OFF").
@@ -145,10 +147,31 @@ static void test_unmapped_dp_ignored() {
     assert(result.merged.find("state") == nullptr);
 }
 
+// DP 26 fault = bool -> plain boolean (z2m tvc.fault: (Bitmap)=>!!v; te.fault()
+// publishes true/false, NOT the ON/OFF string used by the state DP).
+static void test_fault_dp26_bool() {
+    const auto* d = valve();
+
+    const std::uint8_t kFault[] = { 0x01 };
+    const TuyaDpRecord recsF[] = { { 26, 0x01, std::span<const std::uint8_t>(kFault, 1) } };
+    const auto rF = dispatch_dp(*d, std::span<const TuyaDpRecord>(recsF, 1));
+    assert(rF.any_matched);
+    const Value* f = rF.merged.find("fault");
+    assert(f && f->type == ValueType::Bool && f->b == true);
+
+    const std::uint8_t kOk[] = { 0x00 };
+    const TuyaDpRecord recsOk[] = { { 26, 0x01, std::span<const std::uint8_t>(kOk, 1) } };
+    const auto rOk = dispatch_dp(*d, std::span<const TuyaDpRecord>(recsOk, 1));
+    assert(rOk.any_matched);
+    const Value* fOk = rOk.merged.find("fault");
+    assert(fOk && fOk->type == ValueType::Bool && fOk->b == false);
+}
+
 int main() {
     test_manu_resolves_to_full_dp_def();
     test_state_expose_declared();
     test_state_dp1_bool_enum();
+    test_fault_dp26_bool();
     test_unmapped_dp_ignored();
     return 0;
 }
