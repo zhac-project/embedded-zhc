@@ -64,7 +64,9 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         // match by cluster string.
         case 0x0409: return "pHMeasurement";
         case 0x040A: return "byunGasRaw";  // BYUN M415-5C gas-clear raw cluster (1034)
+        case 0x040C: return "msCarbonMonoxide";
         case 0x040D: return "msCO2";
+        case 0x042A: return "pm25Measurement";
 
         // Security & safety
         case 0x0500: return "ssIasZone";

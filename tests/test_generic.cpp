@@ -123,6 +123,89 @@ static void test_ignore_matches_but_emits_nothing() {
     assert(out.count == 0);
 }
 
+// ── fz_pm25 / fz_co (air-quality numerics) ──────────────────────────
+
+// z2m `fz.pm25`: raw measuredValue, no scaling. A u16 report is passed
+// through as Uint (µg/m³ direct).
+static void test_pm25_decodes_raw_uint() {
+    // pm25Measurement (0x042A) attr 0x0000 measuredValue = 42 (uint16).
+    constexpr std::uint8_t kFrame[] = {
+        0x18, 0x01, 0x0A, 0x00, 0x00, 0x21, 0x2A, 0x00,
+    };
+    auto raw = build_frame(0x042A, kFrame);
+    DecodedMessage msg{};
+    assert(decode_frame(raw, {}, msg));
+
+    FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    PreparedDefinition def{};
+    RuntimeContext ctx{};
+    assert(generic::kFzPm25.fn.zcl_fn(msg, generic::kFzPm25, def, ctx, out));
+
+    const Value* v = out.find("pm25");
+    assert(v && v->type == ValueType::Uint && v->u == 42);  // raw, unscaled
+}
+
+// The ZCL pm25Measurement measuredValue is a `single` float; z2m still
+// passes it through unscaled, so the Float type is preserved.
+static void test_pm25_decodes_raw_float() {
+    std::uint8_t frame[10] = { 0x18, 0x01, 0x0A, 0x00, 0x00, 0x39 };
+    const float ug = 12.0f;
+    std::memcpy(&frame[6], &ug, sizeof(ug));
+    auto raw = build_frame(0x042A, frame);
+    DecodedMessage msg{};
+    assert(decode_frame(raw, {}, msg));
+
+    FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    PreparedDefinition def{};
+    RuntimeContext ctx{};
+    assert(generic::kFzPm25.fn.zcl_fn(msg, generic::kFzPm25, def, ctx, out));
+
+    const Value* v = out.find("pm25");
+    assert(v && v->type == ValueType::Float && v->f == 12.0f);
+}
+
+// z2m CO numeric = m.numeric({cluster:"msCarbonMonoxide",
+// scale:0.000001}) → measuredValue * 1e6 → ppm (same math as fz.co2).
+// Emitted key is `co`.
+static void test_co_decodes_ppm_from_float() {
+    // msCarbonMonoxide (0x040C) attr 0x0000 = 0.001 (single float mole
+    // fraction) → 0.001 * 1e6 = 1000 ppm.
+    std::uint8_t frame[10] = { 0x18, 0x01, 0x0A, 0x00, 0x00, 0x39 };
+    const float mole_fraction = 0.001f;
+    std::memcpy(&frame[6], &mole_fraction, sizeof(mole_fraction));
+    auto raw = build_frame(0x040C, frame);
+    DecodedMessage msg{};
+    assert(decode_frame(raw, {}, msg));
+
+    FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    PreparedDefinition def{};
+    RuntimeContext ctx{};
+    assert(generic::kFzCO.fn.zcl_fn(msg, generic::kFzCO, def, ctx, out));
+
+    const Value* v = out.find("co");
+    assert(v && v->type == ValueType::Uint && v->u == 1000);
+}
+
+// Defensive path shared with fz_co2: firmware that already reports ppm
+// as an integer passes through unscaled.
+static void test_co_passthrough_uint_ppm() {
+    // measuredValue = 350 (uint16, 0x015E LE) → 350 ppm unscaled.
+    constexpr std::uint8_t kFrame[] = {
+        0x18, 0x01, 0x0A, 0x00, 0x00, 0x21, 0x5E, 0x01,
+    };
+    auto raw = build_frame(0x040C, kFrame);
+    DecodedMessage msg{};
+    assert(decode_frame(raw, {}, msg));
+
+    FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    PreparedDefinition def{};
+    RuntimeContext ctx{};
+    assert(generic::kFzCO.fn.zcl_fn(msg, generic::kFzCO, def, ctx, out));
+
+    const Value* v = out.find("co");
+    assert(v && v->type == ValueType::Uint && v->u == 350);
+}
+
 // ── Adapter integration: a generic on/off device with ONLY
 // kFzOnOff in its from_zigbee list routes cleanly through dispatch
 // without pulling in any lumi-specific code.
@@ -260,6 +343,10 @@ int main() {
     test_on_off_decodes_off();
     test_battery_emits_voltage_mv_and_percent();
     test_ignore_matches_but_emits_nothing();
+    test_pm25_decodes_raw_uint();
+    test_pm25_decodes_raw_float();
+    test_co_decodes_ppm_from_float();
+    test_co_passthrough_uint_ppm();
     test_dispatch_generic_on_off_device();
 
     test_tz_on_off_on();

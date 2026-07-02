@@ -725,6 +725,26 @@ extern const FzConverter kFzOccupancy;
 // raw ppm as a u16) by passing them through unscaled.
 extern const FzConverter kFzCO2;
 
+// `pm25Measurement` (0x042A) MeasuredValue 0x0000 → "pm25".
+// Mirrors z2m `fz.pm25`: the raw `measuredValue` with NO scaling — the
+// device already reports µg/m³, the unit lives on the expose. The wire
+// type is passed through (u16 → Uint, single float → Float). Note the
+// herdsman cluster name has no `ms` prefix ("pm25Measurement").
+// z2m-source: fromZigbee.ts `fz.pm25` / modernExtend.ts `m.pm25`.
+extern const FzConverter kFzPm25;
+
+// `msCarbonMonoxide` (0x040C) MeasuredValue 0x0000 → "co" (ppm, Uint).
+// z2m ships no standalone `fz.co`; the carbon-monoxide *numeric* is
+// `m.numeric({name:"co", cluster:"msCarbonMonoxide",
+//   attribute:"measuredValue", scale:0.000001, unit:"ppm"})` (Heiman
+// HM-722ESY-E / HS1CA-E / HM-636THV). modernExtend divides the raw
+// value by `scale`, i.e. `co = measuredValue / 1e-6 = measuredValue *
+// 1e6` — identical math to kFzCO2 (single-precision-float mole
+// fraction, 0.0004 = 400 ppm). Already-scaled integer ppm reports pass
+// through unscaled. The emitted key is `co` (a Numeric expose); this is
+// NOT `carbon_monoxide`, which is z2m's IAS boolean detection binary.
+extern const FzConverter kFzCO;
+
 // hvacThermostat setpoint-limit attribute writes (INT16, 0.01 °C).
 // UNIT CONTRACT: caller supplies the already-scaled int (e.g.
 // 1500 = 15.00 °C). DIFFERENT from `kTzThermostat` setpoints above —

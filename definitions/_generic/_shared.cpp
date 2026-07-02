@@ -3661,6 +3661,105 @@ extern const FzConverter kFzCO2{
     .user_config       = nullptr,
 };
 
+// ── msPM25Measurement + msCarbonMonoxide decoders ───────────────────
+//
+// Air-quality siblings of the msCO2 decoder above — two independent
+// standard clusters, each carrying MeasuredValue on attr 0x0000:
+//
+//   pm25Measurement (0x042A) → "pm25". z2m `fz.pm25` returns the raw
+//       `measuredValue` with NO scaling (the device already reports
+//       µg/m³; the unit lives on the expose). The wire type is
+//       preserved (u16 → Uint, single float → Float).
+//
+//   msCarbonMonoxide (0x040C) → "co" (ppm). z2m has no standalone
+//       `fz.co`; the CO numeric is `m.numeric({name:"co",
+//       cluster:"msCarbonMonoxide", attribute:"measuredValue",
+//       scale:0.000001, unit:"ppm"})` (Heiman HM-722ESY-E / HS1CA-E /
+//       HM-636THV). modernExtend divides the raw float by `scale`, i.e.
+//       co = measuredValue * 1e6 → ppm — identical math to fz_co2.
+//       Already-scaled integer ppm reports pass through unscaled. Key
+//       is `co` (Numeric); NOT `carbon_monoxide` (z2m's IAS bool binary).
+//
+// NOTE: cluster ids 0x042A and 0x040C are NOT yet in
+// include/zhc/cluster_names.hpp, so the decoder leaves `msg.cluster`
+// null for them and dispatch matches via its null-is-any rule. Add both
+// ids to that table when wiring these into a combo air-quality device —
+// otherwise kFzPm25 and kFzCO can both claim the same unlabelled
+// measuredValue frame.
+
+namespace {
+
+bool fz_pm25(const DecodedMessage& msg,
+              const FzConverter&,
+              const PreparedDefinition&,
+              RuntimeContext&,
+              FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");   // attr 0x0000 MeasuredValue
+    if (!v) return false;
+    Value o{};
+    if (v->type == ValueType::Float)     { o.type = ValueType::Float; o.f = v->f; }
+    else if (v->type == ValueType::Uint) { o.type = ValueType::Uint;  o.u = v->u; }
+    else if (v->type == ValueType::Int)  { o.type = ValueType::Int;   o.i = v->i; }
+    else return false;
+    out.put("pm25", o);                       // raw µg/m³ (z2m fz.pm25)
+    return true;
+}
+
+bool fz_co(const DecodedMessage& msg,
+            const FzConverter&,
+            const PreparedDefinition&,
+            RuntimeContext&,
+            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");   // attr 0x0000 MeasuredValue
+    if (!v) return false;
+    Value o{}; o.type = ValueType::Uint;
+    if (v->type == ValueType::Float) {
+        if (v->f < 0.0f) return false;        // invalid / unmeasured
+        o.u = static_cast<std::uint64_t>(v->f * 1000000.0f);
+    } else if (v->type == ValueType::Uint) {
+        o.u = v->u;                           // already ppm
+    } else if (v->type == ValueType::Int) {
+        if (v->i < 0) return false;
+        o.u = static_cast<std::uint64_t>(v->i);
+    } else {
+        return false;
+    }
+    out.put("co", o);
+    return true;
+}
+
+}  // namespace
+
+extern const FzConverter kFzPm25{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "pm25Measurement",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_pm25 },
+    .user_config       = nullptr,
+};
+
+extern const FzConverter kFzCO{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "msCarbonMonoxide",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_co },
+    .user_config       = nullptr,
+};
+
 // ── hvacThermostat setpoint-limit attribute writes ──────────────────
 //
 // Closes z2m tz.thermostat_min_heat_setpoint_limit /
