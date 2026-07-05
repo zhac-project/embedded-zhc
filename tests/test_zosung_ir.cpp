@@ -281,10 +281,51 @@ static void test_fz_04_rejects_wrong_cmd_id() {
     assert(g_captured.empty());
 }
 
+static void test_fz_03_rejects_wrong_seq_chunk() {
+    // REPORT.md §2.4: a cmd03 chunk whose seq doesn't match the active Learn
+    // session must be rejected — otherwise any node can inject bytes into the
+    // IR learn buffer. (Pinning the source device needs a device id on
+    // DecodedMessage — a broader change, not done here.)
+    reset_capture();
+    auto& sess = ::zhc::zosung::session_slot();
+    sess.mode     = ::zhc::zosung::Session::Mode::Learn;
+    sess.seq      = 0x1234;
+    sess.length   = 16;
+    sess.position = 0;
+    std::memset(sess.buf, 0, ::zhc::zosung::Session::kBufCap);
+
+    auto ctx = make_ctx();
+    auto msg = make_zosung_msg(::zhc::zosung::cmd::kSendIRCode03);
+
+    // Same shape as the copy test, but seq = 0x9999 (does NOT match sess.seq).
+    constexpr std::uint8_t kPart[4] = { 'A', 'B', 'C', 'D' };   // valid crc 0x0A
+    const std::uint8_t kBody[14] = {
+        0x00,
+        0x99, 0x99,                             // seq = 0x9999 (WRONG)
+        0x00, 0x00, 0x00, 0x00,                 // position = 0
+        0x04,
+        kPart[0], kPart[1], kPart[2], kPart[3],
+        0x0A,                                   // crc (valid)
+        0x00,
+    };
+    msg.raw_body = std::span<const std::uint8_t>(kBody, 13);
+
+    FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    FzConverter dummy_self{};
+    PreparedDefinition dummy_def{};
+
+    const bool claimed = ::zhc::zosung::fz_zosung_send_ir_code_03(
+        msg, dummy_self, dummy_def, ctx, out);
+    assert(claimed);                 // still claims the frame
+    assert(sess.position == 0);      // but did NOT ingest the wrong-seq chunk
+    assert(sess.buf[0]   == 0x00);
+}
+
 int main() {
     test_fz_01_logs_only_no_emit();
     test_fz_00_emits_cmd_01_and_02();
     test_fz_03_copies_chunk_into_session_buffer();
+    test_fz_03_rejects_wrong_seq_chunk();
     test_fz_04_emits_cmd_05_ack();
     test_fz_04_rejects_wrong_cmd_id();
     return 0;

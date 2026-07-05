@@ -170,7 +170,14 @@ bool parse_report_attributes(std::span<const std::uint8_t> payload,
 
         Value v{};
         const int consumed = decode_value(value_span, type, v);
-        if (consumed < 0) return false;
+        if (consumed < 0) {
+            // Undecodable datatype (array 0x48 / struct 0x4C) or a truncated
+            // value — its length is unknown, so we cannot skip it and keep
+            // walking. Stop, but KEEP everything decoded so far: returning
+            // false discarded the whole report and lost valid prefix attrs on
+            // multi-attr reports (same spirit as the C-2 scratch fix).
+            break;
+        }
         // Advance before any skip so we keep walking the frame.
         pos += 3 + static_cast<std::size_t>(consumed);
 
@@ -184,9 +191,9 @@ bool parse_report_attributes(std::span<const std::uint8_t> payload,
             // silently lost state on Aqara/Lumi multi-attr reports.
             if (!key) continue;
         }
-        if (!out.put(key, v)) return false;  // payload full
+        if (!out.put(key, v)) break;  // payload full — keep the decoded prefix
     }
-    return pos == payload.size();
+    return out.count > 0 || pos == payload.size();
 }
 
 bool parse_read_attr_response(std::span<const std::uint8_t> payload,
@@ -206,13 +213,13 @@ bool parse_read_attr_response(std::span<const std::uint8_t> payload,
             // No datatype/value for non-success records — skip.
             continue;
         }
-        if (pos >= payload.size()) return false;
+        if (pos >= payload.size()) break;   // truncated record — keep prefix
         const std::uint8_t type = payload[pos++];
         const auto value_span   = payload.subspan(pos);
 
         Value v{};
         const int consumed = decode_value(value_span, type, v);
-        if (consumed < 0) return false;
+        if (consumed < 0) break;   // undecodable/truncated — keep prefix (§2.4)
         pos += static_cast<std::size_t>(consumed);
 
         const char* key = lookup_key(attr_id, known);
@@ -223,9 +230,9 @@ bool parse_read_attr_response(std::span<const std::uint8_t> payload,
             // not the whole frame (C-2).
             if (!key) continue;
         }
-        if (!out.put(key, v)) return false;
+        if (!out.put(key, v)) break;   // payload full — keep prefix
     }
-    return pos == payload.size();
+    return out.count > 0 || pos == payload.size();
 }
 
 bool parse_mi_struct(std::span<const std::uint8_t> struct_bytes,

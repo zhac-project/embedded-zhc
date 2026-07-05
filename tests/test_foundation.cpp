@@ -130,11 +130,33 @@ static void test_tuya_dp_stream() {
            records[1].value.size() == 4 && records[1].value[3] == 0x2A);
 }
 
+static void test_report_keeps_prefix_on_undecodable_attr() {
+    // A decodable attr (0x0000 bool) followed by one with an undecodable
+    // datatype (0x48 array). The valid prefix must be KEPT, not the whole
+    // report dropped (REPORT.md §2.4 — decode_value<0 used to return false).
+    const std::uint8_t payload[] = {
+        0x00, 0x00, 0x10, 0x01,     // 0x0000 = bool true
+        0x21, 0x00, 0x48, 0x03,     // 0x0021 type 0x48 (array) — undecodable
+    };
+    const AttrKeyEntry known[] = {
+        {0x0000, "state"},
+        {0x0021, "battery"},
+    };
+    char scratch[64];
+    FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    bool ok = parse_report_attributes(payload, known, scratch, sizeof(scratch), out);
+    assert(ok);                      // usable prefix kept, report not dropped
+    assert(out.count == 1);          // the good attr survived the undecodable one
+    const Value* state = out.find("state");
+    assert(state && state->type == ValueType::Bool && state->b == true);
+}
+
 int main() {
     test_header_basic();
     test_header_manufacturer_specific();
     test_report_multi_record();
     test_report_unknown_attr_is_decimal_key();
+    test_report_keeps_prefix_on_undecodable_attr();
     test_read_attr_response_mixes_success_and_failure();
     test_mi_struct_parses_tagged_tlv();
     test_tuya_dp_stream();

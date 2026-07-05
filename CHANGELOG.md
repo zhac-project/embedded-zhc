@@ -10,6 +10,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **ZCL report parsing keeps the decoded prefix (REPORT.md §2.4).**
+  `parse_report_attributes` / `parse_read_attr_response` returned `false` — and
+  the adapter then dropped the whole report — the moment `decode_value` hit an
+  undecodable datatype (array `0x48` / struct `0x4C`) or a truncated value, even
+  though earlier attributes had decoded fine. They now stop at the bad attr but
+  keep everything decoded so far (same spirit as the earlier C-2 scratch fix).
+  Host regression added in `test_foundation`.
+- **zosung IR: reject cross-session chunks (REPORT.md §2.4).** The cmd03 chunk
+  handler ingested any chunk while a Learn session was open without checking its
+  `seq` against the active session, so a stray or hostile node could inject bytes
+  into the IR learn buffer. It now drops chunks whose `seq` doesn't match.
+  (Pinning the source device would need a device id on `DecodedMessage` — a
+  broader change, left open.) Host regression added in `test_zosung_ir`.
 - **WSD500A / TS0201 temperature & humidity (z2m parity).** The auto-generated
   def wired battery + `genOnOff` and DROPPED temperature + humidity, so the
   sensor's `msTemperatureMeasurement` (0x0402) / `msRelativeHumidity` (0x0405)

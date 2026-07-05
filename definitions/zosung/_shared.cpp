@@ -379,6 +379,13 @@ bool fz_zosung_send_ir_code_03(const DecodedMessage& msg,
     // bytes (zero + seq + position + 1B prefix=0 + crc).
     if (msg.raw_body.size() < 9) return true;
     const std::uint8_t* p = msg.raw_body.data();
+    // REPORT.md §2.4: reject a chunk whose seq doesn't match the active session
+    // so a stray or hostile node can't inject bytes into the IR learn buffer.
+    // (Pinning the source device would need a device id on DecodedMessage — a
+    // broader change, not done here.)
+    const std::uint16_t dev_seq =
+        static_cast<std::uint16_t>(p[1] | (static_cast<std::uint16_t>(p[2]) << 8));
+    if (dev_seq != g_session.seq) return true;
     const std::uint32_t dev_pos =
         static_cast<std::uint32_t>(p[3])
       | (static_cast<std::uint32_t>(p[4]) << 8)
