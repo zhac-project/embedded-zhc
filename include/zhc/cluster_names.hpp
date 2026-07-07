@@ -115,4 +115,48 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
     }
 }
 
+// Manufacturer-code-aware cluster label (REPORT.md §2.4 #1 follow-up, safe
+// subset). Non-manufacturer frames fall through to the id table above. For
+// manufacturer-specific frames we label ONLY the clusters we can resolve
+// unambiguously:
+//   • collision ids that carry a distinct manufacturerCode (0xFC01, 0xFC03,
+//     0x0000) — keyed on (id, mfg code); a non-matching code stays fail-open;
+//   • custom clusters whose id is unique across every vendor — keyed by id.
+// Everything else — the existing-table collisions 0xFC00/0xFC11/0xFF01, and
+// orvibo 0x0017 / sdevices 0x0B05 which carry no usable discriminator — is left
+// UNLABELLED (nullptr → dispatch fail-open) rather than risk mislabelling a
+// vendor. manufacturerCode values are z2m / zigbee-herdsman constants; see
+// CLUSTER_NAMES_AUDIT.md.
+inline const char* cluster_name(std::uint16_t cluster_id,
+                                std::uint16_t manufacturer_code,
+                                bool manufacturer_specific) {
+    if (manufacturer_specific) {
+        switch (cluster_id) {
+            case 0x0000:  // vsmartSwitchControl overlays standard genBasic
+                if (manufacturer_code == 0x1379) return "vsmartSwitchControl";
+                break;
+            case 0xFC01:  // Niko / Legrand / Ubisys share this id
+                if (manufacturer_code == 0x125F) return "manuSpecificNikoState";
+                if (manufacturer_code == 0x1021) return "manuSpecificLegrandDevices";
+                if (manufacturer_code == 0x10F2) return "manuSpecificUbisysDimmerSetup";
+                break;
+            case 0xFC03:  // Develco / Yandex share this id
+                if (manufacturer_code == 0x1015) return "manuSpecificDevelcoAirQuality";
+                if (manufacturer_code == 0x132F) return "manuSpecificYandex";
+                break;
+            // Unique-id custom clusters (no cross-vendor collision):
+            case 0xFC0A: return "manuSpecificYokisPilotWire";
+            case 0xFC40: return "manuSpecificLegrandDevices2";
+            case 0xFC42: return "manuSpecificSiglisZigfred";
+            case 0xFC7B: return "perenioSpecific";
+            case 0xFC81: return "heimanSpecificAirQuality";
+            case 0xFC90: return "heimanClusterSpecial";
+            case 0xFEE7: return "aminaControlCluster";
+        }
+        // Unresolved manufacturer-specific frame → leave unlabelled (fail-open).
+        return nullptr;
+    }
+    return cluster_id_to_name(cluster_id);
+}
+
 }  // namespace zhc

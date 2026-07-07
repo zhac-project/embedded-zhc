@@ -47,14 +47,13 @@ bool decode_frame(const InboundApsFrame& frame,
                  ? FrameFamily::TuyaDp
                  : FrameFamily::Zcl;
     // Stamp the cluster name so dispatch can filter converters by cluster.
-    // Manufacturer-specific frames stay unlabelled (nullptr → dispatch
-    // fail-open, unchanged) because the same numeric id maps to different
-    // vendor clusters (0xFC01 = Niko/Legrand/Ubisys, 0x0000 = genBasic vs
-    // vsmart, …) — see CLUSTER_NAMES_AUDIT.md. A manufacturer-code-aware
-    // labeller is the documented follow-up.
-    out.cluster               = hdr.manufacturer_specific
-                                ? nullptr
-                                : cluster_id_to_name(frame.cluster_id);
+    // cluster_name() labels standard clusters by id and the manufacturer-
+    // specific clusters we can resolve unambiguously by (id, manufacturer
+    // code); anything ambiguous stays nullptr → dispatch fail-open. See
+    // CLUSTER_NAMES_AUDIT.md.
+    out.cluster               = cluster_name(frame.cluster_id,
+                                             hdr.manufacturer_code,
+                                             hdr.manufacturer_specific);
     out.direction             = hdr.direction_server_to_client
                                 ? Direction::ServerToClient
                                 : Direction::ClientToServer;

@@ -106,9 +106,80 @@ static void test_dispatch_filters_by_decoded_cluster() {
     assert(r.merged.find("lvl_hit") == nullptr);   // genLevelCtrl filtered out
 }
 
+// ── mfg-aware labelling (REPORT.md §2.4 #1 follow-up, safe subset) ──────────
+// Collision ids that carry a distinct manufacturerCode are disambiguated.
+static void test_decode_mfg_disambiguates_collisions() {
+    struct Case { std::uint16_t cluster; std::uint16_t mfg; const char* want; };
+    static const Case cases[] = {
+        { 0xFC01, 0x125F, "manuSpecificNikoState" },          // NIKO_NV
+        { 0xFC01, 0x1021, "manuSpecificLegrandDevices" },     // LEGRAND_GROUP
+        { 0xFC01, 0x10F2, "manuSpecificUbisysDimmerSetup" },  // UBISYS
+        { 0xFC03, 0x1015, "manuSpecificDevelcoAirQuality" },  // DEVELCO
+        { 0xFC03, 0x132F, "manuSpecificYandex" },             // YANDEX_LLC
+        { 0x0000, 0x1379, "vsmartSwitchControl" },            // VSMART (overlays genBasic)
+    };
+    for (const auto& c : cases) {
+        const std::uint8_t body[] = {
+            0x05,  // FC: cluster-specific + manufacturer bit
+            static_cast<std::uint8_t>(c.mfg & 0xFF),
+            static_cast<std::uint8_t>(c.mfg >> 8),
+            0x42, 0x00,  // seq, cmd
+        };
+        auto raw = make_frame(c.cluster, 1, body);
+        DecodedMessage msg{};
+        assert(decode_frame(raw, {}, msg));
+        assert(msg.manufacturer_specific);
+        assert(msg.cluster != nullptr);
+        assert(std::strcmp(msg.cluster, c.want) == 0);
+    }
+}
+
+// Truly-unique custom clusters are labelled by id (gated on the mfg bit).
+static void test_decode_mfg_labels_unique_custom() {
+    struct Case { std::uint16_t cluster; const char* want; };
+    static const Case cases[] = {
+        { 0xFC0A, "manuSpecificYokisPilotWire" },
+        { 0xFC40, "manuSpecificLegrandDevices2" },
+        { 0xFC42, "manuSpecificSiglisZigfred" },
+        { 0xFC7B, "perenioSpecific" },
+        { 0xFC81, "heimanSpecificAirQuality" },
+        { 0xFC90, "heimanClusterSpecial" },
+        { 0xFEE7, "aminaControlCluster" },
+    };
+    for (const auto& c : cases) {
+        const std::uint8_t body[] = { 0x05, 0x11, 0x22, 0x42, 0x00 };  // any mfg code
+        auto raw = make_frame(c.cluster, 1, body);
+        DecodedMessage msg{};
+        assert(decode_frame(raw, {}, msg));
+        assert(msg.cluster != nullptr);
+        assert(std::strcmp(msg.cluster, c.want) == 0);
+    }
+}
+
+// Unknown mfg on a handled collision id, plus the existing-table collisions
+// (0xFC00/0xFC11/0xFF01) and orvibo (0x0017), stay fail-open — NOT mislabelled.
+static void test_decode_mfg_ambiguous_stays_failopen() {
+    static const std::uint16_t ids[] = {
+        0xFC01, 0xFC03, 0x0000,   // handled ids, but with an unknown mfg code
+        0xFC00, 0xFC11, 0xFF01,   // existing-table collisions — left fail-open
+        0x0017,                    // orvibo — no mfg discriminator
+    };
+    for (std::uint16_t id : ids) {
+        const std::uint8_t body[] = { 0x05, 0x99, 0x99, 0x42, 0x00 };  // mfg 0x9999
+        auto raw = make_frame(id, 1, body);
+        DecodedMessage msg{};
+        assert(decode_frame(raw, {}, msg));
+        assert(msg.manufacturer_specific);
+        assert(msg.cluster == nullptr);   // fail-open, not mislabelled
+    }
+}
+
 int main() {
     test_decode_labels_standard_cluster();
     test_decode_leaves_mfg_specific_unlabelled();
     test_dispatch_filters_by_decoded_cluster();
+    test_decode_mfg_disambiguates_collisions();
+    test_decode_mfg_labels_unique_custom();
+    test_decode_mfg_ambiguous_stays_failopen();
     return 0;
 }

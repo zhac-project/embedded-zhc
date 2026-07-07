@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Cluster filter extended to manufacturer-specific clusters (REPORT.md §2.4 #1
+  follow-up).** New `cluster_name(id, mfg_code, mfg_specific)` labeller resolves
+  the manufacturer clusters that carry a distinct `manufacturerCode` (0xFC01
+  Niko/Legrand/Ubisys, 0xFC03 Develco/Yandex, 0x0000 vsmart) by (id, mfg code),
+  and the globally-unique custom ids (perenio, yokis, siglis, amina, heiman×2,
+  legrand2) by id. Clusters that can't be resolved unambiguously — the existing-
+  table collisions 0xFC00/0xFC11/0xFF01 and orvibo/sdevices (no usable
+  discriminator) — deliberately stay fail-open rather than risk mislabelling a
+  vendor (per-device dispatch means the cross-vendor collision never fires at
+  runtime anyway). Extends `test_decoder_cluster`; full suite 360/360. Resolved
+  ids + rationale in `CLUSTER_NAMES_AUDIT.md`.
 - **Dispatch filters converters by ZCL cluster (REPORT.md §2.4 #1).** The decoder
   set `DecodedMessage::cluster = nullptr` unconditionally, so `cluster_match`
   always hit its null-is-any fall-through — the `.cluster` selector on every
