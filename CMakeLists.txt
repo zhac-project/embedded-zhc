@@ -785,6 +785,9 @@ target_link_libraries(zhc_fixture_runner PRIVATE zhc_definitions)
 add_executable(zhc_dispatch_tests tests/test_dispatch.cpp)
 target_link_libraries(zhc_dispatch_tests PRIVATE zhc_runtime)
 
+add_executable(zhc_decoder_cluster_tests tests/test_decoder_cluster.cpp)
+target_link_libraries(zhc_decoder_cluster_tests PRIVATE zhc_parser zhc_runtime)
+
 add_executable(zhc_config_steps_tests tests/test_config_steps.cpp)
 target_link_libraries(zhc_config_steps_tests PRIVATE zhc_runtime)
 
@@ -3326,6 +3329,7 @@ add_test(NAME zhc_tests           COMMAND zhc_tests)
 add_test(NAME zhc_parser_tests    COMMAND zhc_parser_tests)
 add_test(NAME zhc_decoder_tests   COMMAND zhc_decoder_tests)
 add_test(NAME zhc_dispatch_tests  COMMAND zhc_dispatch_tests)
+add_test(NAME zhc_decoder_cluster_tests COMMAND zhc_decoder_cluster_tests)
 add_test(NAME zhc_config_steps_tests COMMAND zhc_config_steps_tests)
 add_test(NAME zhc_configure_write_defs_tests COMMAND zhc_configure_write_defs_tests)
 add_test(NAME zhc_matcher_tests   COMMAND zhc_matcher_tests)

@@ -3,6 +3,7 @@
 #include "zhc/zcl/decoder.hpp"
 
 #include "zhc/zcl/header.hpp"
+#include "zhc/cluster_names.hpp"
 
 namespace zhc {
 
@@ -45,7 +46,15 @@ bool decode_frame(const InboundApsFrame& frame,
                    hdr.cluster_specific && is_tuya_dp_cmd)
                  ? FrameFamily::TuyaDp
                  : FrameFamily::Zcl;
-    out.cluster               = nullptr;  // dispatch layer maps id → name
+    // Stamp the cluster name so dispatch can filter converters by cluster.
+    // Manufacturer-specific frames stay unlabelled (nullptr → dispatch
+    // fail-open, unchanged) because the same numeric id maps to different
+    // vendor clusters (0xFC01 = Niko/Legrand/Ubisys, 0x0000 = genBasic vs
+    // vsmart, …) — see CLUSTER_NAMES_AUDIT.md. A manufacturer-code-aware
+    // labeller is the documented follow-up.
+    out.cluster               = hdr.manufacturer_specific
+                                ? nullptr
+                                : cluster_id_to_name(frame.cluster_id);
     out.direction             = hdr.direction_server_to_client
                                 ? Direction::ServerToClient
                                 : Direction::ClientToServer;

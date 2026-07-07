@@ -10,6 +10,17 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Dispatch filters converters by ZCL cluster (REPORT.md §2.4 #1).** The decoder
+  set `DecodedMessage::cluster = nullptr` unconditionally, so `cluster_match`
+  always hit its null-is-any fall-through — the `.cluster` selector on every
+  FzConverter was inert corpus-wide, and two converters differing only by cluster
+  (same command id) both fired. The decoder now stamps the cluster name via
+  `cluster_id_to_name` for standard frames. Manufacturer-specific frames stay
+  unlabelled (fail-open, unchanged) because their numeric id collides across
+  vendors (0xFC01 = Niko/Legrand/Ubisys, 0x0000 = genBasic vs vsmart) — a
+  manufacturer-code-aware labeller is the documented follow-up
+  (`CLUSTER_NAMES_AUDIT.md`). Added `genOnOffSwitchCfg` + `genMultistateValue` to
+  the id table. New host test `test_decoder_cluster`; full suite 360/360.
 - **ZCL report parsing keeps the decoded prefix (REPORT.md §2.4).**
   `parse_report_attributes` / `parse_read_attr_response` returned `false` — and
   the adapter then dropped the whole report — the moment `decode_value` hit an

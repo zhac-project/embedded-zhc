@@ -27,6 +27,7 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         case 0x0004: return "genGroups";
         case 0x0005: return "genScenes";
         case 0x0006: return "genOnOff";
+        case 0x0007: return "genOnOffSwitchCfg";
         case 0x0008: return "genLevelCtrl";
         case 0x000A: return "genTime";
         case 0x000C: return "genAnalogInput";
@@ -35,6 +36,7 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         case 0x0010: return "genBinaryOutput";
         case 0x0012: return "genMultistateInput";
         case 0x0013: return "genMultistateOutput";
+        case 0x0014: return "genMultistateValue";
         case 0x0019: return "genOta";
 
         // Closures
