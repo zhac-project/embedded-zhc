@@ -178,6 +178,18 @@ bool emit_unmapped_tuya_dps(std::span<const TuyaDpRecord> dps,
                    !rec.value.empty() && rec.value.size() <= 4) {
             std::int64_t iv = 0;
             for (const auto x : rec.value) iv = (iv << 8) | x;
+            // CODEX: dp_type 0x02 is a SIGNED 32-bit big-endian value. Sign-
+            // extend from the actual byte width (same as the foundation signed-
+            // integer decoder) so a negative Tuya value — e.g. a sub-zero
+            // temperature — isn't surfaced as a large positive. Enum (0x04) and
+            // Bitmap (0x05) are unsigned and left as-is.
+            if (rec.dp_type == 0x02) {
+                const std::size_t bits = rec.value.size() * 8;
+                if (bits < 64) {
+                    const std::int64_t sign_bit = std::int64_t{1} << (bits - 1);
+                    if (iv & sign_bit) iv |= -(std::int64_t{1} << bits);
+                }
+            }
             v.type = ValueType::Int; v.i = iv;
         } else {
             continue;  // raw blob / string / malformed

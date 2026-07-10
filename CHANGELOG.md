@@ -10,6 +10,18 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **CODEX review fixes.** (1) Unmapped-Tuya-DP fallback (`emit_unmapped_tuya_dps`)
+  now sign-extends `dp_type 0x02` (signed 32-bit BE) so a negative Tuya value
+  — e.g. a sub-zero temperature — is no longer surfaced as a large positive.
+  (2) ZCL foundation decodes half (`0x38`) and double (`0x3A`) floats as
+  `ValueType::Float` (via a new `half_to_float` + a double→float narrow) instead
+  of exposing the raw bit pattern as an integer. (3) The heiman bitmap-to-text
+  decoder used one shared static scratch buffer; since `Value`/`put` store a
+  `StringRef` pointer without copying, two bitmap attributes in the same report
+  (`fault_state` + `muted`) aliased the last conversion — it now uses a small
+  round-robin buffer ring. New `test_foundation` float cases (half/double,
+  negative, subnormal).
+
 - **Cluster filter extended to manufacturer-specific clusters (REPORT.md §2.4 #1
   follow-up).** New `cluster_name(id, mfg_code, mfg_specific)` labeller resolves
   the manufacturer clusters that carry a distinct `manufacturerCode` (0xFC01

@@ -151,6 +151,33 @@ static void test_report_keeps_prefix_on_undecodable_attr() {
     assert(state && state->type == ValueType::Bool && state->b == true);
 }
 
+// CODEX: ZCL half (0x38) and double (0x3A) previously fell through to Uint,
+// exposing the raw bit pattern as an integer. They now decode as Float.
+static void test_float_types() {
+    const AttrKeyEntry k[] = {{0x0000, "x"}};
+    auto decode = [&](std::span<const std::uint8_t> p) -> Value {
+        char sc[64];
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        assert(parse_report_attributes(p, k, sc, sizeof(sc), out));
+        const Value* v = out.find("x");
+        assert(v);
+        return *v;
+    };
+    // half 1.5 = 0x3E00 (LE 00 3E)
+    { const std::uint8_t p[] = {0x00,0x00,0x38, 0x00,0x3E}; Value v = decode(p);
+      assert(v.type == ValueType::Float && v.f > 1.49f && v.f < 1.51f); }
+    // half -2.0 = 0xC000 — sign handled
+    { const std::uint8_t p[] = {0x00,0x00,0x38, 0x00,0xC0}; Value v = decode(p);
+      assert(v.type == ValueType::Float && v.f < -1.99f && v.f > -2.01f); }
+    // half smallest subnormal 0x0001 = 2^-24 (~5.96e-8)
+    { const std::uint8_t p[] = {0x00,0x00,0x38, 0x01,0x00}; Value v = decode(p);
+      assert(v.type == ValueType::Float && v.f > 0.0f && v.f < 1e-6f); }
+    // double 3.25 = 0x400A000000000000 (LE) — narrowed to float
+    { const std::uint8_t p[] = {0x00,0x00,0x3A, 0x00,0x00,0x00,0x00,0x00,0x00,0x0A,0x40};
+      Value v = decode(p);
+      assert(v.type == ValueType::Float && v.f > 3.24f && v.f < 3.26f); }
+}
+
 int main() {
     test_header_basic();
     test_header_manufacturer_specific();
@@ -160,5 +187,6 @@ int main() {
     test_read_attr_response_mixes_success_and_failure();
     test_mi_struct_parses_tagged_tlv();
     test_tuya_dp_stream();
+    test_float_types();
     return 0;
 }

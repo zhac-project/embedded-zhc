@@ -64,6 +64,35 @@ const char* lookup_key(std::uint16_t attr_id,
     return nullptr;
 }
 
+// CODEX: IEEE 754 binary16 (half) → binary32 (float). Handles ±0, subnormals,
+// inf/nan and normals. ZCL type 0x38 (half) previously fell through to the Uint
+// default, exposing the raw bit pattern as an integer.
+static float half_to_float(std::uint16_t h) {
+    const std::uint32_t sign = static_cast<std::uint32_t>(h & 0x8000u) << 16;
+    const std::uint32_t hexp = (h >> 10) & 0x1Fu;
+    const std::uint32_t hman = h & 0x3FFu;
+    std::uint32_t bits;
+    if (hexp == 0x1Fu) {                       // inf / nan
+        bits = sign | 0x7F800000u | (hman << 13);
+    } else if (hexp == 0) {
+        if (hman == 0) {
+            bits = sign;                       // ±0
+        } else {                               // subnormal → normalise
+            int e = -1;
+            std::uint32_t m = hman;
+            do { ++e; m <<= 1; } while ((m & 0x400u) == 0);
+            m &= 0x3FFu;
+            const std::int32_t fexp = 127 - 15 - e;
+            bits = sign | (static_cast<std::uint32_t>(fexp) << 23) | (m << 13);
+        }
+    } else {                                   // normal
+        bits = sign | ((hexp + (127u - 15u)) << 23) | (hman << 13);
+    }
+    float f;
+    std::memcpy(&f, &bits, sizeof(f));
+    return f;
+}
+
 // Helper: decode a ZCL value into `Value`. Returns bytes consumed or -1.
 int decode_value(std::span<const std::uint8_t> data,
                  std::uint8_t type,
@@ -97,11 +126,23 @@ int decode_value(std::span<const std::uint8_t> data,
                 out.i = signed_val;
                 break;
             }
+            case 0x38: {  // half-precision float (binary16)
+                out.type = ValueType::Float;
+                out.f = half_to_float(static_cast<std::uint16_t>(u));
+                break;
+            }
             case 0x39: {
                 float f = 0.0f;
                 std::memcpy(&f, &u, sizeof(f));
                 out.type = ValueType::Float;
                 out.f = f;
+                break;
+            }
+            case 0x3A: {  // double-precision float — narrow to float
+                double d = 0.0;
+                std::memcpy(&d, &u, sizeof(d));
+                out.type = ValueType::Float;
+                out.f = static_cast<float>(d);
                 break;
             }
             default:

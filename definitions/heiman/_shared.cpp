@@ -35,19 +35,24 @@ bool emit_bitmap_text(const HeimanSpecificEntry& e,
         out.put(e.out_key, o);
         return true;
     }
-    // Static scratch is OK here — the ZHC dispatch loop is
-    // single-threaded and consumes the StringRef before the next
-    // bitmap report arrives. Lumi's enum_table uses string literals
-    // for the same reason; we synthesise the joined label so we own
-    // the storage instead.
-    static char scratch[96];
+    // CODEX: one shared static buffer aliases when two bitmap attributes are
+    // decoded from the SAME report (e.g. heiman fault_state + muted): Value/put
+    // stores the StringRef pointer without copying, so the first attribute would
+    // end up reading the second's joined-label text. A small round-robin ring
+    // gives each conversion its own storage (sized well past the bitmap
+    // attributes any one heiman report carries). Dispatch is single-threaded, so
+    // the ring index needs no locking; we still synthesise + own the storage.
+    constexpr std::size_t kScratchLen = 96;
+    static char          scratch_ring[8][kScratchLen];
+    static std::uint8_t  ring_next = 0;
+    char* scratch = scratch_ring[ring_next++ & 0x7u];
     std::size_t off = 0;
     for (std::uint8_t i = 0; i < e.bitmap_count; ++i) {
         const auto& b = e.bitmap_table[i];
         if (b.bit > 15) continue;
         if ((bits & (1ull << b.bit)) == 0) continue;
         const std::size_t need = std::strlen(b.label) + (off ? 1 : 0);
-        if (off + need + 1 >= sizeof(scratch)) break;
+        if (off + need + 1 >= kScratchLen) break;
         if (off) scratch[off++] = ';';
         std::memcpy(scratch + off, b.label, std::strlen(b.label));
         off += std::strlen(b.label);
