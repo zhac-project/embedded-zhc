@@ -8,6 +8,16 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Added
+
+- **Licensing hygiene: full upstream MIT text now bundled.** `LICENSES/MIT.txt`
+  carries the verbatim zigbee-herdsman-converters license (© 2018 Koen Kanters),
+  closing the MIT permission-notice-inclusion condition for the adapted material
+  under `definitions/**`. `NOTICE` and the README license section now point at
+  it and record the verification (upstream confirmed MIT at v26.81.0,
+  2026-07-13; the private generation pipeline now pins the upstream LICENSE
+  hash and fails closed on any future relicense).
+
 ### Fixed
 
 - **CODEX review fixes.** (1) Unmapped-Tuya-DP fallback (`emit_unmapped_tuya_dps`)

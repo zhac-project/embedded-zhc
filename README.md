@@ -75,7 +75,8 @@ Apache License 2.0 — see `LICENSE` and `LICENSES/Apache-2.0.txt`.
 Device-definition ports under `definitions/` derive from the MIT-licensed
 [zigbee-herdsman-converters][z2m] project. Adapted material is
 redistributed under Apache-2.0; original upstream attribution is in
-`NOTICE`.
+`NOTICE`, and the full upstream MIT license text is preserved in
+`LICENSES/MIT.txt`.
 
 ## Contributing
 

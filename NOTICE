@@ -19,7 +19,16 @@ The MIT License permits redistribution under different terms when
 combined with compatible licensed material. The adapted ports in this
 repository are redistributed under the Apache License 2.0. The
 original MIT copyright notice continues to apply to the upstream
-material.
+material, and the full upstream permission notice (license text) is
+included verbatim in `LICENSES/MIT.txt`, satisfying the MIT condition
+that the copyright and permission notice accompany all copies or
+substantial portions of the Software.
+
+Upstream license verified MIT at extraction time (last checked
+2026-07-13 against zigbee-herdsman-converters v26.81.0). The private
+generation pipeline (`zhac-tools`) asserts the upstream LICENSE is
+byte-identical to the pinned MIT text on every sync and fails closed
+if upstream ever relicenses.
 
 Each ported definition file retains its relationship to an upstream
 z2m entry via a `// z2m-source:` comment pointing at the vendor.ts
