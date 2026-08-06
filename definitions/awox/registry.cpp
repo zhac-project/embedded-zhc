@@ -17,6 +17,7 @@ extern const PreparedDefinition kDef_EBF_RGB_Zm;
 extern const PreparedDefinition kDef_EGLO_ZM_RGB_W;
 extern const PreparedDefinition kDef_EPIR_Zm;
 extern const PreparedDefinition kDef_ERCU_WS_Zm;
+extern const PreparedDefinition kDef_EZMB_RGB_TW_I2C;
 
 const PreparedDefinition* const kAwoxRegistry[] = {
     &kDef_AwoX_light,
@@ -30,6 +31,7 @@ const PreparedDefinition* const kAwoxRegistry[] = {
     &kDef_EGLO_ZM_RGB_W,
     &kDef_EPIR_Zm,
     &kDef_ERCU_WS_Zm,
+    &kDef_EZMB_RGB_TW_I2C,
 };
 const std::size_t kAwoxRegistryCount = sizeof(kAwoxRegistry) / sizeof(kAwoxRegistry[0]);
 

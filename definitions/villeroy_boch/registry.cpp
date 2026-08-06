@@ -8,10 +8,12 @@ namespace zhc::devices::villeroy_boch {
 
 extern const PreparedDefinition kDef_C0040000;
 extern const PreparedDefinition kDef_C5850000;
+extern const PreparedDefinition kDef_EC1366;
 
 const PreparedDefinition* const kVilleroyBochRegistry[] = {
     &kDef_C0040000,
     &kDef_C5850000,
+    &kDef_EC1366,
 };
 const std::size_t kVilleroyBochRegistryCount = sizeof(kVilleroyBochRegistry) / sizeof(kVilleroyBochRegistry[0]);
 

@@ -43,6 +43,7 @@ extern const PreparedDefinition kDef_D94842;
 extern const PreparedDefinition kDef_D948_47_29165;
 extern const PreparedDefinition kDef_D968_93;
 extern const PreparedDefinition kDef_D984_42;
+extern const PreparedDefinition kDef_CCT_I;
 
 const PreparedDefinition* const kPaulmannRegistry[] = {
     &kDef_D150257,
@@ -82,6 +83,7 @@ const PreparedDefinition* const kPaulmannRegistry[] = {
     &kDef_D948_47_29165,
     &kDef_D968_93,
     &kDef_D984_42,
+    &kDef_CCT_I,
 };
 const std::size_t kPaulmannRegistryCount = sizeof(kPaulmannRegistry) / sizeof(kPaulmannRegistry[0]);
 

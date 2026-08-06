@@ -7,9 +7,11 @@
 namespace zhc::devices::modular {
 
 extern const PreparedDefinition kDef_MWM002;
+extern const PreparedDefinition kDef_LWM005;
 
 const PreparedDefinition* const kModularRegistry[] = {
     &kDef_MWM002,
+    &kDef_LWM005,
 };
 const std::size_t kModularRegistryCount = sizeof(kModularRegistry) / sizeof(kModularRegistry[0]);
 

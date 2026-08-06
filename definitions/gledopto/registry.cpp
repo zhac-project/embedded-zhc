@@ -101,6 +101,7 @@ extern const PreparedDefinition kDef_GL_S_007ZS;
 extern const PreparedDefinition kDef_GL_S_008Z;
 extern const PreparedDefinition kDef_GL_S_014P;
 extern const PreparedDefinition kDef_GL_W_001Z;
+extern const PreparedDefinition kDef_SAV_DL6IN_24V_12W;
 
 const PreparedDefinition* const kGledoptoRegistry[] = {
     &kDefGle__TZE204_8fffc3kb,
@@ -198,6 +199,7 @@ const PreparedDefinition* const kGledoptoRegistry[] = {
     &kDef_GL_S_008Z,
     &kDef_GL_S_014P,
     &kDef_GL_W_001Z,
+    &kDef_SAV_DL6IN_24V_12W,
 };
 const std::size_t kGledoptoRegistryCount = sizeof(kGledoptoRegistry) / sizeof(kGledoptoRegistry[0]);
 
