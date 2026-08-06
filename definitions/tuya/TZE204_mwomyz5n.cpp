@@ -1,6 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE204_mwomyz5n).
+// Tier 3: Tuya TGM50-ZB thermostat (_TZE204_mwomyz5n) — z2m parity v26.92.0.
+// GRADUATED from definitions/tuya/generated/Gen__TZE204_mwomyz5n.cpp — z2m parity v26.92.0.
+//
+// Reason: local_temperature_calibration (DP19) was generated with divisor 1,
+// but z2m has always applied /10 here. Until this window the triple read
+// `tuya.valueConverter.localTempCalibration3`, whose body is
+//     from: v => (v > 0x7fffffff ? v - 0x100000000 : v) / 10
+// i.e. signed AND divided by ten. The parity tool defaulted every
+// localTempCalibrationN to /1 because it could not see inside the named
+// helper, so the mismatch was written off as a false flag in the previous
+// window's B3 triage. v26.92.0 deleted the five localTempCalibrationN helpers
+// and the triple now reads plainly as `tuya.valueConverter.divideBy10`,
+// which settles it: the ez divisor was wrong and every reported calibration
+// value was 10x too large (a -3.0 C offset surfaced as -30).
+//
+// This file is otherwise a verbatim copy of the generated definition; the only
+// change is that one divisor.
+// Originally auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE204_mwomyz5n).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 namespace zhc::devices::tuya {
@@ -36,7 +53,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_mwomyz5n[] = {
     { 4, "preset", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_mwomyz5n_preset_dp4, sizeof(kEnum__TZE204_mwomyz5n_preset_dp4)/sizeof(kEnum__TZE204_mwomyz5n_preset_dp4[0]) },
     { 9, "child_lock", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 15, "max_temperature_limit", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
-    { 19, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 19, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 101, "running_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_mwomyz5n_running_state_dp101, sizeof(kEnum__TZE204_mwomyz5n_running_state_dp101)/sizeof(kEnum__TZE204_mwomyz5n_running_state_dp101[0]) },
     { 102, "frost_protection", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 103, "factory_reset", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
@@ -74,7 +91,7 @@ const TzConverter* const kTz__TZE204_mwomyz5n[] = { &kTzDp__TZE204_mwomyz5n };
 constexpr const char* kM__TZE204_mwomyz5n[] = { "TS0601" };
 constexpr const char* kN__TZE204_mwomyz5n[] = { "_TZE204_mwomyz5n" };
 }  // namespace
-extern const PreparedDefinition kDefGen__TZE204_mwomyz5n{
+extern const PreparedDefinition kDef__TZE204_mwomyz5n{
     .zigbee_models=kM__TZE204_mwomyz5n,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_mwomyz5n,.manufacturer_names_count=1,

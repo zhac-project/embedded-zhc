@@ -625,6 +625,13 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_rgeapp2c.cpp
     definitions/tuya/BAC_001.cpp
     definitions/tuya/Excellux_EZ.cpp
+    definitions/tuya/TZE284_nbv4tdaz.cpp
+    definitions/tuya/TZE284_agcxaw3f.cpp
+    definitions/tuya/TZE284_khah2lkr.cpp
+    definitions/tuya/TZE204_mwomyz5n.cpp
+    definitions/tuya/TZE204_eekpf0ft.cpp
+    definitions/tuya/TZE204_vjpaih9f.cpp
+    definitions/tuya/TZE200_viy9ihs7.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)
@@ -878,6 +885,9 @@ target_link_libraries(zhc_tuya_matcher_tests PRIVATE zhc_runtime)
 
 add_executable(zhc_tuya_dp_tests tests/test_tuya_dp.cpp)
 target_link_libraries(zhc_tuya_dp_tests PRIVATE zhc_parser)
+
+add_executable(zhc_tuya_calibration_tests tests/test_tuya_calibration.cpp)
+target_link_libraries(zhc_tuya_calibration_tests PRIVATE zhc_definitions)
 
 add_executable(zhc_tuya_mcu_sync_time_tests tests/test_tuya_mcu_sync_time.cpp)
 target_link_libraries(zhc_tuya_mcu_sync_time_tests PRIVATE zhc_definitions)
@@ -3368,6 +3378,7 @@ add_test(NAME zhc_wave_e_tests        COMMAND zhc_wave_e_tests)
 add_test(NAME zhc_lumi_registry_tests COMMAND zhc_lumi_registry_tests)
 add_test(NAME zhc_tuya_matcher_tests  COMMAND zhc_tuya_matcher_tests)
 add_test(NAME zhc_tuya_dp_tests       COMMAND zhc_tuya_dp_tests)
+add_test(NAME zhc_tuya_calibration_tests COMMAND zhc_tuya_calibration_tests)
 add_test(NAME zhc_tuya_mcu_sync_time_tests COMMAND zhc_tuya_mcu_sync_time_tests)
 add_test(NAME zhc_tuya_datapoints_tests    COMMAND zhc_tuya_datapoints_tests)
 add_test(NAME zhc_tuya_base_device_tests   COMMAND zhc_tuya_base_device_tests)

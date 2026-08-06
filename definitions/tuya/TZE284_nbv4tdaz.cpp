@@ -1,6 +1,23 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE284_nbv4tdaz).
+// Tier 3: Tuya AR331Pro thermostat (_TZE284_nbv4tdaz) — z2m parity v26.92.0.
+// GRADUATED from definitions/tuya/generated/Gen__TZE284_nbv4tdaz.cpp — z2m parity v26.92.0.
+//
+// Reason: local_temperature_calibration (DP47) was generated with divisor 1,
+// but z2m has always applied /10 here. Until this window the triple read
+// `tuya.valueConverter.localTempCalibration3`, whose body is
+//     from: v => (v > 0x7fffffff ? v - 0x100000000 : v) / 10
+// i.e. signed AND divided by ten. The parity tool defaulted every
+// localTempCalibrationN to /1 because it could not see inside the named
+// helper, so the mismatch was written off as a false flag in the previous
+// window's B3 triage. v26.92.0 deleted the five localTempCalibrationN helpers
+// and the triple now reads plainly as `tuya.valueConverter.divideBy10`,
+// which settles it: the ez divisor was wrong and every reported calibration
+// value was 10x too large (a -3.0 C offset surfaced as -30).
+//
+// This file is otherwise a verbatim copy of the generated definition; the only
+// change is that one divisor.
+// Originally auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE284_nbv4tdaz).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 namespace zhc::devices::tuya {
@@ -40,7 +57,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_nbv4tdaz[] = {
     { 16, "window_temp", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 18, "display_brightness", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 35, "fault_code", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 49, "valve_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_nbv4tdaz_valve_state_dp49, sizeof(kEnum__TZE284_nbv4tdaz_valve_state_dp49)/sizeof(kEnum__TZE284_nbv4tdaz_valve_state_dp49[0]) },
     { 101, "boost_heating", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 103, "eco_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
@@ -87,7 +104,7 @@ const TzConverter* const kTz__TZE284_nbv4tdaz[] = { &kTzDp__TZE284_nbv4tdaz };
 constexpr const char* kM__TZE284_nbv4tdaz[] = { "TS0601" };
 constexpr const char* kN__TZE284_nbv4tdaz[] = { "_TZE284_nbv4tdaz" };
 }  // namespace
-extern const PreparedDefinition kDefGen__TZE284_nbv4tdaz{
+extern const PreparedDefinition kDef__TZE284_nbv4tdaz{
     .zigbee_models=kM__TZE284_nbv4tdaz,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_nbv4tdaz,.manufacturer_names_count=1,
