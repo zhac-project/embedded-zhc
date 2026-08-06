@@ -612,6 +612,11 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0601_cover_5.cpp
     definitions/tuya/ZIS_01P.cpp
     definitions/tuya/ZG_204ZK.cpp
+    definitions/tuya/ZSN_03P.cpp
+    definitions/tuya/PresenceSwitch_28C1.cpp
+    definitions/tuya/ZF24Pro.cpp
+    definitions/tuya/BHT_209_GCZB.cpp
+    definitions/tuya/TZE284_0kihjsys.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)

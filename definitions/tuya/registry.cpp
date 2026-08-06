@@ -44,6 +44,14 @@ extern const PreparedDefinition kDefGen_ZG_204Z;
 extern const PreparedDefinition kDefGen_ZG_204ZE;
 extern const PreparedDefinition kDefGen_ZG_204ZH;
 extern const PreparedDefinition kDef_ZG_204ZK;
+extern const PreparedDefinition kDef_ZSN_03P;
+// z2m v26.92.0 parity wave (Tuya-DP parent overrides)
+extern const PreparedDefinition kDef_PresenceSwitch1G;
+extern const PreparedDefinition kDef_PresenceSwitch2G;
+extern const PreparedDefinition kDef_PresenceSwitch3G;
+extern const PreparedDefinition kDef_ZF24Pro;
+extern const PreparedDefinition kDef_BHT_209_GCZB;
+extern const PreparedDefinition kDef_TZE284_0kihjsys;
 extern const PreparedDefinition kDefGen_ZG_204ZL;
 extern const PreparedDefinition kDefGen_ZG_204ZM;
 extern const PreparedDefinition kDefGen_ZG_204ZQ;
@@ -1483,6 +1491,13 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_204ZE,
     &kDefGen_ZG_204ZH,
     &kDef_ZG_204ZK,
+    &kDef_ZSN_03P,
+    &kDef_PresenceSwitch1G,
+    &kDef_PresenceSwitch2G,
+    &kDef_PresenceSwitch3G,
+    &kDef_ZF24Pro,
+    &kDef_BHT_209_GCZB,
+    &kDef_TZE284_0kihjsys,
     &kDefGen_ZG_204ZL,
     &kDefGen_ZG_204ZM,
     &kDefGen_ZG_204ZQ,
