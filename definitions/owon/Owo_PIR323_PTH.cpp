@@ -14,7 +14,7 @@ const FzConverter* const kFz_PIR323_PTH[] = {
     &::zhc::generic::kFzHumidity,
 };
 
-constexpr const char* kModels_PIR323_PTH[] = { "PIR323-PTH" };
+constexpr const char* kModels_PIR323_PTH[] = { "PIR323-PTH" , "PIR323-PTH-20" };
 
 }  // namespace
 

@@ -14,7 +14,7 @@ const FzConverter* const kFz_SCA01ZB[] = {
     &::zhc::generic::kFzIasCoAlarm,
 };
 
-constexpr const char* kModels_SCA01ZB[] = { "FNB56-COS06FB1.7", "FNB56-COS06FB2.1" };
+constexpr const char* kModels_SCA01ZB[] = { "FNB56-COS06FB1.7", "FNB56-COS06FB2.1" , "FB56-COS02HM1.4" };
 
 }  // namespace
 

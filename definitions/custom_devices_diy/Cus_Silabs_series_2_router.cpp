@@ -24,7 +24,9 @@ constexpr const char* kModels_Silabs_series_2_router[] = {
     "SLZB-06M", "SLZB-06MG24", "SLZB-06MG26", "SLZB-06MG26U", "SLZB-07", "SLZB-07MG24",
     "DONGLE-E", "Dongle-LMG21", "Dongle-M", "Dongle-PMG24",
     "MGM240P", "MGM24", "BM24", "ZBM-MG24",
-};
+    // z2m v26.92.0 added this lower-case-g spelling alongside the existing
+    // "SLZB-06MG26"; model matching is case-sensitive, so both are needed.
+    "SLZB-06Mg26U" };
 }  // namespace
 extern const PreparedDefinition kDef_Silabs_series_2_router{
     .zigbee_models=kModels_Silabs_series_2_router, .zigbee_models_count=sizeof(kModels_Silabs_series_2_router)/sizeof(kModels_Silabs_series_2_router[0]),

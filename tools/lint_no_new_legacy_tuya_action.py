@@ -92,13 +92,9 @@ BASELINE: dict[str, int] = {
     "tuya/generated/Gen_ZG_101ZD.cpp": 1,
     "tuya/generated/Gen_ZG_102Z.cpp": 1,
     "tuya/generated/Gen_ZG_102ZL.cpp": 1,
-    "tuya/generated/Gen_ZG_102ZM.cpp": 1,
     "tuya/generated/Gen_ZG_103Z.cpp": 1,
     "tuya/generated/Gen_ZG_204ZE.cpp": 1,
-    "tuya/generated/Gen_ZG_204ZH.cpp": 1,
-    "tuya/generated/Gen_ZG_204ZK.cpp": 1,
     "tuya/generated/Gen_ZG_204ZL.cpp": 1,
-    "tuya/generated/Gen_ZG_204ZM.cpp": 1,
     "tuya/generated/Gen_ZG_204ZQ.cpp": 1,
     "tuya/generated/Gen_ZG_204ZV.cpp": 1,
     "tuya/generated/Gen_ZG_204ZX.cpp": 1,
@@ -111,13 +107,9 @@ BASELINE: dict[str, int] = {
     "tuya/generated/Gen_ZG_228Z.cpp": 1,
     "tuya/generated/Gen_ZG_229Z.cpp": 1,
     "tuya/generated/Gen_ZG_301Z.cpp": 1,
-    "tuya/generated/Gen_ZG_302Z1.cpp": 1,
-    "tuya/generated/Gen_ZG_302Z2.cpp": 1,
-    "tuya/generated/Gen_ZG_302Z3.cpp": 1,
     "tuya/generated/Gen_ZG_302ZL.cpp": 1,
     "tuya/generated/Gen_ZG_302ZM.cpp": 1,
     "tuya/generated/Gen_ZG_305Z.cpp": 1,
-    "tuya/generated/Gen__TZ3000_abrsvsou.cpp": 1,
 }
 
 

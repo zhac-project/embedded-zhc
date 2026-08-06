@@ -25,6 +25,10 @@ const FzConverter* const kFz_S902M_ZG[] = {
 };
 
 constexpr const char* kModels_S902M_ZG[] = { "HZC Electric motion sensor" };
+// z2m v26.92.0 replaced the zigbeeModel match with a manufacturerName
+// fingerprint ("Shyugj"). Kept BOTH: dropping the old model id would
+// unpair units that already joined on it.
+constexpr const char* kManus_S902M_ZG[] = { "Shyugj" };
 
 }  // namespace
 
@@ -47,7 +51,7 @@ constexpr BindingSpec kAutoBindings[] = {
 extern const PreparedDefinition kDef_S902M_ZG{
     .zigbee_models=kModels_S902M_ZG, .zigbee_models_count=sizeof(kModels_S902M_ZG)/sizeof(kModels_S902M_ZG[0]),
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=nullptr, .manufacturer_names_count=0,
+    .manufacturer_names=kManus_S902M_ZG, .manufacturer_names_count=sizeof(kManus_S902M_ZG)/sizeof(kManus_S902M_ZG[0]),
     .model="S902M-ZG", .vendor="HzcElectric",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
