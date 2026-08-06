@@ -334,8 +334,11 @@
 #include "zhc/devices/zunzunbee_registry.hpp"
 #include "zhc/devices/ensystec_registry.hpp"
 #include "zhc/devices/handshake_finland_registry.hpp"
+#include "zhc/devices/linknlink_registry.hpp"
 #include "zhc/devices/megaman_registry.hpp"
 #include "zhc/devices/nodieby_registry.hpp"
+#include "zhc/devices/pulsar_registry.hpp"
+#include "zhc/devices/nova_digital_registry.hpp"
 
 namespace zhc::devices::tier_e {
 

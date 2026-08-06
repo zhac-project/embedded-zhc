@@ -11,6 +11,7 @@ extern const PreparedDefinition kDef_SMRZB_153;
 extern const PreparedDefinition kDef_EMIZB_141;
 extern const PreparedDefinition kDef_EMIZB_151;
 extern const PreparedDefinition kDef_WISZB_131;
+extern const PreparedDefinition kDef_SMRZB_342;
 
 const PreparedDefinition* const kFrientRegistry[] = {
     &kDef_SIRZB_112,
@@ -18,6 +19,7 @@ const PreparedDefinition* const kFrientRegistry[] = {
     &kDef_EMIZB_141,
     &kDef_EMIZB_151,
     &kDef_WISZB_131,
+    &kDef_SMRZB_342,
 };
 const std::size_t kFrientRegistryCount = sizeof(kFrientRegistry) / sizeof(kFrientRegistry[0]);
 
