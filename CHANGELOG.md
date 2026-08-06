@@ -35,7 +35,17 @@ across the ZHAC platform.
   (+`PIR323-PTH-20`), and `tuya ZG-102ZM` / `ZG-204ZH` / `ZG-204ZM` (+ their
   AOYAN `AY02SZ` / `AY208Z` / `AY205Z` white-labels). `hzc_electric S902M-ZG`
   gains the new `Shyugj` manufacturerName fingerprint while keeping its old
-  zigbeeModel, so already-paired units are not orphaned.
+  zigbeeModel, so already-paired units are not orphaned. Second pass:
+  `philips 046677590161` (+`LGT011`), `shelly S4SN-0071A` (+`Flood S` and the
+  `S4SN-0071Z` white label), `sonoff ZBM5-1C`/`2C`/`3C` (+ the `-120` size
+  variants), `sylvania 72569` (+`LIGHTIFY Conv Under Cabinet TW`),
+  `tuya ZG-227ZL` (+`AY201Z`, +`ZG-227Z`, + the `_TZE200_y8wkaq6w`
+  manufacturerName the generated fingerprint had dropped), and
+  `slacky_diy TS0203-z-Sld` (+ the re-cased `TS0203-z20-SlD`; both spellings
+  kept, matching is case-sensitive).
+
+- **`sonoff SNZB-05P` power source** — `power_source_override = 0x03`
+  (Battery); the sensor misreports ZCL Basic `0x0007`.
 
 ### Fixed
 
@@ -48,7 +58,12 @@ across the ZHAC platform.
   resulting flags were dismissed as false positives. v26.92.0 deleted those
   helpers and the triples now read plainly as `divideBy10`, settling it. New
   `zhc_tuya_calibration_tests` pins both the divisor and the two's-complement
-  sign handling.
+  sign handling. The hand-written definitions were already correct — only the
+  generated ones carried the wrong divisor.
+
+- **`tuya HZ-SL10` read illuminance from the wrong datapoint.** z2m v26.92.0
+  moved it from DP103 to DP105; ZHAC still decoded DP103, so the reported
+  light level was whatever that datapoint now carries.
 
 - **Licensing hygiene: full upstream MIT text now bundled.** `LICENSES/MIT.txt`
   carries the verbatim zigbee-herdsman-converters license (© 2018 Koen Kanters),
