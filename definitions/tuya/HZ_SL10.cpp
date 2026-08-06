@@ -4,6 +4,9 @@
 // Matched by zigbeeModel "ZG-303B"/"ZG-303L" (no manufacturerName fingerprint in z2m).
 // temperature /10; temperature_calibration /10 signed (localTempCalibration3);
 // soil_calibration /1 signed (localTempCalibration2); other numerics raw.
+// Re-verified against z2m v26.92.0: upstream replaced the localTempCalibrationN
+// helpers with plain divideBy10 / raw, which confirms both divisors here were
+// already right. The one real change was illuminance moving DP103 -> DP105.
 // z2m-source: tuya.ts #HZ-SL10
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/dp.hpp"
@@ -23,7 +26,9 @@ struct cfg { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
     ::zhc::tuya::dp::numeric(111,"temperature_sampling",1),
     ::zhc::tuya::dp::numeric(112,"soil_sampling",1),
     ::zhc::tuya::dp::numeric(110,"soil_warning",1),
-    ::zhc::tuya::dp::numeric(103,"illuminance",1),
+    // z2m v26.92.0 moved illuminance from DP103 to DP105. Decoding it off 103
+    // read whatever that datapoint now carries, not the light level.
+    ::zhc::tuya::dp::numeric(105,"illuminance",1),
     ::zhc::tuya::dp::numeric(107,"illuminance_sampling",1)};
     static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{e,12}; };
 using FX=::zhc::tuya::factory::TuyaOnOff<cfg>;
