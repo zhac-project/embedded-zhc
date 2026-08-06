@@ -10,6 +10,46 @@ across the ZHAC platform.
 
 ### Added
 
+- **Parity with zigbee-herdsman-converters v26.92.0 — 40 new devices ported**
+  across 22 vendors (previous baseline v26.77.0, 15 upstream releases). Tuya-DP
+  devices: `ZSN-03P`, the 1/2/3-gang `_TZE28C1000000_*` presence-switches,
+  `ZF24Pro`, `BHT-209-GCZB`, `_TZE284_0kihjsys`, `AY-204Z`, `AY-601ZL`/`602ZL`/
+  `603ZL`, the Nova Digital Topazio `TO-DM-W/B` / `TO-WK-1W/B` / `TO-WK-2W/B`,
+  `_TZE200_rgeapp2c`, `BAC-001`, `EZ-104UPT`, `EZ-500FL`, `ZM6LT1`. Lights:
+  `EZMB-RGB-TW-I2C`, `RCL 241 T`, `RCL 242 C`, `91-943-PRO-RGBCW`, `LWM005`,
+  `CCT-I`, `929003812301`, `929004321001`, `ROB_200-065-0`, `EC1366`,
+  `SAV-DL6IN-24V-12W`. Aqara `SSWQDYH02` + `ZNYB01LM`. Also `SE-RZ11`,
+  `ZSS-QT-LTH-C`, `SMRZB-342`, `Dongle-PP10`, `eMotion Air`, `NFZB-2`,
+  `LPC-V1`. Three new vendors scaffolded: `linknlink`, `nova_digital`,
+  `pulsar` (327 → 330 Tier-E vendors).
+  Partial ports are marked as such in their file headers rather than shipped
+  silently: `ZNYB01LM` carries its light but not the packed-attribute YUBA
+  heater, `BAC-001` omits its cross-datapoint `system_mode` composite, `ZM6LT1`
+  omits the `phaseVariant5` voltage/current/power datapoint, and the Topazio
+  units omit an affine brightness map and a packed inching buffer.
+
+- **White-labels and fingerprints upstream folded into existing definitions**,
+  each of which previously left the device unrecognised: `feibit SCA01ZB`
+  (+`FB56-COS02HM1.4`), `smlight SLZB-06M` (+`SLZB-06Mg26U`, a case-sensitive
+  spelling distinct from the existing `SLZB-06MG26U`), `owon PIR323-PTH`
+  (+`PIR323-PTH-20`), and `tuya ZG-102ZM` / `ZG-204ZH` / `ZG-204ZM` (+ their
+  AOYAN `AY02SZ` / `AY208Z` / `AY205Z` white-labels). `hzc_electric S902M-ZG`
+  gains the new `Shyugj` manufacturerName fingerprint while keeping its old
+  zigbeeModel, so already-paired units are not orphaned.
+
+### Fixed
+
+- **`local_temperature_calibration` was reported 10× too large on seven
+  thermostats** — `AR331Pro`, `BOT-R15W`, `TE-1Z`, `TGM50-ZB`, `TR-M3Z`,
+  `TS0601_thermostat_14` and `ZWT198/ZWT100-BH`. A −3.0 °C offset surfaced as
+  −30. z2m expressed the scaling inside the named helper
+  `valueConverter.localTempCalibration3` (signed, ÷10), which the parity
+  tooling could not see into, so it defaulted the divisor to 1 and the
+  resulting flags were dismissed as false positives. v26.92.0 deleted those
+  helpers and the triples now read plainly as `divideBy10`, settling it. New
+  `zhc_tuya_calibration_tests` pins both the divisor and the two's-complement
+  sign handling.
+
 - **Licensing hygiene: full upstream MIT text now bundled.** `LICENSES/MIT.txt`
   carries the verbatim zigbee-herdsman-converters license (© 2018 Koen Kanters),
   closing the MIT permission-notice-inclusion condition for the adapted material
