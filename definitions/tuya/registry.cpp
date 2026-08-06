@@ -52,6 +52,17 @@ extern const PreparedDefinition kDef_PresenceSwitch3G;
 extern const PreparedDefinition kDef_ZF24Pro;
 extern const PreparedDefinition kDef_BHT_209_GCZB;
 extern const PreparedDefinition kDef_TZE284_0kihjsys;
+extern const PreparedDefinition kDef_AY_204Z;
+extern const PreparedDefinition kDef_AY_601ZL;
+extern const PreparedDefinition kDef_AY_602ZL;
+extern const PreparedDefinition kDef_AY_603ZL;
+extern const PreparedDefinition kDef_TO_DM_W_B;
+extern const PreparedDefinition kDef_TO_WK_1W_B;
+extern const PreparedDefinition kDef_TO_WK_2W_B;
+extern const PreparedDefinition kDef_TZE200_rgeapp2c;
+extern const PreparedDefinition kDef_BAC_001;
+extern const PreparedDefinition kDef_EZ_104UPT;
+extern const PreparedDefinition kDef_EZ_500FL;
 extern const PreparedDefinition kDefGen_ZG_204ZL;
 extern const PreparedDefinition kDefGen_ZG_204ZM;
 extern const PreparedDefinition kDefGen_ZG_204ZQ;
@@ -1498,6 +1509,17 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_ZF24Pro,
     &kDef_BHT_209_GCZB,
     &kDef_TZE284_0kihjsys,
+    &kDef_AY_204Z,
+    &kDef_AY_601ZL,
+    &kDef_AY_602ZL,
+    &kDef_AY_603ZL,
+    &kDef_TO_DM_W_B,
+    &kDef_TO_WK_1W_B,
+    &kDef_TO_WK_2W_B,
+    &kDef_TZE200_rgeapp2c,
+    &kDef_BAC_001,
+    &kDef_EZ_104UPT,
+    &kDef_EZ_500FL,
     &kDefGen_ZG_204ZL,
     &kDefGen_ZG_204ZM,
     &kDefGen_ZG_204ZQ,

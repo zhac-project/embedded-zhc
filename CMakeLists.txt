@@ -617,6 +617,12 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/ZF24Pro.cpp
     definitions/tuya/BHT_209_GCZB.cpp
     definitions/tuya/TZE284_0kihjsys.cpp
+    definitions/tuya/AY_204Z.cpp
+    definitions/tuya/AY_60xZL.cpp
+    definitions/tuya/Topazio_TO.cpp
+    definitions/tuya/TZE200_rgeapp2c.cpp
+    definitions/tuya/BAC_001.cpp
+    definitions/tuya/Excellux_EZ.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)
