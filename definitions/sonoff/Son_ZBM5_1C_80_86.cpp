@@ -1,21 +1,21 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sonoff ZBM5-2C-80/86 — auto-generated.
-// Zigbee Smart two-channel wall switch (type 80/86).
-// z2m-source: sonoff.ts #ZBM5-2C-80/86.
+// Tier 3: sonoff ZBM5-1C-80/86 — z2m parity v26.92.0.
+// GRADUATED from definitions/sonoff/generated/Son_ZBM5_1C_80_86.cpp: z2m v26.92.0 folded the 120-size variant into this definition.
+// Otherwise a verbatim copy of the generated file.
+// Zigbee Smart one-channel wall switch (type 80/86).
+// z2m-source: sonoff.ts #ZBM5-1C-80/86.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::sonoff {
 namespace {
-const FzConverter* const kFz_ZBM5_2C_80_86[] = {
+const FzConverter* const kFz_ZBM5_1C_80_86[] = {
     &::zhc::generic::kFzOnOff,
 };
-const TzConverter* const kTz_ZBM5_2C_80_86[] = {
+const TzConverter* const kTz_ZBM5_1C_80_86[] = {
     &::zhc::generic::kTzOnOff,
 };
-constexpr const char* kModels_ZBM5_2C_80_86[] = { "ZBM5-2C-80/86" };
-
-constexpr ::zhc::EndpointLabel kEndpoints_ZBM5_2C_80_86[] = { {"l1", 1}, {"l2", 2} };
+constexpr const char* kModels_ZBM5_1C_80_86[] = { "ZBM5-1C-80/86", "ZBM5-1C-120" };
 
 }  // namespace
 
@@ -30,19 +30,17 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_ZBM5_2C_80_86{
-    .zigbee_models=kModels_ZBM5_2C_80_86, .zigbee_models_count=sizeof(kModels_ZBM5_2C_80_86)/sizeof(kModels_ZBM5_2C_80_86[0]),
+extern const PreparedDefinition kDef_ZBM5_1C_80_86{
+    .zigbee_models=kModels_ZBM5_1C_80_86, .zigbee_models_count=sizeof(kModels_ZBM5_1C_80_86)/sizeof(kModels_ZBM5_1C_80_86[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
-    .model="ZBM5-2C-80/86", .vendor="Sonoff",
+    .model="ZBM5-1C-80/86", .vendor="Sonoff",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_ZBM5_2C_80_86, .from_zigbee_count=sizeof(kFz_ZBM5_2C_80_86)/sizeof(kFz_ZBM5_2C_80_86[0]),
-    .to_zigbee=kTz_ZBM5_2C_80_86, .to_zigbee_count=sizeof(kTz_ZBM5_2C_80_86)/sizeof(kTz_ZBM5_2C_80_86[0]),
+    .from_zigbee=kFz_ZBM5_1C_80_86, .from_zigbee_count=sizeof(kFz_ZBM5_1C_80_86)/sizeof(kFz_ZBM5_1C_80_86[0]),
+    .to_zigbee=kTz_ZBM5_1C_80_86, .to_zigbee_count=sizeof(kTz_ZBM5_1C_80_86)/sizeof(kTz_ZBM5_1C_80_86[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
-    .endpoint_map       = kEndpoints_ZBM5_2C_80_86,
-    .endpoint_map_count = sizeof(kEndpoints_ZBM5_2C_80_86)/sizeof(kEndpoints_ZBM5_2C_80_86[0]),
 };
 
 }  // namespace zhc::devices::sonoff

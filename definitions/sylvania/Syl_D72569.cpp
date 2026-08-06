@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sylvania 72569 — auto-generated.
+// Tier 3: sylvania 72569 — z2m parity v26.92.0.
+// GRADUATED from definitions/sylvania/generated/Syl_D72569.cpp: z2m v26.92.0 folded the LIGHTIFY Conv variant into this definition.
+// Otherwise a verbatim copy of the generated file.
 // SMART+ Zigbee adjustable white edge-lit under cabinet light
 // Bundle: CTLight (tunable white).
 // z2m-source: sylvania.ts #72569.
@@ -10,7 +12,7 @@
 namespace zhc::devices::sylvania {
 namespace {
 
-constexpr const char* kModels_D72569[] = { "Edge-lit Under Cabinet TW" };
+constexpr const char* kModels_D72569[] = { "Edge-lit Under Cabinet TW", "LIGHTIFY Conv Under Cabinet TW" };
 
 }  // namespace
 

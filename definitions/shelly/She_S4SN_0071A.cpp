@@ -28,8 +28,11 @@ const FzConverter* const kFz_S4SN_0071A[] = {
     &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
-constexpr const char* kModels_S4SN_0071A[] = { "Flood" };
+constexpr const char* kModels_S4SN_0071A[] = { "Flood", "Flood S" };
 
+constexpr WhiteLabel kWhiteLabels_S4SN_0071A[] = {
+    {"Shelly", "S4SN-0071Z"},   // Flood S Gen 4, modelID "Flood S"
+};
 }  // namespace
 
 
@@ -54,7 +57,7 @@ extern const PreparedDefinition kDef_S4SN_0071A{
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="S4SN-0071A", .vendor="Shelly",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels_S4SN_0071A, .white_labels_count=sizeof(kWhiteLabels_S4SN_0071A)/sizeof(kWhiteLabels_S4SN_0071A[0]),
     .from_zigbee=kFz_S4SN_0071A, .from_zigbee_count=sizeof(kFz_S4SN_0071A)/sizeof(kFz_S4SN_0071A[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

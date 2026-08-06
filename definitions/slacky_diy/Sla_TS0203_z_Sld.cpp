@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: SlackyDiy TS0203-z-Sld — auto-generated.
+// Tier 3: slacky_diy TS0203-z-Sld — z2m parity v26.92.0.
+// GRADUATED from definitions/slacky_diy/generated/Sla_TS0203_z_Sld.cpp: z2m v26.92.0 re-cased the zigbeeModel to TS0203-z20-SlD.
+// Both spellings are kept: matching is case-sensitive and dropping the old
+// one would unpair units that already joined on it.
+// Otherwise a verbatim copy of the generated file.
 // Tuya door/window sensor with custom firmware
 // z2m-source: slacky_diy.ts #TS0203-z-Sld.
 #include "definitions/_generic/_shared.hpp"
@@ -12,7 +16,7 @@ const FzConverter* const kFz_TS0203_z_Sld[] = {
     &::zhc::generic::kFzIasZone,
 };
 
-constexpr const char* kModels_TS0203_z_Sld[] = { "TS0203-z20-Sld" };
+constexpr const char* kModels_TS0203_z_Sld[] = { "TS0203-z20-Sld", "TS0203-z20-SlD" };
 
 }  // namespace
 

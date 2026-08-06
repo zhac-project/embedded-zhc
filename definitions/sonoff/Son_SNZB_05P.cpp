@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sonoff SNZB-05P — auto-generated.
+// Tier 3: sonoff SNZB-05P water sensor — z2m parity v26.92.0.
+// GRADUATED from definitions/sonoff/generated/Son_SNZB_05P.cpp: z2m v26.92.0
+// added m.forcePowerSource({powerSource: "Battery"}) because this sensor
+// misreports Basic 0x0007. Otherwise a verbatim copy.
 // Zigbee water sensor
 // z2m-source: sonoff.ts #SNZB-05P.
 #include "definitions/_generic/_shared.hpp"

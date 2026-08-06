@@ -73,7 +73,6 @@ extern const PreparedDefinition kDefGen_ZG_222Z;
 extern const PreparedDefinition kDefGen_ZG_223Z;
 extern const PreparedDefinition kDefGen_ZG_225Z;
 extern const PreparedDefinition kDefGen_ZG_226Z;
-extern const PreparedDefinition kDefGen_ZG_227ZL;
 extern const PreparedDefinition kDefGen_ZG_228Z;
 extern const PreparedDefinition kDefGen_ZG_229Z;
 extern const PreparedDefinition kDefGen_ZG_301Z;
@@ -1474,6 +1473,7 @@ extern const PreparedDefinition kDef_WSD500A;
 extern const PreparedDefinition kDef_IH_K009;
 extern const PreparedDefinition kDef_LCZ030;
 extern const PreparedDefinition kDef_KCTW1Z;
+extern const PreparedDefinition kDef_ZG_227ZL;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_CK_BL702_AL_01_7008_Z102LG01_1_,
@@ -1530,7 +1530,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_223Z,
     &kDefGen_ZG_225Z,
     &kDefGen_ZG_226Z,
-    &kDefGen_ZG_227ZL,
     &kDefGen_ZG_228Z,
     &kDefGen_ZG_229Z,
     &kDefGen_ZG_301Z,
@@ -2933,6 +2932,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_IH_K009,
     &kDef_LCZ030,
     &kDef_KCTW1Z,
+    &kDef_ZG_227ZL,
 };
 
 extern const std::size_t kTuyaRegistryCount =

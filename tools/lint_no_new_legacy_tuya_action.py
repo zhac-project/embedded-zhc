@@ -103,7 +103,6 @@ BASELINE: dict[str, int] = {
     "tuya/generated/Gen_ZG_223Z.cpp": 1,
     "tuya/generated/Gen_ZG_225Z.cpp": 1,
     "tuya/generated/Gen_ZG_226Z.cpp": 1,
-    "tuya/generated/Gen_ZG_227ZL.cpp": 1,
     "tuya/generated/Gen_ZG_228Z.cpp": 1,
     "tuya/generated/Gen_ZG_229Z.cpp": 1,
     "tuya/generated/Gen_ZG_301Z.cpp": 1,

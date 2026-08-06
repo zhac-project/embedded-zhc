@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sonoff ZBM5-3C-80/86 — auto-generated.
+// Tier 3: sonoff ZBM5-3C-80/86 — z2m parity v26.92.0.
+// GRADUATED from definitions/sonoff/generated/Son_ZBM5_3C_80_86.cpp: z2m v26.92.0 folded the 120-size variant into this definition.
+// Otherwise a verbatim copy of the generated file.
 // Zigbee Smart three-channel wall switch (type 80/86).
 // z2m-source: sonoff.ts #ZBM5-3C-80/86.
 #include "definitions/_generic/_shared.hpp"
@@ -13,7 +15,7 @@ const FzConverter* const kFz_ZBM5_3C_80_86[] = {
 const TzConverter* const kTz_ZBM5_3C_80_86[] = {
     &::zhc::generic::kTzOnOff,
 };
-constexpr const char* kModels_ZBM5_3C_80_86[] = { "ZBM5-3C-80/86" };
+constexpr const char* kModels_ZBM5_3C_80_86[] = { "ZBM5-3C-80/86", "ZBM5-3C-120" };
 
 constexpr ::zhc::EndpointLabel kEndpoints_ZBM5_3C_80_86[] = { {"l1", 1}, {"l2", 2}, {"l3", 3} };
 

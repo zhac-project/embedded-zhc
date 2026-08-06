@@ -635,6 +635,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/ZG_102ZM.cpp
     definitions/tuya/ZG_204ZH.cpp
     definitions/tuya/ZG_204ZM.cpp
+    definitions/tuya/ZG_227ZL.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)
