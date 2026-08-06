@@ -16,6 +16,7 @@ extern const PreparedDefinition kDef_SZ_DWS08;
 extern const PreparedDefinition kDef_SZ_PIR04N;
 extern const PreparedDefinition kDef_SZ_WTD03;
 extern const PreparedDefinition kDef_XHS2_SE;
+extern const PreparedDefinition kDef_SE_RZ11;
 
 const PreparedDefinition* const kSercommRegistry[] = {
     &kDef_SZ_ESW01,
@@ -28,6 +29,7 @@ const PreparedDefinition* const kSercommRegistry[] = {
     &kDef_SZ_PIR04N,
     &kDef_SZ_WTD03,
     &kDef_XHS2_SE,
+    &kDef_SE_RZ11,
 };
 const std::size_t kSercommRegistryCount = sizeof(kSercommRegistry) / sizeof(kSercommRegistry[0]);
 

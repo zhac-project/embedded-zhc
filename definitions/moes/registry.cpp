@@ -114,6 +114,7 @@ extern const PreparedDefinition kDef_ZS_D2;
 extern const PreparedDefinition kDef_ZWV_YC;
 extern const PreparedDefinition kDef_BHT_002;
 extern const PreparedDefinition kDef_ZS_D3;
+extern const PreparedDefinition kDef_ZSS_QT_LTH_C;
 
 extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDef_UFO_R11,
@@ -225,6 +226,7 @@ extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDef_ZWV_YC,
     &kDef_BHT_002,
     &kDef_ZS_D3,
+    &kDef_ZSS_QT_LTH_C,
 };
 
 extern const std::size_t kMoesRegistryCount = 79;
