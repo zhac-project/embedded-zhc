@@ -588,6 +588,8 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNWXKG01LM.cpp
     definitions/lumi/SP_WP01.cpp
     definitions/lumi/WGLZ00LM.cpp
+    definitions/lumi/SSWQDYH02.cpp
+    definitions/lumi/ZNYB01LM.cpp
     definitions/lumi/C200.cpp
     definitions/lumi/FP310.cpp
     definitions/lumi/SSWQD22LM.cpp
