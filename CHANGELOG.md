@@ -8,7 +8,45 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING — `motor_direction` now reports `normal` / `reversed`** instead of
+  `forward` / `back`, on 20 cover-motor definitions across `tuya`, `zemismart`
+  and `moes`. z2m v26.95.0 replaced each device's inline `{forward: 0, back: 1}`
+  lookup with `valueConverter.tubularMotorDirection`, which publishes
+  `{normal: 0, reversed: 1}`; wire values are unchanged. Rules, dashboards and
+  automations matching the old strings must be updated —
+  `motor_direction == "forward"` becomes `"normal"`, `"back"` becomes
+  `"reversed"`.
+
 ### Added
+
+- **Parity with zigbee-herdsman-converters v26.95.0** (v26.93.0, v26.94.0,
+  v26.95.0). Upstream re-verified MIT. 15 new devices: HEIMAN `HS2HT`,
+  `HS2TD`, `HS2VTD`, `S1-TL`, `HS2NLV`; Philips `929004291501` (fingerprint is
+  zigbeeModel `LCD018`, not the order code); AOYAN `AY301Z-2CH`; and the Tuya
+  datapoint devices `THAH202001`, `TO-6 W/B`, `ZG-109TDS`, `ZG-IR01`,
+  `TS0301_cover_2`, `TS0601_thermostat_fancoil`, `_TZE204_7lb6j8wg`,
+  `_TZE204_8eazvzo6`.
+  `TS0301_cover_2` also picks up the fourth cover action value `CONTINUE`,
+  added upstream in the same window.
+
+- **More white-labels and fingerprints upstream folded into existing
+  definitions**, each of which left the device unrecognised: `TS0601_6gang_switch`
+  (+`_TZE284_tokhh9pf`), `TYBAC-006` (+`_TZE204_qujphad5`) and `ZG-204ZV`
+  (+zigbeeModel `AY204T` and manufacturerName `"AOYAN  "` — two trailing
+  spaces, the same padded-Basic-string quirk as `AY-204Z`).
+
+- **`sonoff SNZB-05P` and `shelly S4EM-001PXCEU16` power source overrides** —
+  Battery and Mains respectively; both misreport ZCL Basic `0x0007`.
+
+### Fixed
+
+- **`TS0601_6gang_switch` could not learn new fingerprints.** Its
+  `manufacturer_names_count` was a literal `1` rather than derived from the
+  array, so any appended manufacturer name was silently ignored. The count is
+  now `sizeof`-derived. A sweep of every definition found no other count that
+  disagrees with its array.
 
 - **Parity with zigbee-herdsman-converters v26.92.0 — 40 new devices ported**
   across 22 vendors (previous baseline v26.77.0, 15 upstream releases). Tuya-DP
