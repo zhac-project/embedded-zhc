@@ -4,6 +4,10 @@
 // v26.35->v26.76 delta: reworked to full cover model (DP6/8/9/10/11/19 + mode/motor_direction/etc).
 // DP2 & DP3 both carry position; border/motor_fault/click_control decode-only (not exposed, mirrors z2m).
 // z2m-source: tuya.ts #RM28-LE
+// z2m v26.95.0 renamed the motor_direction labels: the inline lookup
+// {forward:0, back:1} became valueConverter.tubularMotorDirection,
+// {normal:0, reversed:1}. Wire values are unchanged; only the published
+// strings differ. Renamed here for z2m parity (product decision).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/dp.hpp"
 #include "definitions/tuya/extend.hpp"
@@ -12,7 +16,7 @@ namespace zhc::devices::tuya {
 namespace {
 constexpr ::zhc::tuya::TuyaEnumEntry kState[]={{0,"open"},{1,"stop"},{2,"close"}};
 constexpr ::zhc::tuya::TuyaEnumEntry kMode[]={{0,"morning"},{1,"night"}};
-constexpr ::zhc::tuya::TuyaEnumEntry kDir[]={{0,"forward"},{1,"back"}};
+constexpr ::zhc::tuya::TuyaEnumEntry kDir[]={{0,"normal"},{1,"reversed"}};
 constexpr ::zhc::tuya::TuyaEnumEntry kWork[]={{0,"opening"},{1,"closing"}};
 constexpr ::zhc::tuya::TuyaEnumEntry kCd[]={{0,"cancel"},{1,"1h"},{2,"2h"},{3,"3h"},{4,"4h"}};
 constexpr ::zhc::tuya::TuyaEnumEntry kSit[]={{0,"fully_open"},{1,"fully_close"}};
@@ -41,7 +45,7 @@ constexpr const char* kM[]={"TS0601"};
 constexpr const char* kN[]={"_TZE200_fodv6bkr"};
 constexpr const char* kStateOpts[]={"open","stop","close"};
 constexpr const char* kModeOpts[]={"morning","night"};
-constexpr const char* kDirOpts[]={"forward","back"};
+constexpr const char* kDirOpts[]={"normal","reversed"};
 constexpr const char* kWorkOpts[]={"opening","closing"};
 constexpr const char* kCdOpts[]={"cancel","1h","2h","3h","4h"};
 constexpr const char* kSitOpts[]={"fully_open","fully_close"};

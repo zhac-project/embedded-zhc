@@ -1,5 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
+// Tier 3: TZE204_q9xty0ad cover motor — z2m parity v26.95.0.
+// GRADUATED from definitions/tuya/generated/Gen__TZE204_q9xty0ad.cpp.
+// z2m v26.95.0 renamed the motor_direction labels: the inline lookup
+// {forward:0, back:1} became valueConverter.tubularMotorDirection,
+// {normal:0, reversed:1}. Wire values unchanged; only the published
+// strings differ. Renamed for z2m parity (product decision).
 // Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE204_q9xty0ad).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
@@ -7,7 +13,7 @@ namespace zhc::devices::tuya {
 namespace {
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_q9xty0ad_motor_direction_dp11[] = {
-    { 0, "forward" },
+    { 0, "normal" },
     { 1, "reverse" },
 };
 
@@ -45,7 +51,7 @@ const TzConverter* const kTz__TZE204_q9xty0ad[] = { &kTzDp__TZE204_q9xty0ad };
 constexpr const char* kM__TZE204_q9xty0ad[] = { "TS0601" };
 constexpr const char* kN__TZE204_q9xty0ad[] = { "_TZE204_q9xty0ad" };
 }  // namespace
-extern const PreparedDefinition kDefGen__TZE204_q9xty0ad{
+extern const PreparedDefinition kDef_TZE204_q9xty0ad{
     .zigbee_models=kM__TZE204_q9xty0ad,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_q9xty0ad,.manufacturer_names_count=1,

@@ -1,5 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
+// Tier 3: TZE200_icka1clh cover motor — z2m parity v26.95.0.
+// GRADUATED from definitions/tuya/generated/Gen__TZE200_icka1clh.cpp.
+// z2m v26.95.0 renamed the motor_direction labels: the inline lookup
+// {forward:0, back:1} became valueConverter.tubularMotorDirection,
+// {normal:0, reversed:1}. Wire values unchanged; only the published
+// strings differ. Renamed for z2m parity (product decision).
 // Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE200_icka1clh).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
@@ -13,7 +19,7 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_icka1clh_state_dp1[] = {
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_icka1clh_motor_direction_dp5[] = {
-    { 0, "forward" },
+    { 0, "normal" },
     { 1, "reverse" },
 };
 
@@ -67,7 +73,7 @@ constexpr const char* kN__TZE200_icka1clh[] = { "_TZE200_icka1clh" };
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_icka1clh[] = {
     {"Moes","AM43-0.45/40-ES-EB"},
 };
-extern const PreparedDefinition kDefGen__TZE200_icka1clh{
+extern const PreparedDefinition kDef_TZE200_icka1clh{
     .zigbee_models=kM__TZE200_icka1clh,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_icka1clh,.manufacturer_names_count=1,

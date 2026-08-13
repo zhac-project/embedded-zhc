@@ -1,5 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
+// Tier 3: Zem__TZE284_3mzb0sdz cover motor — z2m parity v26.95.0.
+// GRADUATED from definitions/zemismart/generated/Zem__TZE284_3mzb0sdz.cpp.
+// z2m v26.95.0 renamed the motor_direction labels: the inline lookup
+// {forward:0, back:1} became valueConverter.tubularMotorDirection,
+// {normal:0, reversed:1}. Wire values unchanged; only the published
+// strings differ. Renamed for z2m parity (product decision).
 // Auto-generated from z2m devices/zemismart.ts (fingerprint TS0601 / _TZE284_3mzb0sdz).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
@@ -13,8 +19,8 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_3mzb0sdz_state_dp1[] = {
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_3mzb0sdz_motor_direction_dp11[] = {
-    { 0, "forward" },
-    { 1, "back" },
+    { 0, "normal" },
+    { 1, "reversed" },
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_3mzb0sdz_border_dp16[] = {

@@ -1,5 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
+// Tier 3: Moes__TZE200_xtrnjaoz cover motor — z2m parity v26.95.0.
+// GRADUATED from definitions/moes/generated/Moes__TZE200_xtrnjaoz.cpp.
+// z2m v26.95.0 renamed the motor_direction labels: the inline lookup
+// {forward:0, back:1} became valueConverter.tubularMotorDirection,
+// {normal:0, reversed:1}. Wire values unchanged; only the published
+// strings differ. Renamed for z2m parity (product decision).
 // Auto-generated from z2m devices/moes.ts (fingerprint TS0601 / _TZE200_xtrnjaoz).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
@@ -13,8 +19,8 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_xtrnjaoz_state_dp1[] = {
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_xtrnjaoz_motor_direction_dp11[] = {
-    { 0, "forward" },
-    { 1, "back" },
+    { 0, "normal" },
+    { 1, "reversed" },
 };
 
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE200_xtrnjaoz[] = {

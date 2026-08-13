@@ -1,5 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
+// Tier 3: TZE200_mlglxwp3 cover motor — z2m parity v26.95.0.
+// GRADUATED from definitions/tuya/generated/Gen__TZE200_mlglxwp3.cpp.
+// z2m v26.95.0 renamed the motor_direction labels: the inline lookup
+// {forward:0, back:1} became valueConverter.tubularMotorDirection,
+// {normal:0, reversed:1}. Wire values unchanged; only the published
+// strings differ. Renamed for z2m parity (product decision).
 // Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE200_mlglxwp3).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
@@ -13,8 +19,8 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_mlglxwp3_state_dp1[] = {
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_mlglxwp3_motor_direction_dp5[] = {
-    { 0, "forward" },
-    { 1, "back" },
+    { 0, "normal" },
+    { 1, "reversed" },
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_mlglxwp3_work_state_dp7[] = {
@@ -68,7 +74,7 @@ const TzConverter* const kTz__TZE200_mlglxwp3[] = { &kTzDp__TZE200_mlglxwp3 };
 constexpr const char* kM__TZE200_mlglxwp3[] = { "TS0601" };
 constexpr const char* kN__TZE200_mlglxwp3[] = { "_TZE200_mlglxwp3" };
 }  // namespace
-extern const PreparedDefinition kDefGen__TZE200_mlglxwp3{
+extern const PreparedDefinition kDef_TZE200_mlglxwp3{
     .zigbee_models=kM__TZE200_mlglxwp3,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_mlglxwp3,.manufacturer_names_count=1,

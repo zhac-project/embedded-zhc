@@ -4,6 +4,10 @@
 // DP2 & DP3 both carry position (control + arrived echo); both decode, writes hit DP2.
 // DP6 auto_power is z2m raw -> mapped Numeric (converter is not onOff; type unconfirmed).
 // z2m-source: tuya.ts #TS0601_cover_13
+// z2m v26.95.0 renamed the motor_direction labels: the inline lookup
+// {forward:0, back:1} became valueConverter.tubularMotorDirection,
+// {normal:0, reversed:1}. Wire values are unchanged; only the published
+// strings differ. Renamed here for z2m parity (product decision).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/dp.hpp"
 #include "definitions/tuya/extend.hpp"
@@ -11,7 +15,7 @@
 namespace zhc::devices::tuya {
 namespace {
 constexpr ::zhc::tuya::TuyaEnumEntry kSt[]={{0,"open"},{1,"stop"},{2,"close"}};
-constexpr ::zhc::tuya::TuyaEnumEntry kDir[]={{0,"forward"},{1,"back"}};
+constexpr ::zhc::tuya::TuyaEnumEntry kDir[]={{0,"normal"},{1,"reversed"}};
 constexpr ::zhc::tuya::TuyaEnumEntry kWork[]={{0,"opening"},{1,"closing"}};
 constexpr ::zhc::tuya::TuyaEnumEntry kSit[]={{0,"fully_close"},{1,"fully_open"}};
 struct cfg { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
@@ -29,7 +33,7 @@ using FX=::zhc::tuya::factory::TuyaRw<cfg>;
 constexpr const char* kM[]={"TS0601"};
 constexpr const char* kN[]={"_TZE204_tgl8i2np"};
 constexpr const char* kStOpts[]={"open","stop","close"};
-constexpr const char* kDirOpts[]={"forward","back"};
+constexpr const char* kDirOpts[]={"normal","reversed"};
 constexpr const char* kWorkOpts[]={"opening","closing"};
 constexpr const char* kSitOpts[]={"fully_close","fully_open"};
 constexpr Expose kExp[]={
