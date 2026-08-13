@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Shelly S4EM-001PXCEU16 — auto-generated.
+// Tier 3: Shelly EM Mini Gen4 — z2m parity v26.95.0.
+// GRADUATED from definitions/shelly/generated/She_S4EM_001PXCEU16.cpp: z2m v26.95.0 added m.forcePowerSource -- the meter misreports Basic 0x0007.
+// Otherwise a verbatim copy of the generated file.
 // EM Mini Gen4
 // z2m-source: shelly.ts #S4EM-001PXCEU16.
 #include "definitions/_generic/_shared.hpp"

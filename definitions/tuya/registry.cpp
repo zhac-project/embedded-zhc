@@ -66,7 +66,7 @@ extern const PreparedDefinition kDef_EZ_500FL;
 extern const PreparedDefinition kDefGen_ZG_204ZL;
 extern const PreparedDefinition kDef_ZG_204ZM;
 extern const PreparedDefinition kDefGen_ZG_204ZQ;
-extern const PreparedDefinition kDefGen_ZG_204ZV;
+extern const PreparedDefinition kDef_ZG_204ZV;
 extern const PreparedDefinition kDefGen_ZG_204ZX;
 extern const PreparedDefinition kDefGen_ZG_205ZL;
 extern const PreparedDefinition kDefGen_ZG_222Z;
@@ -868,7 +868,7 @@ extern const PreparedDefinition kDefGen__TZE204_m64smti7;
 extern const PreparedDefinition kDefGen__TZE204_mby4kbtq;
 extern const PreparedDefinition kDefGen__TZE204_mexisfik;
 extern const PreparedDefinition kDefGen__TZE204_mhxn2jso;
-extern const PreparedDefinition kDefGen__TZE204_mpbki2zm;
+extern const PreparedDefinition kDef__TZE204_mpbki2zm;
 extern const PreparedDefinition kDefGen__TZE204_mrffaamu;
 extern const PreparedDefinition kDefGen__TZE204_mtoaryre;
 extern const PreparedDefinition kDefGen__TZE204_mul9abs3;
@@ -1523,7 +1523,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_204ZL,
     &kDef_ZG_204ZM,
     &kDefGen_ZG_204ZQ,
-    &kDefGen_ZG_204ZV,
+    &kDef_ZG_204ZV,
     &kDefGen_ZG_204ZX,
     &kDefGen_ZG_205ZL,
     &kDefGen_ZG_222Z,
@@ -2323,7 +2323,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_mby4kbtq,
     &kDefGen__TZE204_mexisfik,
     &kDefGen__TZE204_mhxn2jso,
-    &kDefGen__TZE204_mpbki2zm,
+    &kDef__TZE204_mpbki2zm,
     &kDefGen__TZE204_mrffaamu,
     &kDefGen__TZE204_mtoaryre,
     &kDefGen__TZE204_mul9abs3,

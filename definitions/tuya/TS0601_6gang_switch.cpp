@@ -22,7 +22,7 @@ struct cfg { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
     static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{e,9}; };
 using FX=::zhc::tuya::factory::TuyaRw<cfg>;
 constexpr const char* kM[]={"TS0601"};
-constexpr const char* kN[]={"_TZE204_y8ficeai"};
+constexpr const char* kN[]={"_TZE204_y8ficeai", "_TZE284_tokhh9pf" };
 constexpr const char* kPobOpts[]={"off","on","previous"};
 constexpr Expose kExp[]={
     {"state_l1",          ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr,  0},
@@ -37,7 +37,7 @@ constexpr Expose kExp[]={
 }
 extern const PreparedDefinition kDef_TS0601_6gang_switch{
     .zigbee_models=kM,.zigbee_models_count=1,.manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN,.manufacturer_names_count=1,.model="TS0601_6gang_switch",
+    .manufacturer_names=kN,.manufacturer_names_count=sizeof(kN)/sizeof(kN[0]),.model="TS0601_6gang_switch",
     .vendor="Tuya",.meta=nullptr,.exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
