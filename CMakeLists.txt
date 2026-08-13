@@ -637,6 +637,15 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/ZG_204ZM.cpp
     definitions/tuya/ZG_227ZL.cpp
     definitions/tuya/ZG_204ZV.cpp
+    definitions/tuya/AY301Z_2CH.cpp
+    definitions/tuya/THAH202001.cpp
+    definitions/tuya/TO_6_W_B.cpp
+    definitions/tuya/ZG_109TDS.cpp
+    definitions/tuya/ZG_IR01.cpp
+    definitions/tuya/TZE204_8eazvzo6.cpp
+    definitions/tuya/TS0601_thermostat_fancoil.cpp
+    definitions/tuya/TZE204_7lb6j8wg.cpp
+    definitions/tuya/TS0301_cover_2.cpp
     definitions/tuya/TZE200_icka1clh.cpp
     definitions/tuya/TZE200_mlglxwp3.cpp
     definitions/tuya/TZE200_vdiuwbkq.cpp

@@ -1474,6 +1474,15 @@ extern const PreparedDefinition kDef_IH_K009;
 extern const PreparedDefinition kDef_LCZ030;
 extern const PreparedDefinition kDef_KCTW1Z;
 extern const PreparedDefinition kDef_ZG_227ZL;
+extern const PreparedDefinition kDef_AY301Z_2CH;
+extern const PreparedDefinition kDef_THAH202001;
+extern const PreparedDefinition kDef_TO_6_W_B;
+extern const PreparedDefinition kDef_ZG_109TDS;
+extern const PreparedDefinition kDef_ZG_IR01;
+extern const PreparedDefinition kDef_TZE204_8eazvzo6;
+extern const PreparedDefinition kDef_TS0601_thermostat_fancoil;
+extern const PreparedDefinition kDef_TZE204_7lb6j8wg;
+extern const PreparedDefinition kDef_TS0301_cover_2;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_CK_BL702_AL_01_7008_Z102LG01_1_,
@@ -2933,6 +2942,15 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_LCZ030,
     &kDef_KCTW1Z,
     &kDef_ZG_227ZL,
+    &kDef_AY301Z_2CH,
+    &kDef_THAH202001,
+    &kDef_TO_6_W_B,
+    &kDef_ZG_109TDS,
+    &kDef_ZG_IR01,
+    &kDef_TZE204_8eazvzo6,
+    &kDef_TS0601_thermostat_fancoil,
+    &kDef_TZE204_7lb6j8wg,
+    &kDef_TS0301_cover_2,
 };
 
 extern const std::size_t kTuyaRegistryCount =

@@ -75,6 +75,11 @@ extern const PreparedDefinition kDef_HS1CA_E_PLUS;
 extern const PreparedDefinition kDef_HS1SA_E_Lover;
 extern const PreparedDefinition kDef_HS9MS_E;
 extern const PreparedDefinition kDef_M1_PE;
+extern const PreparedDefinition kDef_HS2HT;
+extern const PreparedDefinition kDef_HS2TD;
+extern const PreparedDefinition kDef_HS2VTD;
+extern const PreparedDefinition kDef_S1_TL;
+extern const PreparedDefinition kDef_HS2NLV;
 
 const PreparedDefinition* const kHeimanRegistry[] = {
     &kDef_HM1RC_2_E,
@@ -146,6 +151,11 @@ const PreparedDefinition* const kHeimanRegistry[] = {
     &kDef_HS1SA_E_Lover,
     &kDef_HS9MS_E,
     &kDef_M1_PE,
+    &kDef_HS2HT,
+    &kDef_HS2TD,
+    &kDef_HS2VTD,
+    &kDef_S1_TL,
+    &kDef_HS2NLV,
 };
 const std::size_t kHeimanRegistryCount = sizeof(kHeimanRegistry) / sizeof(kHeimanRegistry[0]);
 
