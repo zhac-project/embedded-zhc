@@ -14,6 +14,13 @@ extern const PreparedDefinition kDef_TERNCY_PP01;
 extern const PreparedDefinition kDef_TERNCY_SD01;
 extern const PreparedDefinition kDef_TERNCY_WS01;
 extern const PreparedDefinition kDef_TERNCY_DC01;
+extern const PreparedDefinition kDef_TERNCY_WS01_D1;
+extern const PreparedDefinition kDef_TERNCY_WS01_D2;
+extern const PreparedDefinition kDef_TERNCY_WS01_D3;
+extern const PreparedDefinition kDef_TERNCY_WS01_D4;
+extern const PreparedDefinition kDef_TERNCY_WS01_S1;
+extern const PreparedDefinition kDef_TERNCY_WS01_S2;
+extern const PreparedDefinition kDef_TERNCY_WS01_S3;
 
 const PreparedDefinition* const kTerncyRegistry[] = {
     &kDef_CL001,
@@ -24,6 +31,13 @@ const PreparedDefinition* const kTerncyRegistry[] = {
     &kDef_TERNCY_SD01,
     &kDef_TERNCY_WS01,
     &kDef_TERNCY_DC01,
+    &kDef_TERNCY_WS01_D1,
+    &kDef_TERNCY_WS01_D2,
+    &kDef_TERNCY_WS01_D3,
+    &kDef_TERNCY_WS01_D4,
+    &kDef_TERNCY_WS01_S1,
+    &kDef_TERNCY_WS01_S2,
+    &kDef_TERNCY_WS01_S3,
 };
 const std::size_t kTerncyRegistryCount = sizeof(kTerncyRegistry) / sizeof(kTerncyRegistry[0]);
 

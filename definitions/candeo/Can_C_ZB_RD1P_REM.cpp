@@ -14,7 +14,9 @@ const FzConverter* const kFz_C_ZB_RD1P_REM[] = {
     &::zhc::candeo::kFzRd1pKnobPress,
     &::zhc::candeo::kFzRd1pKnobRotation
 };
-constexpr const char* kModels_C_ZB_RD1P_REM[] = { "C-ZB-RD1P-REM" };
+constexpr const char* kModels_C_ZB_RD1P_REM[] = {
+    "C-ZB-RD1P-REM", "C-ZB-RD1Pv2-REM",
+};
 
 constexpr Expose kAutoExposes[] = {
     {"energy",            ExposeType::Numeric, Access::State,    "kWh",   nullptr, nullptr, 0},

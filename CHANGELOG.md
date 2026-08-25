@@ -8,6 +8,89 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Out-of-bounds read on two Mazda TRV definitions.** `Maz__TZE204_k6rdmisz`
+  and `Maz__TZE284_k6rdmisz` declared their `TuyaDatapointMap` length as the
+  literal `24` while the entry array holds `23` rows, so every datapoint lookup
+  that missed walked one element past the end. Both counts are now
+  `sizeof`-derived. Found by a repo-wide audit of literal counts prompted by
+  the same trap on `TS0601_6gang_switch` last window; the audit checked all
+  1060 literal-count datapoint maps and these two were the only mismatches.
+
+- **Tuya `AY301Z-2CH` second gang was uncontrollable.** The definition bound
+  both gang endpoints and configured reporting on both, but declared a single
+  bare `state` expose and no `endpoint_map`. Without the map the dispatcher
+  never suffixed the inbound key, so gang 2's report overwrote gang 1's state
+  and outbound writes had no endpoint to route to. Now exposes `state_l1` /
+  `state_l2` with the map z2m declares.
+
+- **Tuya `EZ-500FL` soil-moisture calibration was 100x off.** Upstream changed
+  datapoint 131 (`moisture_calibration`) from `raw` to `divideBy100` in this
+  window. This class of change is invisible to the semantic-token diff — the
+  signature carries datapoint numbers, not their converters — so a divisor
+  change on an existing datapoint produces a zero delta. A sweep of every Tuya
+  datapoint converter across the window confirmed this was the only one.
+
+- **`action_duration` was suffixed by endpoint** on multi-endpoint devices,
+  arriving as `action_duration_l2` while both the definition and z2m call it
+  `action_duration`, so the value was discarded. It now travels with `action`
+  on the device-global key list, and follows it through the
+  `endpoint_action_suffix` opt-in. No existing definition declared a suffixed
+  form, so nothing else changes.
+
+### Added
+
+- **Parity with zigbee-herdsman-converters v26.99.0** (v26.96.0 through
+  v26.99.0). Upstream re-verified MIT. 20 new devices:
+  - TERNCY `TERNCY-WS01-D1` .. `-D4` and `-S1` .. `-S3` wall switches, with a
+    new decoder for their AduroSmart-cluster button frames — a wider click
+    table (1..7) plus a hold/release command carrying a 16-bit duration, and
+    the endpoint carried in the action value (`single_l2`). Covered by the new
+    `zhc_terncy_ws01_tests` suite.
+  - PirogovX `ZB-MIDEA-AC` air-conditioner controller (new vendor) — the whole
+    climate surface rides manufacturer attributes 0xF000..0xF009 on
+    genAnalogInput, read and written here.
+  - MultIR `HE300_ZB` presence sensor, whose occupancy attribute is a bitmap
+    lowered into `occupancy` plus `human_motion_state` (none/active/static).
+  - Gewiss `GWA1241` 2-channel push button, Candeo `C-ZB-RD1Pv2-DIM`,
+    Aqara `HCXDD13LM`, RIBAG Licht `Ribag Air O` (new vendor), Custom devices
+    (DiY) `TLSR-DIY-ZR01-LIGHT-CCT`, and Philips `929004295601`,
+    `929004296701`, `929004296801`.
+  - Tuya ONENUO `TH05Z` (`_TZE2841000000_qf5mzewi`), a ZTH05Z batch that never
+    reports datapoint 18 and instead carries calibration on datapoints 23/24.
+    Upstream branches on the manufacturer name at runtime; ZHC resolves it at
+    match time, so it gets its own definition.
+  - Excellux `EZ-500FS` soil probe (the `EZ-500FL`'s sibling, without the
+    fertility half), Tuya `TS0601_co2_temperature_humidity_sensor`
+    (`_TZE204_pkpfn9hc`), and Tuya `ZBN-DJ-63` DIN-rail breaker
+    (`_TZE204_lb0fsvba`).
+
+  `ZBN-DJ-63` is a **partial port**: 26 of its 32 datapoint rows are wired, but
+  live voltage/current/power (datapoint 6, `phaseVariant2`) and the two
+  protection-threshold editors (datapoints 17/18, `threshold_2` / `threshold_3`)
+  need packed-payload codecs embedded-zhc does not have yet — each packs four
+  to six keys into one payload, and writing one requires re-packing the others.
+  Readings and switching work; the threshold editors do not appear.
+
+- **`max_duration` siren control on Evology `PSE03-V1.1.0` and Tuya `TS0224`.**
+  Upstream replaced `fz.ias_wd` with `m.iasWarningMaxDuration()` across eleven
+  entries; for nine of them that was a pure rename, but these two never had the
+  expose at all, so it is a genuinely new control (ssIasWd `maxDuration`,
+  0-65534 s).
+
+- **Fingerprints and models folded into existing definitions**, each of which
+  left the device unrecognised: Candeo `C-ZB-RD1P-DPM` / `-REM`
+  (+`C-ZB-RD1Pv2-*`), eWeLink `SNZB-05`
+  (+`CK-TLSR8656-Z23SE11HW-01(7019)`), Philips `929004321001` (+`929004321101`),
+  and Tuya `EZ-500FL` (+datapoint 128 `fertility_calibration`).
+
+- **Tuya `TS0502B` MiBoxer RF variant** (`_TZB210_ue01a0s2`) reports colour
+  temperature as a raw frame rather than an attribute report. Upstream guards
+  its decoder on the manufacturer name at runtime; ZHC has only the
+  manufacturer code on a decoded message, so the variant is registered as its
+  own fingerprint instead and carries the extra converter.
+
 ### Changed
 
 - **BREAKING — `motor_direction` now reports `normal` / `reversed`** instead of

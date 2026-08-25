@@ -10,6 +10,18 @@
 //                        ="TS0503B" but is actually a CT light. Without
 //                        this variant the device matches `tuya/TS0503B.cpp`
 //                        (RGB light) and loses color_temp.
+//   - kDefTS0502B_rf   — z2m v26.99.0 added `fzLocal.FUT035ZrfColorTemp`
+//                        to the shared TS0502B entry, guarded at RUNTIME by
+//                        `meta.device.manufacturerName !== "_TZB210_ue01a0s2"`.
+//                        ZHC's DecodedMessage carries the manufacturer CODE,
+//                        not the name, so that guard cannot live inside the
+//                        converter. Expressed instead the way the matcher
+//                        already works: a third registration fingerprinted on
+//                        modelID TS0502B + that manufacturer name, carrying
+//                        the extra converter. Manufacturer-specific
+//                        candidates win over the bare-model one, so only the
+//                        MiBoxer RF variant picks it up — same effect,
+//                        resolved at match time instead of decode time.
 #include "definitions/_generic/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
@@ -24,6 +36,57 @@ constexpr const char* kModels[]    = { "TS0502B" };
 constexpr const char* kModels_v2[] = { "TS0503B" };
 // z2m: tuya.fingerprint("TS0503B", ["_TZB210_lmqquxus"]).
 constexpr const char* kManus_v2[]  = { "_TZB210_lmqquxus" };
+
+// z2m: fzLocal.FUT035ZrfColorTemp — the MiBoxer FUT035Z RF variant
+// answers colour-temperature queries with a RAW lightingColorCtrl frame
+// instead of an attribute report. The last two body bytes are a
+// little-endian 0..1000 position on the lamp's own scale, which z2m maps
+// onto mireds as `round(500 - raw * 347 / 1000)` — i.e. 500 mired at 0
+// down to 153 mired at 1000. Values outside 0..1000 are rejected.
+constexpr const char* kManus_rf[]  = { "_TZB210_ue01a0s2" };
+
+bool fz_fut035z_rf_color_temp(const DecodedMessage& msg,
+                               const FzConverter&,
+                               const PreparedDefinition&,
+                               RuntimeContext&,
+                               FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // z2m reads the tail of the WHOLE frame buffer (msg.data), so use
+    // raw_data rather than the header-stripped raw_body.
+    const auto data = msg.raw_data;
+    if (data.size() < 2) return false;
+
+    const std::uint16_t raw =
+        static_cast<std::uint16_t>(data[data.size() - 2]) |
+        static_cast<std::uint16_t>(static_cast<std::uint16_t>(data[data.size() - 1]) << 8);
+    if (raw > 1000) return false;
+
+    // round(500 - raw * 347 / 1000) in integer arithmetic.
+    const std::int32_t scaled = (static_cast<std::int32_t>(raw) * 347 + 500) / 1000;
+
+    Value ct{}; ct.type = ValueType::Int;
+    ct.i = 500 - scaled;
+    out.put("color_temp", ct);
+    return true;
+}
+
+const FzConverter kFzFut035zRfColorTemp{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "lightingColorCtrl",
+    .type_mask         = type_bit(MessageType::Raw) |
+                         type_bit(MessageType::Command),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_fut035z_rf_color_temp },
+    .user_config       = nullptr,
+};
+
+const FzConverter* const kFz_rf[] = {
+    &::zhc::generic::kFzOnOff, &::zhc::generic::kFzBrightness,
+    &::zhc::generic::kFzColorTemperature, &kFzFut035zRfColorTemp };
 }
 
 constexpr Expose kAutoExposes[] = {
@@ -125,6 +188,24 @@ extern const PreparedDefinition kDefTS0502B_v2{
     .white_labels=kWhiteLabels_TS0502B,
     .white_labels_count=sizeof(kWhiteLabels_TS0502B)/sizeof(kWhiteLabels_TS0502B[0]),
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
+    .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
+    .configure=nullptr,.on_event=nullptr,
+    .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .config_steps=kConfigSteps_TS0502B,
+    .config_steps_count=sizeof(kConfigSteps_TS0502B)/sizeof(kConfigSteps_TS0502B[0]),
+};
+
+extern const PreparedDefinition kDefTS0502B_rf{
+    .zigbee_models=kModels,
+    .zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kManus_rf,
+    .manufacturer_names_count=sizeof(kManus_rf)/sizeof(kManus_rf[0]),
+    .model="TS0502B",.vendor="Tuya",
+    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
+    .white_labels=kWhiteLabels_TS0502B,
+    .white_labels_count=sizeof(kWhiteLabels_TS0502B)/sizeof(kWhiteLabels_TS0502B[0]),
+    .from_zigbee=kFz_rf,.from_zigbee_count=sizeof(kFz_rf)/sizeof(kFz_rf[0]),
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
     .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),

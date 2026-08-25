@@ -44,6 +44,11 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/registry.cpp
     definitions/tuya/_shared.cpp
     definitions/tuya/registry.cpp
+    definitions/tuya/TS0224.cpp
+    definitions/tuya/ZBN_DJ_63.cpp
+    definitions/tuya/TS0601_co2_th.cpp
+    definitions/tuya/Excellux_EZ_500FS.cpp
+    definitions/tuya/ZTH05Z_onenuo.cpp
     definitions/tuya/TZE200_bjawzodf.cpp
     definitions/tuya/TZE200_0nmiizme.cpp
     definitions/tuya/TZE200_cjbofhxw.cpp
@@ -537,6 +542,7 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNLDP14LM.cpp
     definitions/lumi/ZNLDP16LM.cpp
     definitions/lumi/ZNLDP17LM.cpp
+    definitions/lumi/HCXDD13LM.cpp
     definitions/lumi/ZNLDP18LM.cpp
     definitions/lumi/ZNLDP19LM.cpp
     definitions/lumi/ZNLDP20LM.cpp
@@ -3243,6 +3249,12 @@ target_link_libraries(zhc_sercomm_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_terncy_parity_tests tests/test_terncy_parity.cpp)
 target_link_libraries(zhc_terncy_parity_tests PRIVATE zhc_definitions)
 
+# WS01 wall-switch family (z2m v26.98.0) — a second, different frame shape
+# on the same AduroSmart cluster: wider click table, hold/release with a
+# duration, and the endpoint carried in the action value.
+add_executable(zhc_terncy_ws01_tests tests/test_terncy_ws01.cpp)
+target_link_libraries(zhc_terncy_ws01_tests PRIVATE zhc_definitions)
+
 # BTicino (Legrand-family): F20T60A DIN power module was ported with the
 # wrong cluster (seMetering 0x0702 + phantom energy) when z2m's
 # electricityMeter(cluster:"electrical") uses haElectricalMeasurement
@@ -3687,6 +3699,7 @@ add_test(NAME zhc_acuity_brands_lighting_parity_tests COMMAND zhc_acuity_brands_
 add_test(NAME zhc_essentialb_parity_tests   COMMAND zhc_essentialb_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
+add_test(NAME zhc_terncy_ws01_tests         COMMAND zhc_terncy_ws01_tests)
 add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
 add_test(NAME zhc_byun_parity_tests         COMMAND zhc_byun_parity_tests)
 add_test(NAME zhc_calex_parity_tests        COMMAND zhc_calex_parity_tests)

@@ -19,7 +19,12 @@ const TzConverter* const kTz_D929004321001[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-constexpr const char* kModels_D929004321001[] = { "929004321001" };
+// z2m v26.99.0 parity: upstream added "929004321101" to this entry's
+// zigbeeModel list — a second reported model id for the same Hue Play
+// floor lamp. Count is sizeof-derived, so the append takes effect.
+constexpr const char* kModels_D929004321001[] = {
+    "929004321001", "929004321101",
+};
 
 constexpr Expose kExposes_D929004321001[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},

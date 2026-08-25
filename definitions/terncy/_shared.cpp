@@ -254,4 +254,104 @@ extern const FzConverter kFzTerncyTempScale10{
     .user_config       = nullptr,
 };
 
+// ── kFzTerncyWs01Action ──────────────────────────────────────────────
+
+namespace {
+
+// Action strings are emitted as `StringRef`, so every value needs a
+// pointer that outlives the payload. z2m builds `${action}_${ep}` at
+// runtime; here the full cross-product is a static table indexed
+// [endpoint-slot][action]. Nine actions x four endpoints = 36 literals,
+// ~330 bytes of .rodata — cheaper than a formatting scratch buffer on
+// the decode path.
+constexpr std::uint8_t kWs01ActionCount = 9;   // 7 clicks + hold + release
+constexpr std::uint8_t kWs01EpSlots     = 4;   // l1..l4
+
+constexpr const char* kWs01Actions[kWs01EpSlots][kWs01ActionCount] = {
+    {"single_l1", "double_l1", "triple_l1", "quadruple_l1",
+     "5_click_l1", "6_click_l1", "7_click_l1", "hold_l1", "release_l1"},
+    {"single_l2", "double_l2", "triple_l2", "quadruple_l2",
+     "5_click_l2", "6_click_l2", "7_click_l2", "hold_l2", "release_l2"},
+    {"single_l3", "double_l3", "triple_l3", "quadruple_l3",
+     "5_click_l3", "6_click_l3", "7_click_l3", "hold_l3", "release_l3"},
+    {"single_l4", "double_l4", "triple_l4", "quadruple_l4",
+     "5_click_l4", "6_click_l4", "7_click_l4", "hold_l4", "release_l4"},
+};
+
+constexpr std::uint8_t kWs01Hold    = 7;
+constexpr std::uint8_t kWs01Release = 8;
+
+// Map the frame's source endpoint to a row of the table above. The def
+// declares the real endpoint ids in `endpoint_map`; the row index is the
+// label's position in that map, so a device that ever numbers its gangs
+// other than 1..4 still lines up.
+bool ws01_ep_slot(const PreparedDefinition& def,
+                   std::uint8_t endpoint,
+                   std::uint8_t& slot) {
+    if (!def.endpoint_map) return false;
+    for (std::uint8_t i = 0; i < def.endpoint_map_count && i < kWs01EpSlots; ++i) {
+        if (def.endpoint_map[i].endpoint == endpoint) { slot = i; return true; }
+    }
+    return false;
+}
+
+bool fz_terncy_ws01_action(const DecodedMessage& msg,
+                            const FzConverter&,
+                            const PreparedDefinition& def,
+                            RuntimeContext&,
+                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    std::uint8_t slot = 0;
+    if (!ws01_ep_slot(def, msg.src_endpoint, slot)) return false;
+
+    if (msg.command_id == 0x00) {
+        // z2m guards `data.length >= 7`, i.e. two body bytes after the
+        // 5-byte header.
+        if (msg.raw_body.size() < 2) return false;
+        const std::uint8_t click = msg.raw_body[1];
+        if (click < 1 || click > 7) return false;   // table is 1-based
+        Value action{}; action.type = ValueType::StringRef;
+        action.str = kWs01Actions[slot][click - 1];
+        out.put("action", action);
+        return true;
+    }
+
+    if (msg.command_id == 0x29) {
+        // z2m guards `data.length >= 9` -> four body bytes.
+        if (msg.raw_body.size() < 4) return false;
+        std::uint8_t idx = 0;
+        if      (msg.raw_body[0] == 0x02) idx = kWs01Hold;
+        else if (msg.raw_body[0] == 0x08) idx = kWs01Release;
+        else return false;
+
+        Value action{}; action.type = ValueType::StringRef;
+        action.str = kWs01Actions[slot][idx];
+        out.put("action", action);
+
+        Value dur{}; dur.type = ValueType::Uint;
+        dur.u = static_cast<std::uint64_t>(msg.raw_body[2]) |
+                (static_cast<std::uint64_t>(msg.raw_body[3]) << 8);
+        out.put("action_duration", dur);
+        return true;
+    }
+
+    return false;
+}
+
+}  // namespace
+
+extern const FzConverter kFzTerncyWs01Action{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "manuSpecificClusterAduroSmart",
+    .type_mask         = type_bit(MessageType::Command) |
+                         type_bit(MessageType::Raw),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_terncy_ws01_action },
+    .user_config       = nullptr,
+};
+
 }  // namespace zhc::terncy

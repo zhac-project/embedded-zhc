@@ -6,6 +6,10 @@
 namespace zhc::devices::tier_e {
 
 const VendorEntry kTierERegistries[] = {
+    { ::zhc::devices::pirogovx::kPirogovxRegistry,
+      ::zhc::devices::pirogovx::kPirogovxRegistryCount },
+    { ::zhc::devices::ribag::kRibagRegistry,
+      ::zhc::devices::ribag::kRibagRegistryCount },
     { ::zhc::devices::ITCommander::kItcommanderRegistry,
       ::zhc::devices::ITCommander::kItcommanderRegistryCount },
     { ::zhc::devices::acova::kAcovaRegistry,

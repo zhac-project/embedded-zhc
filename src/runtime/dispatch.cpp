@@ -74,6 +74,13 @@ bool merge_payload(const FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& src,
 //     ("press_l1"), not the key. If a future device wants per-EP
 //     `action_l1`/`action_l2`, drop it from this list and add a
 //     per-def override.
+//   * action_duration — travels with `action` and is meaningless apart
+//     from it, so it follows the same rule (z2m's `e.action_duration()`
+//     likewise carries no endpoint). Added for the TERNCY WS01 wall
+//     switches, the first multi-endpoint device to emit it: without this
+//     the key arrived as `action_duration_l2` while the def and z2m both
+//     call it `action_duration`, so the value was dropped on the floor.
+//     Follows `action` through the `endpoint_action_suffix` opt-in too.
 // NOTE: power/energy are deliberately NOT global here — devices that tag
 // metering per-endpoint via z2m `e.power().withEndpoint()` need the suffix.
 // A device with a single untagged metering surface AND per-load state (e.g.
@@ -82,7 +89,7 @@ bool merge_payload(const FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& src,
 // exists — see those defs.
 constexpr const char* kAlwaysGlobalKeys[] = {
     "battery", "battery_low", "voltage", "linkquality",
-    "device_temperature", "tamper", "action",
+    "device_temperature", "tamper", "action", "action_duration",
 };
 
 bool is_always_global_key(const char* key, const PreparedDefinition& def) {
@@ -92,8 +99,10 @@ bool is_always_global_key(const char* key, const PreparedDefinition& def) {
             // Per-device opt-in: multi-EP key fobs / scene remotes set
             // `endpoint_action_suffix` so `action` flows through the
             // suffix rewrite (e.g. `action_l1`, `action_top_left`).
+            // `action_duration` rides along so the pair stays consistent.
             if (def.endpoint_action_suffix &&
-                std::strcmp(key, "action") == 0) {
+                (std::strcmp(key, "action") == 0 ||
+                 std::strcmp(key, "action_duration") == 0)) {
                 return false;
             }
             return true;

@@ -38,7 +38,12 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_k6rdmisz[] = {
     { 34, "schedule_sunday", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagScheduleDay },
     { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_k6rdmisz{ kEntries__TZE204_k6rdmisz, 24 };
+// BUGFIX (z2m v26.99.0 parity sweep): the count was the literal 24 while
+// kEntries__TZE204_k6rdmisz holds 23 rows — every DP lookup that missed walked one
+// element past the end of the array. Made sizeof-derived so it cannot
+// drift again when a DP is added or removed.
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_k6rdmisz{
+    kEntries__TZE204_k6rdmisz, sizeof(kEntries__TZE204_k6rdmisz) / sizeof(kEntries__TZE204_k6rdmisz[0]) };
 constexpr FzConverter kFzDp__TZE204_k6rdmisz{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

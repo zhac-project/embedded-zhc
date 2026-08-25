@@ -11,18 +11,27 @@
 // real wire and the exposed alarm/tamper/battery_low keys were dead. Swap to
 // kFzIasGenericAlarm (the zoneType:"alarm" siren converter) which decodes the
 // command notification: bit0 -> `alarm`, bit2 -> `tamper`, bit3 -> `battery_low`
-// — exactly fz.ias_siren's primary keys. (fz.ias_enroll = GLOBAL IAS enrollment;
-// fz.ias_wd / tz.warning = ssIasWd 0x0502 to-zigbee warning control — both INFRA,
-// no generic converter, deferred.)
+// — exactly fz.ias_siren's primary keys. (fz.ias_enroll = GLOBAL IAS enrollment.)
+//
+// z2m v26.99.0 parity: upstream replaced this entry's `fz.ias_wd` with
+// `m.iasWarningMaxDuration()`, which ALSO adds a `max_duration` numeric
+// (ea.ALL, 0..65534 s) the entry never had — the read/write pair for
+// ssIasWd 0x0502 attribute `maxDuration` (0x0000). Not a rename: the old
+// entry exposed no such key, so this is a genuinely new control. Wired to
+// the existing generic kFzIasWdMaxDuration / kTzIasWdMaxDuration pair,
+// which lifts the "no generic converter, deferred" note this file used to
+// carry for fz.ias_wd.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::evology {
 namespace {
 const FzConverter* const kFz_PSE03_V1_1_0[] = {
     &::zhc::generic::kFzIasGenericAlarm,
+    &::zhc::generic::kFzIasWdMaxDuration,
 };
 const TzConverter* const kTz_PSE03_V1_1_0[] = {
     &::zhc::generic::kTzWarning,
+    &::zhc::generic::kTzIasWdMaxDuration,
 };
 constexpr const char* kModels_PSE03_V1_1_0[] = { "PSE03-V1.1.0" };
 
@@ -34,10 +43,14 @@ constexpr Expose kAutoExposes[] = {
     {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"max_duration", ExposeType::Numeric, Access::StateSet, "s",
+     "Maximum time that the alarm will be active", nullptr, 0,
+     ExposeCategory::Config, 0, 65534, 1},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0500},
+    {1, 0x0502},   // ssIasWd — carries maxDuration
 };
 // --- end auto-generated block ---
 
