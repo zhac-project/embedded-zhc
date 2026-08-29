@@ -45,6 +45,9 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/_shared.cpp
     definitions/tuya/registry.cpp
     definitions/tuya/TS0224.cpp
+    definitions/tuya/MS032Z.cpp
+    definitions/tuya/ZG_227ZP.cpp
+    definitions/tuya/MG_AU03GPOZLP.cpp
     definitions/tuya/ZBN_DJ_63.cpp
     definitions/tuya/TS0601_co2_th.cpp
     definitions/tuya/Excellux_EZ_500FS.cpp
@@ -543,6 +546,7 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNLDP16LM.cpp
     definitions/lumi/ZNLDP17LM.cpp
     definitions/lumi/HCXDD13LM.cpp
+    definitions/lumi/WP-P09D.cpp
     definitions/lumi/ZNLDP18LM.cpp
     definitions/lumi/ZNLDP19LM.cpp
     definitions/lumi/ZNLDP20LM.cpp
@@ -3700,6 +3704,15 @@ add_test(NAME zhc_essentialb_parity_tests   COMMAND zhc_essentialb_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_terncy_ws01_tests         COMMAND zhc_terncy_ws01_tests)
+
+# Literal `_count` guard. Three consecutive z2m parity windows shipped a
+# definition whose hardcoded count disagreed with its array — once reading past
+# the end, twice silently ignoring an appended fingerprint. See
+# tools/lint_literal_counts.py for the history.
+add_test(NAME zhc_literal_count_guard
+         COMMAND ${CMAKE_COMMAND} -E env python3
+                 ${CMAKE_CURRENT_SOURCE_DIR}/tools/lint_literal_counts.py
+                 ${CMAKE_CURRENT_SOURCE_DIR}/definitions)
 add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
 add_test(NAME zhc_byun_parity_tests         COMMAND zhc_byun_parity_tests)
 add_test(NAME zhc_calex_parity_tests        COMMAND zhc_calex_parity_tests)

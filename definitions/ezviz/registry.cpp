@@ -7,9 +7,11 @@
 namespace zhc::devices::ezviz {
 
 extern const PreparedDefinition kDef_CS_T2C;
+extern const PreparedDefinition kDef_CS_T10C;
 
 const PreparedDefinition* const kEzvizRegistry[] = {
     &kDef_CS_T2C,
+    &kDef_CS_T10C,
 };
 const std::size_t kEzvizRegistryCount = sizeof(kEzvizRegistry) / sizeof(kEzvizRegistry[0]);
 

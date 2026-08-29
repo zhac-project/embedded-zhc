@@ -25,6 +25,7 @@ extern const PreparedDefinition kDef_SPM915;
 extern const PreparedDefinition kDef_THS317;
 extern const PreparedDefinition kDef_THS317_ET;
 extern const PreparedDefinition kDef_FDS315;
+extern const PreparedDefinition kDef_SLC611;
 
 const PreparedDefinition* const kOwonRegistry[] = {
     &kDef_AC201,
@@ -46,6 +47,7 @@ const PreparedDefinition* const kOwonRegistry[] = {
     &kDef_THS317,
     &kDef_THS317_ET,
     &kDef_FDS315,
+    &kDef_SLC611,
 };
 const std::size_t kOwonRegistryCount = sizeof(kOwonRegistry) / sizeof(kOwonRegistry[0]);
 

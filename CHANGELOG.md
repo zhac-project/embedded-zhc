@@ -10,6 +10,84 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **A Tuya on/off datapoint wire-typed as ENUM was silently dropped.** The
+  datapoint-map decoder required the raw value to be exactly `Bool`, but Tuya
+  firmwares ship the same logical datapoint as BOOL on one batch and ENUM (or a
+  4-byte VALUE) on another, which `decode_tuya_dp` surfaces as Uint / Int. Every
+  such report was discarded — invisibly, since an abstaining converter looks
+  identical to "nothing to say". Now any truthy 1-byte payload decodes. z2m hit
+  the same wall and fixed it in v26.100.0 by moving `alarm_switch` on TRV601,
+  TRV602 and TS0601_thermostat_1 from `onOff` to `onOffNotStrict`; nine
+  embedded-zhc definitions cover those three models. This also makes the
+  `kTuyaDpFlagBoolEnum` contract true for the first time — its documented job is
+  to decode "regardless of the device wire-typing it bool or enum", but the
+  strict check returned before the flag was ever consulted.
+
+- **Moes `ZS-SF-EUC-WH-MS` never decoded anything.** The definition wired the
+  generic ZCL cover converters against closuresWindowCovering (0x0102), but the
+  device is a Tuya *datapoint* device speaking 0xEF00. Position never decoded
+  and a position write went nowhere. Rewired onto the datapoint factory, and
+  picked up the four datapoints upstream added in the same window.
+
+- **Konke `3AFE12010402102A` would have lost coverage.** Upstream split it out
+  of `KK-WA-J01W` into a new `KK-WA-J01W-2020` entry (different battery curve).
+  The diff shows that only as one removed model id on the parent, and the
+  sibling never appears in the new-device bucket because its fingerprint is
+  already "covered" — by the definition it is being split away from. Acting on
+  the removal alone would have deleted the device. Both definitions now exist.
+
+### Added
+
+- **Parity with zigbee-herdsman-converters v26.101.0** (v26.100.0, v26.101.0).
+  Upstream re-verified MIT. 22 new definitions across 20 of the window's 22 new
+  devices, plus FrankEver `FK-BV05` (a standing gap the window surfaced) and the
+  Konke split sibling:
+  - Linxura `SCHA-1-MO` and `SHCB-1-MO` (new vendor) — every button press is
+    encoded into the IAS Zone status field; one decoder covers 4- and 12-button
+    variants.
+  - Legrand `WNRCB46WH` 4-scene control — the buttons are told apart by the
+    *group id* in the scene-recall body, not by scene id.
+  - Aqara `WP-P09D` outlet, whose three metering endpoints deliberately do not
+    line up with its three switched loads (see the file comment before
+    automating on it).
+  - HEIMAN `S1-TL-AI` and `S2-E` smoke alarms, Rti-Tek `STH1Z` and Selena
+    `SC0002` (new vendors), EZVIZ `CS-T10C`, Light Solutions `42-050`, OWON
+    `SLC611`, Svetomaniya `LF101W2-Mod`, ZigbeeTLc `TS202PIR1-z`, three Philips,
+    and the Tuya datapoint devices `MG-AU03GPOZLP-XX`, `MS032Z`, `ZG-227ZP` and
+    Zemismart `ZMZ609-2`.
+
+- **A literal `_count` guard** (`zhc_literal_count_guard`). Three consecutive
+  parity windows shipped a definition whose hardcoded count disagreed with its
+  array — once reading past the end, twice silently ignoring an appended
+  fingerprint. The check now runs in ctest across all 3830 literal counts.
+
+- **Legrand shutter moving state.** `067776A` gains `moving` plus opening /
+  closing / stopped actions, decoded from the Tuya manufacturer attribute
+  0xF000 against the reported lift.
+
+- **Fingerprints and models folded into existing definitions**: SMLIGHT router
+  variants on the Silabs series-2 definition (7 models), two OpenLumi router
+  firmwares, `_TZE284_q9qytwfa` on `TS0601_power_monitoring_switch`, and
+  `_TZE28C1000000_i8sdouy0` on the Moes curtain switch. Namron `4512763` gains
+  battery reporting, which was never wired.
+
+### Changed
+
+- **Dresden Elektronik `BN-600085` no longer exposes battery.** Upstream dropped
+  `m.battery()` in v26.100.0: the remote is mains/USB powered, serves no
+  genPowerCfg, and the expose was always empty. The genPowerCfg bind is gone too
+  — binding a cluster the device does not serve just fails at join.
+
+### Not ported
+
+- **Third Reality `3RKS030Z`** kitchen scale — the entire device is one custom
+  cluster (weight plus five command buttons); nothing generic applies.
+- **Nous `D4Z-M`** 3-phase meter — every measurement rides `phaseVariant2WithPhase`,
+  `threshold_7/8` or `circuitBreakerFaults1`, all packed multi-key payloads that
+  need codecs embedded-zhc does not have. Same standing gap as `ZBN-DJ-63`.
+
+### Fixed
+
 - **Out-of-bounds read on two Mazda TRV definitions.** `Maz__TZE204_k6rdmisz`
   and `Maz__TZE284_k6rdmisz` declared their `TuyaDatapointMap` length as the
   literal `24` while the entry array holds `23` rows, so every datapoint lookup

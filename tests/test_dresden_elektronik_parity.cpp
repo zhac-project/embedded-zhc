@@ -104,8 +104,13 @@ void check_bn_600085_scene_remote(const PreparedDefinition& def) {
     // Command client: exposes action, no controllable state, no Tz, no
     // per-endpoint suffixing (3-part remote binds EP1 only).
     assert(def_exposes(def, "action"));
-    assert(def_exposes(def, "battery"));
     assert(!def_exposes(def, "state"));
+    // z2m v26.100.0 DROPPED m.battery() from this entry: the remote is
+    // mains/USB powered, serves no genPowerCfg, and the expose was always
+    // empty. The definition followed suit, so battery and voltage must now be
+    // ABSENT — this used to assert the opposite.
+    assert(!def_exposes(def, "battery"));
+    assert(!def_exposes(def, "voltage"));
     assert(def.to_zigbee_count == 0);
     assert(!def.endpoint_action_suffix);
     assert(def.endpoint_map == nullptr || def.endpoint_map_count == 0);

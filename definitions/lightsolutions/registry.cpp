@@ -14,6 +14,7 @@ extern const PreparedDefinition kDef_D91_943;
 extern const PreparedDefinition kDef_D91_943_PRO;
 extern const PreparedDefinition kDef_D91_947_micro;
 extern const PreparedDefinition kDef_D91_943_PRO_RGBCW;
+extern const PreparedDefinition kDef_42_050;
 
 const PreparedDefinition* const kLightsolutionsRegistry[] = {
     &kDef_D200106V3,
@@ -24,6 +25,7 @@ const PreparedDefinition* const kLightsolutionsRegistry[] = {
     &kDef_D91_943_PRO,
     &kDef_D91_947_micro,
     &kDef_D91_943_PRO_RGBCW,
+    &kDef_42_050,
 };
 const std::size_t kLightsolutionsRegistryCount = sizeof(kLightsolutionsRegistry) / sizeof(kLightsolutionsRegistry[0]);
 

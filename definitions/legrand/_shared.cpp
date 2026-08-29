@@ -200,4 +200,82 @@ ZHC_LEGRAND_TZ(kTzDeviceMode, kSpecDeviceMode, "device_mode",
 
 #undef ZHC_LEGRAND_TZ
 
+// ── kFzCoverMovingState ──────────────────────────────────────────────
+
+namespace {
+
+bool fz_cover_moving_state(const DecodedMessage& msg,
+                            const FzConverter&,
+                            const PreparedDefinition&,
+                            RuntimeContext&,
+                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // tuyaMovingState = 0xF000 = 61440; the parser formats non-standard
+    // attribute ids as decimal strings.
+    const Value* mv = msg.payload.find("61440");
+    if (!mv) return false;
+
+    auto as_int = [](const Value* v, std::int64_t& dst) {
+        if (!v) return false;
+        if      (v->type == ValueType::Uint) dst = static_cast<std::int64_t>(v->u);
+        else if (v->type == ValueType::Int)  dst = v->i;
+        else if (v->type == ValueType::Bool) dst = v->b ? 1 : 0;
+        else return false;
+        return true;
+    };
+
+    std::int64_t raw_target = 0;
+    if (!as_int(mv, raw_target)) return false;
+    const std::int64_t target = 100 - raw_target;
+
+    // currentPositionLiftPercentage = 0x0008 = 8.
+    std::int64_t raw_lift = 0;
+    if (!as_int(msg.payload.find("8"), raw_lift)) {
+        // Target only. z2m guesses from previously published state here; a
+        // stateless converter cannot, and guessing a direction would be wrong
+        // half the time, so abstain. See the header note.
+        return false;
+    }
+    const std::int64_t current = 100 - raw_lift;
+
+    std::int64_t delta = target - current;
+    if (delta < 0) delta = -delta;
+
+    Value action{}; action.type = ValueType::StringRef;
+    Value moving{}; moving.type = ValueType::Bool;
+
+    if (delta <= 1) {
+        action.str = "stopped";
+        moving.b   = false;
+        Value state{}; state.type = ValueType::StringRef;
+        state.str = current > 0 ? "OPEN" : "CLOSE";
+        out.put("state", state);
+    } else {
+        action.str = target > current ? "opening" : "closing";
+        moving.b   = true;
+        Value state{}; state.type = ValueType::StringRef;
+        state.str = action.str;
+        out.put("state", state);
+    }
+    out.put("action", action);
+    out.put("moving", moving);
+    return true;
+}
+
+}  // namespace
+
+extern const FzConverter kFzCoverMovingState{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "closuresWindowCovering",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_cover_moving_state },
+    .user_config       = nullptr,
+};
+
 }  // namespace zhc::legrand

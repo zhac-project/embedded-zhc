@@ -38,6 +38,7 @@ extern const PreparedDefinition kDef_ZLGP14_ZLGP15_ZLGP16;
 extern const PreparedDefinition kDef_ZLGP17_ZLGP18;
 extern const PreparedDefinition kDef_D412015;
 extern const PreparedDefinition kDef_D412175;
+extern const PreparedDefinition kDef_WNRCB46WH;
 
 const PreparedDefinition* const kLegrandRegistry[] = {
     &kDef_D064873,
@@ -72,6 +73,7 @@ const PreparedDefinition* const kLegrandRegistry[] = {
     &kDef_ZLGP17_ZLGP18,
     &kDef_D412015,
     &kDef_D412175,
+    &kDef_WNRCB46WH,
 };
 const std::size_t kLegrandRegistryCount = sizeof(kLegrandRegistry) / sizeof(kLegrandRegistry[0]);
 
