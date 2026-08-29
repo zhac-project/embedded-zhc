@@ -89,4 +89,29 @@ extern const TzConverter kTzLedIfOn;
 // z2m-source: legrand.ts tzLegrand.legrand_device_mode.
 extern const TzConverter kTzDeviceMode;
 
+// Decode the Legrand/Netatmo shutter's moving state from the Tuya-flavoured
+// manufacturer attribute `tuyaMovingState` (0xF000, ENUM8) on
+// closuresWindowCovering (0x0102).
+//
+// The attribute carries the TARGET lift as `100 - value`. Compared against
+// `currentPositionLiftPercentage` (0x0008) from the SAME frame it says whether
+// the shutter is still travelling and which way:
+//
+//   |target - current| <= 1  -> stopped;  state OPEN (pos > 0) or CLOSE
+//   target > current         -> opening
+//   target < current         -> closing
+//
+// Emits `action` (opening / closing / stopped) and `moving` (bool).
+//
+// DEFERRED: z2m has a second branch that falls back to the PREVIOUS published
+// position (`meta.state.position`) when the frame carries the target but no
+// current lift, and a final branch that assumes "opening" when neither is
+// known. ZHC converters are stateless — they see one frame and no shadow — so
+// only the same-frame branch is reproduced. A frame carrying the target alone
+// abstains rather than guessing a direction that would be wrong half the time.
+//
+// z2m-source: zigbee-herdsman-converters/src/lib/legrand.ts
+//             fzLegrand.cover_moving_state.
+extern const FzConverter kFzCoverMovingState;
+
 }  // namespace zhc::legrand

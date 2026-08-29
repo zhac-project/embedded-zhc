@@ -7,9 +7,11 @@
 namespace zhc::devices::frankever {
 
 extern const PreparedDefinition kDef_FK_V02;
+extern const PreparedDefinition kDef_FK_BV05;
 
 const PreparedDefinition* const kFrankeverRegistry[] = {
     &kDef_FK_V02,
+    &kDef_FK_BV05,
 };
 const std::size_t kFrankeverRegistryCount = sizeof(kFrankeverRegistry) / sizeof(kFrankeverRegistry[0]);
 

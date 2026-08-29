@@ -1,8 +1,27 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Legrand 067776A — uses shared legrand converters.
-// Netatmo wired shutter switch with level control (NLLV)
-// z2m-source: legrand.ts #067776A.
+// Tier 2: Legrand 067776A — GRADUATED from generated/ for the v26.101.0
+// moving-state rework. Netatmo wired shutter switch with level control (NLLV).
+//
+// z2m v26.101.0 replaced this entry's plain cover converters with a
+// moving-state aware pair: `fzLegrand.cover_moving_state` decodes the Tuya
+// manufacturer attribute `tuyaMovingState` (0xF000) against the reported lift
+// to publish `moving` plus an action of opening / closing / stopped. The old
+// action list ("identify", "open", "close", "stop", "moving", "stopped") is
+// gone; the three travel states replace it.
+//
+// The stock position/state converters stay wired alongside — the new decoder
+// only fires on frames carrying 0xF000, so ordinary position reports are
+// unaffected.
+//
+// NOT ported: z2m also swapped `tz.cover_state` / `tz.cover_position_tilt` for
+// `tzLegrand.cover_state_with_moving` / `cover_position_with_moving`. Those
+// wrap the standard commands to optimistically publish `moving` on the way
+// out; the device re-reports 0xF000 within a second anyway, so the wrapper
+// buys an optimistic UI update this codebase would have to fake. Left on the
+// stock tz until someone asks for the optimistic edge.
+//
+// z2m-source: legrand.ts #067776A, lib/legrand.ts fzLegrand.cover_moving_state.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/legrand/_shared.hpp"
 
@@ -12,6 +31,7 @@ const FzConverter* const kFz_D067776A[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzCoverPosition,
     &::zhc::legrand::kFzClusterFc01,
+    &::zhc::legrand::kFzCoverMovingState,
 };
 const TzConverter* const kTz_D067776A[] = {
     &::zhc::generic::kTzOnOff,
@@ -20,6 +40,8 @@ const TzConverter* const kTz_D067776A[] = {
     &::zhc::legrand::kTzLedIfOn,
 };
 constexpr const char* kModels_D067776A[] = { " Shutter SW with level control" };
+
+constexpr const char* kActionValues_D067776A[] = { "opening", "closing", "stopped" };
 
 }  // namespace
 
@@ -30,6 +52,10 @@ constexpr Expose kAutoExposes[] = {
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
     {"led_in_dark", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"led_if_on",   ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"moving",      ExposeType::Binary, Access::State,    nullptr,
+     "Indicates if the cover is currently moving", nullptr, 0},
+    {"action",      ExposeType::Enum,   Access::State,    nullptr, nullptr,
+     kActionValues_D067776A, sizeof(kActionValues_D067776A)/sizeof(kActionValues_D067776A[0])},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

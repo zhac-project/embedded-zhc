@@ -190,8 +190,31 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
             return true;
         }
         case TuyaDpType::Bool: {
-            if (raw.type != ValueType::Bool) return false;
-            bool b = raw.b;
+            // Accept a truthy 1-byte payload whatever the device wire-typed it
+            // as, not only DP type Bool. Tuya firmwares are inconsistent here:
+            // the same logical on/off datapoint ships as BOOL on one batch and
+            // ENUM (or a 4-byte VALUE) on another, and `decode_tuya_dp` maps
+            // those to Uint / Int rather than Bool. The old strict check
+            // dropped every such report on the floor — silently, since an
+            // abstaining converter is indistinguishable from "nothing to say".
+            //
+            // z2m hit the same wall and fixed it upstream in v26.100.0 by
+            // switching `alarm_switch` on TRV601 / TRV602 / TS0601_thermostat_1
+            // from `valueConverter.onOff` (a strict {ON:true,OFF:false} lookup)
+            // to `valueConverter.onOffNotStrict` (`v ? "ON" : "OFF"`). Nine
+            // embedded-zhc definitions cover those three models.
+            //
+            // This also makes the `kTuyaDpFlagBoolEnum` contract true for the
+            // first time: its documented purpose is to decode "regardless of
+            // the device wire-typing it bool or enum", but the strict check
+            // above returned before the flag was ever consulted.
+            bool b;
+            switch (raw.type) {
+                case ValueType::Bool: b = raw.b;      break;
+                case ValueType::Uint: b = raw.u != 0; break;
+                case ValueType::Int:  b = raw.i != 0; break;
+                default: return false;
+            }
             if (e.flags & kTuyaDpFlagInvertBool) b = !b;
             // Bool→string fan-out (z2m lookup over a boolean DP): match the
             // boolean (keyed 0/1) against the enum table and emit StringRef.

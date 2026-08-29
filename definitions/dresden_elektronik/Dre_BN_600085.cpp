@@ -1,9 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: DresdenElektronik BN-600085 (Scene Switch) — hand-edited 2026-06-10.
-// 3-part Zigbee-powered scene switch (battery-powered remote).
+// 3-part Zigbee-powered scene switch (mains/USB powered, not battery).
 // z2m: m.commandsOnOff() + m.commandsLevelCtrl() + m.commandsColorCtrl()
-//      + m.commandsScenes() + m.battery().
+//      + m.commandsScenes().
+//
+// z2m v26.100.0 DROPPED m.battery() from this entry — the switch is mains/USB
+// powered, so it has no genPowerCfg to report and the battery expose was
+// always empty. Battery converter, exposes and the 0x0001 binding removed to
+// match; a bind to a cluster the device does not serve just fails at join.
 //
 // FULL on the command stream: ZHC's generic kFzCommand* covers OnOff /
 // LevelCtrl / ColorCtrl, and the generic genScenes (0x0005) decoders
@@ -30,19 +35,12 @@ const FzConverter* const kFz_BN_600085[] = {
     &::zhc::generic::kFzCommandMove,
     &::zhc::generic::kFzCommandRecall,   // genScenes recall → action "recall_<scene>"
     &::zhc::generic::kFzCommandStore,    // genScenes store  → action "store_<scene>"
-    &::zhc::generic::kFzBattery,
 };
 // Remote control sends commands; no toZigbee converters needed.
 constexpr const char* kModels_BN_600085[] = { "Scene Switch" };
 
 constexpr Expose kAutoExposes[] = {
     {"action",  ExposeType::Enum,    Access::State, nullptr, nullptr, nullptr, 0},
-    {"battery", ExposeType::Numeric, Access::State, "%",     nullptr, nullptr, 0},
-    {"voltage", ExposeType::Numeric, Access::State, "mV",    nullptr, nullptr, 0},
-};
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0001},
 };
 
 }  // namespace
@@ -58,7 +56,7 @@ extern const PreparedDefinition kDef_BN_600085{
     .from_zigbee=kFz_BN_600085, .from_zigbee_count=sizeof(kFz_BN_600085)/sizeof(kFz_BN_600085[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
-    .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .bindings=nullptr, .bindings_count=0,
 };
 
 }  // namespace zhc::devices::dresden_elektronik

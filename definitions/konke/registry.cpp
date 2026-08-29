@@ -19,6 +19,7 @@ extern const PreparedDefinition kDef_KK_BS_J01W;
 extern const PreparedDefinition kDef_KK_DS_J01W;
 extern const PreparedDefinition kDef_KK_ES_J01W;
 extern const PreparedDefinition kDef_KK_WA_J01W;
+extern const PreparedDefinition kDef_KK_WA_J01W_2020;
 extern const PreparedDefinition kDef_LH07321;
 extern const PreparedDefinition kDef_TW_S1;
 
@@ -36,6 +37,7 @@ const PreparedDefinition* const kKonkeRegistry[] = {
     &kDef_KK_DS_J01W,
     &kDef_KK_ES_J01W,
     &kDef_KK_WA_J01W,
+    &kDef_KK_WA_J01W_2020,
     &kDef_LH07321,
     &kDef_TW_S1,
 };

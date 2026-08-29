@@ -84,7 +84,6 @@ BASELINE: dict[str, int] = {
     "tuya/generated/Gen_TS0207.cpp": 1,
     "tuya/generated/Gen_TS020C.cpp": 1,
     "tuya/generated/Gen_TS0216.cpp": 1,
-    "tuya/generated/Gen_TS0224.cpp": 1,
     "tuya/generated/Gen_TS0301.cpp": 1,
     "tuya/generated/Gen_TS0505.cpp": 1,
     "tuya/generated/Gen_TS0901.cpp": 1,

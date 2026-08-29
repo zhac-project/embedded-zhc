@@ -34,6 +34,7 @@ extern const PreparedDefinition kDef_EFR32MG21_Router_1;
 extern const PreparedDefinition kDef_EFR32MG21_Router_2;
 extern const PreparedDefinition kDef_Silabs_series_2_router;
 extern const PreparedDefinition kDef_ti_router;
+extern const PreparedDefinition kDef_TLSR_DIY_ZR01_LIGHT_CCT;
 
 const PreparedDefinition* const kCustomDevicesDiyRegistry[] = {
     &kDef_ACW02_ZB,
@@ -64,6 +65,7 @@ const PreparedDefinition* const kCustomDevicesDiyRegistry[] = {
     &kDef_EFR32MG21_Router_2,
     &kDef_Silabs_series_2_router,
     &kDef_ti_router,
+    &kDef_TLSR_DIY_ZR01_LIGHT_CCT,
 };
 const std::size_t kCustomDevicesDiyRegistryCount = sizeof(kCustomDevicesDiyRegistry) / sizeof(kCustomDevicesDiyRegistry[0]);
 

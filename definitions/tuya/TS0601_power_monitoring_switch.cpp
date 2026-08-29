@@ -20,7 +20,8 @@ struct cfg { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
     static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{e,6}; };
 using FX=::zhc::tuya::factory::TuyaRw<cfg>;
 constexpr const char* kM[]={"TS0601"};
-constexpr const char* kN[]={"_TZE204_apiu8k13"};
+// z2m v26.101.0 folded a second manufacturer into this entry.
+constexpr const char* kN[]={"_TZE204_apiu8k13","_TZE284_q9qytwfa"};
 constexpr Expose kExp[]={
     {"state",     ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"countdown", ExposeType::Numeric, Access::StateSet, "s",     nullptr, nullptr, 0},
@@ -30,8 +31,8 @@ constexpr Expose kExp[]={
     {"voltage",   ExposeType::Numeric, Access::State,    "V",     nullptr, nullptr, 0}};
 }
 extern const PreparedDefinition kDef_TS0601_power_monitoring_switch{
-    .zigbee_models=kM,.zigbee_models_count=1,.manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN,.manufacturer_names_count=1,.model="TS0601_power_monitoring_switch",
+    .zigbee_models=kM,.zigbee_models_count=sizeof(kM)/sizeof(kM[0]),.manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kN,.manufacturer_names_count=sizeof(kN)/sizeof(kN[0]),.model="TS0601_power_monitoring_switch",
     .vendor="Tuya",.meta=nullptr,.exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,

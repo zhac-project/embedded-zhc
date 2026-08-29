@@ -13,6 +13,7 @@ extern const PreparedDefinition kDef_MIR_SM100_E;
 extern const PreparedDefinition kDef_MIR_SM200;
 extern const PreparedDefinition kDef_MIR_TE600;
 extern const PreparedDefinition kDef_MIR_WA100;
+extern const PreparedDefinition kDef_HE300_ZB;
 
 const PreparedDefinition* const kMultirRegistry[] = {
     &kDef_MIR_SO100,
@@ -22,6 +23,7 @@ const PreparedDefinition* const kMultirRegistry[] = {
     &kDef_MIR_SM200,
     &kDef_MIR_TE600,
     &kDef_MIR_WA100,
+    &kDef_HE300_ZB,
 };
 const std::size_t kMultirRegistryCount = sizeof(kMultirRegistry) / sizeof(kMultirRegistry[0]);
 

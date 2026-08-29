@@ -85,9 +85,17 @@ struct cfg_500 {
         ::zhc::tuya::dp::numeric(125, "fertility_v0_set", 1),
         ::zhc::tuya::dp::numeric(126, "fertility_v1_set", 1),
         ::zhc::tuya::dp::enum_lookup(127, "fertility_warning", kWarnNoneLowHigh, 3),
+        // z2m v26.99.0 added dp128 (divideBy1000 -> cell-constant calibration
+        // in the 0.5..2.0 range the expose declares).
+        ::zhc::tuya::dp::numeric(128, "fertility_calibration", 1000),
         ::zhc::tuya::dp::numeric(129, "moisture_v0_set", 1),
         ::zhc::tuya::dp::numeric(130, "moisture_v1_set", 1),
-        ::zhc::tuya::dp::numeric(131, "moisture_calibration", 1),
+        // z2m v26.99.0 also CHANGED dp131 from `raw` to `divideBy100`. This
+        // one is invisible to the semantic-token diff — the signature carries
+        // DP numbers, not their converters, so a divisor change on an existing
+        // DP produces a zero token delta. Caught only by re-reading the whole
+        // table after the `divisor` bucket flagged this device for dp128.
+        ::zhc::tuya::dp::numeric(131, "moisture_calibration", 100),
         ::zhc::tuya::dp::enum_lookup(132, "moisture_warning", kWarnNoneLowHigh, 3),
     };
     static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{ e, sizeof(e) / sizeof(e[0]) };
@@ -128,6 +136,7 @@ constexpr Expose kExp500[] = {
     { "probe_temperature",             ExposeType::Numeric, ::zhc::Access::State,    "°C",    "Measured probe temperature",   nullptr,   0 },
     { "humidity",                      ExposeType::Numeric, ::zhc::Access::State,    "%",     "Measured relative humidity",   nullptr,   0 },
     { "moisture",                      ExposeType::Numeric, ::zhc::Access::State,    "%",     "Soil moisture",                nullptr,   0 },
+    { "fertility_calibration",         ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, "Calibration of cell constant", nullptr,   0 },
     { "fertility",                     ExposeType::Numeric, ::zhc::Access::State,    "us/cm", "Soil fertility",               nullptr,   0 },
     { "battery",                       ExposeType::Numeric, ::zhc::Access::State,    "%",     "Battery percentage",           nullptr,   0 },
     { "temperature_warning",           ExposeType::Enum,    ::zhc::Access::State,    nullptr, "Temperature warning",          kWarnOpts, 3 },

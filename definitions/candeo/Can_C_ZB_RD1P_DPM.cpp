@@ -1,6 +1,17 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Candeo C-ZB-RD1P-DPM (uses shared candeo knob converters).
+// Tier 2: Candeo C-ZB-RD1P-DPM — GRADUATED from generated/.
+//
+// z2m v26.99.0 parity: upstream folded the v2 hardware revision into
+// this entry as an extra fingerprint rather than a separate def —
+// `C-ZB-RD1Pv2-DPM` reports a different modelID but is functionally
+// identical. (The v2 DIM variant went the other way and got its own
+// entry; see Can_C_ZB_RD1Pv2_DIM.cpp.) Graduated out of generated/ so
+// the added zigbeeModel survives the next generator run.
+//
+// Upstream also dropped `m.deviceEndpoints` from this entry in the same
+// release, but the endpoints it declared are still the ones the device
+// uses and the knob converters key off them, so the endpoint_map stays.
 // Zigbee rotary dimmer pro (dual purpose mode)
 // z2m-source: candeo.ts #C-ZB-RD1P-DPM.
 #include "definitions/_generic/_shared.hpp"
@@ -22,7 +33,9 @@ const TzConverter* const kTz_C_ZB_RD1P_DPM[] = {
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzPowerOnBehavior1
 };
-constexpr const char* kModels_C_ZB_RD1P_DPM[] = { "C-ZB-RD1P-DPM" };
+constexpr const char* kModels_C_ZB_RD1P_DPM[] = {
+    "C-ZB-RD1P-DPM", "C-ZB-RD1Pv2-DPM",
+};
 
 constexpr Expose kAutoExposes[] = {
     {"state",             ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},

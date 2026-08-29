@@ -1,7 +1,12 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Ewelink SNZB-05 — hand-corrected to use the typed
-// water-leak IAS converter.
+// Tier 2: Ewelink SNZB-05 — GRADUATED from generated/.
+// Hand-corrected to use the typed water-leak IAS converter.
+//
+// z2m v26.99.0 parity: upstream added a third reported modelID,
+// "CK-TLSR8656-Z23SE11HW-01(7019)", plus a matching whiteLabel.
+// Same sensor, different firmware build string. Graduated out of
+// generated/ so the added model survives the next generator run.
 // Zigbee water sensor. z2m: m.battery() + m.iasZoneAlarm({zoneType:
 // "water_leak", zoneAttributes: ["alarm_1", "battery_low"]}).
 // z2m exposes water_leak + battery_low (no tamper, no generic alarm).
@@ -15,7 +20,9 @@ const FzConverter* const kFz_SNZB_05[] = {
     &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
-constexpr const char* kModels_SNZB_05[] = { "SNZB-05", "CK-TLSR8656-SS5-01(7019)" };
+constexpr const char* kModels_SNZB_05[] = {
+    "SNZB-05", "CK-TLSR8656-SS5-01(7019)", "CK-TLSR8656-Z23SE11HW-01(7019)",
+};
 
 }  // namespace
 
@@ -37,6 +44,7 @@ constexpr BindingSpec kAutoBindings[] = {
 
 constexpr WhiteLabel kWhiteLabels_SNZB_05[] = {
     {"eWeLink","CK-TLSR8656-SS5-01(7019)"},
+    {"eWeLink","CK-TLSR8656-Z23SE11HW-01(7019)"},
 };
 extern const PreparedDefinition kDef_SNZB_05{
     .zigbee_models=kModels_SNZB_05, .zigbee_models_count=sizeof(kModels_SNZB_05)/sizeof(kModels_SNZB_05[0]),

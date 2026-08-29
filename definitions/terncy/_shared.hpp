@@ -92,4 +92,38 @@ extern const FzConverter kFzTerncyContact;
 //             m.temperature({scale: 10}).
 extern const FzConverter kFzTerncyTempScale10;
 
+// Decode the TERNCY WS01 wall-switch action frame on
+// `manuSpecificClusterAduroSmart` (0xFCCC, mfg 0x1228 XIAOYAN).
+//
+// A DIFFERENT frame shape from `kFzTerncyRawAction` above — same
+// cluster, but the WS01 switches use a wider click table (1..7 instead
+// of 1..4) and add a hold/release command with a duration payload:
+//
+//   z2m full-frame          ZHC (5-byte manuf-specific header stripped)
+//   ----------------------  ----------------------------------------
+//   data[0..2] 0d 28 12      frame-control + mfg code -> matched by the
+//                            descriptor (manu-specific, S->C)
+//   data[4]  discriminator   msg.command_id
+//   data[5]                  raw_body[0]
+//   data[6]  click index     raw_body[1]
+//   data[7]  duration lo     raw_body[2]
+//   data[8]  duration hi     raw_body[3]
+//
+//   command_id == 0x00 -> click. raw_body[1] in 1..7 maps to
+//                          single/double/triple/quadruple/5_click/
+//                          6_click/7_click.
+//   command_id == 0x29 -> hold (raw_body[0]==0x02) or release
+//                          (raw_body[0]==0x08), plus
+//                          `action_duration` = raw_body[2] |
+//                          raw_body[3] << 8.
+//
+// The endpoint rides in the action VALUE, not the key (`single_l1`) —
+// matching z2m and the `kAlwaysGlobalKeys` policy in dispatch.cpp. The
+// label is resolved from the def's `endpoint_map` via `src_endpoint`;
+// a frame from an endpoint outside the map is dropped.
+//
+// z2m-source: zigbee-herdsman-converters/src/devices/terncy.ts
+//             fzLocal.ws01_action.
+extern const FzConverter kFzTerncyWs01Action;
+
 }  // namespace zhc::terncy
