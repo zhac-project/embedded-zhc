@@ -64,4 +64,42 @@ constexpr TuyaDpMapEntry temperature(std::uint8_t dp_id,
     return { dp_id, "temperature", TuyaDpType::Numeric, divisor, nullptr, 0 };
 }
 
+// ── packed-payload datapoints ────────────────────────────────────────
+//
+// These map ONE datapoint onto SEVERAL keys, so they take a key table
+// instead of a single `key`. See TuyaDpExpandFn in _shared.hpp.
+
+// `dpPhaseVariant2(dp_id, keys)` — 8-byte voltage/current/power blob,
+// upstream's narrow-read variant. Pass `&kTuyaPhaseKeysPlain` for the
+// unsuffixed triple.
+constexpr TuyaDpMapEntry phase_variant2(std::uint8_t dp_id,
+                                          const TuyaPhaseKeys* keys) {
+    return { dp_id, nullptr, TuyaDpType::Raw, 1, nullptr, 0, 0, 0.0f,
+             &tuya_dp_expand_phase_variant2, keys };
+}
+
+// `dpPhaseVariant2WithPhase(dp_id, keys)` — same blob, full 24-bit current
+// and power reads plus the negative-power offset correction, emitting the
+// per-phase key triple `keys` names.
+constexpr TuyaDpMapEntry phase_variant2_with_phase(std::uint8_t dp_id,
+                                                     const TuyaPhaseKeys* keys) {
+    return { dp_id, nullptr, TuyaDpType::Raw, 1, nullptr, 0, 0, 0.0f,
+             &tuya_dp_expand_phase_variant2_phase, keys };
+}
+
+// `dpThresholds(dp_id, table)` — packed [id, enabled, value_be16] records.
+constexpr TuyaDpMapEntry thresholds(std::uint8_t dp_id,
+                                      const TuyaThresholdTable* table) {
+    return { dp_id, nullptr, TuyaDpType::Raw, 1, nullptr, 0, 0, 0.0f,
+             &tuya_dp_expand_thresholds, table };
+}
+
+// `dpFaultBitmap(dp_id, key, table)` — bitmap of fault flags joined into one
+// comma-separated string under `key`.
+constexpr TuyaDpMapEntry fault_bitmap(std::uint8_t dp_id, const char* key,
+                                        const TuyaFaultTable* table) {
+    return { dp_id, key, TuyaDpType::Bitmap, 1, nullptr, 0, 0, 0.0f,
+             &tuya_dp_expand_fault_bitmap, table };
+}
+
 }  // namespace zhc::tuya::dp

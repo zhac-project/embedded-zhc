@@ -3259,6 +3259,12 @@ target_link_libraries(zhc_terncy_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_terncy_ws01_tests tests/test_terncy_ws01.cpp)
 target_link_libraries(zhc_terncy_ws01_tests PRIVATE zhc_definitions)
 
+# Packed-payload datapoint expanders — one datapoint, many keys. Every one is
+# byte-offset sensitive, including an offset-encoded negative power that is
+# NOT two's complement.
+add_executable(zhc_tuya_packed_dp_tests tests/test_tuya_packed_dp.cpp)
+target_link_libraries(zhc_tuya_packed_dp_tests PRIVATE zhc_definitions)
+
 # BTicino (Legrand-family): F20T60A DIN power module was ported with the
 # wrong cluster (seMetering 0x0702 + phantom energy) when z2m's
 # electricityMeter(cluster:"electrical") uses haElectricalMeasurement
@@ -3704,6 +3710,7 @@ add_test(NAME zhc_essentialb_parity_tests   COMMAND zhc_essentialb_parity_tests)
 add_test(NAME zhc_sercomm_parity_tests      COMMAND zhc_sercomm_parity_tests)
 add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_terncy_ws01_tests         COMMAND zhc_terncy_ws01_tests)
+add_test(NAME zhc_tuya_packed_dp_tests      COMMAND zhc_tuya_packed_dp_tests)
 
 # Literal `_count` guard. Three consecutive z2m parity windows shipped a
 # definition whose hardcoded count disagreed with its array — once reading past

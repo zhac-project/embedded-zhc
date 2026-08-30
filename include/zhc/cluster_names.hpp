@@ -110,6 +110,12 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         // 0..3 → release/single/double/hold into `action`. Named here so
         // the vendor Fz selector (kFzWsz01Action) matches by cluster string.
         case 0xFE05: return "manuSpecificJxuan";
+        // 0xFF0C (65292) — Third Reality smart-scale cluster. Attr 0x0001
+        // `readWeight` (INT16 grams) plus five commands (tare, start/stop
+        // reporting, set weight, unit convert). Named here so the vendor Fz
+        // selector matches by cluster string; an unnamed id decodes to
+        // nullptr and no converter would ever match it.
+        case 0xFF0C: return "3rScaleSensorcluster";
 
         default:     return nullptr;
     }
