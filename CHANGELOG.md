@@ -41,7 +41,8 @@ across the ZHAC platform.
 - **Parity with zigbee-herdsman-converters v26.101.0** (v26.100.0, v26.101.0).
   Upstream re-verified MIT. 22 new definitions across 20 of the window's 22 new
   devices, plus FrankEver `FK-BV05` (a standing gap the window surfaced) and the
-  Konke split sibling:
+  Konke split sibling. The window's last two deferrals were ported in a
+  follow-up (see the packed-payload entry below), so all 22 are now covered:
   - Linxura `SCHA-1-MO` and `SHCB-1-MO` (new vendor) — every button press is
     encoded into the IAS Zone status field; one decoder covers 4- and 12-button
     variants.
@@ -78,13 +79,42 @@ across the ZHAC platform.
   genPowerCfg, and the expose was always empty. The genPowerCfg bind is gone too
   — binding a cluster the device does not serve just fails at join.
 
-### Not ported
+- **Packed-payload Tuya datapoints.** A datapoint may now carry a *multi-key
+  expander* — the stock path maps one datapoint to one key, but a handful of
+  Tuya datapoints pack a whole record set into one payload. Four are
+  implemented, closing a gap that had deferred devices across three windows:
+  - `phaseVariant2WithPhase` — voltage/current/power for one phase in eight
+    bytes, with 24-bit current and power reads. The width matters: the older
+    narrow variant wraps current above 65.536 A. Negative power is **not**
+    two's complement — the meter reports `0x19999A + power`, so the sign is
+    recovered by an implausibility test rather than a sign bit.
+  - `phaseVariant2` — the narrow variant, kept and pinned for parity.
+  - `parseThresholds` — flat 4-byte `[id, enabled, value_be16]` records against
+    a per-device table, with flag-only entries and unknown-id skipping.
+  - `circuitBreakerFaults1` — a fault bitmap joined into one comma-separated
+    string (z2m publishes a list; ZHC has no list value). Publishes an empty
+    string when nothing is set, so a fault *clearing* is observable.
 
-- **Third Reality `3RKS030Z`** kitchen scale — the entire device is one custom
-  cluster (weight plus five command buttons); nothing generic applies.
-- **Nous `D4Z-M`** 3-phase meter — every measurement rides `phaseVariant2WithPhase`,
-  `threshold_7/8` or `circuitBreakerFaults1`, all packed multi-key payloads that
-  need codecs embedded-zhc does not have. Same standing gap as `ZBN-DJ-63`.
+  All four are covered by the new `zhc_tuya_packed_dp_tests` suite, which pins
+  the byte layouts against hand-built payloads.
+
+- **Nous `D4Z-M`** three-phase DIN-rail meter, previously deferred. Fully wired
+  on the read side: per-phase voltage/current/power, per-phase and total
+  energy, the fault bitmap, and both packed threshold blobs (RS-485 config,
+  high-power alarm, over/under voltage, over-current, unbalanced load, phase
+  loss, negative power). The threshold datapoints are **read-only**: upstream's
+  encoder is a read-modify-write over the whole blob, which needs more prior
+  state than a converter has, and "probably works" is not a good enough basis
+  for writing protection thresholds on a breaker. Two upstream unit
+  conversions (`rs485_baud_rate`, `data_reporting_interval`) are published raw
+  and documented on the exposes.
+
+- **Third Reality `3RKS030Z`** smart kitchen scale, previously deferred. Its
+  cluster (0xFF0C) is now named in `cluster_names.hpp` — an unnamed cluster id
+  decodes to a null name and no converter can ever match it — and the device
+  gets weight in grams, the pound/ounce string (matching z2m's rounding), and
+  all five command buttons: tare, start/stop reporting, set weight, unit
+  convert.
 
 ### Fixed
 

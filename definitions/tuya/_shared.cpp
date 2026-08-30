@@ -6,6 +6,8 @@
 //             (tuya.modernExtend, fz.tuya_*).
 
 #include "definitions/tuya/_shared.hpp"
+
+#include <span>
 #include "definitions/_generic/_shared.hpp"  // ZclWriteSpec / tz_zcl_write_attr
 
 #include <cstdint>
@@ -126,6 +128,11 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
                       const Value& raw,
                       RuntimeContext& ctx,
                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // A multi-key expander replaces the per-type emit entirely: the datapoints
+    // that need one pack several values into a single payload, so there is no
+    // single `out_key` for the built-in path to fill. See TuyaDpExpandFn.
+    if (e.expand) return e.expand(e, raw, ctx, out);
+
     switch (e.type) {
         case TuyaDpType::Enum: {
             if (!e.enum_table || e.enum_count == 0) {
@@ -1158,5 +1165,140 @@ const ::zhc::ReportingSpec kReportsLightRGBCCT_1ep[] = {
 };
 const std::uint8_t kReportsLightRGBCCT_1ep_count =
     static_cast<std::uint8_t>(sizeof(kReportsLightRGBCCT_1ep)/sizeof(kReportsLightRGBCCT_1ep[0]));
+
+// ── packed-payload expanders ─────────────────────────────────────────
+
+extern const TuyaPhaseKeys kTuyaPhaseKeysPlain{ "voltage", "current", "power" };
+
+namespace {
+
+// A Raw datapoint surfaces as BytesRef; every expander below wants those
+// bytes and a minimum length.
+bool raw_bytes(const Value& raw, std::size_t need, std::span<const std::uint8_t>& out) {
+    if (raw.type != ValueType::BytesRef) return false;
+    if (raw.bytes.size() < need) return false;
+    out = raw.bytes;
+    return true;
+}
+
+void put_float(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out, const char* key, float v) {
+    if (!key) return;
+    Value x{}; x.type = ValueType::Float; x.f = v;
+    out.put(key, x);
+}
+
+void put_int(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out, const char* key, std::int64_t v) {
+    if (!key) return;
+    Value x{}; x.type = ValueType::Int; x.i = v;
+    out.put(key, x);
+}
+
+}  // namespace
+
+bool tuya_dp_expand_phase_variant2(const TuyaDpMapEntry& e, const Value& raw,
+                                    RuntimeContext&,
+                                    FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    std::span<const std::uint8_t> b;
+    if (!raw_bytes(raw, 8, b)) return false;
+    const auto* k = static_cast<const TuyaPhaseKeys*>(e.expand_cfg);
+    if (!k) k = &kTuyaPhaseKeysPlain;
+
+    const std::uint32_t voltage = (static_cast<std::uint32_t>(b[0]) << 8) | b[1];
+    // Upstream reads only b[3..4] / b[6..7] for this variant — see the header.
+    const std::uint32_t current = (static_cast<std::uint32_t>(b[3]) << 8) | b[4];
+    const std::uint32_t power   = (static_cast<std::uint32_t>(b[6]) << 8) | b[7];
+
+    put_float(out, k->voltage, static_cast<float>(voltage) / 10.0f);
+    put_float(out, k->current, static_cast<float>(current) / 1000.0f);
+    put_int  (out, k->power,   static_cast<std::int64_t>(power));
+    return true;
+}
+
+bool tuya_dp_expand_phase_variant2_phase(const TuyaDpMapEntry& e, const Value& raw,
+                                          RuntimeContext&,
+                                          FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    std::span<const std::uint8_t> b;
+    if (!raw_bytes(raw, 8, b)) return false;
+    const auto* k = static_cast<const TuyaPhaseKeys*>(e.expand_cfg);
+    if (!k) return false;
+
+    constexpr std::int64_t kNegativePowerOffset = 0x19999A;
+    constexpr std::int64_t kImplausiblePower    = 0x100000;   // 1048576 W on one phase
+
+    const std::uint32_t voltage = (static_cast<std::uint32_t>(b[0]) << 8) | b[1];
+    const std::uint32_t current = (static_cast<std::uint32_t>(b[2]) << 16) |
+                                  (static_cast<std::uint32_t>(b[3]) << 8)  | b[4];
+    std::int64_t power = (static_cast<std::int64_t>(b[5]) << 16) |
+                         (static_cast<std::int64_t>(b[6]) << 8)  | b[7];
+    if (power > kImplausiblePower) power -= kNegativePowerOffset;
+
+    put_float(out, k->voltage, static_cast<float>(voltage) / 10.0f);
+    put_float(out, k->current, static_cast<float>(current) / 1000.0f);
+    put_int  (out, k->power,   power);
+    return true;
+}
+
+bool tuya_dp_expand_thresholds(const TuyaDpMapEntry& e, const Value& raw,
+                                RuntimeContext&,
+                                FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    std::span<const std::uint8_t> b;
+    if (!raw_bytes(raw, 4, b)) return false;
+    const auto* tbl = static_cast<const TuyaThresholdTable*>(e.expand_cfg);
+    if (!tbl || !tbl->defs || tbl->count == 0) return false;
+
+    bool emitted = false;
+    for (std::size_t i = 0; i + 4 <= b.size(); i += 4) {
+        const std::uint8_t id = b[i];
+        const TuyaThresholdDef* def = nullptr;
+        for (std::uint8_t j = 0; j < tbl->count; ++j) {
+            if (tbl->defs[j].id == id) { def = &tbl->defs[j]; break; }
+        }
+        if (!def) continue;              // unknown record id — skip, as upstream does
+
+        Value flag{}; flag.type = ValueType::Bool; flag.b = (b[i + 1] != 0);
+        out.put(def->enabled_key, flag);
+        emitted = true;
+
+        if (def->value_key) {
+            const std::int64_t v = (static_cast<std::int64_t>(b[i + 2]) << 8) | b[i + 3];
+            put_int(out, def->value_key, v);
+        }
+    }
+    return emitted;
+}
+
+bool tuya_dp_expand_fault_bitmap(const TuyaDpMapEntry& e, const Value& raw,
+                                  RuntimeContext& ctx,
+                                  FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const auto* tbl = static_cast<const TuyaFaultTable*>(e.expand_cfg);
+    if (!tbl || !tbl->names || tbl->count == 0) return false;
+
+    // The fault datapoint is declared Bitmap, so it arrives as Uint.
+    std::uint64_t bits = 0;
+    if      (raw.type == ValueType::Uint) bits = raw.u;
+    else if (raw.type == ValueType::Int)  bits = static_cast<std::uint64_t>(raw.i);
+    else return false;
+
+    char   joined[128];
+    std::size_t used = 0;
+    for (std::uint8_t i = 0; i < tbl->count && i < 64; ++i) {
+        if (((bits >> i) & 1u) == 0) continue;
+        const char* name = tbl->names[i];
+        if (!name) continue;                       // documented gap in the table
+        const std::size_t n = std::strlen(name);
+        const std::size_t need = n + (used ? 1 : 0);
+        if (used + need + 1 > sizeof(joined)) break;   // keep what fits
+        if (used) joined[used++] = ',';
+        std::memcpy(joined + used, name, n);
+        used += n;
+    }
+    joined[used] = '\0';
+
+    const char* stable = ctx.alloc_str(joined, used);
+    if (!stable) return false;                     // arena exhausted this dispatch
+    Value v{}; v.type = ValueType::StringRef; v.str = stable;
+    out.put(e.out_key, v);
+    return true;
+}
 
 }  // namespace zhc::tuya

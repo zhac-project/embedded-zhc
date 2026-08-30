@@ -54,6 +54,25 @@ struct TuyaEnumEntry {
     const char*   label;
 };
 
+struct TuyaDpMapEntry;
+
+// Multi-key expander for a datapoint whose payload carries SEVERAL values.
+//
+// The stock decode path maps one datapoint to one key. A handful of Tuya
+// datapoints instead pack a whole record set into one Raw payload — three
+// phases of voltage/current/power, or a list of threshold/enable pairs — and
+// z2m models each with a bespoke converter emitting many keys at once.
+// Rather than bolt each of those onto `TuyaDpType`, an entry may carry an
+// expander: when set, it is called INSTEAD of the built-in per-type emit and
+// is free to put as many keys as it likes.
+//
+// `e.expand_cfg` carries whatever static table the expander needs.
+// Return false to abstain (malformed payload) exactly like the built-ins.
+using TuyaDpExpandFn = bool (*)(const TuyaDpMapEntry& e,
+                                 const Value& raw,
+                                 RuntimeContext& ctx,
+                                 FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
 struct TuyaDpMapEntry {
     std::uint8_t         dp_id;
     const char*          out_key;
@@ -70,6 +89,34 @@ struct TuyaDpMapEntry {
     // and rounds. Default 0.0 preserves int-divisor semantics for
     // every existing port (638+ generated cpps unaffected).
     float                divisor_f{0.0f};
+    // Optional multi-key expander (see TuyaDpExpandFn). Trailing defaults so
+    // every existing positional initialiser stays valid.
+    TuyaDpExpandFn       expand{nullptr};
+    const void*          expand_cfg{nullptr};
+};
+
+// ── expander payload descriptors ─────────────────────────────────────
+
+// Per-phase key triple for the `phaseVariant2WithPhase` expander. Static
+// storage so the emitted keys are plain StringRefs with no arena use.
+struct TuyaPhaseKeys {
+    const char* voltage;
+    const char* current;
+    const char* power;
+};
+
+// One record in a packed threshold blob (z2m `parseThresholds`). The blob is
+// a flat sequence of 4-byte records: [id, enabled, value_hi, value_lo].
+// `value_key` may be null for a flag-only record.
+struct TuyaThresholdDef {
+    std::uint8_t id;
+    const char*  enabled_key;
+    const char*  value_key;
+};
+
+struct TuyaThresholdTable {
+    const TuyaThresholdDef* defs;
+    std::uint8_t            count;
 };
 
 inline constexpr std::uint8_t kTuyaDpFlagInvertBool     = 0x01;
@@ -366,5 +413,70 @@ extern const std::uint8_t         kReportsLightCCT_1ep_count;
 // full-colour RGB+CCT lights.
 extern const ::zhc::ReportingSpec kReportsLightRGBCCT_1ep[];
 extern const std::uint8_t         kReportsLightRGBCCT_1ep_count;
+
+// ── packed-payload expanders ─────────────────────────────────────────
+
+// z2m `valueConverter.phaseVariant2`. 8-byte payload, big-endian:
+//   [0..1] voltage / 10        [3..4] current / 1000      [6..7] power
+// Reads only the LOW two bytes of current and power, exactly as upstream
+// does for this variant — current therefore wraps above 65.536 A. That is a
+// known upstream limitation, kept for parity; the `WithPhase` variant below
+// reads the full three bytes and is the one to copy for new ports.
+// `expand_cfg` is a `const TuyaPhaseKeys*`; pass `&kTuyaPhaseKeysPlain` for
+// the unsuffixed voltage/current/power triple.
+bool tuya_dp_expand_phase_variant2(const TuyaDpMapEntry& e, const Value& raw,
+                                    RuntimeContext& ctx,
+                                    FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
+// z2m `valueConverter.phaseVariant2WithPhase(phase)`. Same 8-byte layout but
+// current and power are full 24-bit big-endian reads:
+//   voltage = be16(0..1) / 10
+//   current = be24(2..4) / 1000
+//   power   = be24(5..7), offset-corrected
+//
+// Negative power is NOT two's complement: the meter reports
+// `0x19999A + power`, so the sign bit is unusable and the branch is taken on
+// an implausibly large reading instead (> 0x100000 W on one phase).
+//
+// `expand_cfg` is a `const TuyaPhaseKeys*` naming the three output keys.
+bool tuya_dp_expand_phase_variant2_phase(const TuyaDpMapEntry& e, const Value& raw,
+                                          RuntimeContext& ctx,
+                                          FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
+// z2m `parseThresholds`. Walks a Raw payload as 4-byte records
+// [id, enabled, value_be16] and, for each id present in the table, emits the
+// record's `enabled_key` as a Bool and (when the definition names one) its
+// `value_key` as an Int. Unknown ids are skipped, matching upstream.
+//
+// `expand_cfg` is a `const TuyaThresholdTable*`.
+bool tuya_dp_expand_thresholds(const TuyaDpMapEntry& e, const Value& raw,
+                                RuntimeContext& ctx,
+                                FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
+// z2m `valueConverter.circuitBreakerFaults1`. Bit N of the payload maps to
+// entry N of the fault-name table; set bits are joined into one
+// comma-separated string under `e.out_key`.
+//
+// z2m publishes a LIST of fault strings. ZHC has no list Value, so the
+// active faults are joined instead — the information is the same and a rule
+// can substring-match it. The joined string is built in the dispatch arena
+// via `ctx.alloc_str`, so it stays valid for the caller's DispatchResult.
+// Emits an empty string when no bits are set (i.e. "no faults"), rather than
+// abstaining, so a fault clearing is observable.
+//
+// `expand_cfg` is a `const TuyaFaultTable*`.
+bool tuya_dp_expand_fault_bitmap(const TuyaDpMapEntry& e, const Value& raw,
+                                  RuntimeContext& ctx,
+                                  FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
+// Bit-index -> fault name. Index is the BIT POSITION, so order matters and
+// gaps must be spelled with a null.
+struct TuyaFaultTable {
+    const char* const* names;
+    std::uint8_t       count;
+};
+
+// The plain (unsuffixed) voltage/current/power triple.
+extern const TuyaPhaseKeys kTuyaPhaseKeysPlain;
 
 }  // namespace zhc::tuya
