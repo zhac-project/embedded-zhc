@@ -31,6 +31,10 @@
 #include "definitions/tuya/dp.hpp"
 #include "zhc/runtime/dispatch.hpp"
 
+namespace zhc::devices::tuya {
+extern const PreparedDefinition kDef_ZBN_DJ_63;
+}  // namespace zhc::devices::tuya
+
 using namespace zhc;
 
 namespace {
@@ -232,6 +236,104 @@ void test_fault_bitmap() {
     check(s2 && s2[0] == '\0', "empty string when no faults");
 }
 
+// ── ZBN-DJ-63, end to end ────────────────────────────────────────────
+//
+// The breaker is the device that drove these expanders, so its own three
+// packed datapoints are pinned against the real definition rather than a
+// synthetic map.
+
+void test_zbn_dj_63() {
+    std::printf("ZBN-DJ-63 packed datapoints\n");
+    const PreparedDefinition& def = ::zhc::devices::tuya::kDef_ZBN_DJ_63;
+
+    // Locate the device's own DP map through its Fz list, so the test binds
+    // to what the definition actually ships.
+    const tuya::TuyaDatapointMap* map = nullptr;
+    for (std::size_t i = 0; i < def.from_zigbee_count; ++i) {
+        const FzConverter* c = def.from_zigbee[i];
+        if (c && c->family == FrameFamily::TuyaDp && c->user_config) {
+            map = static_cast<const tuya::TuyaDatapointMap*>(c->user_config);
+            break;
+        }
+    }
+    check(map != nullptr, "definition ships a datapoint map");
+    if (!map) return;
+
+    // dp6 — the NARROW phaseVariant2. 230.0 V, current from b[3..4] only,
+    // power from b[6..7]. Pinned to prove the device keeps upstream's narrow
+    // read rather than silently getting the wide one.
+    {
+        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x04,0xD2, 0x00,0x09,0x60};
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(run(*map, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "dp6 decodes");
+        check(approx(float_of(out, "voltage"), 230.0f), "voltage 230.0");
+        check(approx(float_of(out, "current"), 1.234f), "current 1.234");
+        check(int_of(out, "power") == 2400, "power 2400");
+    }
+
+    // dp9 — fault is a LOOKUP over single-bit values, not a bitmap. 1<<3
+    // is the leakage alarm; a two-bit value matches nothing, which is
+    // upstream's behaviour and the reason this is worth pinning.
+    {
+        const std::uint8_t one[] = { 0x08 };          // 1 << 3
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(run(*map, {9, 0x04, std::span<const std::uint8_t>(one, 1)}, ctx, out), "dp9 decodes");
+        const char* f = str_of(out, "fault");
+        check(f && std::strcmp(f, "leakagecurr_alarm") == 0, "fault leakagecurr_alarm");
+
+        const std::uint8_t clear[] = { 0x00 };
+        RuntimeContext c2{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o2{};
+        run(*map, {9, 0x04, std::span<const std::uint8_t>(clear, 1)}, c2, o2);
+        const char* f2 = str_of(o2, "fault");
+        check(f2 && std::strcmp(f2, "clear") == 0, "fault clear");
+
+        const std::uint8_t multi[] = { 0x0C };        // two bits set
+        RuntimeContext c3{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o3{};
+        run(*map, {9, 0x04, std::span<const std::uint8_t>(multi, 1)}, c3, o3);
+        check(o3.find("fault") == nullptr, "multi-bit fault matches nothing (as upstream)");
+    }
+
+    // dp17 — threshold_2: overload(3) / leakage(4) / high_temperature(5).
+    {
+        const std::uint8_t body[] = {
+            0x04, 0x01, 0x00, 0x1E,   // leakage on, 30 mA
+            0x05, 0x00, 0x00, 0x50,   // high temperature off, 80 C
+        };
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(run(*map, {17, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "dp17 decodes");
+        bool b = false;
+        check(bool_of(out, "leakage_breaker", b) && b, "leakage_breaker ON");
+        check(int_of(out, "leakage_threshold") == 30, "leakage_threshold 30");
+        check(bool_of(out, "high_temperature_breaker", b) && !b, "high_temperature_breaker OFF");
+        check(int_of(out, "high_temperature_threshold") == 80, "high_temperature_threshold 80");
+    }
+
+    // dp18 — threshold_3: over_current(1) / over_voltage(3) /
+    // under_voltage(4) / insufficient_balance(8).
+    {
+        const std::uint8_t body[] = {
+            0x01, 0x01, 0x00, 0x3F,   // over current on, 63 A
+            0x03, 0x01, 0x01, 0x04,   // over voltage on, 260 V
+            0x04, 0x01, 0x00, 0xC3,   // under voltage on, 195 V
+        };
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(run(*map, {18, 0x00, std::span<const std::uint8_t>(body, 12)}, ctx, out), "dp18 decodes");
+        check(int_of(out, "over_current_threshold") == 63, "over_current_threshold 63");
+        check(int_of(out, "over_voltage_threshold") == 260, "over_voltage_threshold 260 (be16)");
+        check(int_of(out, "under_voltage_threshold") == 195, "under_voltage_threshold 195");
+    }
+
+    // relay_power_on_state labels — the first port had off/on/memory, which
+    // do not match upstream's {Off, On, Restore}.
+    {
+        const std::uint8_t two[] = { 0x02 };
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(run(*map, {134, 0x04, std::span<const std::uint8_t>(two, 1)}, ctx, out), "dp134 decodes");
+        const char* v = str_of(out, "relay_power_on_state");
+        check(v && std::strcmp(v, "Restore") == 0, "relay_power_on_state Restore");
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -240,6 +342,7 @@ int main() {
     test_phase_variant2_narrow();
     test_thresholds();
     test_fault_bitmap();
+    test_zbn_dj_63();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all packed-DP checks passed\n");
     return 0;

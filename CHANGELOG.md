@@ -98,6 +98,31 @@ across the ZHAC platform.
   All four are covered by the new `zhc_tuya_packed_dp_tests` suite, which pins
   the byte layouts against hand-built payloads.
 
+- **Tuya `ZBN-DJ-63` is now complete.** Its first port covered 26 of 32
+  datapoint rows and left the packed ones out for want of these codecs. All
+  23 datapoints upstream declares are now wired, verified row by row against
+  the upstream table:
+  - dp6 gains voltage, current and power — the breaker had **no live
+    electrical readings at all** before this.
+  - dp17/dp18 gain the overload, leakage, high-temperature, over-current,
+    over/under-voltage and insufficient-balance breaker enables and their
+    thresholds. Read-only: upstream's encoder pairs the key being set with
+    the last published value of its partner (threshold with enable, and vice
+    versa) and re-sends both, which a converter with no shadow access cannot
+    do — and writing a threshold without its enable flag would silently
+    change breaker protection settings.
+  - dp9 `fault` was **missed entirely** in the first port. It is a lookup
+    over single-bit values, so exactly one alarm decodes at a time; a
+    multi-bit value matches nothing, which is upstream's behaviour.
+
+### Changed
+
+- **`ZBN-DJ-63` `relay_power_on_state` reports `Off` / `On` / `Restore`**
+  instead of `off` / `on` / `memory`. The first port invented those labels;
+  upstream's lookup is `{Off: 0, On: 1, Restore: 2}`, and the third state
+  restores the pre-outage relay position rather than a "last known" value.
+  Rules matching the old strings need updating.
+
 - **Nous `D4Z-M`** three-phase DIN-rail meter, previously deferred. Fully wired
   on the read side: per-phase voltage/current/power, per-phase and total
   energy, the fault bitmap, and both packed threshold blobs (RS-485 config,
