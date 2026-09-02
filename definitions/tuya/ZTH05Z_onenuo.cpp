@@ -102,7 +102,7 @@ constexpr Expose kExposes_Onenuo[] = {
 };
 
 constexpr const char* kModels_Onenuo[] = { "TS0601" };
-constexpr const char* kManus_Onenuo[]  = { "_TZE2841000000_qf5mzewi" };
+constexpr const char* kManus_Onenuo[]  = { "_TZE284_qf5mzewi", "_TZE2841000000_qf5mzewi" };  // z2m v26.102.0 carries both
 
 constexpr WhiteLabel kWhiteLabels_Onenuo[] = {
     { "ONENUO", "TH05Z" },

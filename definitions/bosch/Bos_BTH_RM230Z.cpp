@@ -7,9 +7,13 @@
 // setpoint / system_mode / running_state) + the Bosch manu-specific TZ
 // writes (operating_mode / boost_heating / window_open / child_lock /
 // display settings). Flat surface, no ExposeType::Climate (project rule).
-// Gaps vs z2m: humidity (msRelativeHumidity), cable_sensor_* and
-// error_state are extra surfaces not in the shared TRV bundle — see
-// docs/BOSCH_PARITY.md.
+//
+// 2026-09-02 (z2m v26.103.0, #13068): moved onto the RM230Z-specific bundle
+// in bosch/_shared — adds humidity (msRelativeHumidity, an upstream surface
+// this port had been missing) and the new `humidity_alarm_led` toggle
+// (0x4023). The battery row is gone; this is a mains device.
+// Remaining gaps vs z2m: cable_sensor_*, heater/valve type, error_state,
+// setpoint_change_source — see docs/BOSCH_PARITY.md.
 // z2m-source: bosch.ts #BTH-RM230Z.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/bosch/_shared.hpp"
@@ -27,13 +31,13 @@ extern const PreparedDefinition kDef_BTH_RM230Z{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="BTH-RM230Z", .vendor="Bosch",
-    .meta=nullptr, .exposes=kExposesBoschTrv, .exposes_count=kExposesBoschTrvCount,
+    .meta=nullptr, .exposes=kExposesBoschRm230z, .exposes_count=kExposesBoschRm230zCount,
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFzBoschTrv, .from_zigbee_count=kFzBoschTrvCount,
-    .to_zigbee=kTzBoschTrv, .to_zigbee_count=kTzBoschTrvCount,
+    .from_zigbee=kFzBoschRm230z, .from_zigbee_count=kFzBoschRm230zCount,
+    .to_zigbee=kTzBoschRm230z, .to_zigbee_count=kTzBoschRm230zCount,
     .configure=nullptr, .on_event=nullptr,
-    .bindings                 = kBindingsBoschTrv,
-    .bindings_count           = kBindingsBoschTrvCount,
+    .bindings                 = kBindingsBoschRm230z,
+    .bindings_count           = kBindingsBoschRm230zCount,
 };
 
 }  // namespace zhc::devices::bosch

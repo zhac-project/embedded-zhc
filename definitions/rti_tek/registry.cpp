@@ -6,10 +6,10 @@
 
 namespace zhc::devices::rti_tek {
 
-extern const PreparedDefinition kDef_STH1Z;
+extern const PreparedDefinition kDef_STHZB;
 
 const PreparedDefinition* const kRtiTekRegistry[] = {
-    &kDef_STH1Z,
+    &kDef_STHZB,
 };
 const std::size_t kRtiTekRegistryCount = sizeof(kRtiTekRegistry) / sizeof(kRtiTekRegistry[0]);
 

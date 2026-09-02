@@ -118,4 +118,21 @@ extern const ::zhc::TzConverter kTzBoschActivityLed;
 // 0x4003 UINT16 with mfgcode 0x1209.
 extern const ::zhc::TzConverter kTzBoschTwinguardSensitivity;
 
+
+// ── BTH-RM230Z (Room thermostat II 230V) bundle ─────────────────────
+// The shared TRV bundle plus what the mains thermostat has that the TRVs do
+// not: humidity (msRelativeHumidity) and the humidity-alarm LED toggle
+// (0x4023, mfg 0x1209; only 0x07 on / 0x06 off are observed values). No
+// battery row — it is a 230 V device.
+extern const ::zhc::FzConverter kFzBoschHumidityAlarmLed;
+extern const ::zhc::TzConverter kTzBoschHumidityAlarmLed;
+extern const ::zhc::FzConverter* const kFzBoschRm230z[];
+extern const std::uint8_t              kFzBoschRm230zCount;
+extern const ::zhc::TzConverter* const kTzBoschRm230z[];
+extern const std::uint8_t              kTzBoschRm230zCount;
+extern const ::zhc::Expose             kExposesBoschRm230z[];
+extern const std::uint8_t              kExposesBoschRm230zCount;
+extern const ::zhc::BindingSpec        kBindingsBoschRm230z[];
+extern const std::uint8_t              kBindingsBoschRm230zCount;
+
 }  // namespace zhc::devices::bosch
