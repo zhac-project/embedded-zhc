@@ -17,6 +17,21 @@ bool has_exact_model(const PreparedDefinition& def, const char* wanted) {
     return false;
 }
 
+// Substring candidates must be long enough to mean something. The registry
+// carries ~110 zigbeeModels of four characters or fewer ("CCT", "RGB",
+// "RGBW", "2PM", "H1", ...). As substrings they match a large share of
+// unrelated modelIDs -- "CCT" alone appears in most colour-temperature
+// lighting ids -- and because the substring pass runs before the generic
+// fallback, a hit there also pre-empts synth_definition. The exact-match
+// passes still serve those short definitions. (Review 2026-09, EZ-02.)
+constexpr std::size_t kMinSubstrModelLen = 5;
+
+// U+FFFD in UTF-8: a model string that was mangled upstream. It must never
+// act as a substring candidate.
+bool has_replacement_char(const char* s) {
+    return std::strstr(s, "\xEF\xBF\xBD") != nullptr;
+}
+
 // Longest substring match against any of def's zigbeeModels. Returns
 // 0 when no entry is a substring match.
 std::size_t longest_substr_score(const PreparedDefinition& def,
@@ -26,8 +41,10 @@ std::size_t longest_substr_score(const PreparedDefinition& def,
     for (std::uint8_t i = 0; i < def.zigbee_models_count; ++i) {
         const char* zm = def.zigbee_models[i];
         if (!zm) continue;
-        if (std::strstr(wanted, zm) == nullptr) continue;  // zm must appear in wanted
         const std::size_t len = std::strlen(zm);
+        if (len < kMinSubstrModelLen) continue;
+        if (has_replacement_char(zm)) continue;
+        if (std::strstr(wanted, zm) == nullptr) continue;  // zm must appear in wanted
         if (len > best) best = len;
     }
     return best;

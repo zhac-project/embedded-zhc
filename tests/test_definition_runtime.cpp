@@ -78,6 +78,48 @@ const PreparedDefinition* const kRegistry[] = {
     &kDefMotion, &kDefMotionAq2, &kDefMotionAc01,
 };
 
+// Review 2026-09 EZ-02: a very short zigbeeModel, and one that is U+FFFD
+// mojibake. Both exist in the real registry; neither may act as a substring.
+const char* const kZmCct[]      = { "CCT" };
+const char* const kZmMojibake[] = { "\xEF\xBF\xBD" };
+
+constexpr PreparedDefinition kDefCct{
+    .zigbee_models       = kZmCct,
+    .zigbee_models_count = 1,
+    .manufacturer_name_prefix = nullptr,
+    .manufacturer_names       = nullptr,
+    .manufacturer_names_count = 0,
+    .model               = "CCT-GENERIC",
+    .vendor              = "Test",
+    .meta                = nullptr,
+    .exposes             = nullptr, .exposes_count = 0,
+    .white_labels        = nullptr, .white_labels_count = 0,
+    .from_zigbee         = nullptr, .from_zigbee_count = 0,
+    .to_zigbee           = nullptr, .to_zigbee_count = 0,
+    .configure           = nullptr,
+    .on_event            = nullptr,
+};
+constexpr PreparedDefinition kDefMojibake{
+    .zigbee_models       = kZmMojibake,
+    .zigbee_models_count = 1,
+    .manufacturer_name_prefix = nullptr,
+    .manufacturer_names       = nullptr,
+    .manufacturer_names_count = 0,
+    .model               = "MOJIBAKE",
+    .vendor              = "Test",
+    .meta                = nullptr,
+    .exposes             = nullptr, .exposes_count = 0,
+    .white_labels        = nullptr, .white_labels_count = 0,
+    .from_zigbee         = nullptr, .from_zigbee_count = 0,
+    .to_zigbee           = nullptr, .to_zigbee_count = 0,
+    .configure           = nullptr,
+    .on_event            = nullptr,
+};
+
+const PreparedDefinition* const kRegistryShort[] = {
+    &kDefCct, &kDefMojibake, &kDefMotionAq2,
+};
+
 }  // namespace
 
 static void test_exact_match_wins_over_substring() {
@@ -97,6 +139,20 @@ static void test_second_alias_in_multi_model_def() {
     // The second string of kZmMotionAc01 — verifies array iteration.
     const auto* d = find_definition_by_model("lumi.sensor_motion.ac01_v2", kRegistry);
     assert(d == &kDefMotionAc01);
+}
+
+static void test_short_model_is_not_a_substring_candidate() {
+    // Before the fix, "CCT" captured every modelID containing it.
+    assert(find_definition_by_model("TRADFRI bulb E27 CCT 806lm", kRegistryShort) == nullptr);
+    assert(find_definition("TRADFRI bulb E27 CCT 806lm", nullptr, kRegistryShort) == nullptr);
+    // Exact matching of the short model is unaffected.
+    assert(find_definition_by_model("CCT", kRegistryShort) == &kDefCct);
+    // A long model still substring-matches (the lumi-style tolerance).
+    assert(find_definition_by_model("lumi.sensor_motion.aq2_v9", kRegistryShort) == &kDefMotionAq2);
+}
+
+static void test_replacement_char_model_never_substring_matches() {
+    assert(find_definition_by_model("lumi.\xEF\xBF\xBD.sensor", kRegistryShort) == nullptr);
 }
 
 static void test_substring_fallback_longest_wins() {
@@ -123,6 +179,8 @@ int main() {
     test_longer_exact_match_wins();
     test_second_alias_in_multi_model_def();
     test_substring_fallback_longest_wins();
+    test_short_model_is_not_a_substring_candidate();
+    test_replacement_char_model_never_substring_matches();
     test_unknown_model_id_returns_null();
     test_empty_or_null_model_id_returns_null();
     return 0;

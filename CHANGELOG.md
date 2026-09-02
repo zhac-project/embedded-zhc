@@ -8,6 +8,20 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Matcher: a short `zigbeeModel` could capture unrelated devices.** The
+  substring fallback pass (`find_definition` pass 3 / `find_definition_by_model`
+  pass 2) ran an unbounded `strstr`, and the registry carries ~110 model strings
+  of four characters or fewer (`"CCT"`, `"RGB"`, `"RGBW"`, `"2PM"`, `"H1"`, …).
+  Any reported modelID merely containing one of them could bind to that
+  definition — and, because the pass runs before `synth_definition`, pre-empt the
+  generic fallback that would otherwise have produced a usable device. Substring
+  candidates now need at least 5 characters, and a model string carrying U+FFFD
+  (four generated ecosmart/osram definitions ship mangled bytes) never acts as
+  one. Exact matching of short models is unchanged. Pinned by two new cases in
+  `zhc_definition_runtime_tests`. (Review 2026-09, EZ-02.)
+
 ### Added
 
 - **z2m v26.102.0 + v26.103.0 (zigbee2mqtt 2.14.0) parity.** New devices:
