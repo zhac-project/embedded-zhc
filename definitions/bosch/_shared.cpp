@@ -10,6 +10,9 @@
 // boschDoorWindowContactCluster 0xFCAD, boschWaterAlarm 0xFCAC,
 // twinguardSmokeDetector 0xE000, …). Mfgcode = 0x1209
 // (ROBERT_BOSCH_GMBH).
+#include <cstring>
+#include <span>
+#include <string_view>
 #include "definitions/bosch/_shared.hpp"
 
 namespace zhc::devices::bosch {
@@ -378,5 +381,139 @@ const ::zhc::TzConverter* const kTzBoschTrv[] = {
 };
 const std::uint8_t kTzBoschTrvCount =
     static_cast<std::uint8_t>(sizeof(kTzBoschTrv)/sizeof(kTzBoschTrv[0]));
+
+
+// ── BTH-RM230Z bundle ────────────────────────────────────────────────
+namespace {
+// 0x4023 humidityAlarmLed (enum8, mfg-specific) → "16419". 0x07 = on, 0x06 = off.
+bool fz_bosch_humidity_alarm_led(const ::zhc::DecodedMessage& msg, const ::zhc::FzConverter&,
+                                 const ::zhc::PreparedDefinition&, ::zhc::RuntimeContext&,
+                                 ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const ::zhc::Value* v = msg.payload.find("16419");
+    if (!v) return false;
+    std::uint64_t raw;
+    if      (v->type == ::zhc::ValueType::Uint) raw = v->u;
+    else if (v->type == ::zhc::ValueType::Int)  raw = static_cast<std::uint64_t>(v->i);
+    else return false;
+    ::zhc::Value o{}; o.type = ::zhc::ValueType::Bool; o.b = (raw == 0x07);
+    out.put("humidity_alarm_led", o);
+    return true;
+}
+constexpr ::zhc::generic::ZclWriteSpec kSpecHumidityAlarmLed{
+    "humidity_alarm_led", 0x4023, 0x30, kBoschMfg, nullptr, 0,
+};
+// Bool / ON / OFF → the two observed raw values, then the generic encoder.
+bool tz_bosch_humidity_alarm_led(std::string_view key, const ::zhc::Value& input,
+                                 const ::zhc::TzConverter& self, const ::zhc::PreparedDefinition& def,
+                                 ::zhc::RuntimeContext& ctx, std::span<std::uint8_t> out_frame,
+                                 std::size_t& out_size) {
+    if (key != "humidity_alarm_led") return false;
+    bool on;
+    switch (input.type) {
+        case ::zhc::ValueType::Bool: on = input.b; break;
+        case ::zhc::ValueType::Uint: on = input.u != 0; break;
+        case ::zhc::ValueType::Int:  on = input.i != 0; break;
+        case ::zhc::ValueType::StringRef:
+            if (!input.str) return false;
+            if      (std::strcmp(input.str, "ON")  == 0) on = true;
+            else if (std::strcmp(input.str, "OFF") == 0) on = false;
+            else return false;
+            break;
+        default: return false;
+    }
+    ::zhc::Value v{}; v.type = ::zhc::ValueType::Uint; v.u = on ? 0x07 : 0x06;
+    const ::zhc::TzConverter tmp{ "humidity_alarm_led", self.cluster, self.cluster_id, self.command_id,
+                                  &::zhc::generic::tz_zcl_write_attr, &kSpecHumidityAlarmLed };
+    return ::zhc::generic::tz_zcl_write_attr(key, v, tmp, def, ctx, out_frame, out_size);
+}
+}  // namespace
+
+extern const ::zhc::FzConverter kFzBoschHumidityAlarmLed{
+    .family            = ::zhc::FrameFamily::Zcl,
+    .cluster           = "hvacThermostat",
+    .type_mask         = ::zhc::type_bit(::zhc::MessageType::AttributeReport) |
+                         ::zhc::type_bit(::zhc::MessageType::ReadResponse),
+    .command_id        = ::zhc::WILDCARD_CMD_ID,
+    .attr_id           = ::zhc::WILDCARD_ATTR_ID,
+    .endpoint          = ::zhc::WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = ::zhc::Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_bosch_humidity_alarm_led },
+    .user_config       = nullptr,
+};
+extern const ::zhc::TzConverter kTzBoschHumidityAlarmLed{
+    "humidity_alarm_led", "hvacThermostat", 0x0201, 0x02,
+    &tz_bosch_humidity_alarm_led, nullptr };
+
+const ::zhc::FzConverter* const kFzBoschRm230z[] = {
+    &::zhc::generic::kFzThermostat,
+    &::zhc::generic::kFzHumidity,
+    &kFzBoschHumidityAlarmLed,
+};
+const std::uint8_t kFzBoschRm230zCount = sizeof(kFzBoschRm230z) / sizeof(kFzBoschRm230z[0]);
+
+const ::zhc::TzConverter* const kTzBoschRm230z[] = {
+    &::zhc::generic::kTzThermostat,
+    &kTzBoschOperatingMode,
+    &kTzBoschBoostHeating,
+    &kTzBoschWindowOpenMode,
+    &kTzBoschRemoteTemperature,
+    &kTzBoschChildLockUi,
+    &kTzBoschDisplayOrientation,
+    &kTzBoschDisplayedTemperature,
+    &kTzBoschDisplaySwitchDur,
+    &kTzBoschDisplayBrightness,
+    &kTzBoschHumidityAlarmLed,
+};
+const std::uint8_t kTzBoschRm230zCount = sizeof(kTzBoschRm230z) / sizeof(kTzBoschRm230z[0]);
+
+const ::zhc::Expose kExposesBoschRm230z[] = {
+    { "local_temperature",          ::zhc::ExposeType::Numeric, ::zhc::Access::State,
+      "\xC2\xB0""C", nullptr, nullptr, 0 },
+    { "current_heating_setpoint",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
+      "\xC2\xB0""C", nullptr, nullptr, 0 },
+    { "system_mode",                ::zhc::ExposeType::Enum,    ::zhc::Access::StateSet,
+      nullptr, nullptr, nullptr, 0 },
+    { "running_state",              ::zhc::ExposeType::Enum,    ::zhc::Access::State,
+      nullptr, nullptr, nullptr, 0 },
+    { "humidity",                   ::zhc::ExposeType::Numeric, ::zhc::Access::State,
+      "%", nullptr, nullptr, 0 },
+    { "operating_mode",             ::zhc::ExposeType::Enum,    ::zhc::Access::StateSet,
+      nullptr, "schedule | manual | pause", nullptr, 0 },
+    { "boost_heating",              ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
+      nullptr, nullptr, nullptr, 0 },
+    { "window_open",                ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
+      nullptr, nullptr, nullptr, 0 },
+    { "remote_temperature",         ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
+      "\xC2\xB0""C", nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Config },
+    { "child_lock",                 ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
+      nullptr, nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Config },
+    { "display_orientation",        ::zhc::ExposeType::Enum,    ::zhc::Access::StateSet,
+      nullptr, nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Config },
+    { "displayed_temperature",      ::zhc::ExposeType::Enum,    ::zhc::Access::StateSet,
+      nullptr, nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Config },
+    { "display_brightness",         ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
+      nullptr, nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Config },
+    { "display_ontime",             ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
+      "s", nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::Config },
+    { "humidity_alarm_led",         ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
+      nullptr, "LED warning when humidity is outside 30-70 % (raw 0x07 on / 0x06 off)", nullptr, 0,
+      ::zhc::ExposeCategory::Config },
+};
+const std::uint8_t kExposesBoschRm230zCount = sizeof(kExposesBoschRm230z) / sizeof(kExposesBoschRm230z[0]);
+
+const ::zhc::BindingSpec kBindingsBoschRm230z[] = {
+    { 1, 0x0201 },  // hvacThermostat
+    { 1, 0x0204 },  // hvacUserInterfaceCfg
+    { 1, 0x0405 },  // msRelativeHumidity
+};
+const std::uint8_t kBindingsBoschRm230zCount = sizeof(kBindingsBoschRm230z) / sizeof(kBindingsBoschRm230z[0]);
 
 }  // namespace zhc::devices::bosch

@@ -23,7 +23,11 @@ using FX=::zhc::tuya::factory::TuyaRw<cfg>;
 constexpr const char* kM[]={"TS0601","TS0105"};
 constexpr const char* kN[]={
     "_TZE200_4vobcgd3","_TZE284_4vobcgd3","_TZE200_5zbp6j0u","_TZE200_eegnwoyw",
-    "_TZE200_nkoabg8w","_TZE200_pk0sfzvr","_TZE204_xu4a5rhj","_TZE600_ogyg1y6b"};
+    "_TZE200_nkoabg8w","_TZE200_pk0sfzvr","_TZE204_xu4a5rhj","_TZE600_ogyg1y6b",
+    // 1fuxihti: upstream TS0601_cover_1 (z2m v26.103.0 added the _TZE28C1000000_
+    // batch). Until this window three generated per-manufacturer stubs claimed
+    // these names and decoded the motor as a genOnOff switch — retired.
+    "_TZE200_1fuxihti","_TZE204_1fuxihti","_TZE284_1fuxihti","_TZE28C1000000_1fuxihti"};
 constexpr const char* kStateOpts[]={"open","stop","close"};
 constexpr Expose kExp[]={
     {"state",    ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kStateOpts, 3},
@@ -31,7 +35,7 @@ constexpr Expose kExp[]={
 }
 extern const PreparedDefinition kDefTS0601_cover{
     .zigbee_models=kM,.zigbee_models_count=2,.manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN,.manufacturer_names_count=8,.model="TS0601_cover",
+    .manufacturer_names=kN,.manufacturer_names_count=sizeof(kN)/sizeof(kN[0]),.model="TS0601_cover",
     .vendor="Tuya",.meta=nullptr,.exposes=kExp,.exposes_count=2,
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,

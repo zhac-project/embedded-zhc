@@ -32,8 +32,10 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         case 0x000A: return "genTime";
         case 0x000C: return "genAnalogInput";
         case 0x000D: return "genAnalogOutput";
+        case 0x000E: return "genAnalogValue";
         case 0x000F: return "genBinaryInput";
         case 0x0010: return "genBinaryOutput";
+        case 0x0011: return "genBinaryValue";
         case 0x0012: return "genMultistateInput";
         case 0x0013: return "genMultistateOutput";
         case 0x0014: return "genMultistateValue";

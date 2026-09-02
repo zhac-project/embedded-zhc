@@ -1,8 +1,13 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Lonsonho TS130F_dual — auto-generated.
+// Tier 2: Lonsonho TS130F_dual — graduated from generated/ for a fingerprint.
 // Dual curtain/blind module
 // z2m-source: lonsonho.ts #TS130F_dual.
+//
+// Graduated 2026-09-02 (z2m v26.103.0, #13052) to add `_TZ3000_wvedmwyp`;
+// the generated copy was retired at the same time. The port itself is the
+// generic dual cover (position per endpoint); the calibration / motor_reversal
+// / moving exposes below are upstream surface with no decoder wired here yet.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::lonsonho {
@@ -14,7 +19,7 @@ const TzConverter* const kTz_TS130F_dual[] = {
     &::zhc::generic::kTzCoverPosition,
 };
 constexpr const char* kModels_TS130F_dual[] = { "TS130F" };
-constexpr const char* kManus_TS130F_dual[] = { "_TZ3000_j1xl73iw", "_TZ3000_kmsbwdol", "_TZ3000_esynmmox", "_TZ3000_l6iqph4f", "_TZ3000_xdo0hj1k", "_TZ3000_bmhwnl7s" };
+constexpr const char* kManus_TS130F_dual[] = { "_TZ3000_j1xl73iw", "_TZ3000_kmsbwdol", "_TZ3000_esynmmox", "_TZ3000_l6iqph4f", "_TZ3000_xdo0hj1k", "_TZ3000_bmhwnl7s", "_TZ3000_wvedmwyp" };
 // z2m endpoint: {left:1, right:2}
 constexpr ::zhc::EndpointLabel kEndpoints_TS130F_dual[] = { {"left", 1}, {"right", 2} };
 }  // namespace

@@ -672,6 +672,10 @@ const VendorEntry kTierERegistries[] = {
       ::zhc::devices::nova_digital::kNovaDigitalRegistryCount },
     { ::zhc::devices::pulsar::kPulsarRegistry,
       ::zhc::devices::pulsar::kPulsarRegistryCount },
+    { ::zhc::devices::heiwa::kHeiwaRegistry,
+      ::zhc::devices::heiwa::kHeiwaRegistryCount },
+    { ::zhc::devices::mowe::kMoweRegistry,
+      ::zhc::devices::mowe::kMoweRegistryCount },
 };
 const std::size_t kTierERegistriesCount = sizeof(kTierERegistries) / sizeof(kTierERegistries[0]);
 

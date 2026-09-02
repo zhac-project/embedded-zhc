@@ -8,7 +8,54 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Added
+
+- **z2m v26.102.0 + v26.103.0 (zigbee2mqtt 2.14.0) parity.** New devices:
+  Moes SFD02-Z star-feather dimmer, Tuya MG-DIM02Z dimmer module with power
+  monitoring, Mowe MW833P 24 GHz presence sensor (new vendor), Heiwa HPZERAD-V1
+  "Ernest" thermostat (new vendor — flat exposes over the vendor attributes on
+  hvacThermostat, endpoint 25, setpoint written as the cooling/heating pair
+  upstream uses), Aqara SJCGQ12LM-ES water-leak sensor (engineering build whose
+  modelID carries a TAB and a 0x01 byte), and the Moes ZS-US1-LN batch of
+  TS0001 (`_TZ3000_bzzgvet0`) with switch type, power-on behaviour and
+  backlight as its own fingerprinted definition.
+- **Schneider CCTFR6400** surfaces the device's boost command as `action`
+  boost_set / boost_cancel with `boost_duration` and `boost_temperature`. The
+  controller-side boost policy and the hub-less attribute-read emulation are
+  firmware work, recorded as a follow-up.
+- **Bosch BTH-RM230Z** gains humidity (a missing upstream surface) and the
+  `humidity_alarm_led` toggle; the battery row is gone from this 230 V device.
+- **PushOk POK001** gains valve `status` (incl. the new MOVING / STUCK /
+  OFFLINE_CLOSE / OFFLINE_OPEN / BLOCKED states), `inverted`, `kamikaze`,
+  `battery_type` and `stall_time`. `offline_action` / `end_lag` stay out: both
+  are single-precision floats and the ZCL layer has no float32 path.
+- **Nous D4Z** graduated out of the generated tree with the datapoints the
+  copies never carried: circuit-breaker `faults`, both threshold record sets
+  and `energy_reset`.
+
+### Changed
+
+- **Rti-Tek STH1Z renamed STHZB** following upstream, whose single entry now
+  covers STH1Z and STH2Z (same modelID; the FD22 config surface stays deferred).
+
 ### Fixed
+
+- **Three Tuya curtain-motor batches decoded as an on/off switch.**
+  `_TZE200/204/284_1fuxihti` were claimed by generated per-manufacturer stubs
+  wired to genOnOff; the motor speaks datapoints (upstream TS0601_cover_1).
+  Folded into TS0601_cover together with the new `_TZE28C1000000_1fuxihti`.
+- **Zemismart ZMS-206US-4 / ZMS-206EU-2 were registered twice** — a genOnOff
+  stub over every fingerprint next to identical per-manufacturer datapoint
+  copies. One parent each now, with the enum datapoints (indicator, per-gang
+  relay status, switch colours, radar config) wired and the new
+  `_TZE28C1000000_xibaabmu` / `_y4jqpry8` / `_dmckrsxg` batches.
+- **Aqara SJCGQ12LM (T1 water-leak) never reported `water_leak`** — the IAS
+  zone alarm_1 converter is now wired alongside the lumi telemetry.
+- Detect fixes folded in: ONENUO TH05Z `_TZE284_qf5mzewi`, Nous D4Z
+  `_TZE200_loejka0i`, Saswell SEA801 `_TZE204_3yp57tby` /
+  `_TZE2841000000_3yp57tby` (+ Nous H1Z white label), AVATTO ZDMS16-1
+  `huu3td85` + `_TZE28C1000000_nqqylykc` (+ NovaDigital MS-DM-ZB), Lonsonho
+  TS130F_dual `_TZ3000_wvedmwyp`.
 
 - **A Tuya on/off datapoint wire-typed as ENUM was silently dropped.** The
   datapoint-map decoder required the raw value to be exactly `Bool`, but Tuya

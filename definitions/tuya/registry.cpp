@@ -499,7 +499,6 @@ extern const PreparedDefinition kDefGen__TZE200_0nauxa0p;
 extern const PreparedDefinition kDefGen__TZE200_0zaf1cr8;
 extern const PreparedDefinition kDefGen__TZE200_1agwnems;
 extern const PreparedDefinition kDefGen__TZE200_1drr8tab;
-extern const PreparedDefinition kDefGen__TZE200_1fuxihti;
 extern const PreparedDefinition kDefGen__TZE200_2dpplnsn;
 extern const PreparedDefinition kDefGen__TZE200_2imwyigp;
 extern const PreparedDefinition kDefGen__TZE200_2m38mh6k;
@@ -754,7 +753,6 @@ extern const PreparedDefinition kDefGen__TZE200_zvo63cmo;
 extern const PreparedDefinition kDefGen__TZE200_zxxfv8wi;
 extern const PreparedDefinition kDefGen__TZE200_zyrdrmno;
 extern const PreparedDefinition kDefGen__TZE204_0hcjew5p;
-extern const PreparedDefinition kDefGen__TZE204_1fuxihti;
 extern const PreparedDefinition kDefGen__TZE204_1v1dxkck;
 extern const PreparedDefinition kDefGen__TZE204_1wnh8bqp;
 extern const PreparedDefinition kDefGen__TZE204_2imwyigp;
@@ -859,7 +857,6 @@ extern const PreparedDefinition kDefGen__TZE204_lbbg34rj;
 extern const PreparedDefinition kDefGen__TZE204_lbhh5o6z;
 extern const PreparedDefinition kDefGen__TZE204_lh3arisb;
 extern const PreparedDefinition kDefGen__TZE204_lmgrbuwf;
-extern const PreparedDefinition kDefGen__TZE204_loejka0i;
 extern const PreparedDefinition kDefGen__TZE204_lsanae15;
 extern const PreparedDefinition kDefGen__TZE204_ltwbm23f;
 extern const PreparedDefinition kDefGen__TZE204_lzriup1j;
@@ -954,7 +951,6 @@ extern const PreparedDefinition kDefGen__TZE210_inpjmc0h;
 extern const PreparedDefinition kDefGen__TZE210_m6lwazh9;
 extern const PreparedDefinition kDefGen__TZE284_0ints6wl;
 extern const PreparedDefinition kDefGen__TZE284_0zaf1cr8;
-extern const PreparedDefinition kDefGen__TZE284_1fuxihti;
 extern const PreparedDefinition kDefGen__TZE284_1lvln0x6;
 extern const PreparedDefinition kDefGen__TZE284_1wnh8bqp;
 extern const PreparedDefinition kDefGen__TZE284_2baujqot;
@@ -1046,7 +1042,6 @@ extern const PreparedDefinition kDefGen__TZE284_kyyu8rbj;
 extern const PreparedDefinition kDefGen__TZE284_l8xiyymq;
 extern const PreparedDefinition kDefGen__TZE284_lbhh5o6z;
 extern const PreparedDefinition kDefGen__TZE284_libht6ua;
-extern const PreparedDefinition kDefGen__TZE284_loejka0i;
 extern const PreparedDefinition kDefGen__TZE284_ltwbm23f;
 extern const PreparedDefinition kDefGen__TZE284_m1cvyneb;
 extern const PreparedDefinition kDefGen__TZE284_madl8ejv;
@@ -1168,6 +1163,8 @@ extern const PreparedDefinition kDefTS0502B_v2;
 extern const PreparedDefinition kDefTS0502B_rf;
 extern const PreparedDefinition kDef_ZTH05Z_onenuo;
 extern const PreparedDefinition kDef_ZBN_DJ_63;
+extern const PreparedDefinition kDef_MG_DIM02Z;
+extern const PreparedDefinition kDef_TS0001_bzzgvet0;
 extern const PreparedDefinition kDef_MS032Z;
 extern const PreparedDefinition kDef_ZG_227ZP;
 extern const PreparedDefinition kDef_MG_AU03GPOZLP;
@@ -1971,7 +1968,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_0zaf1cr8,
     &kDefGen__TZE200_1agwnems,
     &kDefGen__TZE200_1drr8tab,
-    &kDefGen__TZE200_1fuxihti,
     &kDefGen__TZE200_2dpplnsn,
     &kDefGen__TZE200_2imwyigp,
     &kDefGen__TZE200_2m38mh6k,
@@ -2226,7 +2222,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_zxxfv8wi,
     &kDefGen__TZE200_zyrdrmno,
     &kDefGen__TZE204_0hcjew5p,
-    &kDefGen__TZE204_1fuxihti,
     &kDefGen__TZE204_1v1dxkck,
     &kDefGen__TZE204_1wnh8bqp,
     &kDefGen__TZE204_2imwyigp,
@@ -2331,7 +2326,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_lbhh5o6z,
     &kDefGen__TZE204_lh3arisb,
     &kDefGen__TZE204_lmgrbuwf,
-    &kDefGen__TZE204_loejka0i,
     &kDefGen__TZE204_lsanae15,
     &kDefGen__TZE204_ltwbm23f,
     &kDefGen__TZE204_lzriup1j,
@@ -2426,7 +2420,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE210_m6lwazh9,
     &kDefGen__TZE284_0ints6wl,
     &kDefGen__TZE284_0zaf1cr8,
-    &kDefGen__TZE284_1fuxihti,
     &kDefGen__TZE284_1lvln0x6,
     &kDefGen__TZE284_1wnh8bqp,
     &kDefGen__TZE284_2baujqot,
@@ -2518,7 +2511,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE284_l8xiyymq,
     &kDefGen__TZE284_lbhh5o6z,
     &kDefGen__TZE284_libht6ua,
-    &kDefGen__TZE284_loejka0i,
     &kDefGen__TZE284_ltwbm23f,
     &kDefGen__TZE284_m1cvyneb,
     &kDefGen__TZE284_madl8ejv,
@@ -2640,6 +2632,8 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTS0502B_rf,
     &kDef_ZTH05Z_onenuo,
     &kDef_ZBN_DJ_63,
+    &kDef_MG_DIM02Z,
+    &kDef_TS0001_bzzgvet0,
     &kDef_MS032Z,
     &kDef_ZG_227ZP,
     &kDef_MG_AU03GPOZLP,
