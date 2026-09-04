@@ -261,6 +261,7 @@
 #include "zhc/devices/shade_control_registry.hpp"
 #include "zhc/devices/shenzhen_homa_registry.hpp"
 #include "zhc/devices/shyugj_registry.hpp"
+#include "zhc/devices/siemens_registry.hpp"
 #include "zhc/devices/siglis_registry.hpp"
 #include "zhc/devices/sikom_registry.hpp"
 #include "zhc/devices/silicon_labs_registry.hpp"

@@ -7,12 +7,11 @@
 // here against hand-built payloads.
 //
 // Covered:
-//   * phaseVariant2WithPhase — 24-bit current/power reads and the
-//     offset-encoded negative power. The 24-bit read is the whole point:
-//     upstream's older narrow variant wraps current above 65.536 A, and the
-//     high-current case below fails if the third byte is dropped.
-//   * phaseVariant2 — the narrow variant, kept for parity. Pinned so nobody
-//     "fixes" it into the wide one by accident.
+//   * phaseVariant2WithPhase — 16-bit current/power reads and the
+//     offset-encoded negative power. z2m v26.97.0 widened the reads to 24
+//     bits (#12928) and v26.105.0 reverted that (52542ec); the port follows
+//     upstream, so the 70 A case below pins the WRAP, not the wide read.
+//   * phaseVariant2 — the plain variant, same narrow reads, no sign handling.
 //   * parseThresholds — 4-byte records, flag-only entries, unknown ids.
 //   * circuitBreakerFaults1 — bit positions to a joined string.
 //
@@ -109,31 +108,37 @@ void test_phase_variant2_with_phase() {
         check(int_of(out, "power_a") == 2800, "power 2800");
     }
 
-    // 70 A — 70000 mA = 0x011170. A 16-bit read would give 0x1170 = 4.464 A,
-    // which is exactly the wrap upstream fixed by widening this read.
+    // 70 A — 70000 mA = 0x011170. Only b[3..4] = 0x1170 is read, so this
+    // decodes as 4.464 A. Upstream briefly read the third byte (v26.97.0 ..
+    // v26.104.0) and reverted; the wrap is pinned so the port tracks upstream
+    // and nobody re-widens it by accident.
     {
         const std::uint8_t body[] = {0x08,0xFC, 0x01,0x11,0x70, 0x00,0x00,0x64};
         RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
         check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
-        check(approx(float_of(out, "current_a"), 70.0f, 0.01f), "current 70.0 (not wrapped)");
+        check(approx(float_of(out, "current_a"), 4.464f, 0.001f), "current 4.464 (16-bit read, as upstream)");
     }
 
-    // Negative power: the meter reports 0x19999A + power, NOT two's
-    // complement. -100 W arrives as 0x199936.
+    // Negative power: a reading above 0x7FFF is 0x999A - power, NOT two's
+    // complement. -100 W arrives as 0x9936.
     {
-        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x00,0x00, 0x19,0x99,0x36};
+        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x00,0x00, 0x00,0x99,0x36};
         RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
         check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
         check(int_of(out, "power_a") == -100, "power -100 (offset-decoded)");
     }
 
-    // A plausible large-but-positive power must NOT be treated as negative.
-    // 0x0FFFFF = 1048575, one below the implausibility threshold.
+    // The sign branch is taken strictly above 0x7FFF: 32767 W stays
+    // positive, 0x8000 decodes as 0x8000 - 0x999A = -6554.
     {
-        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x00,0x00, 0x0F,0xFF,0xFF};
+        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x00,0x00, 0x00,0x7F,0xFF};
         RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
         check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
-        check(int_of(out, "power_a") == 0x0FFFFF, "power stays positive below the threshold");
+        check(int_of(out, "power_a") == 0x7FFF, "power 32767 stays positive");
+        const std::uint8_t body2[] = {0x08,0xFC, 0x00,0x00,0x00, 0x00,0x80,0x00};
+        RuntimeContext c2{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o2{};
+        check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body2, 8)}, c2, o2), "decodes");
+        check(int_of(o2, "power_a") == -6554, "power 0x8000 -> -6554");
     }
 
     // Short payload must abstain rather than read past the end.
@@ -152,9 +157,8 @@ void test_phase_variant2_narrow() {
     };
     static constexpr tuya::TuyaDatapointMap kMap{ kE, 1 };
 
-    // Same 70 A payload as above. This variant reads only b[3..4] = 0x1170,
-    // so it yields 4.464 A. That is upstream's behaviour for this converter
-    // and the test pins it deliberately — see the header.
+    // Same 70 A payload as above: b[3..4] = 0x1170 -> 4.464 A. Unlike the
+    // WithPhase variant there is no negative-power branch here.
     const std::uint8_t body[] = {0x08,0xFC, 0x01,0x11,0x70, 0x00,0x0A,0xF0};
     RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
     check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");

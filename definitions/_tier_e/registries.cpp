@@ -506,6 +506,8 @@ const VendorEntry kTierERegistries[] = {
       ::zhc::devices::shenzhen_homa::kShenzhenHomaRegistryCount },
     { ::zhc::devices::shyugj::kShyugjRegistry,
       ::zhc::devices::shyugj::kShyugjRegistryCount },
+    { ::zhc::devices::siemens::kSiemensRegistry,
+      ::zhc::devices::siemens::kSiemensRegistryCount },
     { ::zhc::devices::siglis::kSiglisRegistry,
       ::zhc::devices::siglis::kSiglisRegistryCount },
     { ::zhc::devices::sikom::kSikomRegistry,

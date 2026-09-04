@@ -166,6 +166,17 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
         case TuyaDpType::Numeric: {
             if (raw.type != ValueType::Int) return false;
             std::int64_t v_int = raw.i;
+            if ((e.flags & kTuyaDpFlagNumericLookup) && e.enum_table) {
+                for (std::uint8_t j = 0; j < e.enum_count; ++j) {
+                    if (static_cast<std::int64_t>(e.enum_table[j].value) == v_int) {
+                        Value v{}; v.type = ValueType::StringRef;
+                        v.str = e.enum_table[j].label;
+                        out.put(e.out_key, v);
+                        return true;
+                    }
+                }
+                return false;  // unmapped number, as upstream
+            }
             if (e.flags & kTuyaDpFlagInvertPosition) {
                 // F30 (FINDINGS.md): clamp to [0,100] — a malformed cover
                 // position must not surface as a negative/garbage percent.
@@ -947,7 +958,24 @@ bool tz_tuya_datapoints(std::string_view key,
             val_len = 1;
             break;
         case TuyaDpType::Numeric:
-            if (!encode_numeric(*entry, input, val)) return false;
+            if ((entry->flags & kTuyaDpFlagNumericLookup) && entry->enum_table) {
+                // Label -> number, sent as the s32 the device expects.
+                if (input.type != ValueType::StringRef || !input.str) return false;
+                bool hit = false;
+                std::uint32_t n = 0;
+                for (std::uint8_t j = 0; j < entry->enum_count; ++j) {
+                    if (std::strcmp(entry->enum_table[j].label, input.str) == 0) {
+                        n = static_cast<std::uint32_t>(entry->enum_table[j].value); hit = true; break;
+                    }
+                }
+                if (!hit) return false;
+                val[0] = static_cast<std::uint8_t>(n >> 24);
+                val[1] = static_cast<std::uint8_t>(n >> 16);
+                val[2] = static_cast<std::uint8_t>(n >> 8);
+                val[3] = static_cast<std::uint8_t>(n);
+            } else if (!encode_numeric(*entry, input, val)) {
+                return false;
+            }
             val_len = 4;
             break;
         case TuyaDpType::Enum:
@@ -1222,15 +1250,16 @@ bool tuya_dp_expand_phase_variant2_phase(const TuyaDpMapEntry& e, const Value& r
     const auto* k = static_cast<const TuyaPhaseKeys*>(e.expand_cfg);
     if (!k) return false;
 
-    constexpr std::int64_t kNegativePowerOffset = 0x19999A;
-    constexpr std::int64_t kImplausiblePower    = 0x100000;   // 1048576 W on one phase
+    // 16-bit reads again: upstream reverted its 24-bit widening of this
+    // converter in z2m v26.105.0 (52542ec, reverting #12928). Negative power
+    // is offset-encoded rather than two's complement -- a reading above
+    // 0x7FFF is `0x999A - power`, so -100 W arrives as 0x9936.
+    constexpr std::int64_t kNegativePowerBase = 0x999A;
 
     const std::uint32_t voltage = (static_cast<std::uint32_t>(b[0]) << 8) | b[1];
-    const std::uint32_t current = (static_cast<std::uint32_t>(b[2]) << 16) |
-                                  (static_cast<std::uint32_t>(b[3]) << 8)  | b[4];
-    std::int64_t power = (static_cast<std::int64_t>(b[5]) << 16) |
-                         (static_cast<std::int64_t>(b[6]) << 8)  | b[7];
-    if (power > kImplausiblePower) power -= kNegativePowerOffset;
+    const std::uint32_t current = (static_cast<std::uint32_t>(b[3]) << 8) | b[4];
+    std::int64_t power = (static_cast<std::int64_t>(b[6]) << 8) | b[7];
+    if (power > 0x7FFF) power = power - kNegativePowerBase;
 
     put_float(out, k->voltage, static_cast<float>(voltage) / 10.0f);
     put_float(out, k->current, static_cast<float>(current) / 1000.0f);

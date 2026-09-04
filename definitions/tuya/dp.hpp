@@ -78,9 +78,9 @@ constexpr TuyaDpMapEntry phase_variant2(std::uint8_t dp_id,
              &tuya_dp_expand_phase_variant2, keys };
 }
 
-// `dpPhaseVariant2WithPhase(dp_id, keys)` — same blob, full 24-bit current
-// and power reads plus the negative-power offset correction, emitting the
-// per-phase key triple `keys` names.
+// `dpPhaseVariant2WithPhase(dp_id, keys)` — same blob and the same 16-bit
+// reads, plus the negative-power offset correction, emitting the per-phase
+// key triple `keys` names.
 constexpr TuyaDpMapEntry phase_variant2_with_phase(std::uint8_t dp_id,
                                                      const TuyaPhaseKeys* keys) {
     return { dp_id, nullptr, TuyaDpType::Raw, 1, nullptr, 0, 0, 0.0f,
