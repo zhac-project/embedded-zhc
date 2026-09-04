@@ -36,6 +36,11 @@ const PreparedDefinition* find_definition_by_model(
 //      appear verbatim in the list.
 //   4. Else if `manufacturer_name_prefix` is set, `manufacturer_name`
 //      must begin with that prefix.
+//   5. When no Tuya-style entry matched and `manufacturer_name` carries
+//      one of Tuya's newer family prefixes (`_TZE2841000000_`,
+//      `_TZE28C1000000_`), rules 3-4 are retried with the same suffix
+//      under `_TZE284_`, `_TZE204_` and `_TZE200_` in that order. The
+//      suffix is the product id; the prefix only names the radio family.
 //
 // Returns the first candidate that passes. When `manufacturer_name` is
 // null, Tuya-discriminated entries are skipped. Falls back to

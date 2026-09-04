@@ -160,6 +160,14 @@ inline constexpr std::uint8_t kTuyaDpFlagEnumBool       = 0x10;
 // and sends the whole DP atomically (stateless — no shadow merge). Works on a
 // Raw DP (BytesRef on the wire). See codec in tuya/_shared.cpp.
 inline constexpr std::uint8_t kTuyaDpFlagMoesSchedule   = 0x20;
+// Lookup over a NUMERIC datapoint — z2m `valueConverterBasic.lookup({normal: 0,
+// scanning: 1, ...})` with plain numbers (no `tuya.enum()`), which upstream
+// sends and receives as datapoint type 2 (s32) rather than 4 (enum). The wire
+// value arrives as ValueType::Int, so a plain Enum entry would abstain. With
+// this flag set on a `type == Numeric` entry the value is matched against
+// `enum_table` and the StringRef label is emitted (unmapped values abstain,
+// as upstream); encode maps the label back and sends it as a 4-byte Numeric.
+inline constexpr std::uint8_t kTuyaDpFlagNumericLookup  = 0x40;
 
 struct TuyaDatapointMap {
     const TuyaDpMapEntry* entries;
@@ -419,24 +427,25 @@ extern const std::uint8_t         kReportsLightRGBCCT_1ep_count;
 // z2m `valueConverter.phaseVariant2`. 8-byte payload, big-endian:
 //   [0..1] voltage / 10        [3..4] current / 1000      [6..7] power
 // Reads only the LOW two bytes of current and power, exactly as upstream
-// does for this variant — current therefore wraps above 65.536 A. That is a
-// known upstream limitation, kept for parity; the `WithPhase` variant below
-// reads the full three bytes and is the one to copy for new ports.
+// does -- current therefore wraps above 65.536 A. That is a known upstream
+// limitation, kept for parity.
 // `expand_cfg` is a `const TuyaPhaseKeys*`; pass `&kTuyaPhaseKeysPlain` for
 // the unsuffixed voltage/current/power triple.
 bool tuya_dp_expand_phase_variant2(const TuyaDpMapEntry& e, const Value& raw,
                                     RuntimeContext& ctx,
                                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 
-// z2m `valueConverter.phaseVariant2WithPhase(phase)`. Same 8-byte layout but
-// current and power are full 24-bit big-endian reads:
+// z2m `valueConverter.phaseVariant2WithPhase(phase)`. Same 8-byte layout and
+// the same 16-bit reads:
 //   voltage = be16(0..1) / 10
-//   current = be24(2..4) / 1000
-//   power   = be24(5..7), offset-corrected
+//   current = be16(3..4) / 1000
+//   power   = be16(6..7), offset-corrected
 //
-// Negative power is NOT two's complement: the meter reports
-// `0x19999A + power`, so the sign bit is unusable and the branch is taken on
-// an implausibly large reading instead (> 0x100000 W on one phase).
+// Negative power is NOT two's complement: a reading above 0x7FFF is
+// `0x999A - power` (so -100 W arrives as 0x9936).
+//
+// History: z2m v26.97.0 (#12928) widened both reads to 24 bits and this port
+// followed; v26.105.0 reverted that upstream (52542ec) and so did this.
 //
 // `expand_cfg` is a `const TuyaPhaseKeys*` naming the three output keys.
 bool tuya_dp_expand_phase_variant2_phase(const TuyaDpMapEntry& e, const Value& raw,

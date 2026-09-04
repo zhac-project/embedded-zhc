@@ -51,6 +51,8 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/ZBN_DJ_63.cpp
     definitions/tuya/MG_DIM02Z.cpp
     definitions/tuya/TS0001_bzzgvet0.cpp
+    definitions/tuya/TS0301_cover_1.cpp
+    definitions/tuya/TS0601_6gang_switch_2.cpp
     definitions/tuya/TS0601_co2_th.cpp
     definitions/tuya/Excellux_EZ_500FS.cpp
     definitions/tuya/ZTH05Z_onenuo.cpp
@@ -458,6 +460,7 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/WSDCGQ12LM.cpp
     definitions/lumi/SJCGQ12LM.cpp
     definitions/lumi/SJCGQ12LM_ES.cpp
+    definitions/lumi/ZNMHLDJ01LM.cpp
     definitions/lumi/JYGZ01AQ.cpp
     definitions/lumi/WXKG15LM.cpp
     definitions/lumi/WXKG18LM.cpp
@@ -3269,6 +3272,8 @@ add_executable(zhc_tuya_packed_dp_tests tests/test_tuya_packed_dp.cpp)
 target_link_libraries(zhc_tuya_packed_dp_tests PRIVATE zhc_definitions)
 add_executable(zhc_parity_26103_tests tests/test_parity_26103.cpp)
 target_link_libraries(zhc_parity_26103_tests PRIVATE zhc_definitions)
+add_executable(zhc_parity_26105_tests tests/test_parity_26105.cpp)
+target_link_libraries(zhc_parity_26105_tests PRIVATE zhc_definitions)
 
 # BTicino (Legrand-family): F20T60A DIN power module was ported with the
 # wrong cluster (seMetering 0x0702 + phantom energy) when z2m's
@@ -3717,6 +3722,7 @@ add_test(NAME zhc_terncy_parity_tests       COMMAND zhc_terncy_parity_tests)
 add_test(NAME zhc_terncy_ws01_tests         COMMAND zhc_terncy_ws01_tests)
 add_test(NAME zhc_tuya_packed_dp_tests      COMMAND zhc_tuya_packed_dp_tests)
 add_test(NAME zhc_parity_26103_tests        COMMAND zhc_parity_26103_tests)
+add_test(NAME zhc_parity_26105_tests        COMMAND zhc_parity_26105_tests)
 
 # Literal `_count` guard. Three consecutive z2m parity windows shipped a
 # definition whose hardcoded count disagreed with its array — once reading past

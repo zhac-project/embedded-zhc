@@ -25,7 +25,6 @@ extern const PreparedDefinition kDefLin__TZE284_ajhu0zqb;
 extern const PreparedDefinition kDefLin__TZE284_bquwrqh1;
 extern const PreparedDefinition kDefLin__TZE284_chcnj5st;
 extern const PreparedDefinition kDefLin__TZE284_gw05grph;
-extern const PreparedDefinition kDefLin__TZE284_hqys6frs;
 extern const PreparedDefinition kDefLin__TZE284_iunyuzwe;
 extern const PreparedDefinition kDefLin__TZE284_mpzuabwk;
 extern const PreparedDefinition kDefLin__TZE284_rs62zxk8;
@@ -53,6 +52,9 @@ extern const PreparedDefinition kDef_SZW08;
 extern const PreparedDefinition kDef_SZLM04U;
 extern const PreparedDefinition kDef_SZT04;
 extern const PreparedDefinition kDef_SZR07;
+extern const PreparedDefinition kDef_R12LM_Z20T;
+extern const PreparedDefinition kDef_B08LRT_Z10T;
+extern const PreparedDefinition kDef_PZE2612;
 
 const PreparedDefinition* const kLincukooRegistry[] = {
     &kDefLin__TZE204_b8vxct9l,
@@ -74,7 +76,6 @@ const PreparedDefinition* const kLincukooRegistry[] = {
     &kDefLin__TZE284_bquwrqh1,
     &kDefLin__TZE284_chcnj5st,
     &kDefLin__TZE284_gw05grph,
-    &kDefLin__TZE284_hqys6frs,
     &kDefLin__TZE284_iunyuzwe,
     &kDefLin__TZE284_mpzuabwk,
     &kDefLin__TZE284_rs62zxk8,
@@ -101,6 +102,9 @@ const PreparedDefinition* const kLincukooRegistry[] = {
     &kDef_SZLM04U,
     &kDef_SZT04,
     &kDef_SZR07,
+    &kDef_R12LM_Z20T,
+    &kDef_B08LRT_Z10T,
+    &kDef_PZE2612,
 };
 const std::size_t kLincukooRegistryCount = sizeof(kLincukooRegistry) / sizeof(kLincukooRegistry[0]);
 

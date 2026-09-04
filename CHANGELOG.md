@@ -10,6 +10,27 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Tuya `phaseVariant2WithPhase` reads 16-bit current and power again.**
+  z2m v26.105.0 reverted its 24-bit widening of this converter (52542ec undoing
+  #12928); the R4 port had followed the widening and now follows the revert.
+  Negative power is still offset-encoded (`0x999A - power`, so -100 W arrives
+  as 0x9936). Affects Moes ZM6LT1, Nous D4Z-M and every other user of
+  `dp::phase_variant2_with_phase`. `zhc_tuya_packed_dp_tests` pins the wrap.
+- **Matcher: Tuya's newer manufacturer-name families resolve to their legacy
+  registration.** A device reporting `_TZE2841000000_<sfx>` or
+  `_TZE28C1000000_<sfx>` is retried as `_TZE284_`, `_TZE204_` and `_TZE200_`
+  + suffix when no definition lists the exact name (upstream appended 35 such
+  twins in v26.104.0 + v26.105.0 alone, almost all onto generated copies here).
+  A definition that lists the twin explicitly still wins. Two new cases in
+  `zhc_definition_runtime_tests`.
+- **HOBEIAN ZG-IR01 temperature when the display unit is Fahrenheit.** dp109
+  is reported in the unit dp111 selects (z2m #13090); the unit is now cached
+  per device (`DeviceRuntimeState::scratch`) and a Fahrenheit reading converts
+  back to Celsius. `temperature` is now also exposed.
+- **Lincukoo R12LM-Z10T was a dead stub** — the generated copy decoded this
+  TS0601 datapoint presence sensor as a genOnOff switch. Graduated to a real
+  datapoint map; the per-manufacturer copy was retired.
+
 - **Matcher: a short `zigbeeModel` could capture unrelated devices.** The
   substring fallback pass (`find_definition` pass 3 / `find_definition_by_model`
   pass 2) ran an unbounded `strstr`, and the registry carries ~110 model strings
@@ -23,6 +44,19 @@ across the ZHAC platform.
   `zhc_definition_runtime_tests`. (Review 2026-09, EZ-02.)
 
 ### Added
+
+- **z2m v26.104.0 + v26.105.0 (zigbee2mqtt 2.14.1) parity.** New devices:
+  Lincukoo R12LM-Z20T presence sensor, B08LRT-Z10T 5-in-1 sensor button and
+  PZE2612 outdoor twin plug; Tuya TS0601_6gang_switch_2 touch panel with power
+  monitoring (the 61-byte indicator-colour blob on dp107 is not ported); Aqara
+  ZNMHLDJ01LM vertical blinds motor (lift + tilt); Siemens RDZ101ZB room
+  thermostat (new vendor, `running_state` wired); Nova Digital ZCMR-1 roller
+  blind motor. Tuya TS0301_cover_1 graduated out of `generated/` to carry
+  dp13 `battery`. Pinned by `zhc_parity_26105_tests`.
+- **`kTuyaDpFlagNumericLookup`** — z2m lookups over plain numbers
+  (`lookup({normal: 0, scanning: 1})`) ride a Numeric datapoint; the flag makes
+  a `type == Numeric` row emit the label on decode and send the number on
+  encode.
 
 - **z2m v26.102.0 + v26.103.0 (zigbee2mqtt 2.14.0) parity.** New devices:
   Moes SFD02-Z star-feather dimmer, Tuya MG-DIM02Z dimmer module with power

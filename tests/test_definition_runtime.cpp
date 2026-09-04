@@ -120,6 +120,71 @@ const PreparedDefinition* const kRegistryShort[] = {
     &kDefCct, &kDefMojibake, &kDefMotionAq2,
 };
 
+// Tuya-style fixtures for the manufacturer-twin fallback: one definition
+// registered under the legacy `_TZE204_` spelling, one that lists the new
+// `_TZE28C1000000_` spelling explicitly.
+const char* const kZmTs0601[]      = { "TS0601" };
+const char* const kManuLegacy[]    = { "_TZE204_abcdefgh" };
+const char* const kManuTwinExact[] = { "_TZE28C1000000_abcdefgh" };
+const char* const kManuLegacy284[] = { "_TZE284_qrstuvwx" };
+
+constexpr PreparedDefinition kDefTuyaLegacy{
+    .zigbee_models       = kZmTs0601,
+    .zigbee_models_count = 1,
+    .manufacturer_name_prefix = nullptr,
+    .manufacturer_names       = kManuLegacy,
+    .manufacturer_names_count = 1,
+    .model               = "LEGACY",
+    .vendor              = "Test",
+    .meta                = nullptr,
+    .exposes             = nullptr, .exposes_count = 0,
+    .white_labels        = nullptr, .white_labels_count = 0,
+    .from_zigbee         = nullptr, .from_zigbee_count = 0,
+    .to_zigbee           = nullptr, .to_zigbee_count = 0,
+    .configure           = nullptr,
+    .on_event            = nullptr,
+};
+constexpr PreparedDefinition kDefTuyaTwinExact{
+    .zigbee_models       = kZmTs0601,
+    .zigbee_models_count = 1,
+    .manufacturer_name_prefix = nullptr,
+    .manufacturer_names       = kManuTwinExact,
+    .manufacturer_names_count = 1,
+    .model               = "TWIN-EXACT",
+    .vendor              = "Test",
+    .meta                = nullptr,
+    .exposes             = nullptr, .exposes_count = 0,
+    .white_labels        = nullptr, .white_labels_count = 0,
+    .from_zigbee         = nullptr, .from_zigbee_count = 0,
+    .to_zigbee           = nullptr, .to_zigbee_count = 0,
+    .configure           = nullptr,
+    .on_event            = nullptr,
+};
+constexpr PreparedDefinition kDefTuyaLegacy284{
+    .zigbee_models       = kZmTs0601,
+    .zigbee_models_count = 1,
+    .manufacturer_name_prefix = nullptr,
+    .manufacturer_names       = kManuLegacy284,
+    .manufacturer_names_count = 1,
+    .model               = "LEGACY-284",
+    .vendor              = "Test",
+    .meta                = nullptr,
+    .exposes             = nullptr, .exposes_count = 0,
+    .white_labels        = nullptr, .white_labels_count = 0,
+    .from_zigbee         = nullptr, .from_zigbee_count = 0,
+    .to_zigbee           = nullptr, .to_zigbee_count = 0,
+    .configure           = nullptr,
+    .on_event            = nullptr,
+};
+
+const PreparedDefinition* const kRegistryTuya[] = {
+    &kDefTuyaLegacy, &kDefTuyaLegacy284,
+};
+// Legacy first so an explicit-twin win cannot be a registry-order accident.
+const PreparedDefinition* const kRegistryTuyaBoth[] = {
+    &kDefTuyaLegacy, &kDefTuyaTwinExact,
+};
+
 }  // namespace
 
 static void test_exact_match_wins_over_substring() {
@@ -174,6 +239,27 @@ static void test_empty_or_null_model_id_returns_null() {
     assert(find_definition_by_model("",      kRegistry) == nullptr);
 }
 
+static void test_manufacturer_twin_prefix_falls_back_to_legacy() {
+    // Both new families resolve to the legacy registration.
+    assert(find_definition("TS0601", "_TZE28C1000000_abcdefgh", kRegistryTuya) == &kDefTuyaLegacy);
+    assert(find_definition("TS0601", "_TZE2841000000_abcdefgh", kRegistryTuya) == &kDefTuyaLegacy);
+    // ... including a `_TZE284_` registration under the `_TZE28C1000000_` family.
+    assert(find_definition("TS0601", "_TZE28C1000000_qrstuvwx", kRegistryTuya) == &kDefTuyaLegacy284);
+    // The exact legacy name still matches directly.
+    assert(find_definition("TS0601", "_TZE204_abcdefgh", kRegistryTuya) == &kDefTuyaLegacy);
+    // An unknown suffix is still unknown; a twin prefix alone proves nothing.
+    assert(find_definition("TS0601", "_TZE28C1000000_zzzzzzzz", kRegistryTuya) == nullptr);
+    assert(find_definition("TS0601", "_TZE28C1000000_", kRegistryTuya) == nullptr);
+    // The fallback never crosses the model id.
+    assert(find_definition("TS0602", "_TZE28C1000000_abcdefgh", kRegistryTuya) == nullptr);
+    // A legacy name is not rewritten into a twin (one-way only).
+    assert(find_definition("TS0601", "_TZE204_abcdefgh", kRegistryTuyaBoth) == &kDefTuyaLegacy);
+}
+
+static void test_explicit_twin_name_wins_over_fallback() {
+    assert(find_definition("TS0601", "_TZE28C1000000_abcdefgh", kRegistryTuyaBoth) == &kDefTuyaTwinExact);
+}
+
 int main() {
     test_exact_match_wins_over_substring();
     test_longer_exact_match_wins();
@@ -183,5 +269,7 @@ int main() {
     test_replacement_char_model_never_substring_matches();
     test_unknown_model_id_returns_null();
     test_empty_or_null_model_id_returns_null();
+    test_manufacturer_twin_prefix_falls_back_to_legacy();
+    test_explicit_twin_name_wins_over_fallback();
     return 0;
 }

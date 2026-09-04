@@ -147,6 +147,7 @@ extern const PreparedDefinition kDefRTCZCGQ12LM;
 extern const PreparedDefinition kDefSJCGQ11LM;
 extern const PreparedDefinition kDefSJCGQ12LM;
 extern const PreparedDefinition kDefSJCGQ12LM_ES;
+extern const PreparedDefinition kDefZNMHLDJ01LM;
 extern const PreparedDefinition kDefSJCGQ13LM;
 extern const PreparedDefinition kDefSJCGQ14LM;
 extern const PreparedDefinition kDefSJCGQ15LM;
@@ -326,6 +327,7 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefSJCGQ11LM,
     &kDefSJCGQ12LM,
     &kDefSJCGQ12LM_ES,
+    &kDefZNMHLDJ01LM,
     &kDefSJCGQ13LM,
     &kDefSJCGQ14LM,
     &kDefSJCGQ15LM,

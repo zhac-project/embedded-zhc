@@ -948,7 +948,6 @@ extern const PreparedDefinition kDefGen__TZE204_zqq3cipq;
 extern const PreparedDefinition kDefGen__TZE204_ztqnh5cg;
 extern const PreparedDefinition kDefGen__TZE204_zuq5xxib;
 extern const PreparedDefinition kDefGen__TZE210_inpjmc0h;
-extern const PreparedDefinition kDefGen__TZE210_m6lwazh9;
 extern const PreparedDefinition kDefGen__TZE284_0ints6wl;
 extern const PreparedDefinition kDefGen__TZE284_0zaf1cr8;
 extern const PreparedDefinition kDefGen__TZE284_1lvln0x6;
@@ -1165,6 +1164,8 @@ extern const PreparedDefinition kDef_ZTH05Z_onenuo;
 extern const PreparedDefinition kDef_ZBN_DJ_63;
 extern const PreparedDefinition kDef_MG_DIM02Z;
 extern const PreparedDefinition kDef_TS0001_bzzgvet0;
+extern const PreparedDefinition kDef_TS0301_cover_1;
+extern const PreparedDefinition kDef_TS0601_6gang_switch_2;
 extern const PreparedDefinition kDef_MS032Z;
 extern const PreparedDefinition kDef_ZG_227ZP;
 extern const PreparedDefinition kDef_MG_AU03GPOZLP;
@@ -2417,7 +2418,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_ztqnh5cg,
     &kDefGen__TZE204_zuq5xxib,
     &kDefGen__TZE210_inpjmc0h,
-    &kDefGen__TZE210_m6lwazh9,
     &kDefGen__TZE284_0ints6wl,
     &kDefGen__TZE284_0zaf1cr8,
     &kDefGen__TZE284_1lvln0x6,
@@ -2634,6 +2634,8 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_ZBN_DJ_63,
     &kDef_MG_DIM02Z,
     &kDef_TS0001_bzzgvet0,
+    &kDef_TS0301_cover_1,
+    &kDef_TS0601_6gang_switch_2,
     &kDef_MS032Z,
     &kDef_ZG_227ZP,
     &kDef_MG_AU03GPOZLP,

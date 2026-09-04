@@ -113,6 +113,45 @@ bool is_tuya_styled(const PreparedDefinition& def) {
            (def.manufacturer_names && def.manufacturer_names_count > 0);
 }
 
+// Tuya's newer manufacturerName families. Devices now report
+// `_TZE2841000000_<sfx>` or `_TZE28C1000000_<sfx>` for products that were
+// registered as `_TZE284_<sfx>`, `_TZE204_<sfx>` or `_TZE200_<sfx>`; upstream
+// appends the twin to each definition as it surfaces (35 of them in z2m
+// v26.104.0 + v26.105.0 alone, and the mapping to a legacy prefix is not
+// fixed -- `_TZE284_ncc7uahd` gained `_TZE28C1000000_`, `_TZE284_7qc2wlqr`
+// gained `_TZE2841000000_`). The eight-character suffix is the product id
+// and the prefix the radio/firmware family, so a name that misses under a
+// new prefix is retried under the legacy ones. Only consulted when no
+// definition carries the exact name, so an explicit twin still wins.
+constexpr const char* kTwinPrefixes[]   = { "_TZE2841000000_", "_TZE28C1000000_" };
+constexpr const char* kLegacyPrefixes[] = { "_TZE284_", "_TZE204_", "_TZE200_" };
+constexpr std::size_t kLegacyPrefixCount =
+    sizeof(kLegacyPrefixes) / sizeof(kLegacyPrefixes[0]);
+constexpr std::size_t kManuAliasCap = 24;   // "_TZE284_" + suffix + NUL
+
+// Fills `out` with the legacy spellings of a twin-prefixed name. Returns 0
+// when `manu` is not one (or the suffix would not fit).
+std::size_t manufacturer_aliases(const char* manu,
+                                 char (&out)[kLegacyPrefixCount][kManuAliasCap]) {
+    if (!manu) return 0;
+    const char* sfx = nullptr;
+    for (const char* tp : kTwinPrefixes) {
+        const std::size_t tl = std::strlen(tp);
+        if (std::strncmp(manu, tp, tl) == 0) { sfx = manu + tl; break; }
+    }
+    if (!sfx || !*sfx) return 0;
+    const std::size_t sl = std::strlen(sfx);
+    std::size_t n = 0;
+    for (const char* lp : kLegacyPrefixes) {
+        const std::size_t ll = std::strlen(lp);
+        if (ll + sl + 1 > kManuAliasCap) continue;
+        std::memcpy(out[n], lp, ll);
+        std::memcpy(out[n] + ll, sfx, sl + 1);
+        ++n;
+    }
+    return n;
+}
+
 }  // namespace
 
 const PreparedDefinition* find_definition(
@@ -127,6 +166,21 @@ const PreparedDefinition* find_definition(
         if (!def || !is_tuya_styled(*def)) continue;
         if (!has_exact_model(*def, model_id)) continue;
         if (has_manufacturer_match(*def, manufacturer_name)) return def;
+    }
+
+    // Pass 1b: the same walk under the legacy spellings of a twin-prefixed
+    // manufacturer name (see manufacturer_aliases). Runs after Pass 1 so a
+    // definition that lists the exact twin is preferred.
+    {
+        char alias[kLegacyPrefixCount][kManuAliasCap];
+        const std::size_t n = manufacturer_aliases(manufacturer_name, alias);
+        for (std::size_t a = 0; a < n; ++a) {
+            for (const auto* def : registry) {
+                if (!def || !is_tuya_styled(*def)) continue;
+                if (!has_exact_model(*def, model_id)) continue;
+                if (has_manufacturer_match(*def, alias[a])) return def;
+            }
+        }
     }
 
     // Pass 2: non-Tuya candidates by exact model.
