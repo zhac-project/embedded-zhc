@@ -45,6 +45,12 @@ across the ZHAC platform.
 
 ### Added
 
+- **Decimal writes reach the wire correctly.** A `ValueType::Float` on a Tuya numeric datapoint
+  with an integer divisor was truncated before scaling (21.5 × 10 became 210); it now scales
+  first (215). Raw ZCL attribute writes (`zcl_coerce`, Lumi `coerce_input`) round a Float instead
+  of refusing it; Eurotronic rounds instead of truncating. Host test `test_tz_generic` covers
+  both. Thermostat setpoints already took a Float (21.5 → 2150).
+
 - **z2m v26.104.0 + v26.105.0 (zigbee2mqtt 2.14.1) parity.** New devices:
   Lincukoo R12LM-Z20T presence sensor, B08LRT-Z10T 5-in-1 sensor button and
   PZE2612 outdoor twin plug; Tuya TS0601_6gang_switch_2 touch panel with power

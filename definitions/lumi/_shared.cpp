@@ -577,6 +577,12 @@ bool coerce_input(const Value& in,
     if (in.type == ValueType::Bool) { out = in.b ? 1 : 0; return true; }
     if (in.type == ValueType::Uint) { out = static_cast<std::uint32_t>(in.u); return true; }
     if (in.type == ValueType::Int)  { out = static_cast<std::uint32_t>(in.i); return true; }
+    if (in.type == ValueType::Float) {   // wire unit as-is: round, never truncate
+        if (in.f != in.f) return false;
+        out = static_cast<std::uint32_t>(static_cast<std::int64_t>(
+                  in.f + (in.f >= 0.0f ? 0.5f : -0.5f)));
+        return true;
+    }
     if (in.type == ValueType::StringRef && in.str && s.lookup) {
         for (std::uint8_t i = 0; i < s.lookup_count; ++i) {
             if (s.lookup[i].label &&

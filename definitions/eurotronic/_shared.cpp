@@ -55,7 +55,7 @@ bool to_uint(const Value& in, std::uint32_t& out) {
     switch (in.type) {
         case ValueType::Int:   out = static_cast<std::uint32_t>(in.i); return true;
         case ValueType::Uint:  out = static_cast<std::uint32_t>(in.u); return true;
-        case ValueType::Float: out = static_cast<std::uint32_t>(in.f); return true;
+        case ValueType::Float: out = static_cast<std::uint32_t>(static_cast<std::int64_t>(in.f + 0.5f)); return true;
         case ValueType::Bool:  out = in.b ? 1u : 0u;                   return true;
         default: return false;
     }

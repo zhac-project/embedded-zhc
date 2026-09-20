@@ -2630,6 +2630,14 @@ bool zcl_coerce(const Value& in, const ZclWriteSpec& s,
     if (in.type == ValueType::Bool) { out = in.b ? 1 : 0; return true; }
     if (in.type == ValueType::Uint) { out = static_cast<std::uint32_t>(in.u); return true; }
     if (in.type == ValueType::Int)  { out = static_cast<std::uint32_t>(in.i); return true; }
+    if (in.type == ValueType::Float) {
+        // Raw attribute writes carry the wire unit as-is; a decimal is
+        // rounded to the nearest integer rather than refused or truncated.
+        if (in.f != in.f) return false;   // NaN
+        out = static_cast<std::uint32_t>(static_cast<std::int64_t>(
+                  in.f + (in.f >= 0.0f ? 0.5f : -0.5f)));
+        return true;
+    }
     if (in.type == ValueType::StringRef && in.str && s.lookup) {
         for (std::uint8_t i = 0; i < s.lookup_count; ++i) {
             if (s.lookup[i].label &&

@@ -806,13 +806,26 @@ bool encode_numeric(const TuyaDpMapEntry& e, const Value& in,
         else if (prod <= static_cast<float>(INT32_MIN)) raw = INT32_MIN;
         else raw = static_cast<std::int64_t>(prod);
     } else {
-        if      (in.type == ValueType::Int)   raw = in.i;
-        else if (in.type == ValueType::Uint)  raw = static_cast<std::int64_t>(in.u);
-        else if (in.type == ValueType::Float) raw = static_cast<std::int64_t>(in.f);
-        else return false;
         const std::int32_t d = e.divisor == 0 ? 1 : e.divisor;
-        if      (d > 1) raw = raw * d;                            // reverse fz divide
-        else if (d < 0) raw = raw / static_cast<std::int64_t>(-d); // reverse fz multiply
+        if (in.type == ValueType::Float) {
+            // A decimal write (21.5 °C on a divisor-10 DP) scales BEFORE it is
+            // rounded: 21.5 × 10 = 215, not int(21.5) × 10 = 210. Same NaN /
+            // range guard as the float-divisor branch above.
+            float prod = in.f;
+            if      (d > 1) prod = in.f * static_cast<float>(d);
+            else if (d < 0) prod = in.f / static_cast<float>(-d);
+            prod += prod >= 0.0f ? 0.5f : -0.5f;
+            if (prod != prod) return false;                       // NaN
+            if      (prod >= static_cast<float>(INT32_MAX)) raw = INT32_MAX;
+            else if (prod <= static_cast<float>(INT32_MIN)) raw = INT32_MIN;
+            else raw = static_cast<std::int64_t>(prod);
+        } else {
+            if      (in.type == ValueType::Int)   raw = in.i;
+            else if (in.type == ValueType::Uint)  raw = static_cast<std::int64_t>(in.u);
+            else return false;
+            if      (d > 1) raw = raw * d;                            // reverse fz divide
+            else if (d < 0) raw = raw / static_cast<std::int64_t>(-d); // reverse fz multiply
+        }
     }
     if (e.flags & kTuyaDpFlagInvertPosition) {
         // F30: position percent — clamp to [0,100] so a malformed input can't

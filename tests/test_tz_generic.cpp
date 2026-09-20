@@ -9,6 +9,11 @@
 #include <cstring>
 
 #include "definitions/_generic/_shared.hpp"
+#include "zhc/devices/tuya_registry.hpp"
+
+// Generated Tuya definitions are reachable through the registry table, not by
+// name; declare the one this test writes to.
+namespace zhc::devices::tuya { extern const PreparedDefinition kDef_THAH202001; }
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
 
@@ -121,11 +126,69 @@ static void test_zcl_write_enum_manu_specific() {
     assert(std::memcmp(frame, want, n) == 0);
 }
 
+// A decimal on a raw attribute write is rounded, not refused or truncated:
+// 21.6 -> 22 on an int16 attribute (the wire unit is whatever the attribute
+// uses; the caller chose the value).
+static void test_zcl_write_float_rounds() {
+    using namespace zhc::generic;
+    static constexpr ZclWriteSpec spec{
+        .key = "level",
+        .attr_id = 0x0010,
+        .attr_type = 0x29,   // int16
+        .manufacturer_code = 0,
+        .lookup = nullptr,
+        .lookup_count = 0,
+    };
+    TzConverter cvt{
+        .key = "level", .cluster = "genBasic", .cluster_id = 0x0000, .command_id = 0x02,
+        .fn = &tz_zcl_write_attr, .user_config = &spec,
+    };
+    RuntimeContext ctx{};
+    std::uint8_t frame[16] = {};
+    std::size_t n = 0;
+    Value v{}; v.type = ValueType::Float; v.f = 21.6f;
+    assert(tz_zcl_write_attr("level", v, cvt, PreparedDefinition{}, ctx, frame, n));
+    const std::uint8_t want[] = {0x10, 0x00, 0x02, 0x10, 0x00, 0x29, 22, 0x00};
+    assert(n == sizeof(want));
+    assert(std::memcmp(frame, want, n) == 0);
+    v.f = -0.4f;   // rounds toward zero at |x| < 0.5
+    assert(tz_zcl_write_attr("level", v, cvt, PreparedDefinition{}, ctx, frame, n));
+    assert(frame[6] == 0 && frame[7] == 0);
+}
+
+// A decimal on a Tuya numeric datapoint with an integer divisor scales
+// BEFORE rounding: 21.5 on a divisor-10 DP is 215 on the wire, not 210.
+// THAH202001 dp102 "scale_protection_remaining_time" has divisor 10.
+static void test_tuya_numeric_float_scales() {
+    RuntimeContext ctx{};
+    std::uint8_t frame[64] = {};
+    Value v{}; v.type = ValueType::Float; v.f = 21.5f;
+    auto r = dispatch_to_zigbee(devices::tuya::kDef_THAH202001,
+                                "scale_protection_remaining_time", v, ctx,
+                                std::span<std::uint8_t>(frame, sizeof(frame)));
+    assert(r.ok);
+    assert(r.frame_size >= 4);
+    // Numeric DP value: 4 bytes big-endian s32 at the end of the frame.
+    const std::uint8_t* tail = frame + r.frame_size - 4;
+    const std::int32_t got = (std::int32_t)(((std::uint32_t)tail[0] << 24) | ((std::uint32_t)tail[1] << 16) |
+                                            ((std::uint32_t)tail[2] << 8) | tail[3]);
+    assert(got == 215);
+    // The integer path is unchanged: 21 -> 210.
+    Value u{}; u.type = ValueType::Uint; u.u = 21;
+    r = dispatch_to_zigbee(devices::tuya::kDef_THAH202001, "scale_protection_remaining_time", u, ctx,
+                           std::span<std::uint8_t>(frame, sizeof(frame)));
+    assert(r.ok);
+    tail = frame + r.frame_size - 4;
+    assert(tail[3] == 210 && tail[2] == 0);
+}
+
 int main() {
     test_ts0001_on();
     test_ts0001_off_string();
     test_ts0001_unknown_key();
     test_zcl_write_bool_non_manu();
     test_zcl_write_enum_manu_specific();
+    test_zcl_write_float_rounds();
+    test_tuya_numeric_float_scales();
     return 0;
 }
