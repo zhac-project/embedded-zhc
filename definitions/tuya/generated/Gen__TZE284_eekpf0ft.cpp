@@ -81,13 +81,46 @@ constexpr TzConverter kTzDp__TZE284_eekpf0ft{
 const TzConverter* const kTz__TZE284_eekpf0ft[] = { &kTzDp__TZE284_eekpf0ft };
 constexpr const char* kM__TZE284_eekpf0ft[] = { "TS0601" };
 constexpr const char* kN__TZE284_eekpf0ft[] = { "_TZE284_eekpf0ft" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_eekpf0ft_5[] = {"manual", "schedule", "eco", "comfort", "frost_protection", "holiday", "off"};
+constexpr const char* kAutoOpts__TZE284_eekpf0ft_6[] = {"off", "heat"};
+constexpr const char* kAutoOpts__TZE284_eekpf0ft_7[] = {"idle", "heat"};
+constexpr Expose kAutoExposes__TZE284_eekpf0ft[] = {
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_eekpf0ft_5, 7},
+    {"system_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_eekpf0ft_6, 2},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_eekpf0ft_7, 2},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 0},
+    {"schedule_monday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_tuesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_wednesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_thursday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_friday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_saturday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_sunday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"comfort_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"holiday_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"window_open", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"scale_protection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"frost_protection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"frost_protection_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"temperature_accuracy", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 5, 0},
+    {"error", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_eekpf0ft{
     .zigbee_models=kM__TZE284_eekpf0ft,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_eekpf0ft,.manufacturer_names_count=1,
     .model="TS0601__TZE284_eekpf0ft",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_eekpf0ft,.exposes_count=sizeof(kAutoExposes__TZE284_eekpf0ft)/sizeof(kAutoExposes__TZE284_eekpf0ft[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_eekpf0ft,
     .from_zigbee_count=sizeof(kFz__TZE284_eekpf0ft)/sizeof(kFz__TZE284_eekpf0ft[0]),

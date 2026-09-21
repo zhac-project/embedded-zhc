@@ -40,13 +40,22 @@ constexpr TzConverter kTzDp__TZE204_v6iczj35{
 const TzConverter* const kTz__TZE204_v6iczj35[] = { &kTzDp__TZE204_v6iczj35 };
 constexpr const char* kM__TZE204_v6iczj35[] = { "TS0601" };
 constexpr const char* kN__TZE204_v6iczj35[] = { "_TZE204_v6iczj35" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_v6iczj35_2[] = {"none", "fault", "serious_fault", "sensor_fault", "probe_fault", "power_fault"};
+constexpr Expose kAutoExposes__TZE204_v6iczj35[] = {
+    {"gas", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"preheat", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"fault", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_v6iczj35_2, 6},
+    {"lifecycle", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_v6iczj35{
     .zigbee_models=kM__TZE204_v6iczj35,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_v6iczj35,.manufacturer_names_count=1,
     .model="TS0601__TZE204_v6iczj35",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_v6iczj35,.exposes_count=sizeof(kAutoExposes__TZE204_v6iczj35)/sizeof(kAutoExposes__TZE204_v6iczj35[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_v6iczj35,
     .from_zigbee_count=sizeof(kFz__TZE204_v6iczj35)/sizeof(kFz__TZE204_v6iczj35[0]),

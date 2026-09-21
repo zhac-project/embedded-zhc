@@ -45,13 +45,26 @@ constexpr TzConverter kTzDp__TZE284_upt8lzi0{
 const TzConverter* const kTz__TZE284_upt8lzi0[] = { &kTzDp__TZE284_upt8lzi0 };
 constexpr const char* kM__TZE284_upt8lzi0[] = { "TS0601" };
 constexpr const char* kN__TZE284_upt8lzi0[] = { "_TZE284_upt8lzi0" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_upt8lzi0_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE284_upt8lzi0_2[] = {"start", "end"};
+constexpr const char* kAutoOpts__TZE284_upt8lzi0_4[] = {"normal", "reversed"};
+constexpr Expose kAutoExposes__TZE284_upt8lzi0[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_upt8lzi0_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"calibration", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_upt8lzi0_2, 2},
+    {"backlight_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"motor_direction", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_upt8lzi0_4, 2},
+    {"motor_working_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 10, 180, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_upt8lzi0{
     .zigbee_models=kM__TZE284_upt8lzi0,.zigbee_models_count=sizeof(kM__TZE284_upt8lzi0)/sizeof(kM__TZE284_upt8lzi0[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_upt8lzi0,.manufacturer_names_count=1,
     .model="TS0601__TZE284_upt8lzi0",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_upt8lzi0,.exposes_count=sizeof(kAutoExposes__TZE284_upt8lzi0)/sizeof(kAutoExposes__TZE284_upt8lzi0[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_upt8lzi0,
     .from_zigbee_count=sizeof(kFz__TZE284_upt8lzi0)/sizeof(kFz__TZE284_upt8lzi0[0]),

@@ -76,13 +76,45 @@ constexpr TzConverter kTzDp__TZE284_ymldrmzx{
 const TzConverter* const kTz__TZE284_ymldrmzx[] = { &kTzDp__TZE284_ymldrmzx };
 constexpr const char* kM__TZE284_ymldrmzx[] = { "TS0601" };
 constexpr const char* kN__TZE284_ymldrmzx[] = { "_TZE284_ymldrmzx" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_ymldrmzx_7[] = {"auto", "off"};
+constexpr const char* kAutoOpts__TZE284_ymldrmzx_8[] = {"schedule", "manual", "holiday"};
+constexpr const char* kAutoOpts__TZE284_ymldrmzx_23[] = {"up", "right", "down", "left"};
+constexpr Expose kAutoExposes__TZE284_ymldrmzx[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"window_open", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -7, 7, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_ymldrmzx_7, 2},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_ymldrmzx_8, 3},
+    {"comfort_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 15, 35, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 22, 0},
+    {"holiday_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"holiday_time", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"boost_heating", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"boost_time", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 0, 30, 0},
+    {"frost_protection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_monday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_tuesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_wednesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_thursday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_friday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_saturday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_sunday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"screen_orientation", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_ymldrmzx_23, 4},
+    {"fault_code", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_ymldrmzx{
     .zigbee_models=kM__TZE284_ymldrmzx,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_ymldrmzx,.manufacturer_names_count=1,
     .model="TS0601__TZE284_ymldrmzx",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_ymldrmzx,.exposes_count=sizeof(kAutoExposes__TZE284_ymldrmzx)/sizeof(kAutoExposes__TZE284_ymldrmzx[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_ymldrmzx,
     .from_zigbee_count=sizeof(kFz__TZE284_ymldrmzx)/sizeof(kFz__TZE284_ymldrmzx[0]),

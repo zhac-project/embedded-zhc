@@ -118,13 +118,44 @@ constexpr TzConverter kTzDp__TZE204_x9usygq1{
 const TzConverter* const kTz__TZE204_x9usygq1[] = { &kTzDp__TZE204_x9usygq1 };
 constexpr const char* kM__TZE204_x9usygq1[] = { "TS0601" };
 constexpr const char* kN__TZE204_x9usygq1[] = { "_TZE204_x9usygq1" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_x9usygq1_2[] = {"off", "comfort", "comfort_1", "comfort_2", "eco", "antifrost", "program", "thermostat"};
+constexpr const char* kAutoOpts__TZE204_x9usygq1_3[] = {"off", "heat", "auto"};
+constexpr const char* kAutoOpts__TZE204_x9usygq1_5[] = {"standby", "comfort", "comfort_1", "comfort_2", "eco", "antifrost", "program", "thermostat"};
+constexpr const char* kAutoOpts__TZE204_x9usygq1_10[] = {"c", "f"};
+constexpr const char* kAutoOpts__TZE204_x9usygq1_19[] = {"e1", "e2"};
+constexpr const char* kAutoOpts__TZE204_x9usygq1_20[] = {"standby", "comfort", "comfort_1", "comfort_2", "eco", "antifrost"};
+constexpr Expose kAutoExposes__TZE204_x9usygq1[] = {
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_x9usygq1_2, 8},
+    {"system_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_x9usygq1_3, 3},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -10, 10, 0},
+    {"mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_x9usygq1_5, 8},
+    {"window_open", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"fault", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"temp_unit_convert", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_x9usygq1_10, 2},
+    {"lower_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"upper_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"electricity_statistics", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"boost_duration", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 0, 120, 0},
+    {"elec_statistics_day", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"elec_statistics_month", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"elec_statistics_year", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"window_keep_time", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 0, 120, 0},
+    {"fault_alarm", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_x9usygq1_19, 2},
+    {"running_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_x9usygq1_20, 6},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_x9usygq1{
     .zigbee_models=kM__TZE204_x9usygq1,.zigbee_models_count=sizeof(kM__TZE204_x9usygq1)/sizeof(kM__TZE204_x9usygq1[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_x9usygq1,.manufacturer_names_count=1,
     .model="TS0601__TZE204_x9usygq1",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_x9usygq1,.exposes_count=sizeof(kAutoExposes__TZE204_x9usygq1)/sizeof(kAutoExposes__TZE204_x9usygq1[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_x9usygq1,
     .from_zigbee_count=sizeof(kFz__TZE204_x9usygq1)/sizeof(kFz__TZE204_x9usygq1[0]),

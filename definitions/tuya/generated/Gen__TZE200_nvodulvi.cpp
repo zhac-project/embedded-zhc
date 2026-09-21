@@ -224,13 +224,78 @@ constexpr TzConverter kTzDp__TZE200_nvodulvi{
 const TzConverter* const kTz__TZE200_nvodulvi[] = { &kTzDp__TZE200_nvodulvi };
 constexpr const char* kM__TZE200_nvodulvi[] = { "TS0601" };
 constexpr const char* kN__TZE200_nvodulvi[] = { "_TZE200_nvodulvi" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_nvodulvi_8[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_9[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_10[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_11[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_12[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_13[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_14[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_15[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_16[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_17[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_18[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_19[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_20[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_21[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_22[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_23[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_24[] = {"normal", "on", "off", "flash"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_25[] = {"normal", "on", "off", "flash"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_26[] = {"normal", "on", "off", "flash"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_27[] = {"normal", "on", "off", "flash"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_28[] = {"normal", "on", "off", "flash"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_29[] = {"normal", "on", "off", "flash"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_30[] = {"normal", "on", "off", "flash"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_31[] = {"normal", "on", "off", "flash"};
+constexpr const char* kAutoOpts__TZE200_nvodulvi_35[] = {"scene_1", "scene_2", "scene_3", "scene_4", "scene_5", "scene_6", "scene_7", "scene_8"};
+constexpr Expose kAutoExposes__TZE200_nvodulvi[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l5", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l6", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l7", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l8", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_8, 3, ExposeCategory::Config},
+    {"power_on_behavior_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_9, 3, ExposeCategory::Config},
+    {"power_on_behavior_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_10, 3, ExposeCategory::Config},
+    {"power_on_behavior_l4", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_11, 3, ExposeCategory::Config},
+    {"power_on_behavior_l5", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_12, 3, ExposeCategory::Config},
+    {"power_on_behavior_l6", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_13, 3, ExposeCategory::Config},
+    {"power_on_behavior_l7", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_14, 3, ExposeCategory::Config},
+    {"power_on_behavior_l8", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_15, 3, ExposeCategory::Config},
+    {"switch_mode_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_16, 2, ExposeCategory::Config},
+    {"switch_mode_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_17, 2, ExposeCategory::Config},
+    {"switch_mode_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_18, 2, ExposeCategory::Config},
+    {"switch_mode_l4", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_19, 2, ExposeCategory::Config},
+    {"switch_mode_l5", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_20, 2, ExposeCategory::Config},
+    {"switch_mode_l6", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_21, 2, ExposeCategory::Config},
+    {"switch_mode_l7", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_22, 2, ExposeCategory::Config},
+    {"switch_mode_l8", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_23, 2, ExposeCategory::Config},
+    {"light_mode_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_24, 4},
+    {"light_mode_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_25, 4},
+    {"light_mode_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_26, 4},
+    {"light_mode_l4", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_27, 4},
+    {"light_mode_l5", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_28, 4},
+    {"light_mode_l6", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_29, 4},
+    {"light_mode_l7", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_30, 4},
+    {"light_mode_l8", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_31, 4},
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"delay", ExposeType::Numeric, Access::StateSet, "sec", nullptr, nullptr, 0, ExposeCategory::State, 0, 1000, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_nvodulvi_35, 8, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_nvodulvi{
     .zigbee_models=kM__TZE200_nvodulvi,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_nvodulvi,.manufacturer_names_count=1,
     .model="TS0601__TZE200_nvodulvi",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_nvodulvi,.exposes_count=sizeof(kAutoExposes__TZE200_nvodulvi)/sizeof(kAutoExposes__TZE200_nvodulvi[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_nvodulvi,
     .from_zigbee_count=sizeof(kFz__TZE200_nvodulvi)/sizeof(kFz__TZE200_nvodulvi[0]),

@@ -13,13 +13,18 @@ namespace {
 // TODO(parity): no shared helper for non-standard genBasic 0x1337 attribute. Add custom
 // fz/tz pair to expose transmit_power (-20..+20 dBm).
 constexpr const char* kModels_ti_router[] = { "ti.router" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes_ti_router[] = {
+    {"transmit_power", ExposeType::Numeric, Access::StateSet, "dBm", nullptr, nullptr, 0, ExposeCategory::State, -20, 20, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDef_ti_router{
     .zigbee_models=kModels_ti_router, .zigbee_models_count=sizeof(kModels_ti_router)/sizeof(kModels_ti_router[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="ti.router", .vendor="CustomDevicesDiy",
-    .meta=nullptr, .exposes=nullptr, .exposes_count=0,
+    .meta=nullptr, .exposes=kAutoExposes_ti_router,.exposes_count=sizeof(kAutoExposes_ti_router)/sizeof(kAutoExposes_ti_router[0]),
     .white_labels=nullptr, .white_labels_count=0,
     .from_zigbee=nullptr, .from_zigbee_count=0,
     .to_zigbee=nullptr, .to_zigbee_count=0,

@@ -95,13 +95,69 @@ constexpr TzConverter kTzDp__TZE284_rlytpmij{
 const TzConverter* const kTz__TZE284_rlytpmij[] = { &kTzDp__TZE284_rlytpmij };
 constexpr const char* kM__TZE284_rlytpmij[] = { "TS0601" };
 constexpr const char* kN__TZE284_rlytpmij[] = { "_TZE284_rlytpmij" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_rlytpmij_1[] = {"off", "heat"};
+constexpr const char* kAutoOpts__TZE284_rlytpmij_2[] = {"manual", "auto", "eco"};
+constexpr const char* kAutoOpts__TZE284_rlytpmij_3[] = {"idle", "heat"};
+constexpr const char* kAutoOpts__TZE284_rlytpmij_9[] = {"none", "e1", "e2", "e3", "e1_e2", "e1_e3", "e2_e3", "e1_e2_e3"};
+constexpr const char* kAutoOpts__TZE284_rlytpmij_10[] = {"internal", "external", "both"};
+constexpr const char* kAutoOpts__TZE284_rlytpmij_11[] = {"celsius", "fahrenheit"};
+constexpr const char* kAutoOpts__TZE284_rlytpmij_12[] = {"off", "low", "medium", "high"};
+constexpr const char* kAutoOpts__TZE284_rlytpmij_18[] = {"off", "weekend", "single_break", "no_day_off"};
+constexpr Expose kAutoExposes__TZE284_rlytpmij[] = {
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_rlytpmij_1, 2},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_rlytpmij_2, 3},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_rlytpmij_3, 2},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 1},
+    {"floor_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"valve_state", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"fault_alarm", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_rlytpmij_9, 8},
+    {"sensor", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_rlytpmij_10, 3},
+    {"temperature_scale", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_rlytpmij_11, 2},
+    {"backlight_brightness", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_rlytpmij_12, 4},
+    {"antifreeze", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"min_temperature_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 20, 1},
+    {"max_temperature_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 30, 70, 1},
+    {"deadzone_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 3, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 1},
+    {"program_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_rlytpmij_18, 4},
+    {"factory_reset", ExposeType::Binary, Access::Set, nullptr, nullptr, nullptr, 0},
+    {"weekday_1_hour", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 23, 1},
+    {"weekday_1_minute", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 59, 1},
+    {"weekday_1_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"weekday_2_hour", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 23, 1},
+    {"weekday_2_minute", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 59, 1},
+    {"weekday_2_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"weekday_3_hour", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 23, 1},
+    {"weekday_3_minute", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 59, 1},
+    {"weekday_3_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"weekday_4_hour", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 23, 1},
+    {"weekday_4_minute", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 59, 1},
+    {"weekday_4_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"weekday_5_hour", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 23, 1},
+    {"weekday_5_minute", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 59, 1},
+    {"weekday_5_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"weekday_6_hour", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 23, 1},
+    {"weekday_6_minute", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 59, 1},
+    {"weekday_6_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"weekend_1_hour", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 23, 1},
+    {"weekend_1_minute", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 59, 1},
+    {"weekend_1_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"weekend_2_hour", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 23, 1},
+    {"weekend_2_minute", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 59, 1},
+    {"weekend_2_temp", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_rlytpmij{
     .zigbee_models=kM__TZE284_rlytpmij,.zigbee_models_count=sizeof(kM__TZE284_rlytpmij)/sizeof(kM__TZE284_rlytpmij[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_rlytpmij,.manufacturer_names_count=1,
     .model="TS0601__TZE284_rlytpmij",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_rlytpmij,.exposes_count=sizeof(kAutoExposes__TZE284_rlytpmij)/sizeof(kAutoExposes__TZE284_rlytpmij[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_rlytpmij,
     .from_zigbee_count=sizeof(kFz__TZE284_rlytpmij)/sizeof(kFz__TZE284_rlytpmij[0]),

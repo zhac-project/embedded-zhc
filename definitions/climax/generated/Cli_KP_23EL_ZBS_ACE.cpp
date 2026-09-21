@@ -24,12 +24,14 @@ constexpr const char* kModels_KP_23EL_ZBS_ACE[] = { "KP-ACE_00.00.03.12TC", "KP-
 }  // namespace
 
 
+constexpr const char* kAutoOpts_KP_23EL_ZBS_ACE_action[] = {"emergency", "panic", "disarm", "arm_all_zones", "arm_day_zones"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_KP_23EL_ZBS_ACE_action, 5},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

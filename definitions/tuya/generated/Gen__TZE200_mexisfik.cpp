@@ -41,6 +41,14 @@ constexpr TzConverter kTzDp__TZE200_mexisfik{
 const TzConverter* const kTz__TZE200_mexisfik[] = { &kTzDp__TZE200_mexisfik };
 constexpr const char* kM__TZE200_mexisfik[] = { "TS0601" };
 constexpr const char* kN__TZE200_mexisfik[] = { "_TZE200_mexisfik" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE200_mexisfik[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_mexisfik[] = {
@@ -58,7 +66,7 @@ extern const PreparedDefinition kDefGen__TZE200_mexisfik{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_mexisfik,.manufacturer_names_count=1,
     .model="TS0601__TZE200_mexisfik",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_mexisfik,.exposes_count=sizeof(kAutoExposes__TZE200_mexisfik)/sizeof(kAutoExposes__TZE200_mexisfik[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_mexisfik, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_mexisfik)/sizeof(kWhiteLabels_Gen_TZE200_mexisfik[0]),
     .from_zigbee=kFz__TZE200_mexisfik,
     .from_zigbee_count=sizeof(kFz__TZE200_mexisfik)/sizeof(kFz__TZE200_mexisfik[0]),

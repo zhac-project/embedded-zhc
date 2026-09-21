@@ -71,13 +71,31 @@ constexpr TzConverter kTzDp__TZE204_ilzkxrav{
 const TzConverter* const kTz__TZE204_ilzkxrav[] = { &kTzDp__TZE204_ilzkxrav };
 constexpr const char* kM__TZE204_ilzkxrav[] = { "TS0601" };
 constexpr const char* kN__TZE204_ilzkxrav[] = { "_TZE204_ilzkxrav" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_ilzkxrav_0[] = {"comfort", "eco", "antifrost", "off", "comfort_1", "comfort_2"};
+constexpr Expose kAutoExposes__TZE204_ilzkxrav[] = {
+    {"pilot_wire_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_ilzkxrav_0, 6},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -8, 8, 0},
+    {"eco_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"open_window", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"open_window_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 35, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_today", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_yesterday", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"device_mode_type", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_ilzkxrav{
     .zigbee_models=kM__TZE204_ilzkxrav,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_ilzkxrav,.manufacturer_names_count=1,
     .model="TS0601__TZE204_ilzkxrav",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_ilzkxrav,.exposes_count=sizeof(kAutoExposes__TZE204_ilzkxrav)/sizeof(kAutoExposes__TZE204_ilzkxrav[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_ilzkxrav,
     .from_zigbee_count=sizeof(kFz__TZE204_ilzkxrav)/sizeof(kFz__TZE204_ilzkxrav[0]),

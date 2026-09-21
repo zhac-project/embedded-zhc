@@ -46,6 +46,16 @@ constexpr TzConverter kTzDp__TZE284_koxaopnk{
 const TzConverter* const kTz__TZE284_koxaopnk[] = { &kTzDp__TZE284_koxaopnk };
 constexpr const char* kM__TZE284_koxaopnk[] = { "TS0601" };
 constexpr const char* kN__TZE284_koxaopnk[] = { "_TZE284_koxaopnk" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_koxaopnk_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE284_koxaopnk_2[] = {"normal", "reversed"};
+constexpr Expose kAutoExposes__TZE284_koxaopnk[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_koxaopnk_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"motor_direction", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_koxaopnk_2, 2, ExposeCategory::Config},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_koxaopnk[] = {
@@ -57,7 +67,7 @@ extern const PreparedDefinition kDefGen__TZE284_koxaopnk{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_koxaopnk,.manufacturer_names_count=1,
     .model="TS0601__TZE284_koxaopnk",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_koxaopnk,.exposes_count=sizeof(kAutoExposes__TZE284_koxaopnk)/sizeof(kAutoExposes__TZE284_koxaopnk[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_koxaopnk, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_koxaopnk)/sizeof(kWhiteLabels_Gen_TZE284_koxaopnk[0]),
     .from_zigbee=kFz__TZE284_koxaopnk,
     .from_zigbee_count=sizeof(kFz__TZE284_koxaopnk)/sizeof(kFz__TZE284_koxaopnk[0]),

@@ -44,13 +44,24 @@ constexpr TzConverter kTzDp__TZE200_qzaing2g{
 const TzConverter* const kTz__TZE200_qzaing2g[] = { &kTzDp__TZE200_qzaing2g };
 constexpr const char* kM__TZE200_qzaing2g[] = { "TS0601" };
 constexpr const char* kN__TZE200_qzaing2g[] = { "_TZE200_qzaing2g" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE200_qzaing2g[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_qzaing2g{
     .zigbee_models=kM__TZE200_qzaing2g,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_qzaing2g,.manufacturer_names_count=1,
     .model="TS0601__TZE200_qzaing2g",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_qzaing2g,.exposes_count=sizeof(kAutoExposes__TZE200_qzaing2g)/sizeof(kAutoExposes__TZE200_qzaing2g[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_qzaing2g,
     .from_zigbee_count=sizeof(kFz__TZE200_qzaing2g)/sizeof(kFz__TZE200_qzaing2g[0]),

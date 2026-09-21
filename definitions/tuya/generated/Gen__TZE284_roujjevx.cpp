@@ -60,13 +60,32 @@ constexpr TzConverter kTzDp__TZE284_roujjevx{
 const TzConverter* const kTz__TZE284_roujjevx[] = { &kTzDp__TZE284_roujjevx };
 constexpr const char* kM__TZE284_roujjevx[] = { "TS0601" };
 constexpr const char* kN__TZE284_roujjevx[] = { "_TZE284_roujjevx" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_roujjevx_4[] = {"heating", "cooling"};
+constexpr const char* kAutoOpts__TZE284_roujjevx_5[] = {"celsius", "fahrenheit"};
+constexpr Expose kAutoExposes__TZE284_roujjevx[] = {
+    {"temperature_c", ExposeType::Numeric, Access::State, "℃", nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"temperature_f", ExposeType::Numeric, Access::State, "℉", nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"autowork", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"work_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_roujjevx_4, 2, ExposeCategory::Config},
+    {"temperature_unit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_roujjevx_5, 2, ExposeCategory::Config},
+    {"temperature_c_setpoint", ExposeType::Numeric, Access::StateSet, "℃", nullptr, nullptr, 0, ExposeCategory::Config, -20, 102, 0},
+    {"temperature_f_setpoint", ExposeType::Numeric, Access::StateSet, "℉", nullptr, nullptr, 0, ExposeCategory::Config, -4, 221, 0},
+    {"temperature_range", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config, 1, 9, 0},
+    {"temperature_calibration", ExposeType::Numeric, Access::StateSet, "℉", nullptr, nullptr, 0, ExposeCategory::Config, -9, 9, 1},
+    {"cooling_delay_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"cooling_delay", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::Config, 0, 10, 1},
+    {"countdown", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::Config, 0, 86400, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_roujjevx{
     .zigbee_models=kM__TZE284_roujjevx,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_roujjevx,.manufacturer_names_count=1,
     .model="TS0601__TZE284_roujjevx",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_roujjevx,.exposes_count=sizeof(kAutoExposes__TZE284_roujjevx)/sizeof(kAutoExposes__TZE284_roujjevx[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_roujjevx,
     .from_zigbee_count=sizeof(kFz__TZE284_roujjevx)/sizeof(kFz__TZE284_roujjevx[0]),

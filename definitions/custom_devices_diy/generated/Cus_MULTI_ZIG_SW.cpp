@@ -24,10 +24,12 @@ constexpr const char* kModels_MULTI_ZIG_SW[] = { "MULTI-ZIG-SW" };
 }  // namespace
 
 
+constexpr const char* kAutoOpts_MULTI_ZIG_SW_action[] = {"single", "double", "triple", "hold", "release"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_MULTI_ZIG_SW_action, 5},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

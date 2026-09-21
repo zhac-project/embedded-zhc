@@ -33,12 +33,14 @@ constexpr const char* kModels_mTouch_Astro[] = { "mTouch Astro" };
 // device_enabled (bool RW via kTzCtmDeviceEnabled), child_lock
 // (read-only TODO), action (from command_*). group_id BLOCKED on
 // ctmGroupConfig 0xFEA7 manuSpec.
+constexpr const char* kAutoOpts_mTouch_Astro_action[] = {"on", "off"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"device_enabled", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"device_mode", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
     {"child_lock", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_mTouch_Astro_action, 2},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

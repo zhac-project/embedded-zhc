@@ -87,13 +87,35 @@ constexpr TzConverter kTzDp__TZE204_rkbxtclc{
 const TzConverter* const kTz__TZE204_rkbxtclc[] = { &kTzDp__TZE204_rkbxtclc };
 constexpr const char* kM__TZE204_rkbxtclc[] = { "TS0601" };
 constexpr const char* kN__TZE204_rkbxtclc[] = { "_TZE204_rkbxtclc" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_rkbxtclc_6[] = {"off", "on_off_status", "switch_position"};
+constexpr const char* kAutoOpts__TZE204_rkbxtclc_7[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE204_rkbxtclc_9[] = {"red", "blue", "green", "white", "yellow", "magenta", "cyan", "warm_white", "warm_yellow"};
+constexpr const char* kAutoOpts__TZE204_rkbxtclc_10[] = {"red", "blue", "green", "white", "yellow", "magenta", "cyan", "warm_white", "warm_yellow"};
+constexpr Expose kAutoExposes__TZE204_rkbxtclc[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"indicator_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_rkbxtclc_6, 3},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_rkbxtclc_7, 3, ExposeCategory::Config},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"on_color", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_rkbxtclc_9, 9},
+    {"off_color", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_rkbxtclc_10, 9},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 0},
+    {"countdown_l2", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 0},
+    {"countdown_l3", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_rkbxtclc{
     .zigbee_models=kM__TZE204_rkbxtclc,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_rkbxtclc,.manufacturer_names_count=1,
     .model="TS0601__TZE204_rkbxtclc",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_rkbxtclc,.exposes_count=sizeof(kAutoExposes__TZE204_rkbxtclc)/sizeof(kAutoExposes__TZE204_rkbxtclc[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_rkbxtclc,
     .from_zigbee_count=sizeof(kFz__TZE204_rkbxtclc)/sizeof(kFz__TZE204_rkbxtclc[0]),

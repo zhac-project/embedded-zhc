@@ -49,13 +49,29 @@ constexpr TzConverter kTzDp__TZE284_dqolcpcp{
 const TzConverter* const kTz__TZE284_dqolcpcp[] = { &kTzDp__TZE284_dqolcpcp };
 constexpr const char* kM__TZE284_dqolcpcp[] = { "TS0601" };
 constexpr const char* kN__TZE284_dqolcpcp[] = { "_TZE284_dqolcpcp" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE284_dqolcpcp[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l5", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l6", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l7", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l8", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l9", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l10", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l11", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l12", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_dqolcpcp{
     .zigbee_models=kM__TZE284_dqolcpcp,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_dqolcpcp,.manufacturer_names_count=1,
     .model="TS0601__TZE284_dqolcpcp",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_dqolcpcp,.exposes_count=sizeof(kAutoExposes__TZE284_dqolcpcp)/sizeof(kAutoExposes__TZE284_dqolcpcp[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_dqolcpcp,
     .from_zigbee_count=sizeof(kFz__TZE284_dqolcpcp)/sizeof(kFz__TZE284_dqolcpcp[0]),

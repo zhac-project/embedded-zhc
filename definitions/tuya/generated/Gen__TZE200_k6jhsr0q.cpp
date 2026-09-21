@@ -54,6 +54,22 @@ constexpr TzConverter kTzDp__TZE200_k6jhsr0q{
 const TzConverter* const kTz__TZE200_k6jhsr0q[] = { &kTzDp__TZE200_k6jhsr0q };
 constexpr const char* kM__TZE200_k6jhsr0q[] = { "TS0601" };
 constexpr const char* kN__TZE200_k6jhsr0q[] = { "_TZE200_k6jhsr0q" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_k6jhsr0q_10[] = {"off", "on", "previous"};
+constexpr Expose kAutoExposes__TZE200_k6jhsr0q[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l2", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l3", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l4", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_k6jhsr0q_10, 3, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_k6jhsr0q[] = {
@@ -64,7 +80,7 @@ extern const PreparedDefinition kDefGen__TZE200_k6jhsr0q{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_k6jhsr0q,.manufacturer_names_count=1,
     .model="TS0601__TZE200_k6jhsr0q",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_k6jhsr0q,.exposes_count=sizeof(kAutoExposes__TZE200_k6jhsr0q)/sizeof(kAutoExposes__TZE200_k6jhsr0q[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_k6jhsr0q, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_k6jhsr0q)/sizeof(kWhiteLabels_Gen_TZE200_k6jhsr0q[0]),
     .from_zigbee=kFz__TZE200_k6jhsr0q,
     .from_zigbee_count=sizeof(kFz__TZE200_k6jhsr0q)/sizeof(kFz__TZE200_k6jhsr0q[0]),

@@ -78,6 +78,43 @@ constexpr TzConverter kTzDp__TZE200_bvrlmajk{
 const TzConverter* const kTz__TZE200_bvrlmajk[] = { &kTzDp__TZE200_bvrlmajk };
 constexpr const char* kM__TZE200_bvrlmajk[] = { "TS0601" };
 constexpr const char* kN__TZE200_bvrlmajk[] = { "_TZE200_bvrlmajk" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_bvrlmajk_11[] = {"auto", "manual", "off", "on"};
+constexpr const char* kAutoOpts__TZE200_bvrlmajk_12[] = {"auto", "heat", "off"};
+constexpr const char* kAutoOpts__TZE200_bvrlmajk_13[] = {"idle", "heat"};
+constexpr const char* kAutoOpts__TZE200_bvrlmajk_14[] = {"up", "down"};
+constexpr const char* kAutoOpts__TZE200_bvrlmajk_15[] = {"high", "middle", "low"};
+constexpr const char* kAutoOpts__TZE200_bvrlmajk_16[] = {"comfort", "eco"};
+constexpr Expose kAutoExposes__TZE200_bvrlmajk[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"max_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 15, 35, 0},
+    {"min_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 1, 15, 0},
+    {"position", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"window", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"alarm_switch", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 0},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_bvrlmajk_11, 4},
+    {"system_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_bvrlmajk_12, 3},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_bvrlmajk_13, 2},
+    {"screen_orientation", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_bvrlmajk_14, 2},
+    {"display_brightness", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_bvrlmajk_15, 3},
+    {"mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_bvrlmajk_16, 2},
+    {"switch_deviation_eco", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 5, 0},
+    {"schedule_monday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_tuesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_wednesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_thursday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_friday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_saturday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_sunday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"boost_heating", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"boost_time", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 0, 1000, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_bvrlmajk[] = {
@@ -89,7 +126,7 @@ extern const PreparedDefinition kDefGen__TZE200_bvrlmajk{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_bvrlmajk,.manufacturer_names_count=1,
     .model="TS0601__TZE200_bvrlmajk",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_bvrlmajk,.exposes_count=sizeof(kAutoExposes__TZE200_bvrlmajk)/sizeof(kAutoExposes__TZE200_bvrlmajk[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_bvrlmajk, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_bvrlmajk)/sizeof(kWhiteLabels_Gen_TZE200_bvrlmajk[0]),
     .from_zigbee=kFz__TZE200_bvrlmajk,
     .from_zigbee_count=sizeof(kFz__TZE200_bvrlmajk)/sizeof(kFz__TZE200_bvrlmajk[0]),

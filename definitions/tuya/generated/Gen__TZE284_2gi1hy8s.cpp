@@ -61,13 +61,27 @@ constexpr TzConverter kTzDp__TZE284_2gi1hy8s{
 const TzConverter* const kTz__TZE284_2gi1hy8s[] = { &kTzDp__TZE284_2gi1hy8s };
 constexpr const char* kM__TZE284_2gi1hy8s[] = { "TS0601" };
 constexpr const char* kN__TZE284_2gi1hy8s[] = { "_TZE284_2gi1hy8s" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_2gi1hy8s_1[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE284_2gi1hy8s_3[] = {"up", "down", "reset"};
+constexpr const char* kAutoOpts__TZE284_2gi1hy8s_4[] = {"normal", "reversed"};
+constexpr Expose kAutoExposes__TZE284_2gi1hy8s[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_2gi1hy8s_1, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"set_limits", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_2gi1hy8s_3, 3},
+    {"motor_direction", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_2gi1hy8s_4, 2, ExposeCategory::Config},
+    {"tilt_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_2gi1hy8s{
     .zigbee_models=kM__TZE284_2gi1hy8s,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_2gi1hy8s,.manufacturer_names_count=1,
     .model="TS0601__TZE284_2gi1hy8s",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_2gi1hy8s,.exposes_count=sizeof(kAutoExposes__TZE284_2gi1hy8s)/sizeof(kAutoExposes__TZE284_2gi1hy8s[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_2gi1hy8s,
     .from_zigbee_count=sizeof(kFz__TZE284_2gi1hy8s)/sizeof(kFz__TZE284_2gi1hy8s[0]),

@@ -57,13 +57,24 @@ constexpr TzConverter kTzDp__TZE204_srmahpwl{
 const TzConverter* const kTz__TZE204_srmahpwl[] = { &kTzDp__TZE204_srmahpwl };
 constexpr const char* kM__TZE204_srmahpwl[] = { "TS0601" };
 constexpr const char* kN__TZE204_srmahpwl[] = { "_TZE204_srmahpwl" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_srmahpwl_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE204_srmahpwl_2[] = {"START", "END"};
+constexpr const char* kAutoOpts__TZE204_srmahpwl_3[] = {"FORWARD", "BACKWARD"};
+constexpr Expose kAutoExposes__TZE204_srmahpwl[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_srmahpwl_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"calibration", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_srmahpwl_2, 2},
+    {"motor_steering", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_srmahpwl_3, 2},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_srmahpwl{
     .zigbee_models=kM__TZE204_srmahpwl,.zigbee_models_count=sizeof(kM__TZE204_srmahpwl)/sizeof(kM__TZE204_srmahpwl[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_srmahpwl,.manufacturer_names_count=1,
     .model="TS0601__TZE204_srmahpwl",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_srmahpwl,.exposes_count=sizeof(kAutoExposes__TZE204_srmahpwl)/sizeof(kAutoExposes__TZE204_srmahpwl[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_srmahpwl,
     .from_zigbee_count=sizeof(kFz__TZE204_srmahpwl)/sizeof(kFz__TZE204_srmahpwl[0]),

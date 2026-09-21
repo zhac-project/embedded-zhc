@@ -46,13 +46,28 @@ constexpr TzConverter kTzDp__TZE284_who1jxwd{
 const TzConverter* const kTz__TZE284_who1jxwd[] = { &kTzDp__TZE284_who1jxwd };
 constexpr const char* kM__TZE284_who1jxwd[] = { "TS0601" };
 constexpr const char* kN__TZE284_who1jxwd[] = { "_TZE284_who1jxwd" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE284_who1jxwd[] = {
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"presence_distance", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 3, 1},
+    {"presence_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 3, 1},
+    {"radar_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"pir_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 3, 1},
+    {"delay_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 10, 9600, 1},
+    {"led_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"radar_threshold", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config, 5, 255, 1},
+    {"pir_threshold", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config, 1, 250, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_who1jxwd{
     .zigbee_models=kM__TZE284_who1jxwd,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_who1jxwd,.manufacturer_names_count=1,
     .model="TS0601__TZE284_who1jxwd",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_who1jxwd,.exposes_count=sizeof(kAutoExposes__TZE284_who1jxwd)/sizeof(kAutoExposes__TZE284_who1jxwd[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_who1jxwd,
     .from_zigbee_count=sizeof(kFz__TZE284_who1jxwd)/sizeof(kFz__TZE284_who1jxwd[0]),

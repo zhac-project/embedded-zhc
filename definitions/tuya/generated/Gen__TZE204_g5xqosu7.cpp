@@ -59,6 +59,24 @@ constexpr TzConverter kTzDp__TZE204_g5xqosu7{
 const TzConverter* const kTz__TZE204_g5xqosu7[] = { &kTzDp__TZE204_g5xqosu7 };
 constexpr const char* kM__TZE204_g5xqosu7[] = { "TS0601" };
 constexpr const char* kN__TZE204_g5xqosu7[] = { "_TZE204_g5xqosu7" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_g5xqosu7_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE204_g5xqosu7_2[] = {"forward", "back"};
+constexpr const char* kAutoOpts__TZE204_g5xqosu7_4[] = {"SET", "RESET"};
+constexpr const char* kAutoOpts__TZE204_g5xqosu7_5[] = {"SET", "RESET"};
+constexpr const char* kAutoOpts__TZE204_g5xqosu7_6[] = {"SET", "RESET"};
+constexpr const char* kAutoOpts__TZE204_g5xqosu7_7[] = {"continuous", "intermittently"};
+constexpr Expose kAutoExposes__TZE204_g5xqosu7[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g5xqosu7_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"reverse_direction", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g5xqosu7_2, 2},
+    {"motor_fault", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"upper_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g5xqosu7_4, 2, ExposeCategory::Config},
+    {"middle_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g5xqosu7_5, 2, ExposeCategory::Config},
+    {"lower_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g5xqosu7_6, 2, ExposeCategory::Config},
+    {"motor_working_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g5xqosu7_7, 2, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_g5xqosu7[] = {
@@ -71,7 +89,7 @@ extern const PreparedDefinition kDefGen__TZE204_g5xqosu7{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_g5xqosu7,.manufacturer_names_count=1,
     .model="TS0601__TZE204_g5xqosu7",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_g5xqosu7,.exposes_count=sizeof(kAutoExposes__TZE204_g5xqosu7)/sizeof(kAutoExposes__TZE204_g5xqosu7[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_g5xqosu7, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_g5xqosu7)/sizeof(kWhiteLabels_Gen_TZE204_g5xqosu7[0]),
     .from_zigbee=kFz__TZE204_g5xqosu7,
     .from_zigbee_count=sizeof(kFz__TZE204_g5xqosu7)/sizeof(kFz__TZE204_g5xqosu7[0]),

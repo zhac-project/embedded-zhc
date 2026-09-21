@@ -48,6 +48,24 @@ constexpr TzConverter kTzDp__TZE204_m64smti7{
 const TzConverter* const kTz__TZE204_m64smti7[] = { &kTzDp__TZE204_m64smti7 };
 constexpr const char* kM__TZE204_m64smti7[] = { "TS0601" };
 constexpr const char* kN__TZE204_m64smti7[] = { "_TZE204_m64smti7" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_m64smti7[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"voltage_a", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"power_a", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current_a", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"over_current_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"over_current_threshold", ExposeType::Numeric, Access::StateSet, "A", nullptr, nullptr, 0, ExposeCategory::State, 1, 63, 0},
+    {"over_voltage_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"over_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 250, 300, 0},
+    {"under_voltage_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"under_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 150, 200, 0},
+    {"high_temperature_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"high_temperature_threshold", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 40, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_m64smti7[] = {
@@ -58,7 +76,7 @@ extern const PreparedDefinition kDefGen__TZE204_m64smti7{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_m64smti7,.manufacturer_names_count=1,
     .model="TS0601__TZE204_m64smti7",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_m64smti7,.exposes_count=sizeof(kAutoExposes__TZE204_m64smti7)/sizeof(kAutoExposes__TZE204_m64smti7[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_m64smti7, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_m64smti7)/sizeof(kWhiteLabels_Gen_TZE204_m64smti7[0]),
     .from_zigbee=kFz__TZE204_m64smti7,
     .from_zigbee_count=sizeof(kFz__TZE204_m64smti7)/sizeof(kFz__TZE204_m64smti7[0]),

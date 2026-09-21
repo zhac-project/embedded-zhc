@@ -49,13 +49,23 @@ constexpr TzConverter kTzDp__TZE200_hr0tdd47{
 const TzConverter* const kTz__TZE200_hr0tdd47[] = { &kTzDp__TZE200_hr0tdd47 };
 constexpr const char* kM__TZE200_hr0tdd47[] = { "TS0601" };
 constexpr const char* kN__TZE200_hr0tdd47[] = { "_TZE200_hr0tdd47" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_hr0tdd47_2[] = {"checking", "success", "failure", "others"};
+constexpr Expose kAutoExposes__TZE200_hr0tdd47[] = {
+    {"carbon_monoxide", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"co", ExposeType::Numeric, Access::State, "ppm", nullptr, nullptr, 0},
+    {"self_test_result", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_hr0tdd47_2, 4},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"silence", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_hr0tdd47{
     .zigbee_models=kM__TZE200_hr0tdd47,.zigbee_models_count=sizeof(kM__TZE200_hr0tdd47)/sizeof(kM__TZE200_hr0tdd47[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_hr0tdd47,.manufacturer_names_count=1,
     .model="TS0601__TZE200_hr0tdd47",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_hr0tdd47,.exposes_count=sizeof(kAutoExposes__TZE200_hr0tdd47)/sizeof(kAutoExposes__TZE200_hr0tdd47[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_hr0tdd47,
     .from_zigbee_count=sizeof(kFz__TZE200_hr0tdd47)/sizeof(kFz__TZE200_hr0tdd47[0]),

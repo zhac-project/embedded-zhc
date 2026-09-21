@@ -56,13 +56,24 @@ constexpr TzConverter kTzDp__TZE210_inpjmc0h{
 const TzConverter* const kTz__TZE210_inpjmc0h[] = { &kTzDp__TZE210_inpjmc0h };
 constexpr const char* kM__TZE210_inpjmc0h[] = { "TS0301" };
 constexpr const char* kN__TZE210_inpjmc0h[] = { "_TZE210_inpjmc0h" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE210_inpjmc0h_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE210_inpjmc0h_2[] = {"OPEN", "CLOSE", "STOP"};
+constexpr Expose kAutoExposes__TZE210_inpjmc0h[] = {
+    {"state_bottom", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE210_inpjmc0h_0, 3},
+    {"position_bottom", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"state_top", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE210_inpjmc0h_2, 3},
+    {"position_top", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE210_inpjmc0h{
     .zigbee_models=kM__TZE210_inpjmc0h,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE210_inpjmc0h,.manufacturer_names_count=1,
     .model="TS0301__TZE210_inpjmc0h",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE210_inpjmc0h,.exposes_count=sizeof(kAutoExposes__TZE210_inpjmc0h)/sizeof(kAutoExposes__TZE210_inpjmc0h[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE210_inpjmc0h,
     .from_zigbee_count=sizeof(kFz__TZE210_inpjmc0h)/sizeof(kFz__TZE210_inpjmc0h[0]),

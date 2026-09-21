@@ -102,6 +102,38 @@ constexpr TzConverter kTzDp__TZE204_0hcjew5p{
 const TzConverter* const kTz__TZE204_0hcjew5p[] = { &kTzDp__TZE204_0hcjew5p };
 constexpr const char* kM__TZE204_0hcjew5p[] = { "TS0601" };
 constexpr const char* kN__TZE204_0hcjew5p[] = { "_TZE204_0hcjew5p" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_0hcjew5p_5[] = {"off", "heat"};
+constexpr const char* kAutoOpts__TZE204_0hcjew5p_6[] = {"comfort", "eco", "antifrost", "off", "comfort_1", "comfort_2", "program", "manual"};
+constexpr const char* kAutoOpts__TZE204_0hcjew5p_7[] = {"comfort", "eco", "antifrost", "off", "comfort_1", "comfort_2", "program", "manual"};
+constexpr const char* kAutoOpts__TZE204_0hcjew5p_15[] = {"close", "open"};
+constexpr const char* kAutoOpts__TZE204_0hcjew5p_22[] = {"four", "six", "switch"};
+constexpr Expose kAutoExposes__TZE204_0hcjew5p[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 1},
+    {"system_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_0hcjew5p_5, 2},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_0hcjew5p_6, 8},
+    {"mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_0hcjew5p_7, 8, ExposeCategory::Diagnostic},
+    {"radiators_without_integrated_regulation", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"comfort_temperature", ExposeType::Numeric, Access::StateSet, "  C", nullptr, nullptr, 0, ExposeCategory::Config, 5, 35, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::StateSet, "  C", nullptr, nullptr, 0, ExposeCategory::Config, 5, 30, 0},
+    {"antifrost_temperature", ExposeType::Numeric, Access::StateSet, "  C", nullptr, nullptr, 0, ExposeCategory::Config, 5, 15, 0},
+    {"temperature_sensibility", ExposeType::Numeric, Access::StateSet, "  C", nullptr, nullptr, 0, ExposeCategory::Config, 0, 5, 0},
+    {"antifrost", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"window", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_0hcjew5p_15, 2, ExposeCategory::Diagnostic},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_today", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_yesterday", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"device_mode_type", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_0hcjew5p_22, 3, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_0hcjew5p[] = {
@@ -114,7 +146,7 @@ extern const PreparedDefinition kDefGen__TZE204_0hcjew5p{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_0hcjew5p,.manufacturer_names_count=1,
     .model="TS0601__TZE204_0hcjew5p",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_0hcjew5p,.exposes_count=sizeof(kAutoExposes__TZE204_0hcjew5p)/sizeof(kAutoExposes__TZE204_0hcjew5p[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_0hcjew5p, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_0hcjew5p)/sizeof(kWhiteLabels_Gen_TZE204_0hcjew5p[0]),
     .from_zigbee=kFz__TZE204_0hcjew5p,
     .from_zigbee_count=sizeof(kFz__TZE204_0hcjew5p)/sizeof(kFz__TZE204_0hcjew5p[0]),

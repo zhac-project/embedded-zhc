@@ -12,6 +12,14 @@ across the ZHAC platform.
 
 ### Added
 
+- **Generated definitions carry real expose tables.** `zhac-tools/emit/emit_exposes.py`
+  (from a `dump_exposes.js` run against zigbee-herdsman-converters 26.105.0) gave 602 generated
+  definitions the expose table zigbee2mqtt has for them — types, access bits, units, ranges,
+  option lists, categories — replacing `.exposes=nullptr`; 42 more got their `action` value lists
+  (the two Onesti locks also the `state` LOCK/UNLOCK + worded `lock_state` rows). The runtime
+  synthesis from the datapoint map stays as the fallback for the 15 definitions whose z2m entry
+  has no flat exposes.
+
 - **Colour lights round-trip.** `fz_color` remembers each axis per device (runtime scratch
   bytes 24..31) and emits the pairs Home Assistant speaks, `color_xy` "x,y" (CIE 1931, four
   decimals) and `color_hs` "h,s" (0-360 / 0-100), completed from memory when a report carries

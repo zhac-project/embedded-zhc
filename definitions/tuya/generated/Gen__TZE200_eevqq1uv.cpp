@@ -69,6 +69,21 @@ constexpr TzConverter kTzDp__TZE200_eevqq1uv{
 const TzConverter* const kTz__TZE200_eevqq1uv[] = { &kTzDp__TZE200_eevqq1uv };
 constexpr const char* kM__TZE200_eevqq1uv[] = { "TS0601" };
 constexpr const char* kN__TZE200_eevqq1uv[] = { "_TZE200_eevqq1uv" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_eevqq1uv_1[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE200_eevqq1uv_3[] = {"forward", "back"};
+constexpr const char* kAutoOpts__TZE200_eevqq1uv_4[] = {"set_up", "set_down", "delete_up", "delete_down", "delete_both"};
+constexpr const char* kAutoOpts__TZE200_eevqq1uv_5[] = {"up", "down"};
+constexpr Expose kAutoExposes__TZE200_eevqq1uv[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eevqq1uv_1, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"reverse_direction", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eevqq1uv_3, 2},
+    {"cover_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eevqq1uv_4, 5, ExposeCategory::Config},
+    {"click_control", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eevqq1uv_5, 2},
+    {"motor_fault", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_eevqq1uv[] = {
@@ -84,7 +99,7 @@ extern const PreparedDefinition kDefGen__TZE200_eevqq1uv{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_eevqq1uv,.manufacturer_names_count=1,
     .model="TS0601__TZE200_eevqq1uv",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_eevqq1uv,.exposes_count=sizeof(kAutoExposes__TZE200_eevqq1uv)/sizeof(kAutoExposes__TZE200_eevqq1uv[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_eevqq1uv, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_eevqq1uv)/sizeof(kWhiteLabels_Gen_TZE200_eevqq1uv[0]),
     .from_zigbee=kFz__TZE200_eevqq1uv,
     .from_zigbee_count=sizeof(kFz__TZE200_eevqq1uv)/sizeof(kFz__TZE200_eevqq1uv[0]),

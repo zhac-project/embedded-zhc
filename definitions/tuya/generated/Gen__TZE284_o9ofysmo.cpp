@@ -50,13 +50,25 @@ constexpr TzConverter kTzDp__TZE284_o9ofysmo{
 const TzConverter* const kTz__TZE284_o9ofysmo[] = { &kTzDp__TZE284_o9ofysmo };
 constexpr const char* kM__TZE284_o9ofysmo[] = { "TS0601" };
 constexpr const char* kN__TZE284_o9ofysmo[] = { "_TZE284_o9ofysmo" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_o9ofysmo_0[] = {"low", "middle", "high"};
+constexpr Expose kAutoExposes__TZE284_o9ofysmo[] = {
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_o9ofysmo_0, 3, ExposeCategory::Diagnostic},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"soil_moisture", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"humidity_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
+    {"report_interval", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 30, 1200, 30},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_o9ofysmo{
     .zigbee_models=kM__TZE284_o9ofysmo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_o9ofysmo,.manufacturer_names_count=1,
     .model="TS0601__TZE284_o9ofysmo",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_o9ofysmo,.exposes_count=sizeof(kAutoExposes__TZE284_o9ofysmo)/sizeof(kAutoExposes__TZE284_o9ofysmo[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_o9ofysmo,
     .from_zigbee_count=sizeof(kFz__TZE284_o9ofysmo)/sizeof(kFz__TZE284_o9ofysmo[0]),

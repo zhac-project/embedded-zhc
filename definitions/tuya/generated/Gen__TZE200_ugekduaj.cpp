@@ -60,6 +60,34 @@ constexpr TzConverter kTzDp__TZE200_ugekduaj{
 const TzConverter* const kTz__TZE200_ugekduaj[] = { &kTzDp__TZE200_ugekduaj };
 constexpr const char* kM__TZE200_ugekduaj[] = { "TS0601" };
 constexpr const char* kN__TZE200_ugekduaj[] = { "_TZE200_ugekduaj" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE200_ugekduaj[] = {
+    {"voltage_a", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_b", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_c", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"power_a", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_b", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_c", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current_a", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_b", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_c", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"produced_energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"power_factor", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"ac_frequency", ExposeType::Numeric, Access::State, "Hz", nullptr, nullptr, 0},
+    {"data_report_duration", ExposeType::Numeric, Access::Set, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 30, 3600, 0},
+    {"energy_a", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_b", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_c", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_produced_a", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_produced_b", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_produced_c", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"power_factor_a", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"power_factor_b", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"power_factor_c", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_ugekduaj[] = {
@@ -70,7 +98,7 @@ extern const PreparedDefinition kDefGen__TZE200_ugekduaj{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_ugekduaj,.manufacturer_names_count=1,
     .model="TS0601__TZE200_ugekduaj",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_ugekduaj,.exposes_count=sizeof(kAutoExposes__TZE200_ugekduaj)/sizeof(kAutoExposes__TZE200_ugekduaj[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_ugekduaj, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_ugekduaj)/sizeof(kWhiteLabels_Gen_TZE200_ugekduaj[0]),
     .from_zigbee=kFz__TZE200_ugekduaj,
     .from_zigbee_count=sizeof(kFz__TZE200_ugekduaj)/sizeof(kFz__TZE200_ugekduaj[0]),

@@ -29,11 +29,13 @@ constexpr const char* kModels_mTouch_Bryter[] = { "mTouch Bryter" };
 
 // Manual: drop spurious `state` (no relay) + add temperature + action.
 // `group_id` BLOCKED on ctmGroupConfig 0xFEA7 manuSpec read decoder.
+constexpr const char* kAutoOpts_mTouch_Bryter_action[] = {"recall_1", "recall_2", "recall_3", "on", "off", "toggle", "brightness_move_down", "brightness_move_up", "brightness_stop"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_mTouch_Bryter_action, 9},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

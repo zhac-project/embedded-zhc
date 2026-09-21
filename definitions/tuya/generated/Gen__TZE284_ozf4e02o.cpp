@@ -79,13 +79,53 @@ constexpr TzConverter kTzDp__TZE284_ozf4e02o{
 const TzConverter* const kTz__TZE284_ozf4e02o[] = { &kTzDp__TZE284_ozf4e02o };
 constexpr const char* kM__TZE284_ozf4e02o[] = { "TS0601" };
 constexpr const char* kN__TZE284_ozf4e02o[] = { "_TZE284_ozf4e02o" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_0[] = {"absence", "presence", "disabled"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_2[] = {"approaching", "departing", "clear"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_5[] = {"low", "medium", "high"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_8[] = {"AI self-learning"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_9[] = {"small", "medium", "large"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_11[] = {"presence", "motion"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_17[] = {"factory reset"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_18[] = {"threshold", "report"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_20[] = {"timed", "difference"};
+constexpr const char* kAutoOpts__TZE284_ozf4e02o_25[] = {"normal", "slight", "strong", "severe"};
+constexpr Expose kAutoExposes__TZE284_ozf4e02o[] = {
+    {"state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_0, 3},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"current_status", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_2, 3},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"hold_delay_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::Config, 0, 300, 1},
+    {"sensitivity", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_5, 3, ExposeCategory::Config},
+    {"trigger_distance", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::Config, 0, 4, 0},
+    {"forbidden_area", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::Config, 0, 1, 0},
+    {"ai_self_learning", ExposeType::Enum, Access::Set, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_8, 1, ExposeCategory::Config},
+    {"fast_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_9, 3, ExposeCategory::Config},
+    {"indicator", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"sensor_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_11, 2, ExposeCategory::Config},
+    {"single_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"absence_circling_report", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"absence_circling_interval", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::Config, 2, 30, 1},
+    {"find_device", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"enable_sensor", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"factory_reset", ExposeType::Enum, Access::Set, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_17, 1, ExposeCategory::Config},
+    {"lux_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_18, 2, ExposeCategory::Config},
+    {"daylight_threshold", ExposeType::Numeric, Access::StateSet, "lux", nullptr, nullptr, 0, ExposeCategory::Config, 1, 3000, 1},
+    {"lux_report_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_20, 2, ExposeCategory::Config},
+    {"lux_timed_interval", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::Config, 5, 3600, 5},
+    {"lux_difference_threshold", ExposeType::Numeric, Access::StateSet, "lux", nullptr, nullptr, 0, ExposeCategory::Config, 1, 2000, 1},
+    {"lux_difference_value", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"interference_positions", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"home_environment", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_ozf4e02o_25, 4, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_ozf4e02o{
     .zigbee_models=kM__TZE284_ozf4e02o,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_ozf4e02o,.manufacturer_names_count=1,
     .model="TS0601__TZE284_ozf4e02o",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_ozf4e02o,.exposes_count=sizeof(kAutoExposes__TZE284_ozf4e02o)/sizeof(kAutoExposes__TZE284_ozf4e02o[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_ozf4e02o,
     .from_zigbee_count=sizeof(kFz__TZE284_ozf4e02o)/sizeof(kFz__TZE284_ozf4e02o[0]),

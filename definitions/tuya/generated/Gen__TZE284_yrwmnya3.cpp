@@ -112,13 +112,44 @@ constexpr TzConverter kTzDp__TZE284_yrwmnya3{
 const TzConverter* const kTz__TZE284_yrwmnya3[] = { &kTzDp__TZE284_yrwmnya3 };
 constexpr const char* kM__TZE284_yrwmnya3[] = { "TS0601" };
 constexpr const char* kN__TZE284_yrwmnya3[] = { "_TZE284_yrwmnya3" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_4[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_5[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_6[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_7[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_8[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_9[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_10[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_11[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_12[] = {"switch", "scene"};
+constexpr const char* kAutoOpts__TZE284_yrwmnya3_16[] = {"scene_0", "scene_1", "scene_2", "scene_3", "scene_4", "scene_5", "scene_6", "scene_7", "scene_8"};
+constexpr Expose kAutoExposes__TZE284_yrwmnya3[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior_l0", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_4, 3, ExposeCategory::Config},
+    {"power_on_behavior_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_5, 3, ExposeCategory::Config},
+    {"power_on_behavior_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_6, 3, ExposeCategory::Config},
+    {"power_on_behavior_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_7, 3, ExposeCategory::Config},
+    {"power_on_behavior_l4", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_8, 3, ExposeCategory::Config},
+    {"switch_mode_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_9, 2, ExposeCategory::Config},
+    {"switch_mode_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_10, 2, ExposeCategory::Config},
+    {"switch_mode_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_11, 2, ExposeCategory::Config},
+    {"switch_mode_l4", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_12, 2, ExposeCategory::Config},
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 1000, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_yrwmnya3_16, 9, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_yrwmnya3{
     .zigbee_models=kM__TZE284_yrwmnya3,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_yrwmnya3,.manufacturer_names_count=1,
     .model="TS0601__TZE284_yrwmnya3",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_yrwmnya3,.exposes_count=sizeof(kAutoExposes__TZE284_yrwmnya3)/sizeof(kAutoExposes__TZE284_yrwmnya3[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_yrwmnya3,
     .from_zigbee_count=sizeof(kFz__TZE284_yrwmnya3)/sizeof(kFz__TZE284_yrwmnya3[0]),

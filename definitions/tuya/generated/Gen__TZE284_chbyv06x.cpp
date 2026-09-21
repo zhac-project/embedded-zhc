@@ -60,6 +60,20 @@ constexpr TzConverter kTzDp__TZE284_chbyv06x{
 const TzConverter* const kTz__TZE284_chbyv06x[] = { &kTzDp__TZE284_chbyv06x };
 constexpr const char* kM__TZE284_chbyv06x[] = { "TS0601" };
 constexpr const char* kN__TZE284_chbyv06x[] = { "_TZE284_chbyv06x" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_chbyv06x_3[] = {"checking", "success", "failure", "others"};
+constexpr const char* kAutoOpts__TZE284_chbyv06x_5[] = {"melody_1", "melody_2", "melody_3", "melody_4", "melody_5"};
+constexpr Expose kAutoExposes__TZE284_chbyv06x[] = {
+    {"gas", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"gas_value", ExposeType::Numeric, Access::State, "LEL", nullptr, nullptr, 0},
+    {"self_test", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"self_test_result", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_chbyv06x_3, 4},
+    {"silence", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"alarm_ringtone", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_chbyv06x_5, 5},
+    {"alarm_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 1, 180, 1},
+    {"preheat", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_chbyv06x[] = {
@@ -70,7 +84,7 @@ extern const PreparedDefinition kDefGen__TZE284_chbyv06x{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_chbyv06x,.manufacturer_names_count=1,
     .model="TS0601__TZE284_chbyv06x",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_chbyv06x,.exposes_count=sizeof(kAutoExposes__TZE284_chbyv06x)/sizeof(kAutoExposes__TZE284_chbyv06x[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_chbyv06x, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_chbyv06x)/sizeof(kWhiteLabels_Gen_TZE284_chbyv06x[0]),
     .from_zigbee=kFz__TZE284_chbyv06x,
     .from_zigbee_count=sizeof(kFz__TZE284_chbyv06x)/sizeof(kFz__TZE284_chbyv06x[0]),

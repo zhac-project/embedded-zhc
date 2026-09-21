@@ -94,6 +94,35 @@ constexpr TzConverter kTzDp__TZE284_hecsejsb{
 const TzConverter* const kTz__TZE284_hecsejsb[] = { &kTzDp__TZE284_hecsejsb };
 constexpr const char* kM__TZE284_hecsejsb[] = { "TS0601" };
 constexpr const char* kN__TZE284_hecsejsb[] = { "_TZE284_hecsejsb" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_hecsejsb_6[] = {"normal", "over_current_trip", "over_power_trip", "high_temp_trip", "over_voltage_trip", "under_voltage_trip", "over_current_alarm", "over_power_alarm", "high_temp_alarm", "over_voltage_alarm", "under_voltage_alarm", "remote_on", "remote_off", "manual_on", "manual_off", "leakage_trip", "leakage_alarm", "restore_default", "automatic_closing", "electricity_shortage", "electricity_shortage_alarm", "timing_switch_On", "timing_switch_off"};
+constexpr const char* kAutoOpts__TZE284_hecsejsb_7[] = {"Ignore", "Alarm", "Trip"};
+constexpr const char* kAutoOpts__TZE284_hecsejsb_9[] = {"Ignore", "Alarm", "Trip"};
+constexpr const char* kAutoOpts__TZE284_hecsejsb_11[] = {"Ignore", "Alarm", "Trip"};
+constexpr const char* kAutoOpts__TZE284_hecsejsb_13[] = {"Ignore", "Alarm", "Trip"};
+constexpr Expose kAutoExposes__TZE284_hecsejsb[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"event", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_hecsejsb_6, 23},
+    {"over_voltage_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_hecsejsb_7, 3},
+    {"over_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 240, 295, 0},
+    {"under_voltage_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_hecsejsb_9, 3},
+    {"under_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 145, 220, 0},
+    {"temperature_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_hecsejsb_11, 3},
+    {"temperature_threshold", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -25, 100, 0},
+    {"over_power_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_hecsejsb_13, 3},
+    {"over_power_threshold", ExposeType::Numeric, Access::StateSet, "W", nullptr, nullptr, 0, ExposeCategory::State, 5, 25000, 10},
+    {"auto_reclosing", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"restore_default", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"overcurrent_recloser", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"leakage_recloser", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"overpower_recloser", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_hecsejsb[] = {
@@ -106,7 +135,7 @@ extern const PreparedDefinition kDefGen__TZE284_hecsejsb{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_hecsejsb,.manufacturer_names_count=1,
     .model="TS0601__TZE284_hecsejsb",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_hecsejsb,.exposes_count=sizeof(kAutoExposes__TZE284_hecsejsb)/sizeof(kAutoExposes__TZE284_hecsejsb[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_hecsejsb, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_hecsejsb)/sizeof(kWhiteLabels_Gen_TZE284_hecsejsb[0]),
     .from_zigbee=kFz__TZE284_hecsejsb,
     .from_zigbee_count=sizeof(kFz__TZE284_hecsejsb)/sizeof(kFz__TZE284_hecsejsb[0]),

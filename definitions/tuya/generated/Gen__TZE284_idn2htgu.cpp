@@ -114,13 +114,71 @@ constexpr TzConverter kTzDp__TZE284_idn2htgu{
 const TzConverter* const kTz__TZE284_idn2htgu[] = { &kTzDp__TZE284_idn2htgu };
 constexpr const char* kM__TZE284_idn2htgu[] = { "TS0601" };
 constexpr const char* kN__TZE284_idn2htgu[] = { "_TZE284_idn2htgu" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_idn2htgu_37[] = {"open", "stop", "close"};
+constexpr const char* kAutoOpts__TZE284_idn2htgu_39[] = {"open", "stop", "close"};
+constexpr const char* kAutoOpts__TZE284_idn2htgu_41[] = {"open", "stop", "close"};
+constexpr const char* kAutoOpts__TZE284_idn2htgu_43[] = {"open", "stop", "close"};
+constexpr const char* kAutoOpts__TZE284_idn2htgu_46[] = {"heavy_rain", "thunderstorm", "dust_storm", "light_snow", "snow", "freezing_fog", "shower", "floating_dust", "thunder_and_lighting", "light_shower", "rain", "rain_and_snow", "dust_bowl", "ice_pellets", "strong_dust_storms", "sandy", "light_to_moderate_rain", "mostly_sunny", "sunny", "haze", "heavy_shower", "heavy_snow", "very_heavy_rain", "blizzard", "ice_pod", "light_to_moderate_snow", "few_clouds", "light_snow_showers", "moderate_snow", "cloudy", "icy_needles", "thunderstorm_with_ice_pods", "freezing_rain", "snow_shower", "light_rain", "thunder", "moderate_rain", "moderate_to_heavy_rain"};
+constexpr const char* kAutoOpts__TZE284_idn2htgu_47[] = {"scene_1", "scene_2", "scene_3", "scene_4", "scene_5", "scene_6", "scene_7", "scene_8"};
+constexpr Expose kAutoExposes__TZE284_idn2htgu[] = {
+    {"backlight_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_name_l1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_name_l2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_name_l3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_name_l4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l5", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l6", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l7", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l8", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"cover_name_l1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"cover_name_l2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"cover_name_l3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"cover_name_l4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_switch_name_l1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_switch_name_l2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_switch_name_l3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_switch_name_l4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_switch_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_warm_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 0},
+    {"led_bright_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 0},
+    {"led_switch_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_warm_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 0},
+    {"led_bright_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 0},
+    {"led_switch_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_warm_l3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 0},
+    {"led_bright_l3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 0},
+    {"led_switch_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_warm_l4", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 0},
+    {"led_bright_l4", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 0},
+    {"cover_state_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_idn2htgu_37, 3},
+    {"cover_position_l1", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"cover_state_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_idn2htgu_39, 3},
+    {"cover_position_l2", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"cover_state_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_idn2htgu_41, 3},
+    {"cover_position_l3", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"cover_state_l4", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_idn2htgu_43, 3},
+    {"cover_position_l4", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"temperature_1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, -65, 99, 0},
+    {"condition_1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_idn2htgu_46, 38},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_idn2htgu_47, 8, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_idn2htgu{
     .zigbee_models=kM__TZE284_idn2htgu,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_idn2htgu,.manufacturer_names_count=1,
     .model="TS0601__TZE284_idn2htgu",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_idn2htgu,.exposes_count=sizeof(kAutoExposes__TZE284_idn2htgu)/sizeof(kAutoExposes__TZE284_idn2htgu[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_idn2htgu,
     .from_zigbee_count=sizeof(kFz__TZE284_idn2htgu)/sizeof(kFz__TZE284_idn2htgu[0]),

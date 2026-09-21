@@ -65,13 +65,36 @@ constexpr TzConverter kTzDp__TZE284_hdml1aav{
 const TzConverter* const kTz__TZE284_hdml1aav[] = { &kTzDp__TZE284_hdml1aav };
 constexpr const char* kM__TZE284_hdml1aav[] = { "TS0601" };
 constexpr const char* kN__TZE284_hdml1aav[] = { "_TZE284_hdml1aav" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_hdml1aav_0[] = {"none", "alarm"};
+constexpr const char* kAutoOpts__TZE284_hdml1aav_1[] = {"none", "low", "high"};
+constexpr Expose kAutoExposes__TZE284_hdml1aav[] = {
+    {"water_warning", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_hdml1aav_0, 2},
+    {"soil_fertility_warning", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_hdml1aav_1, 3},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 1},
+    {"soil_moisture", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"soil_fertility", ExposeType::Numeric, Access::State, "μS/cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 5000, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"report_period", ExposeType::Numeric, Access::StateSet, "S", nullptr, nullptr, 0, ExposeCategory::State, 5, 1200, 5},
+    {"soil_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
+    {"humidity_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
+    {"illuminance_calibration", ExposeType::Numeric, Access::StateSet, "lux", nullptr, nullptr, 0, ExposeCategory::State, -15, 1000, 1},
+    {"temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -2, 2, 0},
+    {"soil_warning", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
+    {"soil_fertility_calibration", ExposeType::Numeric, Access::StateSet, "μS/cm", nullptr, nullptr, 0, ExposeCategory::State, -1000, 1000, 5},
+    {"soil_fertility_set_v0", ExposeType::Numeric, Access::StateSet, "μS/cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 5000, 1},
+    {"soil_fertility_set_v1", ExposeType::Numeric, Access::StateSet, "μS/cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 5000, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_hdml1aav{
     .zigbee_models=kM__TZE284_hdml1aav,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_hdml1aav,.manufacturer_names_count=1,
     .model="TS0601__TZE284_hdml1aav",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_hdml1aav,.exposes_count=sizeof(kAutoExposes__TZE284_hdml1aav)/sizeof(kAutoExposes__TZE284_hdml1aav[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_hdml1aav,
     .from_zigbee_count=sizeof(kFz__TZE284_hdml1aav)/sizeof(kFz__TZE284_hdml1aav[0]),

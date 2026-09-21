@@ -61,13 +61,32 @@ constexpr TzConverter kTzDp__TZE204_e9ajs4ft{
 const TzConverter* const kTz__TZE204_e9ajs4ft[] = { &kTzDp__TZE204_e9ajs4ft };
 constexpr const char* kM__TZE204_e9ajs4ft[] = { "TS0601" };
 constexpr const char* kN__TZE204_e9ajs4ft[] = { "_TZE204_e9ajs4ft" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_e9ajs4ft_10[] = {"only_move", "exist_move"};
+constexpr const char* kAutoOpts__TZE204_e9ajs4ft_11[] = {"presence", "off", "on"};
+constexpr Expose kAutoExposes__TZE204_e9ajs4ft[] = {
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"presence_sensitivity", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
+    {"detection_range", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 1, 4, 0},
+    {"detection_delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 1, 600, 1},
+    {"illuminance_treshold_max", ExposeType::Numeric, Access::StateSet, "lx", nullptr, nullptr, 0, ExposeCategory::State, 0, 2000, 1},
+    {"illuminance_treshold_min", ExposeType::Numeric, Access::StateSet, "lx", nullptr, nullptr, 0, ExposeCategory::State, 0, 2000, 1},
+    {"presence_illuminance_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"light_switch", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"light_linkage", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"detection_method", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_e9ajs4ft_10, 2},
+    {"indicator_light", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_e9ajs4ft_11, 3},
+    {"identify", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_e9ajs4ft{
     .zigbee_models=kM__TZE204_e9ajs4ft,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_e9ajs4ft,.manufacturer_names_count=1,
     .model="TS0601__TZE204_e9ajs4ft",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_e9ajs4ft,.exposes_count=sizeof(kAutoExposes__TZE204_e9ajs4ft)/sizeof(kAutoExposes__TZE204_e9ajs4ft[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_e9ajs4ft,
     .from_zigbee_count=sizeof(kFz__TZE204_e9ajs4ft)/sizeof(kFz__TZE204_e9ajs4ft[0]),

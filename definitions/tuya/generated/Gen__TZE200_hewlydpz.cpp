@@ -42,6 +42,15 @@ constexpr TzConverter kTzDp__TZE200_hewlydpz{
 const TzConverter* const kTz__TZE200_hewlydpz[] = { &kTzDp__TZE200_hewlydpz };
 constexpr const char* kM__TZE200_hewlydpz[] = { "TS0601" };
 constexpr const char* kN__TZE200_hewlydpz[] = { "_TZE200_hewlydpz" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE200_hewlydpz[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_hewlydpz[] = {
@@ -52,7 +61,7 @@ extern const PreparedDefinition kDefGen__TZE200_hewlydpz{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_hewlydpz,.manufacturer_names_count=1,
     .model="TS0601__TZE200_hewlydpz",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_hewlydpz,.exposes_count=sizeof(kAutoExposes__TZE200_hewlydpz)/sizeof(kAutoExposes__TZE200_hewlydpz[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_hewlydpz, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_hewlydpz)/sizeof(kWhiteLabels_Gen_TZE200_hewlydpz[0]),
     .from_zigbee=kFz__TZE200_hewlydpz,
     .from_zigbee_count=sizeof(kFz__TZE200_hewlydpz)/sizeof(kFz__TZE200_hewlydpz[0]),

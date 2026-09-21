@@ -47,13 +47,23 @@ constexpr TzConverter kTzDp__TZE200_nus5kk3n{
 const TzConverter* const kTz__TZE200_nus5kk3n[] = { &kTzDp__TZE200_nus5kk3n };
 constexpr const char* kM__TZE200_nus5kk3n[] = { "TS0601" };
 constexpr const char* kN__TZE200_nus5kk3n[] = { "_TZE200_nus5kk3n" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_nus5kk3n_2[] = {"checking", "success", "failure", "others"};
+constexpr Expose kAutoExposes__TZE200_nus5kk3n[] = {
+    {"gas", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"self_test", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"self_test_result", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_nus5kk3n_2, 4},
+    {"fault_alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"silence", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_nus5kk3n{
     .zigbee_models=kM__TZE200_nus5kk3n,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_nus5kk3n,.manufacturer_names_count=1,
     .model="TS0601__TZE200_nus5kk3n",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_nus5kk3n,.exposes_count=sizeof(kAutoExposes__TZE200_nus5kk3n)/sizeof(kAutoExposes__TZE200_nus5kk3n[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_nus5kk3n,
     .from_zigbee_count=sizeof(kFz__TZE200_nus5kk3n)/sizeof(kFz__TZE200_nus5kk3n[0]),

@@ -50,13 +50,32 @@ constexpr TzConverter kTzDp__TZE204_eaulras5{
 const TzConverter* const kTz__TZE204_eaulras5[] = { &kTzDp__TZE204_eaulras5 };
 constexpr const char* kM__TZE204_eaulras5[] = { "TS0601" };
 constexpr const char* kN__TZE204_eaulras5[] = { "_TZE204_eaulras5" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_eaulras5[] = {
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"closest_target_distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"movement_timeout", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"idle_timeout", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"far_movement_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"near_movement_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"near_presence_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"far_presence_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"closest_detection_distance", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 7, 0},
+    {"largest_movement_detection_distance", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 7, 0},
+    {"largest_presence_detection_distance", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 7, 0},
+    {"restore_factory", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_indicator", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_eaulras5{
     .zigbee_models=kM__TZE204_eaulras5,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_eaulras5,.manufacturer_names_count=1,
     .model="TS0601__TZE204_eaulras5",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_eaulras5,.exposes_count=sizeof(kAutoExposes__TZE204_eaulras5)/sizeof(kAutoExposes__TZE204_eaulras5[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_eaulras5,
     .from_zigbee_count=sizeof(kFz__TZE204_eaulras5)/sizeof(kFz__TZE204_eaulras5[0]),

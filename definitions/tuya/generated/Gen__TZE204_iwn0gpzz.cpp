@@ -44,13 +44,25 @@ constexpr TzConverter kTzDp__TZE204_iwn0gpzz{
 const TzConverter* const kTz__TZE204_iwn0gpzz[] = { &kTzDp__TZE204_iwn0gpzz };
 constexpr const char* kM__TZE204_iwn0gpzz[] = { "TS0601" };
 constexpr const char* kN__TZE204_iwn0gpzz[] = { "_TZE204_iwn0gpzz" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_iwn0gpzz[] = {
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"produced_energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"power_factor", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"ac_frequency", ExposeType::Numeric, Access::State, "Hz", nullptr, nullptr, 0},
+    {"data_report_duration", ExposeType::Numeric, Access::Set, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 5, 3600, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_iwn0gpzz{
     .zigbee_models=kM__TZE204_iwn0gpzz,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_iwn0gpzz,.manufacturer_names_count=1,
     .model="TS0601__TZE204_iwn0gpzz",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_iwn0gpzz,.exposes_count=sizeof(kAutoExposes__TZE204_iwn0gpzz)/sizeof(kAutoExposes__TZE204_iwn0gpzz[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_iwn0gpzz,
     .from_zigbee_count=sizeof(kFz__TZE204_iwn0gpzz)/sizeof(kFz__TZE204_iwn0gpzz[0]),

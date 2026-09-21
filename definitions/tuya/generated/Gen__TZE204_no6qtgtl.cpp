@@ -42,13 +42,24 @@ constexpr TzConverter kTzDp__TZE204_no6qtgtl{
 const TzConverter* const kTz__TZE204_no6qtgtl[] = { &kTzDp__TZE204_no6qtgtl };
 constexpr const char* kM__TZE204_no6qtgtl[] = { "TS0601" };
 constexpr const char* kN__TZE204_no6qtgtl[] = { "_TZE204_no6qtgtl" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_no6qtgtl_0[] = {"none", "motion", "stationary"};
+constexpr Expose kAutoExposes__TZE204_no6qtgtl[] = {
+    {"presence_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_no6qtgtl_0, 3},
+    {"target_distance_closest", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"near_detection", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 6, 0},
+    {"far_detection", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 6, 0},
+    {"static_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"motion_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_no6qtgtl{
     .zigbee_models=kM__TZE204_no6qtgtl,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_no6qtgtl,.manufacturer_names_count=1,
     .model="TS0601__TZE204_no6qtgtl",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_no6qtgtl,.exposes_count=sizeof(kAutoExposes__TZE204_no6qtgtl)/sizeof(kAutoExposes__TZE204_no6qtgtl[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_no6qtgtl,
     .from_zigbee_count=sizeof(kFz__TZE204_no6qtgtl)/sizeof(kFz__TZE204_no6qtgtl[0]),

@@ -68,6 +68,26 @@ constexpr TzConverter kTzDp__TZE200_tsxpl0d0{
 const TzConverter* const kTz__TZE200_tsxpl0d0[] = { &kTzDp__TZE200_tsxpl0d0 };
 constexpr const char* kM__TZE200_tsxpl0d0[] = { "TS0601" };
 constexpr const char* kN__TZE200_tsxpl0d0[] = { "_TZE200_tsxpl0d0" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_tsxpl0d0_10[] = {"led", "incandescent", "halogen"};
+constexpr const char* kAutoOpts__TZE200_tsxpl0d0_11[] = {"led", "incandescent", "halogen"};
+constexpr const char* kAutoOpts__TZE200_tsxpl0d0_12[] = {"off", "on", "previous"};
+constexpr Expose kAutoExposes__TZE200_tsxpl0d0[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"min_brightness_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"max_brightness_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"min_brightness_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"max_brightness_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l2", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"light_type_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_tsxpl0d0_10, 3},
+    {"light_type_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_tsxpl0d0_11, 3},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_tsxpl0d0_12, 3},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_tsxpl0d0[] = {
@@ -79,7 +99,7 @@ extern const PreparedDefinition kDefGen__TZE200_tsxpl0d0{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_tsxpl0d0,.manufacturer_names_count=1,
     .model="TS0601__TZE200_tsxpl0d0",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_tsxpl0d0,.exposes_count=sizeof(kAutoExposes__TZE200_tsxpl0d0)/sizeof(kAutoExposes__TZE200_tsxpl0d0[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_tsxpl0d0, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_tsxpl0d0)/sizeof(kWhiteLabels_Gen_TZE200_tsxpl0d0[0]),
     .from_zigbee=kFz__TZE200_tsxpl0d0,
     .from_zigbee_count=sizeof(kFz__TZE200_tsxpl0d0)/sizeof(kFz__TZE200_tsxpl0d0[0]),

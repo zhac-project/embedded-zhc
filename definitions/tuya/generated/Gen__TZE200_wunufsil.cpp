@@ -50,13 +50,25 @@ constexpr TzConverter kTzDp__TZE200_wunufsil{
 const TzConverter* const kTz__TZE200_wunufsil[] = { &kTzDp__TZE200_wunufsil };
 constexpr const char* kM__TZE200_wunufsil[] = { "TS0601" };
 constexpr const char* kN__TZE200_wunufsil[] = { "_TZE200_wunufsil" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_wunufsil_6[] = {"off", "previous", "on"};
+constexpr Expose kAutoExposes__TZE200_wunufsil[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l2", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_wunufsil_6, 3, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_wunufsil{
     .zigbee_models=kM__TZE200_wunufsil,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wunufsil,.manufacturer_names_count=1,
     .model="TS0601__TZE200_wunufsil",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_wunufsil,.exposes_count=sizeof(kAutoExposes__TZE200_wunufsil)/sizeof(kAutoExposes__TZE200_wunufsil[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_wunufsil,
     .from_zigbee_count=sizeof(kFz__TZE200_wunufsil)/sizeof(kFz__TZE200_wunufsil[0]),

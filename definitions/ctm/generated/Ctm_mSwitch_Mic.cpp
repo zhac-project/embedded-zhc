@@ -23,13 +23,15 @@ constexpr const char* kModels_mSwitch_Mic[] = { "Mikrofon" };
 
 // Manual: smoke detector (was generic `alarm`); drop spurious `state`;
 // add temperature + action. group_id BLOCKED on ctmGroupConfig manuSpec.
+constexpr const char* kAutoOpts_mSwitch_Mic_action[] = {"on", "off"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_mSwitch_Mic_action, 2},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

@@ -85,13 +85,33 @@ constexpr TzConverter kTzDp__TZE284_zpvusbtv{
 const TzConverter* const kTz__TZE284_zpvusbtv[] = { &kTzDp__TZE284_zpvusbtv };
 constexpr const char* kM__TZE284_zpvusbtv[] = { "TS0601" };
 constexpr const char* kN__TZE284_zpvusbtv[] = { "_TZE284_zpvusbtv" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_zpvusbtv_5[] = {"off", "on_off_status", "switch_position"};
+constexpr const char* kAutoOpts__TZE284_zpvusbtv_6[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE284_zpvusbtv_8[] = {"red", "blue", "green", "white", "yellow", "magenta", "cyan", "warm_white", "warm_yellow"};
+constexpr const char* kAutoOpts__TZE284_zpvusbtv_9[] = {"red", "blue", "green", "white", "yellow", "magenta", "cyan", "warm_white", "warm_yellow"};
+constexpr Expose kAutoExposes__TZE284_zpvusbtv[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"indicator_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zpvusbtv_5, 3},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zpvusbtv_6, 3, ExposeCategory::Config},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"on_color", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zpvusbtv_8, 9},
+    {"off_color", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zpvusbtv_9, 9},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 0},
+    {"countdown_l2", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_zpvusbtv{
     .zigbee_models=kM__TZE284_zpvusbtv,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_zpvusbtv,.manufacturer_names_count=1,
     .model="TS0601__TZE284_zpvusbtv",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_zpvusbtv,.exposes_count=sizeof(kAutoExposes__TZE284_zpvusbtv)/sizeof(kAutoExposes__TZE284_zpvusbtv[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_zpvusbtv,
     .from_zigbee_count=sizeof(kFz__TZE284_zpvusbtv)/sizeof(kFz__TZE284_zpvusbtv[0]),

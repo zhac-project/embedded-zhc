@@ -60,13 +60,30 @@ constexpr TzConverter kTzDp__TZE200_jt50ea5d{
 const TzConverter* const kTz__TZE200_jt50ea5d[] = { &kTzDp__TZE200_jt50ea5d };
 constexpr const char* kM__TZE200_jt50ea5d[] = { "TS0601" };
 constexpr const char* kN__TZE200_jt50ea5d[] = { "_TZE200_jt50ea5d" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_jt50ea5d_3[] = {"1h", "2h", "3h", "4h", "6h", "8h", "12h", "24h", "48h", "72h"};
+constexpr Expose kAutoExposes__TZE200_jt50ea5d[] = {
+    {"water_consumed", ExposeType::Numeric, Access::State, "m³", nullptr, nullptr, 0},
+    {"monthly_water_consumption", ExposeType::Numeric, Access::State, "m³", nullptr, nullptr, 0},
+    {"daily_water_consumption", ExposeType::Numeric, Access::State, "m³", nullptr, nullptr, 0},
+    {"report_period", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_jt50ea5d_3, 10},
+    {"fault", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"prepayment_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"cumulative_heat", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"meter_id", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"instantaneous_flow_rate", ExposeType::Numeric, Access::State, "m³/h", nullptr, nullptr, 0},
+    {"inlet_water_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"outlet_water_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_jt50ea5d{
     .zigbee_models=kM__TZE200_jt50ea5d,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_jt50ea5d,.manufacturer_names_count=1,
     .model="TS0601__TZE200_jt50ea5d",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_jt50ea5d,.exposes_count=sizeof(kAutoExposes__TZE200_jt50ea5d)/sizeof(kAutoExposes__TZE200_jt50ea5d[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_jt50ea5d,
     .from_zigbee_count=sizeof(kFz__TZE200_jt50ea5d)/sizeof(kFz__TZE200_jt50ea5d[0]),

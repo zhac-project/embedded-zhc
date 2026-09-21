@@ -57,13 +57,26 @@ constexpr TzConverter kTzDp__TZE200_1drr8tab{
 const TzConverter* const kTz__TZE200_1drr8tab[] = { &kTzDp__TZE200_1drr8tab };
 constexpr const char* kM__TZE200_1drr8tab[] = { "TS0601" };
 constexpr const char* kN__TZE200_1drr8tab[] = { "_TZE200_1drr8tab" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_1drr8tab_4[] = {"cool", "heat", "fan_only"};
+constexpr const char* kAutoOpts__TZE200_1drr8tab_5[] = {"low", "medium", "high", "auto"};
+constexpr Expose kAutoExposes__TZE200_1drr8tab[] = {
+    {"air_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 20, 30, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_1drr8tab_4, 3},
+    {"fan_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_1drr8tab_5, 4},
+    {"boost_time", ExposeType::Numeric, Access::StateSet, "H", nullptr, nullptr, 0, ExposeCategory::Config, 0, 24, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_1drr8tab{
     .zigbee_models=kM__TZE200_1drr8tab,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_1drr8tab,.manufacturer_names_count=1,
     .model="TS0601__TZE200_1drr8tab",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_1drr8tab,.exposes_count=sizeof(kAutoExposes__TZE200_1drr8tab)/sizeof(kAutoExposes__TZE200_1drr8tab[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_1drr8tab,
     .from_zigbee_count=sizeof(kFz__TZE200_1drr8tab)/sizeof(kFz__TZE200_1drr8tab[0]),

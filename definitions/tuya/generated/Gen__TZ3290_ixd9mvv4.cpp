@@ -54,13 +54,26 @@ constexpr TzConverter kTzDp__TZ3290_ixd9mvv4{
 const TzConverter* const kTz__TZ3290_ixd9mvv4[] = { &kTzDp__TZ3290_ixd9mvv4 };
 constexpr const char* kM__TZ3290_ixd9mvv4[] = { "TS0049" };
 constexpr const char* kN__TZ3290_ixd9mvv4[] = { "_TZ3290_ixd9mvv4" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZ3290_ixd9mvv4_2[] = {"rain", "no_rain"};
+constexpr const char* kAutoOpts__TZ3290_ixd9mvv4_4[] = {"no_charge", "charging", "charged"};
+constexpr Expose kAutoExposes__TZ3290_ixd9mvv4[] = {
+    {"countdown", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"error_status", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"rain_sensor_status", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZ3290_ixd9mvv4_2, 2},
+    {"rain_sensor_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZ3290_ixd9mvv4_4, 3, ExposeCategory::Diagnostic},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZ3290_ixd9mvv4{
     .zigbee_models=kM__TZ3290_ixd9mvv4,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZ3290_ixd9mvv4,.manufacturer_names_count=1,
     .model="TS0049__TZ3290_ixd9mvv4",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZ3290_ixd9mvv4,.exposes_count=sizeof(kAutoExposes__TZ3290_ixd9mvv4)/sizeof(kAutoExposes__TZ3290_ixd9mvv4[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZ3290_ixd9mvv4,
     .from_zigbee_count=sizeof(kFz__TZ3290_ixd9mvv4)/sizeof(kFz__TZ3290_ixd9mvv4[0]),

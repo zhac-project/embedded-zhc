@@ -40,13 +40,28 @@ constexpr TzConverter kTzDp__TZE204_atdqo4nj{
 const TzConverter* const kTz__TZE204_atdqo4nj[] = { &kTzDp__TZE204_atdqo4nj };
 constexpr const char* kM__TZE204_atdqo4nj[] = { "TS0601" };
 constexpr const char* kN__TZE204_atdqo4nj[] = { "_TZE204_atdqo4nj" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_atdqo4nj_2[] = {"off", "heat"};
+constexpr const char* kAutoOpts__TZE204_atdqo4nj_3[] = {"manual", "auto"};
+constexpr const char* kAutoOpts__TZE204_atdqo4nj_5[] = {"idle", "heat"};
+constexpr Expose kAutoExposes__TZE204_atdqo4nj[] = {
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_atdqo4nj_2, 2},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_atdqo4nj_3, 2},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_atdqo4nj_5, 2},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_atdqo4nj{
     .zigbee_models=kM__TZE204_atdqo4nj,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_atdqo4nj,.manufacturer_names_count=1,
     .model="TS0601__TZE204_atdqo4nj",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_atdqo4nj,.exposes_count=sizeof(kAutoExposes__TZE204_atdqo4nj)/sizeof(kAutoExposes__TZE204_atdqo4nj[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_atdqo4nj,
     .from_zigbee_count=sizeof(kFz__TZE204_atdqo4nj)/sizeof(kFz__TZE204_atdqo4nj[0]),

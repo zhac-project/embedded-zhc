@@ -41,6 +41,27 @@ constexpr TzConverter kTzDp__TZE200_lsanae15{
 const TzConverter* const kTz__TZE200_lsanae15[] = { &kTzDp__TZE200_lsanae15 };
 constexpr const char* kM__TZE200_lsanae15[] = { "TS0601" };
 constexpr const char* kN__TZE200_lsanae15[] = { "_TZE200_lsanae15" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_lsanae15_5[] = {"clear", "over_current_threshold", "over_power_threshold", "over_voltage threshold", "wrong_frequency_threshold"};
+constexpr const char* kAutoOpts__TZE200_lsanae15_6[] = {"not_set", "over_current_threshold", "over_voltage_threshold"};
+constexpr const char* kAutoOpts__TZE200_lsanae15_9[] = {"not_set", "over_current_threshold", "over_voltage_threshold"};
+constexpr Expose kAutoExposes__TZE200_lsanae15[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"fault", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_lsanae15_5, 5},
+    {"threshold_1", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_lsanae15_6, 3},
+    {"threshold_1_protection", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"threshold_1_value", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"threshold_2", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_lsanae15_9, 3},
+    {"threshold_2_protection", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"threshold_2_value", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"clear_fault", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"meter_id", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_lsanae15[] = {
@@ -51,7 +72,7 @@ extern const PreparedDefinition kDefGen__TZE200_lsanae15{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_lsanae15,.manufacturer_names_count=1,
     .model="TS0601__TZE200_lsanae15",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_lsanae15,.exposes_count=sizeof(kAutoExposes__TZE200_lsanae15)/sizeof(kAutoExposes__TZE200_lsanae15[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_lsanae15, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_lsanae15)/sizeof(kWhiteLabels_Gen_TZE200_lsanae15[0]),
     .from_zigbee=kFz__TZE200_lsanae15,
     .from_zigbee_count=sizeof(kFz__TZE200_lsanae15)/sizeof(kFz__TZE200_lsanae15[0]),

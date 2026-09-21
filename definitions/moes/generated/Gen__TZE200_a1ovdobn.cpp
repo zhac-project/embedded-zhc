@@ -57,13 +57,27 @@ constexpr TzConverter kTzDp__TZE200_a1ovdobn{
 const TzConverter* const kTz__TZE200_a1ovdobn[] = { &kTzDp__TZE200_a1ovdobn };
 constexpr const char* kM__TZE200_a1ovdobn[] = { "TS0601" };
 constexpr const char* kN__TZE200_a1ovdobn[] = { "_TZE200_a1ovdobn" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_a1ovdobn_5[] = {"off", "on", "memory"};
+constexpr const char* kAutoOpts__TZE200_a1ovdobn_6[] = {"none", "relay", "pos"};
+constexpr Expose kAutoExposes__TZE200_a1ovdobn[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness_1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"brightness_min_1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"brightness_max_1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"countdown_1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 1},
+    {"relay_status", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_a1ovdobn_5, 3},
+    {"light_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_a1ovdobn_6, 3},
+    {"switch_backlight", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_a1ovdobn{
     .zigbee_models=kM__TZE200_a1ovdobn,.zigbee_models_count=sizeof(kM__TZE200_a1ovdobn)/sizeof(kM__TZE200_a1ovdobn[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_a1ovdobn,.manufacturer_names_count=1,
     .model="TS0601__TZE200_a1ovdobn",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_a1ovdobn,.exposes_count=sizeof(kAutoExposes__TZE200_a1ovdobn)/sizeof(kAutoExposes__TZE200_a1ovdobn[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_a1ovdobn,
     .from_zigbee_count=sizeof(kFz__TZE200_a1ovdobn)/sizeof(kFz__TZE200_a1ovdobn[0]),

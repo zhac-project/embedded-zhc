@@ -46,6 +46,19 @@ constexpr TzConverter kTzDp__TZE204_lbbg34rj{
 const TzConverter* const kTz__TZE204_lbbg34rj[] = { &kTzDp__TZE204_lbbg34rj };
 constexpr const char* kM__TZE204_lbbg34rj[] = { "TS0601" };
 constexpr const char* kN__TZE204_lbbg34rj[] = { "_TZE204_lbbg34rj" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_lbbg34rj[] = {
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"presence_timeout", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 180, 1},
+    {"move_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"move_minimum_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 10},
+    {"move_maximum_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 10},
+    {"breath_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"breath_minimum_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 10},
+    {"breath_maximum_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 10},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_lbbg34rj[] = {
@@ -56,7 +69,7 @@ extern const PreparedDefinition kDefGen__TZE204_lbbg34rj{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_lbbg34rj,.manufacturer_names_count=1,
     .model="TS0601__TZE204_lbbg34rj",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_lbbg34rj,.exposes_count=sizeof(kAutoExposes__TZE204_lbbg34rj)/sizeof(kAutoExposes__TZE204_lbbg34rj[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_lbbg34rj, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_lbbg34rj)/sizeof(kWhiteLabels_Gen_TZE204_lbbg34rj[0]),
     .from_zigbee=kFz__TZE204_lbbg34rj,
     .from_zigbee_count=sizeof(kFz__TZE204_lbbg34rj)/sizeof(kFz__TZE204_lbbg34rj[0]),

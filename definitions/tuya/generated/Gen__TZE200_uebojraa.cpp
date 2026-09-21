@@ -46,13 +46,21 @@ constexpr TzConverter kTzDp__TZE200_uebojraa{
 const TzConverter* const kTz__TZE200_uebojraa[] = { &kTzDp__TZE200_uebojraa };
 constexpr const char* kM__TZE200_uebojraa[] = { "TS0601" };
 constexpr const char* kN__TZE200_uebojraa[] = { "_TZE200_uebojraa" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_uebojraa_2[] = {"low", "medium", "high"};
+constexpr Expose kAutoExposes__TZE200_uebojraa[] = {
+    {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_uebojraa_2, 3, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_uebojraa{
     .zigbee_models=kM__TZE200_uebojraa,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_uebojraa,.manufacturer_names_count=1,
     .model="TS0601__TZE200_uebojraa",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_uebojraa,.exposes_count=sizeof(kAutoExposes__TZE200_uebojraa)/sizeof(kAutoExposes__TZE200_uebojraa[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_uebojraa,
     .from_zigbee_count=sizeof(kFz__TZE200_uebojraa)/sizeof(kFz__TZE200_uebojraa[0]),

@@ -39,13 +39,27 @@ constexpr TzConverter kTzDp__TZE204_jcwbwckh{
 const TzConverter* const kTz__TZE204_jcwbwckh[] = { &kTzDp__TZE204_jcwbwckh };
 constexpr const char* kM__TZE204_jcwbwckh[] = { "TS0601" };
 constexpr const char* kN__TZE204_jcwbwckh[] = { "_TZE204_jcwbwckh" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_jcwbwckh_5[] = {"on", "off", "restore"};
+constexpr const char* kAutoOpts__TZE204_jcwbwckh_6[] = {"clear", "short_circuit_alarm", "surge_alarm", "overload_alarm", "leakagecurr_alarm", "temp_dif_fault", "fire_alarm", "high_power_alarm", "self_test_alarm", "ov_cr", "unbalance_alarm", "ov_vol", "undervoltage_alarm", "miss_phase_alarm", "outage_alarm", "magnetism_alarm", "credit_alarm", "no_balance_alarm"};
+constexpr Expose kAutoExposes__TZE204_jcwbwckh[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"power_outage_memory", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_jcwbwckh_5, 3},
+    {"fault", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_jcwbwckh_6, 18},
+    {"meter_id", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_jcwbwckh{
     .zigbee_models=kM__TZE204_jcwbwckh,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_jcwbwckh,.manufacturer_names_count=1,
     .model="TS0601__TZE204_jcwbwckh",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_jcwbwckh,.exposes_count=sizeof(kAutoExposes__TZE204_jcwbwckh)/sizeof(kAutoExposes__TZE204_jcwbwckh[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_jcwbwckh,
     .from_zigbee_count=sizeof(kFz__TZE204_jcwbwckh)/sizeof(kFz__TZE204_jcwbwckh[0]),

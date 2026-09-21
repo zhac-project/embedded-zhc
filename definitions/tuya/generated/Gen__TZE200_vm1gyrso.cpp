@@ -88,6 +88,38 @@ constexpr TzConverter kTzDp__TZE200_vm1gyrso{
 const TzConverter* const kTz__TZE200_vm1gyrso[] = { &kTzDp__TZE200_vm1gyrso };
 constexpr const char* kM__TZE200_vm1gyrso[] = { "TS0601" };
 constexpr const char* kN__TZE200_vm1gyrso[] = { "_TZE200_vm1gyrso" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_vm1gyrso_15[] = {"led", "incandescent", "halogen"};
+constexpr const char* kAutoOpts__TZE200_vm1gyrso_16[] = {"led", "incandescent", "halogen"};
+constexpr const char* kAutoOpts__TZE200_vm1gyrso_17[] = {"led", "incandescent", "halogen"};
+constexpr const char* kAutoOpts__TZE200_vm1gyrso_18[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_vm1gyrso_19[] = {"off", "normal", "inverted"};
+constexpr const char* kAutoOpts__TZE200_vm1gyrso_20[] = {"red", "blue", "green", "white", "yellow", "magenta", "cyan", "warm_white"};
+constexpr Expose kAutoExposes__TZE200_vm1gyrso[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"min_brightness_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"max_brightness_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"min_brightness_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"max_brightness_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness_l3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"min_brightness_l3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"max_brightness_l3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l2", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l3", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"light_type_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_vm1gyrso_15, 3},
+    {"light_type_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_vm1gyrso_16, 3},
+    {"light_type_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_vm1gyrso_17, 3},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_vm1gyrso_18, 3, ExposeCategory::Config},
+    {"backlight_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_vm1gyrso_19, 3, ExposeCategory::Config},
+    {"backlight_color", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_vm1gyrso_20, 8},
+    {"backlight_brightness", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_vm1gyrso[] = {
@@ -100,7 +132,7 @@ extern const PreparedDefinition kDefGen__TZE200_vm1gyrso{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_vm1gyrso,.manufacturer_names_count=1,
     .model="TS0601__TZE200_vm1gyrso",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_vm1gyrso,.exposes_count=sizeof(kAutoExposes__TZE200_vm1gyrso)/sizeof(kAutoExposes__TZE200_vm1gyrso[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_vm1gyrso, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_vm1gyrso)/sizeof(kWhiteLabels_Gen_TZE200_vm1gyrso[0]),
     .from_zigbee=kFz__TZE200_vm1gyrso,
     .from_zigbee_count=sizeof(kFz__TZE200_vm1gyrso)/sizeof(kFz__TZE200_vm1gyrso[0]),

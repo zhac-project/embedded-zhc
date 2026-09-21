@@ -31,10 +31,12 @@ constexpr const char* kModels_VES_ZB_WAL_006[] = { "ZG2833K2_EU07" };
 
 
 // --- hand-curated exposes / bindings ---
+constexpr const char* kAutoOpts_VES_ZB_WAL_006_action[] = {"on_1", "off_1", "stop_1", "brightness_move_up_1", "brightness_move_down_1", "brightness_stop_1"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_VES_ZB_WAL_006_action, 6},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

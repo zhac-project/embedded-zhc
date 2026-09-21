@@ -49,13 +49,23 @@ constexpr TzConverter kTzDp__TZE284_rjxqso4a{
 const TzConverter* const kTz__TZE284_rjxqso4a[] = { &kTzDp__TZE284_rjxqso4a };
 constexpr const char* kM__TZE284_rjxqso4a[] = { "TS0601" };
 constexpr const char* kN__TZE284_rjxqso4a[] = { "_TZE284_rjxqso4a" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_rjxqso4a_2[] = {"checking", "success", "failure", "others"};
+constexpr Expose kAutoExposes__TZE284_rjxqso4a[] = {
+    {"carbon_monoxide", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"co", ExposeType::Numeric, Access::State, "ppm", nullptr, nullptr, 0},
+    {"self_test_result", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_rjxqso4a_2, 4},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"silence", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_rjxqso4a{
     .zigbee_models=kM__TZE284_rjxqso4a,.zigbee_models_count=sizeof(kM__TZE284_rjxqso4a)/sizeof(kM__TZE284_rjxqso4a[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_rjxqso4a,.manufacturer_names_count=1,
     .model="TS0601__TZE284_rjxqso4a",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_rjxqso4a,.exposes_count=sizeof(kAutoExposes__TZE284_rjxqso4a)/sizeof(kAutoExposes__TZE284_rjxqso4a[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_rjxqso4a,
     .from_zigbee_count=sizeof(kFz__TZE284_rjxqso4a)/sizeof(kFz__TZE284_rjxqso4a[0]),

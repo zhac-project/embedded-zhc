@@ -53,6 +53,17 @@ constexpr TzConverter kTzDp__TZE204_myd45weu{
 const TzConverter* const kTz__TZE204_myd45weu[] = { &kTzDp__TZE204_myd45weu };
 constexpr const char* kM__TZE204_myd45weu[] = { "TS0601" };
 constexpr const char* kN__TZE204_myd45weu[] = { "_TZE204_myd45weu" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_myd45weu_2[] = {"celsius", "fahrenheit"};
+constexpr const char* kAutoOpts__TZE204_myd45weu_4[] = {"low", "medium", "high"};
+constexpr Expose kAutoExposes__TZE204_myd45weu[] = {
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"soil_moisture", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"temperature_unit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_myd45weu_2, 2},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_myd45weu_4, 3, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_myd45weu[] = {
@@ -63,7 +74,7 @@ extern const PreparedDefinition kDefGen__TZE204_myd45weu{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_myd45weu,.manufacturer_names_count=1,
     .model="TS0601__TZE204_myd45weu",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_myd45weu,.exposes_count=sizeof(kAutoExposes__TZE204_myd45weu)/sizeof(kAutoExposes__TZE204_myd45weu[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_myd45weu, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_myd45weu)/sizeof(kWhiteLabels_Gen_TZE204_myd45weu[0]),
     .from_zigbee=kFz__TZE204_myd45weu,
     .from_zigbee_count=sizeof(kFz__TZE204_myd45weu)/sizeof(kFz__TZE204_myd45weu[0]),

@@ -61,6 +61,21 @@ constexpr TzConverter kTzDp__TZE200_5nldle7w{
 const TzConverter* const kTz__TZE200_5nldle7w[] = { &kTzDp__TZE200_5nldle7w };
 constexpr const char* kM__TZE200_5nldle7w[] = { "TS0601" };
 constexpr const char* kN__TZE200_5nldle7w[] = { "_TZE200_5nldle7w" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_5nldle7w_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE200_5nldle7w_4[] = {"START", "END"};
+constexpr const char* kAutoOpts__TZE200_5nldle7w_6[] = {"FORWARD", "BACKWARD"};
+constexpr Expose kAutoExposes__TZE200_5nldle7w[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_5nldle7w_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"calibration", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_5nldle7w_4, 2},
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"motor_steering", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_5nldle7w_6, 2},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_5nldle7w[] = {
@@ -71,7 +86,7 @@ extern const PreparedDefinition kDefGen__TZE200_5nldle7w{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_5nldle7w,.manufacturer_names_count=1,
     .model="TS0601__TZE200_5nldle7w",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_5nldle7w,.exposes_count=sizeof(kAutoExposes__TZE200_5nldle7w)/sizeof(kAutoExposes__TZE200_5nldle7w[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_5nldle7w, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_5nldle7w)/sizeof(kWhiteLabels_Gen_TZE200_5nldle7w[0]),
     .from_zigbee=kFz__TZE200_5nldle7w,
     .from_zigbee_count=sizeof(kFz__TZE200_5nldle7w)/sizeof(kFz__TZE200_5nldle7w[0]),

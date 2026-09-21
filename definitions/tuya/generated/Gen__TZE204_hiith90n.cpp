@@ -38,13 +38,18 @@ constexpr TzConverter kTzDp__TZE204_hiith90n{
 const TzConverter* const kTz__TZE204_hiith90n[] = { &kTzDp__TZE204_hiith90n };
 constexpr const char* kM__TZE204_hiith90n[] = { "TS0601" };
 constexpr const char* kN__TZE204_hiith90n[] = { "_TZE204_hiith90n" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_hiith90n[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_hiith90n{
     .zigbee_models=kM__TZE204_hiith90n,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_hiith90n,.manufacturer_names_count=1,
     .model="TS0601__TZE204_hiith90n",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_hiith90n,.exposes_count=sizeof(kAutoExposes__TZE204_hiith90n)/sizeof(kAutoExposes__TZE204_hiith90n[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_hiith90n,
     .from_zigbee_count=sizeof(kFz__TZE204_hiith90n)/sizeof(kFz__TZE204_hiith90n[0]),

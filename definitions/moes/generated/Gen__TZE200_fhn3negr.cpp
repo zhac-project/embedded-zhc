@@ -58,13 +58,36 @@ constexpr TzConverter kTzDp__TZE200_fhn3negr{
 const TzConverter* const kTz__TZE200_fhn3negr[] = { &kTzDp__TZE200_fhn3negr };
 constexpr const char* kM__TZE200_fhn3negr[] = { "TS0601" };
 constexpr const char* kN__TZE200_fhn3negr[] = { "_TZE200_fhn3negr" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_fhn3negr_9[] = {"auto", "manual", "holiday"};
+constexpr const char* kAutoOpts__TZE200_fhn3negr_10[] = {"idle", "heat"};
+constexpr Expose kAutoExposes__TZE200_fhn3negr[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"boost_heating", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"boost_heating_countdown", ExposeType::Numeric, Access::State, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 900, 0},
+    {"auto_setpoint_override", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 30, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 30, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -5, 5, 0},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_fhn3negr_9, 3},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_fhn3negr_10, 2},
+    {"comfort_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"open_window_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"window_detection_time", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 0, 60, 0},
+    {"online", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"error_status", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_fhn3negr{
     .zigbee_models=kM__TZE200_fhn3negr,.zigbee_models_count=sizeof(kM__TZE200_fhn3negr)/sizeof(kM__TZE200_fhn3negr[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_fhn3negr,.manufacturer_names_count=1,
     .model="TS0601__TZE200_fhn3negr",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_fhn3negr,.exposes_count=sizeof(kAutoExposes__TZE200_fhn3negr)/sizeof(kAutoExposes__TZE200_fhn3negr[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_fhn3negr,
     .from_zigbee_count=sizeof(kFz__TZE200_fhn3negr)/sizeof(kFz__TZE200_fhn3negr[0]),

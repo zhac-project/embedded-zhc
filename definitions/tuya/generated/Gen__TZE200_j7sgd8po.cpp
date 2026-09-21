@@ -119,13 +119,41 @@ constexpr TzConverter kTzDp__TZE200_j7sgd8po{
 const TzConverter* const kTz__TZE200_j7sgd8po[] = { &kTzDp__TZE200_j7sgd8po };
 constexpr const char* kM__TZE200_j7sgd8po[] = { "TS0601" };
 constexpr const char* kN__TZE200_j7sgd8po[] = { "_TZE200_j7sgd8po" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_j7sgd8po_3[] = {"ALARM", "IDLE"};
+constexpr const char* kAutoOpts__TZE200_j7sgd8po_6[] = {"closed", "tilted"};
+constexpr const char* kAutoOpts__TZE200_j7sgd8po_10[] = {"off", "low", "medium", "high", "max"};
+constexpr const char* kAutoOpts__TZE200_j7sgd8po_11[] = {"up", "right", "down", "left"};
+constexpr const char* kAutoOpts__TZE200_j7sgd8po_12[] = {"released", "pressed"};
+constexpr const char* kAutoOpts__TZE200_j7sgd8po_13[] = {"released", "pressed"};
+constexpr const char* kAutoOpts__TZE200_j7sgd8po_16[] = {"clear", "execute"};
+constexpr Expose kAutoExposes__TZE200_j7sgd8po[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"vacation", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"alarm", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_j7sgd8po_3, 2},
+    {"alarm_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"handlesound", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"opening_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_j7sgd8po_6, 2},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"keysound", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"sensitivity", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_j7sgd8po_10, 5},
+    {"position", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_j7sgd8po_11, 4},
+    {"button_left", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_j7sgd8po_12, 2},
+    {"button_right", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_j7sgd8po_13, 2},
+    {"duration", ExposeType::Numeric, Access::StateSet, "sec", nullptr, nullptr, 0, ExposeCategory::State, 0, 300, 1},
+    {"update_frequency", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 0, 700, 0},
+    {"calibrate", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_j7sgd8po_16, 2},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_j7sgd8po{
     .zigbee_models=kM__TZE200_j7sgd8po,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_j7sgd8po,.manufacturer_names_count=1,
     .model="TS0601__TZE200_j7sgd8po",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_j7sgd8po,.exposes_count=sizeof(kAutoExposes__TZE200_j7sgd8po)/sizeof(kAutoExposes__TZE200_j7sgd8po[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_j7sgd8po,
     .from_zigbee_count=sizeof(kFz__TZE200_j7sgd8po)/sizeof(kFz__TZE200_j7sgd8po[0]),

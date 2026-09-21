@@ -30,8 +30,10 @@ constexpr const char* kModels_D552_720X1[] = { "Battery switch, 1 button" };
 
 
 // --- hand-authored exposes ---
+constexpr const char* kAutoOpts_D552_720X1_action[] = {"on", "off", "brightness_move_up", "brightness_move_down", "brightness_stop"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_D552_720X1_action, 5},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };

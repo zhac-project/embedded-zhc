@@ -79,13 +79,30 @@ constexpr TzConverter kTzDp__TZE204_k7mfgaen{
 const TzConverter* const kTz__TZE204_k7mfgaen[] = { &kTzDp__TZE204_k7mfgaen };
 constexpr const char* kM__TZE204_k7mfgaen[] = { "TS0601" };
 constexpr const char* kN__TZE204_k7mfgaen[] = { "_TZE204_k7mfgaen" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_k7mfgaen_1[] = {"sound", "light", "sound+light", "normal"};
+constexpr const char* kAutoOpts__TZE204_k7mfgaen_2[] = {"mute", "low", "middle", "high"};
+constexpr const char* kAutoOpts__TZE204_k7mfgaen_3[] = {"melody1", "melody2", "melody3", "melody4", "melody5", "melody6", "melody7", "melody8", "door", "water", "temperature", "entered", "left"};
+constexpr const char* kAutoOpts__TZE204_k7mfgaen_4[] = {"battery", "cable"};
+constexpr const char* kAutoOpts__TZE204_k7mfgaen_6[] = {"low", "middle", "high"};
+constexpr Expose kAutoExposes__TZE204_k7mfgaen[] = {
+    {"alarm", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"type", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_k7mfgaen_1, 4},
+    {"volume", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_k7mfgaen_2, 4},
+    {"ringtone", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_k7mfgaen_3, 13},
+    {"power_type", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_k7mfgaen_4, 2},
+    {"duration", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 1, 60, 1},
+    {"battery_level", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_k7mfgaen_6, 3},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_k7mfgaen{
     .zigbee_models=kM__TZE204_k7mfgaen,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_k7mfgaen,.manufacturer_names_count=1,
     .model="TS0601__TZE204_k7mfgaen",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_k7mfgaen,.exposes_count=sizeof(kAutoExposes__TZE204_k7mfgaen)/sizeof(kAutoExposes__TZE204_k7mfgaen[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_k7mfgaen,
     .from_zigbee_count=sizeof(kFz__TZE204_k7mfgaen)/sizeof(kFz__TZE204_k7mfgaen[0]),

@@ -60,6 +60,24 @@ constexpr TzConverter kTzDp__TZE284_yzr43ayq{
 const TzConverter* const kTz__TZE284_yzr43ayq[] = { &kTzDp__TZE284_yzr43ayq };
 constexpr const char* kM__TZE284_yzr43ayq[] = { "TS0601" };
 constexpr const char* kN__TZE284_yzr43ayq[] = { "_TZE284_yzr43ayq" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_yzr43ayq_0[] = {"none", "alarm"};
+constexpr const char* kAutoOpts__TZE284_yzr43ayq_1[] = {"low", "middle", "high"};
+constexpr Expose kAutoExposes__TZE284_yzr43ayq[] = {
+    {"water_warning", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_yzr43ayq_0, 2},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_yzr43ayq_1, 3, ExposeCategory::Diagnostic},
+    {"soil_moisture", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"soil_sampling", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 5, 3600, 1},
+    {"soil_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
+    {"humidity_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
+    {"illuminance_calibration", ExposeType::Numeric, Access::StateSet, "lx", nullptr, nullptr, 0, ExposeCategory::State, -1000, 1000, 1},
+    {"temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -2, 2, 0},
+    {"soil_warning", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_yzr43ayq[] = {
@@ -70,7 +88,7 @@ extern const PreparedDefinition kDefGen__TZE284_yzr43ayq{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_yzr43ayq,.manufacturer_names_count=1,
     .model="TS0601__TZE284_yzr43ayq",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_yzr43ayq,.exposes_count=sizeof(kAutoExposes__TZE284_yzr43ayq)/sizeof(kAutoExposes__TZE284_yzr43ayq[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_yzr43ayq, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_yzr43ayq)/sizeof(kWhiteLabels_Gen_TZE284_yzr43ayq[0]),
     .from_zigbee=kFz__TZE284_yzr43ayq,
     .from_zigbee_count=sizeof(kFz__TZE284_yzr43ayq)/sizeof(kFz__TZE284_yzr43ayq[0]),

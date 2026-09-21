@@ -50,6 +50,23 @@ constexpr TzConverter kTzDp__TZE284_hgeqeyuv{
 const TzConverter* const kTz__TZE284_hgeqeyuv[] = { &kTzDp__TZE284_hgeqeyuv };
 constexpr const char* kM__TZE284_hgeqeyuv[] = { "TS0601" };
 constexpr const char* kN__TZE284_hgeqeyuv[] = { "_TZE284_hgeqeyuv" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE284_hgeqeyuv[] = {
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"move_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 10, 1},
+    {"presence_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 10, 1},
+    {"presence_timeout", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 1, 600, 1},
+    {"detection_distance_max", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 9, 0},
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"living_room", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"bedroom", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"bathroom", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"sleep", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"radar_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_hgeqeyuv[] = {
@@ -61,7 +78,7 @@ extern const PreparedDefinition kDefGen__TZE284_hgeqeyuv{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_hgeqeyuv,.manufacturer_names_count=1,
     .model="TS0601__TZE284_hgeqeyuv",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_hgeqeyuv,.exposes_count=sizeof(kAutoExposes__TZE284_hgeqeyuv)/sizeof(kAutoExposes__TZE284_hgeqeyuv[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_hgeqeyuv, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_hgeqeyuv)/sizeof(kWhiteLabels_Gen_TZE284_hgeqeyuv[0]),
     .from_zigbee=kFz__TZE284_hgeqeyuv,
     .from_zigbee_count=sizeof(kFz__TZE284_hgeqeyuv)/sizeof(kFz__TZE284_hgeqeyuv[0]),

@@ -44,13 +44,28 @@ constexpr TzConverter kTzDp__TZE284_eaet5qt5{
 const TzConverter* const kTz__TZE284_eaet5qt5[] = { &kTzDp__TZE284_eaet5qt5 };
 constexpr const char* kM__TZE284_eaet5qt5[] = { "TS0601" };
 constexpr const char* kN__TZE284_eaet5qt5[] = { "_TZE284_eaet5qt5" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_eaet5qt5_0[] = {"manual", "auto", "idle"};
+constexpr const char* kAutoOpts__TZE284_eaet5qt5_1[] = {"manual", "auto", "idle"};
+constexpr Expose kAutoExposes__TZE284_eaet5qt5[] = {
+    {"valve_status_l1", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_eaet5qt5_0, 3},
+    {"valve_status_l2", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_eaet5qt5_1, 3},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 0, 1440, 0},
+    {"countdown_l2", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 0, 1440, 0},
+    {"valve_duration_l1", ExposeType::Numeric, Access::State, "s", nullptr, nullptr, 0},
+    {"valve_duration_l2", ExposeType::Numeric, Access::State, "s", nullptr, nullptr, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_eaet5qt5{
     .zigbee_models=kM__TZE284_eaet5qt5,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_eaet5qt5,.manufacturer_names_count=1,
     .model="TS0601__TZE284_eaet5qt5",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_eaet5qt5,.exposes_count=sizeof(kAutoExposes__TZE284_eaet5qt5)/sizeof(kAutoExposes__TZE284_eaet5qt5[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_eaet5qt5,
     .from_zigbee_count=sizeof(kFz__TZE284_eaet5qt5)/sizeof(kFz__TZE284_eaet5qt5[0]),

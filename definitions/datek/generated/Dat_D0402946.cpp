@@ -36,6 +36,8 @@ constexpr const char* kModels_D0402946[] = { "ID Lock 150", "ID Lock 202" };
 
 
 // --- hand-curated exposes/bindings (z2m parity) ---
+constexpr const char* kAutoOpts_D0402946_action[] = {"unknown", "lock", "unlock", "lock_failure_invalid_pin_or_id", "lock_failure_invalid_schedule", "unlock_failure_invalid_pin_or_id", "unlock_failure_invalid_schedule", "one_touch_lock", "key_lock", "key_unlock", "auto_lock", "schedule_lock", "schedule_unlock", "manual_lock", "manual_unlock", "non_access_user_operational_event"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
@@ -49,7 +51,7 @@ constexpr Expose kAutoExposes[] = {
     {"lock_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"relock_enabled", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"pin_code", ExposeType::String, Access::Set, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_D0402946_action, 16},
     {"action_user", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"action_source", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"action_source_name", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},

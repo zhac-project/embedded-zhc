@@ -47,13 +47,24 @@ constexpr TzConverter kTzDp__TZE284_hodyryli{
 const TzConverter* const kTz__TZE284_hodyryli[] = { &kTzDp__TZE284_hodyryli };
 constexpr const char* kM__TZE284_hodyryli[] = { "TS0601" };
 constexpr const char* kN__TZE284_hodyryli[] = { "_TZE284_hodyryli" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_hodyryli_3[] = {"low", "medium", "high"};
+constexpr const char* kAutoOpts__TZE284_hodyryli_4[] = {"12h", "24h"};
+constexpr Expose kAutoExposes__TZE284_hodyryli[] = {
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"external_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_hodyryli_3, 3, ExposeCategory::Diagnostic},
+    {"time_format", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_hodyryli_4, 2},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_hodyryli{
     .zigbee_models=kM__TZE284_hodyryli,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_hodyryli,.manufacturer_names_count=1,
     .model="TS0601__TZE284_hodyryli",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_hodyryli,.exposes_count=sizeof(kAutoExposes__TZE284_hodyryli)/sizeof(kAutoExposes__TZE284_hodyryli[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_hodyryli,
     .from_zigbee_count=sizeof(kFz__TZE284_hodyryli)/sizeof(kFz__TZE284_hodyryli[0]),

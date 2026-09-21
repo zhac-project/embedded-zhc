@@ -55,6 +55,37 @@ constexpr TzConverter kTzDp__TZE200_wbhaespm{
 const TzConverter* const kTz__TZE200_wbhaespm[] = { &kTzDp__TZE200_wbhaespm };
 constexpr const char* kM__TZE200_wbhaespm[] = { "TS0601" };
 constexpr const char* kN__TZE200_wbhaespm[] = { "_TZE200_wbhaespm" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE200_wbhaespm[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"voltage_a", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_b", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_c", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"power_a", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_b", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_c", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current_a", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_b", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_c", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"leakage_test", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"over_current_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"over_current_threshold", ExposeType::Numeric, Access::StateSet, "A", nullptr, nullptr, 0, ExposeCategory::State, 1, 63, 0},
+    {"over_voltage_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"over_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 250, 300, 0},
+    {"under_voltage_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"under_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 150, 200, 0},
+    {"insufficient_balance_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"insufficient_balance_threshold", ExposeType::Numeric, Access::StateSet, "kWh", nullptr, nullptr, 0, ExposeCategory::State, 1, 65535, 0},
+    {"overload_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"overload_threshold", ExposeType::Numeric, Access::StateSet, "kW", nullptr, nullptr, 0, ExposeCategory::State, 1, 25, 0},
+    {"leakage_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"leakage_threshold", ExposeType::Numeric, Access::StateSet, "mA", nullptr, nullptr, 0, ExposeCategory::State, 10, 90, 0},
+    {"high_temperature_breaker", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"high_temperature_threshold", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 40, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_wbhaespm[] = {
@@ -65,7 +96,7 @@ extern const PreparedDefinition kDefGen__TZE200_wbhaespm{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wbhaespm,.manufacturer_names_count=1,
     .model="TS0601__TZE200_wbhaespm",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_wbhaespm,.exposes_count=sizeof(kAutoExposes__TZE200_wbhaespm)/sizeof(kAutoExposes__TZE200_wbhaespm[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_wbhaespm, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_wbhaespm)/sizeof(kWhiteLabels_Gen_TZE200_wbhaespm[0]),
     .from_zigbee=kFz__TZE200_wbhaespm,
     .from_zigbee_count=sizeof(kFz__TZE200_wbhaespm)/sizeof(kFz__TZE200_wbhaespm[0]),

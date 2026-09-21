@@ -24,8 +24,10 @@ constexpr const char* kModels_ZYCT_202[] = { "ZLL-NonColorController" };
 
 }  // namespace
 
+constexpr const char* kAutoOpts_ZYCT_202_action[] = {"on", "off", "stop", "brightness_stop", "brightness_move_up", "brightness_move_down"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_ZYCT_202_action, 6},
 };
 
 extern const PreparedDefinition kDef_ZYCT_202{

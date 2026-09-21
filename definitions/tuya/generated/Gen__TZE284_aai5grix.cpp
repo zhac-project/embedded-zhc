@@ -199,13 +199,75 @@ constexpr TzConverter kTzDp__TZE284_aai5grix{
 const TzConverter* const kTz__TZE284_aai5grix[] = { &kTzDp__TZE284_aai5grix };
 constexpr const char* kM__TZE284_aai5grix[] = { "TS0601" };
 constexpr const char* kN__TZE284_aai5grix[] = { "_TZE284_aai5grix" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_aai5grix_1[] = {"none", "presence", "move"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_6[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_7[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_8[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_9[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_10[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_11[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_12[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_13[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_14[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_15[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_16[] = {"disable", "enable"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_24[] = {"silence", "status"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_27[] = {"large_move", "small_move", "custom_move"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_28[] = {"start"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_29[] = {"start", "ongoing", "complete"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_30[] = {"no_action", "restart", "reset_param"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_31[] = {"high", "medium", "low", "custom"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_32[] = {"high", "medium", "low", "custom"};
+constexpr const char* kAutoOpts__TZE284_aai5grix_33[] = {"custom", "toilet", "kitchen", "corridor", "bedroom", "living_room", "meeting_room"};
+constexpr Expose kAutoExposes__TZE284_aai5grix[] = {
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_1, 3},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"min_distance", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"max_distance", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"target_distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 9, 0},
+    {"gate_enable_01", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_6, 2},
+    {"gate_enable_02", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_7, 2},
+    {"gate_enable_03", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_8, 2},
+    {"gate_enable_04", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_9, 2},
+    {"gate_enable_05", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_10, 2},
+    {"gate_enable_06", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_11, 2},
+    {"gate_enable_07", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_12, 2},
+    {"gate_enable_08", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_13, 2},
+    {"gate_enable_09", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_14, 2},
+    {"gate_enable_10", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_15, 2},
+    {"gate_enable_11", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_16, 2},
+    {"configuration_gate", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 11, 0},
+    {"move_threshold", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 99, 0},
+    {"presence_threshold", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 99, 0},
+    {"nearest_target_gate", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 11, 0},
+    {"target_countdown", ExposeType::Numeric, Access::State, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 3600, 0},
+    {"target_velocity", ExposeType::Numeric, Access::State, "m/s", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 0},
+    {"debug_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"led_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_24, 2},
+    {"delay_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 5, 3600, 0},
+    {"block_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"judge_logic", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_27, 3},
+    {"start_noise_collect", ExposeType::Enum, Access::Set, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_28, 1},
+    {"noise_collect_status", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_29, 3},
+    {"device_control", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_30, 3},
+    {"presence_sensitivity", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_31, 4},
+    {"move_sensitivity", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_32, 4},
+    {"scene_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aai5grix_33, 7},
+    {"illuminance_report", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"move_detect", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"distance_report", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"speed_report", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_aai5grix{
     .zigbee_models=kM__TZE284_aai5grix,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_aai5grix,.manufacturer_names_count=1,
     .model="TS0601__TZE284_aai5grix",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_aai5grix,.exposes_count=sizeof(kAutoExposes__TZE284_aai5grix)/sizeof(kAutoExposes__TZE284_aai5grix[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_aai5grix,
     .from_zigbee_count=sizeof(kFz__TZE284_aai5grix)/sizeof(kFz__TZE284_aai5grix[0]),

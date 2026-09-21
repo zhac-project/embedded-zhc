@@ -42,13 +42,28 @@ constexpr TzConverter kTzDp__TZ3218_7fiyo3kv{
 const TzConverter* const kTz__TZ3218_7fiyo3kv[] = { &kTzDp__TZ3218_7fiyo3kv };
 constexpr const char* kM__TZ3218_7fiyo3kv[] = { "TS000F" };
 constexpr const char* kN__TZ3218_7fiyo3kv[] = { "_TZ3218_7fiyo3kv" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZ3218_7fiyo3kv_1[] = {"on", "off", "restore"};
+constexpr Expose kAutoExposes__TZ3218_7fiyo3kv[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_outage_memory", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ3218_7fiyo3kv_1, 3, ExposeCategory::Config},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -10, 10, 0},
+    {"humidity_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -10, 10, 0},
+    {"temperature_sensitivity", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 1, 0},
+    {"humidity_sensitivity", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 1, 10, 0},
+    {"manual_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZ3218_7fiyo3kv{
     .zigbee_models=kM__TZ3218_7fiyo3kv,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZ3218_7fiyo3kv,.manufacturer_names_count=1,
     .model="TS000F__TZ3218_7fiyo3kv",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZ3218_7fiyo3kv,.exposes_count=sizeof(kAutoExposes__TZ3218_7fiyo3kv)/sizeof(kAutoExposes__TZ3218_7fiyo3kv[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZ3218_7fiyo3kv,
     .from_zigbee_count=sizeof(kFz__TZ3218_7fiyo3kv)/sizeof(kFz__TZ3218_7fiyo3kv[0]),

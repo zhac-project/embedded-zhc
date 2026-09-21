@@ -46,6 +46,19 @@ constexpr TzConverter kTzDp__TZE204_ex3rcdha{
 const TzConverter* const kTz__TZE204_ex3rcdha[] = { &kTzDp__TZE204_ex3rcdha };
 constexpr const char* kM__TZE204_ex3rcdha[] = { "TS0601" };
 constexpr const char* kN__TZE204_ex3rcdha[] = { "_TZE204_ex3rcdha" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_ex3rcdha[] = {
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"presence_timeout", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 180, 1},
+    {"move_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"move_minimum_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 10},
+    {"move_maximum_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 10},
+    {"breath_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"breath_minimum_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 10},
+    {"breath_maximum_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 10},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_ex3rcdha[] = {
@@ -56,7 +69,7 @@ extern const PreparedDefinition kDefGen__TZE204_ex3rcdha{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_ex3rcdha,.manufacturer_names_count=1,
     .model="TS0601__TZE204_ex3rcdha",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_ex3rcdha,.exposes_count=sizeof(kAutoExposes__TZE204_ex3rcdha)/sizeof(kAutoExposes__TZE204_ex3rcdha[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_ex3rcdha, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_ex3rcdha)/sizeof(kWhiteLabels_Gen_TZE204_ex3rcdha[0]),
     .from_zigbee=kFz__TZE204_ex3rcdha,
     .from_zigbee_count=sizeof(kFz__TZE204_ex3rcdha)/sizeof(kFz__TZE204_ex3rcdha[0]),

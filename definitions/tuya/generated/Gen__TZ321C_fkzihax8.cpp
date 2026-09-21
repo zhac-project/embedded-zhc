@@ -87,13 +87,40 @@ constexpr TzConverter kTzDp__TZ321C_fkzihax8{
 const TzConverter* const kTz__TZ321C_fkzihax8[] = { &kTzDp__TZ321C_fkzihax8 };
 constexpr const char* kM__TZ321C_fkzihax8[] = { "TS0225" };
 constexpr const char* kN__TZ321C_fkzihax8[] = { "_TZ321C_fkzihax8" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZ321C_fkzihax8_11[] = {"OFF", "ON"};
+constexpr const char* kAutoOpts__TZ321C_fkzihax8_12[] = {"on", "occupied", "unoccupied"};
+constexpr const char* kAutoOpts__TZ321C_fkzihax8_13[] = {"Custom", "Toilet", "Kitchen", "Hallway", "Bedroom", "Livingroom", "Meetingroom", "Factory default"};
+constexpr const char* kAutoOpts__TZ321C_fkzihax8_14[] = {"Normal", "Occupancy detection"};
+constexpr const char* kAutoOpts__TZ321C_fkzihax8_15[] = {"OFF", "ON"};
+constexpr Expose kAutoExposes__TZ321C_fkzihax8[] = {
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"target_distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"radar_sensitivity", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 10, 100, 10},
+    {"detection_range", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"shield_range", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"entry_sensitivity", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 10, 100, 10},
+    {"entry_distance", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"entry_filter_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 0, 0},
+    {"departure_delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 5, 7200, 1},
+    {"block_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"status_indication", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ321C_fkzihax8_11, 2},
+    {"sensor", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ321C_fkzihax8_12, 3},
+    {"scene_preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ321C_fkzihax8_13, 8},
+    {"distance_report_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ321C_fkzihax8_14, 2},
+    {"debug_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ321C_fkzihax8_15, 2},
+    {"debug_distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"debug_countdown", ExposeType::Numeric, Access::State, "s", nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZ321C_fkzihax8{
     .zigbee_models=kM__TZ321C_fkzihax8,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZ321C_fkzihax8,.manufacturer_names_count=1,
     .model="TS0225__TZ321C_fkzihax8",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZ321C_fkzihax8,.exposes_count=sizeof(kAutoExposes__TZ321C_fkzihax8)/sizeof(kAutoExposes__TZ321C_fkzihax8[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZ321C_fkzihax8,
     .from_zigbee_count=sizeof(kFz__TZ321C_fkzihax8)/sizeof(kFz__TZ321C_fkzihax8[0]),

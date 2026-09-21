@@ -90,6 +90,46 @@ constexpr TzConverter kTzDp__TZE204_qyr2m29i{
 const TzConverter* const kTz__TZE204_qyr2m29i[] = { &kTzDp__TZE204_qyr2m29i };
 constexpr const char* kM__TZE204_qyr2m29i[] = { "TS0601" };
 constexpr const char* kN__TZE204_qyr2m29i[] = { "_TZE204_qyr2m29i" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_qyr2m29i_12[] = {"off", "antifrost", "eco", "comfort", "auto", "on"};
+constexpr const char* kAutoOpts__TZE204_qyr2m29i_13[] = {"idle", "heat"};
+constexpr const char* kAutoOpts__TZE204_qyr2m29i_14[] = {"auto", "heat", "off"};
+constexpr const char* kAutoOpts__TZE204_qyr2m29i_25[] = {"high", "medium", "low"};
+constexpr const char* kAutoOpts__TZE204_qyr2m29i_26[] = {"up", "down"};
+constexpr const char* kAutoOpts__TZE204_qyr2m29i_27[] = {"comfort", "eco"};
+constexpr const char* kAutoOpts__TZE204_qyr2m29i_28[] = {"strong", "middle", "weak"};
+constexpr Expose kAutoExposes__TZE204_qyr2m29i[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"max_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 15, 35, 0},
+    {"min_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 1, 15, 0},
+    {"position", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"boost_timeset_countdown", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 120, 0},
+    {"frost_protection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"window", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -10, 10, 0},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_qyr2m29i_12, 6},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_qyr2m29i_13, 2},
+    {"system_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_qyr2m29i_14, 3},
+    {"schedule_monday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_tuesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_wednesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_thursday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_friday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_saturday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_sunday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"comfort_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"holiday_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"display_brightness", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_qyr2m29i_25, 3},
+    {"screen_orientation", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_qyr2m29i_26, 2},
+    {"hysteresis", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_qyr2m29i_27, 2},
+    {"motor_thrust", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_qyr2m29i_28, 3},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_qyr2m29i[] = {
@@ -100,7 +140,7 @@ extern const PreparedDefinition kDefGen__TZE204_qyr2m29i{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_qyr2m29i,.manufacturer_names_count=1,
     .model="TS0601__TZE204_qyr2m29i",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_qyr2m29i,.exposes_count=sizeof(kAutoExposes__TZE204_qyr2m29i)/sizeof(kAutoExposes__TZE204_qyr2m29i[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_qyr2m29i, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_qyr2m29i)/sizeof(kWhiteLabels_Gen_TZE204_qyr2m29i[0]),
     .from_zigbee=kFz__TZE204_qyr2m29i,
     .from_zigbee_count=sizeof(kFz__TZE204_qyr2m29i)/sizeof(kFz__TZE204_qyr2m29i[0]),

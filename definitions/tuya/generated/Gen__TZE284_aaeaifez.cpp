@@ -69,6 +69,32 @@ constexpr TzConverter kTzDp__TZE284_aaeaifez{
 const TzConverter* const kTz__TZE284_aaeaifez[] = { &kTzDp__TZE284_aaeaifez };
 constexpr const char* kM__TZE284_aaeaifez[] = { "TS0601" };
 constexpr const char* kN__TZE284_aaeaifez[] = { "_TZE284_aaeaifez" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_aaeaifez_4[] = {"idle", "heat"};
+constexpr const char* kAutoOpts__TZE284_aaeaifez_5[] = {"manual", "program", "temporary"};
+constexpr const char* kAutoOpts__TZE284_aaeaifez_10[] = {"two-day weekend", "single day off", "no rest", "turn off programming"};
+constexpr const char* kAutoOpts__TZE284_aaeaifez_12[] = {"in", "out", "all"};
+constexpr const char* kAutoOpts__TZE284_aaeaifez_15[] = {"off", "micro light", "medium light", "high light"};
+constexpr Expose kAutoExposes__TZE284_aaeaifez[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 95, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 0},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_aaeaifez_4, 2},
+    {"mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aaeaifez_5, 3},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"fault", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"upper_temperature_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 15, 95, 1},
+    {"frost_protection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"work_days", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aaeaifez_10, 4},
+    {"sound", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"sensor_selection", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aaeaifez_12, 3},
+    {"temperature_variation", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"sensor_temperature_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 25, 95, 1},
+    {"backlight", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_aaeaifez_15, 4},
+    {"direction_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_aaeaifez[] = {
@@ -79,7 +105,7 @@ extern const PreparedDefinition kDefGen__TZE284_aaeaifez{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_aaeaifez,.manufacturer_names_count=1,
     .model="TS0601__TZE284_aaeaifez",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_aaeaifez,.exposes_count=sizeof(kAutoExposes__TZE284_aaeaifez)/sizeof(kAutoExposes__TZE284_aaeaifez[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_aaeaifez, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_aaeaifez)/sizeof(kWhiteLabels_Gen_TZE284_aaeaifez[0]),
     .from_zigbee=kFz__TZE284_aaeaifez,
     .from_zigbee_count=sizeof(kFz__TZE284_aaeaifez)/sizeof(kFz__TZE284_aaeaifez[0]),

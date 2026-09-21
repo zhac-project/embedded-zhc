@@ -40,6 +40,13 @@ constexpr TzConverter kTzDp__TZE284_0zaf1cr8{
 const TzConverter* const kTz__TZE284_0zaf1cr8[] = { &kTzDp__TZE284_0zaf1cr8 };
 constexpr const char* kM__TZE284_0zaf1cr8[] = { "TS0601" };
 constexpr const char* kN__TZE284_0zaf1cr8[] = { "_TZE284_0zaf1cr8" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE284_0zaf1cr8[] = {
+    {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_0zaf1cr8[] = {
@@ -50,7 +57,7 @@ extern const PreparedDefinition kDefGen__TZE284_0zaf1cr8{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_0zaf1cr8,.manufacturer_names_count=1,
     .model="TS0601__TZE284_0zaf1cr8",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_0zaf1cr8,.exposes_count=sizeof(kAutoExposes__TZE284_0zaf1cr8)/sizeof(kAutoExposes__TZE284_0zaf1cr8[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_0zaf1cr8, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_0zaf1cr8)/sizeof(kWhiteLabels_Gen_TZE284_0zaf1cr8[0]),
     .from_zigbee=kFz__TZE284_0zaf1cr8,
     .from_zigbee_count=sizeof(kFz__TZE284_0zaf1cr8)/sizeof(kFz__TZE284_0zaf1cr8[0]),

@@ -50,6 +50,30 @@ constexpr TzConverter kTzDp__TZE200_nslr42tt{
 const TzConverter* const kTz__TZE200_nslr42tt[] = { &kTzDp__TZE200_nslr42tt };
 constexpr const char* kM__TZE200_nslr42tt[] = { "TS0601" };
 constexpr const char* kN__TZE200_nslr42tt[] = { "_TZE200_nslr42tt" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE200_nslr42tt[] = {
+    {"ac_frequency", ExposeType::Numeric, Access::State, "Hz", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_a", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_b", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"energy_c", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"voltage_a", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_b", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_c", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"power_a", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_b", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_c", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current_a", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_b", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_c", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"power_factor_a", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"power_factor_b", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"power_factor_c", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_nslr42tt[] = {
@@ -61,7 +85,7 @@ extern const PreparedDefinition kDefGen__TZE200_nslr42tt{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_nslr42tt,.manufacturer_names_count=1,
     .model="TS0601__TZE200_nslr42tt",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_nslr42tt,.exposes_count=sizeof(kAutoExposes__TZE200_nslr42tt)/sizeof(kAutoExposes__TZE200_nslr42tt[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_nslr42tt, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_nslr42tt)/sizeof(kWhiteLabels_Gen_TZE200_nslr42tt[0]),
     .from_zigbee=kFz__TZE200_nslr42tt,
     .from_zigbee_count=sizeof(kFz__TZE200_nslr42tt)/sizeof(kFz__TZE200_nslr42tt[0]),

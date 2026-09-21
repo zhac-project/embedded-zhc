@@ -43,13 +43,25 @@ constexpr TzConverter kTzDp__TZE204_kyhbrfyl{
 const TzConverter* const kTz__TZE204_kyhbrfyl[] = { &kTzDp__TZE204_kyhbrfyl };
 constexpr const char* kM__TZE204_kyhbrfyl[] = { "TS0601" };
 constexpr const char* kN__TZE204_kyhbrfyl[] = { "_TZE204_kyhbrfyl" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_kyhbrfyl_1[] = {"none", "small", "large"};
+constexpr Expose kAutoExposes__TZE204_kyhbrfyl[] = {
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"human_motion_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_kyhbrfyl_1, 3},
+    {"departure_delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 3, 600, 1},
+    {"radar_range", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 150, 600, 75},
+    {"radar_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 7, 1},
+    {"presence_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 7, 1},
+    {"dis_current", ExposeType::Numeric, Access::State, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 1000, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_kyhbrfyl{
     .zigbee_models=kM__TZE204_kyhbrfyl,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_kyhbrfyl,.manufacturer_names_count=1,
     .model="TS0601__TZE204_kyhbrfyl",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_kyhbrfyl,.exposes_count=sizeof(kAutoExposes__TZE204_kyhbrfyl)/sizeof(kAutoExposes__TZE204_kyhbrfyl[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_kyhbrfyl,
     .from_zigbee_count=sizeof(kFz__TZE204_kyhbrfyl)/sizeof(kFz__TZE204_kyhbrfyl[0]),

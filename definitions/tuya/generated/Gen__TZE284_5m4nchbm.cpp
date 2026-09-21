@@ -50,13 +50,29 @@ constexpr TzConverter kTzDp__TZE284_5m4nchbm{
 const TzConverter* const kTz__TZE284_5m4nchbm[] = { &kTzDp__TZE284_5m4nchbm };
 constexpr const char* kM__TZE284_5m4nchbm[] = { "TS0601" };
 constexpr const char* kN__TZE284_5m4nchbm[] = { "_TZE284_5m4nchbm" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE284_5m4nchbm[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"leakage_current", ExposeType::Numeric, Access::State, "mA", nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"over_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 220, 265, 0},
+    {"under_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 76, 240, 0},
+    {"over_current_threshold", ExposeType::Numeric, Access::StateSet, "A", nullptr, nullptr, 0, ExposeCategory::State, 1, 63, 0},
+    {"leakage_threshold", ExposeType::Numeric, Access::StateSet, "mA", nullptr, nullptr, 0, ExposeCategory::State, 10, 100, 0},
+    {"temp_threshold", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 40, 150, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_5m4nchbm{
     .zigbee_models=kM__TZE284_5m4nchbm,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_5m4nchbm,.manufacturer_names_count=1,
     .model="TS0601__TZE284_5m4nchbm",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_5m4nchbm,.exposes_count=sizeof(kAutoExposes__TZE284_5m4nchbm)/sizeof(kAutoExposes__TZE284_5m4nchbm[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_5m4nchbm,
     .from_zigbee_count=sizeof(kFz__TZE284_5m4nchbm)/sizeof(kFz__TZE284_5m4nchbm[0]),

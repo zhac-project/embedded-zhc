@@ -85,6 +85,29 @@ constexpr TzConverter kTzDp__TZE204_mtoaryre{
 const TzConverter* const kTz__TZE204_mtoaryre[] = { &kTzDp__TZE204_mtoaryre };
 constexpr const char* kM__TZE204_mtoaryre[] = { "TS0601" };
 constexpr const char* kN__TZE204_mtoaryre[] = { "_TZE204_mtoaryre" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_mtoaryre_12[] = {"standard", "local"};
+constexpr const char* kAutoOpts__TZE204_mtoaryre_14[] = {"OFF", "ON"};
+constexpr const char* kAutoOpts__TZE204_mtoaryre_15[] = {"on", "off", "occupied", "unoccupied"};
+constexpr Expose kAutoExposes__TZE204_mtoaryre[] = {
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"target_distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"radar_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 9, 1},
+    {"detection_range", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"shield_range", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"entry_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 9, 1},
+    {"entry_distance_indentation", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"entry_filter_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"departure_delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 1},
+    {"block_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"breaker_status", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"breaker_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_mtoaryre_12, 2},
+    {"illuminance_threshold", ExposeType::Numeric, Access::StateSet, "lx", nullptr, nullptr, 0, ExposeCategory::State, 0, 420, 0},
+    {"status_indication", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_mtoaryre_14, 2},
+    {"sensor", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_mtoaryre_15, 4},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_mtoaryre[] = {
@@ -98,7 +121,7 @@ extern const PreparedDefinition kDefGen__TZE204_mtoaryre{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_mtoaryre,.manufacturer_names_count=1,
     .model="TS0601__TZE204_mtoaryre",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_mtoaryre,.exposes_count=sizeof(kAutoExposes__TZE204_mtoaryre)/sizeof(kAutoExposes__TZE204_mtoaryre[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_mtoaryre, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_mtoaryre)/sizeof(kWhiteLabels_Gen_TZE204_mtoaryre[0]),
     .from_zigbee=kFz__TZE204_mtoaryre,
     .from_zigbee_count=sizeof(kFz__TZE204_mtoaryre)/sizeof(kFz__TZE204_mtoaryre[0]),

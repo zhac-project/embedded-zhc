@@ -57,6 +57,20 @@ constexpr TzConverter kTzDp__TZE284_g1enhdsi{
 const TzConverter* const kTz__TZE284_g1enhdsi[] = { &kTzDp__TZE284_g1enhdsi };
 constexpr const char* kM__TZE284_g1enhdsi[] = { "TS0601" };
 constexpr const char* kN__TZE284_g1enhdsi[] = { "_TZE284_g1enhdsi" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_g1enhdsi_6[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE284_g1enhdsi_7[] = {"none", "relay", "pos"};
+constexpr Expose kAutoExposes__TZE284_g1enhdsi[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l5", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l6", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_g1enhdsi_6, 3, ExposeCategory::Config},
+    {"indicator_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_g1enhdsi_7, 3, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_g1enhdsi[] = {
@@ -72,7 +86,7 @@ extern const PreparedDefinition kDefGen__TZE284_g1enhdsi{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_g1enhdsi,.manufacturer_names_count=1,
     .model="TS0601__TZE284_g1enhdsi",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_g1enhdsi,.exposes_count=sizeof(kAutoExposes__TZE284_g1enhdsi)/sizeof(kAutoExposes__TZE284_g1enhdsi[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_g1enhdsi, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_g1enhdsi)/sizeof(kWhiteLabels_Gen_TZE284_g1enhdsi[0]),
     .from_zigbee=kFz__TZE284_g1enhdsi,
     .from_zigbee_count=sizeof(kFz__TZE284_g1enhdsi)/sizeof(kFz__TZE284_g1enhdsi[0]),

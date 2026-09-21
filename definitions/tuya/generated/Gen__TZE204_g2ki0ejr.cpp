@@ -79,13 +79,48 @@ constexpr TzConverter kTzDp__TZE204_g2ki0ejr{
 const TzConverter* const kTz__TZE204_g2ki0ejr[] = { &kTzDp__TZE204_g2ki0ejr };
 constexpr const char* kM__TZE204_g2ki0ejr[] = { "TS0601" };
 constexpr const char* kN__TZE204_g2ki0ejr[] = { "_TZE204_g2ki0ejr" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_g2ki0ejr_9[] = {"auto", "manual", "holiday", "comfort"};
+constexpr const char* kAutoOpts__TZE204_g2ki0ejr_13[] = {"off", "heat"};
+constexpr const char* kAutoOpts__TZE204_g2ki0ejr_14[] = {"idle", "heat"};
+constexpr Expose kAutoExposes__TZE204_g2ki0ejr[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"max_temperature_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 15, 45, 0},
+    {"min_temperature_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 15, 0},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"open_window_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"comfort_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"holiday_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g2ki0ejr_9, 4},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 45, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g2ki0ejr_13, 2},
+    {"running_state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_g2ki0ejr_14, 2},
+    {"frost_protection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"boost_time", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::Config, 0, 1440, 15},
+    {"boost_timeset_countdown", ExposeType::Numeric, Access::State, "min", nullptr, nullptr, 0},
+    {"schedule_monday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"schedule_tuesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"schedule_wednesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"schedule_thursday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"schedule_friday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"schedule_saturday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"schedule_sunday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"valve", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"factory_reset", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"error_status", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_g2ki0ejr{
     .zigbee_models=kM__TZE204_g2ki0ejr,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_g2ki0ejr,.manufacturer_names_count=1,
     .model="TS0601__TZE204_g2ki0ejr",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_g2ki0ejr,.exposes_count=sizeof(kAutoExposes__TZE204_g2ki0ejr)/sizeof(kAutoExposes__TZE204_g2ki0ejr[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_g2ki0ejr,
     .from_zigbee_count=sizeof(kFz__TZE204_g2ki0ejr)/sizeof(kFz__TZE204_g2ki0ejr[0]),

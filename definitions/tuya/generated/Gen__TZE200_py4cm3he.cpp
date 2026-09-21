@@ -93,6 +93,39 @@ constexpr TzConverter kTzDp__TZE200_py4cm3he{
 const TzConverter* const kTz__TZE200_py4cm3he[] = { &kTzDp__TZE200_py4cm3he };
 constexpr const char* kM__TZE200_py4cm3he[] = { "TS0601" };
 constexpr const char* kN__TZE200_py4cm3he[] = { "_TZE200_py4cm3he" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_py4cm3he_6[] = {"auto", "manual", "holiday"};
+constexpr const char* kAutoOpts__TZE200_py4cm3he_10[] = {"off", "heat"};
+constexpr const char* kAutoOpts__TZE200_py4cm3he_16[] = {"mon_sun", "mon_fri+sat+sun", "separate"};
+constexpr Expose kAutoExposes__TZE200_py4cm3he[] = {
+    {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"open_window", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"open_window_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"comfort_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"eco_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_py4cm3he_6, 3},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -5, 5, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_py4cm3he_10, 2},
+    {"heating_stop", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"frost_protection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"boost_timeset_countdown", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 465, 0},
+    {"holiday_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 30, 0},
+    {"holiday_start_stop", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"working_day", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_py4cm3he_16, 3},
+    {"schedule_monday", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"schedule_tuesday", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"schedule_wednesday", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"schedule_thursday", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"schedule_friday", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"schedule_saturday", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"schedule_sunday", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+    {"online", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"error_status", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_py4cm3he[] = {
@@ -112,7 +145,7 @@ extern const PreparedDefinition kDefGen__TZE200_py4cm3he{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_py4cm3he,.manufacturer_names_count=1,
     .model="TS0601__TZE200_py4cm3he",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_py4cm3he,.exposes_count=sizeof(kAutoExposes__TZE200_py4cm3he)/sizeof(kAutoExposes__TZE200_py4cm3he[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_py4cm3he, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_py4cm3he)/sizeof(kWhiteLabels_Gen_TZE200_py4cm3he[0]),
     .from_zigbee=kFz__TZE200_py4cm3he,
     .from_zigbee_count=sizeof(kFz__TZE200_py4cm3he)/sizeof(kFz__TZE200_py4cm3he[0]),

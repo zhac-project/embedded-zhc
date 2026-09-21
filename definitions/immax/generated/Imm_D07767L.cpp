@@ -16,8 +16,10 @@ constexpr const char* kManus_D07767L[] = { "_TZ3000_krwtzhfd" };
 }  // namespace
 
 
+constexpr const char* kAutoOpts_D07767L_action[] = {"single", "double", "hold"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_D07767L_action, 3},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };

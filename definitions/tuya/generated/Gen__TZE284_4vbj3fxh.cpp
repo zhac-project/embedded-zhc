@@ -54,13 +54,32 @@ constexpr TzConverter kTzDp__TZE284_4vbj3fxh{
 const TzConverter* const kTz__TZE284_4vbj3fxh[] = { &kTzDp__TZE284_4vbj3fxh };
 constexpr const char* kM__TZE284_4vbj3fxh[] = { "TS0601" };
 constexpr const char* kN__TZE284_4vbj3fxh[] = { "_TZE284_4vbj3fxh" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_4vbj3fxh_1[] = {"off", "cool", "heat", "fan_only"};
+constexpr const char* kAutoOpts__TZE284_4vbj3fxh_2[] = {"low", "medium", "high", "auto"};
+constexpr const char* kAutoOpts__TZE284_4vbj3fxh_9[] = {"locked", "unlocked"};
+constexpr Expose kAutoExposes__TZE284_4vbj3fxh[] = {
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_4vbj3fxh_1, 4},
+    {"fan_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_4vbj3fxh_2, 4},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 45, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 1},
+    {"screen_brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 9, 1},
+    {"deadzone_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 5, 0},
+    {"min_temperature_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 15, 1},
+    {"max_temperature_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 16, 45, 1},
+    {"child_lock", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_4vbj3fxh_9, 2},
+    {"eco_temperature_heating", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 20, 30, 1},
+    {"eco_temperature_cooling", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 20, 30, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_4vbj3fxh{
     .zigbee_models=kM__TZE284_4vbj3fxh,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_4vbj3fxh,.manufacturer_names_count=1,
     .model="TS0601__TZE284_4vbj3fxh",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_4vbj3fxh,.exposes_count=sizeof(kAutoExposes__TZE284_4vbj3fxh)/sizeof(kAutoExposes__TZE284_4vbj3fxh[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_4vbj3fxh,
     .from_zigbee_count=sizeof(kFz__TZE284_4vbj3fxh)/sizeof(kFz__TZE284_4vbj3fxh[0]),

@@ -65,13 +65,33 @@ constexpr TzConverter kTzDp__TZE204_zxkwaztm{
 const TzConverter* const kTz__TZE204_zxkwaztm[] = { &kTzDp__TZE204_zxkwaztm };
 constexpr const char* kM__TZE204_zxkwaztm[] = { "TS0601" };
 constexpr const char* kN__TZE204_zxkwaztm[] = { "_TZE204_zxkwaztm" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_zxkwaztm_1[] = {"off", "heat"};
+constexpr const char* kAutoOpts__TZE204_zxkwaztm_3[] = {"idle", "heat"};
+constexpr const char* kAutoOpts__TZE204_zxkwaztm_4[] = {"schedule", "manual"};
+constexpr const char* kAutoOpts__TZE204_zxkwaztm_8[] = {"mon_fri", "mon_sat", "mon_sun"};
+constexpr Expose kAutoExposes__TZE204_zxkwaztm[] = {
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"system_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_zxkwaztm_1, 2},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_zxkwaztm_3, 2},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_zxkwaztm_4, 2},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 0},
+    {"temperature_delta", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"working_day", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_zxkwaztm_8, 3},
+    {"schedule_weekday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_holiday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"frost_protection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_zxkwaztm{
     .zigbee_models=kM__TZE204_zxkwaztm,.zigbee_models_count=sizeof(kM__TZE204_zxkwaztm)/sizeof(kM__TZE204_zxkwaztm[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_zxkwaztm,.manufacturer_names_count=1,
     .model="TS0601__TZE204_zxkwaztm",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_zxkwaztm,.exposes_count=sizeof(kAutoExposes__TZE204_zxkwaztm)/sizeof(kAutoExposes__TZE204_zxkwaztm[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_zxkwaztm,
     .from_zigbee_count=sizeof(kFz__TZE204_zxkwaztm)/sizeof(kFz__TZE204_zxkwaztm[0]),

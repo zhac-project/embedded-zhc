@@ -47,13 +47,23 @@ constexpr TzConverter kTzDp__TZE204_hcxvyxa5{
 const TzConverter* const kTz__TZE204_hcxvyxa5[] = { &kTzDp__TZE204_hcxvyxa5 };
 constexpr const char* kM__TZE204_hcxvyxa5[] = { "TS0601" };
 constexpr const char* kN__TZE204_hcxvyxa5[] = { "_TZE204_hcxvyxa5" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_hcxvyxa5_1[] = {"low", "medium", "high", "mute"};
+constexpr const char* kAutoOpts__TZE204_hcxvyxa5_2[] = {"ringtone 1", "ringtone 2", "ringtone 3", "ringtone 4", "ringtone 5", "ringtone 6", "ringtone 7", "ringtone 8", "ringtone 9", "ringtone 10", "ringtone 11", "ringtone 12", "ringtone 13", "ringtone 14", "ringtone 15", "ringtone 16", "ringtone 17", "ringtone 18", "ringtone 19", "ringtone 20", "ringtone 21", "ringtone 22", "ringtone 23", "ringtone 24", "ringtone 25", "ringtone 26", "ringtone 27", "ringtone 28", "ringtone 29", "ringtone 30", "ringtone 31", "ringtone 32"};
+constexpr Expose kAutoExposes__TZE204_hcxvyxa5[] = {
+    {"alarm", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"volume", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_hcxvyxa5_1, 4},
+    {"ringtone", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_hcxvyxa5_2, 32},
+    {"duration", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 1, 380, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_hcxvyxa5{
     .zigbee_models=kM__TZE204_hcxvyxa5,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_hcxvyxa5,.manufacturer_names_count=1,
     .model="TS0601__TZE204_hcxvyxa5",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_hcxvyxa5,.exposes_count=sizeof(kAutoExposes__TZE204_hcxvyxa5)/sizeof(kAutoExposes__TZE204_hcxvyxa5[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_hcxvyxa5,
     .from_zigbee_count=sizeof(kFz__TZE204_hcxvyxa5)/sizeof(kFz__TZE204_hcxvyxa5[0]),

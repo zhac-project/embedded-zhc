@@ -46,13 +46,21 @@ constexpr TzConverter kTzDp__TZE204_dsagrkvg{
 const TzConverter* const kTz__TZE204_dsagrkvg[] = { &kTzDp__TZE204_dsagrkvg };
 constexpr const char* kM__TZE204_dsagrkvg[] = { "TS0601" };
 constexpr const char* kN__TZE204_dsagrkvg[] = { "_TZE204_dsagrkvg" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_dsagrkvg_1[] = {"Closed", "Unknown", "Open"};
+constexpr Expose kAutoExposes__TZE204_dsagrkvg[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"valve_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_dsagrkvg_1, 3},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_dsagrkvg{
     .zigbee_models=kM__TZE204_dsagrkvg,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_dsagrkvg,.manufacturer_names_count=1,
     .model="TS0601__TZE204_dsagrkvg",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_dsagrkvg,.exposes_count=sizeof(kAutoExposes__TZE204_dsagrkvg)/sizeof(kAutoExposes__TZE204_dsagrkvg[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_dsagrkvg,
     .from_zigbee_count=sizeof(kFz__TZE204_dsagrkvg)/sizeof(kFz__TZE204_dsagrkvg[0]),

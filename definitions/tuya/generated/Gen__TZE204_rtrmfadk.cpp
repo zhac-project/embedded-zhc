@@ -76,6 +76,41 @@ constexpr TzConverter kTzDp__TZE204_rtrmfadk{
 const TzConverter* const kTz__TZE204_rtrmfadk[] = { &kTzDp__TZE204_rtrmfadk };
 constexpr const char* kM__TZE204_rtrmfadk[] = { "TS0601" };
 constexpr const char* kN__TZE204_rtrmfadk[] = { "_TZE204_rtrmfadk" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_rtrmfadk_11[] = {"auto", "manual", "off", "on"};
+constexpr const char* kAutoOpts__TZE204_rtrmfadk_12[] = {"auto", "heat", "off"};
+constexpr const char* kAutoOpts__TZE204_rtrmfadk_13[] = {"idle", "heat"};
+constexpr const char* kAutoOpts__TZE204_rtrmfadk_21[] = {"up", "down"};
+constexpr const char* kAutoOpts__TZE204_rtrmfadk_22[] = {"high", "middle", "low"};
+constexpr const char* kAutoOpts__TZE204_rtrmfadk_23[] = {"comfort", "eco"};
+constexpr Expose kAutoExposes__TZE204_rtrmfadk[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"max_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 15, 35, 0},
+    {"min_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 1, 15, 0},
+    {"position", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"window", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"alarm_switch", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 0},
+    {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_rtrmfadk_11, 4},
+    {"system_mode", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_rtrmfadk_12, 3},
+    {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_rtrmfadk_13, 2},
+    {"schedule_monday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_tuesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_wednesday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_thursday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_friday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_saturday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"schedule_sunday", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"screen_orientation", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_rtrmfadk_21, 2},
+    {"display_brightness", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_rtrmfadk_22, 3},
+    {"mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_rtrmfadk_23, 2},
+    {"switch_deviation_eco", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 5, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_rtrmfadk[] = {
@@ -87,7 +122,7 @@ extern const PreparedDefinition kDefGen__TZE204_rtrmfadk{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_rtrmfadk,.manufacturer_names_count=1,
     .model="TS0601__TZE204_rtrmfadk",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_rtrmfadk,.exposes_count=sizeof(kAutoExposes__TZE204_rtrmfadk)/sizeof(kAutoExposes__TZE204_rtrmfadk[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_rtrmfadk, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_rtrmfadk)/sizeof(kWhiteLabels_Gen_TZE204_rtrmfadk[0]),
     .from_zigbee=kFz__TZE204_rtrmfadk,
     .from_zigbee_count=sizeof(kFz__TZE204_rtrmfadk)/sizeof(kFz__TZE204_rtrmfadk[0]),

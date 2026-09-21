@@ -98,13 +98,41 @@ constexpr TzConverter kTzDp__TZE200_eqpaxqdv{
 const TzConverter* const kTz__TZE200_eqpaxqdv[] = { &kTzDp__TZE200_eqpaxqdv };
 constexpr const char* kM__TZE200_eqpaxqdv[] = { "TS0601" };
 constexpr const char* kN__TZE200_eqpaxqdv[] = { "_TZE200_eqpaxqdv" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_eqpaxqdv_0[] = {"open", "stop", "close", "lock", "unlock"};
+constexpr const char* kAutoOpts__TZE200_eqpaxqdv_2[] = {"up", "up_delete", "remove_up_down"};
+constexpr const char* kAutoOpts__TZE200_eqpaxqdv_3[] = {"forward", "back"};
+constexpr const char* kAutoOpts__TZE200_eqpaxqdv_5[] = {"opening", "closing", "123"};
+constexpr const char* kAutoOpts__TZE200_eqpaxqdv_7[] = {"fully_open", "fully_close"};
+constexpr const char* kAutoOpts__TZE200_eqpaxqdv_9[] = {"set_up", "set_down", "delete_up", "delete_down", "delete_both"};
+constexpr const char* kAutoOpts__TZE200_eqpaxqdv_12[] = {"start", "end"};
+constexpr const char* kAutoOpts__TZE200_eqpaxqdv_15[] = {"reset"};
+constexpr Expose kAutoExposes__TZE200_eqpaxqdv[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eqpaxqdv_0, 5},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eqpaxqdv_2, 3},
+    {"control_back", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eqpaxqdv_3, 2},
+    {"auto_power", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"work_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_eqpaxqdv_5, 3},
+    {"time_total", ExposeType::Numeric, Access::State, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 0},
+    {"situation_set", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_eqpaxqdv_7, 2},
+    {"fault", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"cover_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eqpaxqdv_9, 5, ExposeCategory::Config},
+    {"favorite_position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::Config, 0, 100, 1},
+    {"angle_horizontal", ExposeType::Numeric, Access::StateSet, "°", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 25},
+    {"calibration", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eqpaxqdv_12, 2},
+    {"quick_calibration", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 900, 0},
+    {"switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"reset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_eqpaxqdv_15, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_eqpaxqdv{
     .zigbee_models=kM__TZE200_eqpaxqdv,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_eqpaxqdv,.manufacturer_names_count=1,
     .model="TS0601__TZE200_eqpaxqdv",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_eqpaxqdv,.exposes_count=sizeof(kAutoExposes__TZE200_eqpaxqdv)/sizeof(kAutoExposes__TZE200_eqpaxqdv[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_eqpaxqdv,
     .from_zigbee_count=sizeof(kFz__TZE200_eqpaxqdv)/sizeof(kFz__TZE200_eqpaxqdv[0]),

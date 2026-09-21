@@ -145,13 +145,90 @@ constexpr TzConverter kTzDp__TZE284_iwyqtclw{
 const TzConverter* const kTz__TZE284_iwyqtclw[] = { &kTzDp__TZE284_iwyqtclw };
 constexpr const char* kM__TZE284_iwyqtclw[] = { "TS0601" };
 constexpr const char* kN__TZE284_iwyqtclw[] = { "_TZE284_iwyqtclw" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_4[] = {"switch", "scene", "smart_light", "curtain"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_5[] = {"switch", "scene", "smart_light", "curtain"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_6[] = {"switch", "scene", "smart_light", "curtain"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_7[] = {"switch", "scene", "smart_light", "curtain", "thermostat"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_44[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_45[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_46[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_47[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_48[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_51[] = {"motion", "on_press", "on"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_56[] = {"switch_1", "switch_2", "switch_3", "switch_4", "switch_5", "switch_6", "switch_7", "switch_8", "switch_9"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_58[] = {"sunny", "heavy_rain", "cloudy", "sandstorm", "light_snow", "snow", "freezing_fog", "rainstorm", "shower", "dust", "spit", "sleet", "yin", "freezing_rain", "rain", "fog", "heavy_shower", "heavy_snow", "heavy_downpour", "blizzard", "hailstone", "snow_shower", "haze", "thunder_shower"};
+constexpr const char* kAutoOpts__TZE284_iwyqtclw_59[] = {"scene_0", "scene_1", "scene_2", "scene_3", "scene_4", "scene_5", "scene_6", "scene_7", "scene_8"};
+constexpr Expose kAutoExposes__TZE284_iwyqtclw[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"mode_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_4, 4},
+    {"mode_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_5, 4},
+    {"mode_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_6, 4},
+    {"mode_l4", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_7, 5},
+    {"name_l1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"name_l2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"name_l3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"name_l4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"scene_name_l4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"dimmer_name_l1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"dimmer_name_l2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"dimmer_name_l3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"dimmer_name_l4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"dimmer_switch_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"dimmer_switch_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"dimmer_switch_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"dimmer_switch_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness_l1", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"brightness_l2", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"brightness_l3", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"brightness_l4", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"color_temp_l1", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"color_temp_l2", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"color_temp_l3", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"color_temp_l4", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"curtain_name_l1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"curtain_name_l2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"curtain_name_l3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"curtain_name_l4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"curtain_switch_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"curtain_switch_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"curtain_switch_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"curtain_switch_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"group_id_l1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 10000, 0},
+    {"group_id_l2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 10000, 0},
+    {"group_id_l3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 10000, 0},
+    {"group_id_l4", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 10000, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_44, 3, ExposeCategory::Config},
+    {"power_on_behavior_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_45, 3, ExposeCategory::Config},
+    {"power_on_behavior_l2", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_46, 3, ExposeCategory::Config},
+    {"power_on_behavior_l3", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_47, 3, ExposeCategory::Config},
+    {"power_on_behavior_l4", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_48, 3, ExposeCategory::Config},
+    {"show_weather", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"backlight", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"show_screen", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_51, 3},
+    {"thermostat", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"thermostat_name", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 16, 32, 0},
+    {"fan_mode", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 3, 0},
+    {"scene_switch", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_56, 9},
+    {"temperature_1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, -65, 99, 0},
+    {"condition_1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_58, 24},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_iwyqtclw_59, 9, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_iwyqtclw{
     .zigbee_models=kM__TZE284_iwyqtclw,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_iwyqtclw,.manufacturer_names_count=1,
     .model="TS0601__TZE284_iwyqtclw",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_iwyqtclw,.exposes_count=sizeof(kAutoExposes__TZE284_iwyqtclw)/sizeof(kAutoExposes__TZE284_iwyqtclw[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_iwyqtclw,
     .from_zigbee_count=sizeof(kFz__TZE284_iwyqtclw)/sizeof(kFz__TZE284_iwyqtclw[0]),

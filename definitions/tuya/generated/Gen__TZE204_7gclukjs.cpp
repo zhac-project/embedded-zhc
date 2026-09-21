@@ -45,13 +45,27 @@ constexpr TzConverter kTzDp__TZE204_7gclukjs{
 const TzConverter* const kTz__TZE204_7gclukjs[] = { &kTzDp__TZE204_7gclukjs };
 constexpr const char* kM__TZE204_7gclukjs[] = { "TS0601" };
 constexpr const char* kN__TZE204_7gclukjs[] = { "_TZE204_7gclukjs" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_7gclukjs_0[] = {"none", "presence", "move"};
+constexpr Expose kAutoExposes__TZE204_7gclukjs[] = {
+    {"state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_7gclukjs_0, 3},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"move_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"presence_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"detection_distance_min", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 8, 0},
+    {"detection_distance_max", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 9, 0},
+    {"presence_timeout", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 1, 1500, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_7gclukjs{
     .zigbee_models=kM__TZE204_7gclukjs,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_7gclukjs,.manufacturer_names_count=1,
     .model="TS0601__TZE204_7gclukjs",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_7gclukjs,.exposes_count=sizeof(kAutoExposes__TZE204_7gclukjs)/sizeof(kAutoExposes__TZE204_7gclukjs[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_7gclukjs,
     .from_zigbee_count=sizeof(kFz__TZE204_7gclukjs)/sizeof(kFz__TZE204_7gclukjs[0]),

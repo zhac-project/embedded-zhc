@@ -67,13 +67,32 @@ constexpr TzConverter kTzDp__TZE204_xalsoe3m{
 const TzConverter* const kTz__TZE204_xalsoe3m[] = { &kTzDp__TZE204_xalsoe3m };
 constexpr const char* kM__TZE204_xalsoe3m[] = { "TS0601" };
 constexpr const char* kN__TZE204_xalsoe3m[] = { "_TZE204_xalsoe3m" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_xalsoe3m_4[] = {"IN", "AL", "OU"};
+constexpr const char* kAutoOpts__TZE204_xalsoe3m_5[] = {"close", "open"};
+constexpr Expose kAutoExposes__TZE204_xalsoe3m[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"eco_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"sensor", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_xalsoe3m_4, 3, ExposeCategory::Config},
+    {"valve_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE204_xalsoe3m_5, 2},
+    {"min_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 20, 0},
+    {"max_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 20, 50, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 50, 1},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 1},
+    {"max_temperature_limit", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 25, 70, 1},
+    {"deadzone_temperature", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 5, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_xalsoe3m{
     .zigbee_models=kM__TZE204_xalsoe3m,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_xalsoe3m,.manufacturer_names_count=1,
     .model="TS0601__TZE204_xalsoe3m",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_xalsoe3m,.exposes_count=sizeof(kAutoExposes__TZE204_xalsoe3m)/sizeof(kAutoExposes__TZE204_xalsoe3m[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_xalsoe3m,
     .from_zigbee_count=sizeof(kFz__TZE204_xalsoe3m)/sizeof(kFz__TZE204_xalsoe3m[0]),

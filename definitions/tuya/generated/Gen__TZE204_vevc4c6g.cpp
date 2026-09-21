@@ -63,6 +63,21 @@ constexpr TzConverter kTzDp__TZE204_vevc4c6g{
 const TzConverter* const kTz__TZE204_vevc4c6g[] = { &kTzDp__TZE204_vevc4c6g };
 constexpr const char* kM__TZE204_vevc4c6g[] = { "TS0601" };
 constexpr const char* kN__TZE204_vevc4c6g[] = { "_TZE204_vevc4c6g" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_vevc4c6g_5[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE204_vevc4c6g_6[] = {"led", "incandescent", "halogen"};
+constexpr const char* kAutoOpts__TZE204_vevc4c6g_7[] = {"off", "normal", "inverted"};
+constexpr Expose kAutoExposes__TZE204_vevc4c6g[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"min_brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"max_brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"countdown", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_vevc4c6g_5, 3, ExposeCategory::Config},
+    {"light_type", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_vevc4c6g_6, 3},
+    {"backlight_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_vevc4c6g_7, 3, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_vevc4c6g[] = {
@@ -90,7 +105,7 @@ extern const PreparedDefinition kDefGen__TZE204_vevc4c6g{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_vevc4c6g,.manufacturer_names_count=1,
     .model="TS0601__TZE204_vevc4c6g",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_vevc4c6g,.exposes_count=sizeof(kAutoExposes__TZE204_vevc4c6g)/sizeof(kAutoExposes__TZE204_vevc4c6g[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_vevc4c6g, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_vevc4c6g)/sizeof(kWhiteLabels_Gen_TZE204_vevc4c6g[0]),
     .from_zigbee=kFz__TZE204_vevc4c6g,
     .from_zigbee_count=sizeof(kFz__TZE204_vevc4c6g)/sizeof(kFz__TZE204_vevc4c6g[0]),

@@ -56,6 +56,18 @@ constexpr TzConverter kTzDp__TZE204_bql5khqx{
 const TzConverter* const kTz__TZE204_bql5khqx[] = { &kTzDp__TZE204_bql5khqx };
 constexpr const char* kM__TZE204_bql5khqx[] = { "TS0601" };
 constexpr const char* kN__TZE204_bql5khqx[] = { "_TZE204_bql5khqx" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_bql5khqx_1[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE204_bql5khqx_3[] = {"off", "off/on", "on"};
+constexpr Expose kAutoExposes__TZE204_bql5khqx[] = {
+    {"fan_speed", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_bql5khqx_1, 3, ExposeCategory::Config},
+    {"light_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"indicator", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_bql5khqx_3, 3},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"minimum_speed", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_bql5khqx[] = {
@@ -67,7 +79,7 @@ extern const PreparedDefinition kDefGen__TZE204_bql5khqx{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_bql5khqx,.manufacturer_names_count=1,
     .model="TS0601__TZE204_bql5khqx",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_bql5khqx,.exposes_count=sizeof(kAutoExposes__TZE204_bql5khqx)/sizeof(kAutoExposes__TZE204_bql5khqx[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_bql5khqx, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_bql5khqx)/sizeof(kWhiteLabels_Gen_TZE204_bql5khqx[0]),
     .from_zigbee=kFz__TZE204_bql5khqx,
     .from_zigbee_count=sizeof(kFz__TZE204_bql5khqx)/sizeof(kFz__TZE204_bql5khqx[0]),

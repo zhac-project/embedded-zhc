@@ -78,6 +78,34 @@ constexpr TzConverter kTzDp__TZE284_4hdbt6rn{
 const TzConverter* const kTz__TZE284_4hdbt6rn[] = { &kTzDp__TZE284_4hdbt6rn };
 constexpr const char* kM__TZE284_4hdbt6rn[] = { "TS0601" };
 constexpr const char* kN__TZE284_4hdbt6rn[] = { "_TZE284_4hdbt6rn" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_4hdbt6rn_7[] = {"normal", "over_current_trip", "over_power_trip", "high_temp_trip", "over_voltage_trip", "under_voltage_trip", "over_current_alarm", "over_power_alarm", "high_temp_alarm", "over_voltage_alarm", "under_voltage_alarm", "remote_on", "remote_off", "manual_on", "manual_off", "leakage_trip", "leakage_alarm", "restore_default", "automatic_closing", "electricity_shortage", "electricity_shortage_alarm", "timing_switch_On", "timing_switch_off"};
+constexpr const char* kAutoOpts__TZE284_4hdbt6rn_8[] = {"Ignore", "Alarm"};
+constexpr const char* kAutoOpts__TZE284_4hdbt6rn_10[] = {"Ignore", "Alarm"};
+constexpr const char* kAutoOpts__TZE284_4hdbt6rn_12[] = {"Ignore", "Alarm"};
+constexpr const char* kAutoOpts__TZE284_4hdbt6rn_14[] = {"Ignore", "Alarm"};
+constexpr const char* kAutoOpts__TZE284_4hdbt6rn_16[] = {"Ignore", "Alarm"};
+constexpr Expose kAutoExposes__TZE284_4hdbt6rn[] = {
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"ac_frequency", ExposeType::Numeric, Access::State, "Hz", nullptr, nullptr, 0},
+    {"power_factor", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"event", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_4hdbt6rn_7, 23},
+    {"over_current_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_4hdbt6rn_8, 2},
+    {"over_current_threshold", ExposeType::Numeric, Access::StateSet, "A", nullptr, nullptr, 0, ExposeCategory::State, 1, 50, 0},
+    {"over_voltage_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_4hdbt6rn_10, 2},
+    {"over_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 240, 295, 0},
+    {"under_voltage_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_4hdbt6rn_12, 2},
+    {"under_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 90, 220, 0},
+    {"temperature_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_4hdbt6rn_14, 2},
+    {"temperature_threshold", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -25, 80, 0},
+    {"over_power_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_4hdbt6rn_16, 2},
+    {"over_power_threshold", ExposeType::Numeric, Access::StateSet, "W", nullptr, nullptr, 0, ExposeCategory::State, 1000, 26000, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_4hdbt6rn[] = {
@@ -88,7 +116,7 @@ extern const PreparedDefinition kDefGen__TZE284_4hdbt6rn{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_4hdbt6rn,.manufacturer_names_count=1,
     .model="TS0601__TZE284_4hdbt6rn",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_4hdbt6rn,.exposes_count=sizeof(kAutoExposes__TZE284_4hdbt6rn)/sizeof(kAutoExposes__TZE284_4hdbt6rn[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_4hdbt6rn, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_4hdbt6rn)/sizeof(kWhiteLabels_Gen_TZE284_4hdbt6rn[0]),
     .from_zigbee=kFz__TZE284_4hdbt6rn,
     .from_zigbee_count=sizeof(kFz__TZE284_4hdbt6rn)/sizeof(kFz__TZE284_4hdbt6rn[0]),

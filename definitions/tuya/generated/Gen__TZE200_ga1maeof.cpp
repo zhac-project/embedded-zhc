@@ -53,13 +53,24 @@ constexpr TzConverter kTzDp__TZE200_ga1maeof{
 const TzConverter* const kTz__TZE200_ga1maeof[] = { &kTzDp__TZE200_ga1maeof };
 constexpr const char* kM__TZE200_ga1maeof[] = { "TS0601" };
 constexpr const char* kN__TZE200_ga1maeof[] = { "_TZE200_ga1maeof" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_ga1maeof_2[] = {"celsius", "fahrenheit"};
+constexpr const char* kAutoOpts__TZE200_ga1maeof_4[] = {"low", "medium", "high"};
+constexpr Expose kAutoExposes__TZE200_ga1maeof[] = {
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"soil_moisture", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"temperature_unit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_ga1maeof_2, 2},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_ga1maeof_4, 3, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_ga1maeof{
     .zigbee_models=kM__TZE200_ga1maeof,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_ga1maeof,.manufacturer_names_count=1,
     .model="TS0601__TZE200_ga1maeof",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_ga1maeof,.exposes_count=sizeof(kAutoExposes__TZE200_ga1maeof)/sizeof(kAutoExposes__TZE200_ga1maeof[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_ga1maeof,
     .from_zigbee_count=sizeof(kFz__TZE200_ga1maeof)/sizeof(kFz__TZE200_ga1maeof[0]),

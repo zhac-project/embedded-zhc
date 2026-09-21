@@ -41,13 +41,21 @@ constexpr TzConverter kTzDp__TZE200_iuk8kupi{
 const TzConverter* const kTz__TZE200_iuk8kupi[] = { &kTzDp__TZE200_iuk8kupi };
 constexpr const char* kM__TZE200_iuk8kupi[] = { "TS0601" };
 constexpr const char* kN__TZE200_iuk8kupi[] = { "_TZE200_iuk8kupi" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE200_iuk8kupi[] = {
+    {"gas", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"gas_value", ExposeType::Numeric, Access::State, "LEL %", nullptr, nullptr, 0},
+    {"carbon_monoxide", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"co", ExposeType::Numeric, Access::State, "ppm", nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_iuk8kupi{
     .zigbee_models=kM__TZE200_iuk8kupi,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_iuk8kupi,.manufacturer_names_count=1,
     .model="TS0601__TZE200_iuk8kupi",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_iuk8kupi,.exposes_count=sizeof(kAutoExposes__TZE200_iuk8kupi)/sizeof(kAutoExposes__TZE200_iuk8kupi[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_iuk8kupi,
     .from_zigbee_count=sizeof(kFz__TZE200_iuk8kupi)/sizeof(kFz__TZE200_iuk8kupi[0]),

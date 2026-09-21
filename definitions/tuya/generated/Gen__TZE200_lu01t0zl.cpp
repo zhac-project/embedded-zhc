@@ -46,13 +46,33 @@ constexpr TzConverter kTzDp__TZE200_lu01t0zl{
 const TzConverter* const kTz__TZE200_lu01t0zl[] = { &kTzDp__TZE200_lu01t0zl };
 constexpr const char* kM__TZE200_lu01t0zl[] = { "TS0601" };
 constexpr const char* kN__TZE200_lu01t0zl[] = { "_TZE200_lu01t0zl" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_lu01t0zl_4[] = {"standing_still", "moving_forward", "moving_backward"};
+constexpr const char* kAutoOpts__TZE200_lu01t0zl_6[] = {"default", "area", "toilet", "bedroom", "parlour", "office", "hotel"};
+constexpr const char* kAutoOpts__TZE200_lu01t0zl_7[] = {"ON", "OFF"};
+constexpr const char* kAutoOpts__TZE200_lu01t0zl_10[] = {"none", "maybe_fall", "fall"};
+constexpr Expose kAutoExposes__TZE200_lu01t0zl[] = {
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"motion_speed", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"motion_direction", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_lu01t0zl_4, 3},
+    {"radar_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"radar_scene", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_lu01t0zl_6, 7},
+    {"tumble_switch", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_lu01t0zl_7, 2},
+    {"fall_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 10, 1},
+    {"tumble_alarm_time", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 1, 5, 1},
+    {"fall_down_status", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_lu01t0zl_10, 3},
+    {"static_dwell_alarm", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_lu01t0zl{
     .zigbee_models=kM__TZE200_lu01t0zl,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_lu01t0zl,.manufacturer_names_count=1,
     .model="TS0601__TZE200_lu01t0zl",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_lu01t0zl,.exposes_count=sizeof(kAutoExposes__TZE200_lu01t0zl)/sizeof(kAutoExposes__TZE200_lu01t0zl[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_lu01t0zl,
     .from_zigbee_count=sizeof(kFz__TZE200_lu01t0zl)/sizeof(kFz__TZE200_lu01t0zl[0]),

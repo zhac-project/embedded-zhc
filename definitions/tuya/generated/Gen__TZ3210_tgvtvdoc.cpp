@@ -43,13 +43,24 @@ constexpr TzConverter kTzDp__TZ3210_tgvtvdoc{
 const TzConverter* const kTz__TZ3210_tgvtvdoc[] = { &kTzDp__TZ3210_tgvtvdoc };
 constexpr const char* kM__TZ3210_tgvtvdoc[] = { "TS0207" };
 constexpr const char* kN__TZ3210_tgvtvdoc[] = { "_TZ3210_tgvtvdoc" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZ3210_tgvtvdoc[] = {
+    {"illuminance_raw", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"illuminance_average_20min", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"illuminance_maximum_today", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"cleaning_reminder", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"rain_intensity", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
+    {"rain", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZ3210_tgvtvdoc{
     .zigbee_models=kM__TZ3210_tgvtvdoc,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZ3210_tgvtvdoc,.manufacturer_names_count=1,
     .model="TS0207__TZ3210_tgvtvdoc",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZ3210_tgvtvdoc,.exposes_count=sizeof(kAutoExposes__TZ3210_tgvtvdoc)/sizeof(kAutoExposes__TZ3210_tgvtvdoc[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZ3210_tgvtvdoc,
     .from_zigbee_count=sizeof(kFz__TZ3210_tgvtvdoc)/sizeof(kFz__TZ3210_tgvtvdoc[0]),

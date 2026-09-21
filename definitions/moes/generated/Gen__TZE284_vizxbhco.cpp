@@ -67,13 +67,37 @@ constexpr TzConverter kTzDp__TZE284_vizxbhco{
 const TzConverter* const kTz__TZE284_vizxbhco[] = { &kTzDp__TZE284_vizxbhco };
 constexpr const char* kM__TZE284_vizxbhco[] = { "TS0601" };
 constexpr const char* kN__TZE284_vizxbhco[] = { "_TZE284_vizxbhco" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_vizxbhco_11[] = {"off", "on", "memory"};
+constexpr const char* kAutoOpts__TZE284_vizxbhco_16[] = {"none", "relay", "pos"};
+constexpr Expose kAutoExposes__TZE284_vizxbhco[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness_1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"brightness_min_1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"brightness_max_1", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"countdown_1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 1},
+    {"brightness_2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"brightness_min_2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"brightness_max_2", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"countdown_2", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 1},
+    {"relay_status", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_vizxbhco_11, 3},
+    {"brightness_3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"brightness_min_3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"brightness_max_3", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 10, 1000, 1},
+    {"countdown_3", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 1},
+    {"light_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_vizxbhco_16, 3},
+    {"switch_backlight", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_vizxbhco{
     .zigbee_models=kM__TZE284_vizxbhco,.zigbee_models_count=sizeof(kM__TZE284_vizxbhco)/sizeof(kM__TZE284_vizxbhco[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_vizxbhco,.manufacturer_names_count=1,
     .model="TS0601__TZE284_vizxbhco",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_vizxbhco,.exposes_count=sizeof(kAutoExposes__TZE284_vizxbhco)/sizeof(kAutoExposes__TZE284_vizxbhco[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_vizxbhco,
     .from_zigbee_count=sizeof(kFz__TZE284_vizxbhco)/sizeof(kFz__TZE284_vizxbhco[0]),

@@ -44,13 +44,25 @@ constexpr TzConverter kTzDp__TZE204_uxllnywp{
 const TzConverter* const kTz__TZE204_uxllnywp[] = { &kTzDp__TZE204_uxllnywp };
 constexpr const char* kM__TZE204_uxllnywp[] = { "TS0601" };
 constexpr const char* kN__TZE204_uxllnywp[] = { "_TZE204_uxllnywp" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_uxllnywp[] = {
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"detection_distance_max", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 840, 1},
+    {"detection_distance_min", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 840, 1},
+    {"target_distance", ExposeType::Numeric, Access::State, "cm", nullptr, nullptr, 0},
+    {"fading_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 1, 59, 1},
+    {"presence_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 10, 1},
+    {"indicator", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_uxllnywp{
     .zigbee_models=kM__TZE204_uxllnywp,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_uxllnywp,.manufacturer_names_count=1,
     .model="TS0601__TZE204_uxllnywp",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_uxllnywp,.exposes_count=sizeof(kAutoExposes__TZE204_uxllnywp)/sizeof(kAutoExposes__TZE204_uxllnywp[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_uxllnywp,
     .from_zigbee_count=sizeof(kFz__TZE204_uxllnywp)/sizeof(kFz__TZE204_uxllnywp[0]),

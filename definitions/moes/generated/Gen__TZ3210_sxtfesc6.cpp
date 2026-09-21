@@ -51,13 +51,42 @@ constexpr TzConverter kTzDp__TZ3210_sxtfesc6{
 const TzConverter* const kTz__TZ3210_sxtfesc6[] = { &kTzDp__TZ3210_sxtfesc6 };
 constexpr const char* kM__TZ3210_sxtfesc6[] = { "TS030F" };
 constexpr const char* kN__TZ3210_sxtfesc6[] = { "_TZ3210_sxtfesc6" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZ3210_sxtfesc6_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZ3210_sxtfesc6_4[] = {"standby", "opening", "closing"};
+constexpr const char* kAutoOpts__TZ3210_sxtfesc6_6[] = {"fully_open", "fully_close"};
+constexpr const char* kAutoOpts__TZ3210_sxtfesc6_7[] = {"none"};
+constexpr const char* kAutoOpts__TZ3210_sxtfesc6_8[] = {"none", "uncharged", "charging", "charged"};
+constexpr const char* kAutoOpts__TZ3210_sxtfesc6_18[] = {"stop", "calibrate", "calibrate_reverse"};
+constexpr Expose kAutoExposes__TZ3210_sxtfesc6[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ3210_sxtfesc6_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"work_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZ3210_sxtfesc6_4, 3},
+    {"total_time", ExposeType::Numeric, Access::State, "s", nullptr, nullptr, 0},
+    {"situation_set", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ3210_sxtfesc6_6, 2},
+    {"fault", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZ3210_sxtfesc6_7, 1},
+    {"charging_status", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZ3210_sxtfesc6_8, 4},
+    {"open_threshold", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"close_threshold", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"curtain_status", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 255, 0},
+    {"total_distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"factory_test", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"custom_week_prog_1", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"custom_week_prog_2", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"custom_week_prog_3", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"custom_week_prog_4", ExposeType::String, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"calibration", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ3210_sxtfesc6_18, 3},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZ3210_sxtfesc6{
     .zigbee_models=kM__TZ3210_sxtfesc6,.zigbee_models_count=sizeof(kM__TZ3210_sxtfesc6)/sizeof(kM__TZ3210_sxtfesc6[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZ3210_sxtfesc6,.manufacturer_names_count=1,
     .model="TS030F__TZ3210_sxtfesc6",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZ3210_sxtfesc6,.exposes_count=sizeof(kAutoExposes__TZ3210_sxtfesc6)/sizeof(kAutoExposes__TZ3210_sxtfesc6[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZ3210_sxtfesc6,
     .from_zigbee_count=sizeof(kFz__TZ3210_sxtfesc6)/sizeof(kFz__TZ3210_sxtfesc6[0]),

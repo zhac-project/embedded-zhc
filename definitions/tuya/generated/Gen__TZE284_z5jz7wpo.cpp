@@ -52,13 +52,24 @@ constexpr TzConverter kTzDp__TZE284_z5jz7wpo{
 const TzConverter* const kTz__TZE284_z5jz7wpo[] = { &kTzDp__TZE284_z5jz7wpo };
 constexpr const char* kM__TZE284_z5jz7wpo[] = { "TS0601" };
 constexpr const char* kN__TZE284_z5jz7wpo[] = { "_TZE284_z5jz7wpo" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_z5jz7wpo_2[] = {"off", "on", "restore"};
+constexpr const char* kAutoOpts__TZE284_z5jz7wpo_4[] = {"none", "relay", "pos"};
+constexpr Expose kAutoExposes__TZE284_z5jz7wpo[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"speed", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 254, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_z5jz7wpo_2, 3, ExposeCategory::Config},
+    {"countdown_hours", ExposeType::Numeric, Access::StateSet, "h", nullptr, nullptr, 0, ExposeCategory::State, 0, 12, 0},
+    {"light_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_z5jz7wpo_4, 3},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_z5jz7wpo{
     .zigbee_models=kM__TZE284_z5jz7wpo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_z5jz7wpo,.manufacturer_names_count=1,
     .model="TS0601__TZE284_z5jz7wpo",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_z5jz7wpo,.exposes_count=sizeof(kAutoExposes__TZE284_z5jz7wpo)/sizeof(kAutoExposes__TZE284_z5jz7wpo[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_z5jz7wpo,
     .from_zigbee_count=sizeof(kFz__TZE284_z5jz7wpo)/sizeof(kFz__TZE284_z5jz7wpo[0]),

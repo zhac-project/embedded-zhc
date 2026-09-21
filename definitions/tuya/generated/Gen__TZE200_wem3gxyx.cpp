@@ -56,13 +56,25 @@ constexpr TzConverter kTzDp__TZE200_wem3gxyx{
 const TzConverter* const kTz__TZE200_wem3gxyx[] = { &kTzDp__TZE200_wem3gxyx };
 constexpr const char* kM__TZE200_wem3gxyx[] = { "TS0601" };
 constexpr const char* kN__TZE200_wem3gxyx[] = { "_TZE200_wem3gxyx" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_wem3gxyx_1[] = {"cool", "heat", "fan_only", "dry"};
+constexpr const char* kAutoOpts__TZE200_wem3gxyx_3[] = {"low", "medium", "high", "auto"};
+constexpr Expose kAutoExposes__TZE200_wem3gxyx[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_wem3gxyx_1, 4},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 16, 32, 1},
+    {"fan_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_wem3gxyx_3, 4},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_wem3gxyx{
     .zigbee_models=kM__TZE200_wem3gxyx,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wem3gxyx,.manufacturer_names_count=1,
     .model="TS0601__TZE200_wem3gxyx",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_wem3gxyx,.exposes_count=sizeof(kAutoExposes__TZE200_wem3gxyx)/sizeof(kAutoExposes__TZE200_wem3gxyx[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_wem3gxyx,
     .from_zigbee_count=sizeof(kFz__TZE200_wem3gxyx)/sizeof(kFz__TZE200_wem3gxyx[0]),

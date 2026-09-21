@@ -45,13 +45,25 @@ constexpr TzConverter kTzDp__TZE284_d4h8j2n6{
 const TzConverter* const kTz__TZE284_d4h8j2n6[] = { &kTzDp__TZE284_d4h8j2n6 };
 constexpr const char* kM__TZE284_d4h8j2n6[] = { "ZP-301Z" };
 constexpr const char* kN__TZE284_d4h8j2n6[] = { "_TZE284_d4h8j2n6" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE284_d4h8j2n6[] = {
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"battery_value", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"brightness_value", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 5, 100, 1},
+    {"presence_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 60, 1},
+    {"presence_delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 5, 120, 1},
+    {"illuminance_trigger", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10000, 1},
+    {"detection_cycle", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 10, 1200, 5},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_d4h8j2n6{
     .zigbee_models=kM__TZE284_d4h8j2n6,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_d4h8j2n6,.manufacturer_names_count=1,
     .model="ZP-301Z__TZE284_d4h8j2n6",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_d4h8j2n6,.exposes_count=sizeof(kAutoExposes__TZE284_d4h8j2n6)/sizeof(kAutoExposes__TZE284_d4h8j2n6[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_d4h8j2n6,
     .from_zigbee_count=sizeof(kFz__TZE284_d4h8j2n6)/sizeof(kFz__TZE284_d4h8j2n6[0]),

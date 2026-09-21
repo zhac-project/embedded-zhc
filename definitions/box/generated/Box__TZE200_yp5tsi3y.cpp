@@ -113,9 +113,11 @@ constexpr const char* kN__TZE200_yp5tsi3y[] = { "_TZE200_yp5tsi3y" };
 }  // namespace
 
 // --- hand-tuned exposes (BOX sweep 2026-04-28p) ---
+constexpr const char* kAutoOpts_Box__TZE200_yp5tsi3y_action[] = {"scene_1", "scene_2", "scene_3", "scene_4", "scene_5", "scene_6", "scene_7", "scene_8", "scene_9", "scene_10"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_Box__TZE200_yp5tsi3y_action, 10},
     {"record_rf", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"clear_rf", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"rf_status", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},

@@ -69,13 +69,34 @@ constexpr TzConverter kTzDp__TZE284_g2e6cpnw{
 const TzConverter* const kTz__TZE284_g2e6cpnw[] = { &kTzDp__TZE284_g2e6cpnw };
 constexpr const char* kM__TZE284_g2e6cpnw[] = { "TS0601" };
 constexpr const char* kN__TZE284_g2e6cpnw[] = { "_TZE284_g2e6cpnw" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_g2e6cpnw_5[] = {"lower_alarm", "upper_alarm", "cancel"};
+constexpr const char* kAutoOpts__TZE284_g2e6cpnw_6[] = {"lower_alarm", "upper_alarm", "cancel"};
+constexpr const char* kAutoOpts__TZE284_g2e6cpnw_13[] = {"low", "medium", "high"};
+constexpr Expose kAutoExposes__TZE284_g2e6cpnw[] = {
+    {"soil_moisture", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0, ExposeCategory::State, -10, 60, 0},
+    {"temperature_f", ExposeType::Numeric, Access::State, "°F", nullptr, nullptr, 0, ExposeCategory::State, 14, 140, 0},
+    {"temperature_sensitivity", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 1, 0},
+    {"humidity_sensitivity", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 1, 5, 0},
+    {"temperature_alarm", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_g2e6cpnw_5, 3},
+    {"humidity_alarm", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_g2e6cpnw_6, 3},
+    {"max_temperature_alarm", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 60, 0},
+    {"min_temperature_alarm", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 0, 60, 0},
+    {"max_humidity_alarm", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"min_humidity_alarm", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"schedule_periodic", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::State, 5, 60, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_g2e6cpnw_13, 3, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_g2e6cpnw{
     .zigbee_models=kM__TZE284_g2e6cpnw,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_g2e6cpnw,.manufacturer_names_count=1,
     .model="TS0601__TZE284_g2e6cpnw",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_g2e6cpnw,.exposes_count=sizeof(kAutoExposes__TZE284_g2e6cpnw)/sizeof(kAutoExposes__TZE284_g2e6cpnw[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_g2e6cpnw,
     .from_zigbee_count=sizeof(kFz__TZE284_g2e6cpnw)/sizeof(kFz__TZE284_g2e6cpnw[0]),

@@ -46,6 +46,15 @@ constexpr TzConverter kTzDp__TZE200_2vfxweng{
 const TzConverter* const kTz__TZE200_2vfxweng[] = { &kTzDp__TZE200_2vfxweng };
 constexpr const char* kM__TZE200_2vfxweng[] = { "TS0601" };
 constexpr const char* kN__TZE200_2vfxweng[] = { "_TZE200_2vfxweng" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_2vfxweng_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE200_2vfxweng_2[] = {"normal", "reversed"};
+constexpr Expose kAutoExposes__TZE200_2vfxweng[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_2vfxweng_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"motor_direction", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_2vfxweng_2, 2, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_2vfxweng[] = {
@@ -57,7 +66,7 @@ extern const PreparedDefinition kDefGen__TZE200_2vfxweng{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_2vfxweng,.manufacturer_names_count=1,
     .model="TS0601__TZE200_2vfxweng",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_2vfxweng,.exposes_count=sizeof(kAutoExposes__TZE200_2vfxweng)/sizeof(kAutoExposes__TZE200_2vfxweng[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_2vfxweng, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_2vfxweng)/sizeof(kWhiteLabels_Gen_TZE200_2vfxweng[0]),
     .from_zigbee=kFz__TZE200_2vfxweng,
     .from_zigbee_count=sizeof(kFz__TZE200_2vfxweng)/sizeof(kFz__TZE200_2vfxweng[0]),

@@ -63,13 +63,33 @@ constexpr TzConverter kTzDp__TZE200_stvgmdjz{
 const TzConverter* const kTz__TZE200_stvgmdjz[] = { &kTzDp__TZE200_stvgmdjz };
 constexpr const char* kM__TZE200_stvgmdjz[] = { "TS0601" };
 constexpr const char* kN__TZE200_stvgmdjz[] = { "_TZE200_stvgmdjz" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_stvgmdjz_4[] = {"off", "previous", "on"};
+constexpr const char* kAutoOpts__TZE200_stvgmdjz_5[] = {"switch_1", "scene_1"};
+constexpr const char* kAutoOpts__TZE200_stvgmdjz_6[] = {"off", "relay", "invert"};
+constexpr const char* kAutoOpts__TZE200_stvgmdjz_7[] = {"ON", "OFF"};
+constexpr const char* kAutoOpts__TZE200_stvgmdjz_8[] = {"Gear 0", "Gear 1", "Gear 2", "Gear 3"};
+constexpr const char* kAutoOpts__TZE200_stvgmdjz_9[] = {"scene_1"};
+constexpr Expose kAutoExposes__TZE200_stvgmdjz[] = {
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"momentary_1", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 3600, 1},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_stvgmdjz_4, 3, ExposeCategory::Config},
+    {"mode_l1", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_stvgmdjz_5, 2},
+    {"indicator_status", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_stvgmdjz_6, 3},
+    {"induction_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_stvgmdjz_7, 2},
+    {"vibration_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_stvgmdjz_8, 4},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_stvgmdjz_9, 1, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_stvgmdjz{
     .zigbee_models=kM__TZE200_stvgmdjz,.zigbee_models_count=sizeof(kM__TZE200_stvgmdjz)/sizeof(kM__TZE200_stvgmdjz[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_stvgmdjz,.manufacturer_names_count=1,
     .model="TS0601__TZE200_stvgmdjz",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_stvgmdjz,.exposes_count=sizeof(kAutoExposes__TZE200_stvgmdjz)/sizeof(kAutoExposes__TZE200_stvgmdjz[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_stvgmdjz,
     .from_zigbee_count=sizeof(kFz__TZE200_stvgmdjz)/sizeof(kFz__TZE200_stvgmdjz[0]),

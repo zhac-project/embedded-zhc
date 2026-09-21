@@ -39,13 +39,19 @@ constexpr TzConverter kTzDp__TZE608_fmemczv1{
 const TzConverter* const kTz__TZE608_fmemczv1[] = { &kTzDp__TZE608_fmemczv1 };
 constexpr const char* kM__TZE608_fmemczv1[] = { "TS0603" };
 constexpr const char* kN__TZE608_fmemczv1[] = { "_TZE608_fmemczv1" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE608_fmemczv1[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"garage_door_contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE608_fmemczv1{
     .zigbee_models=kM__TZE608_fmemczv1,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE608_fmemczv1,.manufacturer_names_count=1,
     .model="TS0603__TZE608_fmemczv1",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE608_fmemczv1,.exposes_count=sizeof(kAutoExposes__TZE608_fmemczv1)/sizeof(kAutoExposes__TZE608_fmemczv1[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE608_fmemczv1,
     .from_zigbee_count=sizeof(kFz__TZE608_fmemczv1)/sizeof(kFz__TZE608_fmemczv1[0]),

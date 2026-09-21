@@ -39,13 +39,20 @@ constexpr TzConverter kTzDp__TZE284_2baujqot{
 const TzConverter* const kTz__TZE284_2baujqot[] = { &kTzDp__TZE284_2baujqot };
 constexpr const char* kM__TZE284_2baujqot[] = { "TS0601" };
 constexpr const char* kN__TZE284_2baujqot[] = { "_TZE284_2baujqot" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_2baujqot_1[] = {"emergency"};
+constexpr Expose kAutoExposes__TZE284_2baujqot[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_2baujqot_1, 1, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_2baujqot{
     .zigbee_models=kM__TZE284_2baujqot,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_2baujqot,.manufacturer_names_count=1,
     .model="TS0601__TZE284_2baujqot",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_2baujqot,.exposes_count=sizeof(kAutoExposes__TZE284_2baujqot)/sizeof(kAutoExposes__TZE284_2baujqot[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_2baujqot,
     .from_zigbee_count=sizeof(kFz__TZE284_2baujqot)/sizeof(kFz__TZE284_2baujqot[0]),

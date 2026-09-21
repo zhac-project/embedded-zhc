@@ -57,8 +57,10 @@ const FzConverter* const kFz_D57004000[] = {
 };
 constexpr const char* kModels_D57004000[] = { "NEXENTRO Pushbutton Interface", "57004000" };
 
+constexpr const char* kAutoOpts_D57004000_action[] = {"on_e1", "off_e1", "toggle_e1", "recall_*_e1", "brightness_stop_e1", "brightness_move_*_e1", "on_e2", "off_e2", "toggle_e2", "recall_*_e2", "brightness_stop_e2", "brightness_move_*_e2", "close_cover", "open_cover", "stop_cover"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_D57004000_action, 15},
 };
 
 constexpr ::zhc::EndpointLabel kEndpoints_D57004000[] = {

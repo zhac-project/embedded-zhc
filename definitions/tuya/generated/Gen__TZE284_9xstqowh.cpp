@@ -104,13 +104,52 @@ constexpr TzConverter kTzDp__TZE284_9xstqowh{
 const TzConverter* const kTz__TZE284_9xstqowh[] = { &kTzDp__TZE284_9xstqowh };
 constexpr const char* kM__TZE284_9xstqowh[] = { "TS0601" };
 constexpr const char* kN__TZE284_9xstqowh[] = { "_TZE284_9xstqowh" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_9xstqowh_15[] = {"normal", "trip_over_current", "trip_over_power", "trip_over_temperature", "trip_voltage_1", "trip_voltage_2", "alarm_over_current", "alarm_over_power", "alarm_over_temperature", "alarm_voltage_1", "alarm_voltage_2", "remote_on", "remote_off", "manual_on", "manual_off", "value_15", "value_16", "factory_reset"};
+constexpr const char* kAutoOpts__TZE284_9xstqowh_16[] = {"closed", "alarm", "trip"};
+constexpr const char* kAutoOpts__TZE284_9xstqowh_18[] = {"closed", "alarm", "trip"};
+constexpr const char* kAutoOpts__TZE284_9xstqowh_20[] = {"closed", "alarm", "trip"};
+constexpr const char* kAutoOpts__TZE284_9xstqowh_22[] = {"closed", "alarm", "trip"};
+constexpr const char* kAutoOpts__TZE284_9xstqowh_24[] = {"closed", "alarm", "trip"};
+constexpr Expose kAutoExposes__TZE284_9xstqowh[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"voltage_a", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_b", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"voltage_c", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"power_a", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_b", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_c", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current_a", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_b", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"current_c", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"last_event", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_9xstqowh_15, 18},
+    {"over_current_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_9xstqowh_16, 3},
+    {"current_threshold", ExposeType::Numeric, Access::StateSet, "A", nullptr, nullptr, 0, ExposeCategory::State, 1, 63, 1},
+    {"under_voltage_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_9xstqowh_18, 3},
+    {"under_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 145, 220, 1},
+    {"over_voltage_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_9xstqowh_20, 3},
+    {"over_voltage_threshold", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0, ExposeCategory::State, 245, 295, 1},
+    {"over_power_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_9xstqowh_22, 3},
+    {"over_power_threshold", ExposeType::Numeric, Access::StateSet, "W", nullptr, nullptr, 0, ExposeCategory::State, 200, 20000, 100},
+    {"temperature_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_9xstqowh_24, 3},
+    {"temperature_threshold", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -40, 100, 1},
+    {"clear_fault", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"factory_reset", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"auto_reclosing", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_9xstqowh{
     .zigbee_models=kM__TZE284_9xstqowh,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_9xstqowh,.manufacturer_names_count=1,
     .model="TS0601__TZE284_9xstqowh",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_9xstqowh,.exposes_count=sizeof(kAutoExposes__TZE284_9xstqowh)/sizeof(kAutoExposes__TZE284_9xstqowh[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_9xstqowh,
     .from_zigbee_count=sizeof(kFz__TZE284_9xstqowh)/sizeof(kFz__TZE284_9xstqowh[0]),

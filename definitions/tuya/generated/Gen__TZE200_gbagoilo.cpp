@@ -50,13 +50,25 @@ constexpr TzConverter kTzDp__TZE200_gbagoilo{
 const TzConverter* const kTz__TZE200_gbagoilo[] = { &kTzDp__TZE200_gbagoilo };
 constexpr const char* kM__TZE200_gbagoilo[] = { "TS0601" };
 constexpr const char* kN__TZE200_gbagoilo[] = { "_TZE200_gbagoilo" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_gbagoilo_5[] = {"off", "previous", "on"};
+constexpr Expose kAutoExposes__TZE200_gbagoilo[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"countdown", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_gbagoilo_5, 3, ExposeCategory::Config},
+    {"backlight_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_gbagoilo{
     .zigbee_models=kM__TZE200_gbagoilo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_gbagoilo,.manufacturer_names_count=1,
     .model="TS0601__TZE200_gbagoilo",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_gbagoilo,.exposes_count=sizeof(kAutoExposes__TZE200_gbagoilo)/sizeof(kAutoExposes__TZE200_gbagoilo[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_gbagoilo,
     .from_zigbee_count=sizeof(kFz__TZE200_gbagoilo)/sizeof(kFz__TZE200_gbagoilo[0]),

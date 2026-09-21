@@ -96,13 +96,46 @@ constexpr TzConverter kTzDp__TZE284_zqq3cipq{
 const TzConverter* const kTz__TZE284_zqq3cipq[] = { &kTzDp__TZE284_zqq3cipq };
 constexpr const char* kM__TZE284_zqq3cipq[] = { "TS0601" };
 constexpr const char* kN__TZE284_zqq3cipq[] = { "_TZE284_zqq3cipq" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_zqq3cipq_0[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE284_zqq3cipq_2[] = {"toggle", "state", "momentary"};
+constexpr const char* kAutoOpts__TZE284_zqq3cipq_11[] = {"toggle", "state", "momentary"};
+constexpr const char* kAutoOpts__TZE284_zqq3cipq_14[] = {"switch", "curtain"};
+constexpr const char* kAutoOpts__TZE284_zqq3cipq_17[] = {"switch", "curtain"};
+constexpr const char* kAutoOpts__TZE284_zqq3cipq_20[] = {"switch", "curtain"};
+constexpr Expose kAutoExposes__TZE284_zqq3cipq[] = {
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zqq3cipq_0, 3, ExposeCategory::Config},
+    {"state_all", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_type_l1_l8", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zqq3cipq_2, 3, ExposeCategory::Config},
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l5", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l6", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l7", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l8", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_type_l9_l16", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zqq3cipq_11, 3, ExposeCategory::Config},
+    {"state_l9", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l10", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_mode_l11_l12", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zqq3cipq_14, 2, ExposeCategory::Config},
+    {"state_l11", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l12", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_mode_l13_l14", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zqq3cipq_17, 2, ExposeCategory::Config},
+    {"state_l13", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l14", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"switch_mode_l15_l16", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_zqq3cipq_20, 2, ExposeCategory::Config},
+    {"state_l15", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l16", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_zqq3cipq{
     .zigbee_models=kM__TZE284_zqq3cipq,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_zqq3cipq,.manufacturer_names_count=1,
     .model="TS0601__TZE284_zqq3cipq",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_zqq3cipq,.exposes_count=sizeof(kAutoExposes__TZE284_zqq3cipq)/sizeof(kAutoExposes__TZE284_zqq3cipq[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_zqq3cipq,
     .from_zigbee_count=sizeof(kFz__TZE284_zqq3cipq)/sizeof(kFz__TZE284_zqq3cipq[0]),

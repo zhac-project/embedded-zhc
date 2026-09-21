@@ -59,13 +59,31 @@ constexpr TzConverter kTzDp__TZE200_wqashyqo{
 const TzConverter* const kTz__TZE200_wqashyqo[] = { &kTzDp__TZE200_wqashyqo };
 constexpr const char* kM__TZE200_wqashyqo[] = { "TS0601" };
 constexpr const char* kN__TZE200_wqashyqo[] = { "_TZE200_wqashyqo" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_wqashyqo_0[] = {"none", "alarm"};
+constexpr const char* kAutoOpts__TZE200_wqashyqo_4[] = {"celsius", "fahrenheit"};
+constexpr Expose kAutoExposes__TZE200_wqashyqo[] = {
+    {"water_warning", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_wqashyqo_0, 2},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"soil_moisture", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"temperature_unit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_wqashyqo_4, 2},
+    {"temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -2, 2, 0},
+    {"humidity_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
+    {"soil_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
+    {"temperature_sampling", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 5, 3600, 1},
+    {"soil_sampling", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 5, 3600, 1},
+    {"soil_warning", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_wqashyqo{
     .zigbee_models=kM__TZE200_wqashyqo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_wqashyqo,.manufacturer_names_count=1,
     .model="ZG-303Z",.vendor="HOBEIAN",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_wqashyqo,.exposes_count=sizeof(kAutoExposes__TZE200_wqashyqo)/sizeof(kAutoExposes__TZE200_wqashyqo[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_wqashyqo,
     .from_zigbee_count=sizeof(kFz__TZE200_wqashyqo)/sizeof(kFz__TZE200_wqashyqo[0]),

@@ -47,13 +47,24 @@ constexpr TzConverter kTzDp__TZE284_vawy74yh{
 const TzConverter* const kTz__TZE284_vawy74yh[] = { &kTzDp__TZE284_vawy74yh };
 constexpr const char* kM__TZE284_vawy74yh[] = { "TS0601" };
 constexpr const char* kN__TZE284_vawy74yh[] = { "_TZE284_vawy74yh" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_vawy74yh_2[] = {"low", "medium", "high"};
+constexpr const char* kAutoOpts__TZE284_vawy74yh_4[] = {"checking", "check_success", "check_failure"};
+constexpr Expose kAutoExposes__TZE284_vawy74yh[] = {
+    {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_vawy74yh_2, 3, ExposeCategory::Diagnostic},
+    {"silence", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"self_test", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_vawy74yh_4, 3},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_vawy74yh{
     .zigbee_models=kM__TZE284_vawy74yh,.zigbee_models_count=sizeof(kM__TZE284_vawy74yh)/sizeof(kM__TZE284_vawy74yh[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_vawy74yh,.manufacturer_names_count=1,
     .model="TS0601__TZE284_vawy74yh",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_vawy74yh,.exposes_count=sizeof(kAutoExposes__TZE284_vawy74yh)/sizeof(kAutoExposes__TZE284_vawy74yh[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_vawy74yh,
     .from_zigbee_count=sizeof(kFz__TZE284_vawy74yh)/sizeof(kFz__TZE284_vawy74yh[0]),

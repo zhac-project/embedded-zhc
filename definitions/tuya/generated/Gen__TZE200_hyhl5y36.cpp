@@ -79,13 +79,53 @@ constexpr TzConverter kTzDp__TZE200_hyhl5y36{
 const TzConverter* const kTz__TZE200_hyhl5y36[] = { &kTzDp__TZE200_hyhl5y36 };
 constexpr const char* kM__TZE200_hyhl5y36[] = { "TS0601" };
 constexpr const char* kN__TZE200_hyhl5y36[] = { "_TZE200_hyhl5y36" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_0[] = {"absence", "presence", "disabled"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_2[] = {"approaching", "departing", "clear"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_5[] = {"low", "medium", "high"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_8[] = {"AI self-learning"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_9[] = {"small", "medium", "large"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_11[] = {"presence", "motion"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_17[] = {"factory reset"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_18[] = {"threshold", "report"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_20[] = {"timed", "difference"};
+constexpr const char* kAutoOpts__TZE200_hyhl5y36_25[] = {"normal", "slight", "strong", "severe"};
+constexpr Expose kAutoExposes__TZE200_hyhl5y36[] = {
+    {"state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_0, 3},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"current_status", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_2, 3},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"hold_delay_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::Config, 0, 300, 1},
+    {"sensitivity", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_5, 3, ExposeCategory::Config},
+    {"trigger_distance", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::Config, 0, 4, 0},
+    {"forbidden_area", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::Config, 0, 1, 0},
+    {"ai_self_learning", ExposeType::Enum, Access::Set, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_8, 1, ExposeCategory::Config},
+    {"fast_setting", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_9, 3, ExposeCategory::Config},
+    {"indicator", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"sensor_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_11, 2, ExposeCategory::Config},
+    {"single_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"absence_circling_report", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"absence_circling_interval", ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0, ExposeCategory::Config, 2, 30, 1},
+    {"find_device", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"enable_sensor", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"factory_reset", ExposeType::Enum, Access::Set, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_17, 1, ExposeCategory::Config},
+    {"lux_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_18, 2, ExposeCategory::Config},
+    {"daylight_threshold", ExposeType::Numeric, Access::StateSet, "lux", nullptr, nullptr, 0, ExposeCategory::Config, 1, 3000, 1},
+    {"lux_report_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_20, 2, ExposeCategory::Config},
+    {"lux_timed_interval", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::Config, 5, 3600, 5},
+    {"lux_difference_threshold", ExposeType::Numeric, Access::StateSet, "lux", nullptr, nullptr, 0, ExposeCategory::Config, 1, 2000, 1},
+    {"lux_difference_value", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"interference_positions", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"home_environment", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE200_hyhl5y36_25, 4, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_hyhl5y36{
     .zigbee_models=kM__TZE200_hyhl5y36,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_hyhl5y36,.manufacturer_names_count=1,
     .model="TS0601__TZE200_hyhl5y36",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_hyhl5y36,.exposes_count=sizeof(kAutoExposes__TZE200_hyhl5y36)/sizeof(kAutoExposes__TZE200_hyhl5y36[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_hyhl5y36,
     .from_zigbee_count=sizeof(kFz__TZE200_hyhl5y36)/sizeof(kFz__TZE200_hyhl5y36[0]),

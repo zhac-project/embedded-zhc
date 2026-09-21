@@ -52,13 +52,22 @@ constexpr TzConverter kTzDp__TZE200_xtrnjaoz{
 const TzConverter* const kTz__TZE200_xtrnjaoz[] = { &kTzDp__TZE200_xtrnjaoz };
 constexpr const char* kM__TZE200_xtrnjaoz[] = { "TS0601" };
 constexpr const char* kN__TZE200_xtrnjaoz[] = { "_TZE200_xtrnjaoz" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_xtrnjaoz_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE200_xtrnjaoz_2[] = {"normal", "reversed"};
+constexpr Expose kAutoExposes__TZE200_xtrnjaoz[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_xtrnjaoz_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"motor_direction", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_xtrnjaoz_2, 2, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE200_xtrnjaoz{
     .zigbee_models=kM__TZE200_xtrnjaoz,.zigbee_models_count=sizeof(kM__TZE200_xtrnjaoz)/sizeof(kM__TZE200_xtrnjaoz[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_xtrnjaoz,.manufacturer_names_count=1,
     .model="TS0601__TZE200_xtrnjaoz",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_xtrnjaoz,.exposes_count=sizeof(kAutoExposes__TZE200_xtrnjaoz)/sizeof(kAutoExposes__TZE200_xtrnjaoz[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE200_xtrnjaoz,
     .from_zigbee_count=sizeof(kFz__TZE200_xtrnjaoz)/sizeof(kFz__TZE200_xtrnjaoz[0]),

@@ -42,13 +42,26 @@ constexpr TzConverter kTzDp__TZE284_d2zfgtij{
 const TzConverter* const kTz__TZE284_d2zfgtij[] = { &kTzDp__TZE284_d2zfgtij };
 constexpr const char* kM__TZE284_d2zfgtij[] = { "TS0601" };
 constexpr const char* kN__TZE284_d2zfgtij[] = { "_TZE284_d2zfgtij" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE284_d2zfgtij[] = {
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"power_factor", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"ac_frequency", ExposeType::Numeric, Access::State, "Hz", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"produced_energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"device_locating", ExposeType::Binary, Access::Set, nullptr, nullptr, nullptr, 0},
+    {"update_frequency", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 5, 3600, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_d2zfgtij{
     .zigbee_models=kM__TZE284_d2zfgtij,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_d2zfgtij,.manufacturer_names_count=1,
     .model="TS0601__TZE284_d2zfgtij",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_d2zfgtij,.exposes_count=sizeof(kAutoExposes__TZE284_d2zfgtij)/sizeof(kAutoExposes__TZE284_d2zfgtij[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_d2zfgtij,
     .from_zigbee_count=sizeof(kFz__TZE284_d2zfgtij)/sizeof(kFz__TZE284_d2zfgtij[0]),

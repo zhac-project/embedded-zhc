@@ -41,6 +41,14 @@ constexpr TzConverter kTzDp__TZE204_f5efvtbv{
 const TzConverter* const kTz__TZE204_f5efvtbv[] = { &kTzDp__TZE204_f5efvtbv };
 constexpr const char* kM__TZE204_f5efvtbv[] = { "TS0601" };
 constexpr const char* kN__TZE204_f5efvtbv[] = { "_TZE204_f5efvtbv" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_f5efvtbv[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_f5efvtbv[] = {
@@ -58,7 +66,7 @@ extern const PreparedDefinition kDefGen__TZE204_f5efvtbv{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_f5efvtbv,.manufacturer_names_count=1,
     .model="TS0601__TZE204_f5efvtbv",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_f5efvtbv,.exposes_count=sizeof(kAutoExposes__TZE204_f5efvtbv)/sizeof(kAutoExposes__TZE204_f5efvtbv[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_f5efvtbv, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_f5efvtbv)/sizeof(kWhiteLabels_Gen_TZE204_f5efvtbv[0]),
     .from_zigbee=kFz__TZE204_f5efvtbv,
     .from_zigbee_count=sizeof(kFz__TZE204_f5efvtbv)/sizeof(kFz__TZE204_f5efvtbv[0]),

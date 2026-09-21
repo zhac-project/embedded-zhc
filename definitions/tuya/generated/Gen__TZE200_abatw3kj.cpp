@@ -41,6 +41,24 @@ constexpr TzConverter kTzDp__TZE200_abatw3kj{
 const TzConverter* const kTz__TZE200_abatw3kj[] = { &kTzDp__TZE200_abatw3kj };
 constexpr const char* kM__TZE200_abatw3kj[] = { "TS0601" };
 constexpr const char* kN__TZE200_abatw3kj[] = { "_TZE200_abatw3kj" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_abatw3kj_5[] = {"off", "previous", "on"};
+constexpr Expose kAutoExposes__TZE200_abatw3kj[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
+    {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_abatw3kj_5, 3, ExposeCategory::Config},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"leakage", ExposeType::Numeric, Access::State, "mA", nullptr, nullptr, 0},
+    {"reclosing_allowed_times", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 30, 0},
+    {"reclosing_enable", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"timer", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 86400, 0},
+    {"clear_energy", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"status", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_abatw3kj[] = {
@@ -51,7 +69,7 @@ extern const PreparedDefinition kDefGen__TZE200_abatw3kj{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_abatw3kj,.manufacturer_names_count=1,
     .model="TS0601__TZE200_abatw3kj",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_abatw3kj,.exposes_count=sizeof(kAutoExposes__TZE200_abatw3kj)/sizeof(kAutoExposes__TZE200_abatw3kj[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_abatw3kj, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_abatw3kj)/sizeof(kWhiteLabels_Gen_TZE200_abatw3kj[0]),
     .from_zigbee=kFz__TZE200_abatw3kj,
     .from_zigbee_count=sizeof(kFz__TZE200_abatw3kj)/sizeof(kFz__TZE200_abatw3kj[0]),

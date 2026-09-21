@@ -51,13 +51,31 @@ constexpr TzConverter kTzDp__TZE284_mxujdmxo{
 const TzConverter* const kTz__TZE284_mxujdmxo[] = { &kTzDp__TZE284_mxujdmxo };
 constexpr const char* kM__TZE284_mxujdmxo[] = { "TS0601" };
 constexpr const char* kN__TZE284_mxujdmxo[] = { "_TZE284_mxujdmxo" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_mxujdmxo_0[] = {"low", "normal", "high"};
+constexpr const char* kAutoOpts__TZE284_mxujdmxo_8[] = {"supply", "drainage"};
+constexpr const char* kAutoOpts__TZE284_mxujdmxo_9[] = {"auto", "manual"};
+constexpr Expose kAutoExposes__TZE284_mxujdmxo[] = {
+    {"liquid_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_mxujdmxo_0, 3},
+    {"liquid_level_percent", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"liquid_depth", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"max_set", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::Config, 0, 100, 1},
+    {"min_set", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::Config, 0, 100, 1},
+    {"liquid_depth_max", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::Config, 0, 10, 0},
+    {"relay_switch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::Config},
+    {"pump_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_mxujdmxo_8, 2, ExposeCategory::Config},
+    {"pump_control", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_mxujdmxo_9, 2, ExposeCategory::Config},
+    {"version", ExposeType::String, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE284_mxujdmxo{
     .zigbee_models=kM__TZE284_mxujdmxo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE284_mxujdmxo,.manufacturer_names_count=1,
     .model="TS0601__TZE284_mxujdmxo",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_mxujdmxo,.exposes_count=sizeof(kAutoExposes__TZE284_mxujdmxo)/sizeof(kAutoExposes__TZE284_mxujdmxo[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE284_mxujdmxo,
     .from_zigbee_count=sizeof(kFz__TZE284_mxujdmxo)/sizeof(kFz__TZE284_mxujdmxo[0]),

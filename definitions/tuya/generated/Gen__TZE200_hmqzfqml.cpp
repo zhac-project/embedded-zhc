@@ -52,6 +52,16 @@ constexpr TzConverter kTzDp__TZE200_hmqzfqml{
 const TzConverter* const kTz__TZE200_hmqzfqml[] = { &kTzDp__TZE200_hmqzfqml };
 constexpr const char* kM__TZE200_hmqzfqml[] = { "TS0601" };
 constexpr const char* kN__TZE200_hmqzfqml[] = { "_TZE200_hmqzfqml" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_hmqzfqml_2[] = {"OFF", "ON"};
+constexpr const char* kAutoOpts__TZE200_hmqzfqml_3[] = {"minimum", "medium", "maximum"};
+constexpr Expose kAutoExposes__TZE200_hmqzfqml[] = {
+    {"status_indication", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_hmqzfqml_2, 2, ExposeCategory::Config},
+    {"fan_speed", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_hmqzfqml_3, 3},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_hmqzfqml[] = {
@@ -62,7 +72,7 @@ extern const PreparedDefinition kDefGen__TZE200_hmqzfqml{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_hmqzfqml,.manufacturer_names_count=1,
     .model="TS0601__TZE200_hmqzfqml",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_hmqzfqml,.exposes_count=sizeof(kAutoExposes__TZE200_hmqzfqml)/sizeof(kAutoExposes__TZE200_hmqzfqml[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_hmqzfqml, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_hmqzfqml)/sizeof(kWhiteLabels_Gen_TZE200_hmqzfqml[0]),
     .from_zigbee=kFz__TZE200_hmqzfqml,
     .from_zigbee_count=sizeof(kFz__TZE200_hmqzfqml)/sizeof(kFz__TZE200_hmqzfqml[0]),

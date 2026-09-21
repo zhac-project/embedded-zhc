@@ -55,6 +55,19 @@ constexpr TzConverter kTzDp__TZ3210_j4pdtz9v{
 const TzConverter* const kTz__TZ3210_j4pdtz9v[] = { &kTzDp__TZ3210_j4pdtz9v };
 constexpr const char* kM__TZ3210_j4pdtz9v[] = { "TS0001" };
 constexpr const char* kN__TZ3210_j4pdtz9v[] = { "_TZ3210_j4pdtz9v" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZ3210_j4pdtz9v_2[] = {"click", "switch", "program"};
+constexpr Expose kAutoExposes__TZ3210_j4pdtz9v[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic, 0, 100, 0},
+    {"mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZ3210_j4pdtz9v_2, 3},
+    {"lower", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 50, 100, 1},
+    {"upper", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 50, 1},
+    {"delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 1},
+    {"reverse", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"touch", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZ3210_j4pdtz9v[] = {
@@ -65,7 +78,7 @@ extern const PreparedDefinition kDefGen__TZ3210_j4pdtz9v{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZ3210_j4pdtz9v,.manufacturer_names_count=1,
     .model="TS0001__TZ3210_j4pdtz9v",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZ3210_j4pdtz9v,.exposes_count=sizeof(kAutoExposes__TZ3210_j4pdtz9v)/sizeof(kAutoExposes__TZ3210_j4pdtz9v[0]),
     .white_labels=kWhiteLabels_Gen_TZ3210_j4pdtz9v, .white_labels_count=sizeof(kWhiteLabels_Gen_TZ3210_j4pdtz9v)/sizeof(kWhiteLabels_Gen_TZ3210_j4pdtz9v[0]),
     .from_zigbee=kFz__TZ3210_j4pdtz9v,
     .from_zigbee_count=sizeof(kFz__TZ3210_j4pdtz9v)/sizeof(kFz__TZ3210_j4pdtz9v[0]),

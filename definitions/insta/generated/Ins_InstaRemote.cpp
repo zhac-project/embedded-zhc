@@ -40,8 +40,10 @@ const FzConverter* const kFz_InstaRemote[] = {
 };
 constexpr const char* kModels_InstaRemote[] = { " Remote" };
 
+constexpr const char* kAutoOpts_InstaRemote_action[] = {"select_0", "select_1", "select_2", "select_3", "select_4", "select_5", "on", "off", "down", "up", "stop"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_InstaRemote_action, 11},
 };
 
 constexpr WhiteLabel kWhiteLabels[] = {

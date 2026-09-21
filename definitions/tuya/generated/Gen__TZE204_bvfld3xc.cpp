@@ -46,13 +46,30 @@ constexpr TzConverter kTzDp__TZE204_bvfld3xc{
 const TzConverter* const kTz__TZE204_bvfld3xc[] = { &kTzDp__TZE204_bvfld3xc };
 constexpr const char* kM__TZE204_bvfld3xc[] = { "TS0601" };
 constexpr const char* kN__TZE204_bvfld3xc[] = { "_TZE204_bvfld3xc" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_bvfld3xc_10[] = {"start", "stop"};
+constexpr Expose kAutoExposes__TZE204_bvfld3xc[] = {
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"dis_current", ExposeType::Numeric, Access::State, "cm", nullptr, nullptr, 0},
+    {"presence_delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 1, 600, 0},
+    {"movesensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"breathsensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"movedistance_max", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 0},
+    {"movedistance_min", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 0},
+    {"breathdistance_max", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 0},
+    {"breathdistance_min", ExposeType::Numeric, Access::StateSet, "cm", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 0},
+    {"self_learning", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_bvfld3xc_10, 2},
+    {"restore_factory_setting", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 extern const PreparedDefinition kDefGen__TZE204_bvfld3xc{
     .zigbee_models=kM__TZE204_bvfld3xc,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_bvfld3xc,.manufacturer_names_count=1,
     .model="TS0601__TZE204_bvfld3xc",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_bvfld3xc,.exposes_count=sizeof(kAutoExposes__TZE204_bvfld3xc)/sizeof(kAutoExposes__TZE204_bvfld3xc[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz__TZE204_bvfld3xc,
     .from_zigbee_count=sizeof(kFz__TZE204_bvfld3xc)/sizeof(kFz__TZE204_bvfld3xc[0]),

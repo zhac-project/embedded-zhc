@@ -17,8 +17,10 @@ constexpr const char* kModels_ZWallRemote0[] = { "ZWallRemote0" };
 }  // namespace
 
 
+constexpr const char* kAutoOpts_ZWallRemote0_action[] = {"toggle"};
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0): action ---
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_ZWallRemote0_action, 1},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

@@ -45,6 +45,18 @@ constexpr TzConverter kTzDp__TZE204_qasjif9e{
 const TzConverter* const kTz__TZE204_qasjif9e[] = { &kTzDp__TZE204_qasjif9e };
 constexpr const char* kM__TZE204_qasjif9e[] = { "TS0601" };
 constexpr const char* kN__TZE204_qasjif9e[] = { "_TZE204_qasjif9e" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr Expose kAutoExposes__TZE204_qasjif9e[] = {
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
+    {"presence", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"target_distance", ExposeType::Numeric, Access::State, "m", nullptr, nullptr, 0},
+    {"radar_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 9, 1},
+    {"minimum_range", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 9, 0},
+    {"maximum_range", ExposeType::Numeric, Access::StateSet, "m", nullptr, nullptr, 0, ExposeCategory::State, 0, 9, 0},
+    {"detection_delay", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 10, 0},
+    {"fading_time", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 1500, 1},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_qasjif9e[] = {
@@ -55,7 +67,7 @@ extern const PreparedDefinition kDefGen__TZE204_qasjif9e{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_qasjif9e,.manufacturer_names_count=1,
     .model="TS0601__TZE204_qasjif9e",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_qasjif9e,.exposes_count=sizeof(kAutoExposes__TZE204_qasjif9e)/sizeof(kAutoExposes__TZE204_qasjif9e[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_qasjif9e, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_qasjif9e)/sizeof(kWhiteLabels_Gen_TZE204_qasjif9e[0]),
     .from_zigbee=kFz__TZE204_qasjif9e,
     .from_zigbee_count=sizeof(kFz__TZE204_qasjif9e)/sizeof(kFz__TZE204_qasjif9e[0]),

@@ -46,6 +46,15 @@ constexpr TzConverter kTzDp__TZE204_ycke4deo{
 const TzConverter* const kTz__TZE204_ycke4deo[] = { &kTzDp__TZE204_ycke4deo };
 constexpr const char* kM__TZE204_ycke4deo[] = { "TS0601" };
 constexpr const char* kN__TZE204_ycke4deo[] = { "_TZE204_ycke4deo" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE204_ycke4deo_0[] = {"OPEN", "CLOSE", "STOP"};
+constexpr const char* kAutoOpts__TZE204_ycke4deo_2[] = {"normal", "reversed"};
+constexpr Expose kAutoExposes__TZE204_ycke4deo[] = {
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_ycke4deo_0, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"motor_direction", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_ycke4deo_2, 2, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_ycke4deo[] = {
@@ -57,7 +66,7 @@ extern const PreparedDefinition kDefGen__TZE204_ycke4deo{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE204_ycke4deo,.manufacturer_names_count=1,
     .model="TS0601__TZE204_ycke4deo",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE204_ycke4deo,.exposes_count=sizeof(kAutoExposes__TZE204_ycke4deo)/sizeof(kAutoExposes__TZE204_ycke4deo[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_ycke4deo, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_ycke4deo)/sizeof(kWhiteLabels_Gen_TZE204_ycke4deo[0]),
     .from_zigbee=kFz__TZE204_ycke4deo,
     .from_zigbee_count=sizeof(kFz__TZE204_ycke4deo)/sizeof(kFz__TZE204_ycke4deo[0]),

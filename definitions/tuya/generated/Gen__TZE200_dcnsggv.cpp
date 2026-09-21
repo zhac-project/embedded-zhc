@@ -63,6 +63,21 @@ constexpr TzConverter kTzDp__TZE200_dcnsggv{
 const TzConverter* const kTz__TZE200_dcnsggv[] = { &kTzDp__TZE200_dcnsggv };
 constexpr const char* kM__TZE200_dcnsggv[] = { "TS0601" };
 constexpr const char* kN__TZE200_dcnsggv[] = { "_TZE200_dcnsggv" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE200_dcnsggv_4[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE200_dcnsggv_6[] = {"led", "incandescent", "halogen"};
+constexpr const char* kAutoOpts__TZE200_dcnsggv_7[] = {"toggle", "state", "momentary"};
+constexpr Expose kAutoExposes__TZE200_dcnsggv[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 0, 254, 0},
+    {"min_brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"max_brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 255, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_dcnsggv_4, 3},
+    {"countdown", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"light_type", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_dcnsggv_6, 3},
+    {"switch_type", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE200_dcnsggv_7, 3, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE200_dcnsggv[] = {
@@ -73,7 +88,7 @@ extern const PreparedDefinition kDefGen__TZE200_dcnsggv{
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN__TZE200_dcnsggv,.manufacturer_names_count=1,
     .model="TS0601__TZE200_dcnsggv",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_dcnsggv,.exposes_count=sizeof(kAutoExposes__TZE200_dcnsggv)/sizeof(kAutoExposes__TZE200_dcnsggv[0]),
     .white_labels=kWhiteLabels_Gen_TZE200_dcnsggv, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE200_dcnsggv)/sizeof(kWhiteLabels_Gen_TZE200_dcnsggv[0]),
     .from_zigbee=kFz__TZE200_dcnsggv,
     .from_zigbee_count=sizeof(kFz__TZE200_dcnsggv)/sizeof(kFz__TZE200_dcnsggv[0]),
