@@ -27,8 +27,9 @@ const FzConverter* const kFz_D421782[] = {
 };
 constexpr const char* kModels_D421782[] = { "Smart Wall Switch " };  // trailing space is intentional (z2m)
 
+static constexpr const char* kActionOpts_Cal_D421782[] = {"on", "off", "color_temperature_move", "brightness_step_up", "brightness_step_down", "brightness_move_up", "brightness_move_down", "brightness_stop", "enhanced_move_to_hue_and_saturation"};
 constexpr Expose kExposes_D421782[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Cal_D421782, 9},
 };
 
 // Remote binds the clusters it sources commands from.

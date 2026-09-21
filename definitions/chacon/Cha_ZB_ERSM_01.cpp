@@ -43,9 +43,10 @@ constexpr const char* kModels_ZB_ERSM_01[] = { "ZB-ERSM-01" };
 
 
 // --- hand-edited exposes/bindings ---
+static constexpr const char* kActionOpts_Cha_ZB_ERSM_01[] = {"open", "close", "stop"};
 constexpr Expose kAutoExposes[] = {
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Cha_ZB_ERSM_01, 3},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

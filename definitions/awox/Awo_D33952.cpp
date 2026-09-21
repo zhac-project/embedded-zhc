@@ -43,8 +43,9 @@ const FzConverter* const kFz_D33952[] = {
 };
 constexpr const char* kModels_D33952[] = { "ERCU_Zm", "TLSR82xx" };
 
+static constexpr const char* kActionOpts_Awo_D33952[] = {"on", "off", "red", "refresh", "refresh_colored", "blue", "yellow", "green", "brightness_step_up", "brightness_step_down", "brightness_move_up", "brightness_move_down", "brightness_stop", "recall_1", "color_temperature_step_up", "color_temperature_step_down", "color_blue", "color_green", "color_yellow", "color_red", "color_temp_warm", "color_temp_cold", "light_movement", "refresh", "recall_1", "recall_2"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Awo_D33952, 26},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

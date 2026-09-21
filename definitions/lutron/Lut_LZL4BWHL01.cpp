@@ -35,8 +35,9 @@ constexpr const char* kModels_LZL4BWHL01[] = { "LZL4BWHL01 Remote" };
 }  // namespace
 
 
+static constexpr const char* kActionOpts_Lut_LZL4BWHL01[] = {"brightness_step_down", "brightness_step_up", "brightness_stop", "brightness_move_to_level"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Lut_LZL4BWHL01, 4},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

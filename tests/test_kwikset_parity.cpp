@@ -133,13 +133,13 @@ void check_lock_state(const PreparedDefinition& def) {
     auto r1 = dispatch_zcl(def, 0x0101, "closuresDoorLock", 2,
                            attr_report(0x0000, 0x30, locked));
     assert(r1.any_matched);
-    assert(u_eq(r1.merged.find("lock_state"), 1));
+    assert((r1.merged.find("lock_state") && r1.merged.find("lock_state")->type == ValueType::StringRef && std::strcmp(r1.merged.find("lock_state")->str, "locked") == 0));
 
     const std::uint8_t unlocked[] = {0x02};
     auto r2 = dispatch_zcl(def, 0x0101, "closuresDoorLock", 2,
                            attr_report(0x0000, 0x30, unlocked));
     assert(r2.any_matched);
-    assert(u_eq(r2.merged.find("lock_state"), 2));
+    assert((r2.merged.find("lock_state") && r2.merged.find("lock_state")->type == ValueType::StringRef && std::strcmp(r2.merged.find("lock_state")->str, "unlocked") == 0));
 }
 
 // ── battery decode (genPowerCfg 0x0021 batteryPercentageRemaining,

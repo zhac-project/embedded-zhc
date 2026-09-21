@@ -35,8 +35,9 @@ constexpr const char* kModels_Z3_1BRL[] = { "Z3-1BRL" };
 }  // namespace
 
 
+static constexpr const char* kActionOpts_Lut_Z3_1BRL[] = {"brightness_step_down", "brightness_step_up", "brightness_stop", "brightness_move_to_level"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Lut_Z3_1BRL, 4},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };

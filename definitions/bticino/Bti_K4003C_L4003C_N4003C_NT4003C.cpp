@@ -34,9 +34,10 @@ constexpr const char* kModels_K4003C_L4003C_N4003C_NT4003C[] = { " Light switch 
 
 
 // --- exposes/bindings: state + action via genBinaryInput ---
+static constexpr const char* kActionOpts_Bti_K4003C_L4003C_N4003C_NT4003C[] = {"identify", "on", "off"};
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Bti_K4003C_L4003C_N4003C_NT4003C, 3},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

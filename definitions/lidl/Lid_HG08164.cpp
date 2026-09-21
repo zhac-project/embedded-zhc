@@ -33,8 +33,9 @@ constexpr const char* kModels_HG08164[] = { "TS004F" };
 constexpr const char* kManus_HG08164[] = { "_TZ3000_rco1yzb1" };
 }  // namespace
 
+static constexpr const char* kActionOpts_Lid_HG08164[] = {"on", "off", "brightness_stop", "brightness_step_up", "brightness_step_down", "single", "double"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Lid_HG08164, 7},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };

@@ -24,8 +24,9 @@ const FzConverter* const kFz_D99106[] = {
 };
 constexpr const char* kModels_D99106[] = { "TLSR82xx" };
 
+static constexpr const char* kActionOpts_Egl_D99106[] = {"on", "brightness_move_to_level", "color_temperature_move"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Egl_D99106, 3},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

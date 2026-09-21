@@ -32,8 +32,9 @@ constexpr const char* kModels_FB21_001[] = { "TS1001" };
 constexpr const char* kManus_FB21_001[] = { "_TYZB01_hww2py6b" };
 }  // namespace
 
+static constexpr const char* kActionOpts_Lid_FB21_001[] = {"on", "off", "brightness_stop", "brightness_step_up", "brightness_step_down", "brightness_move_up", "brightness_move_down"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Lid_FB21_001, 7},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

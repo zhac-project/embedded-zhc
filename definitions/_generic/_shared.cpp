@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #include "zhc/runtime/dispatch.hpp"   // RuntimeContext::alloc_str
@@ -236,50 +237,118 @@ extern const FzConverter kFzColorTemperature{
     .user_config       = nullptr,
 };
 
+// ── colour memory ─────────────────────────────────────────────────────
+// A colour bulb reports currentX / currentY / hue / saturation one attribute
+// at a time and moveToColor needs both axes, so the last known values live in
+// the device's runtime scratch (bytes 24..31; the Tuya IR01 uses byte 0).
+// Without a store (host tests without one) memory is simply absent.
+namespace {
+struct ColorMem {
+    std::uint16_t x{0}, y{0};
+    std::uint8_t  hue{0}, sat{0};
+    std::uint8_t  have{0};   // kHave* bits
+    std::uint8_t  tag{0};    // kColorTag once written
+};
+constexpr std::size_t  kColorMemOff = 24;
+constexpr std::uint8_t kColorTag = 0xC1;
+constexpr std::uint8_t kHaveX = 1, kHaveY = 2, kHaveHue = 4, kHaveSat = 8;
+static_assert(sizeof(ColorMem) == 8, "fits scratch[24..31]");
+
+bool color_mem_load(RuntimeContext& ctx, ColorMem& m) {
+    DeviceRuntimeState* st = ctx.device_state();
+    if (!st) return false;
+    std::memcpy(&m, st->scratch.data() + kColorMemOff, sizeof(m));
+    if (m.tag != kColorTag) { m = ColorMem{}; m.tag = kColorTag; }
+    return true;
+}
+void color_mem_store(RuntimeContext& ctx, const ColorMem& m) {
+    if (DeviceRuntimeState* st = ctx.device_state())
+        std::memcpy(st->scratch.data() + kColorMemOff, &m, sizeof(m));
+}
+// "x,y" / "h,s": two decimals separated by a comma, nothing else.
+bool parse_pair(const char* s, float& a, float& b) {
+    if (!s) return false;
+    char* end = nullptr;
+    a = std::strtof(s, &end);
+    if (end == s || *end != ',') return false;
+    const char* second = end + 1;
+    b = std::strtof(second, &end);
+    if (end == second) return false;
+    while (*end == ' ') end++;
+    return *end == '\0';
+}
+}  // namespace
+
 // ── fz_color (xy) ───────────────────────────────────────────────────
 
 bool fz_color(const DecodedMessage& msg,
                const FzConverter&,
                const PreparedDefinition&,
-               RuntimeContext&,
+               RuntimeContext& ctx,
                FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     // lightingColorCtrl unified report decoder. Walks every attr the
     // ColorControl cluster might ship in a single AttributeReport so
-    // we don't need a separate fz per axis.
+    // we don't need a separate fz per axis. Besides the single axes it
+    // emits the pairs Home Assistant speaks: `color_xy` "x,y" (CIE 1931,
+    // four decimals) and `color_hs` "h,s" (0-360, 0-100), completed from
+    // the remembered other axis when a report carries only one.
     bool emitted = false;
-
+    ColorMem mem{};
+    const bool have_mem = color_mem_load(ctx, mem);
+    bool xy_changed = false, hs_changed = false;
     // Attr 0x0000 currentHue (u8 [0,254]).
     if (const Value* v = msg.payload.find("0")) {
-        if (v->type == ValueType::Uint) {
+        if (v->type == ValueType::Uint && v->u <= 254) {
             Value o{}; o.type = ValueType::Uint; o.u = v->u;
             out.put("hue", o);
-            emitted = true;
+            mem.hue = static_cast<std::uint8_t>(v->u); mem.have |= kHaveHue;
+            hs_changed = emitted = true;
         }
     }
     // Attr 0x0001 currentSaturation (u8 [0,254]).
     if (const Value* v = msg.payload.find("1")) {
-        if (v->type == ValueType::Uint) {
+        if (v->type == ValueType::Uint && v->u <= 254) {
             Value o{}; o.type = ValueType::Uint; o.u = v->u;
             out.put("saturation", o);
-            emitted = true;
+            mem.sat = static_cast<std::uint8_t>(v->u); mem.have |= kHaveSat;
+            hs_changed = emitted = true;
         }
     }
     // Attr 0x0003 currentX / 0x0004 currentY (u16). z2m encodes CIE 1931
     // x/y as `raw / 65535`; emit float in [0,1].
     if (const Value* v = msg.payload.find("3")) {
-        if (v->type == ValueType::Uint) {
+        if (v->type == ValueType::Uint && v->u <= 0xFFFF) {
             Value o{}; o.type = ValueType::Float;
             o.f = static_cast<float>(v->u) / 65535.0f;
             out.put("color_x", o);
-            emitted = true;
+            mem.x = static_cast<std::uint16_t>(v->u); mem.have |= kHaveX;
+            xy_changed = emitted = true;
         }
     }
     if (const Value* v = msg.payload.find("4")) {
-        if (v->type == ValueType::Uint) {
+        if (v->type == ValueType::Uint && v->u <= 0xFFFF) {
             Value o{}; o.type = ValueType::Float;
             o.f = static_cast<float>(v->u) / 65535.0f;
             out.put("color_y", o);
-            emitted = true;
+            mem.y = static_cast<std::uint16_t>(v->u); mem.have |= kHaveY;
+            xy_changed = emitted = true;
+        }
+    }
+    if (have_mem && (xy_changed || hs_changed)) color_mem_store(ctx, mem);
+    if (xy_changed && (mem.have & kHaveX) && (mem.have & kHaveY)) {
+        char b[24];
+        const int n = std::snprintf(b, sizeof(b), "%.4f,%.4f", mem.x / 65535.0f, mem.y / 65535.0f);
+        if (const char* str = (n > 0) ? ctx.alloc_str(b, static_cast<std::size_t>(n)) : nullptr) {
+            Value o{}; o.type = ValueType::StringRef; o.str = str;
+            out.put("color_xy", o);
+        }
+    }
+    if (hs_changed && (mem.have & kHaveHue) && (mem.have & kHaveSat)) {
+        char b[24];
+        const int n = std::snprintf(b, sizeof(b), "%.1f,%.1f", mem.hue * 360.0f / 254.0f, mem.sat * 100.0f / 254.0f);
+        if (const char* str = (n > 0) ? ctx.alloc_str(b, static_cast<std::size_t>(n)) : nullptr) {
+            Value o{}; o.type = ValueType::StringRef; o.str = str;
+            out.put("color_hs", o);
         }
     }
     // Attr 0x0007 colorTemperature (u16 mireds). Same as fz_color_temp
@@ -2325,68 +2394,88 @@ bool color_u8_arg(const Value& v, std::uint8_t& out) {
 
 }  // namespace
 
+// Claims `color_x` / `color_y` (the other axis from memory, centre when
+// unknown), `color_xy` "x,y" in [0,1], `color_hs` "h,s" (0-360, 0-100) and
+// the single `hue` / `saturation`. Every write also updates the memory, so
+// two axis writes in a row land where the caller meant.
 bool tz_color(std::string_view key, const Value& input,
                const TzConverter&,
-               const PreparedDefinition&, RuntimeContext&,
+               const PreparedDefinition&, RuntimeContext& ctx,
                std::span<std::uint8_t> out_frame, std::size_t& out_size) {
     out_size = 0;
-
-    if (key == "color_x" || key == "color_y") {
-        std::uint16_t axis = 0;
-        if (!color_axis_to_u16(input, axis)) return false;
+    ColorMem mem{};
+    const bool have_mem = color_mem_load(ctx, mem);
+    auto remember = [&]() { if (have_mem) color_mem_store(ctx, mem); };
+    auto move_to_color = [&](std::uint16_t x, std::uint16_t y) {
         // moveToColor (0x07): x u16 LE, y u16 LE, transition u16 LE.
-        if (!write_header(out_frame, 0x07, /*payload_len=*/6, out_size)) {
-            return false;
-        }
-        // The other axis isn't carried in the same write — default
-        // to 0x8000 (centre of the [0,1] range). Real clients should
-        // either send both axes back-to-back or use a vendor-specific
-        // composite encoder.
-        const std::uint16_t kCentre = 0x8000;
-        const std::uint16_t x = (key == "color_x") ? axis : kCentre;
-        const std::uint16_t y = (key == "color_y") ? axis : kCentre;
+        if (!write_header(out_frame, 0x07, /*payload_len=*/6, out_size)) return false;
         out_frame[3] = static_cast<std::uint8_t>(x & 0xFF);
         out_frame[4] = static_cast<std::uint8_t>((x >> 8) & 0xFF);
         out_frame[5] = static_cast<std::uint8_t>(y & 0xFF);
         out_frame[6] = static_cast<std::uint8_t>((y >> 8) & 0xFF);
         out_frame[7] = 0x00;
         out_frame[8] = 0x00;
+        mem.x = x; mem.y = y; mem.have |= kHaveX | kHaveY;
+        remember();
+        return true;
+    };
+    if (key == "color_x" || key == "color_y") {
+        std::uint16_t axis = 0;
+        if (!color_axis_to_u16(input, axis)) return false;
+        const std::uint16_t kCentre = 0x8000;
+        const std::uint16_t x = (key == "color_x") ? axis : ((mem.have & kHaveX) ? mem.x : kCentre);
+        const std::uint16_t y = (key == "color_y") ? axis : ((mem.have & kHaveY) ? mem.y : kCentre);
+        return move_to_color(x, y);
+    }
+    if (key == "color_xy") {
+        float fx = 0, fy = 0;
+        if (input.type != ValueType::StringRef || !parse_pair(input.str, fx, fy)) return false;
+        if (fx < 0.0f || fx > 1.0f || fy < 0.0f || fy > 1.0f) return false;
+        return move_to_color(static_cast<std::uint16_t>(fx * 65535.0f + 0.5f),
+                             static_cast<std::uint16_t>(fy * 65535.0f + 0.5f));
+    }
+    if (key == "color_hs") {
+        float h = 0, sat = 0;
+        if (input.type != ValueType::StringRef || !parse_pair(input.str, h, sat)) return false;
+        if (h < 0.0f || h > 360.0f || sat < 0.0f || sat > 100.0f) return false;
+        // moveToHueAndSaturation (0x06): hue u8, saturation u8, transition u16 LE.
+        if (!write_header(out_frame, 0x06, /*payload_len=*/4, out_size)) return false;
+        out_frame[3] = static_cast<std::uint8_t>(h * 254.0f / 360.0f + 0.5f);
+        out_frame[4] = static_cast<std::uint8_t>(sat * 254.0f / 100.0f + 0.5f);
+        out_frame[5] = 0x00;
+        out_frame[6] = 0x00;
+        mem.hue = out_frame[3]; mem.sat = out_frame[4]; mem.have |= kHaveHue | kHaveSat;
+        remember();
         return true;
     }
-
     if (key == "hue") {
         std::uint8_t hue = 0;
         if (!color_u8_arg(input, hue)) return false;
         // moveToHue (0x00): hue u8, direction u8 (0=shortest), transition u16 LE.
-        if (!write_header(out_frame, 0x00, /*payload_len=*/4, out_size)) {
-            return false;
-        }
+        if (!write_header(out_frame, 0x00, /*payload_len=*/4, out_size)) return false;
         out_frame[3] = hue;
         out_frame[4] = 0x00;
         out_frame[5] = 0x00;
         out_frame[6] = 0x00;
+        mem.hue = hue; mem.have |= kHaveHue;
+        remember();
         return true;
     }
-
     if (key == "saturation") {
         std::uint8_t sat = 0;
         if (!color_u8_arg(input, sat)) return false;
-        // moveToSaturation (0x03): sat u8, transition u16 LE.
-        if (!write_header(out_frame, 0x03, /*payload_len=*/3, out_size)) {
-            return false;
-        }
+        // moveToSaturation (0x03): saturation u8, transition u16 LE.
+        if (!write_header(out_frame, 0x03, /*payload_len=*/3, out_size)) return false;
         out_frame[3] = sat;
         out_frame[4] = 0x00;
         out_frame[5] = 0x00;
+        mem.sat = sat; mem.have |= kHaveSat;
+        remember();
         return true;
     }
-
     return false;
 }
 
-// `key=nullptr` makes this a wildcard — `tz_color` itself decides
-// which keys to honour. `command_id` is left at moveToColor (0x07)
-// for the descriptor; the actual command is encoded per-call.
 extern const TzConverter kTzColor{
     .key          = nullptr,
     .cluster      = "lightingColorCtrl",
@@ -2708,7 +2797,10 @@ bool fz_lock(const DecodedMessage& msg,
               FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     const Value* v = msg.payload.find("0");
     if (!v || v->type != ValueType::Uint) return false;
-    Value o{}; o.type = ValueType::Uint; o.u = v->u;
+    // ZCL LockState enum8, in zigbee2mqtt's words (0xFF "undefined" is dropped).
+    const char* word = v->u == 0 ? "not_fully_locked" : v->u == 1 ? "locked" : v->u == 2 ? "unlocked" : nullptr;
+    if (!word) return false;
+    Value o{}; o.type = ValueType::StringRef; o.str = word;
     out.put("lock_state", o);
     return true;
 }

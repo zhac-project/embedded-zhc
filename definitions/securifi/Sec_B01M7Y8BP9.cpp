@@ -29,8 +29,9 @@ constexpr const char* kModels_B01M7Y8BP9[] = { "ZB2-BU01" };
 // Button: surface clicks as `action` (single/double/long). No on/off
 // state, no writeable path — matches z2m exposes:[e.action(...)] /
 // toZigbee:[].
+static constexpr const char* kActionOpts_Sec_B01M7Y8BP9[] = {"single", "double", "long"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Sec_B01M7Y8BP9, 3},
 };
 
 extern const PreparedDefinition kDef_B01M7Y8BP9{

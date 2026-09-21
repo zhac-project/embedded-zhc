@@ -54,6 +54,7 @@ constexpr ::zhc::EndpointLabel kEndpoints_VES_ZB_REM_013[] = {
 
 
 // --- hand-curated exposes / bindings ---
+static constexpr const char* kActionOpts_Ves_VES_ZB_REM_013[] = {"on", "off", "stop", "brightness_move_up", "brightness_move_down", "brightness_stop", "recall_1", "recall_2"};
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
@@ -62,7 +63,7 @@ constexpr Expose kAutoExposes[] = {
     // endpoint (endpoint_action_suffix) → action_1..action_4 carrying values
     // on/off/brightness_move_up/brightness_move_down/brightness_stop and
     // recall_<scene> (z2m equivalents on_1..on_4 … recall_1_1..recall_2_4).
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Ves_VES_ZB_REM_013, 8},
 };
 
 // z2m configure: bind genOnOff/genLevelCtrl/genScenes on EP1-4, +genPowerCfg

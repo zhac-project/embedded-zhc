@@ -32,8 +32,9 @@ constexpr const char* kManus_SSWZ8T[] = { "zunzunbee" };
 
 
 // --- hand-curated exposes / bindings (was auto-generated) ---
+static constexpr const char* kActionOpts_Zun_SSWZ8T[] = {"button_1_short_press", "button_1_long_press", "button_2_short_press", "button_2_long_press", "button_3_short_press", "button_3_long_press", "button_4_short_press", "button_4_long_press", "button_5_short_press", "button_5_long_press", "button_6_short_press", "button_6_long_press", "button_7_short_press", "button_7_long_press", "button_8_short_press", "button_8_long_press"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Zun_SSWZ8T, 16},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},

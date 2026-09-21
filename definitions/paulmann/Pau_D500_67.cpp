@@ -44,11 +44,12 @@ constexpr const char* kModels_D500_67[] = { "RemoteControl", "50067" };
 }  // namespace
 
 
+static constexpr const char* kActionOpts_Pau_D500_67[] = {"on", "off", "toggle", "brightness_step_up", "brightness_step_down", "color_temperature_move", "color_move", "brightness_stop", "brightness_move_down", "brightness_move_up", "color_loop_set", "enhanced_move_to_hue_and_saturation", "scene_*"};
 constexpr Expose kAutoExposes[] = {
     // `action` value carries on/off/toggle/brightness_step_*/brightness_move_*/
     // brightness_stop/color_temperature_move/color_move/color_loop_set/
     // enhanced_move_to_hue_and_saturation (z2m action set, minus scene_*).
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Pau_D500_67, 13},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

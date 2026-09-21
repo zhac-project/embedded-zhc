@@ -25,8 +25,9 @@ constexpr const char* kModels_MIR_SO100[] = { "MIR-SO100" };
 
 
 // --- hand-rewritten (was emit_expose_bindings.py) ---
+static constexpr const char* kActionOpts_Mul_MIR_SO100[] = {"single", "double", "hold"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Mul_MIR_SO100, 3},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };

@@ -96,9 +96,6 @@ bool str_eq(const Value* v, const char* s) {
     return v && v->type == ValueType::StringRef && v->str &&
            std::strcmp(v->str, s) == 0;
 }
-bool uint_eq(const Value* v, std::uint64_t u) {
-    return v && v->type == ValueType::Uint && v->u == u;
-}
 
 bool def_exposes(const PreparedDefinition& def, const char* key) {
     for (std::size_t i = 0; i < def.exposes_count; ++i)
@@ -141,7 +138,7 @@ static void test_action() {
 static void test_lock_state() {
     auto r = dispatch_attr(0x0000, 1);  // 1 = locked
     assert(r.any_matched);
-    assert(uint_eq(r.merged.find("lock_state"), 1));
+    assert(str_eq(r.merged.find("lock_state"), "locked"));
 }
 
 // ── sound_volume attribute (0x0024 enum8) -> z2m label ───────────────

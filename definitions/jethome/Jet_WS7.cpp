@@ -37,8 +37,9 @@ constexpr ::zhc::EndpointLabel kEndpoints_WS7[] = { {"in1", 1}, {"in2", 2}, {"in
 
 
 // --- hand-curated expose/binding block ---
+static constexpr const char* kActionOpts_Jet_WS7[] = {"release_in1", "single_in1", "double_in1", "hold_in1", "release_in2", "single_in2", "double_in2", "hold_in2", "release_in3", "single_in3", "double_in3", "hold_in3"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Jet_WS7, 12},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };

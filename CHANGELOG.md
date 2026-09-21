@@ -12,6 +12,27 @@ across the ZHAC platform.
 
 ### Added
 
+- **Colour lights round-trip.** `fz_color` remembers each axis per device (runtime scratch
+  bytes 24..31) and emits the pairs Home Assistant speaks, `color_xy` "x,y" (CIE 1931, four
+  decimals) and `color_hs` "h,s" (0-360 / 0-100), completed from memory when a report carries
+  one attribute. `tz_color` writes both axes on a `color_x` / `color_y` write (the other one
+  from memory; before, it was reset to centre, so any two-axis colour was unreachable) and
+  accepts the pairs as `color_xy` / `color_hs` for a single moveToColor / moveToHueAndSaturation.
+  `zhc_tz_color_tests` pins it.
+
+- **Locks in zigbee2mqtt's words.** `fz_lock` emits `lock_state` as `not_fully_locked` /
+  `locked` / `unlocked` instead of the raw enum; the ten Weiser, Kwikset and Schlage
+  definitions expose `state` (LOCK / UNLOCK, write-only), `lock_state` with its three words and
+  `action` with the sixteen operation-event words.
+
+- **`action` value lists for 52 hand-written definitions** (Shinasystem, Niko, Iluminize,
+  Ubisys, Shelly, CTM, RGB Genie, Feibit, …), taken from zigbee2mqtt's `e.action([...])` lists
+  or derived from its `commandsOnOff` / `commandsLevelCtrl` / `commandsColorCtrl` /
+  `commandsScenes` / `commandsWindowCovering` extends (with endpoint suffixes; stripped again
+  where the definition suffixes the key instead). Home Assistant can now make an `event` entity
+  of them. Left as they were: 48 generated definitions (regenerate from the generator) and two
+  legacy-converter ports (`N2G-SP`, `V3-BTZB`).
+
 - **`tuya::exposes_from_dp_map`**: derives an expose table from a datapoint map, for the
   666 live generated definitions that ship a map and `.exposes=nullptr`. One expose per
   distinct key; Bool → binary, Enum → enum with the table's labels, Numeric → numeric, String

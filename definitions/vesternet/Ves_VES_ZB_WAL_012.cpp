@@ -47,10 +47,11 @@ constexpr ::zhc::EndpointLabel kEndpoints_VES_ZB_WAL_012[] = {
 
 
 // --- hand-curated exposes / bindings ---
+static constexpr const char* kActionOpts_Ves_VES_ZB_WAL_012[] = {"on", "off", "stop", "brightness_move_up", "brightness_move_down", "brightness_stop"};
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Ves_VES_ZB_WAL_012, 6},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

@@ -46,13 +46,14 @@ constexpr ::zhc::EndpointLabel kEndpoints_D501_37[] = {
 }  // namespace
 
 
+static constexpr const char* kActionOpts_Pau_D501_37[] = {"on", "off", "brightness_move_up", "brightness_move_down", "brightness_move_stop"};
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     // `action` value carries on/off/brightness_move_up/brightness_move_down/
     // brightness_move_stop; the dispatcher suffixes the key per source
     // endpoint → action_1 / action_2 (z2m on_1..off_2 / brightness_move_*_N).
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Pau_D501_37, 5},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

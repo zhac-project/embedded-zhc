@@ -42,8 +42,9 @@ const FzConverter* const kFz_RemoteControl_v1_0[] = {
 };
 constexpr const char* kModels_RemoteControl_v1_0[] = { "RemoteControl_v1.0" };
 
+static constexpr const char* kActionOpts_Vim_RemoteControl_v1_0[] = {"on", "off", "toggle", "brightness_move_to_level", "brightness_move_up", "brightness_move_down", "brightness_step_up", "brightness_step_down", "brightness_stop", "open", "close", "stop"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Vim_RemoteControl_v1_0, 12},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

@@ -35,12 +35,18 @@ constexpr const char* kModels_D9GED18000_009[] = { "SMARTCODE_DEADBOLT_10" };
 
 
 // --- Tier-2 expose/binding surface (mirrors kwikset SmartCode) ---
+// Lock vocabulary (zigbee2mqtt words): commands on `state`, the reported
+// `lock_state`, and the operation-event `action` stream.
+static constexpr const char* kLockCmdOpts[]   = {"LOCK", "UNLOCK"};
+static constexpr const char* kLockStateOpts[] = {"not_fully_locked", "locked", "unlocked"};
+static constexpr const char* kLockActionOpts[] = {"unknown", "lock", "unlock", "lock_failure_invalid_pin_or_id", "lock_failure_invalid_schedule", "unlock_failure_invalid_pin_or_id", "unlock_failure_invalid_schedule", "one_touch_lock", "key_lock", "key_unlock", "auto_lock", "schedule_lock", "schedule_unlock", "manual_lock", "manual_unlock", "non_access_user_event"};
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"lock_state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state", ExposeType::Enum, Access::Set, nullptr, nullptr, kLockCmdOpts, 2},
+    {"lock_state", ExposeType::Enum, Access::State, nullptr, nullptr, kLockStateOpts, 3},
     {"pin_code", ExposeType::String, Access::Set, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kLockActionOpts, 16},
     {"action_user", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"action_source", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"action_source_name", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},

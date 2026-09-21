@@ -139,7 +139,7 @@ static void test_lock_state_regression() {
                           attr_report(0x0000, 0x30, locked));
     assert(r.any_matched);
     const Value* ls = r.merged.find("lock_state");
-    assert(ls && ls->type == ValueType::Uint && ls->u == 1);
+    assert(ls && ls->type == ValueType::StringRef && std::strcmp(ls->str, "locked") == 0);   // zigbee2mqtt word
 
     // Exposes intact.
     assert(def_exposes(def, "lock_state"));

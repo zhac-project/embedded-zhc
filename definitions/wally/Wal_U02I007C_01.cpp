@@ -43,12 +43,13 @@ constexpr const char* kModels_U02I007C_01[] = { "MultiSensor" };
 }  // namespace
 
 
+static constexpr const char* kActionOpts_Wal_U02I007C_01[] = {"on", "off"};
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Wal_U02I007C_01, 2},
     {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };

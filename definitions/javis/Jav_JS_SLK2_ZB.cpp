@@ -29,10 +29,11 @@ constexpr const char* kModels_JS_SLK2_ZB[] = { "JAVISLOCK", "doorlock_5001", "E3
 
 }  // namespace
 
+static constexpr const char* kActionOpts_Jav_JS_SLK2_ZB[] = {"unlock"};
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Jav_JS_SLK2_ZB, 1},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

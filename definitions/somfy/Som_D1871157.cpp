@@ -25,8 +25,9 @@ constexpr const char* kModels_D1871157[] = { "Ysia 1 Zigbee Europe", "Ysia 1 HP 
 
 }  // namespace
 
+static constexpr const char* kActionOpts_Som_D1871157[] = {"on_1", "on_2", "on_3", "on_4", "on_5", "off_1", "off_2", "off_3", "off_4", "off_5", "toggle_1", "toggle_2", "toggle_3", "toggle_4", "toggle_5", "on", "off", "toggle", "open_1", "open_2", "open_3", "open_4", "open_5", "close_1", "close_2", "close_3", "close_4", "close_5", "stop_1", "stop_2", "stop_3", "stop_4", "stop_5", "open", "close", "stop"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Som_D1871157, 36},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };

@@ -49,13 +49,14 @@ constexpr const char* kModels_D501_41[] = { "50141" };
 }  // namespace
 
 
+static constexpr const char* kActionOpts_Pau_D501_41[] = {"on", "off", "toggle", "brightness_move_to_level", "brightness_move_up", "brightness_move_down", "brightness_step_up", "brightness_step_down", "brightness_stop", "color_temperature_move_stop", "color_temperature_move_up", "color_temperature_move_down", "color_temperature_step_up", "color_temperature_step_down", "enhanced_move_to_hue_and_saturation", "move_to_hue_and_saturation", "color_hue_step_up", "color_hue_step_down", "color_saturation_step_up", "color_saturation_step_down", "color_loop_set", "color_temperature_move", "color_move", "hue_move", "hue_stop", "move_to_saturation", "move_to_hue", "stop_move_step", "recall", "store", "add", "remove", "remove_all"};
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     // `action` carries on/off/brightness_move_*/brightness_step_*/
     // brightness_stop/color_temperature_move_*/color_temperature_step_*/
     // recall/store (the z2m commands* action set for this remote).
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Pau_D501_41, 33},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

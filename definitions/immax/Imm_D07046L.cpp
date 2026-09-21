@@ -24,8 +24,9 @@ constexpr const char* kModels_D07046L[] = { "Keyfob-ZB3.0" };
 }  // namespace
 
 
+static constexpr const char* kActionOpts_Imm_D07046L[] = {"disarm", "arm_stay", "arm_away", "panic"};
 constexpr Expose kAutoExposes[] = {
-    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Imm_D07046L, 4},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
