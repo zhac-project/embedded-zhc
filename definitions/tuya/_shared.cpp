@@ -1343,4 +1343,91 @@ bool tuya_dp_expand_fault_bitmap(const TuyaDpMapEntry& e, const Value& raw,
     return true;
 }
 
+
+// ── exposes_from_dp_map ──────────────────────────────────────────────────
+namespace {
+struct KeyUnit { const char* key; const char* unit; };
+// Keys a Tuya device reports and nobody writes, with the unit HA expects.
+constexpr KeyUnit kReadOnlyKeys[] = {
+    {"temperature", "°C"}, {"local_temperature", "°C"}, {"device_temperature", "°C"},
+    {"humidity", "%"}, {"soil_moisture", "%"}, {"battery", "%"},
+    {"illuminance", "lx"}, {"illuminance_lux", "lx"}, {"co2", "ppm"}, {"pm25", "µg/m³"},
+    {"pm10", "µg/m³"}, {"pm1", "µg/m³"}, {"voc", "ppb"}, {"tvoc", "µg/m³"},
+    {"formaldehyde", "mg/m³"}, {"power", "W"}, {"energy", "kWh"}, {"produced_energy", "kWh"},
+    {"voltage", "V"}, {"current", "A"}, {"power_factor", "%"}, {"pressure", "hPa"},
+    {"target_distance", "m"}, {"distance", "m"}, {"water_consumed", "L"}, {"flow", "L/min"},
+    {"noise", "dB"}, {"luminance", "lx"},
+    {"battery_low", nullptr}, {"battery_state", nullptr}, {"presence", nullptr},
+    {"occupancy", nullptr}, {"contact", nullptr}, {"water_leak", nullptr}, {"smoke", nullptr},
+    {"gas", nullptr}, {"carbon_monoxide", nullptr}, {"tamper", nullptr}, {"vibration", nullptr},
+    {"action", nullptr}, {"running_state", nullptr}, {"linkquality", nullptr},
+    {"air_quality", nullptr}, {"fault", nullptr}, {"error", nullptr}, {"warning", nullptr},
+    {"motion_state", nullptr}, {"status", nullptr}, {"alarm_state", nullptr}, {"fire", nullptr},
+};
+// Suffixes of reported-only keys (temperature_alarm, soil_temperature, ...).
+constexpr const char* kReadOnlySuffixes[] = {"_temperature", "_humidity", "_alarm", "_leak", "_detected"};
+
+bool ends_with(const char* s, const char* suf) {
+    const std::size_t n = std::strlen(s), m = std::strlen(suf);
+    return n >= m && std::strcmp(s + n - m, suf) == 0;
+}
+
+const KeyUnit* read_only_key(const char* key) {
+    for (const auto& k : kReadOnlyKeys) if (std::strcmp(k.key, key) == 0) return &k;
+    return nullptr;
+}
+bool read_only_suffix(const char* key) {
+    if (ends_with(key, "_setpoint")) return false;
+    for (const char* suf : kReadOnlySuffixes) if (ends_with(key, suf)) return true;
+    return false;
+}
+const char* unit_for(const char* key) {
+    if (const KeyUnit* k = read_only_key(key)) return k->unit;
+    if (ends_with(key, "_temperature") || ends_with(key, "_setpoint")) return "°C";
+    if (ends_with(key, "_humidity")) return "%";
+    return nullptr;
+}
+}  // namespace
+
+std::size_t exposes_from_dp_map(const TuyaDatapointMap& map, Expose* out, std::size_t cap,
+                                const char** labels, std::size_t labels_cap) {
+    std::size_t n = 0, l = 0;
+    for (std::uint8_t i = 0; i < map.count && n < cap; i++) {
+        const TuyaDpMapEntry& e = map.entries[i];
+        if (!e.out_key || !e.out_key[0]) continue;
+        bool seen = false;   // a key mapped from several datapoints is one expose
+        for (std::size_t j = 0; j < n && !seen; j++) seen = std::strcmp(out[j].name, e.out_key) == 0;
+        if (seen) continue;
+
+        Expose x{};
+        x.name = e.out_key;
+        const bool as_enum = e.type == TuyaDpType::Enum
+                             ? !(e.flags & kTuyaDpFlagEnumBool)
+                             : (e.type == TuyaDpType::Bool && (e.flags & kTuyaDpFlagBoolEnum));
+        if (as_enum) {
+            x.type = ExposeType::Enum;
+            if (e.enum_table && e.enum_count && l + e.enum_count <= labels_cap) {
+                x.enum_values = labels + l;
+                for (std::uint8_t k = 0; k < e.enum_count; k++) labels[l++] = e.enum_table[k].label;
+                x.enum_count = e.enum_count;
+            }
+        } else if (e.type == TuyaDpType::Bool || e.type == TuyaDpType::Enum) {
+            x.type = ExposeType::Binary;
+        } else if (e.type == TuyaDpType::Numeric) {
+            x.type = ExposeType::Numeric;
+            x.unit = unit_for(e.out_key);
+        } else if (e.type == TuyaDpType::String) {
+            x.type = ExposeType::String;
+        } else {
+            continue;   // Raw / Bitmap: nothing a UI can show or set
+        }
+        const bool ro = read_only_key(e.out_key) != nullptr || read_only_suffix(e.out_key);
+        x.access = ro ? Access::State : Access::StateSet;
+        if (std::strcmp(e.out_key, "battery") == 0 || std::strcmp(e.out_key, "linkquality") == 0)
+            x.category = ExposeCategory::Diagnostic;
+        out[n++] = x;
+    }
+    return n;
+}
+
 }  // namespace zhc::tuya

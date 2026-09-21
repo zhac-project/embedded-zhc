@@ -174,6 +174,22 @@ struct TuyaDatapointMap {
     std::uint8_t          count;
 };
 
+// Derive an expose table from a datapoint map, for the generated definitions
+// that ship a map and no exposes (`.exposes=nullptr`): without it the web UI
+// and Home Assistant see an empty device. One expose per distinct key, in
+// map order; Raw and Bitmap datapoints have no UI shape and are skipped.
+// Types follow the datapoint (Bool -> Binary, Enum -> Enum with the table's
+// labels, Numeric -> Numeric, String -> String; the BoolEnum / EnumBool fan-
+// out flags are honoured). Access is a guess by key name: known sensor keys
+// (temperature, battery, contact, action, ...) publish only, everything else
+// is writable, since a setpoint shown read-only is worse than a sensor shown
+// writable. Units come from the same key table. `labels` is scratch storage
+// for the enum label pointers; it must outlive `out`. Returns the count.
+// ponytail: heuristic access; the generator emitting z2m's own access bits
+// and units into the definitions replaces this.
+std::size_t exposes_from_dp_map(const TuyaDatapointMap& map, Expose* out, std::size_t cap,
+                                const char** labels, std::size_t labels_cap);
+
 bool fz_tuya_datapoints(std::span<const TuyaDpRecord> dps,
                          const DecodedMessage& msg,
                          const FzConverter& self,

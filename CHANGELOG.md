@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Fixed
 
+### Added
+
+- **`tuya::exposes_from_dp_map`**: derives an expose table from a datapoint map, for the
+  666 live generated definitions that ship a map and `.exposes=nullptr`. One expose per
+  distinct key; Bool → binary, Enum → enum with the table's labels, Numeric → numeric, String
+  → text; the BoolEnum / EnumBool fan-out flags honoured; Raw and Bitmap skipped. Access is
+  guessed from the key (known sensor keys publish only, everything else is writable) and units
+  come from the same key table. `zhc_tuya_dp_exposes_tests` pins it. The proper fix is the
+  generator emitting zigbee2mqtt's own access bits and units into the definitions.
+
 - **Tuya `phaseVariant2WithPhase` reads 16-bit current and power again.**
   z2m v26.105.0 reverted its 24-bit widening of this converter (52542ec undoing
   #12928); the R4 port had followed the widening and now follows the revert.
