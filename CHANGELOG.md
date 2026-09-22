@@ -10,6 +10,7 @@ across the ZHAC platform.
 
 ### Fixed
 
+- `PreparedDefinition::tuya_time_start` (0 off / 1 = 1970 / 2 = 2000) carries z2m's `tuyaBase({timeStart})`, so the platform can answer a Tuya MCU's time-sync request (0xEF00 cmd 0x24) in the right epoch. Set on Saswell SEA801/SEA802 (1970); the generator does not emit it yet. SEA801 also gains DP 108 `schedule_enable` (z2m: true = system_mode "auto"), which the device reports on every DATA_QUERY and surfaced as `dp_108`.
 ### Added
 
 - **Generated definitions carry real expose tables.** `zhac-tools/emit/emit_exposes.py`

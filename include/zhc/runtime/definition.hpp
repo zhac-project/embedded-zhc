@@ -306,6 +306,14 @@ struct PreparedDefinition {
     //   0x06 Emergency mains and transfer switch.
     // Default 0 = no override → trust the cluster read.
     std::uint8_t         power_source_override = 0;
+
+    // z2m `tuyaBase({timeStart})`. The Tuya MCU asks the coordinator for
+    // the time (0xEF00 cmd 0x24, "mcuSyncTime") and expects UTC + local
+    // seconds back in one of two epochs; a def that never passes timeStart
+    // in z2m gets no answer there either. 0 = do not answer, 1 = seconds
+    // since 1970, 2 = seconds since 2000. Hand-set on ported defs; the
+    // generator does not emit it yet.
+    std::uint8_t         tuya_time_start = 0;
 };
 
 }  // namespace zhc
