@@ -299,18 +299,26 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
                 return true;
             }
             // Saswell day schedule (DP 123..129): [mode:1] + 4 × [minutes BE,
-            // temp×10 BE]. Same "HH:MM/T.t" × 4 string as the other schedule
-            // codecs; the tz side turns it back into the DP 109 frame. The
-            // temperature is printed from the integer tenths, so a decode →
-            // encode round trip is byte-identical.
+            // temp×10 BE]. Same "HH:MM/T.t" string as the other schedule
+            // codecs; the tz side turns it back into the DP 109 frame. A day
+            // with fewer than four periods is stored padded with its last
+            // one, so trailing repeats are printed once: the text then passes
+            // the encoder's strictly-ascending check and the encoder pads it
+            // back, keeping a decode → encode round trip byte-identical (the
+            // temperature is printed from the integer tenths).
             if (e.flags & kTuyaDpFlagSaswellSchedule) {
                 if (raw.type != ValueType::BytesRef || raw.bytes.size() < 17) {
                     return false;  // wrong shape — abstain, no partial emit
                 }
                 const auto* b = raw.bytes.data() + 1;   // skip the mode byte
+                int periods = 4;
+                while (periods > 1 &&
+                       std::memcmp(b + (periods - 1) * 4, b + (periods - 2) * 4, 4) == 0) {
+                    --periods;
+                }
                 char tmp[96];                           // 43 canonical; garbage widens
                 int off = 0;
-                for (int prd = 0; prd < 4; ++prd) {
+                for (int prd = 0; prd < periods; ++prd) {
                     const unsigned mins = (static_cast<unsigned>(b[prd * 4]) << 8) | b[prd * 4 + 1];
                     const unsigned t10  = (static_cast<unsigned>(b[prd * 4 + 2]) << 8) | b[prd * 4 + 3];
                     const int n = std::snprintf(tmp + off,

@@ -154,6 +154,31 @@ static void test_pad_short_program() {
     assert(std::memcmp(frame + 11, want, 16) == 0);
 }
 
+// (6b) The TRV stores a short day padded with its last period (bench echo
+//      2026-09-23 after writing "11:00/22.0 19:00/16.0"). Trailing repeats
+//      print once, so the text passes the encoder's ascending check and
+//      encodes back to the same bytes.
+static void test_padded_echo_round_trip() {
+    const std::uint8_t echo[17] = {
+        0x04,
+        0x02, 0x94, 0x00, 0xDC,   // 660 min = 11:00, 22.0 °C
+        0x04, 0x74, 0x00, 0xA0,   // 1140 min = 19:00, 16.0 °C
+        0x04, 0x74, 0x00, 0xA0,   // padded
+        0x04, 0x74, 0x00, 0xA0,   // padded
+    };
+    RuntimeContext ctx{};
+    const char* s = decode_day(124, echo, "schedule_monday", ctx);
+    assert(s && std::strcmp(s, "11:00/22.0 19:00/16.0") == 0);
+    std::uint8_t frame[64]{};
+    assert(encode_day("schedule_monday", s, frame).ok);
+    assert(std::memcmp(frame + 11, echo + 1, 16) == 0);
+
+    const std::uint8_t same[17] = { 0x04, 0x02, 0x94, 0x00, 0xDC, 0x02, 0x94, 0x00, 0xDC,
+                                    0x02, 0x94, 0x00, 0xDC, 0x02, 0x94, 0x00, 0xDC };
+    const char* one = decode_day(125, same, "schedule_tuesday", ctx);
+    assert(one && std::strcmp(one, "11:00/22.0") == 0);
+}
+
 // (7) Anything the TRV cannot take is refused and nothing is written.
 static void test_rejects() {
     const char* const bad[] = {
@@ -208,6 +233,7 @@ int main() {
     test_day_bitmap();
     test_round_trip();
     test_pad_short_program();
+    test_padded_echo_round_trip();
     test_rejects();
     test_exposes();
     return 0;
