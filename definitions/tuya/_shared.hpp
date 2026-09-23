@@ -168,6 +168,17 @@ inline constexpr std::uint8_t kTuyaDpFlagMoesSchedule   = 0x20;
 // `enum_table` and the StringRef label is emitted (unmapped values abstain,
 // as upstream); encode maps the label back and sends it as a 4-byte Numeric.
 inline constexpr std::uint8_t kTuyaDpFlagNumericLookup  = 0x40;
+// Saswell SEA801/SEA802 day schedule (z2m legacy dataPoints 109, 123..129).
+// The TRV REPORTS each day on its own Raw DP, 123..129 = Sunday..Saturday:
+//   [mode:1] + 4 periods × [minutes since midnight:2 BE][temp×10:2 BE]
+// (mode 4 = "7 day"). Decode emits "HH:MM/T.t HH:MM/T.t HH:MM/T.t HH:MM/T.t"
+// under the entry's key. It TAKES a day on ONE DP, 109:
+//   [day bitmap:1, bit0 = Sunday][mode = 4] + the same 4 periods,
+// so encode derives the day from the entry's dp_id (123..129) and sends DP 109.
+// Encode accepts 1..4 strictly ascending periods, 5..30 °C, and pads to four
+// with the last period as z2m does. Put the flag on the seven day entries only.
+// Last free bit of the uint8_t flags field.
+inline constexpr std::uint8_t kTuyaDpFlagSaswellSchedule = 0x80;
 
 struct TuyaDatapointMap {
     const TuyaDpMapEntry* entries;

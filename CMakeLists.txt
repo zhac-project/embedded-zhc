@@ -3383,6 +3383,10 @@ target_link_libraries(zhc_titan_products_parity_tests PRIVATE zhc_definitions)
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
 target_link_libraries(zhc_moes_bht002_tests PRIVATE zhc_definitions)
 
+# Saswell SEA801/SEA802 weekly schedule codec (DP 123..129 read, DP 109 write).
+add_executable(zhc_saswell_sea801_tests tests/test_saswell_sea801.cpp)
+target_link_libraries(zhc_saswell_sea801_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_moes_zht_sr_tests tests/test_moes_zht_sr.cpp)
 target_link_libraries(zhc_moes_zht_sr_tests PRIVATE zhc_definitions)
 
@@ -3705,6 +3709,7 @@ add_test(NAME zhc_domraem_parity_tests      COMMAND zhc_domraem_parity_tests)
 add_test(NAME zhc_istar_parity_tests        COMMAND zhc_istar_parity_tests)
 add_test(NAME zhc_shenzhen_homa_parity_tests COMMAND zhc_shenzhen_homa_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
+add_test(NAME zhc_saswell_sea801_tests      COMMAND zhc_saswell_sea801_tests)
 add_test(NAME zhc_moes_zht_sr_tests         COMMAND zhc_moes_zht_sr_tests)
 add_test(NAME zhc_zosung_ir_tests           COMMAND zhc_zosung_ir_tests)
 add_test(NAME zhc_zg_204z_tests             COMMAND zhc_zg_204z_tests)

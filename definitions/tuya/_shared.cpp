@@ -298,6 +298,36 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
                 out.put(e.out_key, v);
                 return true;
             }
+            // Saswell day schedule (DP 123..129): [mode:1] + 4 × [minutes BE,
+            // temp×10 BE]. Same "HH:MM/T.t" × 4 string as the other schedule
+            // codecs; the tz side turns it back into the DP 109 frame. The
+            // temperature is printed from the integer tenths, so a decode →
+            // encode round trip is byte-identical.
+            if (e.flags & kTuyaDpFlagSaswellSchedule) {
+                if (raw.type != ValueType::BytesRef || raw.bytes.size() < 17) {
+                    return false;  // wrong shape — abstain, no partial emit
+                }
+                const auto* b = raw.bytes.data() + 1;   // skip the mode byte
+                char tmp[96];                           // 43 canonical; garbage widens
+                int off = 0;
+                for (int prd = 0; prd < 4; ++prd) {
+                    const unsigned mins = (static_cast<unsigned>(b[prd * 4]) << 8) | b[prd * 4 + 1];
+                    const unsigned t10  = (static_cast<unsigned>(b[prd * 4 + 2]) << 8) | b[prd * 4 + 3];
+                    const int n = std::snprintf(tmp + off,
+                        sizeof(tmp) - static_cast<std::size_t>(off),
+                        prd == 0 ? "%02u:%02u/%u.%u" : " %02u:%02u/%u.%u",
+                        mins / 60, mins % 60, t10 / 10, t10 % 10);
+                    if (n <= 0 || static_cast<std::size_t>(off + n) >= sizeof(tmp)) {
+                        return false;
+                    }
+                    off += n;
+                }
+                const char* s = ctx.alloc_str(tmp, static_cast<std::size_t>(off));
+                if (!s) return false;
+                Value v{}; v.type = ValueType::StringRef; v.str = s;
+                out.put(e.out_key, v);
+                return true;
+            }
             // Schedule day: 4 × [h, m, t*2]. Some devices reuse the same DP
             // for schedule frames and a short non-schedule value (e.g. TRV26
             // DP17 carries either open_window_time or schedule_monday). Use
@@ -878,64 +908,76 @@ bool encode_enum(const TuyaDpMapEntry& e, const Value& in,
 // temperature whose ×2 value falls outside 0..255. No locale / atof: ints
 // are parsed by hand and the temperature ×2 is computed with exact integer
 // rounding so a canonical decode→encode round-trip is byte-identical.
+// Parse an unsigned decimal integer of 1+ digits at p; advance p; cap the
+// accumulator so a long run of digits can't overflow (callers range-check).
+bool take_uint(const char*& p, std::uint32_t& v) {
+    if (*p < '0' || *p > '9') return false;
+    std::uint32_t acc = 0;
+    while (*p >= '0' && *p <= '9') {
+        if (acc < 100000U) acc = acc * 10U + static_cast<std::uint32_t>(*p - '0');
+        ++p;
+    }
+    v = acc;
+    return true;
+}
+
+bool take_char(const char*& p, char c) {
+    if (*p != c) return false;
+    ++p;
+    return true;
+}
+
+// One schedule period "HH:MM/T[.t…]" at p (advances p). The temperature comes
+// back multiplied by `scale` (2 for Moes' half degrees, 10 for Saswell's
+// tenths) with exact integer nearest-rounding and no locale / atof, so a
+// canonical decode → encode round trip is byte-identical. False on bad syntax
+// or hour > 23 / minute > 59; the caller range-checks the temperature.
+bool take_period(const char*& p, std::uint32_t scale,
+                 std::uint32_t& hour, std::uint32_t& minute, std::uint64_t& temp_scaled) {
+    std::uint32_t whole = 0;
+    if (!take_uint(p, hour) || !take_char(p, ':')) return false;
+    if (!take_uint(p, minute) || !take_char(p, '/')) return false;
+    if (!take_uint(p, whole)) return false;
+
+    // Optional fractional part "<digits>"; decode emits exactly one decimal
+    // but accept N digits and round exactly.
+    std::uint32_t frac_num = 0, frac_den = 1;
+    if (*p == '.') {
+        ++p;
+        if (*p < '0' || *p > '9') return false;  // "." with no digits
+        while (*p >= '0' && *p <= '9') {
+            if (frac_den < 1000000U) {
+                frac_num = frac_num * 10U + static_cast<std::uint32_t>(*p - '0');
+                frac_den *= 10U;
+            }
+            ++p;
+        }
+    }
+    if (hour > 23 || minute > 59) return false;
+
+    // temp*scale = round((whole + frac_num/frac_den) * scale). Exact integer
+    // nearest-rounding of A/B with A=(whole*frac_den+frac_num)*scale, B=frac_den.
+    const std::uint64_t a =
+        (static_cast<std::uint64_t>(whole) * frac_den + frac_num) * scale;
+    temp_scaled = (a + frac_den / 2ULL) / frac_den;
+    return true;
+}
+
 bool parse_moes_schedule(const char* s, std::uint8_t out[36]) {
     if (!s) return false;
     const char* p = s;
-
-    // Parse an unsigned decimal integer of 1+ digits; advance p; cap the
-    // accumulator so a long run of digits can't overflow (caller range-checks).
-    auto take_uint = [&p](std::uint32_t& v) -> bool {
-        if (*p < '0' || *p > '9') return false;
-        std::uint32_t acc = 0;
-        while (*p >= '0' && *p <= '9') {
-            if (acc < 100000U) acc = acc * 10U + static_cast<std::uint32_t>(*p - '0');
-            ++p;
-        }
-        v = acc;
-        return true;
-    };
-    auto take_char = [&p](char c) -> bool {
-        if (*p != c) return false;
-        ++p;
-        return true;
-    };
-
     for (int g = 0; g < 3; ++g) {
         if (g != 0) {
             // Group separator " | " (space-pipe-space), exactly.
-            if (!take_char(' ') || !take_char('|') || !take_char(' ')) {
+            if (!take_char(p, ' ') || !take_char(p, '|') || !take_char(p, ' ')) {
                 return false;
             }
         }
         for (int prd = 0; prd < 4; ++prd) {
-            if (prd != 0 && !take_char(' ')) return false;  // intra-group space
-
-            std::uint32_t hour = 0, minute = 0, whole = 0;
-            if (!take_uint(hour) || !take_char(':')) return false;
-            if (!take_uint(minute) || !take_char('/')) return false;
-            if (!take_uint(whole)) return false;
-
-            // Optional single fractional part "<digits>"; decode emits exactly
-            // one decimal but accept N digits and round ×2 exactly.
-            std::uint32_t frac_num = 0, frac_den = 1;
-            if (*p == '.') {
-                ++p;
-                if (*p < '0' || *p > '9') return false;  // "." with no digits
-                while (*p >= '0' && *p <= '9') {
-                    if (frac_den < 1000000U) {
-                        frac_num = frac_num * 10U + static_cast<std::uint32_t>(*p - '0');
-                        frac_den *= 10U;
-                    }
-                    ++p;
-                }
-            }
-            if (hour > 23 || minute > 59) return false;
-
-            // temp*2 = round((whole + frac_num/frac_den) * 2). Exact integer
-            // nearest-rounding of A/B with A=(whole*frac_den+frac_num)*2, B=frac_den.
-            const std::uint64_t a =
-                (static_cast<std::uint64_t>(whole) * frac_den + frac_num) * 2ULL;
-            const std::uint64_t temp_x2 = (a + frac_den / 2ULL) / frac_den;
+            if (prd != 0 && !take_char(p, ' ')) return false;  // intra-group space
+            std::uint32_t hour = 0, minute = 0;
+            std::uint64_t temp_x2 = 0;
+            if (!take_period(p, 2, hour, minute, temp_x2)) return false;
             if (temp_x2 > 255ULL) return false;
 
             const int slot = (g * 4 + prd) * 3;
@@ -947,6 +989,45 @@ bool parse_moes_schedule(const char* s, std::uint8_t out[36]) {
     // Reject trailing garbage — the cursor must sit exactly on the NUL.
     return *p == '\0';
 }
+
+// Saswell day program "HH:MM/T.t[ HH:MM/T.t …]" (1..4 periods, single spaces)
+// → the 16 period bytes of the DP 109 frame: 4 × [minutes BE][temp×10 BE].
+// Start times must strictly ascend and temperatures sit in the TRV's 5..30 °C
+// setpoint range; fewer than four periods are padded with the last one, as
+// z2m does. False (writing nothing) on anything else.
+bool parse_saswell_day(const char* s, std::uint8_t out[16]) {
+    if (!s) return false;
+    const char* p = s;
+    std::uint16_t mins[4] = {}, t10[4] = {};
+    int n = 0;
+    while (true) {
+        if (n == 4) return false;                          // a fifth period
+        std::uint32_t hour = 0, minute = 0;
+        std::uint64_t t = 0;
+        if (!take_period(p, 10, hour, minute, t)) return false;
+        if (t < 50 || t > 300) return false;               // 5.0 .. 30.0 °C
+        const std::uint16_t m = static_cast<std::uint16_t>(hour * 60 + minute);
+        if (n > 0 && m <= mins[n - 1]) return false;       // must ascend
+        mins[n] = m;
+        t10[n]  = static_cast<std::uint16_t>(t);
+        ++n;
+        if (*p == '\0') break;
+        if (!take_char(p, ' ')) return false;              // single space between
+    }
+    for (int i = 0; i < 4; ++i) {
+        const int src = i < n ? i : n - 1;                 // pad with the last
+        out[i * 4]     = static_cast<std::uint8_t>(mins[src] >> 8);
+        out[i * 4 + 1] = static_cast<std::uint8_t>(mins[src]);
+        out[i * 4 + 2] = static_cast<std::uint8_t>(t10[src] >> 8);
+        out[i * 4 + 3] = static_cast<std::uint8_t>(t10[src]);
+    }
+    return true;
+}
+
+// Saswell schedule datapoints (z2m legacy dataPoints).
+constexpr std::uint8_t kSaswellScheduleSetDp  = 109;  // takes a day's program
+constexpr std::uint8_t kSaswellFirstDayDp     = 123;  // Sunday; 129 = Saturday
+constexpr std::uint8_t kSaswellModeSevenDay   = 4;
 
 }  // namespace
 
@@ -1023,6 +1104,34 @@ bool tz_tuya_datapoints(std::string_view key,
                 out[7] = 0x00;                       // len_be high
                 out[8] = 36;                         // len_be low
                 for (std::size_t i = 0; i < 36; ++i) out[9 + i] = sched[i];
+                out_size = kTotal;
+                return true;
+            }
+            // Saswell day program: the entry is the day's REPORT datapoint
+            // (123..129 = Sunday..Saturday); the write goes to DP 109 as
+            // [day bitmap][mode 4] + 4 periods. Built here directly, like the
+            // Moes frame above (18 bytes do not fit val[4]).
+            if (entry->flags & kTuyaDpFlagSaswellSchedule) {
+                if (input.type != ValueType::StringRef || !input.str) return false;
+                if (entry->dp_id < kSaswellFirstDayDp || entry->dp_id > kSaswellFirstDayDp + 6) {
+                    return false;  // flag on a non-day entry — refuse, send nothing
+                }
+                std::uint8_t periods[16];
+                if (!parse_saswell_day(input.str, periods)) return false;
+                constexpr std::size_t kLen   = 2 + 16;     // bitmap + mode + periods
+                constexpr std::size_t kTotal = 9 + kLen;
+                if (out.size() < kTotal) return false;
+                out[0] = 0x01;                             // fc: cluster-specific c→s
+                out[1] = 0x00;                             // tsn — platform patches
+                out[2] = 0x00;                             // cmd: setData
+                out[3] = 0x00; out[4] = 0x01;              // tuya seq (big-endian, 1)
+                out[5] = kSaswellScheduleSetDp;
+                out[6] = static_cast<std::uint8_t>(TuyaDpType::Raw);
+                out[7] = 0x00;                             // len_be high
+                out[8] = static_cast<std::uint8_t>(kLen);  // len_be low
+                out[9]  = static_cast<std::uint8_t>(1u << (entry->dp_id - kSaswellFirstDayDp));
+                out[10] = kSaswellModeSevenDay;
+                for (std::size_t i = 0; i < 16; ++i) out[11 + i] = periods[i];
                 out_size = kTotal;
                 return true;
             }
