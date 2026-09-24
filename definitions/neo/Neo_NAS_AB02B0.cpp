@@ -32,8 +32,15 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum_AB02B0_power_type[] = {
     { 4, "usb" },
 };
 
+// z2m: battery_low = (power_type === 3). EnumBool: a hit in this table is true.
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum_AB02B0_battery_low[] = {
+    { 3, "battery_low" },
+};
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries_AB02B0[] = {
     { 101, "power_type",        ::zhc::TuyaDpType::Enum,    1, kEnum_AB02B0_power_type, 5 },
+    { 101, "battery_low",       ::zhc::TuyaDpType::Enum,    1, kEnum_AB02B0_battery_low, 1,
+      ::zhc::tuya::kTuyaDpFlagEnumBool },
     { 102, "melody",            ::zhc::TuyaDpType::Numeric, 1, nullptr, 0 },
     { 103, "duration",          ::zhc::TuyaDpType::Numeric, 1, nullptr, 0 },
     { 104, "alarm",             ::zhc::TuyaDpType::Bool,    1, nullptr, 0 },
@@ -79,11 +86,13 @@ constexpr TzConverter kTzDp_AB02B0{
 const TzConverter* const kTz_NAS_AB02B0[] = { &kTzDp_AB02B0 };
 
 constexpr const char* kModels_NAS_AB02B0[] = { "0yu2xgi", "TS0601" };
-constexpr const char* kManus_NAS_AB02B0[] = { "_TZE200_d0yu2xgi" };
+// _TYST11_ units report zigbeeModel "0yu2xgi" (z2m zigbeeModel) with this name.
+constexpr const char* kManus_NAS_AB02B0[] = { "_TZE200_d0yu2xgi", "_TYST11_d0yu2xgi" };
 
 constexpr Expose kExposes_NAS_AB02B0[] = {
     {"temperature",       ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
     {"humidity",          ExposeType::Numeric, Access::State,    "%",  nullptr, nullptr, 0},
+    {"battery_low",       ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
     {"alarm",             ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"temperature_alarm", ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"humidity_alarm",    ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
@@ -113,6 +122,7 @@ extern const PreparedDefinition kDef_NAS_AB02B0{
     .to_zigbee=kTz_NAS_AB02B0, .to_zigbee_count=sizeof(kTz_NAS_AB02B0)/sizeof(kTz_NAS_AB02B0[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,
     .bindings=kBindings_NAS_AB02B0, .bindings_count=sizeof(kBindings_NAS_AB02B0)/sizeof(kBindings_NAS_AB02B0[0]),
+    .tuya_time_start=1,   // z2m: tuyaBase({forceTimeUpdates}) -- answer mcuSyncTime, 1970 epoch
 };
 
 }  // namespace zhc::devices::neo

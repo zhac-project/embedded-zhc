@@ -10,10 +10,12 @@ across the ZHAC platform.
 
 ### Added
 
+- Neo NAS-AB02B0 (temperature/humidity alarm): `battery_low` (DP 101 power_type == battery_low, as z2m), the `_TYST11_d0yu2xgi` manufacturer name listed explicitly (zigbeeModel `0yu2xgi`), and the Tuya time answer z2m's `forceTimeUpdates` sends (`tuya_time_start = 1`). Test `zhc_neo_nas_ab02b0_tests`.
 - Saswell SEA801/SEA802 weekly schedule, read and write: `schedule_sunday` .. `schedule_saturday` (String, state+set), each four "HH:MM/T.t" periods. The TRV reports a day on its own Raw DP (123 = Sunday .. 129 = Saturday: mode byte + 4 × [minutes BE, temp×10 BE]) and takes one on DP 109 ([day bitmap, mode 4] + the same periods); new `kTuyaDpFlagSaswellSchedule` (0x80, the last free flag bit) handles both sides. Writes take 1-4 strictly ascending periods at 5-30 °C and pad to four with the last, as z2m does. z2m only writes this schedule (its meta lacks `weeklyScheduleFirstDayDpId`, so the day reports are dropped there). The Moes program parser now shares one exact-rounding period parser with it (`take_period`). Test: `tests/test_saswell_sea801.cpp`.
 
 ### Fixed
 
+- Removed `TS0601_th_slim` (Tuya, `_TZE200_d0yu2xgi`): no z2m definition behind it; it read temperature/humidity from DP 1/2 and exposed only `state`, and it took that fingerprint ahead of Neo NAS-AB02B0, where z2m puts it.
 - Saswell schedule days that the TRV stores padded (a day with fewer than four periods repeats its last one) decode with the repeats printed once (`11:00/22.0 19:00/16.0`, not `… 19:00/16.0 19:00/16.0 19:00/16.0`). The padded text failed the encoder's strictly-ascending check, so a day the valve had echoed could not be saved back (the web editor refused it too); the encoder pads it again, so decode → encode stays byte-identical. Test with the bench echo bytes.
 - `PreparedDefinition::tuya_time_start` (0 off / 1 = 1970 / 2 = 2000) carries z2m's `tuyaBase({timeStart})`, so the platform can answer a Tuya MCU's time-sync request (0xEF00 cmd 0x24) in the right epoch. Set on Saswell SEA801/SEA802 (1970); the generator does not emit it yet. SEA801 also gains DP 108 `schedule_enable` (z2m: true = system_mode "auto"), which the device reports on every DATA_QUERY and surfaced as `dp_108`.
 ### Added

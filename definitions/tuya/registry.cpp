@@ -1406,7 +1406,6 @@ extern const PreparedDefinition kDefTZE200_switch_countdown;
 extern const PreparedDefinition kDefTZE200_tank;
 extern const PreparedDefinition kDefTZE200_tds;
 extern const PreparedDefinition kDefTZE200_temp;
-extern const PreparedDefinition kDefTZE200_th_slim;
 extern const PreparedDefinition kDefTZE200_thermostat;
 extern const PreparedDefinition kDefTZE200_thermostat_v3;
 extern const PreparedDefinition kDefTZE200_tilt_blinds;
@@ -2875,7 +2874,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_tank,
     &kDefTZE200_tds,
     &kDefTZE200_temp,
-    &kDefTZE200_th_slim,
     &kDefTZE200_thermostat,
     &kDefTZE200_thermostat_v3,
     &kDefTZE200_tilt_blinds,
