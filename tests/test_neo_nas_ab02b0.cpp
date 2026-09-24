@@ -76,5 +76,26 @@ int main() {
 
     const Value* usb = decode_dp101(4, "battery_low", ctx, r);
     assert(usb && usb->type == ValueType::Bool && !usb->b);
+
+    // melody is an ENUM DP (z2m sendDataPointEnum): the write must be type 0x04,
+    // one byte, raw = the melody number; a value-typed write is ignored by the device.
+    std::uint8_t frame[64]{};
+    Value mv{}; mv.type = ValueType::StringRef; mv.str = "5";
+    const auto w = dispatch_to_zigbee(*ab, "melody", mv, ctx, frame);
+    assert(w.ok && w.cluster_id == 0xEF00);
+    assert(frame[5] == 102 && frame[6] == 0x04 && frame[7] == 0 && frame[8] == 1 && frame[9] == 5);
+
+    // and the device's enum report decodes.
+    const std::uint8_t mel[1] = { 7 };
+    const TuyaDpRecord recs[] = { { 102, 0x04, std::span<const std::uint8_t>(mel, 1) } };
+    DecodedMessage msg{};
+    msg.family = FrameFamily::TuyaDp; msg.type = MessageType::Command;
+    msg.cluster = "manuSpecificTuya"; msg.direction = Direction::ServerToClient;
+    msg.command_id = 0x02; msg.src_endpoint = 1; msg.dst_endpoint = 1;
+    InboundApsFrame raw{};
+    raw.cluster_id = 0xEF00; raw.src_endpoint = 1; raw.dst_endpoint = 1;
+    const auto dr = dispatch_from_zigbee(msg, std::span<const TuyaDpRecord>(recs, 1), *ab, raw, ctx);
+    const Value* m7 = dr.merged.find("melody");
+    assert(m7 && m7->type == ValueType::StringRef && std::strcmp(m7->str, "7") == 0);
     return 0;
 }

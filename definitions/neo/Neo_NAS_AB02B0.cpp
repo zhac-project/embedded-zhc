@@ -37,11 +37,34 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum_AB02B0_battery_low[] = {
     { 3, "battery_low" },
 };
 
+// z2m tz sendDataPointEnum(neoMelody, parseInt(value)): melody is an ENUM DP
+// whose raw value IS the melody number 1..18 (fz: melody = value).
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum_AB02B0_melody[] = {
+    { 1, "1" },
+    { 2, "2" },
+    { 3, "3" },
+    { 4, "4" },
+    { 5, "5" },
+    { 6, "6" },
+    { 7, "7" },
+    { 8, "8" },
+    { 9, "9" },
+    { 10, "10" },
+    { 11, "11" },
+    { 12, "12" },
+    { 13, "13" },
+    { 14, "14" },
+    { 15, "15" },
+    { 16, "16" },
+    { 17, "17" },
+    { 18, "18" },
+};
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries_AB02B0[] = {
     { 101, "power_type",        ::zhc::TuyaDpType::Enum,    1, kEnum_AB02B0_power_type, 5 },
     { 101, "battery_low",       ::zhc::TuyaDpType::Enum,    1, kEnum_AB02B0_battery_low, 1,
       ::zhc::tuya::kTuyaDpFlagEnumBool },
-    { 102, "melody",            ::zhc::TuyaDpType::Numeric, 1, nullptr, 0 },
+    { 102, "melody",            ::zhc::TuyaDpType::Enum,    1, kEnum_AB02B0_melody, 18 },
     { 103, "duration",          ::zhc::TuyaDpType::Numeric, 1, nullptr, 0 },
     { 104, "alarm",             ::zhc::TuyaDpType::Bool,    1, nullptr, 0 },
     { 105, "temperature",       ::zhc::TuyaDpType::Numeric, 10, nullptr, 0 },  // z2m: value/10
@@ -92,6 +115,8 @@ constexpr const char* kManus_NAS_AB02B0[] = { "_TZE200_d0yu2xgi", "_TYST11_d0yu2
 // Allowed values (enums) and z2m's ranges (numerics), so the UI offers a list
 // or a bounded input instead of free text.
 constexpr const char* kVolumeValues[]    = { "low", "medium", "high" };
+constexpr const char* kMelodyValues[]    = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                                             "11", "12", "13", "14", "15", "16", "17", "18" };
 constexpr const char* kPowerTypeValues[] = { "battery_full", "battery_high", "battery_medium",
                                              "battery_low", "usb" };
 
@@ -107,7 +132,7 @@ constexpr Expose kExposes_NAS_AB02B0[] = {
     {"temperature_max",   ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -20, 80, 1},
     {"humidity_min",      ExposeType::Numeric, Access::StateSet, "%",  nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 1},
     {"humidity_max",      ExposeType::Numeric, Access::StateSet, "%",  nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 1},
-    {"melody",            ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 18, 1},
+    {"melody",            ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kMelodyValues, 18},
     {"volume",            ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kVolumeValues, 3},
     {"power_type",        ExposeType::Enum,    Access::State,    nullptr, nullptr, kPowerTypeValues, 5},
 };
