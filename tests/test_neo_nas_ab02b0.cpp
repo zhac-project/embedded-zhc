@@ -57,6 +57,16 @@ int main() {
     const auto* t = find_definition("TS0601", "_TZE200_d0yu2xgi", tuya_reg());
     assert(t == nullptr || t->manufacturer_names_count == 0);   // only a generic TS0601 fallback
 
+    // volume is a writable enum: its values must reach the UI as a list.
+    bool vol = false;
+    for (std::size_t i = 0; i < ab->exposes_count; ++i) {
+        const auto& e = ab->exposes[i];
+        if (std::strcmp(e.name, "volume") == 0) {
+            vol = e.enum_count == 3 && std::strcmp(e.enum_values[1], "medium") == 0;
+        }
+    }
+    assert(vol);
+
     RuntimeContext ctx{};
     DispatchResult r{};
     const Value* low = decode_dp101(3, "battery_low", ctx, r);

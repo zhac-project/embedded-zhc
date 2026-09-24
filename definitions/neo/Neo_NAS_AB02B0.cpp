@@ -89,6 +89,12 @@ constexpr const char* kModels_NAS_AB02B0[] = { "0yu2xgi", "TS0601" };
 // _TYST11_ units report zigbeeModel "0yu2xgi" (z2m zigbeeModel) with this name.
 constexpr const char* kManus_NAS_AB02B0[] = { "_TZE200_d0yu2xgi", "_TYST11_d0yu2xgi" };
 
+// Allowed values (enums) and z2m's ranges (numerics), so the UI offers a list
+// or a bounded input instead of free text.
+constexpr const char* kVolumeValues[]    = { "low", "medium", "high" };
+constexpr const char* kPowerTypeValues[] = { "battery_full", "battery_high", "battery_medium",
+                                             "battery_low", "usb" };
+
 constexpr Expose kExposes_NAS_AB02B0[] = {
     {"temperature",       ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
     {"humidity",          ExposeType::Numeric, Access::State,    "%",  nullptr, nullptr, 0},
@@ -96,14 +102,14 @@ constexpr Expose kExposes_NAS_AB02B0[] = {
     {"alarm",             ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"temperature_alarm", ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"humidity_alarm",    ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"duration",          ExposeType::Numeric, Access::StateSet, "s",  nullptr, nullptr, 0},
-    {"temperature_min",   ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
-    {"temperature_max",   ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
-    {"humidity_min",      ExposeType::Numeric, Access::StateSet, "%",  nullptr, nullptr, 0},
-    {"humidity_max",      ExposeType::Numeric, Access::StateSet, "%",  nullptr, nullptr, 0},
-    {"melody",            ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"volume",            ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"power_type",        ExposeType::Enum,    Access::State,    nullptr, nullptr, nullptr, 0},
+    {"duration",          ExposeType::Numeric, Access::StateSet, "s",  nullptr, nullptr, 0, ExposeCategory::State, 0, 1800, 1},
+    {"temperature_min",   ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -20, 80, 1},
+    {"temperature_max",   ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -20, 80, 1},
+    {"humidity_min",      ExposeType::Numeric, Access::StateSet, "%",  nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 1},
+    {"humidity_max",      ExposeType::Numeric, Access::StateSet, "%",  nullptr, nullptr, 0, ExposeCategory::State, 1, 100, 1},
+    {"melody",            ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0, ExposeCategory::State, 1, 18, 1},
+    {"volume",            ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kVolumeValues, 3},
+    {"power_type",        ExposeType::Enum,    Access::State,    nullptr, nullptr, kPowerTypeValues, 5},
 };
 
 constexpr BindingSpec kBindings_NAS_AB02B0[] = {
