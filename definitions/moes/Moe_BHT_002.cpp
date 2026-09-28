@@ -16,7 +16,8 @@
 //   26   min_temperature_limit          ┘
 //   24   local_temperature              5toc8efa ÷10; elsewhere a 16-bit sign wrap
 //                                       (`v - 65536 + 1`, z2m's +1 kept), then ÷10
-//                                       except ztvwu4nk / ye5jkfsb (raw); ≥ 100 dropped
+//                                       except ztvwu4nk / ye5jkfsb (raw); ≥ 100 dropped;
+//                                       a 32-bit negative stays signed
 //   27   local_temperature_calibration  > 4000 means v − 4096 (write: < 0 → 4096 + v)
 //   36   running_state                  moesValve: truthy = idle, else heat
 //   40   child_lock
@@ -53,7 +54,9 @@ constexpr TuyaEnumEntry kValve[]   = { {0, "heat"}, {1, "idle"} };      // DP36
 bool local_temp(const TuyaDpMapEntry& e, const Value& raw, bool wrap, Payload& out) {
     if (raw.type != ValueType::Int) return false;
     std::int64_t v = raw.i;
-    if (wrap && (v & 0x8000)) v = v - 0x10000 + 1;
+    // The DP is s32: a negative sent in all four bytes is already signed. z2m
+    // (also signed) wraps it anyway and publishes -6554.5; only wrap 16-bit ones.
+    if (wrap && v >= 0 && (v & 0x8000)) v = v - 0x10000 + 1;
     Value t{}; t.type = ValueType::Float;
     t.f = static_cast<float>(v) / static_cast<float>(e.divisor);
     if (t.f >= 100.0f) return false;

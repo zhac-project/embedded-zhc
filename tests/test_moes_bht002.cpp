@@ -454,6 +454,8 @@ static void test_setpoint_scaling() {
 
 // DP24 per z2m: 5toc8efa ÷10; the rest wrap 16-bit negatives the z2m way
 // (`v - 65536 + 1`), then ÷10 except ztvwu4nk / ye5jkfsb (raw); ≥ 100 °C dropped.
+// The DP is signed 32-bit (z2m decodes it signed too), so a negative sent in all
+// four bytes stays as it is in every group; z2m's wrap turned it into -6554.5.
 static void test_local_temperature_groups() {
     auto temp = [](const PreparedDefinition& def, std::int32_t raw) {
         return decode_dp(def, 24, 0x02, be32(raw), "local_temperature");
@@ -466,6 +468,9 @@ static void test_local_temperature_groups() {
     assert(is_float(temp(kDef_BHT_002_rawtemp, 23), 23.0f));     // was 2.3 (÷10)
     assert(is_float(temp(kDef_BHT_002_rawtemp, 0xFFFE), -1.0f));
     assert(!temp(kDef_BHT_002_rawtemp, 235).found);
+    assert(is_float(temp(kDef_BHT_002, -10), -1.0f));              // 0xFFFFFFF6
+    assert(is_float(temp(kDef_BHT_002_5toc8efa, -10), -1.0f));
+    assert(is_float(temp(kDef_BHT_002_rawtemp, -3), -3.0f));       // 0xFFFFFFFD
 }
 
 // DP101 weekly program on every group (was aoclfnxz only).
