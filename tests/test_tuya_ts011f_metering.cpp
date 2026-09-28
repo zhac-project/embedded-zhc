@@ -168,6 +168,35 @@ void check_okaz_configure() {
     assert(g_magic_attrs_ok);
 }
 
+// z2m tuya.fz/tz power_on_behavior_1: genOnOff 0x8002 (moesStartUpOnOff)
+// off=0 / on=1 / previous=2 — three values, no "toggle".
+void check_power_on_behavior(const PreparedDefinition& def) {
+    const Expose* e = find_expose(def, "power_on_behavior");
+    assert(e && e->type == ExposeType::Enum && e->access == Access::StateSet);
+    assert(e->enum_count == 3);
+    const char* want[] = {"off", "on", "previous"};
+    for (int i = 0; i < 3; ++i) assert(std::strcmp(e->enum_values[i], want[i]) == 0);
+
+    // Report 0x8002 enum8 = 2 → "previous".
+    const std::vector<std::uint8_t> rep = {0x18, 0x44, 0x0A, 0x02, 0x80, 0x30, 0x02};
+    auto r = dispatch_zcl(def, 0x0006, "genOnOff", rep);
+    const Value* v = r.merged.find("power_on_behavior");
+    assert(v && v->type == ValueType::StringRef && std::strcmp(v->str, "previous") == 0);
+
+    // Write "previous" → writeAttributes 0x8002 enum8 = 2.
+    std::uint8_t frame[32]{};
+    RuntimeContext ctx{};
+    Value in{}; in.type = ValueType::StringRef; in.str = "previous";
+    auto w = dispatch_to_zigbee(def, "power_on_behavior", in, ctx, frame);
+    assert(w.ok && w.cluster_id == 0x0006 && w.frame_size == 7);
+    const std::uint8_t exp[] = {0x10, 0x00, 0x02, 0x02, 0x80, 0x30, 0x02};
+    assert(std::memcmp(frame, exp, sizeof(exp)) == 0);
+
+    // "toggle" is not a TS011F value.
+    in.str = "toggle";
+    assert(!dispatch_to_zigbee(def, "power_on_behavior", in, ctx, frame).ok);
+}
+
 }  // namespace
 
 int main() {
@@ -182,9 +211,11 @@ int main() {
     check_shape(kDefTS011F_okaz9tjs);
     check_decode(kDefTS011F_okaz9tjs);
     check_okaz_configure();
+    check_power_on_behavior(kDefTS011F_okaz9tjs);
 
     check_shape(kDefTS011F);
     check_decode(kDefTS011F);
+    check_power_on_behavior(kDefTS011F);
     // Generic keeps z2m's default reporting path.
     assert(kDefTS011F.reports_count > 0);
     return 0;

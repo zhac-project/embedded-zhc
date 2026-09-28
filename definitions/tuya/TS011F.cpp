@@ -27,13 +27,46 @@ constexpr FzConverter kFzMeterBound{
     .frame_flags_mask=0,.frame_flags_value=0,.direction=Direction::ServerToClient,
     .fn={.zcl_fn=&::zhc::lumi::fz_lumi_electricity_meter},.user_config=&kMeter };
 
+// z2m tuya.fz/tz power_on_behavior_1 (TS011F_plug_1): genOnOff 0x8002
+// moesStartUpOnOff, off=0 / on=1 / previous=2. The shared
+// kFzTuyaPowerOnBehavior / kTzTuyaPowerOnBehavior carry a 4-value table
+// (2=toggle, 3=previous) that would mislabel this plug, hence a local pair.
+constexpr const char* kPobOpts[] = { "off", "on", "previous" };
+
+bool fz_power_on_behavior_1(const DecodedMessage& msg, const FzConverter&,
+                            const PreparedDefinition&, RuntimeContext&,
+                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("32770");   // 0x8002
+    if (!v) return false;
+    std::uint64_t raw;
+    if      (v->type == ValueType::Uint) raw = v->u;
+    else if (v->type == ValueType::Int)  raw = static_cast<std::uint64_t>(v->i);
+    else return false;
+    if (raw > 2) return false;
+    Value o{}; o.type = ValueType::StringRef; o.str = kPobOpts[raw];
+    out.put("power_on_behavior", o);
+    return true;
+}
+constexpr FzConverter kFzPowerOnBehavior1{
+    .family=FrameFamily::Zcl,.cluster="genOnOff",
+    .type_mask=type_bit(MessageType::AttributeReport)|type_bit(MessageType::ReadResponse),
+    .command_id=WILDCARD_CMD_ID,.attr_id=WILDCARD_ATTR_ID,.endpoint=WILDCARD_ENDPOINT,
+    .frame_flags_mask=0,.frame_flags_value=0,.direction=Direction::ServerToClient,
+    .fn={.zcl_fn=&fz_power_on_behavior_1},.user_config=nullptr };
+constexpr ::zhc::generic::ZclWriteLookup kPobLut[] = { {"off", 0}, {"on", 1}, {"previous", 2} };
+constexpr ::zhc::generic::ZclWriteSpec kSpecPob{
+    "power_on_behavior", 0x8002, 0x30, 0, kPobLut, 3 };
+constexpr TzConverter kTzPowerOnBehavior1{
+    "power_on_behavior", "genOnOff", 0x0006, 0x02,
+    &::zhc::generic::tz_zcl_write_attr, &kSpecPob };
+
 const FzConverter* const kFz[] = {
     &::zhc::generic::kFzOnOff,
     &kFzPowerBound,
     &kFzMeterBound,
-    &::zhc::tuya::kFzTuyaPowerOnBehavior,
+    &kFzPowerOnBehavior1,
 };
-const TzConverter* const kTz[] = { &::zhc::generic::kTzOnOff };
+const TzConverter* const kTz[] = { &::zhc::generic::kTzOnOff, &kTzPowerOnBehavior1 };
 constexpr const char* kModels[] = { "TS011F" };
 }
 
@@ -53,7 +86,8 @@ constexpr BindingSpec kAutoBindings[] = {
 // dropped them, so decoded metering never surfaced.
 constexpr Expose kExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"power_on_behavior", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kPobOpts, 3,
+     ExposeCategory::Config},
     {"power",   ExposeType::Numeric, Access::State, "W",   nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V",   nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A",   nullptr, nullptr, 0},
@@ -72,24 +106,18 @@ constexpr BindingSpec kBindings[] = {
 };
 
 // ── Elivco LSPA9 (`_TZ3000_okaz9tjs`) ─────────────────────────────────
-// z2m TS011F_plug_1 whitelabel. Same decode (kFz) as the generic.
+// z2m TS011F_plug_1 whitelabel. Same converters (kFz/kTz) as the generic.
 // configure: magic packet + bind genOnOff/haElectricalMeasurement/seMetering,
 // and for this manufacturer NO reporting config at all (z2m #29034 —
 // configureReporting breaks its metering). Matched by manufacturer name so
 // it wins Pass 1 of find_definition over the bare-model kDefTS011F.
 namespace {
-const TzConverter* const kTzOkaz[] = {
-    &::zhc::generic::kTzOnOff,
-    &::zhc::tuya::kTzTuyaPowerOnBehavior,
-};
 constexpr const char* kManusOkaz[] = { "_TZ3000_okaz9tjs" };
 constexpr WhiteLabel kWhiteLabelsOkaz[] = { {"Elivco", "LSPA9"} };
-// Labels match kFzTuyaPowerOnBehavior / kTzTuyaPowerOnBehavior (attr 0x8002).
-constexpr const char* kPobOpts[] = { "off", "on", "toggle", "previous" };
 
 constexpr Expose kExposesOkaz[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kPobOpts, 4,
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kPobOpts, 3,
      ExposeCategory::Config},
     {"power",   ExposeType::Numeric, Access::State, "W",   nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V",   nullptr, nullptr, 0},
@@ -117,7 +145,7 @@ extern const PreparedDefinition kDefTS011F_okaz9tjs{
     .meta=nullptr,.exposes=kExposesOkaz,.exposes_count=sizeof(kExposesOkaz)/sizeof(kExposesOkaz[0]),
     .white_labels=kWhiteLabelsOkaz,.white_labels_count=1,
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
-    .to_zigbee=kTzOkaz,.to_zigbee_count=sizeof(kTzOkaz)/sizeof(kTzOkaz[0]),
+    .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
     .bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
     .reports=nullptr,.reports_count=0,
