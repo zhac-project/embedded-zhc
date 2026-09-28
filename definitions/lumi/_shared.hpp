@@ -30,6 +30,18 @@ bool fz_lumi_basic(const DecodedMessage& msg,
 // reports. Reused by every Lumi device that pulls in `fz_lumi_basic`.
 extern const FzConverter kFzLumiBasic;
 
+// Opt-in extra MI-struct tags, passed as `LumiBasicOpts*` in
+// `user_config` (kFzLumiBasic carries none, so its output is unchanged):
+//   energy     — tag 0x95 (149) → "energy" (raw, as z2m; u32 or float)
+//   tag100_key — tag 0x64 (100) → this key (raw). The meaning of tag 100
+//                is per model in z2m (state / smoke_density / temp …).
+struct LumiBasicOpts {
+    bool        energy;
+    const char* tag100_key;
+};
+// Wall switches with an MI-struct energy counter (QBKG11LM).
+extern const FzConverter kFzLumiBasicEnergy;
+
 // Decode a `genMultistateInput` 0x0055 presentValue report into an
 // `action` string. The raw→label map is supplied per device via the
 // FzConverter's `user_config` as a `LumiActionMap*`. Raw values with

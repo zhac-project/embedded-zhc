@@ -34,7 +34,7 @@ std::uint8_t voltage_to_pct(std::uint64_t mv) {
 }  // namespace
 
 bool fz_lumi_basic(const DecodedMessage& msg,
-                    const FzConverter&,
+                    const FzConverter& self,
                     const PreparedDefinition&,
                     RuntimeContext&,
                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
@@ -53,9 +53,22 @@ bool fz_lumi_basic(const DecodedMessage& msg,
         return false;
     }
 
+    const auto* opts = static_cast<const LumiBasicOpts*>(self.user_config);
     bool emitted_anything = false;
     for (std::uint8_t i = 0; i < tlv.count; ++i) {
         const auto& kv = tlv.items[i];
+
+        // Opt-in tags (LumiBasicOpts). Raw pass-through, like z2m.
+        if (opts && kv.value.type != ValueType::BytesRef) {
+            const char* key = nullptr;
+            if (opts->energy && std::strcmp(kv.key, "149") == 0) key = "energy";
+            else if (opts->tag100_key && std::strcmp(kv.key, "100") == 0) key = opts->tag100_key;
+            if (key) {
+                out.put(key, kv.value);
+                emitted_anything = true;
+                continue;
+            }
+        }
 
         // Tag 0x01 — battery voltage in millivolts (u16).
         if (std::strcmp(kv.key, "1") == 0 &&
@@ -110,6 +123,25 @@ extern const FzConverter kFzLumiBasic{
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_lumi_basic },
     .user_config       = nullptr,
+};
+
+namespace {
+constexpr LumiBasicOpts kLumiBasicEnergyOpts{ .energy = true, .tag100_key = nullptr };
+}  // namespace
+
+extern const FzConverter kFzLumiBasicEnergy{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genBasic",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_lumi_basic },
+    .user_config       = &kLumiBasicEnergyOpts,
 };
 
 // ── Multistate action mapper ────────────────────────────────────────
@@ -1087,6 +1119,10 @@ bool fz_lumi_on_off(const DecodedMessage& msg,
                      const PreparedDefinition&,
                      RuntimeContext&,
                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    // z2m lumi_on_off: wall switches report button presses as genOnOff
+    // on endpoints 4/5/6 — that is not relay state, skip it.
+    if (msg.src_endpoint >= 4 && msg.src_endpoint <= 6) return false;
+
     const Value* v = msg.payload.find("0");   // attr 0x0000
     if (!v) return false;
 

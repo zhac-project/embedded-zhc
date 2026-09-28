@@ -14,7 +14,7 @@
 #include "zhc/zcl/decoder.hpp"
 
 namespace zhc::devices::lumi {
-extern const PreparedDefinition kDefQBKG11LM;
+extern const PreparedDefinition kDefQBKG12LM;
 extern const PreparedDefinition kDefWXKG03LM;
 extern const PreparedDefinition kDefZNCZ15LM;
 }
@@ -50,15 +50,15 @@ bool approx(float a, float b, float eps) { return std::fabs(a - b) <= eps; }
 
 }  // namespace
 
-// ── LumiOnOff via QBKG11LM ────────────────────────────────────────
+// ── LumiOnOff via QBKG12LM (2-gang) ────────────────────────────────────────
 
-static void test_qbkg11lm_endpoint_routing() {
+static void test_qbkg12lm_endpoint_routing() {
     constexpr std::uint8_t kOnFrame[] = {
         0x18, 0x01, 0x0A, 0x00, 0x00, 0x10, 0x01,
     };
     // Endpoint 1 → "state_left".
     {
-        const auto r = dispatch(devices::lumi::kDefQBKG11LM,
+        const auto r = dispatch(devices::lumi::kDefQBKG12LM,
                                  0x0006, "genOnOff", 1, kOnFrame);
         assert(r.any_matched);
         const Value* v = r.merged.find("state_left");
@@ -67,7 +67,7 @@ static void test_qbkg11lm_endpoint_routing() {
     }
     // Endpoint 2 → "state_right".
     {
-        const auto r = dispatch(devices::lumi::kDefQBKG11LM,
+        const auto r = dispatch(devices::lumi::kDefQBKG12LM,
                                  0x0006, "genOnOff", 2, kOnFrame);
         assert(r.any_matched);
         const Value* v = r.merged.find("state_right");
@@ -144,7 +144,7 @@ static void test_zncz15lm_relay_state_via_on_off() {
 }
 
 int main() {
-    test_qbkg11lm_endpoint_routing();
+    test_qbkg12lm_endpoint_routing();
     test_wxkg03lm_action_map();
     test_zncz15lm_power_scales_divisor_10();
     test_zncz15lm_energy_scales_divisor_1000();
