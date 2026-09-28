@@ -5,7 +5,8 @@
 // `fromZigbee: [tuya.fz.on_off_action, fz.battery]` and exposes `action` +
 // `battery`. The auto-port had trimmed the def to action-only, dropping the
 // genPowerCfg battery half for EVERY TS0044 (the def matches all manufacturers
-// via an unrestricted zigbeeModel). This guards the re-added battery decode.
+// via an unrestricted zigbeeModel). This guards the re-added battery decode,
+// the 12-value action enum and the magic-packet configure step.
 //
 // z2m-source: zigbee-herdsman-converters/src/devices/tuya.ts #TS0044.
 
@@ -61,6 +62,13 @@ std::vector<std::uint8_t> attr_report(std::uint16_t attr_id, std::uint8_t type,
     return v;
 }
 
+const Expose* find_expose(const PreparedDefinition& def, const char* key) {
+    for (std::size_t i = 0; i < def.exposes_count; ++i)
+        if (def.exposes[i].name && std::strcmp(def.exposes[i].name, key) == 0)
+            return &def.exposes[i];
+    return nullptr;
+}
+
 bool def_exposes(const PreparedDefinition& def, const char* key) {
     for (std::size_t i = 0; i < def.exposes_count; ++i)
         if (def.exposes[i].name && std::strcmp(def.exposes[i].name, key) == 0)
@@ -87,6 +95,25 @@ int main() {
     assert(def_exposes(def, "voltage"));
     // genPowerCfg must be bound for the battery reports to route home.
     assert(def_binds(def, GEN_POWER_CFG));
+
+    // action is an enum of z2m's 12 values, so rule pickers can offer them
+    // (was Binary with no values).
+    const char* kActions[] = {"1_single", "1_double", "1_hold", "2_single", "2_double", "2_hold",
+                              "3_single", "3_double", "3_hold", "4_single", "4_double", "4_hold"};
+    const Expose* action = find_expose(def, "action");
+    assert(action && action->type == ExposeType::Enum && action->access == Access::State);
+    assert(action->enum_count == 12);
+    for (std::size_t i = 0; i < 12; ++i) assert(std::strcmp(action->enum_values[i], kActions[i]) == 0);
+
+    // configure = tuya.configureMagicPacket: genBasic read 4, 0, 1, 5, 7, 0xFFFE.
+    // No battery reporting (z2m #8072: it knocked remotes off the network).
+    const std::uint8_t kMagic[] = {0x04, 0x00, 0x00, 0x00, 0x01, 0x00,
+                                   0x05, 0x00, 0x07, 0x00, 0xFE, 0xFF};
+    assert(def.config_steps_count == 1);
+    const ConfigStep& step = def.config_steps[0];
+    assert(step.op == ConfigStepOp::Read && step.cluster_id == 0x0000);
+    assert(step.payload_len == sizeof(kMagic) && std::memcmp(step.payload, kMagic, sizeof(kMagic)) == 0);
+    assert(def.reports_count == 0);
 
     // genPowerCfg batteryPercentageRemaining (attr 0x0021, u8 half-percent) → battery %.
     const std::uint8_t pct[] = {200};   // 200 half-percent = 100 %

@@ -4,6 +4,9 @@
 // z2m-source: tuya.ts #TS0205 (m.battery + m.iasZoneAlarm smoke, alarm_1 +
 // tamper). Only an illuminance-ignore converter was wired here, so smoke
 // alarms were never decoded.
+// `_TZ3210_up3pngle` (TS0205_smoke_2) has its own def below: z2m configures
+// batteryPercentageRemaining reporting for that manufacturer only
+// ("Required for this version", PR 8004); on other TS0205 it fails (#22421).
 #include "definitions/_generic/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
@@ -45,5 +48,37 @@ extern const PreparedDefinition kDefTS0205{
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+};
+
+namespace {
+constexpr WhiteLabel kWhiteLabels_up3pngle[] = {
+    {"Tuya","TS0205_smoke_2"},
+};
+constexpr const char* kManus_up3pngle[] = { "_TZ3210_up3pngle" };
+// z2m reporting.batteryPercentageRemaining: min HOUR, max MAX (65000), change 0.
+constexpr ReportingSpec kReports_up3pngle[] = {
+    { 1, 0x0001, 0x0021, 0x20, 3600, 65000, 0, 0 },
+};
+// …followed by a read of the same attribute.
+constexpr std::uint8_t kReadBatteryPct[] = { 0x21, 0x00 };
+constexpr ConfigStep kConfigSteps_up3pngle[] = {
+    { ConfigStepOp::Read, 1, 0x0001, 0x00, 0, kReadBatteryPct, sizeof(kReadBatteryPct), 0 },
+};
+}  // namespace
+
+extern const PreparedDefinition kDefTS0205_up3pngle{
+    .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kManus_up3pngle,.manufacturer_names_count=sizeof(kManus_up3pngle)/sizeof(kManus_up3pngle[0]),
+    .model="TS0205",.vendor="Tuya",
+    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
+    .white_labels=kWhiteLabels_up3pngle, .white_labels_count=sizeof(kWhiteLabels_up3pngle)/sizeof(kWhiteLabels_up3pngle[0]),
+    .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
+    .to_zigbee=nullptr,.to_zigbee_count=0,
+    .configure=nullptr,.on_event=nullptr,
+    .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=kReports_up3pngle,.reports_count=sizeof(kReports_up3pngle)/sizeof(kReports_up3pngle[0]),
+    .config_steps=kConfigSteps_up3pngle,
+    .config_steps_count=sizeof(kConfigSteps_up3pngle)/sizeof(kConfigSteps_up3pngle[0]),
 };
 }
