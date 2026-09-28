@@ -22,9 +22,9 @@ inline void magic_packet_fn(std::uint16_t, RuntimeContext&) {}
 inline void electricity_meter_poll_fn(std::uint16_t, RuntimeContext&) {}
 }  // namespace detail
 
-// `electricity_meter_poll()` — sentinel ConfigureFn. Adapter reads
-// the function identity to schedule periodic `haElectricalMeasurement`
-// reads via `RuntimeContext::timers`.
+// `electricity_meter_poll()` — sentinel ConfigureFn, NOT consumed by any
+// adapter (and it cannot say metering yes/no). To make the hub poll a
+// meter set `PreparedDefinition::meter_poll` (kMeterPoll* bits) instead.
 constexpr ConfigureFn electricity_meter_poll() {
     return &detail::electricity_meter_poll_fn;
 }

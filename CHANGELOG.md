@@ -10,6 +10,8 @@ across the ZHAC platform.
 
 ### Added
 
+- `PreparedDefinition::meter_poll` (+ `kMeterPollElectrical` / `kMeterPollMetering`): a definition asks the hub to read its meter periodically, z2m `tuya.modernExtend.electricityMeasurementPoll` shape — haElectricalMeasurement [rmsVoltage, rmsCurrent, activePower] and/or seMetering [currentSummDelivered] on EP1. Both TS011F defs (`kDefTS011F_okaz9tjs`, generic `kDefTS011F`) set both bits: `_TZ3000_okaz9tjs` never reports its meter even when bound (a deliberate step past z2m, whose TS011F_plug_1 does not poll). The unused `tuya::extend::electricity_meter_poll()` sentinel now points at the field. Test `zhc_tuya_ts011f_metering_tests` (also pins that no other Tuya def polls).
+
 - Tuya TS011F `_TZ3000_okaz9tjs` (Elivco LSPA9 smart plug): own definition, picked ahead of the generic TS011F by manufacturer name. Exposes `power` (W), `voltage` (V), `current` (A), `energy` (kWh) read-only, plus `state` and `power_on_behavior` (off/on/previous, writable). Configure sends the Tuya magic packet and binds genOnOff / haElectricalMeasurement / seMetering but sets up **no** attribute reporting, as z2m does for this plug (issue #29034). Test `zhc_tuya_ts011f_metering_tests`.
 
 - Neo NAS-AB02B0: **melody could not be changed and never showed a value** — DP 102 was mapped as a numeric value, but the device uses an enum DP (z2m `sendDataPointEnum`), so writes were ignored and its reports were not decoded. Now an enum, raw value = melody number 1–18, offered as a list.

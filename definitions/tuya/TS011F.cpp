@@ -151,6 +151,11 @@ extern const PreparedDefinition kDefTS011F_okaz9tjs{
     .reports=nullptr,.reports_count=0,
     .config_steps=kConfigSteps,
     .config_steps_count=sizeof(kConfigSteps)/sizeof(kConfigSteps[0]),
+    // Never reports 0x0B04/0x0702 even bound (owner's hub, 3 days, zero
+    // metering frames) and must not get configureReporting (#29034), so
+    // the hub reads the meter itself. z2m's TS011F_plug_1 has no poll;
+    // this is the electricityMeasurementPoll({metering:true}) shape.
+    .meter_poll=kMeterPollElectrical|kMeterPollMetering,
 };
 
 extern const PreparedDefinition kDefTS011F{
@@ -165,5 +170,8 @@ extern const PreparedDefinition kDefTS011F{
 .bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
 .reports=::zhc::tuya::kReportsPlugVIPE_1ep,
 .reports_count=::zhc::tuya::kReportsPlugVIPE_1ep_count,
+    // Backstop for whitelabels that ignore configureReporting: a read
+    // every poll interval costs two small frames per plug.
+    .meter_poll=kMeterPollElectrical|kMeterPollMetering,
 };
 }

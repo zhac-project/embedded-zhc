@@ -218,5 +218,17 @@ int main() {
     check_power_on_behavior(kDefTS011F);
     // Generic keeps z2m's default reporting path.
     assert(kDefTS011F.reports_count > 0);
+
+    // Hub-side meter polling (z2m electricityMeasurementPoll shape): both
+    // TS011F defs ask for haElectricalMeasurement AND seMetering reads —
+    // _TZ3000_okaz9tjs never reports either one on its own.
+    constexpr std::uint8_t kBoth = kMeterPollElectrical | kMeterPollMetering;
+    assert(kDefTS011F_okaz9tjs.meter_poll == kBoth);
+    assert(kDefTS011F.meter_poll == kBoth);
+    // Opt-in only: nothing else in the Tuya registry (generated defs
+    // included) polls.
+    std::size_t polled = 0;
+    for (const auto* d : tuya_reg()) polled += (d && d->meter_poll) ? 1 : 0;
+    assert(polled == 2);
     return 0;
 }

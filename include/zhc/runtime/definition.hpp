@@ -223,6 +223,14 @@ struct TzConverter {
     const void*   user_config;
 };
 
+// Bits for `PreparedDefinition::meter_poll` (z2m
+// `tuya.modernExtend.electricityMeasurementPoll`).
+//   Electrical: read haElectricalMeasurement 0x0B04
+//               [rmsVoltage 0x0505, rmsCurrent 0x0508, activePower 0x050B]
+//   Metering:   read seMetering 0x0702 [currentSummDelivered 0x0000]
+inline constexpr std::uint8_t kMeterPollElectrical = 0x01;
+inline constexpr std::uint8_t kMeterPollMetering   = 0x02;
+
 struct PreparedDefinition {
     // zigbeeModels as they appear in z2m (a device can carry multiple —
     // e.g. a model and its `.aq2` revision — and each must match). Use
@@ -314,6 +322,13 @@ struct PreparedDefinition {
     // since 1970, 2 = seconds since 2000. Hand-set on ported defs; the
     // generator does not emit it yet.
     std::uint8_t         tuya_time_start = 0;
+
+    // Hub-side meter polling for devices that never report their meter
+    // (z2m `electricityMeasurementPoll`). OR of kMeterPoll* bits; 0 = no
+    // polling. The hub owns the interval (z2m default 60 s) and reads EP1
+    // of mains-powered devices only. Replies arrive as ReadResponse, so the
+    // def's Fz converters must accept that message type.
+    std::uint8_t         meter_poll = 0;
 };
 
 }  // namespace zhc
