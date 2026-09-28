@@ -5,12 +5,12 @@
 // Single relay: genOnOff on endpoint 1 → `state` (no endpoint label map;
 // the 2-gang `state_left`/`state_right` map was copied here by mistake).
 // Power = genAnalogInput presentValue, energy = MI-struct tag 0x95,
-// action = genMultistateInput, operation_mode = genBasic 0xFF22
-// (0x12 control_relay / 0xFE decoupled, Lumi manufacturer code).
+// action = genMultistateInput (single/double/release/hold) or, from
+// firmware that reports a rocker press as genOnOff, z2m `lumi_action`
+// (below), operation_mode = genBasic 0xFF22 (0x12 control_relay /
+// 0xFE decoupled, Lumi manufacturer code).
 //
-// Not ported: z2m `lumi_action` (a genOnOff report without attr 0xF000 →
-// action "single"; the multistate path already carries single/double/
-// release/hold), and the `lumi_power` get.
+// Not ported: the `lumi_power` get.
 //
 // z2m-source: zigbee-herdsman-converters/src/devices/lumi.ts
 //             #QBKG11LM (lumi.ctrl_ln1.aq1 / lumi.ctrl_ln1).
@@ -61,9 +61,44 @@ constexpr TzConverter kTzOpMode{
     .user_config = &kOpModeWrite,
 };
 
+// z2m lumi_action, QBKG11LM branch: a genOnOff attribute report is a rocker
+// press ({0: single, 1: single}) unless its 0xF000 (61440) is truthy, as on
+// the relay's own state reports. In decoupled mode the press arrives on EP4,
+// which kFzLumiOnOff skips as relay state.
+bool fz_on_off_action(const DecodedMessage& msg, const FzConverter&,
+                      const PreparedDefinition&, RuntimeContext&,
+                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (const Value* f = msg.payload.find("61440")) {
+        const bool zero = (f->type == ValueType::Uint && f->u == 0) ||
+                          (f->type == ValueType::Int && f->i == 0);
+        if (!zero) return false;
+    }
+    const Value* v = msg.payload.find("0");   // onOff
+    if (!v || !(v->type == ValueType::Bool || (v->type == ValueType::Uint && v->u <= 1)))
+        return false;
+    Value a{}; a.type = ValueType::StringRef; a.str = "single";
+    out.put("action", a);
+    return true;
+}
+
+constexpr FzConverter kFzOnOffAction{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genOnOff",
+    .type_mask         = type_bit(MessageType::AttributeReport),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_on_off_action },
+    .user_config       = nullptr,
+};
+
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasicEnergy,
     &::zhc::lumi::kFzLumiOnOff,
+    &kFzOnOffAction,
     &::zhc::lumi::kFzLumiPowerAnalog,
     &::zhc::lumi::kFzLumiActionMultistate,
     &kFzOpMode,

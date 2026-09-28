@@ -103,10 +103,36 @@ int main() {
         assert(s && s->type == ValueType::Bool && s->b);
         assert(!r.merged.find("state_left"));
     }
-    // ── genOnOff on the button endpoints 4/5/6 is not relay state (z2m lumi_on_off skip)
+    // ── Decoupled rocker press: genOnOff report on EP4, no 0xF000. Not relay state
+    //    (z2m lumi_on_off skips EPs 4-6) but z2m lumi_action's press, {0, 1} → single.
     {
         auto r = dispatch_zcl(def, 0x0006, 4, attr_report(0x0000, 0x10, {0x00}));
         assert(!r.merged.find("state"));
+        assert(str_is(r.merged.find("action"), "single"));
+        auto r1 = dispatch_zcl(def, 0x0006, 4, attr_report(0x0000, 0x10, {0x01}));
+        assert(str_is(r1.merged.find("action"), "single"));
+    }
+    // ── The relay's own report carries 0xF000 (61440): state, no press.
+    {
+        const std::uint8_t f[] = {0x18, 0x43, 0x0A,
+                                  0x00, 0x00, 0x10, 0x01,                      // onOff = 1
+                                  0x00, 0xF0, 0x23, 0xCB, 0x00, 0x00, 0x07};   // 0xF000 u32
+        auto r = dispatch_zcl(def, 0x0006, 1, f);
+        const Value* s = r.merged.find("state");
+        assert(s && s->type == ValueType::Bool && s->b);
+        assert(!r.merged.find("action"));
+        // z2m tests 0xF000 for truthiness, so a zero value counts as absent.
+        const std::uint8_t f0[] = {0x18, 0x44, 0x0A,
+                                   0x00, 0x00, 0x10, 0x01,
+                                   0x00, 0xF0, 0x23, 0x00, 0x00, 0x00, 0x00};
+        assert(str_is(dispatch_zcl(def, 0x0006, 1, f0).merged.find("action"), "single"));
+    }
+    // ── lumi_action takes attribute reports only: reading onOff back is no press.
+    {
+        const std::uint8_t rsp[] = {0x18, 0x45, 0x01, 0x00, 0x00, 0x00, 0x10, 0x01};
+        auto r = dispatch_zcl(def, 0x0006, 1, rsp);
+        assert(r.merged.find("state"));
+        assert(!r.merged.find("action"));
     }
 
     // ── genAnalogInput presentValue (float 0x39, 12.5 W) → power
