@@ -1141,6 +1141,7 @@ extern const PreparedDefinition kDefTS004F;
 extern const PreparedDefinition kDefTS0101;
 extern const PreparedDefinition kDefTS0111;
 extern const PreparedDefinition kDefTS011F;
+extern const PreparedDefinition kDefTS011F_okaz9tjs;
 extern const PreparedDefinition kDefTS0121;
 extern const PreparedDefinition kDefTS0202;
 extern const PreparedDefinition kDefTS0203;
@@ -2610,6 +2611,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTS0101,
     &kDefTS0111,
     &kDefTS011F,
+    &kDefTS011F_okaz9tjs,
     &kDefTS0121,
     &kDefTS0202,
     &kDefTS0203,

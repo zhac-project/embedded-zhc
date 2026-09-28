@@ -7,8 +7,12 @@
 #include "definitions/tuya/_shared.hpp"
 namespace zhc::devices::tuya {
 namespace {
-constexpr ::zhc::lumi::LumiPowerCalibration kPower{1, 1000, 10};
-constexpr ::zhc::lumi::LumiMeterCalibration kMeter{1000};
+// z2m TS011F_plug_1 configure saves acCurrentDivisor 1000 and seMetering
+// divisor 100 (→ kWh); nothing for voltage/power, so
+// tuya.fz.TS011F_electrical_measurement passes them through (factor 1).
+// (_TZ3000_typdpbpg uses acCurrentDivisor 2000 — no ZHAC def for it yet.)
+constexpr ::zhc::lumi::LumiPowerCalibration kPower{1, 1000, 1};
+constexpr ::zhc::lumi::LumiMeterCalibration kMeter{100};
 
 constexpr FzConverter kFzPowerBound{
     .family=FrameFamily::Zcl,.cluster="haElectricalMeasurement",
@@ -44,6 +48,18 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
+// Hand-written exposes (supersede kAutoExposes): z2m tuyaOnOff
+// electricalMeasurements adds power/current/voltage/energy; the auto block
+// dropped them, so decoded metering never surfaced.
+constexpr Expose kExposes[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power",   ExposeType::Numeric, Access::State, "W",   nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V",   nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A",   nullptr, nullptr, 0},
+    {"energy",  ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+};
+
 // Hand-written bindings (supersedes kAutoBindings): the auto block binds only
 // genOnOff, but this plug also decodes + reports haElectricalMeasurement
 // (0x0B04) and seMetering (0x0702). run_configure walks .bindings[]/.reports[]
@@ -55,11 +71,65 @@ constexpr BindingSpec kBindings[] = {
     {1, 0x0702},    // seMetering (energy)
 };
 
+// ── Elivco LSPA9 (`_TZ3000_okaz9tjs`) ─────────────────────────────────
+// z2m TS011F_plug_1 whitelabel. Same decode (kFz) as the generic.
+// configure: magic packet + bind genOnOff/haElectricalMeasurement/seMetering,
+// and for this manufacturer NO reporting config at all (z2m #29034 —
+// configureReporting breaks its metering). Matched by manufacturer name so
+// it wins Pass 1 of find_definition over the bare-model kDefTS011F.
+namespace {
+const TzConverter* const kTzOkaz[] = {
+    &::zhc::generic::kTzOnOff,
+    &::zhc::tuya::kTzTuyaPowerOnBehavior,
+};
+constexpr const char* kManusOkaz[] = { "_TZ3000_okaz9tjs" };
+constexpr WhiteLabel kWhiteLabelsOkaz[] = { {"Elivco", "LSPA9"} };
+// Labels match kFzTuyaPowerOnBehavior / kTzTuyaPowerOnBehavior (attr 0x8002).
+constexpr const char* kPobOpts[] = { "off", "on", "toggle", "previous" };
+
+constexpr Expose kExposesOkaz[] = {
+    {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kPobOpts, 4,
+     ExposeCategory::Config},
+    {"power",   ExposeType::Numeric, Access::State, "W",   nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "V",   nullptr, nullptr, 0},
+    {"current", ExposeType::Numeric, Access::State, "A",   nullptr, nullptr, 0},
+    {"energy",  ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+};
+
+// z2m tuya.configureMagicPacket — genBasic read of manufacturerName,
+// zclVersion, appVersion, modelId, powerSource, 0xFFFE (LE attr ids).
+constexpr std::uint8_t kMagicAttrs[] = {
+    0x04, 0x00,  0x00, 0x00,  0x01, 0x00,
+    0x05, 0x00,  0x07, 0x00,  0xFE, 0xFF,
+};
+constexpr ConfigStep kConfigSteps[] = {
+    { ConfigStepOp::Wait, 0, 0,      0x00, 0, nullptr, 0, 300 },
+    { ConfigStepOp::Read, 1, 0x0000, 0x00, 0, kMagicAttrs, sizeof(kMagicAttrs), 0 },
+};
+}
+
+extern const PreparedDefinition kDefTS011F_okaz9tjs{
+    .zigbee_models=kModels,.zigbee_models_count=1,
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kManusOkaz,.manufacturer_names_count=1,
+    .model="TS011F",.vendor="Tuya",
+    .meta=nullptr,.exposes=kExposesOkaz,.exposes_count=sizeof(kExposesOkaz)/sizeof(kExposesOkaz[0]),
+    .white_labels=kWhiteLabelsOkaz,.white_labels_count=1,
+    .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
+    .to_zigbee=kTzOkaz,.to_zigbee_count=sizeof(kTzOkaz)/sizeof(kTzOkaz[0]),
+    .configure=nullptr,.on_event=nullptr,
+    .bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
+    .reports=nullptr,.reports_count=0,
+    .config_steps=kConfigSteps,
+    .config_steps_count=sizeof(kConfigSteps)/sizeof(kConfigSteps[0]),
+};
+
 extern const PreparedDefinition kDefTS011F{
     .zigbee_models=kModels,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,.manufacturer_names=nullptr,.manufacturer_names_count=0,
     .model="TS011F",.vendor="Tuya",
-    .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
+    .meta=nullptr,.exposes=kExposes,.exposes_count=sizeof(kExposes)/sizeof(kExposes[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=kTz,.to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
