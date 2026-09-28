@@ -99,8 +99,7 @@ extern const ::zhc::Expose kSharedExposes[] = {
     {"humidity_calibration",     ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "%",  nullptr, nullptr, 0, ::zhc::ExposeCategory::Config},
     {"measurement_interval",     ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "s",  nullptr, nullptr, 0, ::zhc::ExposeCategory::Config},
 };
-extern const std::uint8_t kSharedExposesCount =
-    sizeof(kSharedExposes) / sizeof(kSharedExposes[0]);
+static_assert(kSharedExposesCount == std::size(kSharedExposes));
 
 // ── Shared from-zigbee table ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kSharedFz[] = {
@@ -108,8 +107,7 @@ extern const ::zhc::FzConverter* const kSharedFz[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
 };
-extern const std::uint8_t kSharedFzCount =
-    sizeof(kSharedFz) / sizeof(kSharedFz[0]);
+static_assert(kSharedFzCount == std::size(kSharedFz));
 
 // ── Shared to-zigbee table ────────────────────────────────────────
 extern const ::zhc::TzConverter* const kSharedTz[] = {
@@ -124,8 +122,7 @@ extern const ::zhc::TzConverter* const kSharedTz[] = {
     &kTzHumidityCalibration,
     &kTzMeasurementInterval,
 };
-extern const std::uint8_t kSharedTzCount =
-    sizeof(kSharedTz) / sizeof(kSharedTz[0]);
+static_assert(kSharedTzCount == std::size(kSharedTz));
 
 // ── Shared bindings ───────────────────────────────────────────────
 extern const ::zhc::BindingSpec kSharedBindings[] = {
@@ -134,7 +131,6 @@ extern const ::zhc::BindingSpec kSharedBindings[] = {
     {1, 0x0405},  // msRelativeHumidity
     {1, 0x0204},  // hvacUserInterfaceCfg
 };
-extern const std::uint8_t kSharedBindingsCount =
-    sizeof(kSharedBindings) / sizeof(kSharedBindings[0]);
+static_assert(kSharedBindingsCount == std::size(kSharedBindings));
 
 }  // namespace zhc::zigbeetlc

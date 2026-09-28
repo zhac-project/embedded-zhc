@@ -46,19 +46,19 @@ extern const TzConverter kTzMeasurementInterval;    // UINT8  attr 0x0107
 // Shared expose array — every device in this vendor exposes exactly
 // this set. Indexed by `kSharedExposes` / `kSharedExposesCount`.
 extern const ::zhc::Expose kSharedExposes[];
-extern const std::uint8_t  kSharedExposesCount;
+inline constexpr std::uint8_t kSharedExposesCount = 14;
 
 // Shared from-zigbee table (battery + temperature + humidity).
 extern const ::zhc::FzConverter* const kSharedFz[];
-extern const std::uint8_t               kSharedFzCount;
+inline constexpr std::uint8_t           kSharedFzCount = 3;
 
 // Shared to-zigbee table (10 hvacUserInterfaceCfg writes).
 extern const ::zhc::TzConverter* const kSharedTz[];
-extern const std::uint8_t               kSharedTzCount;
+inline constexpr std::uint8_t           kSharedTzCount = 10;
 
 // Shared bindings: ep1 genPowerCfg, msTemperatureMeasurement,
 // msRelativeHumidity, hvacUserInterfaceCfg.
 extern const ::zhc::BindingSpec kSharedBindings[];
-extern const std::uint8_t       kSharedBindingsCount;
+inline constexpr std::uint8_t   kSharedBindingsCount = 4;
 
 }  // namespace zhc::zigbeetlc

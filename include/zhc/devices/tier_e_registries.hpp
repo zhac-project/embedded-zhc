@@ -350,9 +350,12 @@
 
 namespace zhc::devices::tier_e {
 
+// `count` binds to the vendor's k<Vendor>RegistryCount instead of copying
+// it: that count lives in another TU, so copying its value would need a
+// static constructor and keep kTierERegistries in RAM instead of flash.
 struct VendorEntry {
     const PreparedDefinition* const* reg;
-    std::size_t                      count;
+    const std::size_t&               count;
 };
 
 extern const VendorEntry kTierERegistries[];

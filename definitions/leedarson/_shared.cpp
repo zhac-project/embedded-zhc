@@ -13,15 +13,13 @@ const ::zhc::FzConverter* const kFzLeedarsonLight[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzLeedarsonLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzLeedarsonLight) / sizeof(kFzLeedarsonLight[0]));
+static_assert(kFzLeedarsonLightCount == std::size(kFzLeedarsonLight));
 
 const ::zhc::TzConverter* const kTzLeedarsonLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzLeedarsonLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzLeedarsonLight) / sizeof(kTzLeedarsonLight[0]));
+static_assert(kTzLeedarsonLightCount == std::size(kTzLeedarsonLight));
 
 const ::zhc::Expose kExposesLeedarsonLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -29,14 +27,12 @@ const ::zhc::Expose kExposesLeedarsonLight[] = {
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesLeedarsonLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesLeedarsonLight) / sizeof(kExposesLeedarsonLight[0]));
+static_assert(kExposesLeedarsonLightCount == std::size(kExposesLeedarsonLight));
 
 const ::zhc::BindingSpec kBindingsLeedarsonLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsLeedarsonLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsLeedarsonLight) / sizeof(kBindingsLeedarsonLight[0]));
+static_assert(kBindingsLeedarsonLightCount == std::size(kBindingsLeedarsonLight));
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 const ::zhc::FzConverter* const kFzLeedarsonCTLight[] = {
@@ -44,16 +40,14 @@ const ::zhc::FzConverter* const kFzLeedarsonCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzLeedarsonCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzLeedarsonCTLight) / sizeof(kFzLeedarsonCTLight[0]));
+static_assert(kFzLeedarsonCTLightCount == std::size(kFzLeedarsonCTLight));
 
 const ::zhc::TzConverter* const kTzLeedarsonCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzLeedarsonCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzLeedarsonCTLight) / sizeof(kTzLeedarsonCTLight[0]));
+static_assert(kTzLeedarsonCTLightCount == std::size(kTzLeedarsonCTLight));
 
 const ::zhc::Expose kExposesLeedarsonCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -63,14 +57,12 @@ const ::zhc::Expose kExposesLeedarsonCTLight[] = {
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesLeedarsonCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesLeedarsonCTLight) / sizeof(kExposesLeedarsonCTLight[0]));
+static_assert(kExposesLeedarsonCTLightCount == std::size(kExposesLeedarsonCTLight));
 
 const ::zhc::BindingSpec kBindingsLeedarsonCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsLeedarsonCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsLeedarsonCTLight) / sizeof(kBindingsLeedarsonCTLight[0]));
+static_assert(kBindingsLeedarsonCTLightCount == std::size(kBindingsLeedarsonCTLight));
 
 // ── Full RGBW (m.light({colorTemp, color: true})) ───────────────────
 const ::zhc::FzConverter* const kFzLeedarsonColorCTLight[] = {
@@ -79,8 +71,7 @@ const ::zhc::FzConverter* const kFzLeedarsonColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzLeedarsonColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzLeedarsonColorCTLight) / sizeof(kFzLeedarsonColorCTLight[0]));
+static_assert(kFzLeedarsonColorCTLightCount == std::size(kFzLeedarsonColorCTLight));
 
 const ::zhc::TzConverter* const kTzLeedarsonColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -88,8 +79,7 @@ const ::zhc::TzConverter* const kTzLeedarsonColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzLeedarsonColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzLeedarsonColorCTLight) / sizeof(kTzLeedarsonColorCTLight[0]));
+static_assert(kTzLeedarsonColorCTLightCount == std::size(kTzLeedarsonColorCTLight));
 
 const ::zhc::Expose kExposesLeedarsonColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -107,13 +97,11 @@ const ::zhc::Expose kExposesLeedarsonColorCTLight[] = {
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesLeedarsonColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesLeedarsonColorCTLight) / sizeof(kExposesLeedarsonColorCTLight[0]));
+static_assert(kExposesLeedarsonColorCTLightCount == std::size(kExposesLeedarsonColorCTLight));
 
 const ::zhc::BindingSpec kBindingsLeedarsonColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsLeedarsonColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsLeedarsonColorCTLight) / sizeof(kBindingsLeedarsonColorCTLight[0]));
+static_assert(kBindingsLeedarsonColorCTLightCount == std::size(kBindingsLeedarsonColorCTLight));
 
 }  // namespace zhc::devices::leedarson

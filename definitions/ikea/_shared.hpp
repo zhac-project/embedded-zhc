@@ -4,23 +4,23 @@
 #include "definitions/_generic/_shared.hpp"
 namespace zhc::devices::ikea {
 extern const ::zhc::FzConverter* const kFzIkeaLight[];
-extern const std::uint8_t              kFzIkeaLightCount;
+inline constexpr std::uint8_t          kFzIkeaLightCount = 3;
 extern const ::zhc::TzConverter* const kTzIkeaLight[];
-extern const std::uint8_t              kTzIkeaLightCount;
+inline constexpr std::uint8_t          kTzIkeaLightCount = 3;
 extern const ::zhc::Expose             kExposesIkeaLight[];
-extern const std::uint8_t              kExposesIkeaLightCount;
+inline constexpr std::uint8_t          kExposesIkeaLightCount = 3;
 extern const ::zhc::BindingSpec        kBindingsIkeaLight[];
-extern const std::uint8_t              kBindingsIkeaLightCount;
+inline constexpr std::uint8_t          kBindingsIkeaLightCount = 3;
 
 // `ikeaLight({color: true})` variants — adds kFzColor + kTzColor +
 // color_x/color_y/hue/saturation exposes. Bindings reuse the OnOff +
 // LevelCtrl + ColorCtrl set declared above.
 extern const ::zhc::FzConverter* const kFzIkeaColorLight[];
-extern const std::uint8_t              kFzIkeaColorLightCount;
+inline constexpr std::uint8_t          kFzIkeaColorLightCount = 4;
 extern const ::zhc::TzConverter* const kTzIkeaColorLight[];
-extern const std::uint8_t              kTzIkeaColorLightCount;
+inline constexpr std::uint8_t          kTzIkeaColorLightCount = 4;
 extern const ::zhc::Expose             kExposesIkeaColorLight[];
-extern const std::uint8_t              kExposesIkeaColorLightCount;
+inline constexpr std::uint8_t          kExposesIkeaColorLightCount = 7;
 
 // ── Default `configureReporting` sets for IKEA bulbs ────────────────
 //
@@ -29,7 +29,7 @@ extern const std::uint8_t              kExposesIkeaColorLightCount;
 // physically toggles it — the SPA States tab sits empty. Run by the
 // declarative reports walker in `runtime/dispatch.cpp::run_configure`.
 extern const ::zhc::ReportingSpec      kReportsIkeaLight[];
-extern const std::uint8_t              kReportsIkeaLightCount;
+inline constexpr std::uint8_t          kReportsIkeaLightCount = 4;
 extern const ::zhc::ReportingSpec      kReportsIkeaColorLight[];
-extern const std::uint8_t              kReportsIkeaColorLightCount;
+inline constexpr std::uint8_t          kReportsIkeaColorLightCount = 6;
 }

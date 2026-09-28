@@ -12,39 +12,39 @@ namespace zhc::devices::philips {
 
 // ── philips.m.light()  — OnOff + LevelCtrl, no colour ───────────────
 extern const ::zhc::FzConverter* const kFzPhilipsLight[];
-extern const std::uint8_t              kFzPhilipsLightCount;
+inline constexpr std::uint8_t          kFzPhilipsLightCount = 2;
 extern const ::zhc::TzConverter* const kTzPhilipsLight[];
-extern const std::uint8_t              kTzPhilipsLightCount;
+inline constexpr std::uint8_t          kTzPhilipsLightCount = 2;
 extern const ::zhc::Expose             kExposesPhilipsLight[];
-extern const std::uint8_t              kExposesPhilipsLightCount;
+inline constexpr std::uint8_t          kExposesPhilipsLightCount = 2;
 extern const ::zhc::BindingSpec        kBindingsPhilipsLight[];
-extern const std::uint8_t              kBindingsPhilipsLightCount;
+inline constexpr std::uint8_t          kBindingsPhilipsLightCount = 2;
 
 // ── philips.m.light({colorTemp: …})  — adds CT cluster 0x0300 ───────
 extern const ::zhc::FzConverter* const kFzPhilipsCTLight[];
-extern const std::uint8_t              kFzPhilipsCTLightCount;
+inline constexpr std::uint8_t          kFzPhilipsCTLightCount = 3;
 extern const ::zhc::TzConverter* const kTzPhilipsCTLight[];
-extern const std::uint8_t              kTzPhilipsCTLightCount;
+inline constexpr std::uint8_t          kTzPhilipsCTLightCount = 3;
 extern const ::zhc::Expose             kExposesPhilipsCTLight[];
-extern const std::uint8_t              kExposesPhilipsCTLightCount;
+inline constexpr std::uint8_t          kExposesPhilipsCTLightCount = 3;
 extern const ::zhc::BindingSpec        kBindingsPhilipsCTLight[];
-extern const std::uint8_t              kBindingsPhilipsCTLightCount;
+inline constexpr std::uint8_t          kBindingsPhilipsCTLightCount = 3;
 
 // ── philips.m.light({color: …}) — colour-only (no CT) ───────────────
 extern const ::zhc::FzConverter* const kFzPhilipsColorLight[];
-extern const std::uint8_t              kFzPhilipsColorLightCount;
+inline constexpr std::uint8_t          kFzPhilipsColorLightCount = 3;
 extern const ::zhc::TzConverter* const kTzPhilipsColorLight[];
-extern const std::uint8_t              kTzPhilipsColorLightCount;
+inline constexpr std::uint8_t          kTzPhilipsColorLightCount = 3;
 extern const ::zhc::Expose             kExposesPhilipsColorLight[];
-extern const std::uint8_t              kExposesPhilipsColorLightCount;
+inline constexpr std::uint8_t          kExposesPhilipsColorLightCount = 6;
 
 // ── philips.m.light({colorTemp:…, color:…})  — full Hue colour bulb ─
 extern const ::zhc::FzConverter* const kFzPhilipsColorCTLight[];
-extern const std::uint8_t              kFzPhilipsColorCTLightCount;
+inline constexpr std::uint8_t          kFzPhilipsColorCTLightCount = 4;
 extern const ::zhc::TzConverter* const kTzPhilipsColorCTLight[];
-extern const std::uint8_t              kTzPhilipsColorCTLightCount;
+inline constexpr std::uint8_t          kTzPhilipsColorCTLightCount = 4;
 extern const ::zhc::Expose             kExposesPhilipsColorCTLight[];
-extern const std::uint8_t              kExposesPhilipsColorCTLightCount;
+inline constexpr std::uint8_t          kExposesPhilipsColorCTLightCount = 7;
 
 // ── Hue motion sensor (SML00x) — occupancy + temperature + lux ──────
 //
@@ -55,16 +55,16 @@ extern const std::uint8_t              kExposesPhilipsColorCTLightCount;
 // writes (philips.tz.hue_motion_*) have no generic converter and remain
 // unported — see `docs/PHILIPS_PARITY.md`.
 extern const ::zhc::FzConverter* const kFzPhilipsMotionSensor[];
-extern const std::uint8_t              kFzPhilipsMotionSensorCount;
+inline constexpr std::uint8_t          kFzPhilipsMotionSensorCount = 4;
 extern const ::zhc::Expose             kExposesPhilipsMotionSensor[];
-extern const std::uint8_t              kExposesPhilipsMotionSensorCount;
+inline constexpr std::uint8_t          kExposesPhilipsMotionSensorCount = 4;
 extern const ::zhc::BindingSpec        kBindingsPhilipsMotionSensor[];
-extern const std::uint8_t              kBindingsPhilipsMotionSensorCount;
+inline constexpr std::uint8_t          kBindingsPhilipsMotionSensorCount = 4;
 
 // ── Hue dimmer switch (RWL020/021/022) — manuSpecificPhilips 0xFC00 ─
 extern const ::zhc::FzConverter* const kFzPhilipsDimmerSwitch[];
-extern const std::uint8_t              kFzPhilipsDimmerSwitchCount;
+inline constexpr std::uint8_t          kFzPhilipsDimmerSwitchCount = 3;
 extern const ::zhc::Expose             kExposesPhilipsDimmerSwitch[];
-extern const std::uint8_t              kExposesPhilipsDimmerSwitchCount;
+inline constexpr std::uint8_t          kExposesPhilipsDimmerSwitchCount = 2;
 
 }  // namespace zhc::devices::philips

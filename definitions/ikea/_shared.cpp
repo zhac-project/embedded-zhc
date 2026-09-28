@@ -7,27 +7,23 @@ const ::zhc::FzConverter* const kFzIkeaLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzIkeaLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzIkeaLight)/sizeof(kFzIkeaLight[0]));
+static_assert(kFzIkeaLightCount == std::size(kFzIkeaLight));
 const ::zhc::TzConverter* const kTzIkeaLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzIkeaLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzIkeaLight)/sizeof(kTzIkeaLight[0]));
+static_assert(kTzIkeaLightCount == std::size(kTzIkeaLight));
 const ::zhc::Expose kExposesIkeaLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesIkeaLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesIkeaLight)/sizeof(kExposesIkeaLight[0]));
+static_assert(kExposesIkeaLightCount == std::size(kExposesIkeaLight));
 const ::zhc::BindingSpec kBindingsIkeaLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsIkeaLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsIkeaLight)/sizeof(kBindingsIkeaLight[0]));
+static_assert(kBindingsIkeaLightCount == std::size(kBindingsIkeaLight));
 
 // ── Color/CT bulbs (`ikeaLight({color: true})`) ─────────────────────
 //
@@ -42,16 +38,14 @@ const ::zhc::FzConverter* const kFzIkeaColorLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzIkeaColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzIkeaColorLight)/sizeof(kFzIkeaColorLight[0]));
+static_assert(kFzIkeaColorLightCount == std::size(kFzIkeaColorLight));
 const ::zhc::TzConverter* const kTzIkeaColorLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzIkeaColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzIkeaColorLight)/sizeof(kTzIkeaColorLight[0]));
+static_assert(kTzIkeaColorLightCount == std::size(kTzIkeaColorLight));
 const ::zhc::Expose kExposesIkeaColorLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
@@ -61,8 +55,7 @@ const ::zhc::Expose kExposesIkeaColorLight[] = {
     { "hue",        ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesIkeaColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesIkeaColorLight)/sizeof(kExposesIkeaColorLight[0]));
+static_assert(kExposesIkeaColorLightCount == std::size(kExposesIkeaColorLight));
 
 // ── kReportsIkeaLight — tunable-white IKEA bulbs ────────────────────
 //
@@ -79,8 +72,7 @@ const ::zhc::ReportingSpec kReportsIkeaLight[] = {
     // genColorCtrl   colorMode         enum8  0..3600s
     { 1, 0x0300, 0x0008, 0x30, 0,    3600, 1, 0 },
 };
-const std::uint8_t kReportsIkeaLightCount =
-    static_cast<std::uint8_t>(sizeof(kReportsIkeaLight)/sizeof(kReportsIkeaLight[0]));
+static_assert(kReportsIkeaLightCount == std::size(kReportsIkeaLight));
 
 // ── kReportsIkeaColorLight — full-colour IKEA bulbs ────────────────
 //
@@ -96,6 +88,5 @@ const ::zhc::ReportingSpec kReportsIkeaColorLight[] = {
     // genColorCtrl   currentY          u16    5..3600s
     { 1, 0x0300, 0x0004, 0x21, 5,    3600, 1, 0 },
 };
-const std::uint8_t kReportsIkeaColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kReportsIkeaColorLight)/sizeof(kReportsIkeaColorLight[0]));
+static_assert(kReportsIkeaColorLightCount == std::size(kReportsIkeaColorLight));
 }

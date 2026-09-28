@@ -15,28 +15,24 @@ const ::zhc::FzConverter* const kFzPaulNeuhausLight[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzPaulNeuhausLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPaulNeuhausLight) / sizeof(kFzPaulNeuhausLight[0]));
+static_assert(kFzPaulNeuhausLightCount == std::size(kFzPaulNeuhausLight));
 
 const ::zhc::TzConverter* const kTzPaulNeuhausLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzPaulNeuhausLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPaulNeuhausLight) / sizeof(kTzPaulNeuhausLight[0]));
+static_assert(kTzPaulNeuhausLightCount == std::size(kTzPaulNeuhausLight));
 
 const ::zhc::Expose kExposesPaulNeuhausLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPaulNeuhausLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPaulNeuhausLight) / sizeof(kExposesPaulNeuhausLight[0]));
+static_assert(kExposesPaulNeuhausLightCount == std::size(kExposesPaulNeuhausLight));
 
 const ::zhc::BindingSpec kBindingsPaulNeuhausLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsPaulNeuhausLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPaulNeuhausLight) / sizeof(kBindingsPaulNeuhausLight[0]));
+static_assert(kBindingsPaulNeuhausLightCount == std::size(kBindingsPaulNeuhausLight));
 
 // ── CCT (m.light({colorTemp})) ──────────────────────────────────────
 const ::zhc::FzConverter* const kFzPaulNeuhausCTLight[] = {
@@ -44,30 +40,26 @@ const ::zhc::FzConverter* const kFzPaulNeuhausCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzPaulNeuhausCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPaulNeuhausCTLight) / sizeof(kFzPaulNeuhausCTLight[0]));
+static_assert(kFzPaulNeuhausCTLightCount == std::size(kFzPaulNeuhausCTLight));
 
 const ::zhc::TzConverter* const kTzPaulNeuhausCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzPaulNeuhausCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPaulNeuhausCTLight) / sizeof(kTzPaulNeuhausCTLight[0]));
+static_assert(kTzPaulNeuhausCTLightCount == std::size(kTzPaulNeuhausCTLight));
 
 const ::zhc::Expose kExposesPaulNeuhausCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPaulNeuhausCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPaulNeuhausCTLight) / sizeof(kExposesPaulNeuhausCTLight[0]));
+static_assert(kExposesPaulNeuhausCTLightCount == std::size(kExposesPaulNeuhausCTLight));
 
 const ::zhc::BindingSpec kBindingsPaulNeuhausCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsPaulNeuhausCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPaulNeuhausCTLight) / sizeof(kBindingsPaulNeuhausCTLight[0]));
+static_assert(kBindingsPaulNeuhausCTLightCount == std::size(kBindingsPaulNeuhausCTLight));
 
 // ── Full RGBW (m.light({colorTemp, color})) ─────────────────────────
 const ::zhc::FzConverter* const kFzPaulNeuhausColorCTLight[] = {
@@ -76,8 +68,7 @@ const ::zhc::FzConverter* const kFzPaulNeuhausColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzPaulNeuhausColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPaulNeuhausColorCTLight) / sizeof(kFzPaulNeuhausColorCTLight[0]));
+static_assert(kFzPaulNeuhausColorCTLightCount == std::size(kFzPaulNeuhausColorCTLight));
 
 const ::zhc::TzConverter* const kTzPaulNeuhausColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -85,8 +76,7 @@ const ::zhc::TzConverter* const kTzPaulNeuhausColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzPaulNeuhausColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPaulNeuhausColorCTLight) / sizeof(kTzPaulNeuhausColorCTLight[0]));
+static_assert(kTzPaulNeuhausColorCTLightCount == std::size(kTzPaulNeuhausColorCTLight));
 
 const ::zhc::Expose kExposesPaulNeuhausColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
@@ -95,13 +85,11 @@ const ::zhc::Expose kExposesPaulNeuhausColorCTLight[] = {
     { "color_xy",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_hs",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPaulNeuhausColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPaulNeuhausColorCTLight) / sizeof(kExposesPaulNeuhausColorCTLight[0]));
+static_assert(kExposesPaulNeuhausColorCTLightCount == std::size(kExposesPaulNeuhausColorCTLight));
 
 const ::zhc::BindingSpec kBindingsPaulNeuhausColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsPaulNeuhausColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPaulNeuhausColorCTLight) / sizeof(kBindingsPaulNeuhausColorCTLight[0]));
+static_assert(kBindingsPaulNeuhausColorCTLightCount == std::size(kBindingsPaulNeuhausColorCTLight));
 
 }  // namespace zhc::devices::paul_neuhaus

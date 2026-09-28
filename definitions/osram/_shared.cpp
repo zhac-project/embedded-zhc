@@ -11,42 +11,36 @@ namespace zhc::devices::osram {
 const ::zhc::FzConverter* const kFzOsramOnOff[] = {
     &::zhc::generic::kFzOnOff,
 };
-const std::uint8_t kFzOsramOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kFzOsramOnOff) / sizeof(kFzOsramOnOff[0]));
+static_assert(kFzOsramOnOffCount == std::size(kFzOsramOnOff));
 
 const ::zhc::TzConverter* const kTzOsramOnOff[] = {
     &::zhc::generic::kTzOnOff,
 };
-const std::uint8_t kTzOsramOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kTzOsramOnOff) / sizeof(kTzOsramOnOff[0]));
+static_assert(kTzOsramOnOffCount == std::size(kTzOsramOnOff));
 
 const ::zhc::Expose kExposesOsramOnOff[] = {
     { "state", ::zhc::ExposeType::Binary, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesOsramOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kExposesOsramOnOff) / sizeof(kExposesOsramOnOff[0]));
+static_assert(kExposesOsramOnOffCount == std::size(kExposesOsramOnOff));
 
 const ::zhc::BindingSpec kBindingsOsramOnOff[] = {
     { 1, 0x0006 },
 };
-const std::uint8_t kBindingsOsramOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsOsramOnOff) / sizeof(kBindingsOsramOnOff[0]));
+static_assert(kBindingsOsramOnOffCount == std::size(kBindingsOsramOnOff));
 
 // ── Plain dimmable (ledvanceLight({})) ──────────────────────────────
 const ::zhc::FzConverter* const kFzOsramLight[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzOsramLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzOsramLight) / sizeof(kFzOsramLight[0]));
+static_assert(kFzOsramLightCount == std::size(kFzOsramLight));
 
 const ::zhc::TzConverter* const kTzOsramLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzOsramLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzOsramLight) / sizeof(kTzOsramLight[0]));
+static_assert(kTzOsramLightCount == std::size(kTzOsramLight));
 
 const ::zhc::Expose kExposesOsramLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -54,14 +48,12 @@ const ::zhc::Expose kExposesOsramLight[] = {
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesOsramLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesOsramLight) / sizeof(kExposesOsramLight[0]));
+static_assert(kExposesOsramLightCount == std::size(kExposesOsramLight));
 
 const ::zhc::BindingSpec kBindingsOsramLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsOsramLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsOsramLight) / sizeof(kBindingsOsramLight[0]));
+static_assert(kBindingsOsramLightCount == std::size(kBindingsOsramLight));
 
 // ── Tunable white (ledvanceLight({colorTemp})) ──────────────────────
 const ::zhc::FzConverter* const kFzOsramCTLight[] = {
@@ -69,16 +61,14 @@ const ::zhc::FzConverter* const kFzOsramCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzOsramCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzOsramCTLight) / sizeof(kFzOsramCTLight[0]));
+static_assert(kFzOsramCTLightCount == std::size(kFzOsramCTLight));
 
 const ::zhc::TzConverter* const kTzOsramCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzOsramCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzOsramCTLight) / sizeof(kTzOsramCTLight[0]));
+static_assert(kTzOsramCTLightCount == std::size(kTzOsramCTLight));
 
 const ::zhc::Expose kExposesOsramCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -88,14 +78,12 @@ const ::zhc::Expose kExposesOsramCTLight[] = {
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesOsramCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesOsramCTLight) / sizeof(kExposesOsramCTLight[0]));
+static_assert(kExposesOsramCTLightCount == std::size(kExposesOsramCTLight));
 
 const ::zhc::BindingSpec kBindingsOsramCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsOsramCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsOsramCTLight) / sizeof(kBindingsOsramCTLight[0]));
+static_assert(kBindingsOsramCTLightCount == std::size(kBindingsOsramCTLight));
 
 // ── Colour-only (ledvanceLight({color: true})) ──────────────────────
 const ::zhc::FzConverter* const kFzOsramColorLight[] = {
@@ -103,16 +91,14 @@ const ::zhc::FzConverter* const kFzOsramColorLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzOsramColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzOsramColorLight) / sizeof(kFzOsramColorLight[0]));
+static_assert(kFzOsramColorLightCount == std::size(kFzOsramColorLight));
 
 const ::zhc::TzConverter* const kTzOsramColorLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzOsramColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzOsramColorLight) / sizeof(kTzOsramColorLight[0]));
+static_assert(kTzOsramColorLightCount == std::size(kTzOsramColorLight));
 
 const ::zhc::Expose kExposesOsramColorLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -128,14 +114,12 @@ const ::zhc::Expose kExposesOsramColorLight[] = {
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesOsramColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesOsramColorLight) / sizeof(kExposesOsramColorLight[0]));
+static_assert(kExposesOsramColorLightCount == std::size(kExposesOsramColorLight));
 
 const ::zhc::BindingSpec kBindingsOsramColorLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsOsramColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsOsramColorLight) / sizeof(kBindingsOsramColorLight[0]));
+static_assert(kBindingsOsramColorLightCount == std::size(kBindingsOsramColorLight));
 
 // ── Full RGBW (ledvanceLight({colorTemp, color: true})) ─────────────
 const ::zhc::FzConverter* const kFzOsramColorCTLight[] = {
@@ -144,8 +128,7 @@ const ::zhc::FzConverter* const kFzOsramColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzOsramColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzOsramColorCTLight) / sizeof(kFzOsramColorCTLight[0]));
+static_assert(kFzOsramColorCTLightCount == std::size(kFzOsramColorCTLight));
 
 const ::zhc::TzConverter* const kTzOsramColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -153,8 +136,7 @@ const ::zhc::TzConverter* const kTzOsramColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzOsramColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzOsramColorCTLight) / sizeof(kTzOsramColorCTLight[0]));
+static_assert(kTzOsramColorCTLightCount == std::size(kTzOsramColorCTLight));
 
 const ::zhc::Expose kExposesOsramColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -172,13 +154,11 @@ const ::zhc::Expose kExposesOsramColorCTLight[] = {
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesOsramColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesOsramColorCTLight) / sizeof(kExposesOsramColorCTLight[0]));
+static_assert(kExposesOsramColorCTLightCount == std::size(kExposesOsramColorCTLight));
 
 const ::zhc::BindingSpec kBindingsOsramColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsOsramColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsOsramColorCTLight) / sizeof(kBindingsOsramColorCTLight[0]));
+static_assert(kBindingsOsramColorCTLightCount == std::size(kBindingsOsramColorCTLight));
 
 }  // namespace zhc::devices::osram

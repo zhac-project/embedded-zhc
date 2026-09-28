@@ -24,28 +24,28 @@ namespace zhc::devices::hornbach {
 
 // ── CCT (m.light({colorTemp})) ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzHornbachCTLight[];
-extern const std::uint8_t              kFzHornbachCTLightCount;
+inline constexpr std::uint8_t          kFzHornbachCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzHornbachCTLight[];
-extern const std::uint8_t              kTzHornbachCTLightCount;
+inline constexpr std::uint8_t          kTzHornbachCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesHornbachCTLight[];
-extern const std::uint8_t              kExposesHornbachCTLightCount;
+inline constexpr std::uint8_t          kExposesHornbachCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsHornbachCTLight[];
-extern const std::uint8_t              kBindingsHornbachCTLightCount;
+inline constexpr std::uint8_t          kBindingsHornbachCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color})) ─────────────────────────
 extern const ::zhc::FzConverter* const kFzHornbachColorCTLight[];
-extern const std::uint8_t              kFzHornbachColorCTLightCount;
+inline constexpr std::uint8_t          kFzHornbachColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzHornbachColorCTLight[];
-extern const std::uint8_t              kTzHornbachColorCTLightCount;
+inline constexpr std::uint8_t          kTzHornbachColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesHornbachColorCTLight[];
-extern const std::uint8_t              kExposesHornbachColorCTLightCount;
+inline constexpr std::uint8_t          kExposesHornbachColorCTLightCount = 5;
 
 extern const ::zhc::BindingSpec        kBindingsHornbachColorCTLight[];
-extern const std::uint8_t              kBindingsHornbachColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsHornbachColorCTLightCount = 3;
 
 }  // namespace zhc::devices::hornbach

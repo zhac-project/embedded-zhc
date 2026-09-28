@@ -23,41 +23,41 @@ namespace zhc::devices::awox {
 
 // ── Plain dimmable (m.light({})) ────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzAwoxLight[];
-extern const std::uint8_t              kFzAwoxLightCount;
+inline constexpr std::uint8_t          kFzAwoxLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzAwoxLight[];
-extern const std::uint8_t              kTzAwoxLightCount;
+inline constexpr std::uint8_t          kTzAwoxLightCount = 2;
 
 extern const ::zhc::Expose             kExposesAwoxLight[];
-extern const std::uint8_t              kExposesAwoxLightCount;
+inline constexpr std::uint8_t          kExposesAwoxLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsAwoxLight[];
-extern const std::uint8_t              kBindingsAwoxLightCount;
+inline constexpr std::uint8_t          kBindingsAwoxLightCount = 2;
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 extern const ::zhc::FzConverter* const kFzAwoxCTLight[];
-extern const std::uint8_t              kFzAwoxCTLightCount;
+inline constexpr std::uint8_t          kFzAwoxCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzAwoxCTLight[];
-extern const std::uint8_t              kTzAwoxCTLightCount;
+inline constexpr std::uint8_t          kTzAwoxCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesAwoxCTLight[];
-extern const std::uint8_t              kExposesAwoxCTLightCount;
+inline constexpr std::uint8_t          kExposesAwoxCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsAwoxCTLight[];
-extern const std::uint8_t              kBindingsAwoxCTLightCount;
+inline constexpr std::uint8_t          kBindingsAwoxCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color: {modes:["xy","hs"]}})) ────
 extern const ::zhc::FzConverter* const kFzAwoxColorCTLight[];
-extern const std::uint8_t              kFzAwoxColorCTLightCount;
+inline constexpr std::uint8_t          kFzAwoxColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzAwoxColorCTLight[];
-extern const std::uint8_t              kTzAwoxColorCTLightCount;
+inline constexpr std::uint8_t          kTzAwoxColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesAwoxColorCTLight[];
-extern const std::uint8_t              kExposesAwoxColorCTLightCount;
+inline constexpr std::uint8_t          kExposesAwoxColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsAwoxColorCTLight[];
-extern const std::uint8_t              kBindingsAwoxColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsAwoxColorCTLightCount = 3;
 
 }  // namespace zhc::devices::awox

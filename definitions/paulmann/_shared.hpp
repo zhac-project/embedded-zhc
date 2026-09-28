@@ -27,54 +27,54 @@ namespace zhc::devices::paulmann {
 
 // ── Plain dimmable (m.light()) ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzPaulmannLight[];
-extern const std::uint8_t              kFzPaulmannLightCount;
+inline constexpr std::uint8_t          kFzPaulmannLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzPaulmannLight[];
-extern const std::uint8_t              kTzPaulmannLightCount;
+inline constexpr std::uint8_t          kTzPaulmannLightCount = 2;
 
 extern const ::zhc::Expose             kExposesPaulmannLight[];
-extern const std::uint8_t              kExposesPaulmannLightCount;
+inline constexpr std::uint8_t          kExposesPaulmannLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsPaulmannLight[];
-extern const std::uint8_t              kBindingsPaulmannLightCount;
+inline constexpr std::uint8_t          kBindingsPaulmannLightCount = 2;
 
 // ── White-ambiance / CCT (m.light({colorTemp})) ─────────────────────
 extern const ::zhc::FzConverter* const kFzPaulmannCTLight[];
-extern const std::uint8_t              kFzPaulmannCTLightCount;
+inline constexpr std::uint8_t          kFzPaulmannCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzPaulmannCTLight[];
-extern const std::uint8_t              kTzPaulmannCTLightCount;
+inline constexpr std::uint8_t          kTzPaulmannCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesPaulmannCTLight[];
-extern const std::uint8_t              kExposesPaulmannCTLightCount;
+inline constexpr std::uint8_t          kExposesPaulmannCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsPaulmannCTLight[];
-extern const std::uint8_t              kBindingsPaulmannCTLightCount;
+inline constexpr std::uint8_t          kBindingsPaulmannCTLightCount = 3;
 
 // ── Colour-only (m.light({color})) ──────────────────────────────────
 extern const ::zhc::FzConverter* const kFzPaulmannColorLight[];
-extern const std::uint8_t              kFzPaulmannColorLightCount;
+inline constexpr std::uint8_t          kFzPaulmannColorLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzPaulmannColorLight[];
-extern const std::uint8_t              kTzPaulmannColorLightCount;
+inline constexpr std::uint8_t          kTzPaulmannColorLightCount = 3;
 
 extern const ::zhc::Expose             kExposesPaulmannColorLight[];
-extern const std::uint8_t              kExposesPaulmannColorLightCount;
+inline constexpr std::uint8_t          kExposesPaulmannColorLightCount = 4;
 
 extern const ::zhc::BindingSpec        kBindingsPaulmannColorLight[];
-extern const std::uint8_t              kBindingsPaulmannColorLightCount;
+inline constexpr std::uint8_t          kBindingsPaulmannColorLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color})) ─────────────────────────
 extern const ::zhc::FzConverter* const kFzPaulmannColorCTLight[];
-extern const std::uint8_t              kFzPaulmannColorCTLightCount;
+inline constexpr std::uint8_t          kFzPaulmannColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzPaulmannColorCTLight[];
-extern const std::uint8_t              kTzPaulmannColorCTLightCount;
+inline constexpr std::uint8_t          kTzPaulmannColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesPaulmannColorCTLight[];
-extern const std::uint8_t              kExposesPaulmannColorCTLightCount;
+inline constexpr std::uint8_t          kExposesPaulmannColorCTLightCount = 5;
 
 extern const ::zhc::BindingSpec        kBindingsPaulmannColorCTLight[];
-extern const std::uint8_t              kBindingsPaulmannColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsPaulmannColorCTLightCount = 3;
 
 }  // namespace zhc::devices::paulmann

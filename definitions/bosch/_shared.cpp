@@ -23,35 +23,30 @@ const ::zhc::FzConverter* const kFzBoschLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzBoschLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzBoschLight)/sizeof(kFzBoschLight[0]));
+static_assert(kFzBoschLightCount == std::size(kFzBoschLight));
 const ::zhc::TzConverter* const kTzBoschLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzBoschLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzBoschLight)/sizeof(kTzBoschLight[0]));
+static_assert(kTzBoschLightCount == std::size(kTzBoschLight));
 const ::zhc::Expose kExposesBoschLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr,  nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr,  nullptr, nullptr, 0 },
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "mired",  nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesBoschLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesBoschLight)/sizeof(kExposesBoschLight[0]));
+static_assert(kExposesBoschLightCount == std::size(kExposesBoschLight));
 const ::zhc::BindingSpec kBindingsBoschLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsBoschLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsBoschLight)/sizeof(kBindingsBoschLight[0]));
+static_assert(kBindingsBoschLightCount == std::size(kBindingsBoschLight));
 
 // ── IAS battery sensor bundle ───────────────────────────────────────
 const ::zhc::FzConverter* const kFzBoschIasBattery[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzIasZone,
 };
-const std::uint8_t kFzBoschIasBatteryCount =
-    static_cast<std::uint8_t>(sizeof(kFzBoschIasBattery)/sizeof(kFzBoschIasBattery[0]));
+static_assert(kFzBoschIasBatteryCount == std::size(kFzBoschIasBattery));
 const ::zhc::Expose kExposesBoschIasBattery[] = {
     { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
       ::zhc::ExposeCategory::Diagnostic },
@@ -62,14 +57,12 @@ const ::zhc::Expose kExposesBoschIasBattery[] = {
     { "alarm",       ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
     { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesBoschIasBatteryCount =
-    static_cast<std::uint8_t>(sizeof(kExposesBoschIasBattery)/sizeof(kExposesBoschIasBattery[0]));
+static_assert(kExposesBoschIasBatteryCount == std::size(kExposesBoschIasBattery));
 const ::zhc::BindingSpec kBindingsBoschIasBattery[] = {
     { 1, 0x0001 },  // genPowerCfg
     { 1, 0x0500 },  // ssIasZone
 };
-const std::uint8_t kBindingsBoschIasBatteryCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsBoschIasBattery)/sizeof(kBindingsBoschIasBattery[0]));
+static_assert(kBindingsBoschIasBatteryCount == std::size(kBindingsBoschIasBattery));
 
 // ── Typed IAS-zone sensor bundles ───────────────────────────────────
 // The generic `kFzIasZone` above emits a bare `alarm` (zoneStatus bit 0).
@@ -87,8 +80,7 @@ const ::zhc::FzConverter* const kFzBoschContact[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzIasContactAlarm,
 };
-const std::uint8_t kFzBoschContactCount =
-    static_cast<std::uint8_t>(sizeof(kFzBoschContact)/sizeof(kFzBoschContact[0]));
+static_assert(kFzBoschContactCount == std::size(kFzBoschContact));
 const ::zhc::Expose kExposesBoschContact[] = {
     { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
       ::zhc::ExposeCategory::Diagnostic },
@@ -99,8 +91,7 @@ const ::zhc::Expose kExposesBoschContact[] = {
     { "contact",     ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
     { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesBoschContactCount =
-    static_cast<std::uint8_t>(sizeof(kExposesBoschContact)/sizeof(kExposesBoschContact[0]));
+static_assert(kExposesBoschContactCount == std::size(kExposesBoschContact));
 
 // Motion detector (BSEN-M / ISW-ZPR1-WP13 / RADION TriTech ZB) —
 // zoneStatus bit 0 → `occupancy`.
@@ -108,8 +99,7 @@ const ::zhc::FzConverter* const kFzBoschMotion[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzIasMotionAlarm,
 };
-const std::uint8_t kFzBoschMotionCount =
-    static_cast<std::uint8_t>(sizeof(kFzBoschMotion)/sizeof(kFzBoschMotion[0]));
+static_assert(kFzBoschMotionCount == std::size(kFzBoschMotion));
 const ::zhc::Expose kExposesBoschMotion[] = {
     { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
       ::zhc::ExposeCategory::Diagnostic },
@@ -120,8 +110,7 @@ const ::zhc::Expose kExposesBoschMotion[] = {
     { "occupancy",   ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
     { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesBoschMotionCount =
-    static_cast<std::uint8_t>(sizeof(kExposesBoschMotion)/sizeof(kExposesBoschMotion[0]));
+static_assert(kExposesBoschMotionCount == std::size(kExposesBoschMotion));
 
 // Water alarm (BSEN-W / BSD-2, both `RBSH-WS`/`RBSH-SD` "Water alarm"
 // in z2m) — zoneStatus bit 0 → `water_leak`.
@@ -129,8 +118,7 @@ const ::zhc::FzConverter* const kFzBoschWaterLeak[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzIasWaterLeakAlarm,
 };
-const std::uint8_t kFzBoschWaterLeakCount =
-    static_cast<std::uint8_t>(sizeof(kFzBoschWaterLeak)/sizeof(kFzBoschWaterLeak[0]));
+static_assert(kFzBoschWaterLeakCount == std::size(kFzBoschWaterLeak));
 const ::zhc::Expose kExposesBoschWaterLeak[] = {
     { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
       ::zhc::ExposeCategory::Diagnostic },
@@ -141,8 +129,7 @@ const ::zhc::Expose kExposesBoschWaterLeak[] = {
     { "water_leak",  ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
     { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesBoschWaterLeakCount =
-    static_cast<std::uint8_t>(sizeof(kExposesBoschWaterLeak)/sizeof(kExposesBoschWaterLeak[0]));
+static_assert(kExposesBoschWaterLeakCount == std::size(kExposesBoschWaterLeak));
 
 // Smoke alarm (BSD-2, RBSH-SD-ZB-EU "Smoke alarm II") — zoneStatus bit 0
 // → `smoke`. z2m's `smokeAlarmAndButtonPushes` rides the IAS zone state;
@@ -151,8 +138,7 @@ const ::zhc::FzConverter* const kFzBoschSmoke[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzIasSmokeAlarm,
 };
-const std::uint8_t kFzBoschSmokeCount =
-    static_cast<std::uint8_t>(sizeof(kFzBoschSmoke)/sizeof(kFzBoschSmoke[0]));
+static_assert(kFzBoschSmokeCount == std::size(kFzBoschSmoke));
 const ::zhc::Expose kExposesBoschSmoke[] = {
     { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0,
       ::zhc::ExposeCategory::Diagnostic },
@@ -163,43 +149,37 @@ const ::zhc::Expose kExposesBoschSmoke[] = {
     { "smoke",       ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
     { "tamper",      ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesBoschSmokeCount =
-    static_cast<std::uint8_t>(sizeof(kExposesBoschSmoke)/sizeof(kExposesBoschSmoke[0]));
+static_assert(kExposesBoschSmokeCount == std::size(kExposesBoschSmoke));
 
 // ── Smart-plug bundle ───────────────────────────────────────────────
 const ::zhc::FzConverter* const kFzBoschPlug[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzMetering,
 };
-const std::uint8_t kFzBoschPlugCount =
-    static_cast<std::uint8_t>(sizeof(kFzBoschPlug)/sizeof(kFzBoschPlug[0]));
+static_assert(kFzBoschPlugCount == std::size(kFzBoschPlug));
 const ::zhc::TzConverter* const kTzBoschPlug[] = {
     &::zhc::generic::kTzOnOff,
 };
-const std::uint8_t kTzBoschPlugCount =
-    static_cast<std::uint8_t>(sizeof(kTzBoschPlug)/sizeof(kTzBoschPlug[0]));
+static_assert(kTzBoschPlugCount == std::size(kTzBoschPlug));
 const ::zhc::Expose kExposesBoschPlug[] = {
     { "state",   ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr,  nullptr, nullptr, 0 },
     { "energy",  ::zhc::ExposeType::Numeric, ::zhc::Access::State,    "kWh",    nullptr, nullptr, 0 },
     { "power",   ::zhc::ExposeType::Numeric, ::zhc::Access::State,    "W",      nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesBoschPlugCount =
-    static_cast<std::uint8_t>(sizeof(kExposesBoschPlug)/sizeof(kExposesBoschPlug[0]));
+static_assert(kExposesBoschPlugCount == std::size(kExposesBoschPlug));
 const ::zhc::BindingSpec kBindingsBoschPlug[] = {
     { 1, 0x0006 },  // genOnOff
     { 1, 0x0702 },  // seMetering
     { 1, 0x0B04 },  // haElectricalMeasurement
 };
-const std::uint8_t kBindingsBoschPlugCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsBoschPlug)/sizeof(kBindingsBoschPlug[0]));
+static_assert(kBindingsBoschPlugCount == std::size(kBindingsBoschPlug));
 
 // ── BTH-RA TRV bundle ───────────────────────────────────────────────
 const ::zhc::FzConverter* const kFzBoschTrv[] = {
     &::zhc::generic::kFzThermostat,
     &::zhc::generic::kFzBattery,
 };
-const std::uint8_t kFzBoschTrvCount =
-    static_cast<std::uint8_t>(sizeof(kFzBoschTrv)/sizeof(kFzBoschTrv[0]));
+static_assert(kFzBoschTrvCount == std::size(kFzBoschTrv));
 
 // `kTzBoschTrv` populated below the manu-spec block so the converters
 // it references already exist at the point of array initialisation.
@@ -249,15 +229,13 @@ const ::zhc::Expose kExposesBoschTrv[] = {
       nullptr, nullptr, nullptr, 0,
       ::zhc::ExposeCategory::Diagnostic },
 };
-const std::uint8_t kExposesBoschTrvCount =
-    static_cast<std::uint8_t>(sizeof(kExposesBoschTrv)/sizeof(kExposesBoschTrv[0]));
+static_assert(kExposesBoschTrvCount == std::size(kExposesBoschTrv));
 const ::zhc::BindingSpec kBindingsBoschTrv[] = {
     { 1, 0x0001 },  // genPowerCfg
     { 1, 0x0201 },  // hvacThermostat
     { 1, 0x0204 },  // hvacUserInterfaceCfg
 };
-const std::uint8_t kBindingsBoschTrvCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsBoschTrv)/sizeof(kBindingsBoschTrv[0]));
+static_assert(kBindingsBoschTrvCount == std::size(kBindingsBoschTrv));
 
 // ── Manu-specific TZ specs (mfgcode 0x1209 ROBERT_BOSCH_GMBH) ───────
 // Encoded by `tz_zcl_write_attr` which prepends fc=0x14 + mfgcode when
@@ -379,8 +357,7 @@ const ::zhc::TzConverter* const kTzBoschTrv[] = {
     &kTzBoschDisplaySwitchDur,
     &kTzBoschDisplayBrightness,
 };
-const std::uint8_t kTzBoschTrvCount =
-    static_cast<std::uint8_t>(sizeof(kTzBoschTrv)/sizeof(kTzBoschTrv[0]));
+static_assert(kTzBoschTrvCount == std::size(kTzBoschTrv));
 
 
 // ── BTH-RM230Z bundle ────────────────────────────────────────────────
@@ -451,7 +428,7 @@ const ::zhc::FzConverter* const kFzBoschRm230z[] = {
     &::zhc::generic::kFzHumidity,
     &kFzBoschHumidityAlarmLed,
 };
-const std::uint8_t kFzBoschRm230zCount = sizeof(kFzBoschRm230z) / sizeof(kFzBoschRm230z[0]);
+static_assert(kFzBoschRm230zCount == std::size(kFzBoschRm230z));
 
 const ::zhc::TzConverter* const kTzBoschRm230z[] = {
     &::zhc::generic::kTzThermostat,
@@ -466,7 +443,7 @@ const ::zhc::TzConverter* const kTzBoschRm230z[] = {
     &kTzBoschDisplayBrightness,
     &kTzBoschHumidityAlarmLed,
 };
-const std::uint8_t kTzBoschRm230zCount = sizeof(kTzBoschRm230z) / sizeof(kTzBoschRm230z[0]);
+static_assert(kTzBoschRm230zCount == std::size(kTzBoschRm230z));
 
 const ::zhc::Expose kExposesBoschRm230z[] = {
     { "local_temperature",          ::zhc::ExposeType::Numeric, ::zhc::Access::State,
@@ -507,13 +484,13 @@ const ::zhc::Expose kExposesBoschRm230z[] = {
       nullptr, "LED warning when humidity is outside 30-70 % (raw 0x07 on / 0x06 off)", nullptr, 0,
       ::zhc::ExposeCategory::Config },
 };
-const std::uint8_t kExposesBoschRm230zCount = sizeof(kExposesBoschRm230z) / sizeof(kExposesBoschRm230z[0]);
+static_assert(kExposesBoschRm230zCount == std::size(kExposesBoschRm230z));
 
 const ::zhc::BindingSpec kBindingsBoschRm230z[] = {
     { 1, 0x0201 },  // hvacThermostat
     { 1, 0x0204 },  // hvacUserInterfaceCfg
     { 1, 0x0405 },  // msRelativeHumidity
 };
-const std::uint8_t kBindingsBoschRm230zCount = sizeof(kBindingsBoschRm230z) / sizeof(kBindingsBoschRm230z[0]);
+static_assert(kBindingsBoschRm230zCount == std::size(kBindingsBoschRm230z));
 
 }  // namespace zhc::devices::bosch

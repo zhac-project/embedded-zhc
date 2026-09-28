@@ -27,41 +27,41 @@ namespace zhc::devices::paul_neuhaus {
 
 // ── Plain dimmable (m.light()) ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzPaulNeuhausLight[];
-extern const std::uint8_t              kFzPaulNeuhausLightCount;
+inline constexpr std::uint8_t          kFzPaulNeuhausLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzPaulNeuhausLight[];
-extern const std::uint8_t              kTzPaulNeuhausLightCount;
+inline constexpr std::uint8_t          kTzPaulNeuhausLightCount = 2;
 
 extern const ::zhc::Expose             kExposesPaulNeuhausLight[];
-extern const std::uint8_t              kExposesPaulNeuhausLightCount;
+inline constexpr std::uint8_t          kExposesPaulNeuhausLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsPaulNeuhausLight[];
-extern const std::uint8_t              kBindingsPaulNeuhausLightCount;
+inline constexpr std::uint8_t          kBindingsPaulNeuhausLightCount = 2;
 
 // ── White-ambiance / CCT (m.light({colorTemp})) ─────────────────────
 extern const ::zhc::FzConverter* const kFzPaulNeuhausCTLight[];
-extern const std::uint8_t              kFzPaulNeuhausCTLightCount;
+inline constexpr std::uint8_t          kFzPaulNeuhausCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzPaulNeuhausCTLight[];
-extern const std::uint8_t              kTzPaulNeuhausCTLightCount;
+inline constexpr std::uint8_t          kTzPaulNeuhausCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesPaulNeuhausCTLight[];
-extern const std::uint8_t              kExposesPaulNeuhausCTLightCount;
+inline constexpr std::uint8_t          kExposesPaulNeuhausCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsPaulNeuhausCTLight[];
-extern const std::uint8_t              kBindingsPaulNeuhausCTLightCount;
+inline constexpr std::uint8_t          kBindingsPaulNeuhausCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color})) ─────────────────────────
 extern const ::zhc::FzConverter* const kFzPaulNeuhausColorCTLight[];
-extern const std::uint8_t              kFzPaulNeuhausColorCTLightCount;
+inline constexpr std::uint8_t          kFzPaulNeuhausColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzPaulNeuhausColorCTLight[];
-extern const std::uint8_t              kTzPaulNeuhausColorCTLightCount;
+inline constexpr std::uint8_t          kTzPaulNeuhausColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesPaulNeuhausColorCTLight[];
-extern const std::uint8_t              kExposesPaulNeuhausColorCTLightCount;
+inline constexpr std::uint8_t          kExposesPaulNeuhausColorCTLightCount = 5;
 
 extern const ::zhc::BindingSpec        kBindingsPaulNeuhausColorCTLight[];
-extern const std::uint8_t              kBindingsPaulNeuhausColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsPaulNeuhausColorCTLightCount = 3;
 
 }  // namespace zhc::devices::paul_neuhaus

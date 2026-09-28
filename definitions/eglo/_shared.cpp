@@ -13,16 +13,14 @@ const ::zhc::FzConverter* const kFzEgloCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzEgloCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzEgloCTLight) / sizeof(kFzEgloCTLight[0]));
+static_assert(kFzEgloCTLightCount == std::size(kFzEgloCTLight));
 
 const ::zhc::TzConverter* const kTzEgloCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzEgloCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzEgloCTLight) / sizeof(kTzEgloCTLight[0]));
+static_assert(kTzEgloCTLightCount == std::size(kTzEgloCTLight));
 
 const ::zhc::Expose kExposesEgloCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -32,14 +30,12 @@ const ::zhc::Expose kExposesEgloCTLight[] = {
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesEgloCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesEgloCTLight) / sizeof(kExposesEgloCTLight[0]));
+static_assert(kExposesEgloCTLightCount == std::size(kExposesEgloCTLight));
 
 const ::zhc::BindingSpec kBindingsEgloCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsEgloCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsEgloCTLight) / sizeof(kBindingsEgloCTLight[0]));
+static_assert(kBindingsEgloCTLightCount == std::size(kBindingsEgloCTLight));
 
 // ── Full RGBW (m.light({colorTemp, color:{modes:["xy","hs"]}})) ─────
 const ::zhc::FzConverter* const kFzEgloColorCTLight[] = {
@@ -48,8 +44,7 @@ const ::zhc::FzConverter* const kFzEgloColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzEgloColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzEgloColorCTLight) / sizeof(kFzEgloColorCTLight[0]));
+static_assert(kFzEgloColorCTLightCount == std::size(kFzEgloColorCTLight));
 
 const ::zhc::TzConverter* const kTzEgloColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -57,8 +52,7 @@ const ::zhc::TzConverter* const kTzEgloColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzEgloColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzEgloColorCTLight) / sizeof(kTzEgloColorCTLight[0]));
+static_assert(kTzEgloColorCTLightCount == std::size(kTzEgloColorCTLight));
 
 const ::zhc::Expose kExposesEgloColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -76,13 +70,11 @@ const ::zhc::Expose kExposesEgloColorCTLight[] = {
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesEgloColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesEgloColorCTLight) / sizeof(kExposesEgloColorCTLight[0]));
+static_assert(kExposesEgloColorCTLightCount == std::size(kExposesEgloColorCTLight));
 
 const ::zhc::BindingSpec kBindingsEgloColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsEgloColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsEgloColorCTLight) / sizeof(kBindingsEgloColorCTLight[0]));
+static_assert(kBindingsEgloColorCTLightCount == std::size(kBindingsEgloColorCTLight));
 
 }  // namespace zhc::devices::eglo

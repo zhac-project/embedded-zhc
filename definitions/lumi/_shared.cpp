@@ -1289,9 +1289,7 @@ ZHC_LUMI_ATTRREPORT_CONVERTER(kFzLumiDoorLockReport, "closuresDoorLock",
 const ReportingSpec kReportsLumiOnOff[] = {
     {1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0},
 };
-const std::uint8_t kReportsLumiOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kReportsLumiOnOff) /
-                              sizeof(kReportsLumiOnOff[0]));
+static_assert(kReportsLumiOnOffCount == std::size(kReportsLumiOnOff));
 
 // reporting.onOff + reporting.deviceTemperature.
 //   genOnOff         0x0006 / 0x0000  bool  0..3600s   rc 0
@@ -1300,9 +1298,7 @@ const ReportingSpec kReportsLumiOnOffDevTemp[] = {
     {1, 0x0006, 0x0000, 0x10,   0, 3600, 0, 0},
     {1, 0x0002, 0x0000, 0x29, 300, 3600, 1, 0},
 };
-const std::uint8_t kReportsLumiOnOffDevTempCount =
-    static_cast<std::uint8_t>(sizeof(kReportsLumiOnOffDevTemp) /
-                              sizeof(kReportsLumiOnOffDevTemp[0]));
+static_assert(kReportsLumiOnOffDevTempCount == std::size(kReportsLumiOnOffDevTemp));
 
 // reporting.onOff + reporting.currentSummDelivered (energy only — no V/I/P).
 //   genOnOff   0x0006 / 0x0000  bool  0..3600s  rc 0
@@ -1311,8 +1307,6 @@ const ReportingSpec kReportsLumiOnOffEnergy[] = {
     {1, 0x0006, 0x0000, 0x10, 0, 3600,   0, 0},
     {1, 0x0702, 0x0000, 0x25, 5, 3600, 257, 0},
 };
-const std::uint8_t kReportsLumiOnOffEnergyCount =
-    static_cast<std::uint8_t>(sizeof(kReportsLumiOnOffEnergy) /
-                              sizeof(kReportsLumiOnOffEnergy[0]));
+static_assert(kReportsLumiOnOffEnergyCount == std::size(kReportsLumiOnOffEnergy));
 
 }  // namespace zhc::lumi

@@ -13,28 +13,24 @@ const ::zhc::FzConverter* const kFzEcosmartLight[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzEcosmartLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzEcosmartLight) / sizeof(kFzEcosmartLight[0]));
+static_assert(kFzEcosmartLightCount == std::size(kFzEcosmartLight));
 
 const ::zhc::TzConverter* const kTzEcosmartLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzEcosmartLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzEcosmartLight) / sizeof(kTzEcosmartLight[0]));
+static_assert(kTzEcosmartLightCount == std::size(kTzEcosmartLight));
 
 const ::zhc::Expose kExposesEcosmartLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesEcosmartLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesEcosmartLight) / sizeof(kExposesEcosmartLight[0]));
+static_assert(kExposesEcosmartLightCount == std::size(kExposesEcosmartLight));
 
 const ::zhc::BindingSpec kBindingsEcosmartLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsEcosmartLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsEcosmartLight) / sizeof(kBindingsEcosmartLight[0]));
+static_assert(kBindingsEcosmartLightCount == std::size(kBindingsEcosmartLight));
 
 // ── CCT (m.light({colorTemp: ...})) ─────────────────────────────────
 const ::zhc::FzConverter* const kFzEcosmartCTLight[] = {
@@ -42,30 +38,26 @@ const ::zhc::FzConverter* const kFzEcosmartCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzEcosmartCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzEcosmartCTLight) / sizeof(kFzEcosmartCTLight[0]));
+static_assert(kFzEcosmartCTLightCount == std::size(kFzEcosmartCTLight));
 
 const ::zhc::TzConverter* const kTzEcosmartCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzEcosmartCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzEcosmartCTLight) / sizeof(kTzEcosmartCTLight[0]));
+static_assert(kTzEcosmartCTLightCount == std::size(kTzEcosmartCTLight));
 
 const ::zhc::Expose kExposesEcosmartCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesEcosmartCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesEcosmartCTLight) / sizeof(kExposesEcosmartCTLight[0]));
+static_assert(kExposesEcosmartCTLightCount == std::size(kExposesEcosmartCTLight));
 
 const ::zhc::BindingSpec kBindingsEcosmartCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsEcosmartCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsEcosmartCTLight) / sizeof(kBindingsEcosmartCTLight[0]));
+static_assert(kBindingsEcosmartCTLightCount == std::size(kBindingsEcosmartCTLight));
 
 // ── Full RGBW (m.light({colorTemp, color: true})) ───────────────────
 const ::zhc::FzConverter* const kFzEcosmartColorCTLight[] = {
@@ -74,8 +66,7 @@ const ::zhc::FzConverter* const kFzEcosmartColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzEcosmartColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzEcosmartColorCTLight) / sizeof(kFzEcosmartColorCTLight[0]));
+static_assert(kFzEcosmartColorCTLightCount == std::size(kFzEcosmartColorCTLight));
 
 const ::zhc::TzConverter* const kTzEcosmartColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -83,8 +74,7 @@ const ::zhc::TzConverter* const kTzEcosmartColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzEcosmartColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzEcosmartColorCTLight) / sizeof(kTzEcosmartColorCTLight[0]));
+static_assert(kTzEcosmartColorCTLightCount == std::size(kTzEcosmartColorCTLight));
 
 const ::zhc::Expose kExposesEcosmartColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
@@ -95,13 +85,11 @@ const ::zhc::Expose kExposesEcosmartColorCTLight[] = {
     { "hue",        ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesEcosmartColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesEcosmartColorCTLight) / sizeof(kExposesEcosmartColorCTLight[0]));
+static_assert(kExposesEcosmartColorCTLightCount == std::size(kExposesEcosmartColorCTLight));
 
 const ::zhc::BindingSpec kBindingsEcosmartColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsEcosmartColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsEcosmartColorCTLight) / sizeof(kBindingsEcosmartColorCTLight[0]));
+static_assert(kBindingsEcosmartColorCTLightCount == std::size(kBindingsEcosmartColorCTLight));
 
 }  // namespace zhc::devices::ecosmart

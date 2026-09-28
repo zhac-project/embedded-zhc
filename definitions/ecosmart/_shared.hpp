@@ -28,41 +28,41 @@ namespace zhc::devices::ecosmart {
 
 // ── Plain dimmable (m.light()) ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzEcosmartLight[];
-extern const std::uint8_t              kFzEcosmartLightCount;
+inline constexpr std::uint8_t          kFzEcosmartLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzEcosmartLight[];
-extern const std::uint8_t              kTzEcosmartLightCount;
+inline constexpr std::uint8_t          kTzEcosmartLightCount = 2;
 
 extern const ::zhc::Expose             kExposesEcosmartLight[];
-extern const std::uint8_t              kExposesEcosmartLightCount;
+inline constexpr std::uint8_t          kExposesEcosmartLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsEcosmartLight[];
-extern const std::uint8_t              kBindingsEcosmartLightCount;
+inline constexpr std::uint8_t          kBindingsEcosmartLightCount = 2;
 
 // ── White-ambiance / CCT (m.light({colorTemp: ...})) ────────────────
 extern const ::zhc::FzConverter* const kFzEcosmartCTLight[];
-extern const std::uint8_t              kFzEcosmartCTLightCount;
+inline constexpr std::uint8_t          kFzEcosmartCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzEcosmartCTLight[];
-extern const std::uint8_t              kTzEcosmartCTLightCount;
+inline constexpr std::uint8_t          kTzEcosmartCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesEcosmartCTLight[];
-extern const std::uint8_t              kExposesEcosmartCTLightCount;
+inline constexpr std::uint8_t          kExposesEcosmartCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsEcosmartCTLight[];
-extern const std::uint8_t              kBindingsEcosmartCTLightCount;
+inline constexpr std::uint8_t          kBindingsEcosmartCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color: true})) ───────────────────
 extern const ::zhc::FzConverter* const kFzEcosmartColorCTLight[];
-extern const std::uint8_t              kFzEcosmartColorCTLightCount;
+inline constexpr std::uint8_t          kFzEcosmartColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzEcosmartColorCTLight[];
-extern const std::uint8_t              kTzEcosmartColorCTLightCount;
+inline constexpr std::uint8_t          kTzEcosmartColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesEcosmartColorCTLight[];
-extern const std::uint8_t              kExposesEcosmartColorCTLightCount;
+inline constexpr std::uint8_t          kExposesEcosmartColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsEcosmartColorCTLight[];
-extern const std::uint8_t              kBindingsEcosmartColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsEcosmartColorCTLightCount = 3;
 
 }  // namespace zhc::devices::ecosmart

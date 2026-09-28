@@ -11,13 +11,13 @@ namespace zhc::devices::bosch {
 // symbols remain so Bos_*.cpp files which still link against them
 // continue to build during the staged port sweep.
 extern const ::zhc::FzConverter* const kFzBoschLight[];
-extern const std::uint8_t              kFzBoschLightCount;
+inline constexpr std::uint8_t          kFzBoschLightCount = 3;
 extern const ::zhc::TzConverter* const kTzBoschLight[];
-extern const std::uint8_t              kTzBoschLightCount;
+inline constexpr std::uint8_t          kTzBoschLightCount = 3;
 extern const ::zhc::Expose             kExposesBoschLight[];
-extern const std::uint8_t              kExposesBoschLightCount;
+inline constexpr std::uint8_t          kExposesBoschLightCount = 3;
 extern const ::zhc::BindingSpec        kBindingsBoschLight[];
-extern const std::uint8_t              kBindingsBoschLightCount;
+inline constexpr std::uint8_t          kBindingsBoschLightCount = 3;
 
 // ── IAS-zone battery sensor (motion / contact / smoke / water) ──────
 // Bundle: kFzBattery + kFzIasZone + battery/alarm/tamper exposes.
@@ -25,11 +25,11 @@ extern const std::uint8_t              kBindingsBoschLightCount;
 // at the IAS-Zone level (their per-device manuSpec extras still need
 // dedicated work — see BOSCH_PARITY.md).
 extern const ::zhc::FzConverter* const kFzBoschIasBattery[];
-extern const std::uint8_t              kFzBoschIasBatteryCount;
+inline constexpr std::uint8_t          kFzBoschIasBatteryCount = 2;
 extern const ::zhc::Expose             kExposesBoschIasBattery[];
-extern const std::uint8_t              kExposesBoschIasBatteryCount;
+inline constexpr std::uint8_t          kExposesBoschIasBatteryCount = 5;
 extern const ::zhc::BindingSpec        kBindingsBoschIasBattery[];
-extern const std::uint8_t              kBindingsBoschIasBatteryCount;
+inline constexpr std::uint8_t          kBindingsBoschIasBatteryCount = 2;
 
 // ── Typed IAS-zone sensor bundles (semantic key, not bare `alarm`) ──
 // Same genPowerCfg + ssIasZone bindings as kBindingsBoschIasBattery, but
@@ -37,44 +37,44 @@ extern const std::uint8_t              kBindingsBoschIasBatteryCount;
 // semantic key. Contact → `contact`, Motion → `occupancy`, Water →
 // `water_leak`. Use kBindingsBoschIasBattery for .bindings.
 extern const ::zhc::FzConverter* const kFzBoschContact[];
-extern const std::uint8_t              kFzBoschContactCount;
+inline constexpr std::uint8_t          kFzBoschContactCount = 2;
 extern const ::zhc::Expose             kExposesBoschContact[];
-extern const std::uint8_t              kExposesBoschContactCount;
+inline constexpr std::uint8_t          kExposesBoschContactCount = 5;
 extern const ::zhc::FzConverter* const kFzBoschMotion[];
-extern const std::uint8_t              kFzBoschMotionCount;
+inline constexpr std::uint8_t          kFzBoschMotionCount = 2;
 extern const ::zhc::Expose             kExposesBoschMotion[];
-extern const std::uint8_t              kExposesBoschMotionCount;
+inline constexpr std::uint8_t          kExposesBoschMotionCount = 5;
 extern const ::zhc::FzConverter* const kFzBoschWaterLeak[];
-extern const std::uint8_t              kFzBoschWaterLeakCount;
+inline constexpr std::uint8_t          kFzBoschWaterLeakCount = 2;
 extern const ::zhc::Expose             kExposesBoschWaterLeak[];
-extern const std::uint8_t              kExposesBoschWaterLeakCount;
+inline constexpr std::uint8_t          kExposesBoschWaterLeakCount = 5;
 extern const ::zhc::FzConverter* const kFzBoschSmoke[];
-extern const std::uint8_t              kFzBoschSmokeCount;
+inline constexpr std::uint8_t          kFzBoschSmokeCount = 2;
 extern const ::zhc::Expose             kExposesBoschSmoke[];
-extern const std::uint8_t              kExposesBoschSmokeCount;
+inline constexpr std::uint8_t          kExposesBoschSmokeCount = 5;
 
 // ── Smart-plug bundle (BSP-FZ2 / BSP-FD): on/off + electrical meter ─
 extern const ::zhc::FzConverter* const kFzBoschPlug[];
-extern const std::uint8_t              kFzBoschPlugCount;
+inline constexpr std::uint8_t          kFzBoschPlugCount = 2;
 extern const ::zhc::TzConverter* const kTzBoschPlug[];
-extern const std::uint8_t              kTzBoschPlugCount;
+inline constexpr std::uint8_t          kTzBoschPlugCount = 1;
 extern const ::zhc::Expose             kExposesBoschPlug[];
-extern const std::uint8_t              kExposesBoschPlugCount;
+inline constexpr std::uint8_t          kExposesBoschPlugCount = 3;
 extern const ::zhc::BindingSpec        kBindingsBoschPlug[];
-extern const std::uint8_t              kBindingsBoschPlugCount;
+inline constexpr std::uint8_t          kBindingsBoschPlugCount = 3;
 
 // ── Bosch radiator-thermostat (BTH-RA) bundle ───────────────────────
 // Generic hvacThermostat + battery report path, plus a minimal expose
 // list. Manu-specific TZ converters below cover the bulk of the
 // special attributes the device understands.
 extern const ::zhc::FzConverter* const kFzBoschTrv[];
-extern const std::uint8_t              kFzBoschTrvCount;
+inline constexpr std::uint8_t          kFzBoschTrvCount = 2;
 extern const ::zhc::TzConverter* const kTzBoschTrv[];
-extern const std::uint8_t              kTzBoschTrvCount;
+inline constexpr std::uint8_t          kTzBoschTrvCount = 10;
 extern const ::zhc::Expose             kExposesBoschTrv[];
-extern const std::uint8_t              kExposesBoschTrvCount;
+inline constexpr std::uint8_t          kExposesBoschTrvCount = 16;
 extern const ::zhc::BindingSpec        kBindingsBoschTrv[];
-extern const std::uint8_t              kBindingsBoschTrvCount;
+inline constexpr std::uint8_t          kBindingsBoschTrvCount = 3;
 
 // ── Manu-specific (mfgcode 0x1209 = ROBERT_BOSCH_GMBH) writes ───────
 // All target hvacThermostat (0x0201) or hvacUserInterfaceCfg (0x0204)
@@ -127,12 +127,12 @@ extern const ::zhc::TzConverter kTzBoschTwinguardSensitivity;
 extern const ::zhc::FzConverter kFzBoschHumidityAlarmLed;
 extern const ::zhc::TzConverter kTzBoschHumidityAlarmLed;
 extern const ::zhc::FzConverter* const kFzBoschRm230z[];
-extern const std::uint8_t              kFzBoschRm230zCount;
+inline constexpr std::uint8_t          kFzBoschRm230zCount = 3;
 extern const ::zhc::TzConverter* const kTzBoschRm230z[];
-extern const std::uint8_t              kTzBoschRm230zCount;
+inline constexpr std::uint8_t          kTzBoschRm230zCount = 11;
 extern const ::zhc::Expose             kExposesBoschRm230z[];
-extern const std::uint8_t              kExposesBoschRm230zCount;
+inline constexpr std::uint8_t          kExposesBoschRm230zCount = 15;
 extern const ::zhc::BindingSpec        kBindingsBoschRm230z[];
-extern const std::uint8_t              kBindingsBoschRm230zCount;
+inline constexpr std::uint8_t          kBindingsBoschRm230zCount = 3;
 
 }  // namespace zhc::devices::bosch

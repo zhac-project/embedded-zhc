@@ -384,7 +384,7 @@ inline constexpr std::uint8_t kTuyaMagicPacketAttrs[] = {
 // The same as a one-step `config_steps` list on EP1. tuya_base_configure()
 // is a no-op, so a def that needs the packet points `config_steps` here.
 extern const ::zhc::ConfigStep kConfigStepsTuyaMagicPacket[];
-extern const std::uint8_t      kConfigStepsTuyaMagicPacketCount;
+inline constexpr std::uint8_t  kConfigStepsTuyaMagicPacketCount = 1;
 
 // ── kReportsOnOff_Nep — genOnOff Configure-Reporting for switch gangs ──
 //
@@ -394,13 +394,13 @@ extern const std::uint8_t      kConfigStepsTuyaMagicPacketCount;
 // the array matching their gang/endpoint count from `.reports`.
 // z2m-source: lib/reporting.ts `onOff`.
 extern const ::zhc::ReportingSpec kReportsOnOff_1ep[];
-extern const std::uint8_t         kReportsOnOff_1ep_count;
+inline constexpr std::uint8_t     kReportsOnOff_1ep_count = 1;
 extern const ::zhc::ReportingSpec kReportsOnOff_2ep[];
-extern const std::uint8_t         kReportsOnOff_2ep_count;
+inline constexpr std::uint8_t     kReportsOnOff_2ep_count = 2;
 extern const ::zhc::ReportingSpec kReportsOnOff_3ep[];
-extern const std::uint8_t         kReportsOnOff_3ep_count;
+inline constexpr std::uint8_t     kReportsOnOff_3ep_count = 3;
 extern const ::zhc::ReportingSpec kReportsOnOff_4ep[];
-extern const std::uint8_t         kReportsOnOff_4ep_count;
+inline constexpr std::uint8_t     kReportsOnOff_4ep_count = 4;
 
 // ── kReportsPlugVIPE_1ep — single-endpoint metering-plug reporting ──
 //
@@ -435,7 +435,7 @@ extern const std::uint8_t         kReportsOnOff_4ep_count;
 // z2m-source: lib/reporting.ts `onOff`/`currentSummDelivered` defaults +
 // tuya.ts `TS011F_plug_1`/`TS0121_plug` `configure:` V/I/P overrides.
 extern const ::zhc::ReportingSpec kReportsPlugVIPE_1ep[];
-extern const std::uint8_t         kReportsPlugVIPE_1ep_count;
+inline constexpr std::uint8_t     kReportsPlugVIPE_1ep_count = 5;
 
 // ── Generic ZCL-light Configure-Reporting sets (single-endpoint) ──────
 //
@@ -475,16 +475,16 @@ extern const std::uint8_t         kReportsPlugVIPE_1ep_count;
 
 // onOff + currentLevel — plain dimmers (no colour).
 extern const ::zhc::ReportingSpec kReportsDimmer_1ep[];
-extern const std::uint8_t         kReportsDimmer_1ep_count;
+inline constexpr std::uint8_t     kReportsDimmer_1ep_count = 2;
 
 // onOff + currentLevel + colorTemperature — tunable-white (CCT) lights.
 extern const ::zhc::ReportingSpec kReportsLightCCT_1ep[];
-extern const std::uint8_t         kReportsLightCCT_1ep_count;
+inline constexpr std::uint8_t     kReportsLightCCT_1ep_count = 3;
 
 // onOff + currentLevel + colorTemperature + currentX + currentY —
 // full-colour RGB+CCT lights.
 extern const ::zhc::ReportingSpec kReportsLightRGBCCT_1ep[];
-extern const std::uint8_t         kReportsLightRGBCCT_1ep_count;
+inline constexpr std::uint8_t     kReportsLightRGBCCT_1ep_count = 5;
 
 // ── packed-payload expanders ─────────────────────────────────────────
 

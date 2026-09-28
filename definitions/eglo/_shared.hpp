@@ -18,22 +18,22 @@ namespace zhc::devices::eglo {
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 extern const ::zhc::FzConverter* const kFzEgloCTLight[];
-extern const std::uint8_t kFzEgloCTLightCount;
+inline constexpr std::uint8_t kFzEgloCTLightCount = 3;
 extern const ::zhc::TzConverter* const kTzEgloCTLight[];
-extern const std::uint8_t kTzEgloCTLightCount;
+inline constexpr std::uint8_t kTzEgloCTLightCount = 3;
 extern const ::zhc::Expose kExposesEgloCTLight[];
-extern const std::uint8_t kExposesEgloCTLightCount;
+inline constexpr std::uint8_t kExposesEgloCTLightCount = 3;
 extern const ::zhc::BindingSpec kBindingsEgloCTLight[];
-extern const std::uint8_t kBindingsEgloCTLightCount;
+inline constexpr std::uint8_t kBindingsEgloCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color})) ─────────────────────────
 extern const ::zhc::FzConverter* const kFzEgloColorCTLight[];
-extern const std::uint8_t kFzEgloColorCTLightCount;
+inline constexpr std::uint8_t kFzEgloColorCTLightCount = 4;
 extern const ::zhc::TzConverter* const kTzEgloColorCTLight[];
-extern const std::uint8_t kTzEgloColorCTLightCount;
+inline constexpr std::uint8_t kTzEgloColorCTLightCount = 4;
 extern const ::zhc::Expose kExposesEgloColorCTLight[];
-extern const std::uint8_t kExposesEgloColorCTLightCount;
+inline constexpr std::uint8_t kExposesEgloColorCTLightCount = 7;
 extern const ::zhc::BindingSpec kBindingsEgloColorCTLight[];
-extern const std::uint8_t kBindingsEgloColorCTLightCount;
+inline constexpr std::uint8_t kBindingsEgloColorCTLightCount = 3;
 
 }  // namespace zhc::devices::eglo

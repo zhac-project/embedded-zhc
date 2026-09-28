@@ -14,28 +14,24 @@ const ::zhc::FzConverter* const kFzPaulmannLight[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzPaulmannLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPaulmannLight) / sizeof(kFzPaulmannLight[0]));
+static_assert(kFzPaulmannLightCount == std::size(kFzPaulmannLight));
 
 const ::zhc::TzConverter* const kTzPaulmannLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzPaulmannLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPaulmannLight) / sizeof(kTzPaulmannLight[0]));
+static_assert(kTzPaulmannLightCount == std::size(kTzPaulmannLight));
 
 const ::zhc::Expose kExposesPaulmannLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPaulmannLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPaulmannLight) / sizeof(kExposesPaulmannLight[0]));
+static_assert(kExposesPaulmannLightCount == std::size(kExposesPaulmannLight));
 
 const ::zhc::BindingSpec kBindingsPaulmannLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsPaulmannLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPaulmannLight) / sizeof(kBindingsPaulmannLight[0]));
+static_assert(kBindingsPaulmannLightCount == std::size(kBindingsPaulmannLight));
 
 // ── CCT (m.light({colorTemp})) ──────────────────────────────────────
 const ::zhc::FzConverter* const kFzPaulmannCTLight[] = {
@@ -43,30 +39,26 @@ const ::zhc::FzConverter* const kFzPaulmannCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzPaulmannCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPaulmannCTLight) / sizeof(kFzPaulmannCTLight[0]));
+static_assert(kFzPaulmannCTLightCount == std::size(kFzPaulmannCTLight));
 
 const ::zhc::TzConverter* const kTzPaulmannCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzPaulmannCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPaulmannCTLight) / sizeof(kTzPaulmannCTLight[0]));
+static_assert(kTzPaulmannCTLightCount == std::size(kTzPaulmannCTLight));
 
 const ::zhc::Expose kExposesPaulmannCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPaulmannCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPaulmannCTLight) / sizeof(kExposesPaulmannCTLight[0]));
+static_assert(kExposesPaulmannCTLightCount == std::size(kExposesPaulmannCTLight));
 
 const ::zhc::BindingSpec kBindingsPaulmannCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsPaulmannCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPaulmannCTLight) / sizeof(kBindingsPaulmannCTLight[0]));
+static_assert(kBindingsPaulmannCTLightCount == std::size(kBindingsPaulmannCTLight));
 
 // ── Colour-only (m.light({color})) ──────────────────────────────────
 const ::zhc::FzConverter* const kFzPaulmannColorLight[] = {
@@ -74,16 +66,14 @@ const ::zhc::FzConverter* const kFzPaulmannColorLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzPaulmannColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPaulmannColorLight) / sizeof(kFzPaulmannColorLight[0]));
+static_assert(kFzPaulmannColorLightCount == std::size(kFzPaulmannColorLight));
 
 const ::zhc::TzConverter* const kTzPaulmannColorLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzPaulmannColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPaulmannColorLight) / sizeof(kTzPaulmannColorLight[0]));
+static_assert(kTzPaulmannColorLightCount == std::size(kTzPaulmannColorLight));
 
 const ::zhc::Expose kExposesPaulmannColorLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
@@ -91,14 +81,12 @@ const ::zhc::Expose kExposesPaulmannColorLight[] = {
     { "color_xy",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_hs",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPaulmannColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPaulmannColorLight) / sizeof(kExposesPaulmannColorLight[0]));
+static_assert(kExposesPaulmannColorLightCount == std::size(kExposesPaulmannColorLight));
 
 const ::zhc::BindingSpec kBindingsPaulmannColorLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsPaulmannColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPaulmannColorLight) / sizeof(kBindingsPaulmannColorLight[0]));
+static_assert(kBindingsPaulmannColorLightCount == std::size(kBindingsPaulmannColorLight));
 
 // ── Full RGBW (m.light({colorTemp, color})) ─────────────────────────
 const ::zhc::FzConverter* const kFzPaulmannColorCTLight[] = {
@@ -107,8 +95,7 @@ const ::zhc::FzConverter* const kFzPaulmannColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzPaulmannColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPaulmannColorCTLight) / sizeof(kFzPaulmannColorCTLight[0]));
+static_assert(kFzPaulmannColorCTLightCount == std::size(kFzPaulmannColorCTLight));
 
 const ::zhc::TzConverter* const kTzPaulmannColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -116,8 +103,7 @@ const ::zhc::TzConverter* const kTzPaulmannColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzPaulmannColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPaulmannColorCTLight) / sizeof(kTzPaulmannColorCTLight[0]));
+static_assert(kTzPaulmannColorCTLightCount == std::size(kTzPaulmannColorCTLight));
 
 const ::zhc::Expose kExposesPaulmannColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
@@ -126,13 +112,11 @@ const ::zhc::Expose kExposesPaulmannColorCTLight[] = {
     { "color_xy",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_hs",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPaulmannColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPaulmannColorCTLight) / sizeof(kExposesPaulmannColorCTLight[0]));
+static_assert(kExposesPaulmannColorCTLightCount == std::size(kExposesPaulmannColorCTLight));
 
 const ::zhc::BindingSpec kBindingsPaulmannColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsPaulmannColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPaulmannColorCTLight) / sizeof(kBindingsPaulmannColorCTLight[0]));
+static_assert(kBindingsPaulmannColorCTLightCount == std::size(kBindingsPaulmannColorCTLight));
 
 }  // namespace zhc::devices::paulmann

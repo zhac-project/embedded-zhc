@@ -12,42 +12,36 @@ namespace zhc::devices::sylvania {
 const ::zhc::FzConverter* const kFzSylvaniaOnOff[] = {
     &::zhc::generic::kFzOnOff,
 };
-const std::uint8_t kFzSylvaniaOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kFzSylvaniaOnOff) / sizeof(kFzSylvaniaOnOff[0]));
+static_assert(kFzSylvaniaOnOffCount == std::size(kFzSylvaniaOnOff));
 
 const ::zhc::TzConverter* const kTzSylvaniaOnOff[] = {
     &::zhc::generic::kTzOnOff,
 };
-const std::uint8_t kTzSylvaniaOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kTzSylvaniaOnOff) / sizeof(kTzSylvaniaOnOff[0]));
+static_assert(kTzSylvaniaOnOffCount == std::size(kTzSylvaniaOnOff));
 
 const ::zhc::Expose kExposesSylvaniaOnOff[] = {
     { "state", ::zhc::ExposeType::Binary, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesSylvaniaOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kExposesSylvaniaOnOff) / sizeof(kExposesSylvaniaOnOff[0]));
+static_assert(kExposesSylvaniaOnOffCount == std::size(kExposesSylvaniaOnOff));
 
 const ::zhc::BindingSpec kBindingsSylvaniaOnOff[] = {
     { 1, 0x0006 },
 };
-const std::uint8_t kBindingsSylvaniaOnOffCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsSylvaniaOnOff) / sizeof(kBindingsSylvaniaOnOff[0]));
+static_assert(kBindingsSylvaniaOnOffCount == std::size(kBindingsSylvaniaOnOff));
 
 // ── Plain dimmable (ledvanceLight({})) ──────────────────────────────
 const ::zhc::FzConverter* const kFzSylvaniaDim[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzSylvaniaDimCount =
-    static_cast<std::uint8_t>(sizeof(kFzSylvaniaDim) / sizeof(kFzSylvaniaDim[0]));
+static_assert(kFzSylvaniaDimCount == std::size(kFzSylvaniaDim));
 
 const ::zhc::TzConverter* const kTzSylvaniaDim[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzSylvaniaDimCount =
-    static_cast<std::uint8_t>(sizeof(kTzSylvaniaDim) / sizeof(kTzSylvaniaDim[0]));
+static_assert(kTzSylvaniaDimCount == std::size(kTzSylvaniaDim));
 
 const ::zhc::Expose kExposesSylvaniaDim[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -55,14 +49,12 @@ const ::zhc::Expose kExposesSylvaniaDim[] = {
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesSylvaniaDimCount =
-    static_cast<std::uint8_t>(sizeof(kExposesSylvaniaDim) / sizeof(kExposesSylvaniaDim[0]));
+static_assert(kExposesSylvaniaDimCount == std::size(kExposesSylvaniaDim));
 
 const ::zhc::BindingSpec kBindingsSylvaniaDim[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsSylvaniaDimCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsSylvaniaDim) / sizeof(kBindingsSylvaniaDim[0]));
+static_assert(kBindingsSylvaniaDimCount == std::size(kBindingsSylvaniaDim));
 
 // ── Tunable white (ledvanceLight({colorTemp})) ──────────────────────
 const ::zhc::FzConverter* const kFzSylvaniaLight[] = {
@@ -70,16 +62,14 @@ const ::zhc::FzConverter* const kFzSylvaniaLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzSylvaniaLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzSylvaniaLight) / sizeof(kFzSylvaniaLight[0]));
+static_assert(kFzSylvaniaLightCount == std::size(kFzSylvaniaLight));
 
 const ::zhc::TzConverter* const kTzSylvaniaLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzSylvaniaLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzSylvaniaLight) / sizeof(kTzSylvaniaLight[0]));
+static_assert(kTzSylvaniaLightCount == std::size(kTzSylvaniaLight));
 
 const ::zhc::Expose kExposesSylvaniaLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -89,14 +79,12 @@ const ::zhc::Expose kExposesSylvaniaLight[] = {
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesSylvaniaLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesSylvaniaLight) / sizeof(kExposesSylvaniaLight[0]));
+static_assert(kExposesSylvaniaLightCount == std::size(kExposesSylvaniaLight));
 
 const ::zhc::BindingSpec kBindingsSylvaniaLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsSylvaniaLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsSylvaniaLight) / sizeof(kBindingsSylvaniaLight[0]));
+static_assert(kBindingsSylvaniaLightCount == std::size(kBindingsSylvaniaLight));
 
 // ── Colour-only (ledvanceLight({color: true})) ──────────────────────
 const ::zhc::FzConverter* const kFzSylvaniaColorLight[] = {
@@ -104,16 +92,14 @@ const ::zhc::FzConverter* const kFzSylvaniaColorLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzSylvaniaColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzSylvaniaColorLight) / sizeof(kFzSylvaniaColorLight[0]));
+static_assert(kFzSylvaniaColorLightCount == std::size(kFzSylvaniaColorLight));
 
 const ::zhc::TzConverter* const kTzSylvaniaColorLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzSylvaniaColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzSylvaniaColorLight) / sizeof(kTzSylvaniaColorLight[0]));
+static_assert(kTzSylvaniaColorLightCount == std::size(kTzSylvaniaColorLight));
 
 const ::zhc::Expose kExposesSylvaniaColorLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -129,14 +115,12 @@ const ::zhc::Expose kExposesSylvaniaColorLight[] = {
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesSylvaniaColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesSylvaniaColorLight) / sizeof(kExposesSylvaniaColorLight[0]));
+static_assert(kExposesSylvaniaColorLightCount == std::size(kExposesSylvaniaColorLight));
 
 const ::zhc::BindingSpec kBindingsSylvaniaColorLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsSylvaniaColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsSylvaniaColorLight) / sizeof(kBindingsSylvaniaColorLight[0]));
+static_assert(kBindingsSylvaniaColorLightCount == std::size(kBindingsSylvaniaColorLight));
 
 // ── Full RGBW (ledvanceLight({colorTemp, color: true})) ─────────────
 const ::zhc::FzConverter* const kFzSylvaniaColorCTLight[] = {
@@ -145,8 +129,7 @@ const ::zhc::FzConverter* const kFzSylvaniaColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzSylvaniaColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzSylvaniaColorCTLight) / sizeof(kFzSylvaniaColorCTLight[0]));
+static_assert(kFzSylvaniaColorCTLightCount == std::size(kFzSylvaniaColorCTLight));
 
 const ::zhc::TzConverter* const kTzSylvaniaColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -154,8 +137,7 @@ const ::zhc::TzConverter* const kTzSylvaniaColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzSylvaniaColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzSylvaniaColorCTLight) / sizeof(kTzSylvaniaColorCTLight[0]));
+static_assert(kTzSylvaniaColorCTLightCount == std::size(kTzSylvaniaColorCTLight));
 
 const ::zhc::Expose kExposesSylvaniaColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -173,13 +155,11 @@ const ::zhc::Expose kExposesSylvaniaColorCTLight[] = {
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesSylvaniaColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesSylvaniaColorCTLight) / sizeof(kExposesSylvaniaColorCTLight[0]));
+static_assert(kExposesSylvaniaColorCTLightCount == std::size(kExposesSylvaniaColorCTLight));
 
 const ::zhc::BindingSpec kBindingsSylvaniaColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsSylvaniaColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsSylvaniaColorCTLight) / sizeof(kBindingsSylvaniaColorCTLight[0]));
+static_assert(kBindingsSylvaniaColorCTLightCount == std::size(kBindingsSylvaniaColorCTLight));
 
 }  // namespace zhc::devices::sylvania

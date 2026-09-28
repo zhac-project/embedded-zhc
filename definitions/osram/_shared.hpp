@@ -28,67 +28,67 @@ namespace zhc::devices::osram {
 
 // ── On/off only (ledvanceOnOff) — Osram smart plugs ─────────────────
 extern const ::zhc::FzConverter* const kFzOsramOnOff[];
-extern const std::uint8_t              kFzOsramOnOffCount;
+inline constexpr std::uint8_t          kFzOsramOnOffCount = 1;
 
 extern const ::zhc::TzConverter* const kTzOsramOnOff[];
-extern const std::uint8_t              kTzOsramOnOffCount;
+inline constexpr std::uint8_t          kTzOsramOnOffCount = 1;
 
 extern const ::zhc::Expose             kExposesOsramOnOff[];
-extern const std::uint8_t              kExposesOsramOnOffCount;
+inline constexpr std::uint8_t          kExposesOsramOnOffCount = 1;
 
 extern const ::zhc::BindingSpec        kBindingsOsramOnOff[];
-extern const std::uint8_t              kBindingsOsramOnOffCount;
+inline constexpr std::uint8_t          kBindingsOsramOnOffCount = 1;
 
 // ── Plain dimmable (ledvanceLight({})) ──────────────────────────────
 extern const ::zhc::FzConverter* const kFzOsramLight[];
-extern const std::uint8_t              kFzOsramLightCount;
+inline constexpr std::uint8_t          kFzOsramLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzOsramLight[];
-extern const std::uint8_t              kTzOsramLightCount;
+inline constexpr std::uint8_t          kTzOsramLightCount = 2;
 
 extern const ::zhc::Expose             kExposesOsramLight[];
-extern const std::uint8_t              kExposesOsramLightCount;
+inline constexpr std::uint8_t          kExposesOsramLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsOsramLight[];
-extern const std::uint8_t              kBindingsOsramLightCount;
+inline constexpr std::uint8_t          kBindingsOsramLightCount = 2;
 
 // ── Tunable white (ledvanceLight({colorTemp})) ──────────────────────
 extern const ::zhc::FzConverter* const kFzOsramCTLight[];
-extern const std::uint8_t              kFzOsramCTLightCount;
+inline constexpr std::uint8_t          kFzOsramCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzOsramCTLight[];
-extern const std::uint8_t              kTzOsramCTLightCount;
+inline constexpr std::uint8_t          kTzOsramCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesOsramCTLight[];
-extern const std::uint8_t              kExposesOsramCTLightCount;
+inline constexpr std::uint8_t          kExposesOsramCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsOsramCTLight[];
-extern const std::uint8_t              kBindingsOsramCTLightCount;
+inline constexpr std::uint8_t          kBindingsOsramCTLightCount = 3;
 
 // ── Colour-only (ledvanceLight({color: true})) ──────────────────────
 extern const ::zhc::FzConverter* const kFzOsramColorLight[];
-extern const std::uint8_t              kFzOsramColorLightCount;
+inline constexpr std::uint8_t          kFzOsramColorLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzOsramColorLight[];
-extern const std::uint8_t              kTzOsramColorLightCount;
+inline constexpr std::uint8_t          kTzOsramColorLightCount = 3;
 
 extern const ::zhc::Expose             kExposesOsramColorLight[];
-extern const std::uint8_t              kExposesOsramColorLightCount;
+inline constexpr std::uint8_t          kExposesOsramColorLightCount = 6;
 
 extern const ::zhc::BindingSpec        kBindingsOsramColorLight[];
-extern const std::uint8_t              kBindingsOsramColorLightCount;
+inline constexpr std::uint8_t          kBindingsOsramColorLightCount = 3;
 
 // ── Full RGBW (ledvanceLight({colorTemp, color: true})) ─────────────
 extern const ::zhc::FzConverter* const kFzOsramColorCTLight[];
-extern const std::uint8_t              kFzOsramColorCTLightCount;
+inline constexpr std::uint8_t          kFzOsramColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzOsramColorCTLight[];
-extern const std::uint8_t              kTzOsramColorCTLightCount;
+inline constexpr std::uint8_t          kTzOsramColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesOsramColorCTLight[];
-extern const std::uint8_t              kExposesOsramColorCTLightCount;
+inline constexpr std::uint8_t          kExposesOsramColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsOsramColorCTLight[];
-extern const std::uint8_t              kBindingsOsramColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsOsramColorCTLightCount = 3;
 
 }  // namespace zhc::devices::osram

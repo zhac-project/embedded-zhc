@@ -23,82 +23,82 @@ namespace zhc::devices::ledvance {
 
 // ── On/off only (ledvanceOnOff()) — Ledvance smart plugs / T8 tubes ──
 extern const ::zhc::FzConverter* const kFzLedvanceOnOff[];
-extern const std::uint8_t              kFzLedvanceOnOffCount;
+inline constexpr std::uint8_t          kFzLedvanceOnOffCount = 1;
 
 extern const ::zhc::TzConverter* const kTzLedvanceOnOff[];
-extern const std::uint8_t              kTzLedvanceOnOffCount;
+inline constexpr std::uint8_t          kTzLedvanceOnOffCount = 1;
 
 extern const ::zhc::Expose             kExposesLedvanceOnOff[];
-extern const std::uint8_t              kExposesLedvanceOnOffCount;
+inline constexpr std::uint8_t          kExposesLedvanceOnOffCount = 1;
 
 extern const ::zhc::BindingSpec        kBindingsLedvanceOnOff[];
-extern const std::uint8_t              kBindingsLedvanceOnOffCount;
+inline constexpr std::uint8_t          kBindingsLedvanceOnOffCount = 1;
 
 // ── On/off + electricity meter (ledvanceOnOff + m.electricityMeter) ──
 extern const ::zhc::FzConverter* const kFzLedvanceOnOffEM[];
-extern const std::uint8_t              kFzLedvanceOnOffEMCount;
+inline constexpr std::uint8_t          kFzLedvanceOnOffEMCount = 3;
 
 extern const ::zhc::TzConverter* const kTzLedvanceOnOffEM[];
-extern const std::uint8_t              kTzLedvanceOnOffEMCount;
+inline constexpr std::uint8_t          kTzLedvanceOnOffEMCount = 1;
 
 extern const ::zhc::Expose             kExposesLedvanceOnOffEM[];
-extern const std::uint8_t              kExposesLedvanceOnOffEMCount;
+inline constexpr std::uint8_t          kExposesLedvanceOnOffEMCount = 5;
 
 extern const ::zhc::BindingSpec        kBindingsLedvanceOnOffEM[];
-extern const std::uint8_t              kBindingsLedvanceOnOffEMCount;
+inline constexpr std::uint8_t          kBindingsLedvanceOnOffEMCount = 3;
 
 // ── Plain dimmable (ledvanceLight({})) ───────────────────────────────
 extern const ::zhc::FzConverter* const kFzLedvanceDim[];
-extern const std::uint8_t              kFzLedvanceDimCount;
+inline constexpr std::uint8_t          kFzLedvanceDimCount = 2;
 
 extern const ::zhc::TzConverter* const kTzLedvanceDim[];
-extern const std::uint8_t              kTzLedvanceDimCount;
+inline constexpr std::uint8_t          kTzLedvanceDimCount = 2;
 
 extern const ::zhc::Expose             kExposesLedvanceDim[];
-extern const std::uint8_t              kExposesLedvanceDimCount;
+inline constexpr std::uint8_t          kExposesLedvanceDimCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsLedvanceDim[];
-extern const std::uint8_t              kBindingsLedvanceDimCount;
+inline constexpr std::uint8_t          kBindingsLedvanceDimCount = 2;
 
 // ── Dimmable + electricity meter (m.light + m.electricityMeter) ──────
 extern const ::zhc::FzConverter* const kFzLedvanceDimEM[];
-extern const std::uint8_t              kFzLedvanceDimEMCount;
+inline constexpr std::uint8_t          kFzLedvanceDimEMCount = 4;
 
 extern const ::zhc::TzConverter* const kTzLedvanceDimEM[];
-extern const std::uint8_t              kTzLedvanceDimEMCount;
+inline constexpr std::uint8_t          kTzLedvanceDimEMCount = 2;
 
 extern const ::zhc::Expose             kExposesLedvanceDimEM[];
-extern const std::uint8_t              kExposesLedvanceDimEMCount;
+inline constexpr std::uint8_t          kExposesLedvanceDimEMCount = 6;
 
 extern const ::zhc::BindingSpec        kBindingsLedvanceDimEM[];
-extern const std::uint8_t              kBindingsLedvanceDimEMCount;
+inline constexpr std::uint8_t          kBindingsLedvanceDimEMCount = 4;
 
 // ── Tunable white (ledvanceLight({colorTemp})) ───────────────────────
 // kFzLedvanceLight / kExposesLedvanceLight are the historical names every
 // generated port already references — keep them as the CTLight bundle.
 extern const ::zhc::FzConverter* const kFzLedvanceLight[];
-extern const std::uint8_t              kFzLedvanceLightCount;
+inline constexpr std::uint8_t          kFzLedvanceLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzLedvanceLight[];
-extern const std::uint8_t              kTzLedvanceLightCount;
+inline constexpr std::uint8_t          kTzLedvanceLightCount = 3;
 
 extern const ::zhc::Expose             kExposesLedvanceLight[];
-extern const std::uint8_t              kExposesLedvanceLightCount;
+inline constexpr std::uint8_t          kExposesLedvanceLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsLedvanceLight[];
-extern const std::uint8_t              kBindingsLedvanceLightCount;
+inline constexpr std::uint8_t          kBindingsLedvanceLightCount = 3;
 
 // ── Full RGBW (ledvanceLight({colorTemp, color: true})) ──────────────
 extern const ::zhc::FzConverter* const kFzLedvanceColorCTLight[];
-extern const std::uint8_t              kFzLedvanceColorCTLightCount;
+inline constexpr std::uint8_t          kFzLedvanceColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzLedvanceColorCTLight[];
-extern const std::uint8_t              kTzLedvanceColorCTLightCount;
+inline constexpr std::uint8_t          kTzLedvanceColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesLedvanceColorCTLight[];
-extern const std::uint8_t              kExposesLedvanceColorCTLightCount;
+inline constexpr std::uint8_t          kExposesLedvanceColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsLedvanceColorCTLight[];
-extern const std::uint8_t              kBindingsLedvanceColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsLedvanceColorCTLightCount = 3;
 
 }  // namespace zhc::devices::ledvance

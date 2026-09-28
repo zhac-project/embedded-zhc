@@ -22,22 +22,22 @@ namespace zhc::devices::dresden_elektronik {
 
 // ── m.light({colorTemp: range[153,500]}) — color-temp only ──────────
 extern const ::zhc::FzConverter* const kFzDresdenCTLight[];
-extern const std::uint8_t              kFzDresdenCTLightCount;
+inline constexpr std::uint8_t          kFzDresdenCTLightCount = 3;
 extern const ::zhc::TzConverter* const kTzDresdenCTLight[];
-extern const std::uint8_t              kTzDresdenCTLightCount;
+inline constexpr std::uint8_t          kTzDresdenCTLightCount = 3;
 extern const ::zhc::Expose             kExposesDresdenCTLight[];
-extern const std::uint8_t              kExposesDresdenCTLightCount;
+inline constexpr std::uint8_t          kExposesDresdenCTLightCount = 3;
 extern const ::zhc::BindingSpec        kBindingsDresdenCTLight[];
-extern const std::uint8_t              kBindingsDresdenCTLightCount;
+inline constexpr std::uint8_t          kBindingsDresdenCTLightCount = 3;
 
 // ── m.light({colorTemp:…, color:true}) — color-temp + color ─────────
 extern const ::zhc::FzConverter* const kFzDresdenColorCTLight[];
-extern const std::uint8_t              kFzDresdenColorCTLightCount;
+inline constexpr std::uint8_t          kFzDresdenColorCTLightCount = 4;
 extern const ::zhc::TzConverter* const kTzDresdenColorCTLight[];
-extern const std::uint8_t              kTzDresdenColorCTLightCount;
+inline constexpr std::uint8_t          kTzDresdenColorCTLightCount = 4;
 extern const ::zhc::Expose             kExposesDresdenColorCTLight[];
-extern const std::uint8_t              kExposesDresdenColorCTLightCount;
+inline constexpr std::uint8_t          kExposesDresdenColorCTLightCount = 7;
 extern const ::zhc::BindingSpec        kBindingsDresdenColorCTLight[];
-extern const std::uint8_t              kBindingsDresdenColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsDresdenColorCTLightCount = 3;
 
 }  // namespace zhc::devices::dresden_elektronik

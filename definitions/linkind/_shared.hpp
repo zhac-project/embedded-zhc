@@ -24,28 +24,28 @@ namespace zhc::devices::linkind {
 
 // ── Plain dimmable (m.light({})) ────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzLinkindLight[];
-extern const std::uint8_t              kFzLinkindLightCount;
+inline constexpr std::uint8_t          kFzLinkindLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzLinkindLight[];
-extern const std::uint8_t              kTzLinkindLightCount;
+inline constexpr std::uint8_t          kTzLinkindLightCount = 2;
 
 extern const ::zhc::Expose             kExposesLinkindLight[];
-extern const std::uint8_t              kExposesLinkindLightCount;
+inline constexpr std::uint8_t          kExposesLinkindLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsLinkindLight[];
-extern const std::uint8_t              kBindingsLinkindLightCount;
+inline constexpr std::uint8_t          kBindingsLinkindLightCount = 2;
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 extern const ::zhc::FzConverter* const kFzLinkindCTLight[];
-extern const std::uint8_t              kFzLinkindCTLightCount;
+inline constexpr std::uint8_t          kFzLinkindCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzLinkindCTLight[];
-extern const std::uint8_t              kTzLinkindCTLightCount;
+inline constexpr std::uint8_t          kTzLinkindCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesLinkindCTLight[];
-extern const std::uint8_t              kExposesLinkindCTLightCount;
+inline constexpr std::uint8_t          kExposesLinkindCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsLinkindCTLight[];
-extern const std::uint8_t              kBindingsLinkindCTLightCount;
+inline constexpr std::uint8_t          kBindingsLinkindCTLightCount = 3;
 
 }  // namespace zhc::devices::linkind

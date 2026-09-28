@@ -38,18 +38,18 @@ namespace zhc::devices::rgb_genie {
 // Used by ZB-5001 (custom on/off in z2m, but kFzCommandOn/Off produces
 // the same output for non-multi-EP devices), ZB-5004.
 extern const ::zhc::FzConverter* const kFzActionBattery[];
-extern const std::uint8_t              kFzActionBatteryCount;
+inline constexpr std::uint8_t          kFzActionBatteryCount = 6;
 
 extern const ::zhc::BindingSpec        kBindingsActionBattery[];
-extern const std::uint8_t              kBindingsActionBatteryCount;
+inline constexpr std::uint8_t          kBindingsActionBatteryCount = 3;
 
 // ── + Step (brightness_step_up/_down) ────────────────────────────────
 // Used by ZB-5121.
 extern const ::zhc::FzConverter* const kFzActionBatteryDim[];
-extern const std::uint8_t              kFzActionBatteryDimCount;
+inline constexpr std::uint8_t          kFzActionBatteryDimCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsActionBatteryDim[];
-extern const std::uint8_t              kBindingsActionBatteryDimCount;
+inline constexpr std::uint8_t          kBindingsActionBatteryDimCount = 3;
 
 // ── + Color/CT actions (step CT, move-to-CT, move-to-hue-and-sat) ───
 // Used by ZB-5122 (battery, single-EP), ZB-3008 (mains, multi-EP),
@@ -59,15 +59,15 @@ extern const std::uint8_t              kBindingsActionBatteryDimCount;
 // kFzBattery converter at the device level (or use the same list and
 // rely on the device just not reporting genPowerCfg).
 extern const ::zhc::FzConverter* const kFzActionBatteryRGB[];
-extern const std::uint8_t              kFzActionBatteryRGBCount;
+inline constexpr std::uint8_t          kFzActionBatteryRGBCount = 13;
 
 extern const ::zhc::FzConverter* const kFzActionRGBNoBattery[];
-extern const std::uint8_t              kFzActionRGBNoBatteryCount;
+inline constexpr std::uint8_t          kFzActionRGBNoBatteryCount = 12;
 
 extern const ::zhc::BindingSpec        kBindingsActionBatteryRGB[];
-extern const std::uint8_t              kBindingsActionBatteryRGBCount;
+inline constexpr std::uint8_t          kBindingsActionBatteryRGBCount = 4;
 
 extern const ::zhc::BindingSpec        kBindingsActionRGBNoBattery[];
-extern const std::uint8_t              kBindingsActionRGBNoBatteryCount;
+inline constexpr std::uint8_t          kBindingsActionRGBNoBatteryCount = 3;
 
 }  // namespace zhc::devices::rgb_genie

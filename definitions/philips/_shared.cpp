@@ -13,28 +13,24 @@ const ::zhc::FzConverter* const kFzPhilipsLight[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzPhilipsLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPhilipsLight) / sizeof(kFzPhilipsLight[0]));
+static_assert(kFzPhilipsLightCount == std::size(kFzPhilipsLight));
 
 const ::zhc::TzConverter* const kTzPhilipsLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzPhilipsLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPhilipsLight) / sizeof(kTzPhilipsLight[0]));
+static_assert(kTzPhilipsLightCount == std::size(kTzPhilipsLight));
 
 const ::zhc::Expose kExposesPhilipsLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPhilipsLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPhilipsLight) / sizeof(kExposesPhilipsLight[0]));
+static_assert(kExposesPhilipsLightCount == std::size(kExposesPhilipsLight));
 
 const ::zhc::BindingSpec kBindingsPhilipsLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsPhilipsLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPhilipsLight) / sizeof(kBindingsPhilipsLight[0]));
+static_assert(kBindingsPhilipsLightCount == std::size(kBindingsPhilipsLight));
 
 // ── White-ambiance light  (philips.m.light({colorTemp})) ────────────
 const ::zhc::FzConverter* const kFzPhilipsCTLight[] = {
@@ -42,30 +38,26 @@ const ::zhc::FzConverter* const kFzPhilipsCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzPhilipsCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPhilipsCTLight) / sizeof(kFzPhilipsCTLight[0]));
+static_assert(kFzPhilipsCTLightCount == std::size(kFzPhilipsCTLight));
 
 const ::zhc::TzConverter* const kTzPhilipsCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzPhilipsCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPhilipsCTLight) / sizeof(kTzPhilipsCTLight[0]));
+static_assert(kTzPhilipsCTLightCount == std::size(kTzPhilipsCTLight));
 
 const ::zhc::Expose kExposesPhilipsCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPhilipsCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPhilipsCTLight) / sizeof(kExposesPhilipsCTLight[0]));
+static_assert(kExposesPhilipsCTLightCount == std::size(kExposesPhilipsCTLight));
 
 const ::zhc::BindingSpec kBindingsPhilipsCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsPhilipsCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPhilipsCTLight) / sizeof(kBindingsPhilipsCTLight[0]));
+static_assert(kBindingsPhilipsCTLightCount == std::size(kBindingsPhilipsCTLight));
 
 // ── Colour-only light  (legacy LLC0xx — Hue Living Colors) ──────────
 const ::zhc::FzConverter* const kFzPhilipsColorLight[] = {
@@ -73,16 +65,14 @@ const ::zhc::FzConverter* const kFzPhilipsColorLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzPhilipsColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPhilipsColorLight) / sizeof(kFzPhilipsColorLight[0]));
+static_assert(kFzPhilipsColorLightCount == std::size(kFzPhilipsColorLight));
 
 const ::zhc::TzConverter* const kTzPhilipsColorLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzPhilipsColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPhilipsColorLight) / sizeof(kTzPhilipsColorLight[0]));
+static_assert(kTzPhilipsColorLightCount == std::size(kTzPhilipsColorLight));
 
 const ::zhc::Expose kExposesPhilipsColorLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
@@ -92,8 +82,7 @@ const ::zhc::Expose kExposesPhilipsColorLight[] = {
     { "hue",        ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPhilipsColorLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPhilipsColorLight) / sizeof(kExposesPhilipsColorLight[0]));
+static_assert(kExposesPhilipsColorLightCount == std::size(kExposesPhilipsColorLight));
 
 // ── Full-spectrum colour + CT  (philips.m.light({colorTemp, color})) ─
 const ::zhc::FzConverter* const kFzPhilipsColorCTLight[] = {
@@ -102,8 +91,7 @@ const ::zhc::FzConverter* const kFzPhilipsColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzPhilipsColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzPhilipsColorCTLight) / sizeof(kFzPhilipsColorCTLight[0]));
+static_assert(kFzPhilipsColorCTLightCount == std::size(kFzPhilipsColorCTLight));
 
 const ::zhc::TzConverter* const kTzPhilipsColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -111,8 +99,7 @@ const ::zhc::TzConverter* const kTzPhilipsColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzPhilipsColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzPhilipsColorCTLight) / sizeof(kTzPhilipsColorCTLight[0]));
+static_assert(kTzPhilipsColorCTLightCount == std::size(kTzPhilipsColorCTLight));
 
 const ::zhc::Expose kExposesPhilipsColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
@@ -123,8 +110,7 @@ const ::zhc::Expose kExposesPhilipsColorCTLight[] = {
     { "hue",        ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPhilipsColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPhilipsColorCTLight) / sizeof(kExposesPhilipsColorCTLight[0]));
+static_assert(kExposesPhilipsColorCTLightCount == std::size(kExposesPhilipsColorCTLight));
 
 // ── Hue motion sensor (SML00x) ──────────────────────────────────────
 // z2m wires `fz.battery, fz.occupancy, fz.temperature` plus `m.illuminance()`.
@@ -141,8 +127,7 @@ const ::zhc::FzConverter* const kFzPhilipsMotionSensor[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzIlluminance,
 };
-const std::uint8_t kFzPhilipsMotionSensorCount =
-    static_cast<std::uint8_t>(sizeof(kFzPhilipsMotionSensor) / sizeof(kFzPhilipsMotionSensor[0]));
+static_assert(kFzPhilipsMotionSensorCount == std::size(kFzPhilipsMotionSensor));
 
 const ::zhc::Expose kExposesPhilipsMotionSensor[] = {
     { "battery",     ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%",   nullptr, nullptr, 0 },
@@ -150,8 +135,7 @@ const ::zhc::Expose kExposesPhilipsMotionSensor[] = {
     { "illuminance", ::zhc::ExposeType::Numeric, ::zhc::Access::State, "lx",  nullptr, nullptr, 0 },
     { "occupancy",   ::zhc::ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPhilipsMotionSensorCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPhilipsMotionSensor) / sizeof(kExposesPhilipsMotionSensor[0]));
+static_assert(kExposesPhilipsMotionSensorCount == std::size(kExposesPhilipsMotionSensor));
 
 const ::zhc::BindingSpec kBindingsPhilipsMotionSensor[] = {
     { 2, 0x0001 }, // genPowerCfg
@@ -159,8 +143,7 @@ const ::zhc::BindingSpec kBindingsPhilipsMotionSensor[] = {
     { 2, 0x0402 }, // msTemperatureMeasurement
     { 2, 0x0406 }, // msOccupancySensing
 };
-const std::uint8_t kBindingsPhilipsMotionSensorCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsPhilipsMotionSensor) / sizeof(kBindingsPhilipsMotionSensor[0]));
+static_assert(kBindingsPhilipsMotionSensorCount == std::size(kBindingsPhilipsMotionSensor));
 
 // ── Hue dimmer switch  (RWL020 / RWL021 / RWL022) ───────────────────
 const ::zhc::FzConverter* const kFzPhilipsDimmerSwitch[] = {
@@ -168,14 +151,12 @@ const ::zhc::FzConverter* const kFzPhilipsDimmerSwitch[] = {
     &::zhc::generic::kFzHueDimmerNotification,
     &::zhc::generic::kFzCommandRecall,
 };
-const std::uint8_t kFzPhilipsDimmerSwitchCount =
-    static_cast<std::uint8_t>(sizeof(kFzPhilipsDimmerSwitch) / sizeof(kFzPhilipsDimmerSwitch[0]));
+static_assert(kFzPhilipsDimmerSwitchCount == std::size(kFzPhilipsDimmerSwitch));
 
 const ::zhc::Expose kExposesPhilipsDimmerSwitch[] = {
     { "battery", ::zhc::ExposeType::Numeric, ::zhc::Access::State, "%", nullptr, nullptr, 0 },
     { "action",  ::zhc::ExposeType::Enum,    ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesPhilipsDimmerSwitchCount =
-    static_cast<std::uint8_t>(sizeof(kExposesPhilipsDimmerSwitch) / sizeof(kExposesPhilipsDimmerSwitch[0]));
+static_assert(kExposesPhilipsDimmerSwitchCount == std::size(kExposesPhilipsDimmerSwitch));
 
 }  // namespace zhc::devices::philips

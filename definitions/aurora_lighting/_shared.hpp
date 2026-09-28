@@ -25,41 +25,41 @@ namespace zhc::devices::aurora_lighting {
 
 // ── Plain dimmable (m.light()) ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzAuroraLight[];
-extern const std::uint8_t              kFzAuroraLightCount;
+inline constexpr std::uint8_t          kFzAuroraLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzAuroraLight[];
-extern const std::uint8_t              kTzAuroraLightCount;
+inline constexpr std::uint8_t          kTzAuroraLightCount = 2;
 
 extern const ::zhc::Expose             kExposesAuroraLight[];
-extern const std::uint8_t              kExposesAuroraLightCount;
+inline constexpr std::uint8_t          kExposesAuroraLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsAuroraLight[];
-extern const std::uint8_t              kBindingsAuroraLightCount;
+inline constexpr std::uint8_t          kBindingsAuroraLightCount = 2;
 
 // ── White-ambiance / CCT (m.light({colorTemp: ...})) ────────────────
 extern const ::zhc::FzConverter* const kFzAuroraCTLight[];
-extern const std::uint8_t              kFzAuroraCTLightCount;
+inline constexpr std::uint8_t          kFzAuroraCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzAuroraCTLight[];
-extern const std::uint8_t              kTzAuroraCTLightCount;
+inline constexpr std::uint8_t          kTzAuroraCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesAuroraCTLight[];
-extern const std::uint8_t              kExposesAuroraCTLightCount;
+inline constexpr std::uint8_t          kExposesAuroraCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsAuroraCTLight[];
-extern const std::uint8_t              kBindingsAuroraCTLightCount;
+inline constexpr std::uint8_t          kBindingsAuroraCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color: true})) ───────────────────
 extern const ::zhc::FzConverter* const kFzAuroraColorCTLight[];
-extern const std::uint8_t              kFzAuroraColorCTLightCount;
+inline constexpr std::uint8_t          kFzAuroraColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzAuroraColorCTLight[];
-extern const std::uint8_t              kTzAuroraColorCTLightCount;
+inline constexpr std::uint8_t          kTzAuroraColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesAuroraColorCTLight[];
-extern const std::uint8_t              kExposesAuroraColorCTLightCount;
+inline constexpr std::uint8_t          kExposesAuroraColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsAuroraColorCTLight[];
-extern const std::uint8_t              kBindingsAuroraColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsAuroraColorCTLightCount = 3;
 
 }  // namespace zhc::devices::aurora_lighting

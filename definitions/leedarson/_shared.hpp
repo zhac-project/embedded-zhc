@@ -24,41 +24,41 @@ namespace zhc::devices::leedarson {
 
 // ── Plain dimmable (m.light()) ───────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzLeedarsonLight[];
-extern const std::uint8_t              kFzLeedarsonLightCount;
+inline constexpr std::uint8_t          kFzLeedarsonLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzLeedarsonLight[];
-extern const std::uint8_t              kTzLeedarsonLightCount;
+inline constexpr std::uint8_t          kTzLeedarsonLightCount = 2;
 
 extern const ::zhc::Expose             kExposesLeedarsonLight[];
-extern const std::uint8_t              kExposesLeedarsonLightCount;
+inline constexpr std::uint8_t          kExposesLeedarsonLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsLeedarsonLight[];
-extern const std::uint8_t              kBindingsLeedarsonLightCount;
+inline constexpr std::uint8_t          kBindingsLeedarsonLightCount = 2;
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 extern const ::zhc::FzConverter* const kFzLeedarsonCTLight[];
-extern const std::uint8_t              kFzLeedarsonCTLightCount;
+inline constexpr std::uint8_t          kFzLeedarsonCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzLeedarsonCTLight[];
-extern const std::uint8_t              kTzLeedarsonCTLightCount;
+inline constexpr std::uint8_t          kTzLeedarsonCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesLeedarsonCTLight[];
-extern const std::uint8_t              kExposesLeedarsonCTLightCount;
+inline constexpr std::uint8_t          kExposesLeedarsonCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsLeedarsonCTLight[];
-extern const std::uint8_t              kBindingsLeedarsonCTLightCount;
+inline constexpr std::uint8_t          kBindingsLeedarsonCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color: true})) ───────────────────
 extern const ::zhc::FzConverter* const kFzLeedarsonColorCTLight[];
-extern const std::uint8_t              kFzLeedarsonColorCTLightCount;
+inline constexpr std::uint8_t          kFzLeedarsonColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzLeedarsonColorCTLight[];
-extern const std::uint8_t              kTzLeedarsonColorCTLightCount;
+inline constexpr std::uint8_t          kTzLeedarsonColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesLeedarsonColorCTLight[];
-extern const std::uint8_t              kExposesLeedarsonColorCTLightCount;
+inline constexpr std::uint8_t          kExposesLeedarsonColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsLeedarsonColorCTLight[];
-extern const std::uint8_t              kBindingsLeedarsonColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsLeedarsonColorCTLightCount = 3;
 
 }  // namespace zhc::devices::leedarson

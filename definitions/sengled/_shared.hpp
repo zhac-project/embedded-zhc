@@ -28,42 +28,42 @@ namespace zhc::devices::sengled {
 
 // ── Plain dimmable (sengledLight() / sengledLight({color: false})) ──
 extern const ::zhc::FzConverter* const kFzSengledLight[];
-extern const std::uint8_t              kFzSengledLightCount;
+inline constexpr std::uint8_t          kFzSengledLightCount = 2;
 extern const ::zhc::TzConverter* const kTzSengledLight[];
-extern const std::uint8_t              kTzSengledLightCount;
+inline constexpr std::uint8_t          kTzSengledLightCount = 2;
 extern const ::zhc::Expose             kExposesSengledLight[];
-extern const std::uint8_t              kExposesSengledLightCount;
+inline constexpr std::uint8_t          kExposesSengledLightCount = 2;
 extern const ::zhc::BindingSpec        kBindingsSengledLight[];
-extern const std::uint8_t              kBindingsSengledLightCount;
+inline constexpr std::uint8_t          kBindingsSengledLightCount = 2;
 
 // ── Tunable white (sengledLight({colorTemp: {range: ...}})) ────────
 extern const ::zhc::FzConverter* const kFzSengledCTLight[];
-extern const std::uint8_t              kFzSengledCTLightCount;
+inline constexpr std::uint8_t          kFzSengledCTLightCount = 3;
 extern const ::zhc::TzConverter* const kTzSengledCTLight[];
-extern const std::uint8_t              kTzSengledCTLightCount;
+inline constexpr std::uint8_t          kTzSengledCTLightCount = 3;
 extern const ::zhc::Expose             kExposesSengledCTLight[];
-extern const std::uint8_t              kExposesSengledCTLightCount;
+inline constexpr std::uint8_t          kExposesSengledCTLightCount = 3;
 extern const ::zhc::BindingSpec        kBindingsSengledCTLight[];
-extern const std::uint8_t              kBindingsSengledCTLightCount;
+inline constexpr std::uint8_t          kBindingsSengledCTLightCount = 3;
 
 // ── Colour-only (sengledLight({colorTemp: undefined, color: {modes:["xy"]}})) ──
 extern const ::zhc::FzConverter* const kFzSengledColorLight[];
-extern const std::uint8_t              kFzSengledColorLightCount;
+inline constexpr std::uint8_t          kFzSengledColorLightCount = 3;
 extern const ::zhc::TzConverter* const kTzSengledColorLight[];
-extern const std::uint8_t              kTzSengledColorLightCount;
+inline constexpr std::uint8_t          kTzSengledColorLightCount = 3;
 extern const ::zhc::Expose             kExposesSengledColorLight[];
-extern const std::uint8_t              kExposesSengledColorLightCount;
+inline constexpr std::uint8_t          kExposesSengledColorLightCount = 6;
 extern const ::zhc::BindingSpec        kBindingsSengledColorLight[];
-extern const std::uint8_t              kBindingsSengledColorLightCount;
+inline constexpr std::uint8_t          kBindingsSengledColorLightCount = 3;
 
 // ── Full RGBW (sengledLight({colorTemp: {...}, color: {modes:["xy"]}})) ──
 extern const ::zhc::FzConverter* const kFzSengledColorCTLight[];
-extern const std::uint8_t              kFzSengledColorCTLightCount;
+inline constexpr std::uint8_t          kFzSengledColorCTLightCount = 4;
 extern const ::zhc::TzConverter* const kTzSengledColorCTLight[];
-extern const std::uint8_t              kTzSengledColorCTLightCount;
+inline constexpr std::uint8_t          kTzSengledColorCTLightCount = 4;
 extern const ::zhc::Expose             kExposesSengledColorCTLight[];
-extern const std::uint8_t              kExposesSengledColorCTLightCount;
+inline constexpr std::uint8_t          kExposesSengledColorCTLightCount = 7;
 extern const ::zhc::BindingSpec        kBindingsSengledColorCTLight[];
-extern const std::uint8_t              kBindingsSengledColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsSengledColorCTLightCount = 3;
 
 }  // namespace zhc::devices::sengled

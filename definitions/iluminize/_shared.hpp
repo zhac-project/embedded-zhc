@@ -29,68 +29,68 @@ namespace zhc::devices::iluminize {
 
 // ── On/off only (m.onOff()) — switches/actuators ────────────────────
 extern const ::zhc::FzConverter* const kFzIluOnOff[];
-extern const std::uint8_t              kFzIluOnOffCount;
+inline constexpr std::uint8_t          kFzIluOnOffCount = 1;
 
 extern const ::zhc::TzConverter* const kTzIluOnOff[];
-extern const std::uint8_t              kTzIluOnOffCount;
+inline constexpr std::uint8_t          kTzIluOnOffCount = 1;
 
 extern const ::zhc::Expose             kExposesIluOnOff[];
-extern const std::uint8_t              kExposesIluOnOffCount;
+inline constexpr std::uint8_t          kExposesIluOnOffCount = 1;
 
 extern const ::zhc::BindingSpec        kBindingsIluOnOff[];
-extern const std::uint8_t              kBindingsIluOnOffCount;
+inline constexpr std::uint8_t          kBindingsIluOnOffCount = 1;
 
 // ── Plain dimmable (m.light({})) ────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzIluLight[];
-extern const std::uint8_t              kFzIluLightCount;
+inline constexpr std::uint8_t          kFzIluLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzIluLight[];
-extern const std::uint8_t              kTzIluLightCount;
+inline constexpr std::uint8_t          kTzIluLightCount = 2;
 
 extern const ::zhc::Expose             kExposesIluLight[];
-extern const std::uint8_t              kExposesIluLightCount;
+inline constexpr std::uint8_t          kExposesIluLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsIluLight[];
-extern const std::uint8_t              kBindingsIluLightCount;
+inline constexpr std::uint8_t          kBindingsIluLightCount = 2;
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 extern const ::zhc::FzConverter* const kFzIluCTLight[];
-extern const std::uint8_t              kFzIluCTLightCount;
+inline constexpr std::uint8_t          kFzIluCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzIluCTLight[];
-extern const std::uint8_t              kTzIluCTLightCount;
+inline constexpr std::uint8_t          kTzIluCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesIluCTLight[];
-extern const std::uint8_t              kExposesIluCTLightCount;
+inline constexpr std::uint8_t          kExposesIluCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsIluCTLight[];
-extern const std::uint8_t              kBindingsIluCTLightCount;
+inline constexpr std::uint8_t          kBindingsIluCTLightCount = 3;
 
 // ── Colour-only (m.light({color: true})) ────────────────────────────
 extern const ::zhc::FzConverter* const kFzIluColorLight[];
-extern const std::uint8_t              kFzIluColorLightCount;
+inline constexpr std::uint8_t          kFzIluColorLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzIluColorLight[];
-extern const std::uint8_t              kTzIluColorLightCount;
+inline constexpr std::uint8_t          kTzIluColorLightCount = 3;
 
 extern const ::zhc::Expose             kExposesIluColorLight[];
-extern const std::uint8_t              kExposesIluColorLightCount;
+inline constexpr std::uint8_t          kExposesIluColorLightCount = 6;
 
 extern const ::zhc::BindingSpec        kBindingsIluColorLight[];
-extern const std::uint8_t              kBindingsIluColorLightCount;
+inline constexpr std::uint8_t          kBindingsIluColorLightCount = 3;
 
 // ── Full RGBCCT (m.light({colorTemp, color: true})) ─────────────────
 extern const ::zhc::FzConverter* const kFzIluColorCTLight[];
-extern const std::uint8_t              kFzIluColorCTLightCount;
+inline constexpr std::uint8_t          kFzIluColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzIluColorCTLight[];
-extern const std::uint8_t              kTzIluColorCTLightCount;
+inline constexpr std::uint8_t          kTzIluColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesIluColorCTLight[];
-extern const std::uint8_t              kExposesIluColorCTLightCount;
+inline constexpr std::uint8_t          kExposesIluColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsIluColorCTLight[];
-extern const std::uint8_t              kBindingsIluColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsIluColorCTLightCount = 3;
 
 // ── Cover-via-brightness (5128.10 roller-shutter relay) ─────────────
 //

@@ -26,69 +26,69 @@ namespace zhc::devices::sylvania {
 
 // ── On/off only (ledvanceOnOff) — Sylvania smart plugs ──────────────
 extern const ::zhc::FzConverter* const kFzSylvaniaOnOff[];
-extern const std::uint8_t              kFzSylvaniaOnOffCount;
+inline constexpr std::uint8_t          kFzSylvaniaOnOffCount = 1;
 
 extern const ::zhc::TzConverter* const kTzSylvaniaOnOff[];
-extern const std::uint8_t              kTzSylvaniaOnOffCount;
+inline constexpr std::uint8_t          kTzSylvaniaOnOffCount = 1;
 
 extern const ::zhc::Expose             kExposesSylvaniaOnOff[];
-extern const std::uint8_t              kExposesSylvaniaOnOffCount;
+inline constexpr std::uint8_t          kExposesSylvaniaOnOffCount = 1;
 
 extern const ::zhc::BindingSpec        kBindingsSylvaniaOnOff[];
-extern const std::uint8_t              kBindingsSylvaniaOnOffCount;
+inline constexpr std::uint8_t          kBindingsSylvaniaOnOffCount = 1;
 
 // ── Plain dimmable (ledvanceLight({})) ──────────────────────────────
 extern const ::zhc::FzConverter* const kFzSylvaniaDim[];
-extern const std::uint8_t              kFzSylvaniaDimCount;
+inline constexpr std::uint8_t          kFzSylvaniaDimCount = 2;
 
 extern const ::zhc::TzConverter* const kTzSylvaniaDim[];
-extern const std::uint8_t              kTzSylvaniaDimCount;
+inline constexpr std::uint8_t          kTzSylvaniaDimCount = 2;
 
 extern const ::zhc::Expose             kExposesSylvaniaDim[];
-extern const std::uint8_t              kExposesSylvaniaDimCount;
+inline constexpr std::uint8_t          kExposesSylvaniaDimCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsSylvaniaDim[];
-extern const std::uint8_t              kBindingsSylvaniaDimCount;
+inline constexpr std::uint8_t          kBindingsSylvaniaDimCount = 2;
 
 // ── Tunable white (ledvanceLight({colorTemp})) ──────────────────────
 // kFzSylvaniaLight / kExposesSylvaniaLight are the historical names every
 // generated port already references — keep them as the CTLight bundle.
 extern const ::zhc::FzConverter* const kFzSylvaniaLight[];
-extern const std::uint8_t              kFzSylvaniaLightCount;
+inline constexpr std::uint8_t          kFzSylvaniaLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzSylvaniaLight[];
-extern const std::uint8_t              kTzSylvaniaLightCount;
+inline constexpr std::uint8_t          kTzSylvaniaLightCount = 3;
 
 extern const ::zhc::Expose             kExposesSylvaniaLight[];
-extern const std::uint8_t              kExposesSylvaniaLightCount;
+inline constexpr std::uint8_t          kExposesSylvaniaLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsSylvaniaLight[];
-extern const std::uint8_t              kBindingsSylvaniaLightCount;
+inline constexpr std::uint8_t          kBindingsSylvaniaLightCount = 3;
 
 // ── Colour-only (ledvanceLight({color: true})) ──────────────────────
 extern const ::zhc::FzConverter* const kFzSylvaniaColorLight[];
-extern const std::uint8_t              kFzSylvaniaColorLightCount;
+inline constexpr std::uint8_t          kFzSylvaniaColorLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzSylvaniaColorLight[];
-extern const std::uint8_t              kTzSylvaniaColorLightCount;
+inline constexpr std::uint8_t          kTzSylvaniaColorLightCount = 3;
 
 extern const ::zhc::Expose             kExposesSylvaniaColorLight[];
-extern const std::uint8_t              kExposesSylvaniaColorLightCount;
+inline constexpr std::uint8_t          kExposesSylvaniaColorLightCount = 6;
 
 extern const ::zhc::BindingSpec        kBindingsSylvaniaColorLight[];
-extern const std::uint8_t              kBindingsSylvaniaColorLightCount;
+inline constexpr std::uint8_t          kBindingsSylvaniaColorLightCount = 3;
 
 // ── Full RGBW (ledvanceLight({colorTemp, color: true})) ─────────────
 extern const ::zhc::FzConverter* const kFzSylvaniaColorCTLight[];
-extern const std::uint8_t              kFzSylvaniaColorCTLightCount;
+inline constexpr std::uint8_t          kFzSylvaniaColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzSylvaniaColorCTLight[];
-extern const std::uint8_t              kTzSylvaniaColorCTLightCount;
+inline constexpr std::uint8_t          kTzSylvaniaColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesSylvaniaColorCTLight[];
-extern const std::uint8_t              kExposesSylvaniaColorCTLightCount;
+inline constexpr std::uint8_t          kExposesSylvaniaColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsSylvaniaColorCTLight[];
-extern const std::uint8_t              kBindingsSylvaniaColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsSylvaniaColorCTLightCount = 3;
 
 }  // namespace zhc::devices::sylvania

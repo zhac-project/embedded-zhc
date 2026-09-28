@@ -32,54 +32,54 @@ namespace zhc::devices::muller_licht {
 
 // ── On/off only (m.onOff()) — Tint power strips / sockets ───────────
 extern const ::zhc::FzConverter* const kFzMullerLichtOnOff[];
-extern const std::uint8_t              kFzMullerLichtOnOffCount;
+inline constexpr std::uint8_t          kFzMullerLichtOnOffCount = 1;
 
 extern const ::zhc::TzConverter* const kTzMullerLichtOnOff[];
-extern const std::uint8_t              kTzMullerLichtOnOffCount;
+inline constexpr std::uint8_t          kTzMullerLichtOnOffCount = 1;
 
 extern const ::zhc::Expose             kExposesMullerLichtOnOff[];
-extern const std::uint8_t              kExposesMullerLichtOnOffCount;
+inline constexpr std::uint8_t          kExposesMullerLichtOnOffCount = 1;
 
 extern const ::zhc::BindingSpec        kBindingsMullerLichtOnOff[];
-extern const std::uint8_t              kBindingsMullerLichtOnOffCount;
+inline constexpr std::uint8_t          kBindingsMullerLichtOnOffCount = 1;
 
 // ── Dimmable (m.light({})) ──────────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzMullerLichtLight[];
-extern const std::uint8_t              kFzMullerLichtLightCount;
+inline constexpr std::uint8_t          kFzMullerLichtLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzMullerLichtLight[];
-extern const std::uint8_t              kTzMullerLichtLightCount;
+inline constexpr std::uint8_t          kTzMullerLichtLightCount = 2;
 
 extern const ::zhc::Expose             kExposesMullerLichtLight[];
-extern const std::uint8_t              kExposesMullerLichtLightCount;
+inline constexpr std::uint8_t          kExposesMullerLichtLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsMullerLichtLight[];
-extern const std::uint8_t              kBindingsMullerLichtLightCount;
+inline constexpr std::uint8_t          kBindingsMullerLichtLightCount = 2;
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 extern const ::zhc::FzConverter* const kFzMullerLichtCTLight[];
-extern const std::uint8_t              kFzMullerLichtCTLightCount;
+inline constexpr std::uint8_t          kFzMullerLichtCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzMullerLichtCTLight[];
-extern const std::uint8_t              kTzMullerLichtCTLightCount;
+inline constexpr std::uint8_t          kTzMullerLichtCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesMullerLichtCTLight[];
-extern const std::uint8_t              kExposesMullerLichtCTLightCount;
+inline constexpr std::uint8_t          kExposesMullerLichtCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsMullerLichtCTLight[];
-extern const std::uint8_t              kBindingsMullerLichtCTLightCount;
+inline constexpr std::uint8_t          kBindingsMullerLichtCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color: true})) ───────────────────
 extern const ::zhc::FzConverter* const kFzMullerLichtColorCTLight[];
-extern const std::uint8_t              kFzMullerLichtColorCTLightCount;
+inline constexpr std::uint8_t          kFzMullerLichtColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzMullerLichtColorCTLight[];
-extern const std::uint8_t              kTzMullerLichtColorCTLightCount;
+inline constexpr std::uint8_t          kTzMullerLichtColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesMullerLichtColorCTLight[];
-extern const std::uint8_t              kExposesMullerLichtColorCTLightCount;
+inline constexpr std::uint8_t          kExposesMullerLichtColorCTLightCount = 5;
 
 extern const ::zhc::BindingSpec        kBindingsMullerLichtColorCTLight[];
-extern const std::uint8_t              kBindingsMullerLichtColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsMullerLichtColorCTLightCount = 3;
 
 }  // namespace zhc::devices::muller_licht

@@ -12,15 +12,13 @@ const ::zhc::FzConverter* const kFzAwoxLight[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzAwoxLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzAwoxLight) / sizeof(kFzAwoxLight[0]));
+static_assert(kFzAwoxLightCount == std::size(kFzAwoxLight));
 
 const ::zhc::TzConverter* const kTzAwoxLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzAwoxLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzAwoxLight) / sizeof(kTzAwoxLight[0]));
+static_assert(kTzAwoxLightCount == std::size(kTzAwoxLight));
 
 const ::zhc::Expose kExposesAwoxLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -28,14 +26,12 @@ const ::zhc::Expose kExposesAwoxLight[] = {
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesAwoxLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesAwoxLight) / sizeof(kExposesAwoxLight[0]));
+static_assert(kExposesAwoxLightCount == std::size(kExposesAwoxLight));
 
 const ::zhc::BindingSpec kBindingsAwoxLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsAwoxLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsAwoxLight) / sizeof(kBindingsAwoxLight[0]));
+static_assert(kBindingsAwoxLightCount == std::size(kBindingsAwoxLight));
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 const ::zhc::FzConverter* const kFzAwoxCTLight[] = {
@@ -43,16 +39,14 @@ const ::zhc::FzConverter* const kFzAwoxCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzAwoxCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzAwoxCTLight) / sizeof(kFzAwoxCTLight[0]));
+static_assert(kFzAwoxCTLightCount == std::size(kFzAwoxCTLight));
 
 const ::zhc::TzConverter* const kTzAwoxCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzAwoxCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzAwoxCTLight) / sizeof(kTzAwoxCTLight[0]));
+static_assert(kTzAwoxCTLightCount == std::size(kTzAwoxCTLight));
 
 const ::zhc::Expose kExposesAwoxCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -62,14 +56,12 @@ const ::zhc::Expose kExposesAwoxCTLight[] = {
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesAwoxCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesAwoxCTLight) / sizeof(kExposesAwoxCTLight[0]));
+static_assert(kExposesAwoxCTLightCount == std::size(kExposesAwoxCTLight));
 
 const ::zhc::BindingSpec kBindingsAwoxCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsAwoxCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsAwoxCTLight) / sizeof(kBindingsAwoxCTLight[0]));
+static_assert(kBindingsAwoxCTLightCount == std::size(kBindingsAwoxCTLight));
 
 // ── Full RGBW (m.light({colorTemp, color: {modes:["xy","hs"]}})) ────
 const ::zhc::FzConverter* const kFzAwoxColorCTLight[] = {
@@ -78,8 +70,7 @@ const ::zhc::FzConverter* const kFzAwoxColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzAwoxColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzAwoxColorCTLight) / sizeof(kFzAwoxColorCTLight[0]));
+static_assert(kFzAwoxColorCTLightCount == std::size(kFzAwoxColorCTLight));
 
 const ::zhc::TzConverter* const kTzAwoxColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -87,8 +78,7 @@ const ::zhc::TzConverter* const kTzAwoxColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzAwoxColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzAwoxColorCTLight) / sizeof(kTzAwoxColorCTLight[0]));
+static_assert(kTzAwoxColorCTLightCount == std::size(kTzAwoxColorCTLight));
 
 const ::zhc::Expose kExposesAwoxColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet,
@@ -106,13 +96,11 @@ const ::zhc::Expose kExposesAwoxColorCTLight[] = {
     { "saturation", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesAwoxColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesAwoxColorCTLight) / sizeof(kExposesAwoxColorCTLight[0]));
+static_assert(kExposesAwoxColorCTLightCount == std::size(kExposesAwoxColorCTLight));
 
 const ::zhc::BindingSpec kBindingsAwoxColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsAwoxColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsAwoxColorCTLight) / sizeof(kBindingsAwoxColorCTLight[0]));
+static_assert(kBindingsAwoxColorCTLightCount == std::size(kBindingsAwoxColorCTLight));
 
 }  // namespace zhc::devices::awox

@@ -533,7 +533,7 @@ extern const FzConverter kFzLumiDoorLockReport;
 // Used by SSM-U02, ZNCZ02LM (single-relay variants that z2m configures
 // with bare onOff reporting).
 extern const ReportingSpec kReportsLumiOnOff[];
-extern const std::uint8_t  kReportsLumiOnOffCount;
+inline constexpr std::uint8_t kReportsLumiOnOffCount = 1;
 
 // onOff + device-temperature reporting:
 // z2m `reporting.bind(genOnOff, genDeviceTempCfg)` +
@@ -541,7 +541,7 @@ extern const std::uint8_t  kReportsLumiOnOffCount;
 // Used by SSM-U01 (lumi.switch.n0acn2 — neutral 1-ch module that
 // reports its internal temperature).
 extern const ReportingSpec kReportsLumiOnOffDevTemp[];
-extern const std::uint8_t  kReportsLumiOnOffDevTempCount;
+inline constexpr std::uint8_t kReportsLumiOnOffDevTempCount = 2;
 
 // onOff + cumulative-energy reporting:
 // z2m `reporting.bind(genOnOff)` + `reporting.onOff(endpoint)`, plus a
@@ -557,6 +557,6 @@ extern const std::uint8_t  kReportsLumiOnOffDevTempCount;
 // the library default, matching the ZNCZ15LM precedent's rc=1 family).
 // Used by SP-EUC01 (lumi.plug.maeu01/maeu03).
 extern const ReportingSpec kReportsLumiOnOffEnergy[];
-extern const std::uint8_t  kReportsLumiOnOffEnergyCount;
+inline constexpr std::uint8_t kReportsLumiOnOffEnergyCount = 2;
 
 }  // namespace zhc::lumi

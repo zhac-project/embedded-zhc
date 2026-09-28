@@ -17,16 +17,14 @@ const ::zhc::FzConverter* const kFzActionBattery[] = {
     &::zhc::generic::kFzCommandStop,
     &::zhc::generic::kFzBattery,
 };
-const std::uint8_t kFzActionBatteryCount =
-    static_cast<std::uint8_t>(sizeof(kFzActionBattery) / sizeof(kFzActionBattery[0]));
+static_assert(kFzActionBatteryCount == std::size(kFzActionBattery));
 
 const ::zhc::BindingSpec kBindingsActionBattery[] = {
     { 1, 0x0006 },  // genOnOff
     { 1, 0x0008 },  // genLevelCtrl
     { 1, 0x0001 },  // genPowerCfg
 };
-const std::uint8_t kBindingsActionBatteryCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsActionBattery) / sizeof(kBindingsActionBattery[0]));
+static_assert(kBindingsActionBatteryCount == std::size(kBindingsActionBattery));
 
 // ── ActionBatteryDim ─────────────────────────────────────────────────
 const ::zhc::FzConverter* const kFzActionBatteryDim[] = {
@@ -38,16 +36,14 @@ const ::zhc::FzConverter* const kFzActionBatteryDim[] = {
     &::zhc::generic::kFzCommandStop,
     &::zhc::generic::kFzBattery,
 };
-const std::uint8_t kFzActionBatteryDimCount =
-    static_cast<std::uint8_t>(sizeof(kFzActionBatteryDim) / sizeof(kFzActionBatteryDim[0]));
+static_assert(kFzActionBatteryDimCount == std::size(kFzActionBatteryDim));
 
 const ::zhc::BindingSpec kBindingsActionBatteryDim[] = {
     { 1, 0x0006 },
     { 1, 0x0008 },
     { 1, 0x0001 },
 };
-const std::uint8_t kBindingsActionBatteryDimCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsActionBatteryDim) / sizeof(kBindingsActionBatteryDim[0]));
+static_assert(kBindingsActionBatteryDimCount == std::size(kBindingsActionBatteryDim));
 
 // ── ActionBatteryRGB (battery + color/CT actions) ───────────────────
 const ::zhc::FzConverter* const kFzActionBatteryRGB[] = {
@@ -65,8 +61,7 @@ const ::zhc::FzConverter* const kFzActionBatteryRGB[] = {
     &::zhc::generic::kFzCommandMoveColorTemperature,
     &::zhc::generic::kFzBattery,
 };
-const std::uint8_t kFzActionBatteryRGBCount =
-    static_cast<std::uint8_t>(sizeof(kFzActionBatteryRGB) / sizeof(kFzActionBatteryRGB[0]));
+static_assert(kFzActionBatteryRGBCount == std::size(kFzActionBatteryRGB));
 
 // ── ActionRGB (mains-powered, no battery cluster) ───────────────────
 const ::zhc::FzConverter* const kFzActionRGBNoBattery[] = {
@@ -83,8 +78,7 @@ const ::zhc::FzConverter* const kFzActionRGBNoBattery[] = {
     &::zhc::generic::kFzCommandMoveToColor,
     &::zhc::generic::kFzCommandMoveColorTemperature,
 };
-const std::uint8_t kFzActionRGBNoBatteryCount =
-    static_cast<std::uint8_t>(sizeof(kFzActionRGBNoBattery) / sizeof(kFzActionRGBNoBattery[0]));
+static_assert(kFzActionRGBNoBatteryCount == std::size(kFzActionRGBNoBattery));
 
 const ::zhc::BindingSpec kBindingsActionBatteryRGB[] = {
     { 1, 0x0006 },  // genOnOff
@@ -92,15 +86,13 @@ const ::zhc::BindingSpec kBindingsActionBatteryRGB[] = {
     { 1, 0x0300 },  // lightingColorCtrl
     { 1, 0x0001 },  // genPowerCfg
 };
-const std::uint8_t kBindingsActionBatteryRGBCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsActionBatteryRGB) / sizeof(kBindingsActionBatteryRGB[0]));
+static_assert(kBindingsActionBatteryRGBCount == std::size(kBindingsActionBatteryRGB));
 
 const ::zhc::BindingSpec kBindingsActionRGBNoBattery[] = {
     { 1, 0x0006 },
     { 1, 0x0008 },
     { 1, 0x0300 },
 };
-const std::uint8_t kBindingsActionRGBNoBatteryCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsActionRGBNoBattery) / sizeof(kBindingsActionRGBNoBattery[0]));
+static_assert(kBindingsActionRGBNoBatteryCount == std::size(kBindingsActionRGBNoBattery));
 
 }  // namespace zhc::devices::rgb_genie

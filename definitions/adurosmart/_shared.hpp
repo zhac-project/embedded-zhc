@@ -36,80 +36,80 @@ namespace zhc::devices::adurosmart {
 
 // ── On/off only (m.onOff()) ─────────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzAduOnOff[];
-extern const std::uint8_t              kFzAduOnOffCount;
+inline constexpr std::uint8_t          kFzAduOnOffCount = 1;
 
 extern const ::zhc::TzConverter* const kTzAduOnOff[];
-extern const std::uint8_t              kTzAduOnOffCount;
+inline constexpr std::uint8_t          kTzAduOnOffCount = 1;
 
 extern const ::zhc::Expose             kExposesAduOnOff[];
-extern const std::uint8_t              kExposesAduOnOffCount;
+inline constexpr std::uint8_t          kExposesAduOnOffCount = 1;
 
 extern const ::zhc::BindingSpec        kBindingsAduOnOff[];
-extern const std::uint8_t              kBindingsAduOnOffCount;
+inline constexpr std::uint8_t          kBindingsAduOnOffCount = 1;
 
 // ── On/off + electricity meter (m.onOff() + m.electricityMeter) ─────
 extern const ::zhc::FzConverter* const kFzAduOnOffEM[];
-extern const std::uint8_t              kFzAduOnOffEMCount;
+inline constexpr std::uint8_t          kFzAduOnOffEMCount = 2;
 
 extern const ::zhc::TzConverter* const kTzAduOnOffEM[];
-extern const std::uint8_t              kTzAduOnOffEMCount;
+inline constexpr std::uint8_t          kTzAduOnOffEMCount = 1;
 
 extern const ::zhc::Expose             kExposesAduOnOffEM[];
-extern const std::uint8_t              kExposesAduOnOffEMCount;
+inline constexpr std::uint8_t          kExposesAduOnOffEMCount = 4;
 
 extern const ::zhc::BindingSpec        kBindingsAduOnOffEM[];
-extern const std::uint8_t              kBindingsAduOnOffEMCount;
+inline constexpr std::uint8_t          kBindingsAduOnOffEMCount = 2;
 
 // ── Plain dimmable (m.light()) ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzAduLight[];
-extern const std::uint8_t              kFzAduLightCount;
+inline constexpr std::uint8_t          kFzAduLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzAduLight[];
-extern const std::uint8_t              kTzAduLightCount;
+inline constexpr std::uint8_t          kTzAduLightCount = 2;
 
 extern const ::zhc::Expose             kExposesAduLight[];
-extern const std::uint8_t              kExposesAduLightCount;
+inline constexpr std::uint8_t          kExposesAduLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsAduLight[];
-extern const std::uint8_t              kBindingsAduLightCount;
+inline constexpr std::uint8_t          kBindingsAduLightCount = 2;
 
 // ── Dimmable + electricity meter (m.light() + m.electricityMeter) ───
 extern const ::zhc::FzConverter* const kFzAduLightEM[];
-extern const std::uint8_t              kFzAduLightEMCount;
+inline constexpr std::uint8_t          kFzAduLightEMCount = 3;
 
 extern const ::zhc::TzConverter* const kTzAduLightEM[];
-extern const std::uint8_t              kTzAduLightEMCount;
+inline constexpr std::uint8_t          kTzAduLightEMCount = 2;
 
 extern const ::zhc::Expose             kExposesAduLightEM[];
-extern const std::uint8_t              kExposesAduLightEMCount;
+inline constexpr std::uint8_t          kExposesAduLightEMCount = 5;
 
 extern const ::zhc::BindingSpec        kBindingsAduLightEM[];
-extern const std::uint8_t              kBindingsAduLightEMCount;
+inline constexpr std::uint8_t          kBindingsAduLightEMCount = 3;
 
 // ── Tunable white (m.light({colorTemp})) ────────────────────────────
 extern const ::zhc::FzConverter* const kFzAduCTLight[];
-extern const std::uint8_t              kFzAduCTLightCount;
+inline constexpr std::uint8_t          kFzAduCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzAduCTLight[];
-extern const std::uint8_t              kTzAduCTLightCount;
+inline constexpr std::uint8_t          kTzAduCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesAduCTLight[];
-extern const std::uint8_t              kExposesAduCTLightCount;
+inline constexpr std::uint8_t          kExposesAduCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsAduCTLight[];
-extern const std::uint8_t              kBindingsAduCTLightCount;
+inline constexpr std::uint8_t          kBindingsAduCTLightCount = 3;
 
 // ── Full RGBCCT (m.light({colorTemp, color})) ───────────────────────
 extern const ::zhc::FzConverter* const kFzAduColorCTLight[];
-extern const std::uint8_t              kFzAduColorCTLightCount;
+inline constexpr std::uint8_t          kFzAduColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzAduColorCTLight[];
-extern const std::uint8_t              kTzAduColorCTLightCount;
+inline constexpr std::uint8_t          kTzAduColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesAduColorCTLight[];
-extern const std::uint8_t              kExposesAduColorCTLightCount;
+inline constexpr std::uint8_t          kExposesAduColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsAduColorCTLight[];
-extern const std::uint8_t              kBindingsAduColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsAduColorCTLightCount = 3;
 
 }  // namespace zhc::devices::adurosmart

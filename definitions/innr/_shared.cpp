@@ -15,28 +15,24 @@ const ::zhc::FzConverter* const kFzInnrLight[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
 };
-const std::uint8_t kFzInnrLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzInnrLight) / sizeof(kFzInnrLight[0]));
+static_assert(kFzInnrLightCount == std::size(kFzInnrLight));
 
 const ::zhc::TzConverter* const kTzInnrLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-const std::uint8_t kTzInnrLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzInnrLight) / sizeof(kTzInnrLight[0]));
+static_assert(kTzInnrLightCount == std::size(kTzInnrLight));
 
 const ::zhc::Expose kExposesInnrLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesInnrLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesInnrLight) / sizeof(kExposesInnrLight[0]));
+static_assert(kExposesInnrLightCount == std::size(kExposesInnrLight));
 
 const ::zhc::BindingSpec kBindingsInnrLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 },
 };
-const std::uint8_t kBindingsInnrLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsInnrLight) / sizeof(kBindingsInnrLight[0]));
+static_assert(kBindingsInnrLightCount == std::size(kBindingsInnrLight));
 
 // ── CCT (m.light({colorTemp})) ──────────────────────────────────────
 const ::zhc::FzConverter* const kFzInnrCTLight[] = {
@@ -44,30 +40,26 @@ const ::zhc::FzConverter* const kFzInnrCTLight[] = {
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzColorTemperature,
 };
-const std::uint8_t kFzInnrCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzInnrCTLight) / sizeof(kFzInnrCTLight[0]));
+static_assert(kFzInnrCTLightCount == std::size(kFzInnrCTLight));
 
 const ::zhc::TzConverter* const kTzInnrCTLight[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
 };
-const std::uint8_t kTzInnrCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzInnrCTLight) / sizeof(kTzInnrCTLight[0]));
+static_assert(kTzInnrCTLightCount == std::size(kTzInnrCTLight));
 
 const ::zhc::Expose kExposesInnrCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_temp", ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, "mired", nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesInnrCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesInnrCTLight) / sizeof(kExposesInnrCTLight[0]));
+static_assert(kExposesInnrCTLightCount == std::size(kExposesInnrCTLight));
 
 const ::zhc::BindingSpec kBindingsInnrCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsInnrCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsInnrCTLight) / sizeof(kBindingsInnrCTLight[0]));
+static_assert(kBindingsInnrCTLightCount == std::size(kBindingsInnrCTLight));
 
 // ── Full RGBW (m.light({colorTemp, color})) ─────────────────────────
 const ::zhc::FzConverter* const kFzInnrColorCTLight[] = {
@@ -76,8 +68,7 @@ const ::zhc::FzConverter* const kFzInnrColorCTLight[] = {
     &::zhc::generic::kFzColorTemperature,
     &::zhc::generic::kFzColor,
 };
-const std::uint8_t kFzInnrColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kFzInnrColorCTLight) / sizeof(kFzInnrColorCTLight[0]));
+static_assert(kFzInnrColorCTLightCount == std::size(kFzInnrColorCTLight));
 
 const ::zhc::TzConverter* const kTzInnrColorCTLight[] = {
     &::zhc::generic::kTzOnOff,
@@ -85,8 +76,7 @@ const ::zhc::TzConverter* const kTzInnrColorCTLight[] = {
     &::zhc::generic::kTzColorTemp,
     &::zhc::generic::kTzColor,
 };
-const std::uint8_t kTzInnrColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kTzInnrColorCTLight) / sizeof(kTzInnrColorCTLight[0]));
+static_assert(kTzInnrColorCTLightCount == std::size(kTzInnrColorCTLight));
 
 const ::zhc::Expose kExposesInnrColorCTLight[] = {
     { "state",      ::zhc::ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
@@ -95,13 +85,11 @@ const ::zhc::Expose kExposesInnrColorCTLight[] = {
     { "color_xy",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_hs",   ::zhc::ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
-const std::uint8_t kExposesInnrColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kExposesInnrColorCTLight) / sizeof(kExposesInnrColorCTLight[0]));
+static_assert(kExposesInnrColorCTLightCount == std::size(kExposesInnrColorCTLight));
 
 const ::zhc::BindingSpec kBindingsInnrColorCTLight[] = {
     { 1, 0x0006 }, { 1, 0x0008 }, { 1, 0x0300 },
 };
-const std::uint8_t kBindingsInnrColorCTLightCount =
-    static_cast<std::uint8_t>(sizeof(kBindingsInnrColorCTLight) / sizeof(kBindingsInnrColorCTLight[0]));
+static_assert(kBindingsInnrColorCTLightCount == std::size(kBindingsInnrColorCTLight));
 
 }  // namespace zhc::devices::innr

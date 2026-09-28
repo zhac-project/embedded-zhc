@@ -22,7 +22,7 @@ const ::zhc::ConfigStep kConfigStepsTuyaMagicPacket[] = {
     { ::zhc::ConfigStepOp::Read, 1, 0x0000, 0x00, 0,
       kTuyaMagicPacketAttrs, sizeof(kTuyaMagicPacketAttrs), 0 },
 };
-const std::uint8_t kConfigStepsTuyaMagicPacketCount = 1;
+static_assert(kConfigStepsTuyaMagicPacketCount == std::size(kConfigStepsTuyaMagicPacket));
 
 // ── kReportsOnOff_Nep — genOnOff attribute reporting for switch gangs ──
 //
@@ -44,23 +44,20 @@ const std::uint8_t kConfigStepsTuyaMagicPacketCount = 1;
 const ::zhc::ReportingSpec kReportsOnOff_1ep[] = {
     { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
 };
-const std::uint8_t kReportsOnOff_1ep_count =
-    static_cast<std::uint8_t>(sizeof(kReportsOnOff_1ep)/sizeof(kReportsOnOff_1ep[0]));
+static_assert(kReportsOnOff_1ep_count == std::size(kReportsOnOff_1ep));
 
 const ::zhc::ReportingSpec kReportsOnOff_2ep[] = {
     { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
     { 2, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
 };
-const std::uint8_t kReportsOnOff_2ep_count =
-    static_cast<std::uint8_t>(sizeof(kReportsOnOff_2ep)/sizeof(kReportsOnOff_2ep[0]));
+static_assert(kReportsOnOff_2ep_count == std::size(kReportsOnOff_2ep));
 
 const ::zhc::ReportingSpec kReportsOnOff_3ep[] = {
     { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
     { 2, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
     { 3, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
 };
-const std::uint8_t kReportsOnOff_3ep_count =
-    static_cast<std::uint8_t>(sizeof(kReportsOnOff_3ep)/sizeof(kReportsOnOff_3ep[0]));
+static_assert(kReportsOnOff_3ep_count == std::size(kReportsOnOff_3ep));
 
 const ::zhc::ReportingSpec kReportsOnOff_4ep[] = {
     { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
@@ -68,8 +65,7 @@ const ::zhc::ReportingSpec kReportsOnOff_4ep[] = {
     { 3, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
     { 4, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0 },
 };
-const std::uint8_t kReportsOnOff_4ep_count =
-    static_cast<std::uint8_t>(sizeof(kReportsOnOff_4ep)/sizeof(kReportsOnOff_4ep[0]));
+static_assert(kReportsOnOff_4ep_count == std::size(kReportsOnOff_4ep));
 
 // ── kReportsPlugVIPE_1ep — onOff + electrical (V/I/P) + metering (energy) ──
 //
@@ -92,8 +88,7 @@ const ::zhc::ReportingSpec kReportsPlugVIPE_1ep[] = {
     // seMetering.currentSummationDelivered u48   payload("currentSummDelivered",5,HOUR,257)
     { 1, 0x0702, 0x0000, 0x25, 5, 3600, 257, 0 },
 };
-const std::uint8_t kReportsPlugVIPE_1ep_count =
-    static_cast<std::uint8_t>(sizeof(kReportsPlugVIPE_1ep)/sizeof(kReportsPlugVIPE_1ep[0]));
+static_assert(kReportsPlugVIPE_1ep_count == std::size(kReportsPlugVIPE_1ep));
 
 // Cluster-specific command ids on manuSpecificTuya (0xEF00).
 namespace {
@@ -1446,8 +1441,7 @@ const ::zhc::ReportingSpec kReportsDimmer_1ep[] = {
     // genLevelCtrl   currentLevel      u8     1..3600s   change 1
     { 1, 0x0008, 0x0000, 0x20, 1, 3600, 1, 0 },
 };
-const std::uint8_t kReportsDimmer_1ep_count =
-    static_cast<std::uint8_t>(sizeof(kReportsDimmer_1ep)/sizeof(kReportsDimmer_1ep[0]));
+static_assert(kReportsDimmer_1ep_count == std::size(kReportsDimmer_1ep));
 
 // onOff + currentLevel + colorTemperature — tunable-white (CCT) lights.
 const ::zhc::ReportingSpec kReportsLightCCT_1ep[] = {
@@ -1456,8 +1450,7 @@ const ::zhc::ReportingSpec kReportsLightCCT_1ep[] = {
     // lightingColorCtrl colorTemperature u16  0..3600s   change 1 (mired)
     { 1, 0x0300, 0x0007, 0x21, 0, 3600, 1, 0 },
 };
-const std::uint8_t kReportsLightCCT_1ep_count =
-    static_cast<std::uint8_t>(sizeof(kReportsLightCCT_1ep)/sizeof(kReportsLightCCT_1ep[0]));
+static_assert(kReportsLightCCT_1ep_count == std::size(kReportsLightCCT_1ep));
 
 // onOff + currentLevel + colorTemperature + currentX + currentY —
 // full-colour RGB+CCT lights.
@@ -1470,8 +1463,7 @@ const ::zhc::ReportingSpec kReportsLightRGBCCT_1ep[] = {
     // lightingColorCtrl currentY        u16   10..65535s change 1
     { 1, 0x0300, 0x0004, 0x21, 10, 65535, 1, 0 },
 };
-const std::uint8_t kReportsLightRGBCCT_1ep_count =
-    static_cast<std::uint8_t>(sizeof(kReportsLightRGBCCT_1ep)/sizeof(kReportsLightRGBCCT_1ep[0]));
+static_assert(kReportsLightRGBCCT_1ep_count == std::size(kReportsLightRGBCCT_1ep));
 
 // ── packed-payload expanders ─────────────────────────────────────────
 

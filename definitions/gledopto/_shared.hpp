@@ -27,54 +27,54 @@ namespace zhc::devices::gledopto {
 
 // ── Plain dimmable (m.light()) ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzGledoptoLight[];
-extern const std::uint8_t              kFzGledoptoLightCount;
+inline constexpr std::uint8_t          kFzGledoptoLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzGledoptoLight[];
-extern const std::uint8_t              kTzGledoptoLightCount;
+inline constexpr std::uint8_t          kTzGledoptoLightCount = 2;
 
 extern const ::zhc::Expose             kExposesGledoptoLight[];
-extern const std::uint8_t              kExposesGledoptoLightCount;
+inline constexpr std::uint8_t          kExposesGledoptoLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsGledoptoLight[];
-extern const std::uint8_t              kBindingsGledoptoLightCount;
+inline constexpr std::uint8_t          kBindingsGledoptoLightCount = 2;
 
 // ── White-ambiance / CCT (gledoptoLight({colorTemp})) ───────────────
 extern const ::zhc::FzConverter* const kFzGledoptoCTLight[];
-extern const std::uint8_t              kFzGledoptoCTLightCount;
+inline constexpr std::uint8_t          kFzGledoptoCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzGledoptoCTLight[];
-extern const std::uint8_t              kTzGledoptoCTLightCount;
+inline constexpr std::uint8_t          kTzGledoptoCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesGledoptoCTLight[];
-extern const std::uint8_t              kExposesGledoptoCTLightCount;
+inline constexpr std::uint8_t          kExposesGledoptoCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsGledoptoCTLight[];
-extern const std::uint8_t              kBindingsGledoptoCTLightCount;
+inline constexpr std::uint8_t          kBindingsGledoptoCTLightCount = 3;
 
 // ── Colour-only (gledoptoLight({color: true})) ──────────────────────
 extern const ::zhc::FzConverter* const kFzGledoptoColorLight[];
-extern const std::uint8_t              kFzGledoptoColorLightCount;
+inline constexpr std::uint8_t          kFzGledoptoColorLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzGledoptoColorLight[];
-extern const std::uint8_t              kTzGledoptoColorLightCount;
+inline constexpr std::uint8_t          kTzGledoptoColorLightCount = 3;
 
 extern const ::zhc::Expose             kExposesGledoptoColorLight[];
-extern const std::uint8_t              kExposesGledoptoColorLightCount;
+inline constexpr std::uint8_t          kExposesGledoptoColorLightCount = 6;
 
 extern const ::zhc::BindingSpec        kBindingsGledoptoColorLight[];
-extern const std::uint8_t              kBindingsGledoptoColorLightCount;
+inline constexpr std::uint8_t          kBindingsGledoptoColorLightCount = 3;
 
 // ── Full RGBW (gledoptoLight({colorTemp, color: true})) ─────────────
 extern const ::zhc::FzConverter* const kFzGledoptoColorCTLight[];
-extern const std::uint8_t              kFzGledoptoColorCTLightCount;
+inline constexpr std::uint8_t          kFzGledoptoColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzGledoptoColorCTLight[];
-extern const std::uint8_t              kTzGledoptoColorCTLightCount;
+inline constexpr std::uint8_t          kTzGledoptoColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesGledoptoColorCTLight[];
-extern const std::uint8_t              kExposesGledoptoColorCTLightCount;
+inline constexpr std::uint8_t          kExposesGledoptoColorCTLightCount = 7;
 
 extern const ::zhc::BindingSpec        kBindingsGledoptoColorCTLight[];
-extern const std::uint8_t              kBindingsGledoptoColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsGledoptoColorCTLightCount = 3;
 
 }  // namespace zhc::devices::gledopto

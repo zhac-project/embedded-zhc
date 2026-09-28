@@ -28,41 +28,41 @@ namespace zhc::devices::innr {
 
 // ── Plain dimmable (m.light()) ──────────────────────────────────────
 extern const ::zhc::FzConverter* const kFzInnrLight[];
-extern const std::uint8_t              kFzInnrLightCount;
+inline constexpr std::uint8_t          kFzInnrLightCount = 2;
 
 extern const ::zhc::TzConverter* const kTzInnrLight[];
-extern const std::uint8_t              kTzInnrLightCount;
+inline constexpr std::uint8_t          kTzInnrLightCount = 2;
 
 extern const ::zhc::Expose             kExposesInnrLight[];
-extern const std::uint8_t              kExposesInnrLightCount;
+inline constexpr std::uint8_t          kExposesInnrLightCount = 2;
 
 extern const ::zhc::BindingSpec        kBindingsInnrLight[];
-extern const std::uint8_t              kBindingsInnrLightCount;
+inline constexpr std::uint8_t          kBindingsInnrLightCount = 2;
 
 // ── White-ambiance / CCT (m.light({colorTemp})) ─────────────────────
 extern const ::zhc::FzConverter* const kFzInnrCTLight[];
-extern const std::uint8_t              kFzInnrCTLightCount;
+inline constexpr std::uint8_t          kFzInnrCTLightCount = 3;
 
 extern const ::zhc::TzConverter* const kTzInnrCTLight[];
-extern const std::uint8_t              kTzInnrCTLightCount;
+inline constexpr std::uint8_t          kTzInnrCTLightCount = 3;
 
 extern const ::zhc::Expose             kExposesInnrCTLight[];
-extern const std::uint8_t              kExposesInnrCTLightCount;
+inline constexpr std::uint8_t          kExposesInnrCTLightCount = 3;
 
 extern const ::zhc::BindingSpec        kBindingsInnrCTLight[];
-extern const std::uint8_t              kBindingsInnrCTLightCount;
+inline constexpr std::uint8_t          kBindingsInnrCTLightCount = 3;
 
 // ── Full RGBW (m.light({colorTemp, color})) ─────────────────────────
 extern const ::zhc::FzConverter* const kFzInnrColorCTLight[];
-extern const std::uint8_t              kFzInnrColorCTLightCount;
+inline constexpr std::uint8_t          kFzInnrColorCTLightCount = 4;
 
 extern const ::zhc::TzConverter* const kTzInnrColorCTLight[];
-extern const std::uint8_t              kTzInnrColorCTLightCount;
+inline constexpr std::uint8_t          kTzInnrColorCTLightCount = 4;
 
 extern const ::zhc::Expose             kExposesInnrColorCTLight[];
-extern const std::uint8_t              kExposesInnrColorCTLightCount;
+inline constexpr std::uint8_t          kExposesInnrColorCTLightCount = 5;
 
 extern const ::zhc::BindingSpec        kBindingsInnrColorCTLight[];
-extern const std::uint8_t              kBindingsInnrColorCTLightCount;
+inline constexpr std::uint8_t          kBindingsInnrColorCTLightCount = 3;
 
 }  // namespace zhc::devices::innr
