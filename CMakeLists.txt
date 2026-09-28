@@ -3776,6 +3776,17 @@ add_test(NAME zhc_literal_count_guard
          COMMAND ${CMAKE_COMMAND} -E env python3
                  ${CMAKE_CURRENT_SOURCE_DIR}/tools/lint_literal_counts.py
                  ${CMAKE_CURRENT_SOURCE_DIR}/definitions)
+
+# Constant-init guard: a definition whose initialiser reads a value from
+# another TU (an `extern const` count) gets a static constructor, which on
+# the ESP32 moves it from flash .rodata into internal RAM .data — 1,093 of
+# them once cost the S31 ~124 KB of DRAM. See tools/check_defs_const_init.py.
+file(GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/zhc_definitions_objects.txt
+     CONTENT "$<JOIN:$<TARGET_OBJECTS:zhc_definitions>,\n>\n")
+add_test(NAME zhc_defs_const_init_guard
+         COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_defs_const_init.py
+                 ${CMAKE_OBJDUMP}
+                 ${CMAKE_CURRENT_BINARY_DIR}/zhc_definitions_objects.txt)
 add_test(NAME zhc_bticino_parity_tests      COMMAND zhc_bticino_parity_tests)
 add_test(NAME zhc_byun_parity_tests         COMMAND zhc_byun_parity_tests)
 add_test(NAME zhc_calex_parity_tests        COMMAND zhc_calex_parity_tests)
