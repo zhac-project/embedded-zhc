@@ -8,9 +8,14 @@
 //     tuyaOnOff({endpoints: [l1, l2]}) — state_l1 / state_l2 and one
 //     power_on_behavior on genOnOff 0x8002 {off, on, previous};
 //     configure = magic packet, bind + reporting.onOff on EP1 and EP2.
+//   ZK-EU-2U (TS0112, any manufacturer): m.onOff({endpointNames: [l1, l2]}) —
+//     state_l1 / state_l2 and power_on_behavior_l1 / _l2 on genOnOff 0x4003
+//     {0 off, 1 on, 2 toggle, 255 previous}; configure = bind + onOff
+//     reporting (MIN / MAX / 1) and a read of onOff + startUpOnOff per port.
 //
 // z2m-source: zigbee-herdsman-converters/src/devices/moes.ts #MS-104BZ,
-//             lib/tuya.ts tuyaBase / tuyaOnOff, lib/reporting.ts onOff.
+//             #ZK-EU-2U, lib/tuya.ts tuyaBase / tuyaOnOff,
+//             lib/reporting.ts onOff, lib/modernExtend.ts onOff.
 
 #include <cassert>
 #include <cstdint>
@@ -30,6 +35,7 @@
 
 namespace zhc::devices::moes {
 extern const PreparedDefinition kDef_MS_104BZ;
+extern const PreparedDefinition kDef_ZK_EU_2U;
 }  // namespace zhc::devices::moes
 
 using namespace zhc;
@@ -175,6 +181,37 @@ int main() {
         // Picked ahead of the generic TS011F plug by manufacturer name.
         assert(match("TS011F", "_TZ3000_pmz6mjyu") == &def);
         assert(match("TS011F", "_TZ3000_iv6ph5tr") == &def);
+    }
+
+    // ── Moes ZK-EU-2U
+    {
+        const auto& def = devices::moes::kDef_ZK_EU_2U;
+        expect_l1_l2(def);
+        expect_switch(def, "state_l1");
+        expect_switch(def, "state_l2");
+        assert(!find_expose(def, "state"));
+        // m.onOff: power_on_behavior per port, standard startUpOnOff values.
+        expect_enum(def, "power_on_behavior_l1", {"off", "on", "toggle", "previous"});
+        expect_enum(def, "power_on_behavior_l2", {"off", "on", "toggle", "previous"});
+        assert(!find_expose(def, "power_on_behavior"));
+
+        assert(is_bool(report(def, 1, 0x0000, 0x10, 0x01, "state_l1"), true));
+        assert(is_bool(report(def, 2, 0x0000, 0x10, 0x01, "state_l2"), true));
+        assert(is_str(report(def, 1, 0x4003, 0x30, 0x02, "power_on_behavior_l1"), "toggle"));
+        assert(is_str(report(def, 2, 0x4003, 0x30, 0xFF, "power_on_behavior_l2"), "previous"));
+        // The adapter strips `_l2`, routes to EP2 and hands the converter the bare key.
+        assert(encode(def, "power_on_behavior", "previous") == 0x4003FF);
+        assert(encode(def, "power_on_behavior", "off")      == 0x400300);
+
+        // configure per port: bind + onOff reporting (0 / 65000 / 1), then read
+        // onOff (0x0000) and startUpOnOff (0x4003).
+        assert(binds(def, 1, 0x0006) && binds(def, 2, 0x0006));
+        assert(reports_onoff(def, 1, 65000, 1) && reports_onoff(def, 2, 65000, 1));
+        assert(reads(def, 1, 0x0006, {0x00, 0x00, 0x03, 0x40}));
+        assert(reads(def, 2, 0x0006, {0x00, 0x00, 0x03, 0x40}));
+
+        // zigbeeModel TS0112, any manufacturer.
+        assert(match("TS0112", "_TZ3000_zzzzzzzz") == &def);
     }
     return 0;
 }

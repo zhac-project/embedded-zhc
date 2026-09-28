@@ -285,17 +285,17 @@ Phase 1 + Phase 2 parity work landed 2026-04-27 (see `docs/parity/MOES_PARITY.md
 **Status:** ✅ FULL  
 **z2m vendor:** `Moes`  
 **Fingerprints (1):** `TS0112` (zigbeeModel)  
-**ZHC port files (2):** `Moe_ZK_EU_2U.cpp`, `Moes_TS0112.cpp`
+**ZHC port files (1):** `ZK_EU_2U.cpp` (graduated from `generated/`)
 
 | Aspect | z2m | ZHC |
 |---|---|---|
-| fromZigbee | *(via extend: `m.onOff`)* | `::zhc::generic::kFzOnOff`, `::zhc::tuya::kFzTuyaMcuSyncTime`, `::zhc::tuya::kFzTuyaOnOffAction` |
-| toZigbee | *(via extend)* | `::zhc::generic::kTzOnOff` |
-| configure | *(none)* | *(nullptr)* |
-| exposes | *(via extend: `m.onOff`)* | `action`, `state` |
+| fromZigbee | *(via extend: `m.onOff`)* | `::zhc::generic::kFzOnOff`, `::zhc::generic::kFzPowerOnBehavior1` |
+| toZigbee | *(via extend)* | `::zhc::generic::kTzOnOff`, `::zhc::generic::kTzPowerOnBehavior1` |
+| configure | *(via extend: `m.onOff`)* | bind + onOff reporting + read onOff/startUpOnOff on EP1/EP2 |
+| exposes | *(via extend: `m.onOff`)* | `state_l1`, `state_l2`, `power_on_behavior_l1`, `power_on_behavior_l2` |
 | extend | `m.onOff` | — |
 
-**Notes:** z2m uses `extend: [m.onOff()]`; ZHC parent port `Moe_ZK_EU_2U.cpp` uses `kFzOnOff`+`kTzOnOff`; the additional `Moes_TS0112.cpp` sibling is from a stale generation pass (it advertises Tuya scene-action converters which do not match z2m — harmless because the parent definition shadows it for the runtime fingerprint match).
+**Notes:** 2026-09-28 (z2m v26.105.0): hand-port of `m.onOff({endpointNames: [l1, l2]})`, endpoint map l1 = 1, l2 = 2. z2m's EP7 fallback for l2 (units without EP2) is not mirrored: the endpoint map is static. Verified vs moes.ts source, NOT against real device.
 
 ### `ZP-LZ-FR2U` — Zigbee 3.0 dual USB wireless socket plug
 **Status:** ✅ FULL  
