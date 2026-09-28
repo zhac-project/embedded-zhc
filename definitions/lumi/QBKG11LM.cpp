@@ -8,8 +8,9 @@
 // action = genMultistateInput, operation_mode = genBasic 0xFF22
 // (0x12 control_relay / 0xFE decoupled, Lumi manufacturer code).
 //
-// Not ported: z2m `lumi_action` (genOnOff attributeReport → "single") —
-// it would publish an action on every relay report; `lumi_power` get.
+// Not ported: z2m `lumi_action` (a genOnOff report without attr 0xF000 →
+// action "single"; the multistate path already carries single/double/
+// release/hold), and the `lumi_power` get.
 //
 // z2m-source: zigbee-herdsman-converters/src/devices/lumi.ts
 //             #QBKG11LM (lumi.ctrl_ln1.aq1 / lumi.ctrl_ln1).
