@@ -1316,6 +1316,116 @@ extern const FzConverter kFzTuyaSwitchType{
     .user_config       = nullptr,
 };
 
+// ── tuyaLight extras (see _shared.hpp) ────────────────────────────────
+
+namespace {
+
+bool fz_tuya_brightness(const DecodedMessage& msg, const FzConverter&,
+                        const PreparedDefinition&, RuntimeContext&,
+                        FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("61440");  // 0xF000, 0-1000
+    if (!v || v->type != ValueType::Uint) return false;
+    Value o{}; o.type = ValueType::Uint; o.u = (v->u * 255 + 500) / 1000;   // z2m rounds
+    out.put("brightness", o);
+    return true;
+}
+
+// Cluster-specific command header, default response suppressed; the
+// platform patches the TSN.
+bool light_cmd_header(std::span<std::uint8_t> out, std::uint8_t cmd,
+                      std::size_t payload_len, std::size_t& out_size) {
+    if (out.size() < 3 + payload_len) return false;
+    out[0] = 0x11;
+    out[1] = 0x00;
+    out[2] = cmd;
+    out_size = 3 + payload_len;
+    return true;
+}
+
+bool tz_tuya_do_not_disturb(std::string_view key, const Value& input, const TzConverter&,
+                            const PreparedDefinition&, RuntimeContext&,
+                            std::span<std::uint8_t> out, std::size_t& out_size) {
+    out_size = 0;
+    if (key != "do_not_disturb") return false;
+    std::uint8_t enable;
+    if (input.type == ValueType::Bool) {
+        enable = input.b ? 0x01 : 0x00;
+    } else if (input.type == ValueType::Uint) {
+        enable = input.u ? 0x01 : 0x00;
+    } else if (input.type == ValueType::Int) {
+        enable = (input.i != 0) ? 0x01 : 0x00;
+    } else if (input.type == ValueType::StringRef && input.str) {
+        if      (std::strcmp(input.str, "ON")  == 0 || std::strcmp(input.str, "true")  == 0) enable = 0x01;
+        else if (std::strcmp(input.str, "OFF") == 0 || std::strcmp(input.str, "false") == 0) enable = 0x00;
+        else return false;
+    } else {
+        return false;
+    }
+    if (!light_cmd_header(out, 0xFA, 1, out_size)) return false;
+    out[3] = enable;
+    return true;
+}
+
+constexpr const char* kColorPowerOnLabels[] = { "initial", "previous", "customized" };
+
+bool tz_tuya_color_power_on(std::string_view key, const Value& input, const TzConverter&,
+                            const PreparedDefinition&, RuntimeContext&,
+                            std::span<std::uint8_t> out, std::size_t& out_size) {
+    out_size = 0;
+    if (key != "color_power_on_behavior") return false;
+    std::uint64_t idx = 3;   // out of range until matched
+    if (input.type == ValueType::Uint) {
+        idx = input.u;
+    } else if (input.type == ValueType::Int && input.i >= 0) {
+        idx = static_cast<std::uint64_t>(input.i);
+    } else if (input.type == ValueType::StringRef && input.str) {
+        for (std::uint64_t i = 0; i < 3; ++i)
+            if (std::strcmp(input.str, kColorPowerOnLabels[i]) == 0) idx = i;
+    }
+    if (idx >= 3) return false;
+    // mode (u16 LE) = value × 256, then 10 zero bytes.
+    if (!light_cmd_header(out, 0xF9, 12, out_size)) return false;
+    out[3] = 0x00;
+    out[4] = static_cast<std::uint8_t>(idx);
+    for (std::size_t i = 5; i < 15; ++i) out[i] = 0x00;
+    return true;
+}
+
+}  // namespace
+
+extern const FzConverter kFzTuyaBrightness{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genLevelCtrl",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_tuya_brightness },
+    .user_config       = nullptr,
+};
+
+extern const TzConverter kTzTuyaDoNotDisturb{
+    .key         = "do_not_disturb",
+    .cluster     = "lightingColorCtrl",
+    .cluster_id  = 0x0300,
+    .command_id  = 0xFA,        // tuyaDoNotDisturb
+    .fn          = tz_tuya_do_not_disturb,
+    .user_config = nullptr,
+};
+
+extern const TzConverter kTzTuyaColorPowerOnBehavior{
+    .key         = "color_power_on_behavior",
+    .cluster     = "lightingColorCtrl",
+    .cluster_id  = 0x0300,
+    .command_id  = 0xF9,        // tuyaOnStartUp
+    .fn          = tz_tuya_color_power_on,
+    .user_config = nullptr,
+};
+
 // ── Generic ZCL-light Configure-Reporting sets (single-endpoint) ──────
 //
 // Shared reporting arrays for standard-ZCL Tuya lights. Values mirror

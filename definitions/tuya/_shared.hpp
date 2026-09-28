@@ -360,6 +360,20 @@ extern const TzConverter kTzTuyaChildLock;         // attr 0x8000 bool
 extern const FzConverter kFzTuyaSwitchType;
 extern const TzConverter kTzTuyaSwitchType;
 
+// ── tuyaLight extras ─────────────────────────────────────────────────
+//
+// kFzTuyaBrightness: genLevelCtrl attr 0xF000 (0-1000) → brightness 0-255
+// (z2m tuyaFz.brightness). Wire next to the generic brightness decode.
+// kTzTuyaDoNotDisturb: lightingColorCtrl cmd 0xFA tuyaDoNotDisturb [enable].
+// kTzTuyaColorPowerOnBehavior: lightingColorCtrl cmd 0xF9 tuyaOnStartUp,
+// {initial, previous, customized} → mode u16 LE = value × 256 + 10 zero bytes.
+// Both writes are commands the light never echoes back.
+// z2m-source: lib/tuya.ts tuyaFz.brightness, tuyaTz.do_not_disturb,
+//             tuyaTz.color_power_on_behavior.
+extern const FzConverter kFzTuyaBrightness;
+extern const TzConverter kTzTuyaDoNotDisturb;
+extern const TzConverter kTzTuyaColorPowerOnBehavior;
+
 // z2m tuya.configureMagicPacket — genBasic read of manufacturerName,
 // zclVersion, appVersion, modelId, powerSource, 0xFFFE (LE attr ids), as
 // a Read-step payload.

@@ -15,13 +15,14 @@
 // So this file:
 //   - removes the (wrong-for-this-device) generic `power_on_behavior`
 //     expose + `kFzPowerOnBehavior` + the 0x4003 initial read, and
-//   - adds three vendor-local write-only command converters:
+//   - wires three write-only command converters:
 //       * color_power_on_behavior — lightingColorCtrl(0x0300) cmd 0xf9
-//                                   (tuyaOnStartUp): mode u16 LE (= v*256)
-//                                   + 10 zero bytes.
+//                                   (tuyaOnStartUp), shared
+//                                   tuya::kTzTuyaColorPowerOnBehavior.
 //       * do_not_disturb          — lightingColorCtrl(0x0300) cmd 0xfa
-//                                   (tuyaDoNotDisturb): 1-byte enable.
-//       * effect                  — genIdentify(0x0003) cmd 0x40
+//                                   (tuyaDoNotDisturb), shared
+//                                   tuya::kTzTuyaDoNotDisturb.
+//       * effect (local)          — genIdentify(0x0003) cmd 0x40
 //                                   (triggerEffect): [effect_id, variant=0]
 //                                   for the 6 standard effects, PLUS
 //                                   lightingColorCtrl(0x0300) cmd 0x44
@@ -39,6 +40,7 @@
 #include <cstring>
 
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/tuya/_shared.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/types.hpp"
 
@@ -64,14 +66,14 @@ constexpr const char* kManus_YSR_MINI_01_rgbcct[]  = {
 }  // namespace
 
 
-// ── Write-only command encoders (tuyaLight control parity) ───────────
+// ── Write-only effect encoders (tuyaLight control parity) ────────────
 //
-// All three are CLUSTER-SPECIFIC commands (not attribute writes, not
-// Tuya 0xEF00 DPs) sent profile-wide (no manufacturer code) — exactly
-// as z2m's `tuya.modernExtend.tuyaOnStartUp` / `tuyaDoNotDisturb` and
-// the standard `triggerEffect` / `colorLoopSet` do. The shared
-// `_generic` `write_header()` (FC=0x11 cluster-specific, default-response
+// CLUSTER-SPECIFIC commands (not attribute writes, not Tuya 0xEF00 DPs)
+// sent profile-wide (no manufacturer code). The shared `_generic`
+// `write_header()` (FC=0x11 cluster-specific, default-response
 // suppressed) is file-private, so a tiny local header writer mirrors it.
+// NOTE: colour loop goes out as colorLoopSet here; z2m's tz.effect uses
+// moveHue (`hue_move`), as the shared generic::kTzEffectColorLoop does.
 namespace {
 
 // ZCL frame-control byte for a cluster-specific c→s command with the
@@ -90,103 +92,6 @@ bool ysr_write_header(std::span<std::uint8_t> out, std::uint8_t cmd_id,
     out_size = total;
     return true;
 }
-
-// Resolve an enum-style Value to its ordinal. Accepts Uint/Int (already
-// an index) or a StringRef label matched against `labels`. Returns false
-// on type mismatch / unknown label / out-of-range index.
-bool ysr_enum_index(const Value& v, const char* const* labels,
-                    std::size_t label_count, std::uint8_t& out) {
-    if (v.type == ValueType::Uint) {
-        if (v.u >= label_count) return false;
-        out = static_cast<std::uint8_t>(v.u);
-        return true;
-    }
-    if (v.type == ValueType::Int) {
-        if (v.i < 0 || static_cast<std::size_t>(v.i) >= label_count) return false;
-        out = static_cast<std::uint8_t>(v.i);
-        return true;
-    }
-    if (v.type == ValueType::StringRef && v.str) {
-        for (std::size_t i = 0; i < label_count; ++i) {
-            if (std::strcmp(v.str, labels[i]) == 0) {
-                out = static_cast<std::uint8_t>(i);
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-// ── color_power_on_behavior → lightingColorCtrl 0x0300 cmd 0xf9 ──────
-// z2m `tuya.modernExtend.tuyaOnStartUp`: enum {initial,previous,customized}
-// → 0/1/2. Payload = mode (u16 LE) = value*256, then 10 bytes of 0x00.
-constexpr const char* kColorPowerOnLabels[] = { "initial", "previous", "customized" };
-
-bool tz_color_power_on(std::string_view key, const Value& input,
-                       const TzConverter&,
-                       const PreparedDefinition&, RuntimeContext&,
-                       std::span<std::uint8_t> out_frame, std::size_t& out_size) {
-    out_size = 0;
-    if (key != "color_power_on_behavior") return false;
-    std::uint8_t idx = 0;
-    if (!ysr_enum_index(input, kColorPowerOnLabels,
-                        sizeof(kColorPowerOnLabels) / sizeof(kColorPowerOnLabels[0]),
-                        idx)) {
-        return false;
-    }
-    // mode (u16 LE) = value*256, then `data` = 10 zero bytes → 12-byte body.
-    if (!ysr_write_header(out_frame, 0xf9, /*payload_len=*/12, out_size)) return false;
-    const std::uint16_t mode = static_cast<std::uint16_t>(idx) * 256u;
-    out_frame[3] = static_cast<std::uint8_t>(mode & 0xFF);
-    out_frame[4] = static_cast<std::uint8_t>((mode >> 8) & 0xFF);
-    for (std::size_t i = 5; i < 15; ++i) out_frame[i] = 0x00;
-    return true;
-}
-
-extern const TzConverter kTzColorPowerOn{
-    .key         = "color_power_on_behavior",
-    .cluster     = "lightingColorCtrl",
-    .cluster_id  = 0x0300,
-    .command_id  = 0xf9,        // tuyaOnStartUp
-    .fn          = tz_color_power_on,
-    .user_config = nullptr,
-};
-
-// ── do_not_disturb → lightingColorCtrl 0x0300 cmd 0xfa ───────────────
-// z2m `tuya.modernExtend.tuyaDoNotDisturb`: binary → 1-byte enable.
-bool tz_do_not_disturb(std::string_view key, const Value& input,
-                       const TzConverter&,
-                       const PreparedDefinition&, RuntimeContext&,
-                       std::span<std::uint8_t> out_frame, std::size_t& out_size) {
-    out_size = 0;
-    if (key != "do_not_disturb") return false;
-    std::uint8_t enable;
-    if (input.type == ValueType::Bool) {
-        enable = input.b ? 0x01 : 0x00;
-    } else if (input.type == ValueType::Uint) {
-        enable = input.u ? 0x01 : 0x00;
-    } else if (input.type == ValueType::Int) {
-        enable = (input.i != 0) ? 0x01 : 0x00;
-    } else if (input.type == ValueType::StringRef && input.str) {
-        if      (std::strcmp(input.str, "ON")  == 0 || std::strcmp(input.str, "true")  == 0) enable = 0x01;
-        else if (std::strcmp(input.str, "OFF") == 0 || std::strcmp(input.str, "false") == 0) enable = 0x00;
-        else return false;
-    } else {
-        return false;
-    }
-    if (!ysr_write_header(out_frame, 0xfa, /*payload_len=*/1, out_size)) return false;
-    out_frame[3] = enable;
-    return true;
-}
-
-extern const TzConverter kTzDoNotDisturb{
-    .key         = "do_not_disturb",
-    .cluster     = "lightingColorCtrl",
-    .cluster_id  = 0x0300,
-    .command_id  = 0xfa,        // tuyaDoNotDisturb
-    .fn          = tz_do_not_disturb,
-    .user_config = nullptr,
-};
 
 // ── effect → genIdentify 0x0003 cmd 0x40 (triggerEffect) ─────────────
 // 6 standard effects. Payload = [effect_id u8, variant u8 = 0x00].
@@ -284,6 +189,7 @@ namespace {
 constexpr const char* kColorMode_Light[] = { "hs", "xy", "color_temp" };
 
 // Write-only command enums surfaced to the SPA.
+constexpr const char* kColorPowerOnLabels[] = { "initial", "previous", "customized" };
 constexpr const char* kEffectLabels[] = {
     "blink", "breathe", "okay", "channel_change", "finish_effect",
     "stop_effect", "colorloop", "stop_colorloop",
@@ -303,8 +209,8 @@ const TzConverter* const kTz_min_YSR_MINI_01_rgbcct[] = {
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
     // Write-only tuyaLight control parity (vendor-local, this file):
-    &kTzColorPowerOn,      // color_power_on_behavior — 0x0300 cmd 0xf9
-    &kTzDoNotDisturb,      // do_not_disturb          — 0x0300 cmd 0xfa
+    &::zhc::tuya::kTzTuyaColorPowerOnBehavior,   // 0x0300 cmd 0xf9
+    &::zhc::tuya::kTzTuyaDoNotDisturb,           // 0x0300 cmd 0xfa
     &kTzEffectIdentify,    // effect (6 std)          — 0x0003 cmd 0x40
     &kTzEffectColorLoop,   // effect (colour loop)    — 0x0300 cmd 0x44
     // tz for XY color write-back not yet in the library — fz lands the

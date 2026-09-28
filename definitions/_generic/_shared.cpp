@@ -2269,7 +2269,7 @@ extern const TzConverter kTzOnOff{
 };
 
 bool tz_brightness(std::string_view key, const Value& input,
-                    const TzConverter&,
+                    const TzConverter& self,
                     const PreparedDefinition&, RuntimeContext&,
                     std::span<std::uint8_t> out_frame, std::size_t& out_size) {
     out_size = 0;
@@ -2277,8 +2277,10 @@ bool tz_brightness(std::string_view key, const Value& input,
     if (input.type != ValueType::Uint) return false;
     if (input.u > 254) return false;
 
-    // moveToLevelWithOnOff (0x04) — payload: level u8, transtime u16 LE.
-    if (!write_header(out_frame, 0x04, /*payload_len=*/3, out_size)) {
+    // moveToLevelWithOnOff (0x04) or moveToLevel (0x00), per the converter —
+    // payload: level u8, transtime u16 LE.
+    if (!write_header(out_frame, static_cast<std::uint8_t>(self.command_id),
+                      /*payload_len=*/3, out_size)) {
         return false;
     }
     out_frame[3] = static_cast<std::uint8_t>(input.u);
@@ -2293,6 +2295,79 @@ extern const TzConverter kTzBrightness{
     .cluster_id   = 0x0008,
     .command_id   = 0x04,
     .fn           = tz_brightness,
+    .user_config  = nullptr,
+};
+
+extern const TzConverter kTzBrightnessMoveToLevel{
+    .key          = "brightness",
+    .cluster      = "genLevelCtrl",
+    .cluster_id   = 0x0008,
+    .command_id   = 0x00,
+    .fn           = tz_brightness,
+    .user_config  = nullptr,
+};
+
+// z2m `tz.effect`: the identify effects go out as genIdentify triggerEffect
+// [effect id, variant 0]; colorloop / stop_colorloop are `hue_move` on
+// lightingColorCtrl (below). Each converter abstains on the other's labels.
+namespace {
+struct EffectId { const char* label; std::uint8_t id; };
+constexpr EffectId kIdentifyEffects[] = {
+    {"blink", 0x00}, {"breathe", 0x01}, {"okay", 0x02},
+    {"channel_change", 0x0B}, {"finish_effect", 0xFE}, {"stop_effect", 0xFF},
+};
+
+bool tz_effect(std::string_view key, const Value& input, const TzConverter&,
+               const PreparedDefinition&, RuntimeContext&,
+               std::span<std::uint8_t> out_frame, std::size_t& out_size) {
+    out_size = 0;
+    if (key != "effect" || input.type != ValueType::StringRef || !input.str) return false;
+    for (const auto& e : kIdentifyEffects) {
+        if (std::strcmp(input.str, e.label) != 0) continue;
+        if (!write_header(out_frame, 0x40, /*payload_len=*/2, out_size)) return false;
+        out_frame[3] = e.id;
+        out_frame[4] = 0x00;     // effect variant
+        return true;
+    }
+    return false;
+}
+}  // namespace
+
+extern const TzConverter kTzEffect{
+    .key          = "effect",
+    .cluster      = "genIdentify",
+    .cluster_id   = 0x0003,
+    .command_id   = 0x40,     // triggerEffect
+    .fn           = tz_effect,
+    .user_config  = nullptr,
+};
+
+// colorloop = moveHue up at 255 / 15 s = 17 (z2m's default transition),
+// stop_colorloop = moveHue stop, rate 1. Payload: mode, rate, optionsMask,
+// optionsOverride.
+namespace {
+bool tz_effect_color_loop(std::string_view key, const Value& input, const TzConverter&,
+                          const PreparedDefinition&, RuntimeContext&,
+                          std::span<std::uint8_t> out_frame, std::size_t& out_size) {
+    out_size = 0;
+    if (key != "effect" || input.type != ValueType::StringRef || !input.str) return false;
+    const bool start = std::strcmp(input.str, "colorloop") == 0;
+    if (!start && std::strcmp(input.str, "stop_colorloop") != 0) return false;
+    if (!write_header(out_frame, 0x01, /*payload_len=*/4, out_size)) return false;
+    out_frame[3] = start ? 0x01 : 0x00;     // move mode: up / stop
+    out_frame[4] = start ? 17 : 1;          // rate
+    out_frame[5] = 0x00;
+    out_frame[6] = 0x00;
+    return true;
+}
+}  // namespace
+
+extern const TzConverter kTzEffectColorLoop{
+    .key          = "effect",
+    .cluster      = "lightingColorCtrl",
+    .cluster_id   = 0x0300,
+    .command_id   = 0x01,     // moveHue
+    .fn           = tz_effect_color_loop,
     .user_config  = nullptr,
 };
 

@@ -575,6 +575,17 @@ bool tz_brightness(std::string_view key,
 
 extern const TzConverter kTzBrightness;
 
+// Same, as `moveToLevel` (0x00): z2m meta `moveToLevelWithOnOffDisable`, for
+// lights that randomly switch off on moveToLevelWithOnOff at low levels.
+extern const TzConverter kTzBrightnessMoveToLevel;
+
+// z2m `tz.effect`, one key on two clusters: kTzEffect sends the identify
+// effects (blink, breathe, okay, channel_change, finish_effect, stop_effect)
+// as genIdentify triggerEffect; kTzEffectColorLoop sends colorloop /
+// stop_colorloop as lightingColorCtrl moveHue. Wire both.
+extern const TzConverter kTzEffect;
+extern const TzConverter kTzEffectColorLoop;
+
 // lightingColorCtrl (0x0300) "color_temp" setter. Emits the
 // `moveToColorTemp` (0x0A) command. Accepts `Value::Uint` mireds.
 bool tz_color_temp(std::string_view key,
