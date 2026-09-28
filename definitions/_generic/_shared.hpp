@@ -326,6 +326,8 @@ extern const FzConverter kFzIasWaterLeakAlarm;
 extern const FzConverter kFzIasWaterLeakAlarm1;
 extern const FzConverter kFzIasWaterLeakAlarm2;
 extern const FzConverter kFzIasSmokeAlarm;
+// zoneStatus bit 1 → `test` (z2m lumi_smoke test-mode flag).
+extern const FzConverter kFzIasTestBit;
 extern const FzConverter kFzIasCoAlarm;
 extern const FzConverter kFzIasVibrationAlarm;
 // Variant of kFzIasVibrationAlarm reading zoneStatus bit 1 instead of

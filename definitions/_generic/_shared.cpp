@@ -1241,6 +1241,9 @@ constexpr IasAlarmLabel kLbl_Alarm       { "alarm",           0 };
 // z2m fz.ias_sos_alarm_2: SOS / panic button reports on zoneStatus bit 1,
 // published as `sos` (Feibit SEB01ZB SOS button).
 constexpr IasAlarmLabel kLbl_Sos2        { "sos",             1 };
+// z2m lumi_smoke: `test` = zoneStatus bit 1 (test mode), next to the
+// smoke alarm (Xiaomi JTYJ-GD-01LM/BW).
+constexpr IasAlarmLabel kLbl_Test        { "test",            1 };
 
 }  // namespace
 
@@ -1279,6 +1282,7 @@ ZHC_IAS_TYPED_CVT(kFzIasGasAlarm,       &kLbl_Gas);
 ZHC_IAS_TYPED_CVT(kFzIasGasAlarm2,      &kLbl_Gas2);
 ZHC_IAS_TYPED_CVT(kFzIasGenericAlarm,   &kLbl_Alarm);
 ZHC_IAS_TYPED_CVT(kFzIasSosAlarm2,      &kLbl_Sos2);
+ZHC_IAS_TYPED_CVT(kFzIasTestBit,        &kLbl_Test);
 
 // ── ssIasAce arm / panic command decoders ───────────────────────────
 //
