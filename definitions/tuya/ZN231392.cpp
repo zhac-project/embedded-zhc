@@ -16,7 +16,8 @@
 // reporting (z2m's ZN231392 configure only reads), so manual valve
 // changes keep reaching the hub.
 //
-// z2m-source: tuya.ts #ZN231392.
+// z2m-source: tuya.ts #ZN231392. v26.105.0 adds tuyaBase(), whose only
+// configure step is the magic packet this configure already sends.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
 namespace zhc::devices::tuya {

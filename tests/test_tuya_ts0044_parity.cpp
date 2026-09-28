@@ -129,5 +129,24 @@ int main() {
     const Value* mv = rv.merged.find("voltage");
     assert(mv && mv->type == ValueType::Uint && mv->u == 3000);
 
+    // z2m v26.105.0: m.battery({voltage: true, percentageReporting: false}) —
+    // battery % (0-100) and voltage mV as diagnostics, no reporting configured
+    // (checked above), and 0xFF ("invalid") on either attribute is skipped.
+    const Expose* bx = find_expose(def, "battery");
+    assert(bx->category == ExposeCategory::Diagnostic && bx->value_min == 0 && bx->value_max == 100);
+    assert(find_expose(def, "voltage")->category == ExposeCategory::Diagnostic);
+    const std::uint8_t invalid[] = {0xFF};
+    assert(!dispatch_zcl(def, GEN_POWER_CFG, 1, attr_report(0x0021, 0x20, invalid)).merged.find("battery"));
+    assert(!dispatch_zcl(def, GEN_POWER_CFG, 1, attr_report(0x0020, 0x20, invalid)).merged.find("voltage"));
+
+    // v26.105.0 white labels: Nous C1 and Tuya TS0044_2 join the list.
+    auto has_wl = [&](const char* vendor, const char* model) {
+        for (std::size_t i = 0; i < def.white_labels_count; ++i)
+            if (std::strcmp(def.white_labels[i].vendor, vendor) == 0 &&
+                std::strcmp(def.white_labels[i].model, model) == 0) return true;
+        return false;
+    };
+    assert(has_wl("Nous", "C1") && has_wl("Tuya", "TS0044_2") && has_wl("iHseno", "_TZ3000_mh9px7cq"));
+
     return 0;
 }

@@ -19,7 +19,9 @@
 #include <span>
 
 #include "zhc/cluster_names.hpp"
+#include "zhc/devices/tuya_registry.hpp"
 #include "zhc/runtime/definition.hpp"
+#include "zhc/runtime/definition_runtime.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
@@ -115,6 +117,13 @@ int main() {
         }
         assert(magic);
         assert(def.power_source_override == 0x01);   // Mains (single phase)
+
+        // z2m v26.105.0: zigbeeModel ["TS0011", "ZG-302Z1"] (any manufacturer
+        // without its own definition), tuyaBase() → the magic packet above.
+        const std::span<const PreparedDefinition* const> reg(devices::tuya::kTuyaRegistry,
+                                                             devices::tuya::kTuyaRegistryCount);
+        assert(find_definition("ZG-302Z1", "_TZ3000_zzzzzzzz", reg) == &def);
+        assert(find_definition("TS0011", "_TZ3000_l8fsgo6p", reg) == &def);
     }
 
     // ── eWeLink SWITCH-ZR03-1

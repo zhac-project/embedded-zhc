@@ -62,8 +62,10 @@ bool fz_battery(const DecodedMessage& msg,
     bool emitted = false;
 
     // attr 0x0020 — batteryVoltage (u8 in units of 100 mV → emit in mV).
+    // 0xFF on either u8 attribute is ZCL "invalid"; z2m fz.battery and
+    // m.battery skip it (`< 255`).
     if (const Value* v = msg.payload.find("32")) {
-        if (v->type == ValueType::Uint) {
+        if (v->type == ValueType::Uint && v->u < 255) {
             Value volt{}; volt.type = ValueType::Uint; volt.u = v->u * 100;
             out.put("voltage", volt);
             emitted = true;
@@ -73,7 +75,7 @@ bool fz_battery(const DecodedMessage& msg,
     // attr 0x0021 — batteryPercentageRemaining. Zigbee spec: u8 in
     // half-percent units, 0x00 = 0 %, 0xC8 = 100 %. Emit whole percent.
     if (const Value* v = msg.payload.find("33")) {
-        if (v->type == ValueType::Uint) {
+        if (v->type == ValueType::Uint && v->u < 255) {
             Value bat{}; bat.type = ValueType::Uint; bat.u = v->u / 2;
             out.put("battery", bat);
             emitted = true;
@@ -130,8 +132,10 @@ bool fz_battery_no_divide(const DecodedMessage& msg,
     bool emitted = false;
 
     // attr 0x0020 — batteryVoltage (u8 in units of 100 mV → emit in mV).
+    // 0xFF on either u8 attribute is ZCL "invalid"; z2m fz.battery and
+    // m.battery skip it (`< 255`).
     if (const Value* v = msg.payload.find("32")) {
-        if (v->type == ValueType::Uint) {
+        if (v->type == ValueType::Uint && v->u < 255) {
             Value volt{}; volt.type = ValueType::Uint; volt.u = v->u * 100;
             out.put("voltage", volt);
             emitted = true;
@@ -141,7 +145,7 @@ bool fz_battery_no_divide(const DecodedMessage& msg,
     // attr 0x0021 — batteryPercentageRemaining, reported as a whole
     // percent already (dontDividePercentage). Emit verbatim, no /2.
     if (const Value* v = msg.payload.find("33")) {
-        if (v->type == ValueType::Uint) {
+        if (v->type == ValueType::Uint && v->u < 255) {
             Value bat{}; bat.type = ValueType::Uint; bat.u = v->u;
             out.put("battery", bat);
             emitted = true;
