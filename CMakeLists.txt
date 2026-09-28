@@ -3398,6 +3398,8 @@ target_link_libraries(zhc_titan_products_parity_tests PRIVATE zhc_definitions)
 # MOES parity sweep. See tests/README.md for the pattern.
 add_executable(zhc_moes_bht002_tests tests/test_moes_bht002.cpp)
 target_link_libraries(zhc_moes_bht002_tests PRIVATE zhc_definitions)
+add_executable(zhc_moes_onoff_2ep_tests tests/test_moes_onoff_2ep.cpp)
+target_link_libraries(zhc_moes_onoff_2ep_tests PRIVATE zhc_definitions)
 
 # Saswell SEA801/SEA802 weekly schedule codec (DP 123..129 read, DP 109 write).
 add_executable(zhc_saswell_sea801_tests tests/test_saswell_sea801.cpp)
@@ -3737,6 +3739,7 @@ add_test(NAME zhc_domraem_parity_tests      COMMAND zhc_domraem_parity_tests)
 add_test(NAME zhc_istar_parity_tests        COMMAND zhc_istar_parity_tests)
 add_test(NAME zhc_shenzhen_homa_parity_tests COMMAND zhc_shenzhen_homa_parity_tests)
 add_test(NAME zhc_moes_bht002_tests         COMMAND zhc_moes_bht002_tests)
+add_test(NAME zhc_moes_onoff_2ep_tests      COMMAND zhc_moes_onoff_2ep_tests)
 add_test(NAME zhc_saswell_sea801_tests      COMMAND zhc_saswell_sea801_tests)
 add_test(NAME zhc_neo_nas_ab02b0_tests      COMMAND zhc_neo_nas_ab02b0_tests)
 add_test(NAME zhc_smoke_ias_tests           COMMAND zhc_smoke_ias_tests)

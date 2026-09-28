@@ -93,17 +93,17 @@ Phase 1 + Phase 2 parity work landed 2026-04-27 (see `docs/parity/MOES_PARITY.md
 **Status:** ✅ FULL  
 **z2m vendor:** `Moes`  
 **Fingerprints (2):** `_TZ3000_pmz6mjyu`, `_TZ3000_iv6ph5tr`  
-**ZHC port files (3):** `Moe_MS_104BZ.cpp`, `Moes__TZ3000_iv6ph5tr.cpp`, `Moes__TZ3000_pmz6mjyu.cpp`
+**ZHC port files (1):** `MS_104BZ.cpp` (graduated from `generated/`)
 
 | Aspect | z2m | ZHC |
 |---|---|---|
-| fromZigbee | *(via extend: `tuya.modernExtend.tuyaOnOff`)* | `::zhc::generic::kFzBattery`, `::zhc::generic::kFzOnOff`, `::zhc::tuya::kFzTuyaMcuSyncTime` |
-| toZigbee | *(via extend)* | `::zhc::generic::kTzOnOff` |
-| configure | `INLINE_FN` | `::zhc::tuya::extend::tuya_base_configure()` |
-| exposes | *(via extend: `tuya.modernExtend.tuyaOnOff`)* | `battery`, `state`, `voltage` |
+| fromZigbee | *(via extend: `tuya.modernExtend.tuyaOnOff`)* | `::zhc::generic::kFzOnOff`, `::zhc::tuya::kFzTuyaPowerOnBehavior` |
+| toZigbee | *(via extend)* | `::zhc::generic::kTzOnOff`, `::zhc::tuya::kTzTuyaPowerOnBehavior` |
+| configure | `INLINE_FN` | bind + onOff reporting on EP1/EP2, magic packet |
+| exposes | *(via extend: `tuya.modernExtend.tuyaOnOff`)* | `state_l1`, `state_l2`, `power_on_behavior` |
 | extend | `tuya.modernExtend.tuyaOnOff` | — |
 
-**Notes:** Phase C (2026-04-27): `tuya_base_configure` attached (was nullptr).
+**Notes:** 2026-09-28 (z2m v26.105.0): hand-port of `tuyaBase` + `tuyaOnOff({endpoints: [l1, l2]})`, endpoint map l1 = 1, l2 = 2. Verified vs moes.ts source, NOT against real device.
 
 ### `MS-104Z` — Smart light switch module (1 gang)
 **Status:** ✅ FULL  
