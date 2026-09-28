@@ -226,6 +226,16 @@ bool fz_tuya_indicator_mode(const DecodedMessage& msg,
                               FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 extern const FzConverter kFzTuyaIndicatorMode;
 
+// genOnOff 0x8001 → backlight_mode {0 off, 1 normal, 2 inverted}
+// (z2m tuyaFz.backlight_mode_off_normal_inverted). Pairs with
+// kTzTuyaBacklightMode; never wire together with kFzTuyaIndicatorMode.
+bool fz_tuya_backlight_mode(const DecodedMessage& msg,
+                             const FzConverter& self,
+                             const PreparedDefinition& def,
+                             RuntimeContext& ctx,
+                             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+extern const FzConverter kFzTuyaBacklightMode;
+
 bool fz_tuya_operation_mode(const DecodedMessage& msg,
                               const FzConverter& self,
                               const PreparedDefinition& def,
@@ -336,6 +346,7 @@ extern const TzConverter kTzTuyaDatapointsProto;
 extern const TzConverter kTzTuyaPowerOnBehavior;   // attr 0x8002 enum
 extern const TzConverter kTzTuyaOperationMode;     // attr 0x8004 enum
 extern const TzConverter kTzTuyaIndicatorMode;     // attr 0x8001 enum
+extern const TzConverter kTzTuyaBacklightMode;     // attr 0x8001 enum off/normal/inverted
 extern const TzConverter kTzTuyaChildLock;         // attr 0x8000 bool
 
 // ── manuSpecificTuya3 cluster (ID 0xE001, ZHC name "manuSpecificTuya2") ──
@@ -348,6 +359,12 @@ extern const TzConverter kTzTuyaChildLock;         // attr 0x8000 bool
 // z2m-source: lib/tuya.ts tuyaFz.switch_type / tuyaTz.switch_type.
 extern const FzConverter kFzTuyaSwitchType;
 extern const TzConverter kTzTuyaSwitchType;
+
+// z2m tuya.configureMagicPacket as a one-step `config_steps` list
+// (genBasic read 4, 0, 1, 5, 7, 0xFFFE on EP1). tuya_base_configure() is
+// a no-op, so a def that needs the packet points `config_steps` here.
+extern const ::zhc::ConfigStep kConfigStepsTuyaMagicPacket[];
+extern const std::uint8_t      kConfigStepsTuyaMagicPacketCount;
 
 // ── kReportsOnOff_Nep — genOnOff Configure-Reporting for switch gangs ──
 //

@@ -18,6 +18,18 @@
 
 namespace zhc::tuya {
 
+// z2m tuya.configureMagicPacket — genBasic read of manufacturerName,
+// zclVersion, appVersion, modelId, powerSource, 0xFFFE (LE attr ids).
+constexpr std::uint8_t kMagicPacketAttrs[] = {
+    0x04, 0x00,  0x00, 0x00,  0x01, 0x00,
+    0x05, 0x00,  0x07, 0x00,  0xFE, 0xFF,
+};
+const ::zhc::ConfigStep kConfigStepsTuyaMagicPacket[] = {
+    { ::zhc::ConfigStepOp::Read, 1, 0x0000, 0x00, 0,
+      kMagicPacketAttrs, sizeof(kMagicPacketAttrs), 0 },
+};
+const std::uint8_t kConfigStepsTuyaMagicPacketCount = 1;
+
 // ── kReportsOnOff_Nep — genOnOff attribute reporting for switch gangs ──
 //
 // Mirrors z2m's `reporting.onOff(endpoint)` exactly. In
@@ -483,6 +495,15 @@ constexpr EnumAttrConfig kIndicatorModeCfg{
     0x8001, "indicator_mode", kIndicatorModeTable, 4,
 };
 
+// z2m tuyaFz.backlight_mode_off_normal_inverted — same attr 0x8001 as
+// indicator_mode, other labels; a def wires one or the other.
+constexpr TuyaEnumEntry kBacklightModeTable[] = {
+    {0, "off"}, {1, "normal"}, {2, "inverted"},
+};
+constexpr EnumAttrConfig kBacklightModeCfg{
+    0x8001, "backlight_mode", kBacklightModeTable, 3,
+};
+
 constexpr TuyaEnumEntry kOperationModeTable[] = {
     {0, "command"}, {1, "event"},
 };
@@ -506,6 +527,14 @@ bool fz_tuya_indicator_mode(const DecodedMessage& msg,
                               RuntimeContext&,
                               FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     return decode_enum_attr(msg, kIndicatorModeCfg, out);
+}
+
+bool fz_tuya_backlight_mode(const DecodedMessage& msg,
+                             const FzConverter&,
+                             const PreparedDefinition&,
+                             RuntimeContext&,
+                             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    return decode_enum_attr(msg, kBacklightModeCfg, out);
 }
 
 bool fz_tuya_operation_mode(const DecodedMessage& msg,
@@ -703,6 +732,7 @@ bool fz_tuya_action(const DecodedMessage& msg, const FzConverter& self,
 
 ZHC_TUYA_ATTR_CVT(kFzTuyaPowerOnBehavior, "genOnOff", fz_tuya_power_on_behavior);
 ZHC_TUYA_ATTR_CVT(kFzTuyaIndicatorMode,   "genOnOff", fz_tuya_indicator_mode);
+ZHC_TUYA_ATTR_CVT(kFzTuyaBacklightMode,   "genOnOff", fz_tuya_backlight_mode);
 ZHC_TUYA_ATTR_CVT(kFzTuyaOperationMode,   "genOnOff", fz_tuya_operation_mode);
 
 #define ZHC_TUYA_ACTION_CVT(var, cfg_ptr)                                 \
@@ -1208,6 +1238,15 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecIndicatorMode{
     "indicator_mode", 0x8001, 0x30, 0, kIndicatorLut, 4,
 };
 
+// z2m tuyaTz.backlight_indicator_mode_1, backlight_mode branch
+// (off/normal/inverted; its low/medium/high aliases are not ported).
+constexpr ::zhc::generic::ZclWriteLookup kBacklightLut[] = {
+    {"off", 0}, {"normal", 1}, {"inverted", 2},
+};
+constexpr ::zhc::generic::ZclWriteSpec kSpecBacklightMode{
+    "backlight_mode", 0x8001, 0x30, 0, kBacklightLut, 3,
+};
+
 constexpr ::zhc::generic::ZclWriteSpec kSpecChildLock{
     "child_lock", 0x8000, 0x10, 0, nullptr, 0,
 };
@@ -1254,6 +1293,7 @@ bool fz_tuya_switch_type(const DecodedMessage& msg, const FzConverter&,
 ZHC_TUYA_TZ(kTzTuyaPowerOnBehavior, kSpecPowerOnBehavior, "power_on_behavior")
 ZHC_TUYA_TZ(kTzTuyaOperationMode,   kSpecOperationMode,   "operation_mode")
 ZHC_TUYA_TZ(kTzTuyaIndicatorMode,   kSpecIndicatorMode,   "indicator_mode")
+ZHC_TUYA_TZ(kTzTuyaBacklightMode,   kSpecBacklightMode,   "backlight_mode")
 ZHC_TUYA_TZ(kTzTuyaChildLock,       kSpecChildLock,       "child_lock")
 #undef ZHC_TUYA_TZ
 
