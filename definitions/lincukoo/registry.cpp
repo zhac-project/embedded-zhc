@@ -47,8 +47,6 @@ extern const PreparedDefinition kDef_E02C_Z10T;
 extern const PreparedDefinition kDef_W04_Z10T;
 extern const PreparedDefinition kDef_CZF02;
 extern const PreparedDefinition kDef_EZC04;
-extern const PreparedDefinition kDef_SZLR08;
-extern const PreparedDefinition kDef_SZW08;
 extern const PreparedDefinition kDef_SZLM04U;
 extern const PreparedDefinition kDef_SZT04;
 extern const PreparedDefinition kDef_SZR07;
@@ -97,8 +95,6 @@ const PreparedDefinition* const kLincukooRegistry[] = {
     &kDef_W04_Z10T,
     &kDef_CZF02,
     &kDef_EZC04,
-    &kDef_SZLR08,
-    &kDef_SZW08,
     &kDef_SZLM04U,
     &kDef_SZT04,
     &kDef_SZR07,
