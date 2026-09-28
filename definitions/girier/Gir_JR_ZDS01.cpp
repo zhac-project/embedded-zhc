@@ -15,12 +15,8 @@
 // Tuya-DP device: state rides genOnOff (0x0006), the config attrs ride
 // standard ZCL / Tuya-manuSpecific attribute reports.
 //
-// NOTE: the shared kFzTuyaPowerOnBehavior table maps value 2->"toggle",
-// 3->"previous" (Tuya superset). z2m's power_on_behavior_1 maps 2->"previous"
-// (no separate toggle). Values 0/1 agree exactly; only the value-2 label
-// diverges from z2m for this attribute. The expose value list below mirrors
-// z2m ([off,on,previous]); fixing the shared table is cross-vendor infra and
-// out of scope for this single-vendor pass.
+// The shared kFzTuyaPowerOnBehavior table matches z2m power_on_behavior_1
+// ({0 off, 1 on, 2 previous}); the expose value list mirrors it.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
 

@@ -466,15 +466,18 @@ bool decode_enum_attr(const DecodedMessage& msg,
     return false;
 }
 
+// z2m tuyaFz.power_on_behavior_1 (genOnOff 0x8002 moesStartUpOnOff).
+// There is no "toggle" on this attribute.
 constexpr TuyaEnumEntry kPowerOnBehaviorTable[] = {
-    {0, "off"}, {1, "on"}, {2, "toggle"}, {3, "previous"},
+    {0, "off"}, {1, "on"}, {2, "previous"},
 };
 constexpr EnumAttrConfig kPowerOnBehaviorCfg{
-    0x8002, "power_on_behavior", kPowerOnBehaviorTable, 4,
+    0x8002, "power_on_behavior", kPowerOnBehaviorTable, 3,
 };
 
+// z2m tuyaFz.indicator_mode (genOnOff 0x8001 tuyaBacklightMode).
 constexpr TuyaEnumEntry kIndicatorModeTable[] = {
-    {0, "off"}, {1, "off_on"}, {2, "on_off"}, {3, "on"},
+    {0, "off"}, {1, "off/on"}, {2, "on/off"}, {3, "on"},
 };
 constexpr EnumAttrConfig kIndicatorModeCfg{
     0x8001, "indicator_mode", kIndicatorModeTable, 4,
@@ -1182,11 +1185,12 @@ extern const TzConverter kTzTuyaDatapointsProto{
 // ── Canonical Tuya non-DP writes ────────────────────────────────
 namespace {
 
+// z2m tuyaTz.power_on_behavior_1 — same values as the fz table above.
 constexpr ::zhc::generic::ZclWriteLookup kPowerOnLut[] = {
-    {"off", 0}, {"on", 1}, {"toggle", 2}, {"previous", 3},
+    {"off", 0}, {"on", 1}, {"previous", 2},
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecPowerOnBehavior{
-    "power_on_behavior", 0x8002, 0x30, 0, kPowerOnLut, 4,
+    "power_on_behavior", 0x8002, 0x30, 0, kPowerOnLut, 3,
 };
 
 constexpr ::zhc::generic::ZclWriteLookup kOpModeLut[] = {
@@ -1196,11 +1200,12 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecOperationMode{
     "operation_mode", 0x8004, 0x30, 0, kOpModeLut, 2,
 };
 
+// z2m tuyaTz.backlight_indicator_mode_1, indicator_mode branch.
 constexpr ::zhc::generic::ZclWriteLookup kIndicatorLut[] = {
-    {"off", 0}, {"on_when_off", 1}, {"on_when_on", 2},
+    {"off", 0}, {"off/on", 1}, {"on/off", 2}, {"on", 3},
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecIndicatorMode{
-    "indicator_mode", 0x8001, 0x30, 0, kIndicatorLut, 3,
+    "indicator_mode", 0x8001, 0x30, 0, kIndicatorLut, 4,
 };
 
 constexpr ::zhc::generic::ZclWriteSpec kSpecChildLock{

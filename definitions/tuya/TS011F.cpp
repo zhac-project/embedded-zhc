@@ -28,45 +28,16 @@ constexpr FzConverter kFzMeterBound{
     .fn={.zcl_fn=&::zhc::lumi::fz_lumi_electricity_meter},.user_config=&kMeter };
 
 // z2m tuya.fz/tz power_on_behavior_1 (TS011F_plug_1): genOnOff 0x8002
-// moesStartUpOnOff, off=0 / on=1 / previous=2. The shared
-// kFzTuyaPowerOnBehavior / kTzTuyaPowerOnBehavior carry a 4-value table
-// (2=toggle, 3=previous) that would mislabel this plug, hence a local pair.
+// moesStartUpOnOff, off=0 / on=1 / previous=2 — the shared Tuya pair.
 constexpr const char* kPobOpts[] = { "off", "on", "previous" };
-
-bool fz_power_on_behavior_1(const DecodedMessage& msg, const FzConverter&,
-                            const PreparedDefinition&, RuntimeContext&,
-                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    const Value* v = msg.payload.find("32770");   // 0x8002
-    if (!v) return false;
-    std::uint64_t raw;
-    if      (v->type == ValueType::Uint) raw = v->u;
-    else if (v->type == ValueType::Int)  raw = static_cast<std::uint64_t>(v->i);
-    else return false;
-    if (raw > 2) return false;
-    Value o{}; o.type = ValueType::StringRef; o.str = kPobOpts[raw];
-    out.put("power_on_behavior", o);
-    return true;
-}
-constexpr FzConverter kFzPowerOnBehavior1{
-    .family=FrameFamily::Zcl,.cluster="genOnOff",
-    .type_mask=type_bit(MessageType::AttributeReport)|type_bit(MessageType::ReadResponse),
-    .command_id=WILDCARD_CMD_ID,.attr_id=WILDCARD_ATTR_ID,.endpoint=WILDCARD_ENDPOINT,
-    .frame_flags_mask=0,.frame_flags_value=0,.direction=Direction::ServerToClient,
-    .fn={.zcl_fn=&fz_power_on_behavior_1},.user_config=nullptr };
-constexpr ::zhc::generic::ZclWriteLookup kPobLut[] = { {"off", 0}, {"on", 1}, {"previous", 2} };
-constexpr ::zhc::generic::ZclWriteSpec kSpecPob{
-    "power_on_behavior", 0x8002, 0x30, 0, kPobLut, 3 };
-constexpr TzConverter kTzPowerOnBehavior1{
-    "power_on_behavior", "genOnOff", 0x0006, 0x02,
-    &::zhc::generic::tz_zcl_write_attr, &kSpecPob };
 
 const FzConverter* const kFz[] = {
     &::zhc::generic::kFzOnOff,
     &kFzPowerBound,
     &kFzMeterBound,
-    &kFzPowerOnBehavior1,
+    &::zhc::tuya::kFzTuyaPowerOnBehavior,
 };
-const TzConverter* const kTz[] = { &::zhc::generic::kTzOnOff, &kTzPowerOnBehavior1 };
+const TzConverter* const kTz[] = { &::zhc::generic::kTzOnOff, &::zhc::tuya::kTzTuyaPowerOnBehavior };
 constexpr const char* kModels[] = { "TS011F" };
 }
 
