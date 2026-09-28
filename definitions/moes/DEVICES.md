@@ -511,7 +511,7 @@ Phase 1 + Phase 2 parity work landed 2026-04-27 (see `docs/parity/MOES_PARITY.md
 **Status:** 🟡 PARTIAL  
 **z2m vendor:** `Moes`  
 **Fingerprints (9):** `_TZE200_aoclfnxz`, `_TZE200_ztvwu4nk`, `_TZE204_5toc8efa`, `_TZE200_5toc8efa`, `_TZE200_ye5jkfsb`, `_TZE284_ye5jkfsb`, `_TZE204_aoclfnxz`, `_TZE200_u9bfwha0`, `_TZE204_u9bfwha0`  
-**ZHC port files (10):** `Moe_BHT_002.cpp`, `Moes__TZE200_5toc8efa.cpp`, `Moes__TZE200_aoclfnxz.cpp`, `Moes__TZE200_u9bfwha0.cpp`, `Moes__TZE200_ye5jkfsb.cpp`, `Moes__TZE200_ztvwu4nk.cpp`, `Moes__TZE204_5toc8efa.cpp`, `Moes__TZE204_aoclfnxz.cpp`, `Moes__TZE204_u9bfwha0.cpp`, `Moes__TZE284_ye5jkfsb.cpp`
+**ZHC port files (1):** `Moe_BHT_002.cpp` — `kDef_BHT_002` (aoclfnxz, u9bfwha0), `kDef_BHT_002_5toc8efa`, `kDef_BHT_002_rawtemp` (ztvwu4nk, ye5jkfsb)
 
 | Aspect | z2m | ZHC |
 |---|---|---|
@@ -521,7 +521,7 @@ Phase 1 + Phase 2 parity work landed 2026-04-27 (see `docs/parity/MOES_PARITY.md
 | exposes | *(dynamic function)* | `child_lock`, `current_heating_setpoint`, `deadzone_temperature`, `local_temperature`, `local_temperature_calibration`, `max_temperature_limit`, `min_temperature_limit`, `preset`, `running_state`, `sensor`, `state` |
 | extend | `tuya.modernExtend.tuyaBase` | — |
 
-**Notes:** Phase D (2026-04-27): 12-DP map ported from `legacy.fz.moes_thermostat`. DP 101 packed-weekday schedule unsupported (would need raw decoder). `_TZE200_5toc8efa`/`_TZE204_5toc8efa` use /10 setpoint scaling (handled in fp-specific files). Verified vs legacy.ts source, NOT against real device.
+**Notes:** 2026-09-28 (z2m v26.105.0): one definition per scaling group — DP16-26 ÷10 on 5toc8efa; DP24 raw on ztvwu4nk/ye5jkfsb. running_state inverted (DP36 true = idle), preset from DP2 + DP3 (written together), calibration wrap at 4096, DP101 `program` on every ID, magic packet + 1970 time answer. `system_mode` stays the `state` bool; no climate composite. Verified vs legacy.ts source, NOT against real device.
 
 ### `BRT-100-TRV` — Thermostatic radiator valve
 **Status:** 🟡 PARTIAL  

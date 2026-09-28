@@ -103,7 +103,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_scene_4btn.cpp
     definitions/tuya/TZE200_thermostat.cpp
     definitions/tuya/TZE200_trv_v2.cpp
-    definitions/tuya/TZE200_fancoil.cpp
     definitions/tuya/TZE200_radar_v2.cpp
     definitions/tuya/TZE204_radar.cpp
     definitions/tuya/TS0043.cpp

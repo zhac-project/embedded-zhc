@@ -1295,7 +1295,6 @@ extern const PreparedDefinition kDefTZE200_fall;
 extern const PreparedDefinition kDefTZE200_fan_dim;
 extern const PreparedDefinition kDefTZE200_fan_speed;
 extern const PreparedDefinition kDefTZE200_fan_thermo;
-extern const PreparedDefinition kDefTZE200_fancoil;
 extern const PreparedDefinition kDefTZE200_flood;
 extern const PreparedDefinition kDefTZE200_floor_ctrl;
 extern const PreparedDefinition kDefTZE200_floor_thermo;
@@ -2768,7 +2767,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_fan_dim,
     &kDefTZE200_fan_speed,
     &kDefTZE200_fan_thermo,
-    &kDefTZE200_fancoil,
     &kDefTZE200_flood,
     &kDefTZE200_floor_ctrl,
     &kDefTZE200_floor_thermo,

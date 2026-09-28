@@ -22,12 +22,10 @@ extern const PreparedDefinition kDefMoes__TZ3210_sxtfesc6;
 extern const PreparedDefinition kDef_UFO_R11;
 extern const PreparedDefinition kDefMoes__TZE200_127x7wnl;
 extern const PreparedDefinition kDefMoes__TZE200_1ozguk6x;
-extern const PreparedDefinition kDefMoes__TZE200_5toc8efa;
 extern const PreparedDefinition kDefMoes__TZE200_6y7kyjga;
 extern const PreparedDefinition kDefMoes__TZE200_9dhenr94;
 extern const PreparedDefinition kDefMoes__TZE200_a1ovdobn;
 extern const PreparedDefinition kDefMoes__TZE200_amp6tsvy;
-extern const PreparedDefinition kDefMoes__TZE200_aoclfnxz;
 extern const PreparedDefinition kDefMoes__TZE200_b6wax7g0;
 extern const PreparedDefinition kDefMoes__TZE200_dq8bu0pt;
 extern const PreparedDefinition kDefMoes__TZE200_fhn3negr;
@@ -45,20 +43,14 @@ extern const PreparedDefinition kDefMoes__TZE200_stvgmdjz;
 extern const PreparedDefinition kDefMoes__TZE200_tviaymwx;
 extern const PreparedDefinition kDefMoes__TZE200_tz32mtza;
 extern const PreparedDefinition kDefMoes__TZE200_tzyy0rtq;
-extern const PreparedDefinition kDefMoes__TZE200_u9bfwha0;
 extern const PreparedDefinition kDefMoes__TZE200_uenof8jd;
 extern const PreparedDefinition kDefMoes__TZE200_wv9ukqca;
 extern const PreparedDefinition kDefMoes__TZE200_xtrnjaoz;
 extern const PreparedDefinition kDefMoes__TZE200_ydkqbmpt;
-extern const PreparedDefinition kDefMoes__TZE200_ye5jkfsb;
 extern const PreparedDefinition kDefMoes__TZE200_z3u99qxt;
 extern const PreparedDefinition kDefMoes__TZE200_zo0cfekv;
-extern const PreparedDefinition kDefMoes__TZE200_ztvwu4nk;
 extern const PreparedDefinition kDefMoes__TZE204_5slehgeo;
-extern const PreparedDefinition kDefMoes__TZE204_5toc8efa;
-extern const PreparedDefinition kDefMoes__TZE204_aoclfnxz;
 extern const PreparedDefinition kDefMoes__TZE204_srmahpwl;
-extern const PreparedDefinition kDefMoes__TZE204_u9bfwha0;
 extern const PreparedDefinition kDefMoes__TZE204_vawy74yh;
 extern const PreparedDefinition kDefMoes__TZE204_x9usygq1;
 extern const PreparedDefinition kDefMoes__TZE204_xtrnjaoz;
@@ -72,7 +64,6 @@ extern const PreparedDefinition kDefMoes__TZE284_rlytpmij;
 extern const PreparedDefinition kDefMoes__TZE284_upt8lzi0;
 extern const PreparedDefinition kDefMoes__TZE284_vawy74yh;
 extern const PreparedDefinition kDefMoes__TZE284_vizxbhco;
-extern const PreparedDefinition kDefMoes__TZE284_ye5jkfsb;
 
 extern const PreparedDefinition kDef_ZS_EUB_1gang;
 extern const PreparedDefinition kDef_ZTS_EU_2gang;
@@ -114,6 +105,8 @@ extern const PreparedDefinition kDef_ADCBZI01;
 extern const PreparedDefinition kDef_ZS_D2;
 extern const PreparedDefinition kDef_ZWV_YC;
 extern const PreparedDefinition kDef_BHT_002;
+extern const PreparedDefinition kDef_BHT_002_5toc8efa;
+extern const PreparedDefinition kDef_BHT_002_rawtemp;
 extern const PreparedDefinition kDef_ZS_D3;
 extern const PreparedDefinition kDef_ZSS_QT_LTH_C;
 extern const PreparedDefinition kDef_ZM6LT1;
@@ -137,12 +130,10 @@ extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDefMoes__TZ3210_sxtfesc6,
     &kDefMoes__TZE200_127x7wnl,
     &kDefMoes__TZE200_1ozguk6x,
-    &kDefMoes__TZE200_5toc8efa,
     &kDefMoes__TZE200_6y7kyjga,
     &kDefMoes__TZE200_9dhenr94,
     &kDefMoes__TZE200_a1ovdobn,
     &kDefMoes__TZE200_amp6tsvy,
-    &kDefMoes__TZE200_aoclfnxz,
     &kDefMoes__TZE200_b6wax7g0,
     &kDefMoes__TZE200_dq8bu0pt,
     &kDefMoes__TZE200_fhn3negr,
@@ -160,20 +151,14 @@ extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDefMoes__TZE200_tviaymwx,
     &kDefMoes__TZE200_tz32mtza,
     &kDefMoes__TZE200_tzyy0rtq,
-    &kDefMoes__TZE200_u9bfwha0,
     &kDefMoes__TZE200_uenof8jd,
     &kDefMoes__TZE200_wv9ukqca,
     &kDefMoes__TZE200_xtrnjaoz,
     &kDefMoes__TZE200_ydkqbmpt,
-    &kDefMoes__TZE200_ye5jkfsb,
     &kDefMoes__TZE200_z3u99qxt,
     &kDefMoes__TZE200_zo0cfekv,
-    &kDefMoes__TZE200_ztvwu4nk,
     &kDefMoes__TZE204_5slehgeo,
-    &kDefMoes__TZE204_5toc8efa,
-    &kDefMoes__TZE204_aoclfnxz,
     &kDefMoes__TZE204_srmahpwl,
-    &kDefMoes__TZE204_u9bfwha0,
     &kDefMoes__TZE204_vawy74yh,
     &kDefMoes__TZE204_x9usygq1,
     &kDefMoes__TZE204_xtrnjaoz,
@@ -187,7 +172,6 @@ extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDefMoes__TZE284_upt8lzi0,
     &kDefMoes__TZE284_vawy74yh,
     &kDefMoes__TZE284_vizxbhco,
-    &kDefMoes__TZE284_ye5jkfsb,
     &kDef_ZS_EUB_1gang,
     &kDef_ZTS_EU_2gang,
     &kDef_ZHT_SR,
@@ -228,11 +212,13 @@ extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDef_ZS_D2,
     &kDef_ZWV_YC,
     &kDef_BHT_002,
+    &kDef_BHT_002_5toc8efa,
+    &kDef_BHT_002_rawtemp,
     &kDef_ZS_D3,
     &kDef_ZSS_QT_LTH_C,
     &kDef_ZM6LT1,
 };
 
-extern const std::size_t kMoesRegistryCount = 79;
+extern const std::size_t kMoesRegistryCount = sizeof(kMoesRegistry) / sizeof(kMoesRegistry[0]);
 
 }  // namespace zhc::devices::moes

@@ -47,6 +47,9 @@ _PAIRS = (
 )
 # `TuyaDatapointMap kMap{ kEntries, <literal> }`
 _DP_MAP = re.compile(r"TuyaDatapointMap\s+\w+\s*\{\s*(\w+)\s*,\s*(\d+)\s*\}")
+# `kFooRegistryCount = <literal>;` in a vendor registry.cpp. A stale one hid the
+# last 33 Moes definitions (BHT-002 among them) from the matcher.
+_REG_COUNT = re.compile(r"\b(\w+Registry)Count\s*=\s*(\d+)\s*;")
 
 
 def strip_comments(src: str) -> str:
@@ -138,6 +141,16 @@ def scan(defs_dir: str):
             actual = count_elements(body)
             if actual != declared:
                 problems.append((rel, "TuyaDatapointMap", arr, declared, actual))
+
+        for m in _REG_COUNT.finditer(src):
+            arr, declared = m.group(1), int(m.group(2))
+            body = array_body(src, arr)
+            if body is None:
+                continue
+            checked += 1
+            actual = count_elements(body)
+            if actual != declared:
+                problems.append((rel, "registry count", arr, declared, actual))
 
     return problems, checked
 
