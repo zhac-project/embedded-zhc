@@ -170,8 +170,10 @@ extern const PreparedDefinition kDefTS011F{
 .bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
 .reports=::zhc::tuya::kReportsPlugVIPE_1ep,
 .reports_count=::zhc::tuya::kReportsPlugVIPE_1ep_count,
-    // Backstop for whitelabels that ignore configureReporting: a read
-    // every poll interval costs two small frames per plug.
-    .meter_poll=kMeterPollElectrical|kMeterPollMetering,
+    // No meter_poll here: this def has no manufacturer filter, so it
+    // catches every TS011F without a more specific def (units that already
+    // report via kReportsPlugVIPE_1ep, whitelabels with other divisors, and
+    // units with no meter at all). Polling stays opt-in per manufacturer
+    // (see kDefTS011F_okaz9tjs) until a real silent device proves it needed.
 };
 }

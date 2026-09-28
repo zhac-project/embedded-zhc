@@ -121,6 +121,45 @@ void check_decode(const PreparedDefinition& def) {
     assert(std::fabs(num(re, "energy") - 12.34) < 1e-4);
 }
 
+// I-3: ReadResponse (ZCL cmd 0x01) uses a per-record status byte — unlike
+// Report Attributes, a failed record carries NO type/value bytes at all
+// (parse_read_attr_response in src/zcl/foundation.cpp skips straight to the
+// next record on status != 0x00). Pin that the decode still finds every
+// successful record around a skipped one, and that scaling matches the
+// Report Attributes path.
+void check_read_response_decode() {
+    const auto& def = devices::tuya::kDefTS011F;
+
+    // haElectricalMeasurement ReadResponse, 4 records:
+    //   rmsVoltage  0x0505 status=0x00 u16 = 231        → 231 V
+    //   (unknown)   0x0509 status=0x86 UNSUPPORTED_ATTR  → no type/value, skip
+    //   rmsCurrent  0x0508 status=0x00 u16 = 111         → 0.111 A
+    //   activePower 0x050B status=0x00 s16 = 18          → 18 W
+    const std::vector<std::uint8_t> em = {
+        0x18, 0x60, 0x01,
+        0x05, 0x05, 0x00, 0x21, 0xE7, 0x00,
+        0x09, 0x05, 0x86,
+        0x08, 0x05, 0x00, 0x21, 0x6F, 0x00,
+        0x0B, 0x05, 0x00, 0x29, 0x12, 0x00,
+    };
+    auto r = dispatch_zcl(def, 0x0B04, "haElectricalMeasurement", em);
+    assert(r.any_matched);
+    assert(std::fabs(num(r, "voltage") - 231.0) < 1e-6);
+    assert(std::fabs(num(r, "current") - 0.111) < 1e-4);
+    assert(std::fabs(num(r, "power") - 18.0) < 1e-6);
+    assert(!r.merged.find("1289"));  // 0x0509 skipped, no stray key
+
+    // seMetering ReadResponse: currentSummDelivered 0x0000, status=0x00,
+    // type 0x25 (48-bit uint) = 1234 → 12.34 kWh (seMetering divisor 100).
+    const std::vector<std::uint8_t> se = {
+        0x18, 0x61, 0x01,
+        0x00, 0x00, 0x00, 0x25, 0xD2, 0x04, 0x00, 0x00, 0x00, 0x00,
+    };
+    auto re = dispatch_zcl(def, 0x0702, "seMetering", se);
+    assert(re.any_matched);
+    assert(std::fabs(num(re, "energy") - 12.34) < 1e-4);
+}
+
 void check_shape(const PreparedDefinition& def) {
     assert(find_expose(def, "state"));
     assert(find_expose(def, "power_on_behavior"));
@@ -219,16 +258,21 @@ int main() {
     // Generic keeps z2m's default reporting path.
     assert(kDefTS011F.reports_count > 0);
 
-    // Hub-side meter polling (z2m electricityMeasurementPoll shape): both
-    // TS011F defs ask for haElectricalMeasurement AND seMetering reads —
-    // _TZ3000_okaz9tjs never reports either one on its own.
+    // Hub-side meter polling (z2m electricityMeasurementPoll shape):
+    // _TZ3000_okaz9tjs never reports haElectricalMeasurement/seMetering on
+    // its own, so only its def asks for reads. The generic kDefTS011F has
+    // no manufacturer filter (catches plugs that already report via
+    // kReportsPlugVIPE_1ep, other-divisor whitelabels, and non-metering
+    // units), so it must NOT poll.
     constexpr std::uint8_t kBoth = kMeterPollElectrical | kMeterPollMetering;
     assert(kDefTS011F_okaz9tjs.meter_poll == kBoth);
-    assert(kDefTS011F.meter_poll == kBoth);
+    assert(kDefTS011F.meter_poll == 0);
     // Opt-in only: nothing else in the Tuya registry (generated defs
     // included) polls.
     std::size_t polled = 0;
     for (const auto* d : tuya_reg()) polled += (d && d->meter_poll) ? 1 : 0;
-    assert(polled == 2);
+    assert(polled == 1);
+
+    check_read_response_decode();
     return 0;
 }
