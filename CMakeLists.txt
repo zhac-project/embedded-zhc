@@ -666,6 +666,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_vdiuwbkq.cpp
     definitions/tuya/TZE204_q9xty0ad.cpp
     definitions/tuya/TZE204_mpbki2zm.cpp
+    definitions/tuya/ZN231392.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)
@@ -1207,6 +1208,8 @@ add_executable(zhc_tuya_onoff_attr_luts_tests tests/test_tuya_onoff_attr_luts.cp
 target_link_libraries(zhc_tuya_onoff_attr_luts_tests PRIVATE zhc_definitions)
 add_executable(zhc_switch_power_on_behavior_tests tests/test_switch_power_on_behavior.cpp)
 target_link_libraries(zhc_switch_power_on_behavior_tests PRIVATE zhc_definitions)
+add_executable(zhc_tuya_zn231392_tests tests/test_tuya_zn231392.cpp)
+target_link_libraries(zhc_tuya_zn231392_tests PRIVATE zhc_definitions)
 
 add_executable(zhc_tuya_wsd500a_parity_tests tests/test_tuya_wsd500a_parity.cpp)
 target_link_libraries(zhc_tuya_wsd500a_parity_tests PRIVATE zhc_definitions)
@@ -3506,6 +3509,7 @@ add_test(NAME zhc_ysrsai_parity_tests       COMMAND zhc_ysrsai_parity_tests)
 add_test(NAME zhc_tuya_ts0044_parity_tests  COMMAND zhc_tuya_ts0044_parity_tests)
 add_test(NAME zhc_tuya_onoff_attr_luts_tests COMMAND zhc_tuya_onoff_attr_luts_tests)
 add_test(NAME zhc_switch_power_on_behavior_tests COMMAND zhc_switch_power_on_behavior_tests)
+add_test(NAME zhc_tuya_zn231392_tests COMMAND zhc_tuya_zn231392_tests)
 add_test(NAME zhc_tuya_wsd500a_parity_tests COMMAND zhc_tuya_wsd500a_parity_tests)
 add_test(NAME zhc_tuya_weather_exposes_tests COMMAND zhc_tuya_weather_exposes_tests)
 add_test(NAME zhc_ysrsai_rgbcct_tz_tests    COMMAND zhc_ysrsai_rgbcct_tz_tests)

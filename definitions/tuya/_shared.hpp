@@ -360,9 +360,15 @@ extern const TzConverter kTzTuyaChildLock;         // attr 0x8000 bool
 extern const FzConverter kFzTuyaSwitchType;
 extern const TzConverter kTzTuyaSwitchType;
 
-// z2m tuya.configureMagicPacket as a one-step `config_steps` list
-// (genBasic read 4, 0, 1, 5, 7, 0xFFFE on EP1). tuya_base_configure() is
-// a no-op, so a def that needs the packet points `config_steps` here.
+// z2m tuya.configureMagicPacket — genBasic read of manufacturerName,
+// zclVersion, appVersion, modelId, powerSource, 0xFFFE (LE attr ids), as
+// a Read-step payload.
+inline constexpr std::uint8_t kTuyaMagicPacketAttrs[] = {
+    0x04, 0x00,  0x00, 0x00,  0x01, 0x00,
+    0x05, 0x00,  0x07, 0x00,  0xFE, 0xFF,
+};
+// The same as a one-step `config_steps` list on EP1. tuya_base_configure()
+// is a no-op, so a def that needs the packet points `config_steps` here.
 extern const ::zhc::ConfigStep kConfigStepsTuyaMagicPacket[];
 extern const std::uint8_t      kConfigStepsTuyaMagicPacketCount;
 

@@ -18,15 +18,9 @@
 
 namespace zhc::tuya {
 
-// z2m tuya.configureMagicPacket — genBasic read of manufacturerName,
-// zclVersion, appVersion, modelId, powerSource, 0xFFFE (LE attr ids).
-constexpr std::uint8_t kMagicPacketAttrs[] = {
-    0x04, 0x00,  0x00, 0x00,  0x01, 0x00,
-    0x05, 0x00,  0x07, 0x00,  0xFE, 0xFF,
-};
 const ::zhc::ConfigStep kConfigStepsTuyaMagicPacket[] = {
     { ::zhc::ConfigStepOp::Read, 1, 0x0000, 0x00, 0,
-      kMagicPacketAttrs, sizeof(kMagicPacketAttrs), 0 },
+      kTuyaMagicPacketAttrs, sizeof(kTuyaMagicPacketAttrs), 0 },
 };
 const std::uint8_t kConfigStepsTuyaMagicPacketCount = 1;
 
