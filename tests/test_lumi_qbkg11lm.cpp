@@ -93,6 +93,8 @@ int main() {
     // Mains device: no battery / voltage phantoms.
     assert(!find_expose(def, "battery"));
     assert(!find_expose(def, "voltage"));
+    // z2m m.forcePowerSource({powerSource: "Mains (single phase)"}).
+    assert(def.power_source_override == 0x01);
 
     // ── genOnOff ep1 onOff=1 → `state` (was `state_left`)
     {

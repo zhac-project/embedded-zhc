@@ -110,6 +110,8 @@ extern const PreparedDefinition kDefQBKG11LM{
     .configure           = nullptr,
     .on_event            = nullptr,
 .bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
+    // z2m m.forcePowerSource({powerSource: "Mains (single phase)"}).
+    .power_source_override=0x01,
 };
 
 }  // namespace zhc::devices::lumi
