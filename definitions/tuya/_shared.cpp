@@ -10,6 +10,7 @@
 #include <span>
 #include "definitions/_generic/_shared.hpp"  // ZclWriteSpec / tz_zcl_write_attr
 
+#include <cctype>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -1105,12 +1106,63 @@ const TuyaDpMapEntry* find_entry_by_key(const TuyaDatapointMap& map,
     return nullptr;
 }
 
+// `key` equals `label` once folded: form 0 as given, 1 lower-cased,
+// 2 upper-cased (ASCII, as the tables).
+bool same_in_form(const char* key, const char* label, int form) {
+    for (;; ++key, ++label) {
+        const auto c = static_cast<unsigned char>(*key);
+        const int f = form == 1 ? std::tolower(c) : form == 2 ? std::toupper(c) : c;
+        if (f != static_cast<unsigned char>(*label)) return false;
+        if (c == 0) return true;
+    }
+}
+
+// The table entry whose label is `key`. `forms` 3 is z2m `utils.getFromLookup`
+// with a string key: the key as given, then lower-cased, then upper-cased, the
+// first form found winning. `forms` 1 takes the key as given only.
+const TuyaEnumEntry* lookup_label(const TuyaEnumEntry* table, std::uint8_t count,
+                                  const char* key, int forms) {
+    for (int form = 0; form < forms; ++form) {
+        for (std::uint8_t i = 0; i < count; ++i) {
+            if (table[i].label && same_in_form(key, table[i].label, form)) return &table[i];
+        }
+    }
+    return nullptr;
+}
+
+// z2m's words for a boolean datapoint: `valueConverter.onOff`, behind nearly
+// every writable Tuya boolean, and `valueConverter.lockUnlock`, which z2m puts
+// on most child_lock datapoints (onOff on the rest). Both are lookups, so
+// getFromLookup's case rules apply.
+// ponytail: every row without a table takes onOff's words and child_lock takes
+// both pairs, because the generated map drops z2m's converter; the generator
+// recording each datapoint's own words makes it exact.
+constexpr TuyaEnumEntry kOnOffWords[]      = { {1, "ON"},   {0, "OFF"} };
+constexpr TuyaEnumEntry kLockUnlockWords[] = { {1, "LOCK"}, {0, "UNLOCK"} };
+
+// A word gives the feature's value; kTuyaDpFlagInvertBool then maps it to the
+// wire, as on decode. A kTuyaDpFlagBoolEnum row takes its own labels, as
+// written: those rows are hand ports, mostly of z2m legacy converters that
+// compare the word exactly (`value === "LOCK"`).
 bool encode_bool(const TuyaDpMapEntry& e, const Value& in,
                   std::uint8_t out_val[1]) {
     bool b = false;
     if      (in.type == ValueType::Bool) b = in.b;
     else if (in.type == ValueType::Uint) b = in.u != 0;
     else if (in.type == ValueType::Int)  b = in.i != 0;
+    else if (in.type == ValueType::StringRef && in.str) {
+        const TuyaEnumEntry* w = nullptr;
+        if ((e.flags & kTuyaDpFlagBoolEnum) && e.enum_table) {
+            w = lookup_label(e.enum_table, e.enum_count, in.str, 1);
+        } else {
+            w = lookup_label(kOnOffWords, 2, in.str, 3);
+            if (!w && e.out_key && std::strcmp(e.out_key, "child_lock") == 0) {
+                w = lookup_label(kLockUnlockWords, 2, in.str, 3);
+            }
+        }
+        if (!w) return false;
+        b = w->value != 0;
+    }
     else return false;
     if (e.flags & kTuyaDpFlagInvertBool) b = !b;
     out_val[0] = b ? 1 : 0;
