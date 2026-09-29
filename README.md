@@ -4,7 +4,7 @@ Host-testable C++20 static-memory library that consolidates the
 Zigbee device-definition layer used by [ZHAC]. Hubs built on it recognise
 4 989 device definitions from 400 manufacturers, adapted from
 [zigbee-herdsman-converters] into C++ records with no heap allocation
-([searchable list](https://zhac-project.github.io/zhac-docs/devices/)).
+([searchable list](https://zhac.org/devices/)).
 
 [ZHAC]: https://github.com/zhac-project/zhac-platform
 [zigbee-herdsman-converters]: https://github.com/Koenkk/zigbee-herdsman-converters

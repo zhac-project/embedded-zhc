@@ -49,6 +49,7 @@ Tests: `zhc_lumi_aqara_fixes_tests` (real 0x00F7 payloads from z2m issues for ei
 
 ### Changed
 
+- README: the "searchable list" link points at `https://zhac.org/devices/` (the site has its own domain; the old github.io address only redirects).
 - **~126 KB more internal RAM free** on the ESP32-S31 and on the P4 (S31 initialised internal data: 153,220 → 23,732 bytes): 1,093 device definitions — mostly lights (Philips Hue, Gledopto, IKEA, Ledvance, Osram, Paulmann, Müller Licht, Sengled, Sylvania, …) plus some Tuya, Bosch, Lumi and Moes devices — were filled in by static constructors at boot and kept in internal RAM, because they read a shared list's length from another source file. Those lengths now sit in the shared headers (`inline constexpr`, each checked against its list by a `static_assert`), so these definitions live in flash like all the others and ~1,090 boot-time constructors are gone. The Tier-E vendor table moved to flash as well (`VendorEntry::count` now refers to the vendor's count instead of copying it). Device matching and decoding are unchanged. New test `zhc_defs_const_init_guard` fails if a definition ever needs a static constructor or lands in writable memory again.
 
 ### Fixed
