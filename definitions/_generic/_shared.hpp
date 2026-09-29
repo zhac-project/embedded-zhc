@@ -86,6 +86,10 @@ extern const FzConverter kFzColorTemperature;
 //                                                       ("hs" / "xy" / "color_temp")
 //   attr 0x4000 enhancedCurrentHue    (u16)          → "enhanced_hue"
 // XY are encoded by z2m as `raw / 65535` per the ZCL CIE 1931 spec.
+// A colour frame without colorMode still carries "color_mode" once the
+// light's mode is known (runtime memory, single-endpoint defs): its last
+// colorMode, or the mode of the last kTzColor / kTzColorTemp command — z2m
+// syncColorState. Nothing is guessed while no mode is known.
 bool fz_color(const DecodedMessage& msg,
                const FzConverter& self,
                const PreparedDefinition& def,
@@ -93,6 +97,10 @@ bool fz_color(const DecodedMessage& msg,
                FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 
 extern const FzConverter kFzColor;
+
+// "color_mode" values, indexed by ZCL colorMode (z2m colorModeLookup); a
+// light's color_mode expose lists these.
+inline constexpr const char* kColorModes[] = { "hs", "xy", "color_temp" };
 
 // genOnOff attr 0x4003 startUpOnOff (enum8) → "power_on_behavior"
 // ("off" / "on" / "toggle" / "previous").
@@ -588,6 +596,7 @@ extern const TzConverter kTzEffectColorLoop;
 
 // lightingColorCtrl (0x0300) "color_temp" setter. Emits the
 // `moveToColorTemp` (0x0A) command. Accepts `Value::Uint` mireds.
+// Remembers colour mode "color_temp" for kFzColor.
 bool tz_color_temp(std::string_view key,
                     const Value& input,
                     const TzConverter& self,
@@ -614,6 +623,8 @@ extern const TzConverter kTzColorTemp;
 // `key=nullptr` makes the converter wildcard: its own body decides
 // which keys to honour and rejects the rest cleanly so other Tz
 // converters in the array can still match.
+// Remembers the command's colour mode (moveToColor "xy", the hue /
+// saturation moves "hs") for kFzColor.
 //
 // z2m-source: toZigbee.ts `tz.light_color` /
 //             `tz.light_hue_saturation_move`.

@@ -244,19 +244,30 @@ extern const FzConverter kFzColorTemperature{
 // ── colour memory ─────────────────────────────────────────────────────
 // A colour bulb reports currentX / currentY / hue / saturation one attribute
 // at a time and moveToColor needs both axes, so the last known values live in
-// the device's runtime scratch (bytes 24..31; the Tuya IR01 uses byte 0).
+// the device's runtime scratch (bytes 24..31; the Tuya IR01 uses byte 0),
+// together with the light's colour mode (z2m keeps both in its state).
 // Without a store (host tests without one) memory is simply absent.
 namespace {
 struct ColorMem {
     std::uint16_t x{0}, y{0};
     std::uint8_t  hue{0}, sat{0};
-    std::uint8_t  have{0};   // kHave* bits
+    std::uint8_t  have{0};   // kHave* bits; bits 4-5: colour mode + 1, 0 = unknown
     std::uint8_t  tag{0};    // kColorTag once written
 };
 constexpr std::size_t  kColorMemOff = 24;
 constexpr std::uint8_t kColorTag = 0xC1;
 constexpr std::uint8_t kHaveX = 1, kHaveY = 2, kHaveHue = 4, kHaveSat = 8;
 static_assert(sizeof(ColorMem) == 8, "fits scratch[24..31]");
+
+// ZCL colorMode values, the index into kColorModes.
+constexpr std::uint8_t kModeHs = 0, kModeXy = 1, kModeColorTemp = 2;
+void set_mode(ColorMem& m, std::uint8_t mode) {
+    m.have = static_cast<std::uint8_t>((m.have & 0x0F) | ((mode + 1) << 4));
+}
+const char* mode_name(const ColorMem& m) {
+    const unsigned v = (m.have >> 4) & 0x03;
+    return v ? kColorModes[v - 1] : nullptr;
+}
 
 bool color_mem_load(RuntimeContext& ctx, ColorMem& m) {
     DeviceRuntimeState* st = ctx.device_state();
@@ -287,7 +298,7 @@ bool parse_pair(const char* s, float& a, float& b) {
 
 bool fz_color(const DecodedMessage& msg,
                const FzConverter&,
-               const PreparedDefinition&,
+               const PreparedDefinition& def,
                RuntimeContext& ctx,
                FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     // lightingColorCtrl unified report decoder. Walks every attr the
@@ -299,7 +310,7 @@ bool fz_color(const DecodedMessage& msg,
     bool emitted = false;
     ColorMem mem{};
     const bool have_mem = color_mem_load(ctx, mem);
-    bool xy_changed = false, hs_changed = false;
+    bool xy_changed = false, hs_changed = false, mode_seen = false;
     // Attr 0x0000 currentHue (u8 [0,254]).
     if (const Value* v = msg.payload.find("0")) {
         if (v->type == ValueType::Uint && v->u <= 254) {
@@ -338,7 +349,15 @@ bool fz_color(const DecodedMessage& msg,
             xy_changed = emitted = true;
         }
     }
-    if (have_mem && (xy_changed || hs_changed)) color_mem_store(ctx, mem);
+    // Attr 0x0008 colorMode (enum8): 0 = hs, 1 = xy, 2 = color_temp
+    // (z2m colorModeLookup). Emitted with the other attributes below.
+    if (const Value* v = msg.payload.find("8")) {
+        if (v->type == ValueType::Uint && v->u <= kModeColorTemp) {
+            set_mode(mem, static_cast<std::uint8_t>(v->u));
+            mode_seen = emitted = true;
+        }
+    }
+    if (have_mem && (xy_changed || hs_changed || mode_seen)) color_mem_store(ctx, mem);
     if (xy_changed && (mem.have & kHaveX) && (mem.have & kHaveY)) {
         char b[24];
         const int n = std::snprintf(b, sizeof(b), "%.4f,%.4f", mem.x / 65535.0f, mem.y / 65535.0f);
@@ -366,24 +385,6 @@ bool fz_color(const DecodedMessage& msg,
             emitted = true;
         }
     }
-    // Attr 0x0008 (colorMode): 0=HueSat, 1=XY, 2=ColorTemp. Emit as
-    // StringRef so UI + rules can see which branch the device is
-    // currently representing.
-    if (const Value* v = msg.payload.find("8")) {
-        if (v->type == ValueType::Uint) {
-            const char* mode = nullptr;
-            switch (v->u) {
-                case 0: mode = "hs";         break;
-                case 1: mode = "xy";         break;
-                case 2: mode = "color_temp"; break;
-            }
-            if (mode) {
-                Value o{}; o.type = ValueType::StringRef; o.str = mode;
-                out.put("color_mode", o);
-                emitted = true;
-            }
-        }
-    }
     // Attr 0x4000 enhancedCurrentHue (u16). Optional on legacy bulbs;
     // kept under a separate key so the SPA/rules engine can tell it
     // apart from the 8-bit `hue`.
@@ -392,6 +393,21 @@ bool fz_color(const DecodedMessage& msg,
             Value o{}; o.type = ValueType::Uint; o.u = v->u;
             out.put("enhanced_hue", o);
             emitted = true;
+        }
+    }
+    // color_mode, as z2m fz.color_colortemp + syncColorState: the colorMode
+    // this frame carries, else the light's last known mode — its last
+    // colorMode, or the mode of the last colour command sent (kTzColor /
+    // kTzColorTemp; z2m's tz.light_color / light_colortemp return it as
+    // state). z2m guesses a mode from the attributes when its state has none;
+    // not here: this memory is lost on a hub restart, and a guess would then
+    // overwrite the mode the shadow kept.
+    // ponytail: one memory per device, so a multi-endpoint light only gets
+    // the mode its frame carries; per-endpoint memory if one needs more.
+    if (emitted && (mode_seen || def.endpoint_map_count == 0)) {
+        if (const char* mode = mode_name(mem)) {
+            Value o{}; o.type = ValueType::StringRef; o.str = mode;
+            out.put("color_mode", o);
         }
     }
     return emitted;
@@ -2407,7 +2423,7 @@ extern const TzConverter kTzCoverViaBrightness{
 
 bool tz_color_temp(std::string_view key, const Value& input,
                     const TzConverter&,
-                    const PreparedDefinition&, RuntimeContext&,
+                    const PreparedDefinition&, RuntimeContext& ctx,
                     std::span<std::uint8_t> out_frame, std::size_t& out_size) {
     out_size = 0;
     if (key != "color_temp") return false;
@@ -2423,6 +2439,10 @@ bool tz_color_temp(std::string_view key, const Value& input,
     out_frame[4] = static_cast<std::uint8_t>((mireds >> 8) & 0xFF);
     out_frame[5] = 0x00;
     out_frame[6] = 0x00;
+    // z2m tz.light_colortemp returns color_mode "color_temp" as state; here
+    // the light's next colour report carries it (fz_color).
+    ColorMem mem{};
+    if (color_mem_load(ctx, mem)) { set_mode(mem, kModeColorTemp); color_mem_store(ctx, mem); }
     return true;
 }
 
@@ -2480,7 +2500,9 @@ bool color_u8_arg(const Value& v, std::uint8_t& out) {
 // Claims `color_x` / `color_y` (the other axis from memory, centre when
 // unknown), `color_xy` "x,y" in [0,1], `color_hs` "h,s" (0-360, 0-100) and
 // the single `hue` / `saturation`. Every write also updates the memory, so
-// two axis writes in a row land where the caller meant.
+// two axis writes in a row land where the caller meant, and records the
+// command's colour mode (moveToColor xy, the hue/saturation moves hs), which
+// z2m's tz.light_color returns as state.
 bool tz_color(std::string_view key, const Value& input,
                const TzConverter&,
                const PreparedDefinition&, RuntimeContext& ctx,
@@ -2499,6 +2521,7 @@ bool tz_color(std::string_view key, const Value& input,
         out_frame[7] = 0x00;
         out_frame[8] = 0x00;
         mem.x = x; mem.y = y; mem.have |= kHaveX | kHaveY;
+        set_mode(mem, kModeXy);
         remember();
         return true;
     };
@@ -2528,6 +2551,7 @@ bool tz_color(std::string_view key, const Value& input,
         out_frame[5] = 0x00;
         out_frame[6] = 0x00;
         mem.hue = out_frame[3]; mem.sat = out_frame[4]; mem.have |= kHaveHue | kHaveSat;
+        set_mode(mem, kModeHs);
         remember();
         return true;
     }
@@ -2541,6 +2565,7 @@ bool tz_color(std::string_view key, const Value& input,
         out_frame[5] = 0x00;
         out_frame[6] = 0x00;
         mem.hue = hue; mem.have |= kHaveHue;
+        set_mode(mem, kModeHs);
         remember();
         return true;
     }
@@ -2553,6 +2578,7 @@ bool tz_color(std::string_view key, const Value& input,
         out_frame[4] = 0x00;
         out_frame[5] = 0x00;
         mem.sat = sat; mem.have |= kHaveSat;
+        set_mode(mem, kModeHs);
         remember();
         return true;
     }

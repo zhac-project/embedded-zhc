@@ -8,10 +8,14 @@
 // six manufacturers z2m sets moveToLevelWithOnOffDisable, so brightness goes
 // out as moveToLevel (0x00) instead of moveToLevelWithOnOff (0x04).
 // The bulb could not be given a colour at all before: no colour converter,
-// no colour expose.
+// no colour expose. It then never reported `color_mode` (colorMode is not
+// among its configured reports, as in z2m), so consumers could not tell xy,
+// hs and colour-temperature mode apart.
 //
 // z2m-source: tuya.ts #TS0505B_1, lib/tuya.ts tuyaLight / tuyaTz.do_not_disturb
-//             / tuyaTz.color_power_on_behavior, converters/toZigbee.ts tz.effect.
+//             / tuyaTz.color_power_on_behavior, converters/toZigbee.ts tz.effect
+//             / tz.light_color / tz.light_colortemp, converters/fromZigbee.ts
+//             fz.color_colortemp, lib/color.ts syncColorState.
 
 #include <cassert>
 #include <cmath>
@@ -25,6 +29,7 @@
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/definition_runtime.hpp"
 #include "zhc/runtime/dispatch.hpp"
+#include "zhc/runtime/store.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
 
@@ -46,9 +51,20 @@ const Expose* find_expose(const PreparedDefinition& def, const char* key) {
     return nullptr;
 }
 
-// ZCL attribute report on `cluster` → the def's merged output.
-DispatchResult report(const PreparedDefinition& def, std::uint16_t cluster, const Bytes& records) {
-    Bytes f = {0x18, 0x42, 0x0A};
+// One light's runtime memory, kept across frames as the hub adapter keeps it
+// (each frame still gets a fresh context, as in the adapter).
+RuntimeStore<1> g_mem;
+RuntimeContext new_ctx(bool mem) {
+    RuntimeContext ctx{};
+    if (mem) { ctx.store = &g_mem; ctx.store_get = &RuntimeStore<1>::get; }
+    return ctx;
+}
+
+// ZCL global command on `cluster` (0x0A attribute report, 0x01 read
+// attributes response) → the def's merged output.
+DispatchResult report(const PreparedDefinition& def, std::uint16_t cluster, const Bytes& records,
+                      bool mem = false, std::uint8_t cmd = 0x0A) {
+    Bytes f = {0x18, 0x42, cmd};
     f.insert(f.end(), records.begin(), records.end());
     InboundApsFrame raw{};
     raw.cluster_id = cluster;
@@ -57,13 +73,13 @@ DispatchResult report(const PreparedDefinition& def, std::uint16_t cluster, cons
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(cluster);
-    RuntimeContext ctx{};
+    RuntimeContext ctx = new_ctx(mem);
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
 struct Sent { std::uint16_t cluster; Bytes frame; };
-Sent send(const PreparedDefinition& def, const char* key, const Value& v) {
-    RuntimeContext ctx{};
+Sent send(const PreparedDefinition& def, const char* key, const Value& v, bool mem = false) {
+    RuntimeContext ctx = new_ctx(mem);
     std::uint8_t frame[64]{};
     const auto r = dispatch_to_zigbee(def, key, v, ctx, frame);
     if (!r.ok) return {0, {}};
@@ -73,6 +89,59 @@ Sent send(const PreparedDefinition& def, const char* key, const Value& v) {
 Value str_v(const char* s) { Value v{}; v.type = ValueType::StringRef; v.str = s; return v; }
 Value bool_v(bool b)       { Value v{}; v.type = ValueType::Bool; v.b = b; return v; }
 Value uint_v(std::uint64_t u) { Value v{}; v.type = ValueType::Uint; v.u = u; return v; }
+bool is_str(const Value* v, const char* s) {
+    return v && v->type == ValueType::StringRef && v->str && std::strcmp(v->str, s) == 0;
+}
+const char* mode_of(const DispatchResult& r) {
+    const Value* v = r.merged.find("color_mode");
+    return v && v->type == ValueType::StringRef ? v->str : nullptr;
+}
+
+// color_mode, as z2m's fz.color_colortemp: lightingColorCtrl colorMode (0x0008,
+// enum8) 0 → hs, 1 → xy, 2 → color_temp, from a report or a read response. A
+// colour frame without colorMode carries the light's last known mode (z2m keeps
+// it in state, syncColorState): the last colorMode it sent, or the mode of the
+// last colour command — tz.light_color / tz.light_colortemp return color_mode
+// as state. Nothing is guessed while no mode is known.
+void check_color_mode(const PreparedDefinition& def) {
+    const char* const names[] = {"hs", "xy", "color_temp"};
+    for (std::uint8_t m = 0; m < 3; ++m)   // report: colorMode enum8 = m
+        assert(is_str(report(def, 0x0300, {0x08, 0x00, 0x30, m}).merged.find("color_mode"), names[m]));
+    // Read Attributes Response: currentX (u16, status 0) + colorMode = 1.
+    const auto rr = report(def, 0x0300, {0x03, 0x00, 0x00, 0x21, 0x33, 0x53,
+                                         0x08, 0x00, 0x00, 0x30, 0x01}, false, 0x01);
+    assert(is_str(rr.merged.find("color_mode"), "xy") && rr.merged.find("color_x"));
+
+    const Bytes ct300 = {0x07, 0x00, 0x21, 0x2C, 0x01};                  // colorTemperature 300
+    const Bytes x_only = {0x03, 0x00, 0x21, 0x33, 0x53};                 // currentX
+    g_mem = RuntimeStore<1>{};
+    // No colorMode and no mode known yet: nothing guessed from the attributes.
+    assert(!mode_of(report(def, 0x0300, ct300, true)));
+    assert(!mode_of(report(def, 0x0300, x_only, true)));
+    // The mode the light reported stays with its later colour reports …
+    report(def, 0x0300, {0x08, 0x00, 0x30, 0x00}, true);                 // hs
+    assert(is_str(report(def, 0x0300, x_only, true).merged.find("color_mode"), "hs"));
+    assert(is_str(report(def, 0x0300, ct300, true).merged.find("color_mode"), "hs"));
+    // … until a colour command: the next report carries the command's mode.
+    assert(send(def, "color_temp", uint_v(300), true).cluster == 0x0300);
+    assert(is_str(report(def, 0x0300, ct300, true).merged.find("color_mode"), "color_temp"));
+    assert(is_str(report(def, 0x0300, x_only, true).merged.find("color_mode"), "color_temp"));
+    assert(send(def, "color_xy", str_v("0.3,0.4"), true).cluster == 0x0300);
+    assert(is_str(report(def, 0x0300, x_only, true).merged.find("color_mode"), "xy"));
+    assert(send(def, "color_hs", str_v("120,50"), true).cluster == 0x0300);
+    assert(is_str(report(def, 0x0300, {0x00, 0x00, 0x20, 0x55}, true).merged.find("color_mode"), "hs"));
+    assert(send(def, "color_x", str_v("0.3,0.4"), true).frame.empty());   // refused: nothing sent …
+    assert(is_str(report(def, 0x0300, x_only, true).merged.find("color_mode"), "hs"));   // … mode kept
+    // A colorMode from the light wins over the command's.
+    assert(send(def, "color_temp", uint_v(250), true).cluster == 0x0300);
+    const Bytes ct_and_mode = {0x07, 0x00, 0x21, 0x2C, 0x01, 0x08, 0x00, 0x30, 0x01};
+    assert(is_str(report(def, 0x0300, ct_and_mode, true).merged.find("color_mode"), "xy"));
+
+    // Exposed read-only, with the three values it takes.
+    const Expose* cm = find_expose(def, "color_mode");
+    assert(cm && cm->type == ExposeType::Enum && cm->access == Access::State && cm->enum_count == 3);
+    for (std::uint8_t m = 0; m < 3; ++m) assert(std::strcmp(cm->enum_values[m], names[m]) == 0);
+}
 
 void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {
     // Exposes: the light, colour, and tuyaLight's three extras; no power_on_behavior.
@@ -133,6 +202,8 @@ void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {
 int main() {
     check_def(kDefTS0505B, 0x04);
     check_def(kDefTS0505B_moveToLevel, 0x00);
+    check_color_mode(kDefTS0505B);
+    check_color_mode(kDefTS0505B_moveToLevel);
 
     // The six moveToLevelWithOnOffDisable manufacturers (z2m v26.105.0) get the
     // moveToLevel definition; every other TS0505B keeps the generic one.

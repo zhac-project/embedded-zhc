@@ -4,10 +4,12 @@
 // z2m tuyaLight({colorTemp: {range: [153, 500]}, color: true}): light with
 // color_temp 153-500 and color_xy, Tuya's 0xF000 brightness reports, effect,
 // do_not_disturb and color_power_on_behavior; tuyaLight turns
-// power_on_behavior off. For six manufacturers z2m sets
-// moveToLevelWithOnOffDisable ("moveToLevelWithOnOff seems to be broken,
-// leading to the light randomly switching off for levels lower than some
-// threshold"): their brightness goes out as moveToLevel — second definition.
+// power_on_behavior off. color_mode as z2m's fz.color_colortemp publishes it
+// (z2m has no expose for it; listed so the hub shows it). For six
+// manufacturers z2m sets moveToLevelWithOnOffDisable ("moveToLevelWithOnOff
+// seems to be broken, leading to the light randomly switching off for levels
+// lower than some threshold"): their brightness goes out as moveToLevel —
+// second definition.
 // Not ported: applyRedFix (nudges Home Assistant's exact red 0.701/0.299),
 // the TS0505B_1 transition workaround (ZHAC sends no transition), the
 // colorCapabilities cache, power source "when unknown".
@@ -48,6 +50,8 @@ constexpr Expose kExposes[] = {
      ExposeCategory::State, 153, 500, 1},
     {"color_x", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"color_y", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    // Which of the above the light shows: hs / xy / color_temp (kFzColor).
+    {"color_mode", ExposeType::Enum, Access::State, nullptr, nullptr, ::zhc::generic::kColorModes, 3},
     {"effect", ExposeType::Enum, Access::Set, nullptr, "Triggers an effect on the light",
      kEffects, 8},
     {"do_not_disturb", ExposeType::Binary, Access::Set, nullptr, nullptr, nullptr, 0,

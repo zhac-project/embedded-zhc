@@ -3,7 +3,8 @@
 //
 // Colour: the decoder remembers each axis so a one-attribute report still
 // yields the `color_xy` / `color_hs` pairs, and the encoder writes both axes
-// (the other one from memory) instead of resetting it to centre.
+// (the other one from memory) instead of resetting it to centre. The colour
+// mode is remembered the same way.
 #include <cassert>
 #include <cstdint>
 #include <cstring>
@@ -106,6 +107,25 @@ int main() {
         RuntimeContext ctx{};
         assert(generic::tz_color("color_x", floatv(0.0f), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n));
         assert(le16(frame + 3) == 0 && le16(frame + 5) == 0x8000);
+    }
+
+    // ── colour mode ──
+    {   // the last command's mode (color_hs above) rides a report without
+        // colorMode; not on a multi-endpoint light, whose endpoints would
+        // share the one memory
+        RuntimeContext ctx = ctx_with_store();
+        DecodedMessage msg{};
+        msg.payload.put("3", uintv(1000));
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        assert(generic::fz_color(msg, generic::kFzColor, def, ctx, out));
+        assert(str_is(out.find("color_mode"), "hs"));
+        static constexpr EndpointLabel kEps[] = {{"l1", 1}, {"l2", 2}};
+        PreparedDefinition multi{};
+        multi.endpoint_map = kEps;
+        multi.endpoint_map_count = 2;
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out2{};
+        assert(generic::fz_color(msg, generic::kFzColor, multi, ctx, out2));
+        assert(out2.find("color_x") && !out2.find("color_mode"));
     }
     return 0;
 }
