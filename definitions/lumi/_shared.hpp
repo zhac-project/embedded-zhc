@@ -183,12 +183,131 @@ extern const FzConverter kFzLumiManuWaterLeak;
 // z2m attr ids:
 //   power_outage_memory → 0x0201 bool
 //   led_disabled_night  → 0x0203 bool
-//   button_lock         → 0x0200 bool   (optional per-family)
-//   flip_indicator_light→ 0x00F5 bool   (some variants only)
+//   button_lock         → 0x0200 u8, ON = 0 / OFF = 1 (lumi_socket_button_lock,
+//                         lumiButtonLock). Plugs only: on a wall switch 0x0200 is
+//                         the relay's operation mode, and 0 there is "decoupled".
+//   flip_indicator_light→ 0x00F0 u8, ON = 1 / OFF = 0 (lumiFlipIndicatorLight)
 extern const TzConverter kTzLumiPowerOutageMemory;
 extern const TzConverter kTzLumiLedDisabledNight;
 extern const TzConverter kTzLumiButtonLock;
 extern const TzConverter kTzLumiFlipIndicatorLight;
+
+// ── Aqara's own requests ───────────────────────────────────────────
+//
+// z2m lumiPreventReset: a genBasic attribute report of 0xFFF0 that starts
+// aa 10 05 41 87 is the device asking to reset itself off the network (after
+// a long press, among others). z2m answers each one with a genBasic write of
+// 0xFFF0 = aa 10 05 41 47 01 01 10 01 (octet string, code 0x115F, endpoint 1).
+// z2m lumiPreventLeave: a manuSpecificLumi report of 0x00FC = false is answered
+// with 0x00FC = true. Both reply through ctx.configure_write, publish nothing
+// and match attribute reports only.
+extern const FzConverter kFzLumiPreventReset;
+extern const FzConverter kFzLumiPreventLeave;
+
+// ── Modern heartbeat: manuSpecificLumi 0x00F7 ──────────────────────
+//
+// z2m lumi_specific, case "247" (numericAttributes2Payload over
+// buffer2DataObject), for what the heartbeat says about the device itself:
+//   tag 1    voltage (mV); battery % on the model's curve (z2m
+//            meta.battery.voltageToPercentage)
+//   tag 2    power_outage_count = value - 1, JT-BZ-01AQ/A only
+//   tag 3    device_temperature, except on the models z2m ignores it for
+//   tag 5    power_outage_count = value - 1
+//   tag 101  battery: ZNJLBL01LM / ZNCLDJ12LM as is, ZNCLBL01LM / 2
+//   tag 102  battery: TH-S04D
+//   tag 149  energy (LLKZMK12LM / 1000)
+//   tag 150  voltage x 0.1 (KD-R01D, WS-K05E x 0.01; none on JTYJ-GD-01LM/BW)
+//   tag 151  current x 0.001 (LLKZMK11LM as is)
+//   tag 152  power (none on DJT11LM)
+// and z2m lumiBattery, an extend some models add, which takes the battery
+// voltage (or percentage) from its own tags and wins over lumi_specific. The
+// per-model tag cases key on def.model, as z2m's do; the battery settings
+// come from user_config.
+struct LumiHeartbeatOpts {
+    bool          specific;       // z2m lumi_specific: the tag cases above
+    bool          tag1_battery;   // tag 1 → battery on the curve (meta.battery)
+    std::uint8_t  lb_volt_tag;    // lumiBattery voltageAttribute; 0 = no lumiBattery
+    std::uint8_t  lb_pct_tag;     // lumiBattery percentageAttribute (used without a curve)
+    bool          lb_curve;       // lumiBattery voltageToPercentage
+    std::uint16_t min_mv;         // the curve, z2m {min, max}
+    std::uint16_t max_mv;
+};
+bool fz_lumi_heartbeat(const DecodedMessage& msg,
+                        const FzConverter& self,
+                        const PreparedDefinition& def,
+                        RuntimeContext& ctx,
+                        FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+// The heartbeat converter for a model's own settings.
+constexpr FzConverter lumi_heartbeat_converter(const LumiHeartbeatOpts* opts) {
+    return FzConverter{
+        .family            = FrameFamily::Zcl,
+        .cluster           = "manuSpecificLumi",
+        .type_mask         = type_bit(MessageType::AttributeReport) |
+                             type_bit(MessageType::ReadResponse),
+        .command_id        = WILDCARD_CMD_ID,
+        .attr_id           = WILDCARD_ATTR_ID,
+        .endpoint          = WILDCARD_ENDPOINT,
+        .frame_flags_mask  = 0,
+        .frame_flags_value = 0,
+        .direction         = Direction::ServerToClient,
+        .fn                = { .zcl_fn = &fz_lumi_heartbeat },
+        .user_config       = opts,
+    };
+}
+extern const FzConverter kFzLumiHeartbeat;         // mains: voltage but no battery %
+extern const FzConverter kFzLumiHeartbeatBattery;  // + battery % on 2850-3000 mV
+extern const FzConverter kFzLumiBattery;           // lumiBattery() alone: tag 1, 2850-3000 mV
+
+// ── Wall-switch event mode and operation_mode ──────────────────────
+//
+// z2m lumiSetEventMode (also inside lumiCommandMode, and the per-model
+// configure writes of the older definitions): at configure, manuSpecificLumi
+// `mode` 0x0009 (u8) = 1, "event" — the keys send events — code 0x115F,
+// endpoint 1.
+inline constexpr std::uint8_t kLumiEventModeValue[] = {0x01};
+inline constexpr ConfigStep kConfigStepsLumiEventMode[] = {
+    {ConfigStepOp::Write, 1, 0xFCC0, 0, 0, kLumiEventModeValue, 1, 0,
+     /*manu_code=*/0x115F, /*attr_id=*/0x0009, /*attr_type=*/0x20},
+};
+
+// operation_mode writers, each on the endpoint z2m writes it to:
+//   manuSpecificLumi 0x0200 u8 {control_relay 1, decoupled 0}, on the
+//     button's endpoint (lumi_switch_operation_mode_opple, lumiOnOff
+//     ({operationMode: true}), lumiOperationMode);
+//   genBasic 0xFF22 / 0xFF23 u8 on endpoint 1 (lumi_switch_operation_mode_basic):
+//     one rocker {control_relay 0x12, decoupled 0xFE}; per rocker
+//     {control_left_relay 0x12, control_right_relay 0x22, decoupled 0xFE},
+//     where control_relay is the key's own relay;
+//   manuSpecificLumi 0x0009 u8 {command 0, event 1} (lumiCommandMode).
+extern const TzConverter kTzLumiOperationMode;            // operation_mode        @1
+extern const TzConverter kTzLumiOperationModeLeft;        // operation_mode_left   @1
+extern const TzConverter kTzLumiOperationModeCenter;      // operation_mode_center @2
+extern const TzConverter kTzLumiOperationModeRight2;      // operation_mode_right  @2
+extern const TzConverter kTzLumiOperationModeRight3;      // operation_mode_right  @3
+extern const TzConverter kTzLumiOperationModeTop;         // operation_mode_top    @1
+extern const TzConverter kTzLumiOperationModeBottom2;     // operation_mode_bottom @2
+extern const TzConverter kTzLumiOperationModeBottom3;     // operation_mode_bottom @3
+extern const TzConverter kTzLumiOperationModeUp;          // operation_mode_up     @1
+extern const TzConverter kTzLumiOperationModeDown;        // operation_mode_down   @2
+extern const TzConverter kTzLumiOperationModeL1;          // operation_mode_l1     @1
+extern const TzConverter kTzLumiOperationModeL2;          // operation_mode_l2     @2
+extern const TzConverter kTzLumiOperationModePower;       // operation_mode_power  @1
+extern const TzConverter kTzLumiOperationModeBright;      // operation_mode_bright @2
+extern const TzConverter kTzLumiOperationModeDim;         // operation_mode_dim    @3
+extern const TzConverter kTzLumiOperationModeBasic;       // genBasic 0xFF22, one rocker
+extern const TzConverter kTzLumiOperationModeBasicLeft;   // genBasic 0xFF22
+extern const TzConverter kTzLumiOperationModeBasicRight;  // genBasic 0xFF23
+extern const TzConverter kTzLumiCommandMode;              // 0x0009
+
+// Reads those attributes back under the key of the definition's own writer
+// for them: 0x0200 per endpoint (a button's key only from its endpoint, the
+// plain key from any), 0xFF22 / 0xFF23 / 0x0009 from any endpoint.
+extern const FzConverter kFzLumiOperationMode;
+
+inline constexpr const char* kLumiOperationModeValues[] = {"control_relay", "decoupled"};
+inline constexpr const char* kLumiOperationModeRelayValues[] = {
+    "control_left_relay", "control_right_relay", "decoupled"};
+inline constexpr const char* kLumiCommandModeValues[] = {"event", "command"};
 
 // (kFzLumiCurtainPosition already declared earlier in this header.)
 
@@ -350,10 +469,10 @@ struct LumiTagMap {
 };
 
 // Well-known tag ids — use these when building a device's map so the
-// tag-value magic numbers don't drift across files.
+// tag-value magic numbers don't drift across files. The outage count (tag 5,
+// published as value - 1) is fz_lumi_basic's; a raw map entry would undo that.
 constexpr std::uint16_t kLumiTagVoltage       = 0x01;  // u16 mV
 constexpr std::uint16_t kLumiTagDeviceTemp    = 0x03;  // i8 °C
-constexpr std::uint16_t kLumiTagOutageCount   = 0x04;  // u16
 constexpr std::uint16_t kLumiTagState         = 0x64;  // varies (temp/state)
 constexpr std::uint16_t kLumiTagHumidity      = 0x65;  // u16 %rh * 100
 constexpr std::uint16_t kLumiTagPressure      = 0x66;  // u32 kPa * 100

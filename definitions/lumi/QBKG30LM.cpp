@@ -7,7 +7,18 @@
 namespace zhc::devices::lumi {
 namespace {
 struct E { static constexpr ::zhc::lumi::DeviceEndpointLabel e[]={{1,"state_left"},{2,"state_center"},{3,"state_right"}}; static constexpr ::zhc::lumi::DeviceEndpointLabels map{e,3}; };
-using FX = ::zhc::lumi::factory::LumiOnOff<E>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 3> fz{{
+        &::zhc::lumi::kFzLumiHeartbeat,
+        &::zhc::lumi::kFzLumiPreventReset,
+        &::zhc::lumi::kFzLumiOperationMode,
+    }};
+    static constexpr std::array<const TzConverter*, 1> tz{{
+        &::zhc::lumi::kTzLumiOperationMode,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiOnOff<E, X>;
 constexpr const char* kModels[] = { "lumi.switch.l3aeu1", "lumi.switch.n1acn1" };
 }
 
@@ -18,6 +29,9 @@ constexpr Expose kAutoExposes[] = {
     {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"operation_mode", ExposeType::Enum, Access::StateSet, nullptr,
+     "Decoupled mode",
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

@@ -85,7 +85,9 @@ int main() {
         assert(r.def->model && std::strcmp(r.def->model, r.model) == 0);
         assert(r.def->zigbee_models_count >= 1);
         assert(r.def->zigbee_models && r.def->zigbee_models[0]);
-        assert(r.def->from_zigbee_count == 2);   // lumi_basic + lumi_on_off
+        // lumi_basic + lumi_on_off, then what z2m adds where it has it:
+        // heartbeat, the reset answer, operation_mode read-back.
+        assert(r.def->from_zigbee_count >= 2);
         assert(r.def->to_zigbee_count   >= 1);   // kTzOnOff + manu writes
     }
     return 0;

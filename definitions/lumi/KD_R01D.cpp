@@ -8,6 +8,12 @@ namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::lumi::kFzLumiActionMultistate,
+    &::zhc::lumi::kFzLumiHeartbeat,
+    &::zhc::lumi::kFzLumiPreventLeave,
+    &::zhc::lumi::kFzLumiOperationMode,
+};
+const TzConverter* const kTz[] = {
+    &::zhc::lumi::kTzLumiOperationMode,
 };
 constexpr const char* kModels[] = { "lumi.switch.agl011" };
 }
@@ -19,6 +25,9 @@ constexpr Expose kAutoExposes[] = {
     {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"action", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"operation_mode", ExposeType::Enum, Access::StateSet, nullptr,
+     "Decoupled mode for knob",
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -34,7 +43,7 @@ extern const PreparedDefinition kDefKD_R01D{
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
-    .to_zigbee=nullptr,.to_zigbee_count=0,
+    .to_zigbee = kTz, .to_zigbee_count = sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };

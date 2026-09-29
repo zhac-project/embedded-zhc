@@ -49,6 +49,7 @@ const FzConverter* const kFz[] = {
     &Temp::converter,
     &Humidity::converter,
     &Pressure::converter,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.sensor_ht.agl02", "lumi.weather.v2" };
 }

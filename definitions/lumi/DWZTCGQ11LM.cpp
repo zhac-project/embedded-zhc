@@ -20,11 +20,12 @@
 //       0x01ef triple_tap_detection
 //       … (more — see z2m source for the full list)
 //
-// This stub matches the zigbeeModel so the device is recognised, and
-// uses kFzLumiBasic to decode battery + identity via the standard Lumi
-// MI-struct path. Config-attribute Tz wiring is a follow-up — needs
-// per-attribute kTz* converters on the lumi manu-spec cluster, plus
-// an exposes list for the SPA's Options tab.
+// This stub matches the zigbeeModel so the device is recognised, takes
+// battery and voltage from the 0xFCC0 0x00F7 heartbeat (z2m lumiBattery,
+// tags 0x17/0x18) and answers the reset request (lumiPreventReset).
+// Config-attribute Tz wiring is a follow-up — needs per-attribute kTz*
+// converters on the lumi manu-spec cluster, plus exposes for the SPA's
+// Options tab.
 
 #include "definitions/lumi/_shared.hpp"
 #include "zhc/runtime/definition.hpp"
@@ -35,8 +36,22 @@ namespace {
 
 const char* const kZigbeeModels[] = { "lumi.vibration.agl002" };
 
+// z2m lumiBattery({voltageAttribute: 0x17, percentageAttribute: 0x18}), no lumi_specific.
+constexpr ::zhc::lumi::LumiHeartbeatOpts kHeartbeatOpts{
+    .specific = false, .tag1_battery = false, .lb_volt_tag = 0x17, .lb_pct_tag = 0x18,
+    .lb_curve = false, .min_mv = 0, .max_mv = 0,
+};
+constexpr FzConverter kFzHeartbeat = ::zhc::lumi::lumi_heartbeat_converter(&kHeartbeatOpts);
+
 const FzConverter* const kFromZigbee[] = {
     &zhc::lumi::kFzLumiBasic,
+    &kFzHeartbeat,
+    &zhc::lumi::kFzLumiPreventReset,
+};
+
+constexpr Expose kExposes[] = {
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };
 
 }  // namespace
@@ -50,8 +65,8 @@ extern const PreparedDefinition kDefDWZTCGQ11LM{
     .model  = "DWZTCGQ11LM",
     .vendor = "Aqara",
     .meta = nullptr,
-    .exposes = nullptr,
-    .exposes_count = 0,
+    .exposes = kExposes,
+    .exposes_count = sizeof(kExposes) / sizeof(kExposes[0]),
     .white_labels = nullptr,
     .white_labels_count = 0,
     .from_zigbee = kFromZigbee,

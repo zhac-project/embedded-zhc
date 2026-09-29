@@ -10,6 +10,7 @@ namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::lumi::kFzLumiContact,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.magnet.agl02" };
 }

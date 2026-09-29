@@ -34,6 +34,7 @@ constexpr FzConverter kFzAction{
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &kFzAction,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.remote.b186opcn01", "lumi.remote.b286opcn01" };
 }

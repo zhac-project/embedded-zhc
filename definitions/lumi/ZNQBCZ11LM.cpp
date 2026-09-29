@@ -7,7 +7,10 @@ namespace zhc::devices::lumi {
 namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
-
+    &::zhc::lumi::kFzLumiHeartbeat,
+};
+const TzConverter* const kTz[] = {
+    &::zhc::lumi::kTzLumiButtonLock,
 };
 constexpr const char* kModels[] = { "lumi.plug.acn005" };
 }
@@ -18,6 +21,8 @@ constexpr Expose kAutoExposes[] = {
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
+    {"button_lock", ExposeType::Binary, Access::StateSet, nullptr,
+     "Disables the physical switch button", nullptr, 0, ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -32,7 +37,7 @@ extern const PreparedDefinition kDefZNQBCZ11LM{
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
-    .to_zigbee=nullptr,.to_zigbee_count=0,
+    .to_zigbee = kTz, .to_zigbee_count = sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };

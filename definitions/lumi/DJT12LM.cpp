@@ -10,6 +10,7 @@ namespace zhc::devices::lumi {
 namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
+    &::zhc::lumi::kFzLumiBattery,
 };
 constexpr const char* kModels[] = { "lumi.vibration.agl01" };
 }

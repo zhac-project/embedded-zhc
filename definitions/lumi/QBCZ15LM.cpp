@@ -8,7 +8,16 @@ namespace zhc::devices::lumi {
 namespace {
 struct E { static constexpr ::zhc::lumi::DeviceEndpointLabel e[]={{1,"state_relay"}, {2,"state_usb"}};
           static constexpr ::zhc::lumi::DeviceEndpointLabels map{e,2}; };
-using FX = ::zhc::lumi::factory::LumiOnOff<E>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 1> fz{{
+        &::zhc::lumi::kFzLumiHeartbeat,
+    }};
+    static constexpr std::array<const TzConverter*, 1> tz{{
+        &::zhc::lumi::kTzLumiButtonLock,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiOnOff<E, X>;
 constexpr const char* kModels[] = { "lumi.plug.sacn03" };
 }
 
@@ -19,6 +28,8 @@ constexpr Expose kAutoExposes[] = {
     {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"button_lock", ExposeType::Binary, Access::StateSet, nullptr,
+     "Disables the physical switch button", nullptr, 0, ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

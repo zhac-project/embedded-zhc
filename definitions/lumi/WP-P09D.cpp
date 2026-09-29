@@ -36,6 +36,7 @@ const FzConverter* const kFz_WP_P09D[] = {
     &::zhc::generic::kFzElectricalMeasurement,
     &::zhc::lumi::kFzLumiElectricityMeter,
     &::zhc::lumi::kFzLumiManuSpecific,
+    &::zhc::lumi::kFzLumiHeartbeat,
 };
 const TzConverter* const kTz_WP_P09D[] = {
     &::zhc::generic::kTzOnOff,

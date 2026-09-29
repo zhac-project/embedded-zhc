@@ -14,6 +14,7 @@ const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::lumi::kFzLumiCTPR01Multistate,
     &::zhc::lumi::kFzLumiCubeAnalog,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.remote.cagl02" };
 }

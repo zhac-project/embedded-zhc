@@ -5,7 +5,9 @@
 #include "definitions/lumi/_shared.hpp"
 namespace zhc::devices::lumi {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::lumi::kFzLumiBasic, &::zhc::lumi::kFzLumiCurtainPosition };
+const FzConverter* const kFz[] = { &::zhc::lumi::kFzLumiBasic, &::zhc::lumi::kFzLumiCurtainPosition,
+    &::zhc::lumi::kFzLumiHeartbeat,
+};
 constexpr const char* kModels[] = { "lumi.curtain.acn003", "lumi.curtain.agl001" };
 }
 

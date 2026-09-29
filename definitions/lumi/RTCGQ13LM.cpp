@@ -13,6 +13,7 @@ const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::lumi::kFzOccupancy,
     &::zhc::lumi::kFzLumiManuMotion,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.motion.agl04" };
 }
@@ -32,7 +33,6 @@ constexpr Expose kAutoExposes[] = {
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0000},
     {1, 0x0406},
-    {1, 0xFCC0},
 };
 // --- end auto-generated block ---
 

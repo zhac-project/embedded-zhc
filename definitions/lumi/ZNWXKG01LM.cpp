@@ -8,7 +8,20 @@ namespace zhc::devices::lumi {
 namespace {
 struct E { static constexpr ::zhc::lumi::DeviceEndpointLabel e[]={{1,"state"}};
            static constexpr ::zhc::lumi::DeviceEndpointLabels map{e,1}; };
-using FX = ::zhc::lumi::factory::LumiOnOff<E>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 3> fz{{
+        &::zhc::lumi::kFzLumiHeartbeat,
+        &::zhc::lumi::kFzLumiPreventReset,
+        &::zhc::lumi::kFzLumiOperationMode,
+    }};
+    static constexpr std::array<const TzConverter*, 3> tz{{
+        &::zhc::lumi::kTzLumiOperationModeLeft,
+        &::zhc::lumi::kTzLumiOperationModeCenter,
+        &::zhc::lumi::kTzLumiOperationModeRight3,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiOnOff<E, X>;
 constexpr const char* kModels[] = { "lumi.switch.acn040" };
 }
 
@@ -19,6 +32,15 @@ constexpr Expose kAutoExposes[] = {
     {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"operation_mode_left", ExposeType::Enum, Access::StateSet, nullptr,
+     "Decoupled mode for left button",
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
+    {"operation_mode_center", ExposeType::Enum, Access::StateSet, nullptr,
+     "Decoupled mode for center button",
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
+    {"operation_mode_right", ExposeType::Enum, Access::StateSet, nullptr,
+     "Decoupled mode for right button",
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -34,5 +56,8 @@ extern const PreparedDefinition kDefZNWXKG01LM{
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m: manuSpecificLumi mode (0x0009) = 1, "event", at configure.
+    .config_steps = ::zhc::lumi::kConfigStepsLumiEventMode,
+    .config_steps_count = std::size(::zhc::lumi::kConfigStepsLumiEventMode),
 };
 }

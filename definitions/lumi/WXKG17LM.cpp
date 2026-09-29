@@ -8,7 +8,14 @@ namespace zhc::devices::lumi {
 namespace {
 struct E { static constexpr ::zhc::lumi::DeviceEndpointLabel e[]={{1,"state"}};
           static constexpr ::zhc::lumi::DeviceEndpointLabels map{e,1}; };
-using FX = ::zhc::lumi::factory::LumiOnOff<E>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 2> fz{{
+        &::zhc::lumi::kFzLumiHeartbeatBattery,
+        &::zhc::lumi::kFzLumiPreventReset,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiOnOff<E, X>;
 constexpr const char* kModels[] = { "lumi.remote.acn004" };
 }
 

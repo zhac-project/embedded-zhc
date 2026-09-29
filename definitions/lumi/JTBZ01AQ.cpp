@@ -5,7 +5,9 @@
 #include "definitions/lumi/_shared.hpp"
 namespace zhc::devices::lumi {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::lumi::kFzLumiBasic };
+const FzConverter* const kFz[] = { &::zhc::lumi::kFzLumiBasic,
+    &::zhc::lumi::kFzLumiHeartbeat,
+};
 constexpr const char* kModels[] = { "lumi.sensor_gas.acn02" };
 }
 

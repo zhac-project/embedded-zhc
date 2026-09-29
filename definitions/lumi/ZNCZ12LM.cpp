@@ -8,7 +8,13 @@ namespace zhc::devices::lumi {
 namespace {
 struct C { static constexpr ::zhc::lumi::LumiPowerCalibration power{1,1000,10};
            static constexpr ::zhc::lumi::LumiMeterCalibration meter{1000}; };
-using FX = ::zhc::lumi::factory::LumiPower<C>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 1> fz{{
+        &::zhc::lumi::kFzLumiHeartbeat,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiPower<C, X>;
 constexpr const char* kModels[] = { "lumi.plug.maus01" };
 }
 

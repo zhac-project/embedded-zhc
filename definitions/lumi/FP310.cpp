@@ -9,9 +9,13 @@
 // channels: temperature (0x0402 /100), humidity (0x0405 /100), illuminance
 // (0x0400) and occupancy (msOccupancySensing 0x0406).
 //
+// The 0xFCC0 0x00F7 heartbeat (z2m lumi_specific + lumiBattery on tag 0x17 with
+// the 2850-3000 mV curve) gives battery, voltage and the outage count, and the
+// hub answers the "leave" flag (lumiPreventLeave).
+//
 // DEFERRED (all Aqara 0xFCC0 manuSpecificLumi): mmWave presence readout
-// (fp1ePresence), presence_sensitivity, approach/distance settings, and the
-// lumiBattery voltage attribute (0x0017). NOTE: `occupancy` populates only if
+// (fp1ePresence), presence_sensitivity, approach/distance settings.
+// NOTE: `occupancy` populates only if
 // the device mirrors presence onto standard msOccupancySensing; its native
 // presence rides the deferred 0xFCC0 cluster.
 #include "definitions/lumi/_shared.hpp"
@@ -19,11 +23,20 @@
 
 namespace zhc::devices::lumi {
 namespace {
+// z2m lumi_specific + lumiBattery({voltageToPercentage: {min: 2850, max: 3000},
+// voltageAttribute: 0x0017}).
+constexpr ::zhc::lumi::LumiHeartbeatOpts kHeartbeatOpts{
+    .specific = true, .tag1_battery = false, .lb_volt_tag = 0x17, .lb_pct_tag = 1,
+    .lb_curve = true, .min_mv = 2850, .max_mv = 3000,
+};
+constexpr FzConverter kFzHeartbeat = ::zhc::lumi::lumi_heartbeat_converter(&kHeartbeatOpts);
 const FzConverter* const kFz[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzIlluminance,
     &::zhc::generic::kFzOccupancy,
+    &kFzHeartbeat,
+    &::zhc::lumi::kFzLumiPreventLeave,
 };
 constexpr const char* kModels[] = { "lumi.sensor_occupy.acn1" };
 }  // namespace
@@ -33,6 +46,8 @@ constexpr Expose kAutoExposes[] = {
     {"humidity",    ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
     {"occupancy",   ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
+    {"battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
+    {"voltage",     ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

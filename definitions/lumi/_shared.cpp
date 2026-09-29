@@ -7,9 +7,12 @@
 #include "definitions/lumi/_shared.hpp"
 #include "definitions/_generic/_shared.hpp"   // ZclWriteSpec / tz_zcl_write_attr
 
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <initializer_list>
+#include <utility>
 
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/zcl/foundation.hpp"
@@ -756,11 +759,17 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecPowerOutageMemory{
 constexpr ::zhc::generic::ZclWriteSpec kSpecLedDisabledNight{
     "led_disabled_night",  0x0203, 0x10, 0x115F, nullptr, 0,
 };
+// z2m lumi_socket_button_lock / lumiButtonLock: ON = 0, OFF = 1 (a boolean
+// true is ON).
+constexpr ::zhc::generic::ZclWriteLookup kButtonLockLut[] = {{"ON", 0}, {"OFF", 1}};
 constexpr ::zhc::generic::ZclWriteSpec kSpecButtonLock{
-    "button_lock",         0x0200, 0x10, 0x115F, nullptr, 0,
+    "button_lock",         0x0200, 0x20, 0x115F, kButtonLockLut, 2,
+    ::zhc::generic::kZclWriteFlagInvertBool,
 };
+// z2m lumiFlipIndicatorLight.
+constexpr ::zhc::generic::ZclWriteLookup kFlipIndicatorLut[] = {{"ON", 1}, {"OFF", 0}};
 constexpr ::zhc::generic::ZclWriteSpec kSpecFlipIndicator{
-    "flip_indicator_light", 0x00F5, 0x10, 0x115F, nullptr, 0,
+    "flip_indicator_light", 0x00F0, 0x20, 0x115F, kFlipIndicatorLut, 2,
 };
 }  // namespace
 
@@ -778,6 +787,407 @@ ZHC_LUMI_TZ(kTzLumiLedDisabledNight,   kSpecLedDisabledNight,   "led_disabled_ni
 ZHC_LUMI_TZ(kTzLumiButtonLock,         kSpecButtonLock,         "button_lock")
 ZHC_LUMI_TZ(kTzLumiFlipIndicatorLight, kSpecFlipIndicator,      "flip_indicator_light")
 #undef ZHC_LUMI_TZ
+
+// ── Aqara's own requests: "may I reset?" and "leave" ────────────────
+//
+// z2m lumiPreventReset / lumiPreventLeave (lib/lumi.ts). The answer goes out
+// through the configure write hook, which the adapter also hands the RX path.
+
+namespace {
+
+bool fz_lumi_prevent_reset(const DecodedMessage& msg, const FzConverter&,
+                           const PreparedDefinition&, RuntimeContext& ctx,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>&) {
+    static constexpr std::uint8_t kAsk[] = {0xAA, 0x10, 0x05, 0x41, 0x87};
+    const Value* v = msg.payload.find("65520");   // genBasic 0xFFF0
+    if (!v || v->type != ValueType::BytesRef || v->bytes.size() < sizeof(kAsk) ||
+        std::memcmp(v->bytes.data(), kAsk, sizeof(kAsk)) != 0) {
+        return false;
+    }
+    // Octet string on the wire: its length, then aa 10 05 41 47 01 01 10 01.
+    static constexpr std::uint8_t kStay[] = {0x09, 0xAA, 0x10, 0x05, 0x41,
+                                             0x47, 0x01, 0x01, 0x10, 0x01};
+    return ctx.configure_write &&
+           ctx.configure_write(ctx.device_index, 1, 0x0000, 0xFFF0, 0x41,
+                               kStay, sizeof(kStay), 0x115F);
+}
+
+bool fz_lumi_prevent_leave(const DecodedMessage& msg, const FzConverter&,
+                           const PreparedDefinition&, RuntimeContext& ctx,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>&) {
+    const Value* v = msg.payload.find("252");     // 0xFCC0 0x00FC
+    if (!v || v->type != ValueType::Bool || v->b) return false;
+    static constexpr std::uint8_t kStay[] = {0x01};
+    return ctx.configure_write &&
+           ctx.configure_write(ctx.device_index, 1, 0xFCC0, 0x00FC, 0x10,
+                               kStay, sizeof(kStay), 0x115F);
+}
+
+}  // namespace
+
+extern const FzConverter kFzLumiPreventReset{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genBasic",
+    .type_mask         = type_bit(MessageType::AttributeReport),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_lumi_prevent_reset },
+    .user_config       = nullptr,
+};
+
+extern const FzConverter kFzLumiPreventLeave{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "manuSpecificLumi",
+    .type_mask         = type_bit(MessageType::AttributeReport),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_lumi_prevent_leave },
+    .user_config       = nullptr,
+};
+
+// ── Modern heartbeat: manuSpecificLumi 0x00F7 ───────────────────────
+
+namespace {
+
+// The 0x00F7 tags the heartbeat reads, ascending. z2m walks the decoded struct
+// as a JS object, whose integer keys come out in ascending order; that decides
+// who wins when two tags feed one key (voltage: 150 after 1).
+constexpr std::uint8_t kHbTags[] = {1, 2, 3, 5, 23, 24, 101, 102, 149, 150, 151, 152};
+constexpr const char* kHbKeys[] = {"1", "2", "3", "5", "23", "24",
+                                   "101", "102", "149", "150", "151", "152"};
+static_assert(sizeof(kHbTags) == sizeof(kHbKeys) / sizeof(kHbKeys[0]));
+
+const char* hb_key(std::uint8_t tag) {
+    for (std::size_t k = 0; k < sizeof(kHbTags); ++k)
+        if (kHbTags[k] == tag) return kHbKeys[k];
+    return nullptr;
+}
+
+// z2m buffer2DataObject: tag · type · value records, walked while more than
+// one byte is left, so a trailing byte is never read as a tag. Integers are
+// little-endian except the 64-bit ones, which z2m reads big-endian. 0x42 and
+// 0x5F carry 1 and 4 bytes nobody reads; any other unknown type moves one byte
+// on and reads the next tag from there; a double (0x3A) is read whole but only
+// 4 of its bytes are stepped over. The last record of a tag wins. Where z2m's
+// Buffer read would throw on a record cut short, this stops and keeps the rest.
+void lumi_buffer_to_data(std::span<const std::uint8_t> b,
+                         FixedPayload<ZHC_MI_STRUCT_CAP>& out) {
+    std::size_t i = 0;
+    while (i + 1 < b.size()) {
+        const std::uint8_t tag = b[i], type = b[i + 1];
+        std::size_t len = 0;    // value bytes read
+        std::size_t step = 0;   // bytes to the next tag, when not 2 + len
+        switch (type) {
+            case 0x10: case 0x20: case 0x28: len = 1; break;
+            case 0x21: case 0x29: len = 2; break;
+            case 0x22: case 0x2A: len = 3; break;
+            case 0x23: case 0x2B: case 0x39: len = 4; break;
+            case 0x24: case 0x2C: len = 5; break;
+            case 0x25: case 0x2D: len = 6; break;
+            case 0x26: case 0x2E: len = 7; break;
+            case 0x27: case 0x2F: len = 8; break;
+            case 0x3A: len = 8; step = 6; break;
+            case 0x42: step = 3; break;
+            case 0x5F: step = 6; break;
+            default:   step = 1; break;
+        }
+        if (len) {
+            if (i + 2 + len > b.size()) break;
+            const std::uint8_t* p = b.data() + i + 2;
+            const bool big_endian = type == 0x27 || type == 0x2F;
+            std::uint64_t u = 0;
+            for (std::size_t k = 0; k < len; ++k)
+                u |= static_cast<std::uint64_t>(p[big_endian ? len - 1 - k : k]) << (8 * k);
+            Value v{};
+            if (type == 0x39) {
+                const auto bits = static_cast<std::uint32_t>(u);
+                float f;
+                std::memcpy(&f, &bits, sizeof(f));
+                v.type = ValueType::Float; v.f = f;
+            } else if (type == 0x3A) {
+                double d;
+                std::memcpy(&d, &u, sizeof(d));
+                v.type = ValueType::Float; v.f = static_cast<float>(d);
+            } else if (type >= 0x28 && type <= 0x2F) {
+                std::int64_t s = static_cast<std::int64_t>(u);
+                if (len < 8 && (u >> (8 * len - 1)) & 1) s -= std::int64_t{1} << (8 * len);
+                v.type = ValueType::Int; v.i = s;
+            } else {
+                v.type = ValueType::Uint; v.u = u;   // 0x10 too: z2m reads it as a number
+            }
+            if (const char* k = hb_key(tag)) {
+                bool replaced = false;
+                for (std::uint8_t j = 0; j < out.count; ++j)
+                    if (out.items[j].key == k) { out.items[j].value = v; replaced = true; }
+                if (!replaced) out.put(k, v);
+            }
+            if (!step) step = 2 + len;
+        }
+        i += step;
+    }
+}
+
+double hb_num(const Value& v) {
+    switch (v.type) {
+        case ValueType::Uint:  return static_cast<double>(v.u);
+        case ValueType::Int:   return static_cast<double>(v.i);
+        case ValueType::Float: return v.f;
+        default:               return 0.0;
+    }
+}
+
+bool model_is(const char* model, std::initializer_list<const char*> models) {
+    for (const char* m : models)
+        if (std::strcmp(model, m) == 0) return true;
+    return false;
+}
+
+// z2m batteryVoltageToPercentage with {min, max}: toPercentage, a rounded
+// linear map clamped to 0-100.
+Value hb_percent(double mv, const LumiHeartbeatOpts& o) {
+    const double lo = o.min_mv, hi = o.max_mv;
+    const double c = mv > hi ? hi : (mv < lo ? lo : mv);
+    Value v{};
+    v.type = ValueType::Uint;
+    v.u = static_cast<std::uint64_t>(std::floor((c - lo) / (hi - lo) * 100.0 + 0.5));
+    return v;
+}
+
+Value hb_float(double d) { Value v{}; v.type = ValueType::Float; v.f = static_cast<float>(d); return v; }
+Value hb_int(double d)   { Value v{}; v.type = ValueType::Int;   v.i = static_cast<std::int64_t>(d); return v; }
+
+}  // namespace
+
+bool fz_lumi_heartbeat(const DecodedMessage& msg, const FzConverter& self,
+                       const PreparedDefinition& def, RuntimeContext&,
+                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const auto* o = static_cast<const LumiHeartbeatOpts*>(self.user_config);
+    const Value* raw = msg.payload.find("247");   // 0x00F7
+    if (!o || !raw || raw->type != ValueType::BytesRef) return false;
+
+    auto& tags = msg.mi_struct_arena;
+    tags = FixedPayload<ZHC_MI_STRUCT_CAP>{};
+    lumi_buffer_to_data(raw->bytes, tags);
+
+    const char* model = def.model ? def.model : "";
+    // One slot per published key; a later tag overwrites, as in z2m's payload.
+    Value voltage{}, battery{}, temperature{}, outage{}, energy{}, power{}, current{};
+
+    if (o->specific) {
+        for (std::size_t k = 0; k < sizeof(kHbTags); ++k) {
+            const Value* v = tags.find(kHbKeys[k]);
+            if (!v) continue;
+            const double d = hb_num(*v);
+            switch (kHbTags[k]) {
+                case 1:
+                    voltage = *v;
+                    if (o->tag1_battery) battery = hb_percent(d, *o);
+                    break;
+                case 2:
+                    if (model_is(model, {"JT-BZ-01AQ/A", "JTBZ01AQ"})) outage = hb_int(d - 1);
+                    break;
+                case 3:
+                    // A constant 25 °C on these (z2m issues 11126, 13253).
+                    if (!model_is(model, {"WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "MCCGQ14LM",
+                                          "GZCGQ01LM", "JY-GZ-01AQ", "JYGZ01AQ", "CTP-R01"}))
+                        temperature = *v;
+                    break;
+                case 5:
+                    outage = hb_int(d - 1);
+                    break;
+                case 101:
+                    if (model_is(model, {"ZNJLBL01LM", "ZNCLDJ12LM"})) battery = *v;
+                    else if (model_is(model, {"ZNCLBL01LM"}))
+                        battery = hb_float(std::floor(d / 2 * 100 + 0.5) / 100);
+                    break;
+                case 102:
+                    if (model_is(model, {"TH-S04D"})) battery = *v;
+                    break;
+                case 149:
+                    energy = model_is(model, {"LLKZMK12LM"}) ? hb_float(d / 1000) : *v;
+                    break;
+                case 150:
+                    if (model_is(model, {"KD-R01D", "WS-K05E"})) voltage = hb_float(d * 0.01);
+                    else if (!model_is(model, {"JTYJ-GD-01LM/BW", "JTYJGD01LM"})) voltage = hb_float(d * 0.1);
+                    break;
+                case 151:
+                    current = model_is(model, {"LLKZMK11LM"}) ? *v : hb_float(d * 0.001);
+                    break;
+                case 152:
+                    if (!model_is(model, {"DJT11LM"})) power = *v;
+                    break;
+            }
+        }
+    }
+    // z2m lumiBattery: a separate converter after lumi_specific, so it wins.
+    // It only takes truthy values.
+    if (o->lb_volt_tag) {
+        if (!o->lb_curve) {
+            const char* pk = hb_key(o->lb_pct_tag);
+            const Value* p = pk ? tags.find(pk) : nullptr;
+            if (p && hb_num(*p) != 0) battery = *p;
+        }
+        const char* vk = hb_key(o->lb_volt_tag);
+        const Value* v = vk ? tags.find(vk) : nullptr;
+        if (v && hb_num(*v) != 0) {
+            voltage = *v;
+            if (o->lb_curve) battery = hb_percent(hb_num(*v), *o);
+        }
+    }
+
+    bool any = false;
+    const std::pair<const char*, const Value*> keys[] = {
+        {"voltage", &voltage}, {"battery", &battery}, {"device_temperature", &temperature},
+        {"power_outage_count", &outage}, {"energy", &energy}, {"power", &power},
+        {"current", &current},
+    };
+    for (const auto& [key, v] : keys) {
+        if (v->type == ValueType::None) continue;
+        out.put(key, *v);
+        any = true;
+    }
+    return any;
+}
+
+namespace {
+constexpr LumiHeartbeatOpts kHeartbeatMains{
+    .specific = true, .tag1_battery = false, .lb_volt_tag = 0, .lb_pct_tag = 0,
+    .lb_curve = false, .min_mv = 0, .max_mv = 0,
+};
+constexpr LumiHeartbeatOpts kHeartbeatBattery{
+    .specific = true, .tag1_battery = true, .lb_volt_tag = 0, .lb_pct_tag = 0,
+    .lb_curve = false, .min_mv = 2850, .max_mv = 3000,
+};
+constexpr LumiHeartbeatOpts kBatteryOnly{   // lumiBattery({voltageToPercentage: {min: 2850, max: 3000}})
+    .specific = false, .tag1_battery = false, .lb_volt_tag = 1, .lb_pct_tag = 1,
+    .lb_curve = true, .min_mv = 2850, .max_mv = 3000,
+};
+}  // namespace
+
+extern const FzConverter kFzLumiHeartbeat        = lumi_heartbeat_converter(&kHeartbeatMains);
+extern const FzConverter kFzLumiHeartbeatBattery = lumi_heartbeat_converter(&kHeartbeatBattery);
+extern const FzConverter kFzLumiBattery          = lumi_heartbeat_converter(&kBatteryOnly);
+
+// ── operation_mode ──────────────────────────────────────────────────
+
+namespace {
+constexpr ::zhc::generic::ZclWriteLookup kOpModeLut[] = {
+    {"control_relay", 1}, {"decoupled", 0}};
+constexpr ::zhc::generic::ZclWriteLookup kOpModeBasicLut[] = {
+    {"control_relay", 0x12}, {"decoupled", 0xFE}};
+// control_relay on a rocker's key is that rocker's own relay; the value names
+// come first so a read-back finds them.
+constexpr ::zhc::generic::ZclWriteLookup kOpModeLeftLut[] = {
+    {"control_left_relay", 0x12}, {"control_right_relay", 0x22}, {"decoupled", 0xFE},
+    {"control_relay", 0x12}};
+constexpr ::zhc::generic::ZclWriteLookup kOpModeRightLut[] = {
+    {"control_left_relay", 0x12}, {"control_right_relay", 0x22}, {"decoupled", 0xFE},
+    {"control_relay", 0x22}};
+constexpr ::zhc::generic::ZclWriteLookup kCommandModeLut[] = {{"command", 0}, {"event", 1}};
+
+constexpr ::zhc::generic::ZclWriteSpec kSpecOpMode{nullptr, 0x0200, 0x20, 0x115F, kOpModeLut, 2};
+constexpr ::zhc::generic::ZclWriteSpec kSpecOpModeBasic{nullptr, 0xFF22, 0x20, 0x115F, kOpModeBasicLut, 2};
+constexpr ::zhc::generic::ZclWriteSpec kSpecOpModeLeft{nullptr, 0xFF22, 0x20, 0x115F, kOpModeLeftLut, 4};
+constexpr ::zhc::generic::ZclWriteSpec kSpecOpModeRight{nullptr, 0xFF23, 0x20, 0x115F, kOpModeRightLut, 4};
+constexpr ::zhc::generic::ZclWriteSpec kSpecCommandMode{nullptr, 0x0009, 0x20, 0x115F, kCommandModeLut, 2};
+
+constexpr const ::zhc::generic::ZclWriteSpec* kOpModeSpecs[] = {
+    &kSpecOpMode, &kSpecOpModeBasic, &kSpecOpModeLeft, &kSpecOpModeRight, &kSpecCommandMode};
+}  // namespace
+
+#define ZHC_LUMI_OPMODE_TZ(var, key_str, cl_name, cl_id, spec, ep)     \
+    extern const TzConverter var{                                        \
+        .key         = key_str,                                          \
+        .cluster     = cl_name,                                          \
+        .cluster_id  = cl_id,                                            \
+        .command_id  = 0x02,                                             \
+        .fn          = &::zhc::generic::tz_zcl_write_attr,               \
+        .user_config = &spec,                                            \
+        .endpoint    = ep,                                               \
+    };
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationMode,           "operation_mode",        "manuSpecificLumi", 0xFCC0, kSpecOpMode, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeLeft,       "operation_mode_left",   "manuSpecificLumi", 0xFCC0, kSpecOpMode, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeCenter,     "operation_mode_center", "manuSpecificLumi", 0xFCC0, kSpecOpMode, 2)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeRight2,     "operation_mode_right",  "manuSpecificLumi", 0xFCC0, kSpecOpMode, 2)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeRight3,     "operation_mode_right",  "manuSpecificLumi", 0xFCC0, kSpecOpMode, 3)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeTop,        "operation_mode_top",    "manuSpecificLumi", 0xFCC0, kSpecOpMode, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBottom2,    "operation_mode_bottom", "manuSpecificLumi", 0xFCC0, kSpecOpMode, 2)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBottom3,    "operation_mode_bottom", "manuSpecificLumi", 0xFCC0, kSpecOpMode, 3)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeUp,         "operation_mode_up",     "manuSpecificLumi", 0xFCC0, kSpecOpMode, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeDown,       "operation_mode_down",   "manuSpecificLumi", 0xFCC0, kSpecOpMode, 2)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeL1,         "operation_mode_l1",     "manuSpecificLumi", 0xFCC0, kSpecOpMode, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeL2,         "operation_mode_l2",     "manuSpecificLumi", 0xFCC0, kSpecOpMode, 2)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModePower,      "operation_mode_power",  "manuSpecificLumi", 0xFCC0, kSpecOpMode, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBright,     "operation_mode_bright", "manuSpecificLumi", 0xFCC0, kSpecOpMode, 2)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeDim,        "operation_mode_dim",    "manuSpecificLumi", 0xFCC0, kSpecOpMode, 3)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBasic,      "operation_mode",        "genBasic", 0x0000, kSpecOpModeBasic, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBasicLeft,  "operation_mode_left",   "genBasic", 0x0000, kSpecOpModeLeft, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBasicRight, "operation_mode_right",  "genBasic", 0x0000, kSpecOpModeRight, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiCommandMode,             "operation_mode",        "manuSpecificLumi", 0xFCC0, kSpecCommandMode, 1)
+#undef ZHC_LUMI_OPMODE_TZ
+
+// A report is published under the key of the definition's own writer for its
+// attribute, so a read-back lands where the write came from: 0x0200 per button
+// (z2m postfixWithEndpointName / enumLookup endpointName), the others from any
+// endpoint. Aqara sends these manufacturer-specific, which leaves the frame
+// without a cluster name; when there is one it must be the writer's.
+namespace {
+bool fz_lumi_operation_mode(const DecodedMessage& msg, const FzConverter&,
+                            const PreparedDefinition& def, RuntimeContext&,
+                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool any = false;
+    for (std::uint8_t i = 0; i < def.to_zigbee_count; ++i) {
+        const TzConverter* t = def.to_zigbee[i];
+        if (!t) continue;
+        const auto* s = static_cast<const ::zhc::generic::ZclWriteSpec*>(t->user_config);
+        bool ours = false;
+        for (const auto* k : kOpModeSpecs) ours = ours || k == s;
+        if (!ours) continue;
+        if (msg.cluster && std::strcmp(msg.cluster, t->cluster) != 0) continue;
+        if (s == &kSpecOpMode && std::strcmp(t->key, "operation_mode") != 0 &&
+            t->endpoint != msg.src_endpoint) {
+            continue;
+        }
+        char id[8];
+        std::snprintf(id, sizeof(id), "%u", static_cast<unsigned>(s->attr_id));
+        const Value* v = msg.payload.find(id);
+        if (!v || v->type != ValueType::Uint) continue;
+        for (std::uint8_t k = 0; k < s->lookup_count; ++k) {
+            if (s->lookup[k].value != v->u) continue;
+            Value o{};
+            o.type = ValueType::StringRef;
+            o.str  = s->lookup[k].label;
+            out.put(t->key, o);
+            any = true;
+            break;
+        }
+    }
+    return any;
+}
+}  // namespace
+
+extern const FzConverter kFzLumiOperationMode{
+    .family            = FrameFamily::Zcl,
+    .cluster           = nullptr,   // genBasic and manuSpecificLumi; checked per writer
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_lumi_operation_mode },
+    .user_config       = nullptr,
+};
 
 // (fz_lumi_curtain_position already exists lower in this file with
 // the ZHC_LUMI_ATTRREPORT_CONVERTER macro — don't duplicate.)

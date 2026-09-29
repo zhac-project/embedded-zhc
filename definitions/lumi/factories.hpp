@@ -35,6 +35,25 @@
 
 namespace zhc::lumi::factory {
 
+// Converters a definition adds on top of a factory bundle: the z2m extends it
+// has besides lumiOnOff / lumiAction / lumiPower / lumiLight (lumi_specific,
+// lumiPreventReset, operation_mode writers, ...). A definition derives from
+// NoExtras and hides `fz` and/or `tz` with its own std::array.
+struct NoExtras {
+    static constexpr std::array<const FzConverter*, 0> fz{};
+    static constexpr std::array<const TzConverter*, 0> tz{};
+};
+
+namespace detail {
+template <typename T, std::size_t A, std::size_t B>
+constexpr std::array<T, A + B> concat(const std::array<T, A>& a, const std::array<T, B>& b) {
+    std::array<T, A + B> out{};
+    for (std::size_t i = 0; i < A; ++i) out[i] = a[i];
+    for (std::size_t i = 0; i < B; ++i) out[A + i] = b[i];
+    return out;
+}
+}  // namespace detail
+
 // ── LumiLight ─────────────────────────────────────────────────────
 //
 // Builds the converter bundle for Aqara lights. Covers the subset of
@@ -94,10 +113,10 @@ struct LightTzList {
 
 }  // namespace detail
 
-template <LumiLightOpts OPTS>
+template <LumiLightOpts OPTS, typename ExtraT = NoExtras>
 struct LumiLight {
-    static constexpr auto fz_array = detail::LightFzList<OPTS>::value;
-    static constexpr auto tz_array = detail::LightTzList<OPTS>::value;
+    static constexpr auto fz_array = detail::concat(detail::LightFzList<OPTS>::value, ExtraT::fz);
+    static constexpr auto tz_array = detail::concat(detail::LightTzList<OPTS>::value, ExtraT::tz);
 
     // Pointer-list views the device plugs directly into
     // `PreparedDefinition::from_zigbee` / `to_zigbee`. Data lives in
@@ -126,7 +145,7 @@ struct LumiLight {
 // When `map.count == 0` the factory degrades to the single-endpoint
 // case and emits plain "state".
 
-template <typename EndpointsT>
+template <typename EndpointsT, typename ExtraT = NoExtras>
 struct LumiOnOff {
     static constexpr FzConverter kFzOnOffBound{
         .family            = FrameFamily::Zcl,
@@ -143,19 +162,21 @@ struct LumiOnOff {
         .user_config       = &EndpointsT::map,
     };
 
-    static constexpr std::array<const FzConverter*, 2> fz_array{{
-        &::zhc::lumi::kFzLumiBasic,
-        &kFzOnOffBound,
-    }};
+    static constexpr auto fz_array = detail::concat(
+        std::array<const FzConverter*, 2>{{&::zhc::lumi::kFzLumiBasic, &kFzOnOffBound}},
+        ExtraT::fz);
     // Wall-switch family (QBKG*/ZNQBKG*/WS-EUK*) accepts the same
     // 0xFCC0 attrs as the plug family. Wire them; unsupported models
-    // NAK the attribute.
-    static constexpr std::array<const TzConverter*, 4> tz_array{{
-        &::zhc::generic::kTzOnOff,
-        &::zhc::lumi::kTzLumiPowerOutageMemory,
-        &::zhc::lumi::kTzLumiLedDisabledNight,
-        &::zhc::lumi::kTzLumiButtonLock,
-    }};
+    // NAK the attribute. No button_lock: on a switch 0xFCC0 0x0200 is
+    // the relay's operation mode (0 = decoupled); the plugs z2m gives a
+    // button lock add kTzLumiButtonLock themselves.
+    static constexpr auto tz_array = detail::concat(
+        std::array<const TzConverter*, 3>{{
+            &::zhc::generic::kTzOnOff,
+            &::zhc::lumi::kTzLumiPowerOutageMemory,
+            &::zhc::lumi::kTzLumiLedDisabledNight,
+        }},
+        ExtraT::tz);
 
     static constexpr const FzConverter* const* fz_list = fz_array.data();
     static constexpr std::uint8_t fz_count =
@@ -174,9 +195,9 @@ struct LumiOnOff {
 //
 // Factory pairs `kFzLumiBasic` (battery TLV) with a
 // `fz_lumi_action_multistate` converter bound to `&ActionMapT::map`.
-// No outbound path — these are report-only remotes.
+// No outbound path of its own: these are report-only remotes.
 
-template <typename ActionMapT>
+template <typename ActionMapT, typename ExtraT = NoExtras>
 struct LumiAction {
     static constexpr FzConverter kFzActionBound{
         .family            = FrameFamily::Zcl,
@@ -193,17 +214,19 @@ struct LumiAction {
         .user_config       = &ActionMapT::map,
     };
 
-    static constexpr std::array<const FzConverter*, 2> fz_array{{
-        &::zhc::lumi::kFzLumiBasic,
-        &kFzActionBound,
-    }};
+    static constexpr auto fz_array = detail::concat(
+        std::array<const FzConverter*, 2>{{&::zhc::lumi::kFzLumiBasic, &kFzActionBound}},
+        ExtraT::fz);
+    static constexpr auto tz_array = ExtraT::tz;
 
     static constexpr const FzConverter* const* fz_list = fz_array.data();
     static constexpr std::uint8_t fz_count =
         static_cast<std::uint8_t>(fz_array.size());
 
-    static constexpr const TzConverter* const* tz_list = nullptr;
-    static constexpr std::uint8_t tz_count = 0;
+    static constexpr const TzConverter* const* tz_list =
+        tz_array.size() ? tz_array.data() : nullptr;
+    static constexpr std::uint8_t tz_count =
+        static_cast<std::uint8_t>(tz_array.size());
 };
 
 // ── LumiPower ─────────────────────────────────────────────────────
@@ -217,7 +240,7 @@ struct LumiAction {
 // to power calibration) + fz_lumi_electricity_meter (bound to meter
 // calibration). Outbound: tz_on_off.
 
-template <typename CalibrationT>
+template <typename CalibrationT, typename ExtraT = NoExtras>
 struct LumiPower {
     static constexpr FzConverter kFzPowerBound{
         .family            = FrameFamily::Zcl,
@@ -249,21 +272,25 @@ struct LumiPower {
         .user_config       = &CalibrationT::meter,
     };
 
-    static constexpr std::array<const FzConverter*, 4> fz_array{{
-        &::zhc::lumi::kFzLumiBasic,
-        &::zhc::generic::kFzOnOff,
-        &kFzPowerBound,
-        &kFzMeterBound,
-    }};
+    static constexpr auto fz_array = detail::concat(
+        std::array<const FzConverter*, 4>{{
+            &::zhc::lumi::kFzLumiBasic,
+            &::zhc::generic::kFzOnOff,
+            &kFzPowerBound,
+            &kFzMeterBound,
+        }},
+        ExtraT::fz);
     // Every Aqara metering plug in z2m's modern tz list accepts
     // power_outage_memory + led_disabled_night writes on 0xFCC0.
     // Wiring them unconditionally is harmless on older models — the
     // device simply NAKs an unknown-attr write.
-    static constexpr std::array<const TzConverter*, 3> tz_array{{
-        &::zhc::generic::kTzOnOff,
-        &::zhc::lumi::kTzLumiPowerOutageMemory,
-        &::zhc::lumi::kTzLumiLedDisabledNight,
-    }};
+    static constexpr auto tz_array = detail::concat(
+        std::array<const TzConverter*, 3>{{
+            &::zhc::generic::kTzOnOff,
+            &::zhc::lumi::kTzLumiPowerOutageMemory,
+            &::zhc::lumi::kTzLumiLedDisabledNight,
+        }},
+        ExtraT::tz);
 
     static constexpr const FzConverter* const* fz_list = fz_array.data();
     static constexpr std::uint8_t fz_count =

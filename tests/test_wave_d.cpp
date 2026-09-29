@@ -48,7 +48,8 @@ const Row kRows[] = {
 int main() {
     for (const auto& r : kRows) {
         assert(r.def->model && std::strcmp(r.def->model, r.model) == 0);
-        assert(r.def->from_zigbee_count == 4);   // basic + onoff + power + meter
+        // basic + onoff + power + meter, + the 0x00F7 heartbeat where z2m decodes it
+        assert(r.def->from_zigbee_count >= 4);
         assert(r.def->to_zigbee_count   >= 1);   // kTzOnOff + manu writes
     }
     return 0;

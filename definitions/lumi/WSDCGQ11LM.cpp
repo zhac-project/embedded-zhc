@@ -41,11 +41,11 @@ using Humidity = ::zhc::m::Numeric<ms_humidity_opts>;
 using Pressure = ::zhc::m::Numeric<ms_pressure_opts>;
 
 // Lumi TLV path — covers the same three values on the consolidated
-// 0xFF01 attr report.
+// 0xFF01 attr report. power_outage_count is kFzLumiBasic's (tag 5 - 1, z2m
+// case "5"); tag 4 is mode_switch on wall switches and nothing here.
 constexpr ::zhc::lumi::LumiTagEntry kTagEntries[] = {
     { ::zhc::lumi::kLumiTagVoltage,     "voltage",            1   },
     { ::zhc::lumi::kLumiTagDeviceTemp,  "device_temperature", 1   },
-    { ::zhc::lumi::kLumiTagOutageCount, "power_outage_count", 1   },
     { ::zhc::lumi::kLumiTagState,       "temperature",        100 },
     { ::zhc::lumi::kLumiTagHumidity,    "humidity",           100 },
     { ::zhc::lumi::kLumiTagPressure,    "pressure",           100 },

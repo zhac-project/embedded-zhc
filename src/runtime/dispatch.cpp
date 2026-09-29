@@ -416,6 +416,7 @@ TzDispatchResult dispatch_to_zigbee(const PreparedDefinition& def,
         r.cluster_id = cvt->cluster_id;
         r.command_id = cvt->command_id;
         r.frame_size = n;
+        r.endpoint   = cvt->endpoint;
         return r;
     }
     return r;

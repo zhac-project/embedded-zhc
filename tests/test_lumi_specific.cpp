@@ -88,23 +88,24 @@ static void test_plug_metering_map() {
 }
 
 // ── Button battery frame (WXKG01LM TLV shape) ───────────────────────
-// Same 11-byte MI-struct as the fixture: voltage 2984 / temp 29 / outages 18.
+// Same 11-byte MI-struct as the fixture: voltage 2984 / temp 29 / tag 4 = 18.
 constexpr std::uint8_t kButtonFrame[] = {
     0x18, 0x0B, 0x0A,
     0x01, 0xFF, 0x42, 0x0B,
     0x01, 0x21, 0xA8, 0x0B,     // tag 0x01 u16 = 2984 (voltage mV)
     0x03, 0x28, 0x1D,            // tag 0x03 i8  = 29   (°C)
-    0x04, 0x21, 0x12, 0x00,      // tag 0x04 u16 = 18   (outages)
+    0x04, 0x21, 0x12, 0x00,      // tag 0x04 u16 = 18   (mode_switch on a wall switch)
 };
 
 static void test_button_battery_map_raw_passthrough() {
     // Divisor 1 everywhere — prove the same converter does raw pass-
     // through when the map doesn't request scaling (fz_lumi_basic owns
-    // the voltage-curve derivation; fz_lumi_specific stays mechanical).
+    // the voltage-curve derivation and the outage count; fz_lumi_specific
+    // stays mechanical).
     static constexpr lumi::LumiTagEntry entries[] = {
         { lumi::kLumiTagVoltage,     "voltage",            1 },
         { lumi::kLumiTagDeviceTemp,  "device_temperature", 1 },
-        { lumi::kLumiTagOutageCount, "power_outage_count", 1 },
+        { 0x04,                      "tag_4",              1 },
     };
     static constexpr lumi::LumiTagMap map{ entries,
                                      sizeof(entries) / sizeof(entries[0]) };
@@ -127,9 +128,9 @@ static void test_button_battery_map_raw_passthrough() {
     assert(dtemp && dtemp->type == ValueType::Int);
     assert(dtemp->i == 29);
 
-    const Value* outages = result.merged.find("power_outage_count");
-    assert(outages && outages->type == ValueType::Int);
-    assert(outages->i == 18);
+    const Value* tag4 = result.merged.find("tag_4");
+    assert(tag4 && tag4->type == ValueType::Int);
+    assert(tag4->i == 18);
 
     // The basic-curve battery% key MUST NOT appear — that derivation
     // belongs to fz_lumi_basic.

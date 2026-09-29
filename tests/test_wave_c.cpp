@@ -55,8 +55,8 @@ const Row kRows[] = {
     { &devices::lumi::kDefZNLDP28LM, "ZNLDP28LM", 3 },
     { &devices::lumi::kDefZNLDP30LM, "ZNLDP30LM", 3 },
     { &devices::lumi::kDefZNLDP31LM, "ZNLDP31LM", 3 },
-    { &devices::lumi::kDefZNXNKG01LM,"ZNXNKG01LM",2 },
-    { &devices::lumi::kDefZNXNKG02LM,"ZNXNKG02LM",2 },
+    { &devices::lumi::kDefZNXNKG01LM,"ZNXNKG01LM",3 },   // + operation_mode (lumiCommandMode)
+    { &devices::lumi::kDefZNXNKG02LM,"ZNXNKG02LM",3 },   // + operation_mode (lumiCommandMode)
     { &devices::lumi::kDefZNXNKG03LM,"ZNXNKG03LM",2 },
     { &devices::lumi::kDefZNXNKG04LM,"ZNXNKG04LM",2 },
     { &devices::lumi::kDefZNXNKG05LM,"ZNXNKG05LM",2 },

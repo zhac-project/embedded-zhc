@@ -61,7 +61,10 @@ bool parse_read_attr_response(std::span<const std::uint8_t> payload,
 // Parse a Xiaomi `0xFF01` / MI-struct payload. Shape: the ZCL value is
 // type 0x42 (octet-string with 1-byte length prefix) whose bytes are a
 // packed TLV stream: `tag(1) | type(1) | value(N)`. Writes each tag
-// decoded into `arena` using the decimal tag number as the key.
+// decoded into `arena` using the decimal tag number as the key. A trailing
+// byte, a record cut short, an unknown type or a full arena stops the walk;
+// the records before it stay. True when any record was read (or the struct
+// is empty).
 bool parse_mi_struct(std::span<const std::uint8_t> struct_bytes,
                       char* key_scratch,
                       std::size_t scratch_cap,

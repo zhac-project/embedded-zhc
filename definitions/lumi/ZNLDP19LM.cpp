@@ -6,7 +6,13 @@
 #include "definitions/lumi/factories.hpp"
 namespace zhc::devices::lumi {
 namespace {
-using FX = ::zhc::lumi::factory::LumiLight<::zhc::lumi::factory::LumiLightOpts{.level=true,.color_temp=true}>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 1> fz{{
+        &::zhc::lumi::kFzLumiHeartbeat,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiLight<::zhc::lumi::factory::LumiLightOpts{.level=true,.color_temp=true}, X>;
 constexpr const char* kModels[] = { "lumi.light.acn004" };
 }
 

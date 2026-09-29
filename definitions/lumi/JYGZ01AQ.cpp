@@ -8,8 +8,15 @@
 
 namespace zhc::devices::lumi {
 namespace {
+// z2m lumi_specific with meta.battery.voltageToPercentage {min: 2475, max: 3000}.
+constexpr ::zhc::lumi::LumiHeartbeatOpts kHeartbeatOpts{
+    .specific = true, .tag1_battery = true, .lb_volt_tag = 0, .lb_pct_tag = 0,
+    .lb_curve = false, .min_mv = 2475, .max_mv = 3000,
+};
+constexpr FzConverter kFzHeartbeat = ::zhc::lumi::lumi_heartbeat_converter(&kHeartbeatOpts);
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
+    &kFzHeartbeat,
 };
 constexpr const char* kModels[] = { "lumi.sensor_smoke.acn02", "lumi.sensor_smoke.acn03" };
 }

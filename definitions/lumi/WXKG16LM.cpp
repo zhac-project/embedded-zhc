@@ -14,7 +14,13 @@ struct WXKG16_Actions {
     };
     static constexpr ::zhc::lumi::LumiActionMap map{ entries, 3 };
 };
-using FX = ::zhc::lumi::factory::LumiAction<WXKG16_Actions>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 1> fz{{
+        &::zhc::lumi::kFzLumiHeartbeatBattery,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiAction<WXKG16_Actions, X>;
 constexpr const char* kModels[] = { "lumi.remote.acn003" };
 }
 

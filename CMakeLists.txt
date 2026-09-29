@@ -920,6 +920,9 @@ target_link_libraries(zhc_lumi_registry_tests PRIVATE zhc_definitions)
 add_executable(zhc_lumi_switch_reports_tests tests/test_lumi_switch_reports.cpp)
 target_link_libraries(zhc_lumi_switch_reports_tests PRIVATE zhc_definitions)
 
+add_executable(zhc_lumi_aqara_fixes_tests tests/test_lumi_aqara_fixes.cpp)
+target_link_libraries(zhc_lumi_aqara_fixes_tests PRIVATE zhc_definitions)
+
 add_executable(zhc_tuya_matcher_tests tests/test_tuya_matcher.cpp)
 target_link_libraries(zhc_tuya_matcher_tests PRIVATE zhc_runtime)
 
@@ -3483,6 +3486,7 @@ add_test(NAME zhc_tuya_tz_tests             COMMAND zhc_tuya_tz_tests)
 add_test(NAME zhc_tuya_switch_reports_tests COMMAND zhc_tuya_switch_reports_tests)
 add_test(NAME zhc_tuya_plug_reports_tests   COMMAND zhc_tuya_plug_reports_tests)
 add_test(NAME zhc_lumi_switch_reports_tests COMMAND zhc_lumi_switch_reports_tests)
+add_test(NAME zhc_lumi_aqara_fixes_tests    COMMAND zhc_lumi_aqara_fixes_tests)
 add_test(NAME zhc_tuya_light_reports_tests  COMMAND zhc_tuya_light_reports_tests)
 add_test(NAME zhc_ts0502b_config_tests      COMMAND zhc_ts0502b_config_tests)
 add_test(NAME zhc_tuya_ts011f_metering_tests COMMAND zhc_tuya_ts011f_metering_tests)

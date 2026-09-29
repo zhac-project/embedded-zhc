@@ -12,6 +12,7 @@ namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::lumi::kFzOccupancy,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.motion.agl02" };
 }

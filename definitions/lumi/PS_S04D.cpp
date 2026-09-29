@@ -5,9 +5,16 @@
 #include "definitions/lumi/_shared.hpp"
 namespace zhc::devices::lumi {
 namespace {
+// z2m lumi_specific + lumiBattery({voltageAttribute: 0x17, percentageAttribute: 0x18}).
+constexpr ::zhc::lumi::LumiHeartbeatOpts kHeartbeatOpts{
+    .specific = true, .tag1_battery = false, .lb_volt_tag = 0x17, .lb_pct_tag = 0x18,
+    .lb_curve = false, .min_mv = 0, .max_mv = 0,
+};
+constexpr FzConverter kFzHeartbeat = ::zhc::lumi::lumi_heartbeat_converter(&kHeartbeatOpts);
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
-
+    &kFzHeartbeat,
+    &::zhc::lumi::kFzLumiPreventLeave,
 };
 constexpr const char* kModels[] = { "lumi.sensor_occupy.agl8" };
 }

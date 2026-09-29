@@ -15,6 +15,7 @@ namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::generic::kFzIasWaterLeakAlarm,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.flood.agl02", "lumi.sensor_wleak.agl02" };
 }

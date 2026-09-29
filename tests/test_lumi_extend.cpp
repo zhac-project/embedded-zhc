@@ -14,7 +14,6 @@ using namespace zhc;
 
 static void test_each_helper_yields_unique_fn() {
     const ConfigureFn fns[] = {
-        lumi::extend::prevent_reset(),
         lumi::extend::flip_indicator_light(),
         lumi::extend::led_disabled_night(),
         lumi::extend::add_manu_specific_lumi_cluster(),
@@ -30,12 +29,11 @@ static void test_each_helper_yields_unique_fn() {
 }
 
 static void test_same_helper_is_stable() {
-    assert(lumi::extend::prevent_reset() == lumi::extend::prevent_reset());
+    assert(lumi::extend::zigbee_ota() == lumi::extend::zigbee_ota());
 }
 
 static void test_helpers_are_callable_without_crash() {
     RuntimeContext ctx{};
-    lumi::extend::prevent_reset()(0, ctx);
     lumi::extend::flip_indicator_light()(0, ctx);
     lumi::extend::led_disabled_night()(0, ctx);
     lumi::extend::add_manu_specific_lumi_cluster()(0, ctx);
@@ -45,11 +43,11 @@ static void test_helpers_are_callable_without_crash() {
 
 static void test_modern_extend_bundle() {
     constexpr auto bundle = lumi::extend::lumi_modern_extend_default();
-    assert(bundle.count == 5);
+    assert(bundle.count == 4);
     for (std::uint8_t i = 0; i < bundle.count; ++i) {
         assert(bundle.steps[i] != nullptr);
     }
-    // All five must be distinct.
+    // All four must be distinct.
     std::set<ConfigureFn> unique;
     for (std::uint8_t i = 0; i < bundle.count; ++i) unique.insert(bundle.steps[i]);
     assert(unique.size() == bundle.count);

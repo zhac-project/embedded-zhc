@@ -221,6 +221,10 @@ struct TzConverter {
     std::uint16_t command_id;   // ZCL command id encoded into the frame
     ToZigbeeFn    fn;
     const void*   user_config;
+    // The endpoint the frame must go to, for a write z2m makes on a fixed
+    // endpoint (a button's own endpoint, genBasic on endpoint 1). 0 = the
+    // endpoint the caller asked for.
+    std::uint8_t  endpoint = 0;
 };
 
 // Bits for `PreparedDefinition::meter_poll` (z2m

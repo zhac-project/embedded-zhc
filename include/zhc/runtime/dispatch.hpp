@@ -178,6 +178,7 @@ struct TzDispatchResult {
     std::uint16_t cluster_id{0};
     std::uint16_t command_id{0};
     std::size_t   frame_size{0};
+    std::uint8_t  endpoint{0};   // the converter's TzConverter::endpoint; 0 = caller's
 };
 
 // Walk `def.to_zigbee` looking for a TzConverter that claims `key`.

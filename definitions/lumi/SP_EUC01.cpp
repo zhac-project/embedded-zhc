@@ -8,7 +8,16 @@ namespace zhc::devices::lumi {
 namespace {
 struct C { static constexpr ::zhc::lumi::LumiPowerCalibration power{1,1000,10};
            static constexpr ::zhc::lumi::LumiMeterCalibration meter{1000}; };
-using FX = ::zhc::lumi::factory::LumiPower<C>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 1> fz{{
+        &::zhc::lumi::kFzLumiHeartbeat,
+    }};
+    static constexpr std::array<const TzConverter*, 1> tz{{
+        &::zhc::lumi::kTzLumiButtonLock,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiPower<C, X>;
 constexpr const char* kModels[] = { "lumi.plug.maeu01", "lumi.plug.maeu03" };
 }
 
@@ -22,6 +31,8 @@ constexpr Expose kAutoExposes[] = {
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    {"button_lock", ExposeType::Binary, Access::StateSet, nullptr,
+     "Disables the physical switch button", nullptr, 0, ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -45,5 +56,8 @@ extern const PreparedDefinition kDefSPEUC01{
     // z2m deliberately does NOT configureReporting V/I/P here.
     .reports=::zhc::lumi::kReportsLumiOnOffEnergy,
     .reports_count=::zhc::lumi::kReportsLumiOnOffEnergyCount,
+    // z2m: manuSpecificLumi mode (0x0009) = 1, "event", at configure.
+    .config_steps = ::zhc::lumi::kConfigStepsLumiEventMode,
+    .config_steps_count = std::size(::zhc::lumi::kConfigStepsLumiEventMode),
 };
 }

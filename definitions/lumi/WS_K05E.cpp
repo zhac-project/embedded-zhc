@@ -8,6 +8,15 @@ namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::lumi::kFzLumiActionMultistate,
+    &::zhc::lumi::kFzLumiHeartbeat,
+    &::zhc::lumi::kFzLumiPreventReset,
+    &::zhc::lumi::kFzLumiPreventLeave,
+    &::zhc::lumi::kFzLumiOperationMode,
+};
+const TzConverter* const kTz[] = {
+    &::zhc::lumi::kTzLumiOperationModePower,
+    &::zhc::lumi::kTzLumiOperationModeBright,
+    &::zhc::lumi::kTzLumiOperationModeDim,
 };
 constexpr const char* kModels[] = { "lumi.switch.agl007" };
 }
@@ -19,6 +28,15 @@ constexpr Expose kAutoExposes[] = {
     {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"action", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"operation_mode_power", ExposeType::Enum, Access::StateSet, nullptr,
+     "Decoupled mode for the load relay (decoupling power disables bright/dim buttons)",
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
+    {"operation_mode_bright", ExposeType::Enum, Access::StateSet, nullptr,
+     "Decoupled mode for the brightness up button (disabled when power is decoupled)",
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
+    {"operation_mode_dim", ExposeType::Enum, Access::StateSet, nullptr,
+     "Decoupled mode for the brightness down button (disabled when power is decoupled)",
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -34,8 +52,11 @@ extern const PreparedDefinition kDefWS_K05E{
     .meta=nullptr,.exposes=kAutoExposes,.exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
-    .to_zigbee=nullptr,.to_zigbee_count=0,
+    .to_zigbee = kTz, .to_zigbee_count = sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m: manuSpecificLumi mode (0x0009) = 1, "event", at configure.
+    .config_steps = ::zhc::lumi::kConfigStepsLumiEventMode,
+    .config_steps_count = std::size(::zhc::lumi::kConfigStepsLumiEventMode),
 };
 }

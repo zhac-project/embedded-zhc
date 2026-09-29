@@ -7,7 +7,7 @@ namespace zhc::devices::lumi {
 namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
-
+    &::zhc::lumi::kFzLumiHeartbeat,
 };
 constexpr const char* kModels[] = { "lumi.light.agl001", "lumi.light.agl003", "lumi.light.agl005", "lumi.light.agl007" };
 }

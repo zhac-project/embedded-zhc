@@ -23,6 +23,7 @@ using Lux = ::zhc::m::Numeric<illum_opts>;
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &Lux::converter,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.sen_ill.mgl01" };
 }

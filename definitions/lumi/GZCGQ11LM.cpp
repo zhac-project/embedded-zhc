@@ -8,7 +8,9 @@ namespace zhc::devices::lumi {
 namespace {
 struct i_opts { static constexpr const char* name="illuminance", *unit="lux", *cluster="msIlluminanceMeasurement"; static constexpr std::uint16_t attr=0x0000; static constexpr std::uint32_t divisor=1; };
 using Lux = ::zhc::m::Numeric<i_opts>;
-const FzConverter* const kFz[] = { &::zhc::lumi::kFzLumiBasic, &Lux::converter };
+const FzConverter* const kFz[] = { &::zhc::lumi::kFzLumiBasic, &Lux::converter,
+    &::zhc::lumi::kFzLumiHeartbeatBattery,
+};
 constexpr const char* kModels[] = { "lumi.sen_ill.agl01", "lumi.sen_ill.agl02" };
 }
 

@@ -64,11 +64,13 @@ const FzConverter* const kFz[] = {
     &::zhc::generic::kFzOnOff,
     &kFzPowerBound,
     &kFzMeterBound,
+    &::zhc::lumi::kFzLumiHeartbeat,
 };
 const TzConverter* const kTz[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::lumi::kTzLumiPowerOutageMemory,
     &::zhc::lumi::kTzLumiLedDisabledNight,
+    &::zhc::lumi::kTzLumiButtonLock,
 };
 
 constexpr const char* kZigbeeModels[] = { "lumi.plug.macn01" };
@@ -81,7 +83,6 @@ constexpr BindingSpec kBindings[] = {
     {1, 0x0006},    // genOnOff
     {1, 0x0702},    // seMetering
     {1, 0x0B04},    // haElectricalMeasurement
-    {1, 0xFCC0},    // manuSpecificLumi
 };
 constexpr ReportingSpec kReports[] = {
     // genOnOff.onOff         bool   1s..3600s, reportable change = any
@@ -113,6 +114,8 @@ constexpr Expose kExposes[] = {
      nullptr, "Retain relay state across mains loss", nullptr, 0},
     {"led_disabled_night",  ExposeType::Binary,  Access::StateSet,
      nullptr, "Disable LED indicator at night",    nullptr, 0},
+    {"button_lock", ExposeType::Binary, Access::StateSet, nullptr,
+     "Disables the physical switch button", nullptr, 0, ExposeCategory::Config},
 };
 
 }  // namespace

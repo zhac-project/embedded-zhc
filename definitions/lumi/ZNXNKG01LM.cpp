@@ -6,7 +6,18 @@
 #include "definitions/lumi/factories.hpp"
 namespace zhc::devices::lumi {
 namespace {
-using FX = ::zhc::lumi::factory::LumiLight<::zhc::lumi::factory::LumiLightOpts{.level=true,.color_temp=false}>;
+// What z2m adds on top of the factory bundle (factories.hpp NoExtras).
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 3> fz{{
+        &::zhc::lumi::kFzLumiHeartbeat,
+        &::zhc::lumi::kFzLumiPreventReset,
+        &::zhc::lumi::kFzLumiOperationMode,
+    }};
+    static constexpr std::array<const TzConverter*, 1> tz{{
+        &::zhc::lumi::kTzLumiCommandMode,
+    }};
+};
+using FX = ::zhc::lumi::factory::LumiLight<::zhc::lumi::factory::LumiLightOpts{.level=true,.color_temp=false}, X>;
 constexpr const char* kModels[] = { "lumi.dimmer.rcbac1", "lumi.switch.rkna01" };
 }
 
@@ -18,6 +29,9 @@ constexpr Expose kAutoExposes[] = {
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"operation_mode", ExposeType::Enum, Access::StateSet, nullptr,
+     "Command mode is useful for binding. Event mode is useful for processing.",
+     ::zhc::lumi::kLumiCommandModeValues, std::size(::zhc::lumi::kLumiCommandModeValues), ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -34,5 +48,8 @@ extern const PreparedDefinition kDefZNXNKG01LM{
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m: manuSpecificLumi mode (0x0009) = 1, "event", at configure.
+    .config_steps = ::zhc::lumi::kConfigStepsLumiEventMode,
+    .config_steps_count = std::size(::zhc::lumi::kConfigStepsLumiEventMode),
 };
 }

@@ -8,7 +8,8 @@
 // action = genMultistateInput (single/double/release/hold) or, from
 // firmware that reports a rocker press as genOnOff, z2m `lumi_action`
 // (below), operation_mode = genBasic 0xFF22 (0x12 control_relay /
-// 0xFE decoupled, Lumi manufacturer code).
+// 0xFE decoupled, Lumi manufacturer code, endpoint 1). The hub answers the
+// switch's "may I reset?" request (z2m lumiPreventReset).
 //
 // Not ported: the `lumi_power` get.
 //
@@ -21,45 +22,6 @@
 namespace zhc::devices::lumi {
 
 namespace {
-
-// z2m lumi_operation_mode_basic / lumi_switch_operation_mode_basic
-// (single-endpoint lookup).
-constexpr ::zhc::lumi::LumiActionEntry kOpModeEntries[] = {
-    {0x12, "control_relay"},
-    {0xFE, "decoupled"},
-};
-constexpr ::zhc::lumi::LumiActionMap kOpModeMap{ kOpModeEntries, 2 };
-
-constexpr FzConverter kFzOpMode{
-    .family            = FrameFamily::Zcl,
-    .cluster           = "genBasic",
-    .type_mask         = type_bit(MessageType::AttributeReport) |
-                         type_bit(MessageType::ReadResponse),
-    .command_id        = WILDCARD_CMD_ID,
-    .attr_id           = WILDCARD_ATTR_ID,
-    .endpoint          = WILDCARD_ENDPOINT,
-    .frame_flags_mask  = 0,
-    .frame_flags_value = 0,
-    .direction         = Direction::ServerToClient,
-    .fn                = { .zcl_fn = &::zhc::lumi::fz_lumi_operation_mode_basic },
-    .user_config       = &kOpModeMap,
-};
-
-constexpr ::zhc::generic::ZclWriteLookup kOpModeLut[] = {
-    {"control_relay", 0x12},
-    {"decoupled",     0xFE},
-};
-constexpr ::zhc::generic::ZclWriteSpec kOpModeWrite{
-    "operation_mode", 0xFF22, 0x20, 0x115F, kOpModeLut, 2,
-};
-constexpr TzConverter kTzOpMode{
-    .key         = "operation_mode",
-    .cluster     = "genBasic",
-    .cluster_id  = 0x0000,
-    .command_id  = 0x02,
-    .fn          = &::zhc::generic::tz_zcl_write_attr,
-    .user_config = &kOpModeWrite,
-};
 
 // z2m lumi_action, QBKG11LM branch: a genOnOff attribute report is a rocker
 // press ({0: single, 1: single}) unless its 0xF000 (61440) is truthy, as on
@@ -101,17 +63,17 @@ const FzConverter* const kFz[] = {
     &kFzOnOffAction,
     &::zhc::lumi::kFzLumiPowerAnalog,
     &::zhc::lumi::kFzLumiActionMultistate,
-    &kFzOpMode,
+    &::zhc::lumi::kFzLumiOperationMode,
+    &::zhc::lumi::kFzLumiPreventReset,
 };
 const TzConverter* const kTz[] = {
     &::zhc::generic::kTzOnOff,
-    &kTzOpMode,
+    &::zhc::lumi::kTzLumiOperationModeBasic,
 };
 
 constexpr const char* kZigbeeModels[] = { "lumi.ctrl_ln1", "lumi.ctrl_ln1.aq1" };
 
 constexpr const char* kActionValues[] = { "single", "double", "release", "hold" };
-constexpr const char* kOpModeValues[] = { "control_relay", "decoupled" };
 
 }  // namespace
 
@@ -122,7 +84,8 @@ constexpr Expose kExposes[] = {
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionValues, 4},
     {"operation_mode", ExposeType::Enum, Access::StateSet, nullptr, "Decoupled mode",
-     kOpModeValues, 2, ExposeCategory::Config},
+     ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues),
+     ExposeCategory::Config},
 };
 
 constexpr BindingSpec kBindings[] = {

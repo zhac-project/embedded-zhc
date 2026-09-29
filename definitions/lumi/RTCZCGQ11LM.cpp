@@ -8,7 +8,9 @@
 #include "definitions/lumi/_shared.hpp"
 namespace zhc::devices::lumi {
 namespace {
-const FzConverter* const kFz[] = { &::zhc::lumi::kFzLumiBasic };
+const FzConverter* const kFz[] = { &::zhc::lumi::kFzLumiBasic,
+    &::zhc::lumi::kFzLumiHeartbeat,
+};
 constexpr const char* kModels[] = { "lumi.motion.ac01", "lumi.motion.ac01fp1" };
 }
 
