@@ -91,8 +91,29 @@ static void test_no_hook_is_safe() {
     assert(!g_probe.called);
 }
 
+// The epoch of the answer: the def's own field, else z2m v26.105.0's
+// tuyaBase({timeStart}) fingerprints, else none (z2m default "off").
+// Generated defs never carry the field, so the fingerprint decides for them.
+static void test_time_start_follows_z2m() {
+    PreparedDefinition def{};
+    // Tuya ZTH08 LCD sensor: z2m TS0601_temperature_humidity_sensor_2, "1970".
+    assert(tuya::time_start(def, "_TZE204_d7lpruvi", "TS0601") == 1);
+    assert(tuya::time_start(def, "_TZE284_d7lpruvi", "TS0601") == 1);
+    // Avatto TRV26: "2000".
+    assert(tuya::time_start(def, "_TZE204_xdtnpp1a", "TS0601") == 2);
+    // Immax 07703L matches on zigbeeModel "losfena": "2000".
+    assert(tuya::time_start(def, "_TYST11_other", "losfena") == 2);
+    // Not in any timeStart definition: no answer.
+    assert(tuya::time_start(def, "_TZ3000_notlisted", "TS0601") == 0);
+    assert(tuya::time_start(def, nullptr, nullptr) == 0);
+    // A hand-set field wins.
+    def.tuya_time_start = 2;
+    assert(tuya::time_start(def, "_TZE204_d7lpruvi", "TS0601") == 2);
+}
+
 int main() {
     test_mcu_sync_time_fires_hook();
     test_no_hook_is_safe();
+    test_time_start_follows_z2m();
     return 0;
 }

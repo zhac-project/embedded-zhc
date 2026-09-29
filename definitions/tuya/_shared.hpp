@@ -32,6 +32,20 @@ bool fz_tuya_mcu_sync_time(const DecodedMessage& msg,
 
 extern const FzConverter kFzTuyaMcuSyncTime;
 
+// ── time_start ─────────────────────────────────────────────────────
+//
+// The epoch a Tuya MCU's mcuSyncTime answer is given in: 0 = no answer,
+// 1 = seconds since 1970, 2 = since 2000. The def's own `tuya_time_start`
+// wins; otherwise the device's manufacturerName (or zigbeeModel) is looked
+// up among the fingerprints z2m gives `tuyaBase({timeStart})`. The generator
+// never emitted the field, so ~290 definitions -- the Tuya ZTH08 LCD
+// sensor among them -- left their devices asking for the time unanswered.
+//
+// z2m-source: tuya.ts `tuyaBase` (v26.105.0, 100 definitions).
+std::uint8_t time_start(const PreparedDefinition& def,
+                        const char* manufacturer_name,
+                        const char* model_id);
+
 // ── fz_tuya_datapoints ─────────────────────────────────────────────
 //
 // Meta-driven generic for the ~287 Tuya devices that use the DP-stream

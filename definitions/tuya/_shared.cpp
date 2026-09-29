@@ -121,6 +121,276 @@ extern const FzConverter kFzTuyaMcuSyncTime{
     .user_config       = nullptr,
 };
 
+// ── time_start ─────────────────────────────────────────────────────
+
+namespace {
+// z2m v26.105.0 definitions that pass tuyaBase({timeStart}): their fingerprint
+// manufacturerNames (and the zigbeeModel of the two that match on one), one
+// comment per definition. No name is in both lists, and z2m lists none of
+// them in a definition without timeStart. Refresh on a z2m parity catch-up
+// (`timeStart: "` in src/devices/*.ts).
+constexpr const char* kTimeStart1970[] = {
+    // engo EONE
+    "_TZE204_djurk6p5",
+    // engo E40
+    "_TZE204_glk6viwg", "_TZE204_lnxdk2ch",
+    // essentials _TZE200_i48qyn9s
+    "_TZE200_i48qyn9s",
+    // giex QT06_1
+    "_TZE200_sh1btabb",
+    // giex QT06_2
+    "_TZE200_7ytb3h8u", "_TZE200_a7sghmms", "_TZE204_7ytb3h8u", "_TZE204_a7sghmms",
+    "_TZE284_7ytb3h8u",
+    // lidl PSBZS A1
+    "_TZE200_htnnfasr",
+    // lidl 368308_2010
+    "_TZE200_chyvmhay", "_TZE200_uiyqstza",
+    // lincukoo SZT04
+    "_TZE2841000000_4dosadbh", "_TZE2841000000_mpzuabwk", "_TZE2841000000_rs62zxk8",
+    "_TZE284_4dosadbh", "_TZE284_mpzuabwk", "_TZE284_rs62zxk8",
+    // lincukoo E02C-Z10T
+    "_TZE204_hyt4iucb", "_TZE28C1000000_hyt4iucb",
+    // moes ZHT-S03
+    "_TZE204_zxkwaztm",
+    // moes SFL02-Z-1
+    "_TZE200_stvgmdjz", "_TZE200_ydkqbmpt", "_TZE200_z3u99qxt",
+    // moes SFL02-Z-2
+    "_TZE200_hktk6hze", "_TZE200_tzyy0rtq", "_TZE200_uenof8jd",
+    // moes SFL02-Z-3
+    "_TZE200_rd8cdssd", "_TZE200_wv9ukqca", "_TZE200_zo0cfekv",
+    // moes SFL02-Z-4
+    "_TZE200_9dhenr94", "_TZE200_dq8bu0pt", "_TZE200_hmabvy81",
+    // moes BHT-002
+    "_TZE200_5toc8efa", "_TZE200_aoclfnxz", "_TZE200_u9bfwha0", "_TZE200_ye5jkfsb",
+    "_TZE200_ztvwu4nk", "_TZE204_5toc8efa", "_TZE204_aoclfnxz", "_TZE204_u9bfwha0",
+    "_TZE284_ye5jkfsb",
+    // moes SH4-ZB
+    "_TZE200_fhn3negr",
+    // moes BRT-100-TRV
+    "_TZE200_6y7kyjga", "_TZE200_b6wax7g0", "_TZE200_qsoecqlk",
+    // moes ZHT-SR
+    "_TZE204_lpedvtvr",
+    // moes ZHT-PT01-M-MS
+    "_TZE204_x9usygq1",
+    // moes ZHT-S01
+    "_TZE284_rlytpmij",
+    // nedis ZBHTR20WT
+    "_TZE200_ne4pikwm", "_TZE284_hcs66axl", "_TZE284_ne4pikwm",
+    // neo NAS-WV03B
+    "_TZE204_4fblxpma", "_TZE204_nnhwcvbk", "_TZE204_rzrrjkz2", "_TZE204_uab532m0",
+    "_TZE204_z7a2jmyy", "_TZE284_4fblxpma", "_TZE284_nnhwcvbk", "_TZE284_rzrrjkz2",
+    "_TZE284_uab532m0", "_TZE284_z7a2jmyy",
+    // nous SZ-T04
+    "_TZE200_c7emyjom", "_TZE200_eanjj2pa", "_TZE200_locansqn", "_TZE200_lve3dvpy",
+    "_TZE200_qrztc3ev", "_TZE200_snloy4rw", "_TZE200_ydrdfkim", "_TZE284_locansqn",
+    // nous E6
+    "_TZE200_nnrfa68v", "_TZE200_wtikaxzs", "_TZE200_zppcgbdj", "_TZE284_wtikaxzs",
+    // saswell SEA801-Zigbee/SEA802-Zigbee
+    "_TYST11_KGbxAXL2", "_TYST11_c88teujp", "_TYST11_caj4jz0i", "_TYST11_yw7cahqs",
+    "_TYST11_zuhszj9s", "_TZE200_0dvm9mva", "_TZE200_3yp57tby", "_TZE200_7p8ugv8d",
+    "_TZE200_9gvruqf5", "_TZE200_9m4kmbfu", "_TZE200_azqp6ssj", "_TZE200_c88teujp",
+    "_TZE200_exfrnlow", "_TZE200_gd4rvykv", "_TZE200_h4cgnbzg", "_TZE200_yw7cahqs",
+    "_TZE200_zr9c0day", "_TZE200_zuhszj9s", "_TZE204_3yp57tby", "_TZE2841000000_3yp57tby",
+    "_TZE284_0dvm9mva", "_TZE284_3yp57tby", "_TZE284_9m4kmbfu",
+    // tech VNTH-T2_v1
+    "_TZE204_r7brscr6",
+    // tech VNTH-T2_v2
+    "_TZE204_p1qrtljn",
+    // tuya TS0601_temperature_humidity_sensor_2
+    "_TZE200_9yapgbuv", "_TZE200_cirvgep4", "_TZE200_d7lpruvi", "_TZE200_upagmta9",
+    "_TZE200_utkemkbs", "_TZE200_yjjdcqsq", "_TZE204_1wnh8bqp", "_TZE204_9yapgbuv",
+    "_TZE204_cirvgep4", "_TZE204_d7lpruvi", "_TZE204_jygvp6fk", "_TZE204_ksz749x8",
+    "_TZE204_upagmta9", "_TZE204_utkemkbs", "_TZE204_yjjdcqsq", "_TZE284_1wnh8bqp",
+    "_TZE284_9yapgbuv", "_TZE284_d7lpruvi", "_TZE284_hdyjyqjm", "_TZE284_ksz749x8",
+    "_TZE284_upagmta9", "_TZE284_utkemkbs", "_TZE284_yjjdcqsq",
+    // tuya TS0601_temperature_humidity_sensor_3
+    "_TZE200_s1xgth2u", "_TZE200_t3xd7l44", "_TZE284_kdqrazmy",
+    // tuya ZTH05Z
+    "_TZE200_vvmbj46n", "_TZE200_w6n8jeuu", "_TZE2841000000_qf5mzewi", "_TZE284_cwyqwqbf",
+    "_TZE284_qf5mzewi", "_TZE284_vvmbj46n",
+    // tuya AR331
+    "_TZE284_noixx2uz",
+    // tuya BHT-209-GCZB
+    "_TZE284_4cgmagba",
+    // tuya AR331Pro
+    "_TZE284_nbv4tdaz",
+    // tuya TO-6 W/B
+    "_TZE200_rqhnxkqu",
+    // tuya TO-WK-1W/B
+    "_TZE284_3xnyj4ga",
+    // tuya TO-WK-2W/B
+    "_TZE284_exfilann",
+    // tuya TO-DM-W/B
+    "_TZE284_5yah8qx4",
+    // tuya BAC-002-ALZB
+    "_TZE200_dzuqwsyg", "_TZE204_dzuqwsyg",
+    // tuya BAC-001
+    "_TZE204_hpkusvom",
+    // tuya TS0601_thermostat
+    "_TZE200_2atgpdho", "_TZE200_4eeyebrt", "_TZE200_7fqkphoq", "_TZE200_8thwkzxl",
+    "_TZE200_8whxpsiw", "_TZE200_9sfg7gm0", "_TZE200_ckud7u2l", "_TZE200_cpmgn2cf",
+    "_TZE200_cwnjrr72", "_TZE200_do5qy8zo", "_TZE200_lpwgshtl", "_TZE200_pvvbommb",
+    "_TZE200_qjp4ynvi", "_TZE200_rk1wojce", "_TZE200_rndg81sf", "_TZE200_rufdtfyv",
+    "_TZE200_xby0s3ta", "_TZE200_ywdxldoj", "_TZE200_znlqjmih", "_TZE284_znlqjmih", "kud7u2l",
+    // tuya TV02-Zigbee
+    "_TZE200_7yoranx2", "_TZE200_e9ba97vf", "_TZE200_fsow0qsk", "_TZE200_hue3yfsn",
+    "_TZE200_husqqvux", "_TZE200_k1tumq4t", "_TZE200_kds0pmmv", "_TZE200_lhzapfg9",
+    "_TZE200_lllliz3p", "_TZE200_lnbfnyxd", "_TZE200_mudxchsu", "_TZE200_py4cm3he",
+    "_TZE200_sur6q7ko", "_TZE200_wsbfwodu", "_TZE200_x9axofse",
+    // tuya TS0601_thermostat_2
+    "_TZE200_0hg58wyk",
+    // tuya TS0601_thermostat_4
+    "_TZE204_pcdmj88b", "_TZE284_pcdmj88b",
+    // tuya THAH202001
+    "_TZE204_m5r5nlxc",
+    // tuya TS0601_thermostat_1
+    "_TZE200_a4bpgplm", "_TZE200_bvrlmajk", "_TZE200_dv8abrrz", "_TZE200_z1tyspqw",
+    // tuya TRV601
+    "_TZE204_cvcu2p6e", "_TZE204_rtrmfadk",
+    // tuya TRV602
+    "_TZE200_9mjy74mp", "_TZE200_rtrmfadk", "_TZE204_9mjy74mp",
+    // tuya TRV603-WZ
+    "_TZE284_ymldrmzx",
+    // tuya BOT-R15W
+    "_TZE284_agcxaw3f",
+    // tuya ZWT198/ZWT100-BH
+    "_TZE200_viy9ihs7", "_TZE204_gops3slb", "_TZE204_lzriup1j", "_TZE204_oh8y8pv8",
+    "_TZE204_xnbkhhdr", "_TZE204_zjhoqbrd", "_TZE284_gops3slb", "_TZE284_xnbkhhdr",
+    "_TZE284_zjhoqbrd",
+    // tuya TGM50-ZB
+    "_TZE204_cvub6xbb", "_TZE204_mwomyz5n", "_TZE284_cvub6xbb",
+    // tuya M8Pro
+    "_TZE284_atuj3i0w",
+    // tuya JM-TRH-ZGB-V1
+    "_TZE200_whkgqxse",
+    // tuya TYBAC-006
+    "_TZE204_mpbki2zm", "_TZE204_qujphad5",
+    // tuya TS0601_floor_thermostat
+    "_TZE200_edl8pz1k", "_TZE204_6a4vxfnv", "_TZE204_edl8pz1k",
+    // tuya TS0601_thermostat_thermosphere
+    "_TZE200_ha0vwoew",
+    // tuya TS0601_GTZ10
+    "_TZE200_eo6xhfbo", "_TZE200_pbo8cj0z",
+    // tuya PO-BOCO-ELEC
+    "_TZE204_3q3maeoo", "_TZE204_d6i25bwg",
+    // tuya TR-M3Z
+    "_TZE204_eekpf0ft", "_TZE284_eekpf0ft",
+    // tuya _TZE204_3regm3h6
+    "_TZE204_0hcjew5p", "_TZE204_3regm3h6", "_TZE204_6vwfjkcj", "_TZE204_ouy7vpm1",
+    "_TZE284_3regm3h6",
+    // tuya F3-Pro
+    "_TZE284_7zazvlyn", "_TZE284_idn2htgu",
+    // tuya TS0601_thermostat_14
+    "_TZE204_vjpaih9f", "_TZE284_vjpaih9f",
+    // tuya M9Pro
+    "_TZE284_iwyqtclw",
+    // tuya TS0601_smart_temperature_switch
+    "_TZE284_roujjevx",
+    // tuya L2-T-F-MF
+    "_TZE284_4vbj3fxh",
+    // tuya TZE284_aaeasoll
+    "_TZE284_aaeasoll",
+    // zemismart ZMS-206US-1
+    "_TZE204_sa2ueffe", "_TZE204_zuepxzck", "_TZE284_lnyz4a6v",
+    // zemismart ZMS-206EU-2
+    "_TZE204_3ctwoaip", "_TZE284_3ctwoaip", "_TZE284_dmckrsxg", "_TZE28C1000000_dmckrsxg",
+    // zemismart ZMS-206EU-3
+    "_TZE204_iyki9kjp", "_TZE204_k7v0eqke", "_TZE284_e4pf6l87", "_TZE284_k7v0eqke",
+    "_TZE28C1000000_e4pf6l87",
+    // zemismart ZMS-206US-4
+    "_TZE204_08qc13ct", "_TZE204_wwaeqnrf", "_TZE204_xibaabmu", "_TZE204_y4jqpry8",
+    "_TZE284_wwaeqnrf", "_TZE284_xibaabmu", "_TZE284_y4jqpry8", "_TZE28C1000000_xibaabmu",
+    "_TZE28C1000000_y4jqpry8",
+    // zemismart ZMZ609-2
+    "_TZE284_o409r73p", "_TZE28C1000000_o409r73p",
+};
+constexpr const char* kTimeStart2000[] = {
+    // avatto ME168_AVATTO
+    "_TZE200_4aijvczq", "_TZE200_cxakecfo", "_TZE200_r5ksy7qo", "_TZE200_ybsqljjg",
+    // avatto TRV26
+    "_TZE204_xdtnpp1a", "_TZE284_xdtnpp1a",
+    // engo ECB62-ZB
+    "_TZE200_oahqgdig", "_TZE200_zaabefnt",
+    // engo EONE-230W
+    "_TZE200_awnadkan", "_TZE204_ca3i8m8p",
+    // engo EONE-BATB
+    "_TZE200_gtouvmvl",
+    // evanell EZ200
+    "_TZE200_dmfguuli", "_TZE200_rxypyjkw",
+    // futurehome TS0601_futurehome_thermostat
+    "_TZE200_4hbx5cvx", "_TZE200_e5hpkc6d", "_TZE204_e5hpkc6d",
+    // immax 07703L
+    "_TZE200_wlosfena", "losfena",
+    // mazda TR-M2Z
+    "_TZE204_k6rdmisz", "_TZE284_k6rdmisz",
+    // moes ZTRV-S01
+    "_TZE200_ivdc0kwl",
+    // namron 4512752/4512753
+    "_TZE204_p3lqqy2r",
+    // neo NAS-WV03B2
+    "_TZE204_a9ojznj8", "_TZE284_a9ojznj8",
+    // rtx ZVG1
+    "_TZE200_2wg5qrjy", "_TZE200_81isopgh", "_TZE200_akjefhj5", "_TZE204_qtnjuoae",
+    "_TZE284_qtnjuoae", "_TZE284_xuflgcnz",
+    // tuya BAB-1413_Pro
+    "_TZE204_g2ki0ejr",
+    // tuya PO-THCO-EAU
+    "_TZE200_tbgecldg", "_TZE204_tbgecldg", "_TZE284_tbgecldg",
+    // tuya TS0601_thermostat_3
+    "_TZE200_4utwoz2", "_TZE200_4utwozi2", "_TZE200_6rdj8dzm", "_TZE200_9xfjixap",
+    "_TZE200_bvu2wnxz", "_TZE200_d3z1ukqw", "_TZE200_jkfbph7l", "_TZE200_ow09xlxm",
+    "_TZE200_rv6iuyxb", "_TZE200_rxntag7i", "_TZE200_rxq4iti9", "_TZE200_suxywabt",
+    "_TZE200_yqgbrdyo", "_TZE204_o3x45p96", "_TZE204_ogx8u5z6", "_TZE284_c6wv4xyo",
+    "_TZE284_o3x45p96", "_TZE284_ogx8u5z6", "_TZE284_p3dbf6qs", "_TZE284_rv6iuyxb",
+    // tuya TS0601_thermostat_5
+    "_TZE200_hvaxb2tc", "_TZE200_p3dbf6qs",
+    // tuya HT-08
+    "_TYST11_wv90ladg", "_TZE200_wv90ladg",
+    // tuya HT-10
+    "_TYST11_2dpplnsn", "_TZE200_2dpplnsn",
+    // tuya TRV602Z
+    "_TZE204_ltwbm23f", "_TZE204_qyr2m29i", "_TZE284_ltwbm23f",
+    // tuya ZHT-002
+    "_TZE204_xalsoe3m",
+    // tuya HY08WE
+    "_TZE200_znzs7yaw",
+    // tuya ZWT07
+    "_TZE200_g9a3awaj",
+    // tuya X5H-GB-B
+    "_TZE200_2ekuz3dz",
+    // tuya TE-1Z
+    "_TZE284_khah2lkr",
+    // tuya PRO-900Z
+    "_TZE204_tagezcph",
+    // tuya AE-940K
+    "_TZE200_wem3gxyx",
+    // tuya AE-720K
+    "_TZE284_mul9abs3",
+    // woox R7067
+    "_TZE200_wnvhlcgl",
+};
+
+bool listed(std::span<const char* const> names, const char* key) {
+    for (const char* n : names) {
+        if (std::strcmp(n, key) == 0) return true;
+    }
+    return false;
+}
+}  // namespace
+
+std::uint8_t time_start(const PreparedDefinition& def,
+                        const char* manufacturer_name,
+                        const char* model_id) {
+    if (def.tuya_time_start) return def.tuya_time_start;
+    const char* const keys[] = {manufacturer_name, model_id};
+    for (const char* key : keys) {
+        if (!key) continue;
+        if (listed(kTimeStart1970, key)) return 1;
+        if (listed(kTimeStart2000, key)) return 2;
+    }
+    return 0;
+}
+
 // ── fz_tuya_datapoints ─────────────────────────────────────────────
 
 namespace {
