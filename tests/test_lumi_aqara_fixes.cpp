@@ -362,6 +362,29 @@ constexpr const char* kTag1BatteryModels[] = {
 // lumiBattery without lumi_specific: no tag but the battery ones.
 constexpr const char* kBatteryOnlyModels[] = {"DJT12LM", "ZNXNKG02LM", "DWZTCGQ11LM"};
 
+// The voltage and battery exposes of the heartbeat models, as z2m has them:
+// e.voltage() (V) with the electricity meter (lumiElectricityMeter,
+// m.electricityMeter, e.voltage()); e.battery_voltage() / lumiBattery (mV) on the
+// battery models; none on the other mains ones. TH-S04D keeps its mV expose: z2m
+// exposes no voltage there, but its tag 1 is the battery's, in mV.
+constexpr const char* kVoltsModels[] = {
+    "KD-R01D", "LLKZMK12LM", "QBCZ14LM", "QBCZ15LM", "QBKG19LM", "QBKG20LM", "QBKG26LM",
+    "QBKG30LM", "QBKG31LM", "QBKG32LM", "QBKG34LM", "SP-EUC01", "SSM-U01", "WP-P01D",
+    "WS-K01D", "WS-K05E", "WS-USC03", "WS-USC04", "ZNCZ04LM", "ZNCZ12LM", "ZNCZ15LM",
+    "ZNQBCZ11LM", "ZNQBKG16LM", "ZNQBKG38LM", "ZNQBKG39LM", "ZNQBKG40LM", "ZNQBKG41LM",
+    "ZNQBKG42LM", "ZNQBKG43LM", "ZNQBKG44LM", "ZNQBKG45LM", "ZNXNKG01LM",
+};
+constexpr const char* kBatteryModels[] = {
+    "CTP-R01", "DJT12LM", "DWZTCGQ11LM", "FP310", "GZCGQ01LM", "GZCGQ11LM", "JYGZ01AQ",
+    "MCCGQ12LM", "MCCGQ13LM", "MCCGQ14LM", "PS-S04D", "RTCGQ12LM", "RTCGQ13LM", "RTCGQ14LM",
+    "RTCGQ15LM", "SJCGQ12LM", "SJCGQ13LM", "TH-S04D", "VOCKQJK11LM", "WSDCGQ12LM",
+    "WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "WXKG04LM", "WXKG13LM", "WXKG14LM", "WXKG15LM",
+    "WXKG16LM", "WXKG17LM", "WXKG20LM", "WXKG21LM", "WXKG22LM", "ZNCLBL01LM", "ZNXNKG02LM",
+};
+// z2m exposes battery % on all of them, and the millivolts on all but TH-S04D, whose
+// mV expose ZHAC keeps.
+bool millivolts(const char* model) { return in(kBatteryModels, model); }
+
 void item3_heartbeat() {
     // Real, SJCGQ12LM (z2m #20764): 3013 mV, 25 °C, tag 5 = 17.
     const auto t1 = f7({0x01, 0x21, 0xC5, 0x0B, 0x03, 0x28, 0x19, 0x04, 0x21, 0xA8, 0x13, 0x05,
@@ -520,6 +543,21 @@ void item3_heartbeat() {
                 assert(false);
             }
         });
+    });
+
+    // Their voltage and battery exposes are z2m's, unit included: tag 150 is volts
+    // on a mains device, and a mains device has no battery.
+    each_lumi([](const PreparedDefinition& def) {
+        if (!in(kHeartbeatModels, def.model)) return;
+        const Expose* v = expose_of(def, "voltage");
+        const char* unit = in(kVoltsModels, def.model) ? "V" : millivolts(def.model) ? "mV" : nullptr;
+        const bool v_ok = unit ? v && v->unit && std::strcmp(v->unit, unit) == 0 : v == nullptr;
+        const bool b = expose_of(def, "battery") != nullptr;
+        if (!v_ok || b != in(kBatteryModels, def.model)) {
+            std::fprintf(stderr, "%s: voltage expose %s, battery expose %d\n", def.model,
+                         v ? (v->unit ? v->unit : "(no unit)") : "none", b);
+            assert(false);
+        }
     });
 
     // PS-S04D (FP300) firmware 0.0.0_6542 "does not push the 0x00F7 struct on its
@@ -924,7 +962,7 @@ void item7_split() {
     struct Shape { const char* model; const char* fp; std::uint8_t fz, tz, exposes, binds, steps; };
     for (const Shape& s : {Shape{"QBKG21LM", "lumi.switch.b1lacn02", 4, 4, 6, 2, 0},
                            Shape{"QBKG22LM", "lumi.switch.b2lacn02", 4, 5, 7, 2, 0},
-                           Shape{"WS-EUK03", "lumi.switch.n1aeu1", 5, 4, 6, 2, 1}}) {
+                           Shape{"WS-EUK03", "lumi.switch.n1aeu1", 5, 4, 4, 2, 1}}) {
         const auto& d = def_of(s.model);
         assert(d.zigbee_models_count == 1 && std::strcmp(d.zigbee_models[0], s.fp) == 0);
         if (d.from_zigbee_count != s.fz || d.to_zigbee_count != s.tz || d.exposes_count != s.exposes ||
