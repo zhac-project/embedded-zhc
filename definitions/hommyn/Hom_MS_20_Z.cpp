@@ -53,6 +53,8 @@ extern const PreparedDefinition kDef_MS_20_Z{
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m fz.ias_occupancy_alarm_1_with_timeout: the hub clears occupancy 90 s after the last motion.
+    .occupancy_timeout = 90,
 };
 
 }  // namespace zhc::devices::hommyn

@@ -1,15 +1,20 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Tuya SM0202 — auto-generated.
-// Motion sensor
+// Tier 2: Tuya SM0202 — motion sensor.
 // z2m-source: tuya.ts #SM0202.
+//   fromZigbee: [fz.ias_occupancy_alarm_1_with_timeout, fz.battery]
+//   exposes:    occupancy, battery_low, battery, battery_voltage
+// The generated port decoded the zone with the bare IAS decoder, which emits
+// `alarm`: the sensor never showed `occupancy`, so no motion rule could see
+// it. kFzIasMotionAlarm emits occupancy + tamper + battery_low, as z2m's
+// converter does; the "no motion" half is the hub's occupancy_timeout.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::tuya {
 namespace {
 const FzConverter* const kFz_SM0202[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasMotionAlarm,
 };
 
 constexpr const char* kModels_SM0202[] = { "SM0202" };
@@ -21,7 +26,7 @@ constexpr const char* kModels_SM0202[] = { "SM0202" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
@@ -48,6 +53,8 @@ extern const PreparedDefinition kDefSM0202{
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m fz.ias_occupancy_alarm_1_with_timeout: the hub clears occupancy 90 s after the last motion.
+    .occupancy_timeout = 90,
 };
 
 }  // namespace zhc::devices::tuya

@@ -1148,6 +1148,7 @@ extern const PreparedDefinition kDefZN231392_TS0011;
 extern const PreparedDefinition kDefTS0601_soil;
 extern const PreparedDefinition kDefTS0121;
 extern const PreparedDefinition kDefTS0202;
+extern const PreparedDefinition kDefTS0202_1;
 extern const PreparedDefinition kDefTS0203;
 extern const PreparedDefinition kDefTS0204;
 extern const PreparedDefinition kDefTS0205;
@@ -2623,6 +2624,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTS0601_soil,
     &kDefTS0121,
     &kDefTS0202,
+    &kDefTS0202_1,
     &kDefTS0203,
     &kDefTS0204,
     &kDefTS0205,

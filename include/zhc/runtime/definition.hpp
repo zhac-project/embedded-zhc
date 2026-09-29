@@ -329,6 +329,17 @@ struct PreparedDefinition {
     // of mains-powered devices only. Replies arrive as ReadResponse, so the
     // def's Fz converters must accept that message type.
     std::uint8_t         meter_poll = 0;
+
+    // Hub-side "no motion" interval in seconds: z2m's per-device option
+    // `occupancy_timeout`, offered by the host-timer occupancy converters
+    // (fz.occupancy_with_timeout, fz.ias_occupancy_alarm_1_with_timeout,
+    // fz.ias_ace_occupancy_with_timeout, lumi.fz.lumi_occupancy[_illuminance])
+    // for sensors that report motion but never "no motion". The value is z2m's
+    // default for the def (90 s; Lumi: detection_interval + 2); the hub clears
+    // `occupancy` that long after the last `occupancy = true` unless the user
+    // chose another interval (0 = never). 0 here = no such option: the device
+    // reports "no motion" itself, or keeps a device-side delay.
+    std::uint16_t        occupancy_timeout = 0;
 };
 
 }  // namespace zhc

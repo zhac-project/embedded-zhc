@@ -10,6 +10,15 @@ across the ZHAC platform.
 
 ### Added
 
+- `PreparedDefinition::occupancy_timeout`: z2m's per-device option `occupancy_timeout`, the "no motion" interval of sensors that report motion but never "no motion" (the host-timer converters `fz.occupancy_with_timeout`, `fz.ias_occupancy_alarm_1_with_timeout`, `fz.ias_ace_occupancy_with_timeout`, `lumi_occupancy[_illuminance]`). The value is z2m's default; the hub clears `occupancy` that long after the last motion unless the user picks another interval. Set on the 24 definitions that decode `occupancy` here: 90 s on Bitron AV2010/14, /22, /22A, /22B, Hive MOT003 and KEYPAD001, Hommyn MS-20-Z, J.XUAN PRZ01, Konke 2AJZ4KPBS and KK-BS-J01W, LivingWise LVS-SN10ZW_SN11, ORVIBO SN10ZW, Technicolor XHK1-TC, UEI XHK1-UE and UEHK2AZ0, Tuya SM0202 and TS0202_1, Xiaomi RTCGQ01LM, Aqara RTCGQ11LM, TERNCY-PP01; 62 s (detection_interval 60 + 2) on Aqara RTCGQ12LM, RTCGQ13LM, RTCGQ15LM; 32 s (30 + 2) on RTCGQ14LM. Test `test_occupancy_timeout.cpp`.
+- Tuya TS0202_1: own definition for the five TS0202 manufacturers z2m lists as needing the timeout (`_TYZB01_jytabjkb`, `_TZ3000_lltemgsf`, `_TYZB01_5nr7ncpl`, `_TZ3000_mg4dy6z6`, `_TZ3000_bsvqrxru`); they fell back to the generic TS0202, which gets no interval because it reports "no motion" itself.
+
+### Fixed
+
+- Tuya SM0202 motion sensor decoded its zone as `alarm` (the bare IAS decoder), so it never showed `occupancy` and no motion rule saw it. It now decodes `occupancy` + tamper + battery_low, as z2m's `ias_occupancy_alarm_1_with_timeout` does.
+
+### Added
+
 - Tuya ZN231392 smart water/gas valve: own definition (TS011F `_TZ3000_rk2yzt0u`/`_TZ3000_o4cjetlm`, TS0001 × 9 manufacturers, TS0011 `_TYZB01_rifa0wlb`, as z2m). The valve had been shown as a generic switch — on the TS011F IDs with power/voltage/current/energy it does not have. It now shows `state`, `power_on_behavior` (off/previous/on — `previous` keeps the valve as it was after a power cut) and `indicator_mode` (off / off/on / on/off / on), all writable. Pairing sends the Tuya magic packet and reads the valve state and power-on setting. Test `zhc_tuya_zn231392_tests`.
 
 - `PreparedDefinition::meter_poll` (+ `kMeterPollElectrical` / `kMeterPollMetering`): a definition asks the hub to read its meter periodically, z2m `tuya.modernExtend.electricityMeasurementPoll` shape — haElectricalMeasurement [rmsVoltage, rmsCurrent, activePower] and/or seMetering [currentSummDelivered] on EP1. Only `kDefTS011F_okaz9tjs` sets it (both bits): that plug never reports its meter even when bound (a deliberate step past z2m, whose TS011F_plug_1 does not poll). The generic `kDefTS011F` does not poll; other manufacturers get it once a real device proves silent. The unused `tuya::extend::electricity_meter_poll()` sentinel now points at the field. Test `zhc_tuya_ts011f_metering_tests` (pins that no other Tuya def polls, and decodes a Read Attributes Response for 0x0B04 incl. an unsupported-attribute record and 0x0702).

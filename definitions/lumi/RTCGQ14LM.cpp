@@ -51,5 +51,7 @@ extern const PreparedDefinition kDefRTCGQ14LM{
     .to_zigbee = nullptr, .to_zigbee_count = 0,
     .configure = nullptr, .on_event = nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m lumi_occupancy_illuminance: the hub clears occupancy detection_interval (30) + 2 s after the last motion.
+    .occupancy_timeout = 32,
 };
 }

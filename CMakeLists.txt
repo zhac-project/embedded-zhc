@@ -112,6 +112,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/WSD500A.cpp
     definitions/tuya/TS0601_TZE204_upagmta9.cpp
     definitions/tuya/TS0202.cpp
+    definitions/tuya/TS0202_1.cpp
     definitions/tuya/TS0205.cpp
     definitions/tuya/TZE200_pir_illum.cpp
     definitions/tuya/TZE200_presence_zone.cpp
@@ -982,6 +983,8 @@ add_executable(zhc_ts0502b_config_tests tests/test_ts0502b_config.cpp)
 target_link_libraries(zhc_ts0502b_config_tests PRIVATE zhc_definitions)
 add_executable(zhc_tuya_ts011f_metering_tests tests/test_tuya_ts011f_metering.cpp)
 target_link_libraries(zhc_tuya_ts011f_metering_tests PRIVATE zhc_definitions)
+add_executable(zhc_occupancy_timeout_tests tests/test_occupancy_timeout.cpp)
+target_link_libraries(zhc_occupancy_timeout_tests PRIVATE zhc_definitions)
 
 add_executable(zhc_hoch_din_tz_tests tests/test_hoch_din_tz.cpp)
 target_link_libraries(zhc_hoch_din_tz_tests PRIVATE zhc_definitions)
@@ -3483,6 +3486,7 @@ add_test(NAME zhc_lumi_switch_reports_tests COMMAND zhc_lumi_switch_reports_test
 add_test(NAME zhc_tuya_light_reports_tests  COMMAND zhc_tuya_light_reports_tests)
 add_test(NAME zhc_ts0502b_config_tests      COMMAND zhc_ts0502b_config_tests)
 add_test(NAME zhc_tuya_ts011f_metering_tests COMMAND zhc_tuya_ts011f_metering_tests)
+add_test(NAME zhc_occupancy_timeout_tests   COMMAND zhc_occupancy_timeout_tests)
 add_test(NAME zhc_hoch_din_tz_tests         COMMAND zhc_hoch_din_tz_tests)
 add_test(NAME zhc_diy_range_extender_tests  COMMAND zhc_diy_range_extender_tests)
 add_test(NAME zhc_sonoff_snzb02_tests       COMMAND zhc_sonoff_snzb02_tests)
