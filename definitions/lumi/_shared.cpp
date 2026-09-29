@@ -293,6 +293,35 @@ extern const FzConverter kFzLumiActionMultistate{
     .user_config       = nullptr,
 };
 
+// z2m lumi_action_multistate, wall-switch branch (see the header).
+bool fz_lumi_switch_action(const DecodedMessage& msg, const FzConverter& self,
+                           const PreparedDefinition&, RuntimeContext& ctx,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("85");   // presentValue 0x0055
+    if (!v || v->type != ValueType::Uint) return false;
+    const char* action = nullptr;
+    for (std::uint8_t i = 0; i < kDefaultLumiActionMap.count && !action; ++i)
+        if (kDefaultLumiActionMap.entries[i].value == v->u) action = kDefaultLumiActionMap.entries[i].action;
+    if (!action) return false;
+
+    if (const auto* lookup = static_cast<const LumiButtons*>(self.user_config)) {
+        const char* button = nullptr;
+        for (std::uint8_t i = 0; i < lookup->count && !button; ++i)
+            if (lookup->buttons[i].endpoint == msg.src_endpoint) button = lookup->buttons[i].name;
+        if (!button) return false;
+        char buf[32];
+        const int n = std::snprintf(buf, sizeof(buf), "%s_%s", action, button);
+        if (n <= 0 || static_cast<std::size_t>(n) >= sizeof(buf)) return false;
+        action = ctx.alloc_str(buf, static_cast<std::size_t>(n));
+        if (!action) return false;
+    }
+    Value a{};
+    a.type = ValueType::StringRef;
+    a.str  = action;
+    out.put("action", a);
+    return true;
+}
+
 // ── Xiaomi Mi Cube (MFKZQ01LM) action decoders ─────────────────────
 //
 // z2m-source: lumi.ts `lumi_action_multistate` + `lumi_action_analog`.
@@ -771,6 +800,11 @@ constexpr ::zhc::generic::ZclWriteLookup kFlipIndicatorLut[] = {{"ON", 1}, {"OFF
 constexpr ::zhc::generic::ZclWriteSpec kSpecFlipIndicator{
     "flip_indicator_light", 0x00F0, 0x20, 0x115F, kFlipIndicatorLut, 2,
 };
+// z2m lumi_switch_mode_switch.
+constexpr ::zhc::generic::ZclWriteLookup kModeSwitchLut[] = {{"anti_flicker_mode", 4}, {"quick_mode", 1}};
+constexpr ::zhc::generic::ZclWriteSpec kSpecModeSwitch{
+    "mode_switch", 0x0004, 0x21, 0x115F, kModeSwitchLut, 2,
+};
 }  // namespace
 
 #define ZHC_LUMI_TZ(var, spec_ref, key_str)                           \
@@ -786,7 +820,33 @@ ZHC_LUMI_TZ(kTzLumiPowerOutageMemory,  kSpecPowerOutageMemory,  "power_outage_me
 ZHC_LUMI_TZ(kTzLumiLedDisabledNight,   kSpecLedDisabledNight,   "led_disabled_night")
 ZHC_LUMI_TZ(kTzLumiButtonLock,         kSpecButtonLock,         "button_lock")
 ZHC_LUMI_TZ(kTzLumiFlipIndicatorLight, kSpecFlipIndicator,      "flip_indicator_light")
+ZHC_LUMI_TZ(kTzLumiModeSwitch,         kSpecModeSwitch,         "mode_switch")
 #undef ZHC_LUMI_TZ
+
+// tz.on_off for one rocker: its own key, its own endpoint, the plain on/off frame.
+namespace {
+bool tz_lumi_state_endpoint(std::string_view, const Value& input, const TzConverter& self,
+                            const PreparedDefinition& def, RuntimeContext& ctx,
+                            std::span<std::uint8_t> out_frame, std::size_t& out_size) {
+    return ::zhc::generic::tz_on_off("state", input, self, def, ctx, out_frame, out_size);
+}
+}  // namespace
+
+#define ZHC_LUMI_STATE_TZ(var, key_str, ep)                              \
+    extern const TzConverter var{                                        \
+        .key         = key_str,                                          \
+        .cluster     = "genOnOff",                                       \
+        .cluster_id  = 0x0006,                                           \
+        .command_id  = 0x00,                                             \
+        .fn          = &tz_lumi_state_endpoint,                          \
+        .user_config = nullptr,                                          \
+        .endpoint    = ep,                                               \
+    };
+ZHC_LUMI_STATE_TZ(kTzLumiStateTop,    "state_top",    1)
+ZHC_LUMI_STATE_TZ(kTzLumiStateBottom, "state_bottom", 2)
+ZHC_LUMI_STATE_TZ(kTzLumiStateLeft,   "state_left",   1)
+ZHC_LUMI_STATE_TZ(kTzLumiStateRight,  "state_right",  2)
+#undef ZHC_LUMI_STATE_TZ
 
 // ── Aqara's own requests: "may I reset?" and "leave" ────────────────
 //
@@ -1140,7 +1200,45 @@ ZHC_LUMI_OPMODE_TZ(kTzLumiCommandMode,             "operation_mode",        "man
 // endpoint. Aqara sends these manufacturer-specific, which leaves the frame
 // without a cluster name; when there is one it must be the writer's.
 namespace {
-bool fz_lumi_operation_mode(const DecodedMessage& msg, const FzConverter&,
+// z2m lumi_specific's direct cases for a setting: 240 flip_indicator_light =
+// value === 1 ? "ON" : "OFF", 513 power_outage_memory and 515 led_disabled_night
+// = value === 1, "4" mode_switch by lookup, 512 on a plug button_lock =
+// value === 1 ? "OFF" : "ON". The binary ones are Bool here, as ZHAC's exposes
+// take them (ON = true).
+bool fz_lumi_setting(const DecodedMessage& msg, const TzConverter& t,
+                     const ::zhc::generic::ZclWriteSpec* s,
+                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (s != &kSpecPowerOutageMemory && s != &kSpecLedDisabledNight && s != &kSpecFlipIndicator &&
+        s != &kSpecButtonLock && s != &kSpecModeSwitch) {
+        return false;
+    }
+    if (msg.cluster && std::strcmp(msg.cluster, t.cluster) != 0) return false;
+    char id[8];
+    std::snprintf(id, sizeof(id), "%u", static_cast<unsigned>(s->attr_id));
+    const Value* v = msg.payload.find(id);
+    if (!v) return false;
+    std::uint64_t n;
+    if (v->type == ValueType::Bool)      n = v->b ? 1 : 0;   // herdsman reads 0x10 as a number
+    else if (v->type == ValueType::Uint) n = v->u;
+    else return false;
+    Value o{};
+    if (s == &kSpecModeSwitch) {
+        const char* label = nullptr;
+        for (std::uint8_t k = 0; k < s->lookup_count && !label; ++k)
+            if (s->lookup[k].value == n) label = s->lookup[k].label;
+        if (!label) return false;
+        o.type = ValueType::StringRef;
+        o.str  = label;
+    } else {
+        o.type = ValueType::Bool;
+        o.b    = s == &kSpecButtonLock ? n != 1 : n == 1;
+    }
+    out.put(t.key, o);
+    return true;
+}
+
+// user_config non-null: kFzLumiSettings, the settings too.
+bool fz_lumi_operation_mode(const DecodedMessage& msg, const FzConverter& self,
                             const PreparedDefinition& def, RuntimeContext&,
                             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     bool any = false;
@@ -1150,7 +1248,10 @@ bool fz_lumi_operation_mode(const DecodedMessage& msg, const FzConverter&,
         const auto* s = static_cast<const ::zhc::generic::ZclWriteSpec*>(t->user_config);
         bool ours = false;
         for (const auto* k : kOpModeSpecs) ours = ours || k == s;
-        if (!ours) continue;
+        if (!ours) {
+            if (self.user_config && fz_lumi_setting(msg, *t, s, out)) any = true;
+            continue;
+        }
         if (msg.cluster && std::strcmp(msg.cluster, t->cluster) != 0) continue;
         if (s == &kSpecOpMode && std::strcmp(t->key, "operation_mode") != 0 &&
             t->endpoint != msg.src_endpoint) {
@@ -1187,6 +1288,25 @@ extern const FzConverter kFzLumiOperationMode{
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_lumi_operation_mode },
     .user_config       = nullptr,
+};
+
+namespace {
+constexpr bool kWithSettings = true;
+}  // namespace
+
+extern const FzConverter kFzLumiSettings{
+    .family            = FrameFamily::Zcl,
+    .cluster           = nullptr,   // genBasic and manuSpecificLumi; checked per writer
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_lumi_operation_mode },
+    .user_config       = &kWithSettings,
 };
 
 // (fz_lumi_curtain_position already exists lower in this file with

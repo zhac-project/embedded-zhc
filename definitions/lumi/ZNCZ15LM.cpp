@@ -65,6 +65,7 @@ const FzConverter* const kFz[] = {
     &kFzPowerBound,
     &kFzMeterBound,
     &::zhc::lumi::kFzLumiHeartbeat,
+    &::zhc::lumi::kFzLumiSettings,   // its settings read back, button_lock among them
 };
 const TzConverter* const kTz[] = {
     &::zhc::generic::kTzOnOff,

@@ -70,6 +70,8 @@ extern const PreparedDefinition kDefQBKG28LM;
 extern const PreparedDefinition kDefQBKG27LM;
 extern const PreparedDefinition kDefWS_USC02;
 extern const PreparedDefinition kDefWS_USC01;
+extern const PreparedDefinition kDefWS_USC03;
+extern const PreparedDefinition kDefWS_USC04;
 extern const PreparedDefinition kDefLGYCDD01LM;
 extern const PreparedDefinition kDefJWDL001A;
 extern const PreparedDefinition kDefJWSP001A;
@@ -170,6 +172,7 @@ extern const PreparedDefinition kDefWSDCGQ22LM;
 extern const PreparedDefinition kDefWSDCGQ23LM;
 extern const PreparedDefinition kDefWSDCGQ24LM;
 extern const PreparedDefinition kDefWSEUK01;
+extern const PreparedDefinition kDefWS_EUK02;
 extern const PreparedDefinition kDefWSEUK03;
 extern const PreparedDefinition kDefWSEUK04;
 extern const PreparedDefinition kDefWXCJKG11LM;
@@ -350,6 +353,7 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefWSDCGQ23LM,
     &kDefWSDCGQ24LM,
     &kDefWSEUK01,
+    &kDefWS_EUK02,
     &kDefWSEUK03,
     &kDefWSEUK04,
     &kDefWXCJKG11LM,
@@ -438,6 +442,8 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefLGYCDD01LM,
     &kDefWS_USC01,
     &kDefWS_USC02,
+    &kDefWS_USC03,
+    &kDefWS_USC04,
     &kDefQBKG27LM,
     &kDefQBKG28LM,
     &kDefQBKG26LM,

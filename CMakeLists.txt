@@ -429,6 +429,8 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/QBKG27LM.cpp
     definitions/lumi/WS_USC02.cpp
     definitions/lumi/WS_USC01.cpp
+    definitions/lumi/WS_USC03.cpp
+    definitions/lumi/WS_USC04.cpp
     definitions/lumi/LGYCDD01LM.cpp
     definitions/lumi/JWDL001A.cpp
     definitions/lumi/JWSP001A.cpp
@@ -531,6 +533,7 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/QBKG24LM.cpp
     definitions/lumi/QBKG25LM.cpp
     definitions/lumi/SSM_U02.cpp
+    definitions/lumi/WS_EUK02.cpp
     definitions/lumi/WS_EUK03.cpp
     definitions/lumi/QBKG34LM.cpp
     definitions/lumi/ZNQBKG13LM.cpp

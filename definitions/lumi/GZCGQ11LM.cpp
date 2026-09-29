@@ -37,5 +37,8 @@ extern const PreparedDefinition kDefGZCGQ11LM{
     .to_zigbee = nullptr, .to_zigbee_count = 0,
     .configure = nullptr, .on_event = nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    // z2m: manuSpecificLumi mode (0x0009) = 1, "event", at configure.
+    .config_steps = ::zhc::lumi::kConfigStepsLumiEventMode,
+    .config_steps_count = std::size(::zhc::lumi::kConfigStepsLumiEventMode),
 };
 }

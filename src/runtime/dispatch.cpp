@@ -81,6 +81,9 @@ bool merge_payload(const FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& src,
 //     the key arrived as `action_duration_l2` while the def and z2m both
 //     call it `action_duration`, so the value was dropped on the floor.
 //     Follows `action` through the `endpoint_action_suffix` opt-in too.
+//   * power_outage_count — the device's, from its heartbeat (Aqara
+//     0x00F7 / 0xFF01, whichever endpoint sends it); z2m publishes it
+//     unsuffixed on multi-endpoint devices too (WP-P09D).
 // NOTE: power/energy are deliberately NOT global here — devices that tag
 // metering per-endpoint via z2m `e.power().withEndpoint()` need the suffix.
 // A device with a single untagged metering surface AND per-load state (e.g.
@@ -90,6 +93,7 @@ bool merge_payload(const FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& src,
 constexpr const char* kAlwaysGlobalKeys[] = {
     "battery", "battery_low", "voltage", "linkquality",
     "device_temperature", "tamper", "action", "action_duration",
+    "power_outage_count",
 };
 
 bool is_always_global_key(const char* key, const PreparedDefinition& def) {

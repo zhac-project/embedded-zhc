@@ -9,12 +9,14 @@
 //   4  the legacy heartbeat (genBasic 0xFF01): a trailing byte, WSDCGQ11LM's outage count
 //   5  no 0xFCC0 binding
 //   6  wall-switch event mode and operation_mode
+//   7  WS-USC03, WS-USC04 and WS-EUK02 as their own definitions
 // Frames go through decode_frame as zhc_adapter feeds them, so Aqara's
 // manufacturer-specific frames reach the converters with no cluster name, as on
 // the hub. Payloads marked "real" were published in z2m issues or z2m's own tests;
 // the others are built from the z2m converter they exercise.
 // `zhc_lumi_aqara_fixes_tests 3` runs item 3 alone.
 
+#undef NDEBUG   // the checks below are asserts; a Release build must run them too
 #include <cassert>
 #include <cmath>
 #include <cstdint>
@@ -30,6 +32,7 @@
 #include "definitions/lumi/_shared.hpp"
 #include "zhc/devices/lumi_registry.hpp"
 #include "zhc/runtime/definition.hpp"
+#include "zhc/runtime/definition_runtime.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
@@ -91,6 +94,15 @@ std::vector<std::uint8_t> lumi_report(std::uint16_t attr, std::uint8_t type,
     return f;
 }
 
+// A profile-wide attribute report, server to client: FC 0x18, then attr / type / value.
+std::vector<std::uint8_t> zcl_report(std::uint16_t attr, std::uint8_t type,
+                                     std::initializer_list<std::uint8_t> value) {
+    std::vector<std::uint8_t> f{0x18, 0x40, 0x0A, static_cast<std::uint8_t>(attr),
+                                static_cast<std::uint8_t>(attr >> 8), type};
+    f.insert(f.end(), value.begin(), value.end());
+    return f;
+}
+
 // 0xFCC0 attribute 0x00F7, octet string.
 std::vector<std::uint8_t> f7(std::initializer_list<std::uint8_t> payload) {
     std::vector<std::uint8_t> f{0x1C, 0x5F, 0x11, 0x31, 0x0A, 0xF7, 0x00, 0x41,
@@ -111,7 +123,8 @@ void feed(const PreparedDefinition& def, std::uint16_t cluster, std::uint8_t ep,
     raw.linkquality  = 0xC8;
     raw.data         = std::span<const std::uint8_t>(zcl.data(), zcl.size());
     DecodedMessage msg{};
-    assert(decode_frame(raw, {}, msg));
+    const bool decoded = decode_frame(raw, {}, msg);
+    assert(decoded);
     RuntimeContext ctx{};
     ctx.configure_write = &capture_write;
     const DispatchResult r = dispatch_from_zigbee(msg, {}, def, raw, ctx);
@@ -134,6 +147,7 @@ bool is_num(const Value* v, double want, double eps) {
 bool is_str(const Value* v, const char* want) {
     return v && v->type == ValueType::StringRef && std::strcmp(v->str, want) == 0;
 }
+bool is_bool(const Value* v, bool want) { return v && v->type == ValueType::Bool && v->b == want; }
 
 // ── frames out ───────────────────────────────────────────────────────
 
@@ -192,6 +206,15 @@ void item1_button_lock() {
         }
         const Expose* e = expose_of(def, "button_lock");
         assert(e && e->type == ExposeType::Binary && e->access == Access::StateSet);
+        // Read back as z2m does (case "512" on the four with lumi_specific,
+        // lumiButtonLock on ZNQBCZ11LM and WP-P01D): 0 = ON, 1 = OFF.
+        feed(def, 0xFCC0, 1, lumi_report(0x0200, 0x20, {0x00}),
+             [](const DispatchResult& r) { assert(is_bool(r.merged.find("button_lock"), true)); });
+        feed(def, 0xFCC0, 1, lumi_report(0x0200, 0x20, {0x01}),
+             [](const DispatchResult& r) {
+                 assert(is_bool(r.merged.find("button_lock"), false));
+                 assert(!r.merged.find("operation_mode"));
+             });
     }
     // No other Lumi definition takes button_lock — above all no wall switch.
     each_lumi([](const PreparedDefinition& def) {
@@ -209,8 +232,9 @@ void item1_button_lock() {
         RuntimeContext ctx{};
         std::uint8_t buf[32]{};
         std::size_t n = 0;
-        assert(flip.fn("flip_indicator_light", v, flip, def_of("QBKG25LM"), ctx,
-                       std::span<std::uint8_t>(buf, sizeof(buf)), n));
+        const bool encoded = flip.fn("flip_indicator_light", v, flip, def_of("QBKG25LM"), ctx,
+                                     std::span<std::uint8_t>(buf, sizeof(buf)), n);
+        assert(encoded);
         assert(bytes_are(std::vector<std::uint8_t>(buf, buf + n),
                          {0x14, 0x5F, 0x11, 0x00, 0x02, 0xF0, 0x00, 0x20,
                           static_cast<std::uint8_t>(byte)}));
@@ -231,8 +255,9 @@ constexpr const char* kPreventResetModels[] = {
     "QBKG19LM", "QBKG20LM", "QBKG21LM", "QBKG22LM", "QBKG23LM", "QBKG24LM", "QBKG25LM",
     "QBKG26LM", "QBKG27LM", "QBKG28LM", "QBKG29LM", "QBKG30LM", "QBKG31LM", "QBKG32LM",
     "QBKG33LM", "QBKG34LM", "QBKG38LM", "QBKG39LM", "QBKG40LM", "QBKG41LM", "WS-EUK01",
-    "WS-EUK03", "WS-EUK04", "WS-K01D", "WS-K02E", "WS-K03E", "WS-K04E", "WS-K05E",
-    "WS-USC01", "WS-USC02", "WXKG02LM", "WXKG03LM", "WXKG06LM", "WXKG07LM", "WXKG17LM",
+    "WS-EUK02", "WS-EUK03", "WS-EUK04", "WS-K01D", "WS-K02E", "WS-K03E", "WS-K04E", "WS-K05E",
+    "WS-USC01", "WS-USC02", "WS-USC03", "WS-USC04", "WXKG02LM", "WXKG03LM", "WXKG06LM",
+    "WXKG07LM", "WXKG17LM",
     "ZNQBKG16LM", "ZNQBKG38LM", "ZNQBKG39LM", "ZNQBKG40LM", "ZNQBKG41LM", "ZNQBKG42LM",
     "ZNQBKG43LM", "ZNQBKG44LM", "ZNQBKG45LM", "ZNWXKG01LM", "ZNXNKG01LM", "ZNXNKG02LM",
 };
@@ -315,9 +340,10 @@ constexpr const char* kHeartbeatModels[] = {
     "QBKG38LM", "QBKG39LM", "QBKG40LM", "QBKG41LM", "RTCGQ12LM", "RTCGQ13LM", "RTCGQ14LM",
     "RTCGQ15LM", "RTCZCGQ11LM", "SJCGQ12LM", "SJCGQ13LM", "SP-EUC01", "SSM-U01", "SSM-U02",
     "SSWQD03LM", "SSWQD22LM", "SSWQDYH02", "T2_E27", "T2_E27_CCT", "TDL01LM", "TH-S04D",
-    "VOCKQJK11LM", "WP-P09D", "WP-P01D", "WSDCGQ12LM", "WS-EUK01", "WS-EUK03", "WS-EUK04",
-    "WS-K01D", "WS-K02E", "WS-K03E", "WS-K04E", "WS-K05E", "WS-K07E", "WS-K08D", "WS-USC01",
-    "WS-USC02", "WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "WXKG04LM", "WXKG13LM", "WXKG14LM",
+    "VOCKQJK11LM", "WP-P09D", "WP-P01D", "WSDCGQ12LM", "WS-EUK01", "WS-EUK02", "WS-EUK03",
+    "WS-EUK04", "WS-K01D", "WS-K02E", "WS-K03E", "WS-K04E", "WS-K05E", "WS-K07E", "WS-K08D",
+    "WS-USC01", "WS-USC02", "WS-USC03", "WS-USC04", "WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM",
+    "WXKG04LM", "WXKG13LM", "WXKG14LM",
     "WXKG15LM", "WXKG16LM", "WXKG17LM", "WXKG20LM", "WXKG21LM", "WXKG22LM", "ZNCLBL01LM",
     "ZNCZ04LM", "ZNCZ12LM", "ZNCZ15LM", "ZNDDQDQ11LM", "ZNDDQDQ12LM", "ZNDDQDQ13LM",
     "ZNLDP12LM", "ZNLDP13LM", "ZNLDP14LM", "ZNLDP18LM", "ZNLDP19LM", "ZNQBCZ11LM",
@@ -476,16 +502,15 @@ void item3_heartbeat() {
              assert(is_int(r.merged.find("power_outage_count"), 16));
          });
 
-    // Exactly z2m's models decode it. (WP-P09D's endpoint map suffixes the per-endpoint
-    // keys of a report from endpoint 1 with its label "1".)
+    // Exactly z2m's models decode it. The outage count is the device's, never an
+    // endpoint's: WP-P09D's endpoint map leaves it unsuffixed, as z2m publishes it.
     const auto probe = f7({0x01, 0x21, 0xC5, 0x0B, 0x05, 0x21, 0x03, 0x00});
     each_lumi([&probe](const PreparedDefinition& def) {
         feed(def, 0xFCC0, 1, probe, [&def](const DispatchResult& r) {
             const bool hb = in(kHeartbeatModels, def.model);
             const bool v = r.merged.find("voltage") != nullptr;
             const bool b = r.merged.find("battery") != nullptr;
-            const bool o = r.merged.find(def.endpoint_map ? "power_outage_count_1"
-                                                          : "power_outage_count") != nullptr;
+            const bool o = r.merged.find("power_outage_count") != nullptr;
             const bool want_v = hb && std::strcmp(def.model, "DWZTCGQ11LM") != 0;
             const bool want_b = in(kTag1BatteryModels, def.model);
             const bool want_o = hb && !in(kBatteryOnlyModels, def.model);
@@ -496,29 +521,54 @@ void item3_heartbeat() {
             }
         });
     });
+
+    // PS-S04D (FP300) firmware 0.0.0_6542 "does not push the 0x00F7 struct on its
+    // own" (z2m): configure reads it, as z2m's does.
+    {
+        const auto& def = def_of("PS-S04D");
+        bool reads = false;
+        for (std::uint8_t i = 0; i < def.config_steps_count; ++i) {
+            const ConfigStep& s = def.config_steps[i];
+            reads = reads || (s.op == ConfigStepOp::Read && s.endpoint == 1 && s.cluster_id == 0xFCC0 &&
+                              s.manu_code == 0x115F && s.payload_len == 2 && s.payload[0] == 0xF7 &&
+                              s.payload[1] == 0x00);
+        }
+        assert(reads);
+    }
 }
 
 // ── 4  legacy heartbeat (genBasic 0xFF01) ────────────────────────────
 
 void item4_legacy_heartbeat() {
-    // herdsman readMiStruct skips "a trailing byte" some Xiaomi structs carry;
-    // parse what is there instead of dropping the whole struct.
+    // herdsman readMiStruct skips "a trailing byte" some Xiaomi structs carry.
     {
         const std::uint8_t s[] = {0x01, 0x21, 0xA8, 0x0B, 0x03, 0x28, 0x1D, 0x05, 0x21, 0x12, 0x00,
                                   0x00};   // trailing byte
         char scratch[64];
         FixedPayload<ZHC_MI_STRUCT_CAP> arena{};
-        assert(parse_mi_struct(s, scratch, sizeof(scratch), arena));
+        const bool ok = parse_mi_struct(s, scratch, sizeof(scratch), arena);
+        assert(ok);
         assert(arena.count == 3);
         assert(is_uint(arena.find("5"), 18));
     }
-    // A record cut short keeps the records before it.
-    {
-        const std::uint8_t s[] = {0x01, 0x21, 0xA8, 0x0B, 0x05, 0x21, 0x12};
+    // Anything else it cannot read throws there, and z2m drops the report: a record
+    // cut short, a type with no known size.
+    for (const std::vector<std::uint8_t>& s : {
+             std::vector<std::uint8_t>{0x01, 0x21, 0xA8, 0x0B, 0x05, 0x21, 0x12},
+             std::vector<std::uint8_t>{0x01, 0x21, 0xA8, 0x0B, 0x05, 0xFE, 0x12, 0x00}}) {
         char scratch[64];
         FixedPayload<ZHC_MI_STRUCT_CAP> arena{};
-        assert(parse_mi_struct(s, scratch, sizeof(scratch), arena));
-        assert(arena.count == 1 && is_uint(arena.find("1"), 2984));
+        const bool ok = parse_mi_struct(s, scratch, sizeof(scratch), arena);
+        assert(!ok);
+    }
+    // More records than the arena holds: the ones that fit stay.
+    {
+        std::vector<std::uint8_t> s;
+        for (std::uint8_t tag = 1; tag <= ZHC_MI_STRUCT_CAP + 2; ++tag) s.insert(s.end(), {tag, 0x20, tag});
+        char scratch[8 * ZHC_MI_STRUCT_CAP];
+        FixedPayload<ZHC_MI_STRUCT_CAP> arena{};
+        const bool ok = parse_mi_struct(s, scratch, sizeof(scratch), arena);
+        assert(ok && arena.count == ZHC_MI_STRUCT_CAP && is_uint(arena.find("1"), 1));
     }
     // The owner's WXKG01LM heartbeat with a trailing byte inside the 0xFF01 string:
     // battery, voltage, temperature and outage count still arrive.
@@ -578,14 +628,15 @@ void item5_bindings() {
 // ── 6  wall-switch event mode and operation_mode ─────────────────────
 //
 // Event mode: z2m lumiSetEventMode / lumiCommandMode / the per-model configure write
-// manuSpecificLumi `mode` (0x0009, u8) = 1, code 0x115F, endpoint 1. The six non-switch
-// models ZHAC already wrote it for stay as they are.
+// manuSpecificLumi `mode` (0x0009, u8) = 1, code 0x115F, endpoint 1 — on every model
+// z2m sends it to.
 constexpr const char* kEventModeModels[] = {
     "QBKG25LM", "QBKG26LM", "QBKG27LM", "QBKG28LM", "QBKG29LM", "QBKG38LM", "QBKG39LM",
-    "QBKG40LM", "QBKG41LM", "SP-EUC01", "WS-EUK01", "WS-EUK03", "WS-EUK04", "WS-K01D",
-    "WS-K05E", "WS-USC01", "WS-USC02", "ZNQBKG16LM", "ZNQBKG38LM", "ZNQBKG39LM",
-    "ZNQBKG40LM", "ZNQBKG41LM", "ZNWXKG01LM", "ZNXNKG01LM", "ZNXNKG02LM",
-    "WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "WXKG15LM", "WXKG21LM", "WXKG22LM",
+    "QBKG40LM", "QBKG41LM", "SP-EUC01", "WS-EUK01", "WS-EUK02", "WS-EUK03", "WS-EUK04",
+    "WS-K01D", "WS-K05E", "WS-USC01", "WS-USC02", "WS-USC03", "WS-USC04", "ZNQBKG16LM",
+    "ZNQBKG38LM", "ZNQBKG39LM", "ZNQBKG40LM", "ZNQBKG41LM", "ZNWXKG01LM", "ZNXNKG01LM",
+    "ZNXNKG02LM", "WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "WXKG13LM", "WXKG14LM",
+    "WXKG15LM", "WXKG21LM", "WXKG22LM", "CTP-R01", "GZCGQ11LM",
 };
 
 bool writes_event_mode(const PreparedDefinition& def) {
@@ -635,12 +686,17 @@ constexpr Op kOps[] = {
     {"QBKG41LM", "operation_mode_left", 0xFCC0, 0x0200, 1},
     {"QBKG41LM", "operation_mode_right", 0xFCC0, 0x0200, 2},
     {"WS-EUK01", "operation_mode", 0xFCC0, 0x0200, 1},
+    {"WS-EUK02", "operation_mode_left", 0xFCC0, 0x0200, 1},
+    {"WS-EUK02", "operation_mode_right", 0xFCC0, 0x0200, 2},
     {"WS-EUK03", "operation_mode", 0xFCC0, 0x0200, 1},
     {"WS-EUK04", "operation_mode_left", 0xFCC0, 0x0200, 1},
     {"WS-EUK04", "operation_mode_right", 0xFCC0, 0x0200, 2},
     {"WS-USC01", "operation_mode", 0xFCC0, 0x0200, 1},
     {"WS-USC02", "operation_mode_top", 0xFCC0, 0x0200, 1},
     {"WS-USC02", "operation_mode_bottom", 0xFCC0, 0x0200, 2},
+    {"WS-USC03", "operation_mode", 0xFCC0, 0x0200, 1},
+    {"WS-USC04", "operation_mode_top", 0xFCC0, 0x0200, 1},
+    {"WS-USC04", "operation_mode_bottom", 0xFCC0, 0x0200, 2},
     {"ZNQBKG16LM", "operation_mode_left", 0xFCC0, 0x0200, 1},    // z2m ZNQBKG26LM
     {"ZNQBKG16LM", "operation_mode_center", 0xFCC0, 0x0200, 2},
     {"ZNQBKG16LM", "operation_mode_right", 0xFCC0, 0x0200, 3},
@@ -798,13 +854,195 @@ void item6_switch_settings() {
          [](const DispatchResult& r) { assert(!r.merged.find("operation_mode")); });
 }
 
+// ── 7  WS-USC03, WS-USC04, WS-EUK02 ──────────────────────────────────
+//
+// z2m (devices/lumi.ts) has them as models of their own; ZHAC had them inside
+// QBKG21LM, QBKG22LM and WS-EUK03, with those switches' settings.
+struct Ex { const char* name; ExposeType type; Access access; const char* unit; };
+void exposes_are(const PreparedDefinition& def, std::initializer_list<Ex> want) {
+    bool ok = def.exposes_count == want.size();
+    std::uint8_t i = 0;
+    for (const Ex& w : want) {
+        if (!ok) break;
+        const Expose& e = def.exposes[i++];
+        ok = std::strcmp(e.name, w.name) == 0 && e.type == w.type && e.access == w.access &&
+             (w.unit ? e.unit && std::strcmp(e.unit, w.unit) == 0 : e.unit == nullptr);
+    }
+    if (!ok) {
+        std::fprintf(stderr, "%s: exposes differ from z2m's\n", def.model);
+        assert(false);
+    }
+}
+
+void expect_on_off(const PreparedDefinition& def, const char* key, std::uint8_t ep) {
+    for (auto [v, cmd] : {std::pair{str_v("ON"), 0x01}, {str_v("OFF"), 0x00}, {str_v("TOGGLE"), 0x02},
+                          {bool_v(true), 0x01}}) {
+        const Out o = send(def, key, v);
+        assert(o.ok && o.cluster == 0x0006 && o.endpoint == ep);
+        assert(bytes_are(o.frame, {0x11, 0x00, static_cast<std::uint8_t>(cmd)}));
+    }
+}
+
+// A manufacturer-specific write of manuSpecificLumi `attr`, as z2m's converter sends it.
+void expect_lumi_write(const PreparedDefinition& def, const char* key, const Value& v,
+                       std::initializer_list<std::uint8_t> attr_type_value) {
+    const Out o = send(def, key, v);
+    std::vector<std::uint8_t> want{0x14, 0x5F, 0x11, 0x00, 0x02};
+    want.insert(want.end(), attr_type_value.begin(), attr_type_value.end());
+    if (!o.ok || o.cluster != 0xFCC0 || o.frame != want) {
+        std::fprintf(stderr, "%s: %s\n", def.model, key);
+        assert(false);
+    }
+}
+
+void expect_action(const PreparedDefinition& def, std::uint8_t ep, std::uint8_t value, const char* want) {
+    feed(def, 0x0012, ep, zcl_report(0x0055, 0x21, {value, 0x00}), [&](const DispatchResult& r) {
+        if (want ? !is_str(r.merged.find("action"), want) : r.merged.find("action") != nullptr) {
+            std::fprintf(stderr, "%s: ep %u value %u\n", def.model, ep, value);
+            assert(false);
+        }
+    });
+}
+
+void item7_split() {
+    // The matcher picks each fingerprint's own definition.
+    const std::span<const PreparedDefinition* const> reg(devices::lumi::kLumiRegistry,
+                                                         devices::lumi::kLumiRegistryCount);
+    for (auto [fp, model] : {std::pair{"lumi.switch.b1naus01", "WS-USC03"},
+                             {"lumi.switch.b2naus01", "WS-USC04"},
+                             {"lumi.switch.l2aeu1", "WS-EUK02"},
+                             {"lumi.switch.b1lacn02", "QBKG21LM"},
+                             {"lumi.switch.b2lacn02", "QBKG22LM"},
+                             {"lumi.switch.n1aeu1", "WS-EUK03"}}) {
+        const PreparedDefinition* d = find_definition(fp, "LUMI", reg);
+        if (!d || std::strcmp(d->model, model) != 0) {
+            std::fprintf(stderr, "%s -> %s, want %s\n", fp, d ? d->model : "nothing", model);
+            assert(false);
+        }
+    }
+    // The three they came out of keep everything but that fingerprint.
+    struct Shape { const char* model; const char* fp; std::uint8_t fz, tz, exposes, binds, steps; };
+    for (const Shape& s : {Shape{"QBKG21LM", "lumi.switch.b1lacn02", 4, 4, 6, 2, 0},
+                           Shape{"QBKG22LM", "lumi.switch.b2lacn02", 4, 5, 7, 2, 0},
+                           Shape{"WS-EUK03", "lumi.switch.n1aeu1", 5, 4, 6, 2, 1}}) {
+        const auto& d = def_of(s.model);
+        assert(d.zigbee_models_count == 1 && std::strcmp(d.zigbee_models[0], s.fp) == 0);
+        if (d.from_zigbee_count != s.fz || d.to_zigbee_count != s.tz || d.exposes_count != s.exposes ||
+            d.bindings_count != s.binds || d.config_steps_count != s.steps) {
+            std::fprintf(stderr, "%s: fz %u tz %u exposes %u binds %u steps %u\n", s.model,
+                         d.from_zigbee_count, d.to_zigbee_count, d.exposes_count, d.bindings_count,
+                         d.config_steps_count);
+            assert(false);
+        }
+    }
+
+    const auto& usc03 = def_of("WS-USC03");
+    const auto& usc04 = def_of("WS-USC04");
+    const auto& euk02 = def_of("WS-EUK02");
+    constexpr auto N = ExposeType::Numeric, B = ExposeType::Binary, E = ExposeType::Enum;
+    constexpr auto R = Access::State, RW = Access::StateSet;
+    exposes_are(usc03, {{"state", B, RW, nullptr}, {"action", E, R, nullptr},
+                        {"flip_indicator_light", B, RW, nullptr}, {"power_outage_count", N, R, nullptr},
+                        {"device_temperature", N, R, "C"}, {"power", N, R, "W"}, {"energy", N, R, "kWh"},
+                        {"voltage", N, R, "V"}, {"power_outage_memory", B, RW, nullptr},
+                        {"operation_mode", E, RW, nullptr}});
+    exposes_are(usc04, {{"state_top", B, RW, nullptr}, {"state_bottom", B, RW, nullptr},
+                        {"operation_mode_top", E, RW, nullptr}, {"operation_mode_bottom", E, RW, nullptr},
+                        {"power_outage_count", N, R, nullptr}, {"device_temperature", N, R, "C"},
+                        {"flip_indicator_light", B, RW, nullptr}, {"power", N, R, "W"},
+                        {"energy", N, R, "kWh"}, {"voltage", N, R, "V"},
+                        {"power_outage_memory", B, RW, nullptr}, {"action", E, R, nullptr}});
+    exposes_are(euk02, {{"state_left", B, RW, nullptr}, {"state_right", B, RW, nullptr},
+                        {"power_outage_memory", B, RW, nullptr}, {"flip_indicator_light", B, RW, nullptr},
+                        {"led_disabled_night", B, RW, nullptr}, {"power_outage_count", N, R, nullptr},
+                        {"device_temperature", N, R, "C"}, {"operation_mode_left", E, RW, nullptr},
+                        {"operation_mode_right", E, RW, nullptr}, {"mode_switch", E, RW, nullptr},
+                        {"action", E, R, nullptr}});
+    assert(enum_is(expose_of(usc03, "action"), {"single", "double"}));
+    assert(enum_is(expose_of(usc04, "action"), {"single_top", "single_bottom", "single_both", "double_top",
+                                                "double_bottom", "double_both"}));
+    assert(enum_is(expose_of(euk02, "action"), {"single_left", "double_left", "single_right", "double_right",
+                                                "single_both", "double_both"}));
+    assert(enum_is(expose_of(euk02, "mode_switch"), {"anti_flicker_mode", "quick_mode"}));
+    for (const auto* d : {&usc03, &usc04, &euk02}) assert(d->bindings_count == 0);
+
+    // Relays: tz.on_off, on the rocker's own endpoint (z2m's endpoint maps).
+    expect_on_off(usc03, "state", 0);
+    expect_on_off(usc04, "state_top", 1);
+    expect_on_off(usc04, "state_bottom", 2);
+    expect_on_off(euk02, "state_left", 1);
+    expect_on_off(euk02, "state_right", 2);
+    assert(!send(usc03, "state_top", str_v("ON")).ok && !send(usc04, "state_left", str_v("ON")).ok);
+    // ... and their reports, fz.on_off (postfixed with the endpoint name).
+    feed(usc03, 0x0006, 1, zcl_report(0x0000, 0x10, {0x01}),
+         [](const DispatchResult& r) { assert(is_bool(r.merged.find("state"), true)); });
+    feed(usc04, 0x0006, 2, zcl_report(0x0000, 0x10, {0x01}),
+         [](const DispatchResult& r) { assert(is_bool(r.merged.find("state_bottom"), true)); });
+    feed(euk02, 0x0006, 1, zcl_report(0x0000, 0x10, {0x00}),
+         [](const DispatchResult& r) { assert(is_bool(r.merged.find("state_left"), false)); });
+
+    // Settings, as z2m writes them (endpoints for operation_mode are in item 6).
+    for (const auto* d : {&usc03, &usc04, &euk02}) {
+        expect_lumi_write(*d, "power_outage_memory", bool_v(true), {0x01, 0x02, 0x10, 0x01});
+        expect_lumi_write(*d, "flip_indicator_light", str_v("ON"), {0xF0, 0x00, 0x20, 0x01});
+        expect_lumi_write(*d, "flip_indicator_light", str_v("OFF"), {0xF0, 0x00, 0x20, 0x00});
+    }
+    expect_lumi_write(euk02, "led_disabled_night", bool_v(true), {0x03, 0x02, 0x10, 0x01});
+    expect_lumi_write(euk02, "mode_switch", str_v("anti_flicker_mode"), {0x04, 0x00, 0x21, 0x04, 0x00});
+    expect_lumi_write(euk02, "mode_switch", str_v("quick_mode"), {0x04, 0x00, 0x21, 0x01, 0x00});
+    for (const auto* d : {&usc03, &usc04}) {   // z2m offers neither on these two
+        assert(!send(*d, "led_disabled_night", bool_v(true)).ok);
+        assert(!send(*d, "mode_switch", str_v("quick_mode")).ok);
+    }
+    // ... and read back where z2m's lumi_specific reads them.
+    for (const auto* d : {&usc03, &usc04, &euk02}) {
+        feed(*d, 0xFCC0, 1, lumi_report(0x0201, 0x10, {0x01}),
+             [](const DispatchResult& r) { assert(is_bool(r.merged.find("power_outage_memory"), true)); });
+        feed(*d, 0xFCC0, 1, lumi_report(0x00F0, 0x20, {0x01}),
+             [](const DispatchResult& r) { assert(is_bool(r.merged.find("flip_indicator_light"), true)); });
+        feed(*d, 0xFCC0, 1, lumi_report(0x00F0, 0x20, {0x00}),
+             [](const DispatchResult& r) { assert(is_bool(r.merged.find("flip_indicator_light"), false)); });
+    }
+    feed(euk02, 0xFCC0, 1, lumi_report(0x0203, 0x10, {0x01}),
+         [](const DispatchResult& r) { assert(is_bool(r.merged.find("led_disabled_night"), true)); });
+    feed(euk02, 0xFCC0, 1, lumi_report(0x0004, 0x21, {0x04, 0x00}),
+         [](const DispatchResult& r) { assert(is_str(r.merged.find("mode_switch"), "anti_flicker_mode")); });
+    feed(euk02, 0xFCC0, 2, lumi_report(0x0200, 0x20, {0x00}),
+         [](const DispatchResult& r) { assert(is_str(r.merged.find("operation_mode_right"), "decoupled")); });
+    feed(usc04, 0xFCC0, 1, lumi_report(0x0200, 0x20, {0x01}),
+         [](const DispatchResult& r) { assert(is_str(r.merged.find("operation_mode_top"), "control_relay")); });
+    feed(usc03, 0xFCC0, 1, lumi_report(0x0200, 0x20, {0x00}),
+         [](const DispatchResult& r) { assert(is_str(r.merged.find("operation_mode"), "decoupled")); });
+
+    // Buttons: lumi_action_multistate, `${action}_${button}` from z2m's button
+    // endpoints; WS-USC03 has no button lookup, so the action alone.
+    expect_action(usc03, 41, 1, "single");
+    expect_action(usc03, 41, 2, "double");
+    expect_action(usc04, 41, 1, "single_top");
+    expect_action(usc04, 42, 2, "double_bottom");
+    expect_action(usc04, 51, 1, "single_both");
+    expect_action(usc04, 43, 1, nullptr);
+    expect_action(euk02, 41, 2, "double_left");
+    expect_action(euk02, 42, 1, "single_right");
+    expect_action(euk02, 51, 2, "double_both");
+    expect_action(euk02, 1, 1, nullptr);
+
+    // Power (lumi_power, genAnalogInput presentValue) on the two with a neutral.
+    for (const auto* d : {&usc03, &usc04})
+        feed(*d, 0x000C, 1, zcl_report(0x0055, 0x39, {0x00, 0x00, 0x48, 0x41}),
+             [](const DispatchResult& r) { assert(is_num(r.merged.find("power"), 12.5, 1e-6)); });
+    feed(euk02, 0x000C, 1, zcl_report(0x0055, 0x39, {0x00, 0x00, 0x48, 0x41}),
+         [](const DispatchResult& r) { assert(!r.merged.find("power")); });
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
     const int only = argc > 1 ? std::atoi(argv[1]) : 0;
     void (*const items[])() = {item1_button_lock, item2_prevent_reset_and_leave, item3_heartbeat,
-                               item4_legacy_heartbeat, item5_bindings, item6_switch_settings};
-    for (int i = 0; i < 6; ++i) {
+                               item4_legacy_heartbeat, item5_bindings, item6_switch_settings,
+                               item7_split};
+    for (int i = 0; i < 7; ++i) {
         if (only && only != i + 1) continue;
         items[i]();
         std::printf("item %d ok\n", i + 1);

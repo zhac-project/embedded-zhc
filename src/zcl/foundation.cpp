@@ -280,10 +280,11 @@ bool parse_mi_struct(std::span<const std::uint8_t> struct_bytes,
                       char* key_scratch,
                       std::size_t scratch_cap,
                       FixedPayload<ZHC_MI_STRUCT_CAP>& arena) {
-    // Parse what is there, as herdsman's readMiStruct does: a trailing byte
-    // ("some Xiaomi structs have a trailing byte, skip it"), a record cut
-    // short, a type with no known size or a full arena ends the walk and
-    // keeps the records before it, battery included.
+    // As herdsman's readMiStruct: one byte left after the last record is
+    // skipped ("some Xiaomi structs have a trailing byte, skip it"); a record
+    // it cannot read (cut short, a type with no known size) throws there, and
+    // z2m drops the report. More records than the arena holds keep the ones
+    // that fit.
     std::size_t pos = 0;
     std::size_t scratch_offset = 0;
     while (pos + 2 <= struct_bytes.size()) {
@@ -293,18 +294,18 @@ bool parse_mi_struct(std::span<const std::uint8_t> struct_bytes,
 
         Value v{};
         const int consumed = decode_value(value_span, type, v);
-        if (consumed < 0) break;
+        if (consumed < 0) return false;
 
-        if (scratch_offset + 6 > scratch_cap) break;
+        if (scratch_offset + 6 > scratch_cap) return true;
         char* key = key_scratch + scratch_offset;
         const int n = std::snprintf(key, 6, "%u", static_cast<unsigned>(tag));
-        if (n < 0 || static_cast<std::size_t>(n) >= 6) break;
+        if (n < 0 || static_cast<std::size_t>(n) >= 6) return false;
         scratch_offset += static_cast<std::size_t>(n) + 1;
 
-        if (!arena.put(key, v)) break;
+        if (!arena.put(key, v)) return true;
         pos += 2 + static_cast<std::size_t>(consumed);
     }
-    return arena.count > 0 || pos == struct_bytes.size();
+    return true;   // nothing left, or the trailing byte
 }
 
 bool parse_tuya_dp_stream(std::span<const std::uint8_t> payload,

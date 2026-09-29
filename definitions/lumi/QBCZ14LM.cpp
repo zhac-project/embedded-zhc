@@ -10,8 +10,9 @@ struct E { static constexpr ::zhc::lumi::DeviceEndpointLabel e[]={{1,"state"}};
           static constexpr ::zhc::lumi::DeviceEndpointLabels map{e,1}; };
 // What z2m adds on top of the factory bundle (factories.hpp NoExtras).
 struct X : ::zhc::lumi::factory::NoExtras {
-    static constexpr std::array<const FzConverter*, 1> fz{{
+    static constexpr std::array<const FzConverter*, 2> fz{{
         &::zhc::lumi::kFzLumiHeartbeat,
+        &::zhc::lumi::kFzLumiSettings,   // its settings read back, button_lock among them
     }};
     static constexpr std::array<const TzConverter*, 1> tz{{
         &::zhc::lumi::kTzLumiButtonLock,

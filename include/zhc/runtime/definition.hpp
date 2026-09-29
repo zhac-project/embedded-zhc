@@ -223,7 +223,8 @@ struct TzConverter {
     const void*   user_config;
     // The endpoint the frame must go to, for a write z2m makes on a fixed
     // endpoint (a button's own endpoint, genBasic on endpoint 1). 0 = the
-    // endpoint the caller asked for.
+    // endpoint the caller asked for. Non-zero wins over the endpoint the
+    // adapter would take from an endpoint_map suffix or default_endpoint.
     std::uint8_t  endpoint = 0;
 };
 

@@ -303,11 +303,61 @@ extern const TzConverter kTzLumiCommandMode;              // 0x0009
 // for them: 0x0200 per endpoint (a button's key only from its endpoint, the
 // plain key from any), 0xFF22 / 0xFF23 / 0x0009 from any endpoint.
 extern const FzConverter kFzLumiOperationMode;
+// The same, plus z2m lumi_specific's other direct settings, again for the ones
+// the definition writes: flip_indicator_light (0x00F0, 1 = ON),
+// power_outage_memory (0x0201) and led_disabled_night (0x0203) (1 = true),
+// mode_switch (0x0004) and a plug's button_lock (0x0200, 1 = OFF).
+extern const FzConverter kFzLumiSettings;
 
 inline constexpr const char* kLumiOperationModeValues[] = {"control_relay", "decoupled"};
 inline constexpr const char* kLumiOperationModeRelayValues[] = {
     "control_left_relay", "control_right_relay", "decoupled"};
 inline constexpr const char* kLumiCommandModeValues[] = {"event", "command"};
+
+// z2m lumi_switch_mode_switch: manuSpecificLumi 0x0004, u16,
+// anti_flicker_mode = 4, quick_mode = 1, code 0x115F.
+extern const TzConverter kTzLumiModeSwitch;
+inline constexpr const char* kLumiModeSwitchValues[] = {"anti_flicker_mode", "quick_mode"};
+
+// z2m tz.on_off with a rocker's name: `state_<name>` goes to that rocker's
+// endpoint, as z2m's endpoint map has it.
+extern const TzConverter kTzLumiStateTop;      // state_top    @1
+extern const TzConverter kTzLumiStateBottom;   // state_bottom @2
+extern const TzConverter kTzLumiStateLeft;     // state_left   @1
+extern const TzConverter kTzLumiStateRight;    // state_right  @2
+
+// z2m lumi_action_multistate on a wall switch: genMultistateInput presentValue
+// through actionLookup {0 hold, 1 single, 2 double, 3 triple, 255 release},
+// then `${action}_${button}` with the button the model's buttonLookup names
+// for the reporting endpoint, and nothing from an endpoint it does not name.
+// A model without a buttonLookup (null user_config) gets the action alone.
+struct LumiButton {
+    std::uint8_t endpoint;
+    const char*  name;
+};
+struct LumiButtons {
+    const LumiButton* buttons;
+    std::uint8_t      count;
+};
+bool fz_lumi_switch_action(const DecodedMessage& msg, const FzConverter& self,
+                           const PreparedDefinition& def, RuntimeContext& ctx,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+constexpr FzConverter lumi_switch_action_converter(const LumiButtons* buttons) {
+    return FzConverter{
+        .family            = FrameFamily::Zcl,
+        .cluster           = "genMultistateInput",
+        .type_mask         = type_bit(MessageType::AttributeReport) |
+                             type_bit(MessageType::ReadResponse),
+        .command_id        = WILDCARD_CMD_ID,
+        .attr_id           = WILDCARD_ATTR_ID,
+        .endpoint          = WILDCARD_ENDPOINT,
+        .frame_flags_mask  = 0,
+        .frame_flags_value = 0,
+        .direction         = Direction::ServerToClient,
+        .fn                = { .zcl_fn = &fz_lumi_switch_action },
+        .user_config       = buttons,
+    };
+}
 
 // (kFzLumiCurtainPosition already declared earlier in this header.)
 

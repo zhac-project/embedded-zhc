@@ -10,8 +10,9 @@ struct C { static constexpr ::zhc::lumi::LumiPowerCalibration power{1,1000,10};
            static constexpr ::zhc::lumi::LumiMeterCalibration meter{1000}; };
 // What z2m adds on top of the factory bundle (factories.hpp NoExtras).
 struct X : ::zhc::lumi::factory::NoExtras {
-    static constexpr std::array<const FzConverter*, 1> fz{{
+    static constexpr std::array<const FzConverter*, 2> fz{{
         &::zhc::lumi::kFzLumiHeartbeat,
+        &::zhc::lumi::kFzLumiSettings,   // its settings read back, button_lock among them
     }};
     static constexpr std::array<const TzConverter*, 1> tz{{
         &::zhc::lumi::kTzLumiButtonLock,

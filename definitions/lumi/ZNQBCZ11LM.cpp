@@ -8,6 +8,7 @@ namespace {
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::lumi::kFzLumiHeartbeat,
+    &::zhc::lumi::kFzLumiSettings,   // its settings read back, button_lock among them
 };
 const TzConverter* const kTz[] = {
     &::zhc::lumi::kTzLumiButtonLock,
