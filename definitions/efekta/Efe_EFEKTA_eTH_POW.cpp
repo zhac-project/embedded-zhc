@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Efekta EFEKTA_eTH_POW — auto-generated.
+// Tier 2: Efekta EFEKTA_eTH_POW, graduated from the generated def for
+// z2m v26.115.1: zigbeeModels EFEKTA_eTH_POW_E, EFEKTA_eTH_POW_E_WT, EFEKTA_eTH_POW_E_LR_WT, EFEKTA_eTH_POW_R_LR_WT.
 // Temperature and humidity smart sensor with with e-ink display
 // z2m-source: efekta.ts #EFEKTA_eTH_POW.
 #include "definitions/_generic/_shared.hpp"
@@ -21,7 +22,7 @@ const FzConverter* const kFz_EFEKTA_eTH_POW[] = {
 const TzConverter* const kTz_EFEKTA_eTH_POW[] = {
     &kTzWrite_EFEKTA_eTH_POW_reading_interval,
 };
-constexpr const char* kModels_EFEKTA_eTH_POW[] = { "EFEKTA_eTH_POW_E_LR", "EFEKTA_eTH_POW_R_LR" };
+constexpr const char* kModels_EFEKTA_eTH_POW[] = { "EFEKTA_eTH_POW_E_LR", "EFEKTA_eTH_POW_R_LR", "EFEKTA_eTH_POW_E", "EFEKTA_eTH_POW_E_WT", "EFEKTA_eTH_POW_E_LR_WT", "EFEKTA_eTH_POW_R_LR_WT" };
 
 }  // namespace
 
@@ -41,7 +42,7 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_EFEKTA_eTH_POW{
+extern const PreparedDefinition kDefEfekta_eTH_POW{
     .zigbee_models=kModels_EFEKTA_eTH_POW, .zigbee_models_count=sizeof(kModels_EFEKTA_eTH_POW)/sizeof(kModels_EFEKTA_eTH_POW[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,

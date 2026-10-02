@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Efekta EFEKTA_ePST_POW_V2 — auto-generated.
+// Tier 2: Efekta EFEKTA_ePST_POW_V2, graduated from the generated def for
+// z2m v26.115.1: zigbeeModels EFEKTA_ePST_POW_V2_E.
 // Smart water/gas pressure monitor with e-ink display.
 // z2m-source: efekta.ts #EFEKTA_ePST_POW_V2.
 #include "definitions/_generic/_shared.hpp"
@@ -13,7 +14,7 @@ const FzConverter* const kFz_EFEKTA_ePST_POW_V2[] = {
     &::zhc::generic::kFzTemperature,
 };
 
-constexpr const char* kModels_EFEKTA_ePST_POW_V2[] = { "EFEKTA_ePST_POW_V2_E_LR", "EFEKTA_ePST_POW_V2_R_LR" };
+constexpr const char* kModels_EFEKTA_ePST_POW_V2[] = { "EFEKTA_ePST_POW_V2_E_LR", "EFEKTA_ePST_POW_V2_R_LR", "EFEKTA_ePST_POW_V2_E" };
 
 }  // namespace
 
@@ -33,7 +34,7 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_EFEKTA_ePST_POW_V2{
+extern const PreparedDefinition kDefEfekta_ePST_POW_V2{
     .zigbee_models=kModels_EFEKTA_ePST_POW_V2, .zigbee_models_count=sizeof(kModels_EFEKTA_ePST_POW_V2)/sizeof(kModels_EFEKTA_ePST_POW_V2[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,

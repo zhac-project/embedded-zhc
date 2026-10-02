@@ -23,7 +23,10 @@ struct cfg { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
     static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{e,7}; };
 using FX=::zhc::tuya::factory::TuyaRw<cfg>;
 constexpr const char* kM[]={"TS0601"};
-constexpr const char* kN[]={"_TZE284_7e6v8u9f"};
+// z2m v26.115.0 adds `_TZE28C1000000_rzdkn5rx`, sold as the Zemismart ZNS-LRL2E
+// 30 A immersion switch.
+constexpr const char* kN[]={"_TZE284_7e6v8u9f","_TZE28C1000000_rzdkn5rx"};
+constexpr WhiteLabel kWL[]={{"Zemismart","ZNS-LRL2E"}};
 constexpr const char* kPobOpts[]={"off","on","previous"};
 constexpr const char* kIndOpts[]={"none","relay","pos"};
 constexpr Expose kExp[]={
@@ -36,10 +39,10 @@ constexpr Expose kExp[]={
     {"backlight_brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr,  0}};
 }
 extern const PreparedDefinition kDef_TS0601_multifunction_switch{
-    .zigbee_models=kM,.zigbee_models_count=1,.manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN,.manufacturer_names_count=1,.model="TS0601_multifunction_switch",
+    .zigbee_models=kM,.zigbee_models_count=sizeof(kM)/sizeof(kM[0]),.manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kN,.manufacturer_names_count=sizeof(kN)/sizeof(kN[0]),.model="TS0601_multifunction_switch",
     .vendor="Tuya",.meta=nullptr,.exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWL,.white_labels_count=sizeof(kWL)/sizeof(kWL[0]),
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };

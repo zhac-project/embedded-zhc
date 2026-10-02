@@ -1,0 +1,103 @@
+// SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+// SPDX-License-Identifier: Apache-2.0
+// Tier 2: Tuya TS0601_switch_6_gang for _TZE284_znkkcauq (z2m v26.115.1 window,
+// Ekaza EKGD-T4085P-4Z 4 gang switch with 2 gang socket). The family lives in
+// per-manufacturer generated copies, identical apart from the manufacturer;
+// this is a hand-written copy of _TZE284_tdhnhhiy's for the new member, under
+// z2m's model name.
+// z2m-source: tuya.ts #TS0601_switch_6_gang.
+#include "definitions/tuya/_shared.hpp"
+#include "definitions/tuya/extend.hpp"
+namespace zhc::devices::tuya {
+namespace {
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_znkkcauq_power_on_behavior_dp14[] = {
+    { 0, "off" },
+    { 1, "on" },
+    { 2, "memory" },
+};
+
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_znkkcauq_indicator_mode_dp15[] = {
+    { 0, "none" },
+    { 1, "relay" },
+    { 2, "pos" },
+};
+
+constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_znkkcauq[] = {
+    { 1, "state_l1", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 2, "state_l2", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 3, "state_l3", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 4, "state_l4", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 5, "state_l5", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 6, "state_l6", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 14, "power_on_behavior", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_znkkcauq_power_on_behavior_dp14, sizeof(kEnum__TZE284_znkkcauq_power_on_behavior_dp14)/sizeof(kEnum__TZE284_znkkcauq_power_on_behavior_dp14[0]) },
+    { 15, "indicator_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_znkkcauq_indicator_mode_dp15, sizeof(kEnum__TZE284_znkkcauq_indicator_mode_dp15)/sizeof(kEnum__TZE284_znkkcauq_indicator_mode_dp15[0]) },
+};
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_znkkcauq{ kEntries__TZE284_znkkcauq, sizeof(kEntries__TZE284_znkkcauq)/sizeof(kEntries__TZE284_znkkcauq[0]) };
+constexpr FzConverter kFzDp__TZE284_znkkcauq{
+    .family            = FrameFamily::TuyaDp,
+    .cluster           = "manuSpecificTuya",
+    .type_mask         = type_bit(MessageType::Command),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .tuya_fn = &::zhc::tuya::fz_tuya_datapoints },
+    .user_config       = &kMap__TZE284_znkkcauq,
+};
+const FzConverter* const kFz__TZE284_znkkcauq[] = {
+    &::zhc::tuya::kFzTuyaMcuSyncTime,
+    &kFzDp__TZE284_znkkcauq,
+};
+constexpr TzConverter kTzDp__TZE284_znkkcauq{
+    .key         = nullptr,                // wildcard — claims any mapped key
+    .cluster     = "manuSpecificTuya",
+    .cluster_id  = 0xEF00,
+    .command_id  = 0x00,
+    .fn          = &::zhc::tuya::tz_tuya_datapoints,
+    .user_config = &kMap__TZE284_znkkcauq,
+};
+const TzConverter* const kTz__TZE284_znkkcauq[] = { &kTzDp__TZE284_znkkcauq };
+constexpr const char* kM__TZE284_znkkcauq[] = { "TS0601" };
+constexpr const char* kN__TZE284_znkkcauq[] = { "_TZE284_znkkcauq" };
+// --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
+constexpr const char* kAutoOpts__TZE284_znkkcauq_6[] = {"off", "on", "previous"};
+constexpr const char* kAutoOpts__TZE284_znkkcauq_7[] = {"none", "relay", "pos"};
+constexpr Expose kAutoExposes__TZE284_znkkcauq[] = {
+    {"state_l1", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l2", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l5", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state_l6", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_znkkcauq_6, 3, ExposeCategory::Config},
+    {"indicator_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_znkkcauq_7, 3, ExposeCategory::Config},
+};
+// --- end auto-generated exposes ---
+}  // namespace
+
+constexpr WhiteLabel kWhiteLabels_Gen_TZE284_znkkcauq[] = {
+    {"Mercator Ikuü","SSW06G"},
+    {"Nova Digital","NTZB-04-W-B"},
+    {"Nova Digital","SYZB-6W"},
+    {"Nova Digital","FZB-6"},
+    {"Nova Digital","SA-6"},
+    {"Ekaza","EKAT-T3074-6WZ"},
+    {"Ekaza","EKGD-T4085P-4Z"},
+};
+extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq{
+    .zigbee_models=kM__TZE284_znkkcauq,.zigbee_models_count=sizeof(kM__TZE284_znkkcauq)/sizeof(kM__TZE284_znkkcauq[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kN__TZE284_znkkcauq,.manufacturer_names_count=sizeof(kN__TZE284_znkkcauq)/sizeof(kN__TZE284_znkkcauq[0]),
+    .model="TS0601_switch_6_gang",.vendor="Tuya",
+    .meta=nullptr,.exposes=kAutoExposes__TZE284_znkkcauq,.exposes_count=sizeof(kAutoExposes__TZE284_znkkcauq)/sizeof(kAutoExposes__TZE284_znkkcauq[0]),
+    .white_labels=kWhiteLabels_Gen_TZE284_znkkcauq, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_znkkcauq)/sizeof(kWhiteLabels_Gen_TZE284_znkkcauq[0]),
+    .from_zigbee=kFz__TZE284_znkkcauq,
+    .from_zigbee_count=sizeof(kFz__TZE284_znkkcauq)/sizeof(kFz__TZE284_znkkcauq[0]),
+    .to_zigbee=kTz__TZE284_znkkcauq,
+    .to_zigbee_count=sizeof(kTz__TZE284_znkkcauq)/sizeof(kTz__TZE284_znkkcauq[0]),
+    .configure=::zhc::tuya::extend::tuya_base_configure(),
+    .on_event=nullptr };
+}  // namespace zhc::devices::tuya

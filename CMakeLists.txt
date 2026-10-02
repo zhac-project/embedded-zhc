@@ -690,6 +690,10 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/ZY_N1.cpp
     definitions/tuya/ZG_308Z.cpp
     definitions/tuya/CK_TLSR8258_L5PI_01_7009.cpp
+    definitions/tuya/TS0601_switch_4_gang_1_58of2pfn.cpp
+    definitions/tuya/TS0601_switch_6_gang_znkkcauq.cpp
+    definitions/tuya/TOQCB2_80_lyqazpe6.cpp
+    definitions/tuya/CK_BL702_AL_01.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)

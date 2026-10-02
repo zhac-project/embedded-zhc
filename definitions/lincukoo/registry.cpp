@@ -53,6 +53,7 @@ extern const PreparedDefinition kDef_SZR07;
 extern const PreparedDefinition kDef_R12LM_Z20T;
 extern const PreparedDefinition kDef_B08LRT_Z10T;
 extern const PreparedDefinition kDef_PZE2612;
+extern const PreparedDefinition kDef_SZLMR10_TZE284_sndkanfr;
 
 const PreparedDefinition* const kLincukooRegistry[] = {
     &kDefLin__TZE204_b8vxct9l,
@@ -101,6 +102,7 @@ const PreparedDefinition* const kLincukooRegistry[] = {
     &kDef_R12LM_Z20T,
     &kDef_B08LRT_Z10T,
     &kDef_PZE2612,
+    &kDef_SZLMR10_TZE284_sndkanfr,
 };
 const std::size_t kLincukooRegistryCount = sizeof(kLincukooRegistry) / sizeof(kLincukooRegistry[0]);
 

@@ -510,7 +510,7 @@ extern const PreparedDefinition kDef_D929003521701;
 extern const PreparedDefinition kDef_D929003526301;
 extern const PreparedDefinition kDef_D929003531502;
 extern const PreparedDefinition kDef_D929003531702;
-extern const PreparedDefinition kDef_D929003535301;
+extern const PreparedDefinition kDef_D929003535301_festavia;
 extern const PreparedDefinition kDef_D929003536001;
 extern const PreparedDefinition kDef_D929003553001;
 extern const PreparedDefinition kDef_D929003555701;
@@ -531,9 +531,6 @@ extern const PreparedDefinition kDef_D929003666501;
 extern const PreparedDefinition kDef_D929003666701;
 extern const PreparedDefinition kDef_D929003666901;
 extern const PreparedDefinition kDef_D929003667001;
-extern const PreparedDefinition kDef_D9290036744;
-extern const PreparedDefinition kDef_D9290036745;
-extern const PreparedDefinition kDef_D929003674601;
 extern const PreparedDefinition kDef_D929003711201;
 extern const PreparedDefinition kDef_D9290037121;
 extern const PreparedDefinition kDef_D929003736101;
@@ -1110,7 +1107,7 @@ const PreparedDefinition* const kPhilipsRegistry[] = {
     &kDef_D929003526301,
     &kDef_D929003531502,
     &kDef_D929003531702,
-    &kDef_D929003535301,
+    &kDef_D929003535301_festavia,
     &kDef_D929003536001,
     &kDef_D929003553001,
     &kDef_D929003555701,
@@ -1131,9 +1128,6 @@ const PreparedDefinition* const kPhilipsRegistry[] = {
     &kDef_D929003666701,
     &kDef_D929003666901,
     &kDef_D929003667001,
-    &kDef_D9290036744,
-    &kDef_D9290036745,
-    &kDef_D929003674601,
     &kDef_D929003711201,
     &kDef_D9290037121,
     &kDef_D929003736101,

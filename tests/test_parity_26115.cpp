@@ -16,9 +16,12 @@
 #include "definitions/tuya/_shared.hpp"
 #include "zhc/cluster_names.hpp"
 #include "zhc/devices/candeo_registry.hpp"
+#include "zhc/devices/efekta_registry.hpp"
 #include "zhc/devices/immax_registry.hpp"
 #include "zhc/devices/legrand_registry.hpp"
+#include "zhc/devices/lincukoo_registry.hpp"
 #include "zhc/devices/lumi_registry.hpp"
+#include "zhc/devices/moes_registry.hpp"
 #include "zhc/devices/owon_registry.hpp"
 #include "zhc/devices/philips_registry.hpp"
 #include "zhc/devices/qa_registry.hpp"
@@ -77,6 +80,14 @@ namespace zhc::devices::legrand     { extern const PreparedDefinition kDef_WNP10
 namespace zhc::devices::sinope      { extern const PreparedDefinition kDef_OTH3600_GA_ZB; }
 namespace zhc::devices::waxman      { extern const PreparedDefinition kDef_D8840100H; }
 namespace zhc::devices::ekaza       { extern const PreparedDefinition kDef_TS0225_EKAZA; }
+namespace zhc::devices::moes        { extern const PreparedDefinition kDef_SFL02_Z_2_dp;
+                                      extern const PreparedDefinition kDef_ZC_HM_dp;
+                                      extern const PreparedDefinition kDef_FWJZCEH18A001_dp; }
+namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_CK_BL702_AL_01_Z102; }
+namespace zhc::devices::efekta      { extern const PreparedDefinition kDefEfekta_PST_V1;
+                                      extern const PreparedDefinition kDefEfekta_PST_DUO_V1;
+                                      extern const PreparedDefinition kDefEfekta_TH_POW;
+                                      extern const PreparedDefinition kDefEfekta_eFlora; }
 
 using namespace zhc;
 
@@ -472,6 +483,9 @@ const std::vector<const PreparedDefinition*>& registries() {
     add(devices::legrand::kLegrandRegistry, devices::legrand::kLegrandRegistryCount);
     add(devices::sinope::kSinopeRegistry, devices::sinope::kSinopeRegistryCount);
     add(devices::philips::kPhilipsRegistry, devices::philips::kPhilipsRegistryCount);
+    add(devices::moes::kMoesRegistry, devices::moes::kMoesRegistryCount);
+    add(devices::lincukoo::kLincukooRegistry, devices::lincukoo::kLincukooRegistryCount);
+    add(devices::efekta::kEfektaRegistry, devices::efekta::kEfektaRegistryCount);
     for (std::size_t i = 0; i < devices::tier_e::kTierERegistriesCount; ++i)
         add(devices::tier_e::kTierERegistries[i].reg, devices::tier_e::kTierERegistries[i].count);
     return reg;
@@ -649,6 +663,87 @@ void test_new_zcl_devices() {
       check(approx(float_of(o, "illuminance"), 321.f), "TS0225_EKAZA DP104 illuminance"); }
 }
 
+// Detects: new fingerprints on existing families, and the generated stubs
+// they would have landed on, graduated.
+void test_detects_and_graduations() {
+    std::printf("Detects onto existing families; Moes / CK-BL702 / Festavia / Efekta graduations\n");
+    const auto& reg = registries();
+    const std::span<const PreparedDefinition* const> all(reg.data(), reg.size());
+    const Want wants[] = {
+        {"TS0601", "_TZE204_58of2pfn", "TS0601_switch_4_gang_1"},
+        {"TS0601", "_TZE284_znkkcauq", "TS0601_switch_6_gang"},
+        {"TS0601", "_TZE204_lyqazpe6", "TOQCB2-80"}, {"TS0601", "_TZE284_lyqazpe6", "TOQCB2-80"},
+        {"TS0601", "_TZE28C1000000_rzdkn5rx", "TS0601_multifunction_switch"},
+        {"TS0601", "_TZE284_sndkanfr", "SZLMR10"},
+        {"TS0601", "_TZE284_uenof8jd", "SFL02-Z-2"}, {"TS0601", "_TZE200_hktk6hze", "SFL02-Z-2"},
+        {"TS0601", "JM720ES-EF-3.0", "ZC-HM"}, {"TS0601", "_TZE200_rjxqso4a", "ZC-HM"},
+        {"TS0601", "_TZE2841000000_u68q868h", "FWJZCEH18A001"},
+        {"CK-BL702-AL-02(7008)-1", "_TZ3210_any", "CK-BL702-AL-01(7008_Z102LG01-1)"},
+        {"LXC015", "Signify Netherlands B.V.", "929003535301"}, {"LCX016", "Signify Netherlands B.V.", "929003535301"},
+        {"EFEKTA_eTH_POW_E_WT", "EfektaLab", "EFEKTA_eTH_POW"},
+        {"EFEKTA_ePST_POW_V2_E", "EfektaLab", "EFEKTA_ePST_POW_V2"},
+    };
+    for (const Want& w : wants) resolves(all, w);
+
+    RuntimeContext ctx{};
+    // SFL02-Z-2: scene datapoints carry a static action; words for 103 / 104.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::moes::kDef_SFL02_Z_2_dp, 1, 0, ctx, o);
+      check(str_is(o, "action", "scene_1"), "SFL02-Z-2 DP1 -> action scene_1"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::moes::kDef_SFL02_Z_2_dp, 104, 2, ctx, o);
+      check(str_is(o, "vibration_mode", "Gear 2"), "SFL02-Z-2 DP104 -> Gear 2"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_bool(devices::moes::kDef_SFL02_Z_2_dp, 25, true, ctx, o);
+      check(bool_is(o, "state_l2", true), "SFL02-Z-2 DP25 -> state_l2"); }
+    // ZC-HM: trueFalse0 alarm.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::moes::kDef_ZC_HM_dp, 1, 0, ctx, o);
+      check(bool_is(o, "carbon_monoxide", true), "ZC-HM DP1 0 -> alarm"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::moes::kDef_ZC_HM_dp, 1, 1, ctx, o);
+      check(bool_is(o, "carbon_monoxide", false), "ZC-HM DP1 1 -> clear"); }
+    // FWJZCEH18A001: a Tuya datapoint motor, not closuresWindowCovering.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::moes::kDef_FWJZCEH18A001_dp, 11, 1, ctx, o);
+      check(str_is(o, "motor_direction", "reversed"), "FWJZCEH18A001 DP11 -> reversed"); }
+    { auto e = encode(devices::moes::kDef_FWJZCEH18A001_dp, "position", num(40));
+      check(e.ok && e.cluster == 0xEF00, "FWJZCEH18A001 position -> Tuya datapoint"); }
+    // CK-BL702: brightness as moveToLevel (z2m moveToLevelWithOnOffDisable).
+    { auto e = encode(devices::tuya::kDef_CK_BL702_AL_01_Z102, "brightness", [] { Value v{}; v.type = ValueType::Uint; v.u = 128; return v; }());
+      check(e.ok && e.cluster == 0x0008 && e.frame.size() > 2 && e.frame[2] == 0x00, "CK-BL702 brightness -> moveToLevel"); }
+    // Efekta additions.
+    { Report r; r.u8(0x0020, 0x10, 1);
+      auto d = dispatch(devices::efekta::kDefEfekta_PST_V1, 0x0403, 1, r.span());
+      check(r_str(d, "overheating", "TRUE"), "PST_V1 overheating TRUE"); }
+    { Report r; r.u8(0x0020, 0x10, 0);
+      auto d = dispatch(devices::efekta::kDefEfekta_PST_DUO_V1, 0x0403, 2, r.span());
+      check(r_str(d, "overheating_2", "FALSE"), "PST_DUO_V1 endpoint 2 -> overheating_2"); }
+    { Report r; r.u16(0x0341, 0x29, 1234).u16(0x0343, 0x29, 4567);
+      auto d = dispatch(devices::efekta::kDefEfekta_TH_POW, 0x0402, 1, r.span());
+      check(approx(r_float(d, "dew_point"), 12.34f, 0.01f) && approx(r_float(d, "air_enthalpy"), 45.67f, 0.01f), "TH_POW dew point / enthalpy"); }
+    { Report r; r.u16(0x0340, 0x29, 85);
+      auto d = dispatch(devices::efekta::kDefEfekta_eFlora, 0x0408, 1, r.span());
+      check(approx(r_float(d, "vpd"), 0.85f, 0.01f), "eFlora vpd / 100"); }
+}
+
+// Pins, no fix: the window's _TZE2841000000_ / _TZE28C1000000_ twins whose
+// base id an ez definition already lists resolve through the matcher's
+// Pass 1b.
+void test_twin_pins() {
+    std::printf("Twin fingerprints resolve through Pass 1b (pins)\n");
+    const auto& reg = registries();
+    const std::span<const PreparedDefinition* const> all(reg.data(), reg.size());
+    const char* twins[][2] = {
+        {"_TZE28C1000000_v5xjyphj", "_TZE204_v5xjyphj"}, {"_TZE28C1000000_1youk3hj", "_TZE204_1youk3hj"},
+        {"_TZE2841000000_n4ttsck2", "_TZE284_n4ttsck2"}, {"_TZE28C1000000_6fk3gewc", "_TZE204_6fk3gewc"},
+        {"_TZE28C1000000_a2teqi5u", "_TZE284_a2teqi5u"}, {"_TZE2841000000_3mzb0sdz", "_TZE284_3mzb0sdz"},
+        {"_TZE2841000000_6ycgarab", "_TZE284_6ycgarab"},
+    };
+    for (const auto& t : twins) {
+        const PreparedDefinition* a = find_definition("TS0601", t[0], all);
+        const PreparedDefinition* b = find_definition("TS0601", t[1], all);
+        if (!a || !b || std::strcmp(a->model, b->model) != 0) {
+            std::printf("  %s -> %s, %s -> %s\n", t[0], a ? a->model : "none", t[1], b ? b->model : "none");
+            check(false, "twin resolves to its base id's model");
+        }
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -661,6 +756,8 @@ int main() {
     test_misc_fixes();
     test_new_devices();
     test_new_zcl_devices();
+    test_detects_and_graduations();
+    test_twin_pins();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;

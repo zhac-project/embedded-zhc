@@ -23,6 +23,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Moes SFL02-Z-2, ZC-HM and FWJZCEH18A001 are one definition each, from
+  z2m's datapoints.** Each was a generated model-level stub that decoded the
+  Tuya datapoint device with ZCL converters (genOnOff, IAS zone,
+  closuresWindowCovering), shadowed for the known manufacturers by
+  per-manufacturer copies with generated model names and stale keys
+  (SFL02-Z-2 published the scene datapoints as a number instead of
+  `scene_1` / `scene_2`; FWJZCEH18A001 published `border` with old labels
+  instead of `cover_limit`). New z2m fingerprints: `_TZE284_uenof8jd`,
+  `JM720ES-EF-3.0`, `_TZE2841000000_u68q868h` (its battery datapoint, a
+  base64 string, is not decoded).
+- **Tuya CK-BL702-AL-01(7008_Z102LG01-1) bulb was a stub** wiring Tuya on/off
+  actions onto a ZCL light; it is now a colour + CT light with power-on
+  behaviour and moveToLevel brightness, plus CK-BL702-AL-02(7008)-1.
 - **ZigbeeTLc settings were written 100 times too small.** Temperature and
   humidity calibration and the comfort limits are hundredths on the wire (z2m
   `scale: 100`); the write specs sent the plain number, so 1.5 °C became 2
@@ -108,6 +121,21 @@ across the ZHAC platform.
   from `noise_state`, as upstream). Datapoints z2m maps to strings
   (MW836P 107–109) or to energy / backlight writes MakeGood does through
   custom converters are not ported yet (see R8 worklist).
+- **Detects from the same window**: TS0601_switch_4_gang_1 `_TZE204_58of2pfn`
+  (Tuya DIY-DC-04), TS0601_switch_6_gang `_TZE284_znkkcauq` (Ekaza
+  EKGD-T4085P-4Z), TOQCB2-80 `_TZE204_lyqazpe6` / `_TZE284_lyqazpe6` (copies
+  of their families' per-manufacturer definitions), TS0601_multifunction_switch
+  `_TZE28C1000000_rzdkn5rx` (Zemismart ZNS-LRL2E), Lincukoo SZLMR10
+  `_TZE284_sndkanfr`, Efekta eTH_POW (`_E`, `_E_WT`, `_E_LR_WT`, `_R_LR_WT`)
+  and ePST_POW_V2 (`_E`).
+- **Efekta additions** (14 definitions graduated from generated):
+  `overheating` on the PST pressure sensors (msPressureMeasurement 0x0020,
+  per endpoint on the DUO models), `vpd` on zFlora Pro / ProMax and eFlora /
+  Pro / Max Pro (msSoilMoisture 0x0340 / 100), `dew_point`, `air_enthalpy` and
+  `vpd` on TH_POW (msTemperatureMeasurement 0x0341 / 0x0343 / 0x0340 / 100).
+- **Philips Hue Festavia**: 929003535301 now carries LCX015 / LCX016 / LCX017
+  and the new LXC015 / LXC016 / LXC017 ids, as z2m merged 9290036744,
+  9290036745 and 929003674601 into it (now its white labels).
 - **More new devices from the same window (ZCL).** Owon OPS305, WLS316,
   PB206 (`sos` on zone bit 0, new `kFzIasSosAlarm`), WSP406; Allesin roller
   shade (new vendor; `TLSR82xx` + `Aubor`, which the AwoX TLSR82xx light

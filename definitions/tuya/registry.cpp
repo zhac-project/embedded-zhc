@@ -18,7 +18,7 @@ extern const PreparedDefinition kDefEPJ_ZB;
 extern const PreparedDefinition kDefE220_KR4N0Z0_HA;
 extern const PreparedDefinition kDefD3_DPWK_TY;
 
-extern const PreparedDefinition kDefGen_CK_BL702_AL_01_7008_Z102LG01_1_;
+extern const PreparedDefinition kDef_CK_BL702_AL_01_Z102;
 extern const PreparedDefinition kDefGen_TS0006;
 extern const PreparedDefinition kDefGen_TS0026;
 extern const PreparedDefinition kDefGen_TS0041A;
@@ -1508,9 +1508,12 @@ extern const PreparedDefinition kDef_TS0601_wsek35um;
 extern const PreparedDefinition kDef_ZY_N1;
 extern const PreparedDefinition kDef_ZG_308Z;
 extern const PreparedDefinition kDef_CK_TLSR8258_L5PI_01_7009;
+extern const PreparedDefinition kDef_TS0601_switch_4_gang_1_58of2pfn;
+extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq;
+extern const PreparedDefinition kDef_TOQCB2_80_lyqazpe6;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
-    &kDefGen_CK_BL702_AL_01_7008_Z102LG01_1_,
+    &kDef_CK_BL702_AL_01_Z102,
     &kDefGen_TS0006,
     &kDefGen_TS0026,
     &kDefGen_TS0041A,
@@ -3001,6 +3004,9 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_ZY_N1,
     &kDef_ZG_308Z,
     &kDef_CK_TLSR8258_L5PI_01_7009,
+    &kDef_TS0601_switch_4_gang_1_58of2pfn,
+    &kDef_TS0601_switch_6_gang_znkkcauq,
+    &kDef_TOQCB2_80_lyqazpe6,
 };
 
 extern const std::size_t kTuyaRegistryCount =

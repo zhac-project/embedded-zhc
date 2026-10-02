@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Efekta EFEKTA_TH_POW — auto-generated.
+// Tier 2: Efekta EFEKTA_TH_POW, graduated from the generated def for
+// z2m v26.115.1: dew_point / air_enthalpy / vpd (msTemperatureMeasurement 0x0341 / 0x0343 / 0x0340).
 // Temperature and humidity smart monitor with voltage detector
 // z2m-source: efekta.ts #EFEKTA_TH_POW.
 #include "definitions/_generic/_shared.hpp"
@@ -37,7 +38,15 @@ constexpr TzConverter kTzWrite_EFEKTA_TH_POW_low_humidity{
     .cluster_id=0x0405, .command_id=0x02,
     .fn=::zhc::generic::tz_zcl_write_attr,
     .user_config=&kWriteSpec_EFEKTA_TH_POW_low_humidity };
+// z2m m.numeric on msTemperatureMeasurement (int16, scale 100): vpd 0x0340
+// (kPa), dew_point 0x0341 (C), air_enthalpy 0x0343 (kJ/kg).
+constexpr ::zhc::generic::ZclAttrRow kTempExtraRows[] = {
+    { 0x0341, "dew_point", 100 }, { 0x0343, "air_enthalpy", 100 }, { 0x0340, "vpd", 100 },
+};
+constexpr ::zhc::generic::ZclAttrMap kTempExtraMap{ kTempExtraRows, 3 };
+constexpr FzConverter kFzTempExtra = ::zhc::generic::zcl_attr_fz("msTemperatureMeasurement", &kTempExtraMap);
 const FzConverter* const kFz_EFEKTA_TH_POW[] = {
+    &kFzTempExtra,
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzTemperature,
@@ -60,6 +69,9 @@ constexpr Expose kAutoExposes[] = {
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"dew_point", ExposeType::Numeric, Access::State, "°C", "Dew point calculated from built-in sensor data", nullptr, 0},
+    {"air_enthalpy", ExposeType::Numeric, Access::State, "kJ/kg", "Air enthalpy derived from built-in sensor", nullptr, 0},
+    {"vpd", ExposeType::Numeric, Access::State, "kPa", "Vapor Pressure Deficit (VPD) from built-in sensor", nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -69,7 +81,7 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_EFEKTA_TH_POW{
+extern const PreparedDefinition kDefEfekta_TH_POW{
     .zigbee_models=kModels_EFEKTA_TH_POW, .zigbee_models_count=sizeof(kModels_EFEKTA_TH_POW)/sizeof(kModels_EFEKTA_TH_POW[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,

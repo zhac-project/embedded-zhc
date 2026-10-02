@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Efekta zFlora_Pro — auto-generated.
+// Tier 2: Efekta zFlora_Pro, graduated from the generated def for
+// z2m v26.115.1: vpd (msSoilMoisture 0x0340 / 100).
 // Plant watering sensor zFlora_Pro
 // z2m-source: efekta.ts #zFlora_Pro.
 #include "definitions/_generic/_shared.hpp"
@@ -32,7 +33,12 @@ constexpr TzConverter kTzWrite_zFlora_Pro_temperature_offset{
     .fn=::zhc::generic::tz_zcl_write_attr,
     .user_config=&kWriteSpec_zFlora_Pro_temperature_offset };
 // TODO(parity-efekta): no shared FzConverter for: soilMoisture
+// z2m m.numeric vpd: msSoilMoisture 0x0340 (int16, scale 100) in kPa.
+constexpr ::zhc::generic::ZclAttrRow kSoilExtraRows[] = { { 0x0340, "vpd", 100 } };
+constexpr ::zhc::generic::ZclAttrMap kSoilExtraMap{ kSoilExtraRows, 1 };
+constexpr FzConverter kFzSoilExtra = ::zhc::generic::zcl_attr_fz("msSoilMoisture", &kSoilExtraMap);
 const FzConverter* const kFz_zFlora_Pro[] = {
+    &kFzSoilExtra,
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzIlluminance,
@@ -57,6 +63,7 @@ constexpr Expose kAutoExposes[] = {
     {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
     {"soil_moisture", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"vpd", ExposeType::Numeric, Access::State, "kPa", "Vapor Pressure Deficit (VPD) from built-in sensor", nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -68,7 +75,7 @@ constexpr BindingSpec kAutoBindings[] = {
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_zFlora_Pro{
+extern const PreparedDefinition kDefEfekta_zFlora_Pro{
     .zigbee_models=kModels_zFlora_Pro, .zigbee_models_count=sizeof(kModels_zFlora_Pro)/sizeof(kModels_zFlora_Pro[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
