@@ -24,6 +24,7 @@
 #include "zhc/devices/lincukoo_registry.hpp"
 #include "zhc/devices/lumi_registry.hpp"
 #include "zhc/devices/moes_registry.hpp"
+#include "zhc/devices/namron_registry.hpp"
 #include "zhc/devices/owon_registry.hpp"
 #include "zhc/devices/philips_registry.hpp"
 #include "zhc/devices/qa_registry.hpp"
@@ -501,6 +502,7 @@ const std::vector<const PreparedDefinition*>& registries() {
     add(devices::schneider::kSchneiderRegistry, devices::schneider::kSchneiderRegistryCount);
     add(devices::third_reality::kThirdRealityRegistry, devices::third_reality::kThirdRealityRegistryCount);
     add(devices::develco::kDevelcoRegistry, devices::develco::kDevelcoRegistryCount);
+    add(devices::namron::kNamronRegistry, devices::namron::kNamronRegistryCount);
     for (std::size_t i = 0; i < devices::tier_e::kTierERegistriesCount; ++i)
         add(devices::tier_e::kTierERegistries[i].reg, devices::tier_e::kTierERegistries[i].count);
     return reg;
@@ -874,6 +876,34 @@ void test_sonoff_hobeian() {
       check(d && str_is(o, "rainwater", "raining"), "ZG-223Z DP1 -> raining"); }
 }
 
+// Tuya TS0001 / cover_1 / TO-Q-SYS-JZT and Namron 540139X.
+void test_tuya_namron() {
+    std::printf("TS0001 p26flek3, TS0601_cover_1 tilt, TO-Q-SYS-JZT, Namron 540139X\n");
+    const auto& reg = registries();
+    const std::span<const PreparedDefinition* const> all(reg.data(), reg.size());
+    auto resolved = [&](const char* zm, const char* manu) { return find_definition(zm, manu, all); };
+    RuntimeContext ctx{};
+    { const auto* d = resolved("TS0001", "_TZ3000_p26flek3");
+      Report r; r.u8(0x8001, 0x30, 2);
+      auto x = d ? dispatch(*d, 0x0006, 1, r.span()) : DispatchResult{};
+      check(d && r_str(x, "indicator_mode", "on/off") && expose_of(*d, "switch_type"), "TS0001 p26flek3 indicator_mode + switch_type"); }
+    { const auto* d = resolved("TS0601", "_TZE204_wzre8hu2");
+      FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{};
+      if (d) dp_num(*d, 21, 90, ctx, o);
+      check(d && approx(float_of(o, "tilt"), 50.f, 0.1f) && approx(float_of(o, "flip_angle"), 90.f), "cover_1 wzre8hu2 DP21 90 -> tilt 50 %");
+      auto e = d ? encode(*d, "tilt", num(50)) : Encoded{};
+      check(e.ok && e.cluster == 0xEF00 && e.frame.size() >= 4 && e.frame.back() == 90, "cover_1 tilt 50 % -> DP21 90"); }
+    { const auto* d = resolved("TS0601", "_TZE284_6ocnqlhn");
+      FixedPayload<ZHC_FIXED_PAYLOAD_CAP> a{}, b{}, c{};
+      if (d) { dp_num(*d, 32, 5000, ctx, a); dp_num(*d, 32, 50, ctx, b); dp_num(*d, 140, 4, ctx, c); }
+      check(d && approx(float_of(a, "ac_frequency"), 50.f) && approx(float_of(b, "ac_frequency"), 50.f) &&
+            approx(float_of(c, "lcd_brightness"), 80.f, 0.01f), "TO-Q-SYS-JZT ac_frequency rule and lcd_brightness x20"); }
+    { const auto* d = resolved("5401392", "Namron AS");
+      Report r; r.u8(0x0000, 0x30, 1);
+      auto x = d ? dispatch(*d, 0x0204, 1, r.span()) : DispatchResult{};
+      check(d && r_str(x, "temperature_display_mode", "fahrenheit"), "Namron 540139X temperature_display_mode"); }
+}
+
 }  // namespace
 
 int main() {
@@ -890,6 +920,7 @@ int main() {
     test_twin_pins();
     test_vendor_fixes();
     test_sonoff_hobeian();
+    test_tuya_namron();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;

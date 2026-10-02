@@ -37,7 +37,7 @@ constexpr const char* kOpts4[] = { "unlock", "lock1", "lock2", "lock3", "lock4",
 constexpr const char* kOpts5[] = { "celsius", "fahrenheit" };
 constexpr Expose kExp[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 7, 30, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOpts2, 2},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"keypad_lockout", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOpts4, 6, ExposeCategory::Config},

@@ -73,8 +73,7 @@ constexpr const char* kDisplayUnits[] = { "celsius", "fahrenheit" };
 constexpr const char* kSecondDisplay[] = { "auto", "setpoint", "outdoor temp" };
 constexpr Expose kExp[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0,
-     ExposeCategory::State, 7, 30, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "\u00b0C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kSystemModes, 2},
     {"pi_heating_demand", ExposeType::Numeric, Access::State, "%", "Position of the valve (= demanded heat) where 0% is fully closed and 100% is fully open", nullptr, 0},
     {"running_state", ExposeType::Enum, Access::State, nullptr, "Heating state calculated from PI heating demand", kRunningStates, 2},

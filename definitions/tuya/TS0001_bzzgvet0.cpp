@@ -16,6 +16,10 @@
 //                      form; other Tuya switches publish the same attribute
 //                      as the four-way `indicator_mode`, hence a local pair.
 //
+// z2m v26.115.1 switches the same features on for `_TZ3000_p26flek3`, plus
+// indicatorMode (the four-way reading of the same 0x8001 attribute):
+// kDef_TS0001_p26flek3 below.
+//
 // z2m-source: tuya.ts #TS0001 (whiteLabel Moes ZS-US1-LN).
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
@@ -99,6 +103,47 @@ extern const PreparedDefinition kDef_TS0001_bzzgvet0{
     .white_labels=kWhiteLabels, .white_labels_count=sizeof(kWhiteLabels)/sizeof(kWhiteLabels[0]),
     .from_zigbee=kFz, .from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=kTz, .to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
+    .configure=nullptr, .on_event=nullptr,
+    .bindings=kBindings, .bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
+    .reports=::zhc::tuya::kReportsOnOff_1ep, .reports_count=::zhc::tuya::kReportsOnOff_1ep_count,
+};
+
+namespace {
+const FzConverter* const kFzP26[] = {
+    &::zhc::generic::kFzOnOff,
+    &::zhc::tuya::kFzTuyaPowerOnBehavior,
+    &::zhc::tuya::kFzTuyaSwitchType,
+    &kFzBacklightOffOn,
+    &::zhc::tuya::kFzTuyaIndicatorMode,
+};
+const TzConverter* const kTzP26[] = {
+    &::zhc::generic::kTzOnOff,
+    &::zhc::tuya::kTzTuyaPowerOnBehavior,
+    &::zhc::tuya::kTzTuyaSwitchType,
+    &kTzBacklightOffOn,
+    &::zhc::tuya::kTzTuyaIndicatorMode,
+    &::zhc::tuya::kTzTuyaChildLock,
+};
+constexpr const char* kIndicatorOpts[] = { "off", "off/on", "on/off", "on" };
+constexpr Expose kExposesP26[] = {
+    { "state",             ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0 },
+    { "power_on_behavior", ExposeType::Enum,   Access::StateSet, nullptr, nullptr, kPowerOnOpts, 3, ExposeCategory::Config },
+    { "switch_type",       ExposeType::Enum,   Access::StateSet, nullptr, nullptr, kSwitchTypeOpts, 3, ExposeCategory::Config },
+    { "backlight_mode",    ExposeType::Binary, Access::StateSet, nullptr, "Mode of the backlight", nullptr, 0, ExposeCategory::Config },
+    { "indicator_mode",    ExposeType::Enum,   Access::StateSet, nullptr, "LED indicator mode", kIndicatorOpts, 4, ExposeCategory::Config },
+};
+constexpr const char* kManusP26[] = { "_TZ3000_p26flek3" };
+}  // namespace
+
+extern const PreparedDefinition kDef_TS0001_p26flek3{
+    .zigbee_models=kModels, .zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kManusP26, .manufacturer_names_count=sizeof(kManusP26)/sizeof(kManusP26[0]),
+    .model="TS0001", .vendor="Tuya",
+    .meta=nullptr, .exposes=kExposesP26, .exposes_count=sizeof(kExposesP26)/sizeof(kExposesP26[0]),
+    .white_labels=nullptr, .white_labels_count=0,
+    .from_zigbee=kFzP26, .from_zigbee_count=sizeof(kFzP26)/sizeof(kFzP26[0]),
+    .to_zigbee=kTzP26, .to_zigbee_count=sizeof(kTzP26)/sizeof(kTzP26[0]),
     .configure=nullptr, .on_event=nullptr,
     .bindings=kBindings, .bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
     .reports=::zhc::tuya::kReportsOnOff_1ep, .reports_count=::zhc::tuya::kReportsOnOff_1ep_count,

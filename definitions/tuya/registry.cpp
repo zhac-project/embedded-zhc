@@ -930,7 +930,7 @@ extern const PreparedDefinition kDefGen__TZE204_wc2w9t1s;
 extern const PreparedDefinition kDefGen__TZE204_wjk6rurm;
 extern const PreparedDefinition kDefGen__TZE204_wktrysab;
 extern const PreparedDefinition kDefGen__TZE204_wskr3up8;
-extern const PreparedDefinition kDefGen__TZE204_wzre8hu2;
+extern const PreparedDefinition kDef_TS0601_cover_1_tilt;
 extern const PreparedDefinition kDefGen__TZE204_x8diwkqb;
 extern const PreparedDefinition kDefGen__TZE204_x8fp01wi;
 extern const PreparedDefinition kDef_ZHT_002;
@@ -1457,7 +1457,7 @@ extern const PreparedDefinition kDef_DHT0001;
 extern const PreparedDefinition kDef_HY607W_3A;
 extern const PreparedDefinition kDef_SM0201;
 extern const PreparedDefinition kDef_TLSR82xx_2btn_remote;
-extern const PreparedDefinition kDef_TO_Q_SYS_JZT;
+extern const PreparedDefinition kDef_TO_Q_SYS_JZT_dp;
 extern const PreparedDefinition kDef_TS0108;
 extern const PreparedDefinition kDef_TS0111_valve;
 extern const PreparedDefinition kDef_TS011F_plug_3;
@@ -1513,6 +1513,7 @@ extern const PreparedDefinition kDef_TS0601_switch_4_gang_1_58of2pfn;
 extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq;
 extern const PreparedDefinition kDef_TOQCB2_80_lyqazpe6;
 extern const PreparedDefinition kDef_ZG_102ZA;
+extern const PreparedDefinition kDef_TS0001_p26flek3;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_CK_BL702_AL_01_Z102,
@@ -2424,7 +2425,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_wjk6rurm,
     &kDefGen__TZE204_wktrysab,
     &kDefGen__TZE204_wskr3up8,
-    &kDefGen__TZE204_wzre8hu2,
+    &kDef_TS0601_cover_1_tilt,
     &kDefGen__TZE204_x8diwkqb,
     &kDefGen__TZE204_x8fp01wi,
     &kDef_ZHT_002,
@@ -2960,7 +2961,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_HY607W_3A,
     &kDef_SM0201,
     &kDef_TLSR82xx_2btn_remote,
-    &kDef_TO_Q_SYS_JZT,
+    &kDef_TO_Q_SYS_JZT_dp,
     &kDef_TS0108,
     &kDef_TS0111_valve,
     &kDef_TS011F_plug_3,
@@ -3011,6 +3012,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_TS0601_switch_6_gang_znkkcauq,
     &kDef_TOQCB2_80_lyqazpe6,
     &kDef_ZG_102ZA,
+    &kDef_TS0001_p26flek3,
 };
 
 extern const std::size_t kTuyaRegistryCount =

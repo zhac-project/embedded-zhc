@@ -23,6 +23,13 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Tongou TO-Q-SYS-JZT (`_TZE284_6ocnqlhn`) was a stub** decoding this Tuya
+  datapoint meter with ZCL metering converters; it now carries z2m's
+  datapoints, including v26.115.1's LCD / recloser settings and the
+  ac_frequency rule (above 100 = hundredths of Hz).
+- **Tuya `_TZE204_wzre8hu2` (TS0601_cover_1) was a battery + on/off stub**; it
+  is a cover (DP1 / DP2) with z2m v26.115.0's slat tilt on DP21 (`tilt` %,
+  `flip_angle` degrees).
 - **SONOFF SNZB-02LD and SNZB-02WD decoded only their battery**: the
   generated copies had no temperature / humidity converter. Graduated with
   temperature (+ humidity) reported every 5 s .. 1 h on a 0.2 C / 1 % change
@@ -161,6 +168,9 @@ across the ZHAC platform.
   from `noise_state`, as upstream). Datapoints z2m maps to strings
   (MW836P 107–109) or to energy / backlight writes MakeGood does through
   custom converters are not ported yet (see R8 worklist).
+- **Tuya TS0001 `_TZ3000_p26flek3`**: power-on behaviour, switch type,
+  backlight and indicator mode (z2m window), next to `_TZ3000_bzzgvet0`.
+  **Namron 540139X** `temperature_display_mode` (z2m v26.113.0).
 - **SONOFF MINI-ZBD / ZBMINIR2** external switch actions: `toggle`, and
   `double_click` / `long_press` from 0xFC11 attribute 0x0028 (firmware 1.1.0,
   z2m window). **SNZB-02M** pressure from msPressureMeasurement 0x0004

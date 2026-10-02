@@ -75,4 +75,32 @@ extern const PreparedDefinition kDef_WSER40{
     .from_zigbee=FXWser40::fz_list,.from_zigbee_count=FXWser40::fz_count,
     .to_zigbee=FXWser40::tz_list,.to_zigbee_count=FXWser40::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };
+// `_TZE204_wzre8hu2` (upstream TS0601_cover_1): the legacy DP1 / DP2 cover plus,
+// from z2m v26.115.0, slat tilt on DP21 — an angle 0..180 published as `tilt`
+// (0..100 %) and `flip_angle` (degrees); both write DP21. Its generated
+// per-manufacturer copy decoded the motor as a battery + genOnOff device.
+namespace {
+struct cfg_tilt { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
+    ::zhc::tuya::dp::enum_lookup(1,"state",kCovSt,3),
+    ::zhc::tuya::dp::numeric(2,"position",1),
+    { 21, "tilt", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, 1.8f },
+    ::zhc::tuya::dp::numeric(21,"flip_angle",1)};
+    static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{e,sizeof(e)/sizeof(e[0])}; };
+using FXTilt=::zhc::tuya::factory::TuyaRw<cfg_tilt>;
+constexpr const char* kTiltN[]={"_TZE204_wzre8hu2"};
+constexpr Expose kTiltExp[]={
+    {"state",      ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kStateOpts, 3},
+    {"position",   ExposeType::Numeric, Access::StateSet, "%",     nullptr, nullptr,    0},
+    {"tilt",       ExposeType::Numeric, Access::StateSet, "%",     nullptr, nullptr,    0},
+    {"flip_angle", ExposeType::Numeric, Access::StateSet, "\xC2\xB0", "Slat angle in degrees, same as tilt on a 0-180 scale",
+     nullptr, 0, ExposeCategory::State, 0, 180, 1}};
+}
+extern const PreparedDefinition kDef_TS0601_cover_1_tilt{
+    .zigbee_models=kM,.zigbee_models_count=sizeof(kM)/sizeof(kM[0]),.manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kTiltN,.manufacturer_names_count=sizeof(kTiltN)/sizeof(kTiltN[0]),.model="TS0601_cover_1",
+    .vendor="Tuya",.meta=nullptr,.exposes=kTiltExp,.exposes_count=sizeof(kTiltExp)/sizeof(kTiltExp[0]),
+    .white_labels=nullptr,.white_labels_count=0,
+    .from_zigbee=FXTilt::fz_list,.from_zigbee_count=FXTilt::fz_count,
+    .to_zigbee=FXTilt::tz_list,.to_zigbee_count=FXTilt::tz_count,
+    .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };
 }  // namespace zhc::devices::tuya

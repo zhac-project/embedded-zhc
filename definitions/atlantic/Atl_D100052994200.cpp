@@ -24,7 +24,7 @@ const TzConverter* const kTz[] = {
 constexpr const char* kOpts2[] = { "off", "heat" };
 constexpr Expose kExp[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 7, 30, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOpts2, 2},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
