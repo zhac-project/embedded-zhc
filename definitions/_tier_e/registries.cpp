@@ -60,6 +60,8 @@ const VendorEntry kTierERegistries[] = {
       ::zhc::devices::bacchus::kBacchusRegistryCount },
     { ::zhc::devices::bankamp::kBankampRegistry,
       ::zhc::devices::bankamp::kBankampRegistryCount },
+    { ::zhc::devices::beca::kBecaRegistry,
+      ::zhc::devices::beca::kBecaRegistryCount },
     { ::zhc::devices::bega::kBegaRegistry,
       ::zhc::devices::bega::kBegaRegistryCount },
     { ::zhc::devices::belkin::kBelkinRegistry,

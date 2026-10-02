@@ -17,6 +17,9 @@ extern const PreparedDefinition kDefAva__TZE204_o9gyszw2;
 extern const PreparedDefinition kDefAva__TZE284_udaucpdi;
 extern const PreparedDefinition kDefAva__TZE284_ty5neqqo;
 extern const PreparedDefinition kDef_LZWSM16_1;
+extern const PreparedDefinition kDef_1443ZK;
+extern const PreparedDefinition kDef_ZSD20;
+extern const PreparedDefinition kDef_ZOT60;
 
 const PreparedDefinition* const kAvattoRegistry[] = {
     &kDefAva__TZE204_s139roas,
@@ -30,6 +33,9 @@ const PreparedDefinition* const kAvattoRegistry[] = {
     &kDefAva__TZE284_udaucpdi,
     &kDefAva__TZE284_ty5neqqo,
     &kDef_LZWSM16_1,
+    &kDef_1443ZK,
+    &kDef_ZSD20,
+    &kDef_ZOT60,
 };
 const std::size_t kAvattoRegistryCount = sizeof(kAvattoRegistry) / sizeof(kAvattoRegistry[0]);
 

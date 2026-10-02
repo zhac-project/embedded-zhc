@@ -7,9 +7,11 @@
 namespace zhc::devices::mowe {
 
 extern const PreparedDefinition kDef_MW833P;
+extern const PreparedDefinition kDef_MW836P;
 
 const PreparedDefinition* const kMoweRegistry[] = {
     &kDef_MW833P,
+    &kDef_MW836P,
 };
 const std::size_t kMoweRegistryCount = sizeof(kMoweRegistry) / sizeof(kMoweRegistry[0]);
 

@@ -33,6 +33,7 @@ extern const PreparedDefinition kDef_QAT42Z3H;
 extern const PreparedDefinition kDef_QAT44Z4H;
 extern const PreparedDefinition kDef_QAT44Z6H;
 extern const PreparedDefinition kDef_QAFZ200;
+extern const PreparedDefinition kDef_QADZ1LR;
 
 const PreparedDefinition* const kQaRegistry[] = {
     &kDefQa__TZ3218_kwht8j5m,
@@ -57,6 +58,7 @@ const PreparedDefinition* const kQaRegistry[] = {
     &kDef_QAT44Z4H,
     &kDef_QAT44Z6H,
     &kDef_QAFZ200,
+    &kDef_QADZ1LR,
 };
 const std::size_t kQaRegistryCount = sizeof(kQaRegistry) / sizeof(kQaRegistry[0]);
 

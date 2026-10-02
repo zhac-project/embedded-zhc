@@ -7,9 +7,11 @@
 namespace zhc::devices::automaton {
 
 extern const PreparedDefinition kDef_AUT000069;
+extern const PreparedDefinition kDef_CH8Z;
 
 const PreparedDefinition* const kAutomatonRegistry[] = {
     &kDef_AUT000069,
+    &kDef_CH8Z,
 };
 const std::size_t kAutomatonRegistryCount = sizeof(kAutomatonRegistry) / sizeof(kAutomatonRegistry[0]);
 

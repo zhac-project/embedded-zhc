@@ -31,6 +31,7 @@
 #include "zhc/devices/axis_registry.hpp"
 #include "zhc/devices/bacchus_registry.hpp"
 #include "zhc/devices/bankamp_registry.hpp"
+#include "zhc/devices/beca_registry.hpp"
 #include "zhc/devices/bega_registry.hpp"
 #include "zhc/devices/belkin_registry.hpp"
 #include "zhc/devices/bituo_technik_registry.hpp"

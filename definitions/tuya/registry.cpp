@@ -1493,6 +1493,20 @@ extern const PreparedDefinition kDef_TZE204_8eazvzo6;
 extern const PreparedDefinition kDef_TS0601_thermostat_fancoil;
 extern const PreparedDefinition kDef_TZE204_7lb6j8wg;
 extern const PreparedDefinition kDef_TS0301_cover_2;
+extern const PreparedDefinition kDef_CTL_Mini_DTP_TYZ_AC;
+extern const PreparedDefinition kDef_TS0601_air_quality_sensor_2;
+extern const PreparedDefinition kDef_AE_5503_S_H_ZIGBEE;
+extern const PreparedDefinition kDef_Pro_Line_X10;
+extern const PreparedDefinition kDef_TS0601_cover_with_1_switch_limited;
+extern const PreparedDefinition kDef_TS0601_3ch_bidirectional_meter;
+extern const PreparedDefinition kDef_MG_BJQ002;
+extern const PreparedDefinition kDef_HS208Z;
+extern const PreparedDefinition kDef_HS208Z_model;
+extern const PreparedDefinition kDef_TZE284_grxx6qek;
+extern const PreparedDefinition kDef_ZAS_01P;
+extern const PreparedDefinition kDef_TS0601_wsek35um;
+extern const PreparedDefinition kDef_ZY_N1;
+extern const PreparedDefinition kDef_ZG_308Z;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_CK_BL702_AL_01_7008_Z102LG01_1_,
@@ -2971,6 +2985,20 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_TS0601_thermostat_fancoil,
     &kDef_TZE204_7lb6j8wg,
     &kDef_TS0301_cover_2,
+    &kDef_CTL_Mini_DTP_TYZ_AC,
+    &kDef_TS0601_air_quality_sensor_2,
+    &kDef_AE_5503_S_H_ZIGBEE,
+    &kDef_Pro_Line_X10,
+    &kDef_TS0601_cover_with_1_switch_limited,
+    &kDef_TS0601_3ch_bidirectional_meter,
+    &kDef_MG_BJQ002,
+    &kDef_HS208Z,
+    &kDef_HS208Z_model,
+    &kDef_TZE284_grxx6qek,
+    &kDef_ZAS_01P,
+    &kDef_TS0601_wsek35um,
+    &kDef_ZY_N1,
+    &kDef_ZG_308Z,
 };
 
 extern const std::size_t kTuyaRegistryCount =

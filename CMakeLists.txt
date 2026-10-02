@@ -675,6 +675,19 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0601_fan_5_levels_and_light_switch.cpp
     definitions/tuya/ZHT_002.cpp
     definitions/tuya/Tervix_6kijc7nd.cpp
+    definitions/tuya/CTL_Mini_DTP_TYZ_AC.cpp
+    definitions/tuya/TS0601_air_quality_sensor_2.cpp
+    definitions/tuya/AE_5503_S_H_ZIGBEE.cpp
+    definitions/tuya/Pro_Line_X10.cpp
+    definitions/tuya/TS0601_cover_with_1_switch_limited.cpp
+    definitions/tuya/TS0601_3ch_bidirectional_meter.cpp
+    definitions/tuya/MG_BJQ002.cpp
+    definitions/tuya/HS208Z.cpp
+    definitions/tuya/TZE284_grxx6qek.cpp
+    definitions/tuya/ZAS_01P.cpp
+    definitions/tuya/TS0601_wsek35um.cpp
+    definitions/tuya/ZY_N1.cpp
+    definitions/tuya/ZG_308Z.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)

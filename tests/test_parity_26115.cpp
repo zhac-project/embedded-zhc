@@ -15,7 +15,12 @@
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
 #include "zhc/cluster_names.hpp"
+#include "zhc/devices/immax_registry.hpp"
+#include "zhc/devices/qa_registry.hpp"
+#include "zhc/devices/tier_e_registries.hpp"
+#include "zhc/devices/tuya_registry.hpp"
 #include "zhc/runtime/definition.hpp"
+#include "zhc/runtime/definition_runtime.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/runtime/store.hpp"
 #include "zhc/types.hpp"
@@ -49,6 +54,10 @@ namespace zhc::devices::profalux    { extern const PreparedDefinition kDef_MOT_C
 namespace zhc::devices::purmo       { extern const PreparedDefinition kDef_Yali_Parada_Plus; }
 namespace zhc::devices::bituo_technik { extern const PreparedDefinition kDef_SDM02_U01; }
 namespace zhc::devices::philips     { extern const PreparedDefinition kDef_D929004610402; }
+namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_TS0601_wsek35um;
+                                      extern const PreparedDefinition kDef_ZY_N1; }
+namespace zhc::devices::avatto      { extern const PreparedDefinition kDef_ZSD20; }
+namespace zhc::devices::qa          { extern const PreparedDefinition kDef_QADZ1LR; }
 
 using namespace zhc;
 
@@ -426,6 +435,73 @@ void test_misc_fixes() {
     check(has_model(devices::philips::kDef_D929004610402, "929004610603"), "929004610402 + 929004610603 (#13313)");
 }
 
+// New devices: resolved through the same registries the adapter walks
+// (Tuya, Immax, QA and the tier-E vendors), then one datapoint each where
+// the mapping is not a plain numeric.
+void test_new_devices() {
+    std::printf("New devices resolve; ZY-N1, wsek35um, ZSD20, QADZ1LR decode\n");
+    std::vector<const PreparedDefinition*> reg;
+    auto add = [&](const PreparedDefinition* const* r, std::size_t n) { reg.insert(reg.end(), r, r + n); };
+    add(devices::tuya::kTuyaRegistry, devices::tuya::kTuyaRegistryCount);
+    add(devices::immax::kImmaxRegistry, devices::immax::kImmaxRegistryCount);
+    add(devices::qa::kQaRegistry, devices::qa::kQaRegistryCount);
+    for (std::size_t i = 0; i < devices::tier_e::kTierERegistriesCount; ++i)
+        add(devices::tier_e::kTierERegistries[i].reg, devices::tier_e::kTierERegistries[i].count);
+    const std::span<const PreparedDefinition* const> all(reg.data(), reg.size());
+    struct Want { const char* zm; const char* manu; const char* model; };
+    const Want wants[] = {
+        {"TS0601", "_TZE284_1oft6qso", "CH8Z"},
+        {"TS0601", "_TZE284_16m4bgsv", "1443ZK"},
+        {"TS011F", "_TZ3218_fv20refe", "ZOT60"},
+        {"TS0601", "_TZE284_zeeqkb0p", "ZSD20"},
+        {"TS0601", "_TZE284_rhocfd6y", "07519L"},
+        {"TS0601", "_TZE200_4jvmbiph", "MG-AU03"},
+        {"TS0601", "_TZE200_lq0ffndf", "MG-GPO02Z"},
+        {"TS0601", "_TZE284_mexuq6lm", "MW836P"},
+        {"TS0601", "_TZE28C1000000_brx4eku5", "QADZ1LR"},
+        {"TS0601", "_TZE204_eaasry7v", "AE-5503-S-H-ZIGBEE"},
+        {"TS0601", "_TZE284_5qfrnbqs", "CTL-Mini-DTP-TYZ/AC"},
+        {"TS0202", "_TZD200_sjjp9bti", "HS208Z"},
+        {"HS208Z", "HYSYIOT", "HS208Z"},
+        {"TS0601", "_TZE20C_tjz9ad5g", "MG-BJQ002"},
+        {"TS0601", "_TZE284_rfpyqax9", "Pro Line X10"},
+        {"TS0601", "_TZE20C1000000_p3g8xiug", "TS0601_3ch_bidirectional_meter"},
+        {"TS0601", "_TZE204_dak2k10o", "TS0601_air_quality_sensor_2"},
+        {"TS0601", "_TZE204_pxbjch8m", "TS0601_cover_with_1_switch_limited"},
+        {"TS0601", "_TZE204_wsek35um", "TS0601_wsek35um"},
+        {"TS0601", "_TZE284_grxx6qek", "_TZE284_grxx6qek"},
+        {"TS0601", "_TZE20C_ycab9txf", "ZAS-01P"},
+        {"ZG-308Z", "HOBEIAN", "ZG-308Z"},
+        {"TS0601", "_TZE204_r6kfl9ta", "ZY-N1"},
+        {"TS0601", "_TZE204_6ewjlefg", "BVRF-L001"},
+    };
+    for (const Want& w : wants) {
+        const PreparedDefinition* d = find_definition(w.zm, w.manu, all);
+        if (!d || std::strcmp(d->model, w.model) != 0) {
+            std::printf("  %s/%s -> %s (want %s)\n", w.zm, w.manu, d ? d->model : "none", w.model);
+            check(false, "new device resolves");
+        }
+    }
+    RuntimeContext ctx{};
+    // ZY-N1: DP101 is noise_state, and noise_detected for 0/2/3.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::tuya::kDef_ZY_N1, 101, 2, ctx, o);
+      check(str_is(o, "noise_state", "noise_2min") && bool_is(o, "noise_detected", true), "ZY-N1 DP101 2 -> noise_2min, detected"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::tuya::kDef_ZY_N1, 101, 1, ctx, o);
+      check(str_is(o, "noise_state", "no_noise") && bool_is(o, "noise_detected", false), "ZY-N1 DP101 1 -> no_noise"); }
+    // wsek35um: mode Off reads as a 5 degree setpoint; other modes leave it alone.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(devices::tuya::kDef_TS0601_wsek35um, 2, 0, ctx, o);
+      check(str_is(o, "mode", "Off") && approx(float_of(o, "current_heating_setpoint"), 5.f), "wsek35um DP2 Off -> setpoint 5"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(devices::tuya::kDef_TS0601_wsek35um, 2, 3, ctx, o);
+      check(str_is(o, "mode", "Day") && o.find("current_heating_setpoint") == nullptr, "wsek35um DP2 Day -> no setpoint"); }
+    // ZSD20: zero fault bitmap reads "No faults".
+    { const std::uint8_t b[] = {0x00};
+      FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; run_dp(devices::avatto::kDef_ZSD20, {11, 0x05, std::span<const std::uint8_t>(b, 1)}, ctx, o);
+      check(str_is(o, "fault", "No faults"), "ZSD20 DP11 0 -> No faults"); }
+    // QADZ1LR: brightness 0..1000 on the wire, 0..254 exposed.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(devices::qa::kDef_QADZ1LR, 2, 1000, ctx, o);
+      check(approx(float_of(o, "brightness"), 254.f, 0.5f), "QADZ1LR DP2 1000 -> 254"); }
+}
+
 }  // namespace
 
 int main() {
@@ -436,6 +512,7 @@ int main() {
     test_tuya_covers();
     test_tuya_thermostats_meters();
     test_misc_fixes();
+    test_new_devices();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;

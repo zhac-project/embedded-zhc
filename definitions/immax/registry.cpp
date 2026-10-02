@@ -30,6 +30,7 @@ extern const PreparedDefinition kDef_D07047L;
 extern const PreparedDefinition kDef_D07502L;
 extern const PreparedDefinition kDef_D07504L;
 extern const PreparedDefinition kDef_D07743L;
+extern const PreparedDefinition kDef_D07519L;
 
 const PreparedDefinition* const kImmaxRegistry[] = {
     &kDefImm__TZE200_moycceze,
@@ -56,6 +57,7 @@ const PreparedDefinition* const kImmaxRegistry[] = {
     &kDef_D07502L,
     &kDef_D07504L,
     &kDef_D07743L,
+    &kDef_D07519L,
 };
 const std::size_t kImmaxRegistryCount = sizeof(kImmaxRegistry) / sizeof(kImmaxRegistry[0]);
 

@@ -91,6 +91,19 @@ across the ZHAC platform.
 
 ### Added
 
+- **z2m v26.106.0 – v26.115.1 (zigbee2mqtt 2.14.2) parity: new devices.**
+  Tuya datapoint devices: AutomatOn CH8Z, CBE 1443ZK, AVATTO ZSD20 smoke
+  detector and ZOT60 (TS011F), Beca BVRF-L001 (new vendor), Immax 07519L,
+  MakeGood MG-AU03 / MG-GPO02Z, Mowe MW836P, QA QADZ1LR dimmer (brightness
+  0–1000 on the wire), Tuya AE-5503-S-H-ZIGBEE, CTL-Mini-DTP-TYZ/AC,
+  HYSYIOT HS208Z (TS0202 `_TZD200_sjjp9bti` and its own `HS208Z` model),
+  Moes MG-BJQ002, Tervix Pro Line X10, TS0601_3ch_bidirectional_meter,
+  TS0601_air_quality_sensor_2, TS0601_cover_with_1_switch_limited,
+  TS0601_wsek35um (mode Off reads as a 5 °C setpoint), `_TZE284_grxx6qek`,
+  Novato ZAS-01P, HOBEIAN ZG-308Z and ZY-N1 noise sensor (`noise_detected`
+  from `noise_state`, as upstream). Datapoints z2m maps to strings
+  (MW836P 107–109) or to energy / backlight writes MakeGood does through
+  custom converters are not ported yet (see R8 worklist).
 - Purmo/Radson Yali Parada Plus: `keypad_lockout` (z2m v26.112.0, #13247),
   read at pairing; white labels Yali Digital Plus (Purmo/Radson, LVI). Generic
   `kFzHvacUserInterface` / `kTzKeypadLockout` / `kTzTemperatureDisplayMode`
