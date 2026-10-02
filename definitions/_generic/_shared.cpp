@@ -2998,6 +2998,25 @@ bool fz_zcl_attr_map(const DecodedMessage& msg,
     return any;
 }
 
+// ── hvacUserInterfaceCfg (keypad lockout / display unit) ────────────
+
+namespace {
+constexpr ZclWriteLookup kKeypadLockoutModes[] = {
+    {"unlock", 0}, {"lock1", 1}, {"lock2", 2}, {"lock3", 3}, {"lock4", 4}, {"lock5", 5} };
+constexpr ZclWriteLookup kTemperatureDisplayModes[] = { {"celsius", 0}, {"fahrenheit", 1} };
+constexpr ZclAttrRow kHvacUiRows[] = {
+    { 0x0001, "keypad_lockout", 1, kKeypadLockoutModes, 6 },
+    { 0x0000, "temperature_display_mode", 1, kTemperatureDisplayModes, 2 },
+};
+constexpr ZclAttrMap kHvacUiMap{ kHvacUiRows, sizeof(kHvacUiRows)/sizeof(kHvacUiRows[0]) };
+constexpr ZclWriteSpec kKeypadLockoutSpec{ "keypad_lockout", 0x0001, 0x30, 0, kKeypadLockoutModes, 6 };
+constexpr ZclWriteSpec kTemperatureDisplayModeSpec{ "temperature_display_mode", 0x0000, 0x30, 0, kTemperatureDisplayModes, 2 };
+}  // namespace
+
+extern const FzConverter kFzHvacUserInterface = zcl_attr_fz("hvacUserInterfaceCfg", &kHvacUiMap);
+extern const TzConverter kTzKeypadLockout = zcl_write_tz("hvacUserInterfaceCfg", 0x0204, &kKeypadLockoutSpec);
+extern const TzConverter kTzTemperatureDisplayMode = zcl_write_tz("hvacUserInterfaceCfg", 0x0204, &kTemperatureDisplayModeSpec);
+
 // ── fz_lock (closuresDoorLock 0x0101) ───────────────────────────────
 //
 // Emits "lock_state" from attribute 0x0000 (LockState, enum8):

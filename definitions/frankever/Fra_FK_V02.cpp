@@ -2,35 +2,29 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: FrankEver FK_V02 — Tuya-DP water valve (graduated from generated/).
 //
-// FrankEver "Zigbee smart water valve" (TS0601 / _TZE200_*). The generator
-// misrouted this Tuya-MCU device to bare genOnOff (cluster 0x0006) and dropped
-// the threshold + timer channels — it only knew the `state` expose. z2m decodes
-// it entirely over the 0xEF00 DP stream via `legacy.fz.frankever_valve`:
+// FrankEver "Zigbee smart water valve" (TS0601 / _TZE200_*). z2m v26.114.0
+// (#13285) moved it off the legacy frankever_valve converters onto a plain
+// datapoint table, renaming and rescaling on the way:
 //
-//   DP 1   (state)             -> state     Bool     ON/OFF
-//   DP 101 (frankEverTreshold) -> threshold Numeric  raw (0..100, multiple of 10)
-//   DP 9   (frankEverTimer)    -> timer     Numeric  value / 60  (seconds -> minutes)
+//   DP 1   -> state               Bool     ON/OFF
+//   DP 9   -> countdown           Numeric  seconds (was `timer`, minutes = /60)
+//   DP 27  -> power_off_state     Enum     off / on / maintain   (new)
+//   DP 101 -> set_valve_position  Numeric  0..100 %, steps of 10 (was `threshold`)
 //
-// Write path mirrors legacy.tz.tuya_switch_state / frankever_threshold /
-// frankever_timer — all three go out as DP setData on 0xEF00. z2m's tz encoders
-// clamp/quantise the input, but the wire value is the same raw int (threshold)
-// / value*60 (timer) the generic tz_tuya_datapoints emits with divisor 1 / 60.
-//
-// z2m-source: frankever.ts #FK_V02 + lib/legacy.ts fz.frankever_valve /
-//             tz.tuya_switch_state / tz.frankever_threshold / tz.frankever_timer.
+// Rules on `threshold` / `timer` need the new keys; `countdown` is in seconds.
+// z2m-source: frankever.ts #FK_V02.
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 
 namespace zhc::devices::frankever {
 namespace {
 
+constexpr ::zhc::tuya::TuyaEnumEntry kPowerOff_FK_V02[] = { {0,"off"}, {1,"on"}, {2,"maintain"} };
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries_FK_V02[] = {
-    // DP 1   -> state     (Bool)            z2m: value ? "ON" : "OFF"
-    { 1,   "state",     ::zhc::TuyaDpType::Bool,    1,  nullptr, 0, 0 },
-    // DP 101 -> threshold (Numeric, raw)    z2m: {threshold: value}
-    { 101, "threshold", ::zhc::TuyaDpType::Numeric, 1,  nullptr, 0, 0 },
-    // DP 9   -> timer     (Numeric, /60)    z2m: {timer: value / 60} (s -> min)
-    { 9,   "timer",     ::zhc::TuyaDpType::Numeric, 60, nullptr, 0, 0 },
+    { 1,   "state",              ::zhc::TuyaDpType::Bool,    1, nullptr, 0, 0 },
+    { 9,   "countdown",          ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 27,  "power_off_state",    ::zhc::TuyaDpType::Enum,    1, kPowerOff_FK_V02, 3, 0 },
+    { 101, "set_valve_position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
 };
 constexpr ::zhc::tuya::TuyaDatapointMap kMap_FK_V02{
     kEntries_FK_V02, sizeof(kEntries_FK_V02) / sizeof(kEntries_FK_V02[0]) };
@@ -68,12 +62,14 @@ constexpr const char* kManus_FK_V02[] = { "_TZE200_wt9agwf3", "_TZE200_5uodvhgc"
 }  // namespace
 
 
-// --- exposes (state + threshold + timer, all StateSet) ---
+// --- exposes ---
 // Field order: {name, type, access, unit, description, enum_values, enum_count}.
+constexpr const char* kPowerOffOpts_FK_V02[] = { "off", "on", "maintain" };
 constexpr Expose kAutoExposes[] = {
-    {"state",     ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"threshold", ExposeType::Numeric, Access::StateSet, "%",     "Valve open percentage (multiple of 10)", nullptr, 0, ExposeCategory::State, 0, 100, 0},
-    {"timer",     ExposeType::Numeric, Access::StateSet, "min",   "Countdown timer in minutes",             nullptr, 0, ExposeCategory::State, 0, 600, 0},
+    {"state",              ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"power_off_state",    ExposeType::Enum,    Access::StateSet, nullptr, "Power-off status behavior", kPowerOffOpts_FK_V02, 3},
+    {"set_valve_position", ExposeType::Numeric, Access::StateSet, "%",     nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 10},
+    {"countdown",          ExposeType::Numeric, Access::StateSet, "s",     "Countdown timer in seconds", nullptr, 0, ExposeCategory::State, 0, 43200, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

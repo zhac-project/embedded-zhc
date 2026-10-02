@@ -69,6 +69,19 @@ across the ZHAC platform.
   reversed) replaces `motor_steering` (#13207). ZS-SR-EUC was registered three
   times (one copy a ZCL stub); its position clamps the motor's overshoot past
   the end stops as z2m does (above 150 → 0, 101–150 → 100).
+- **FrankEver FK_V02 water valve**: z2m v26.114.0 (#13285) replaced the legacy
+  converters — `threshold` is now `set_valve_position` (%) and `timer`
+  (minutes) is `countdown` in seconds; new `power_off_state` off / on /
+  maintain. FK-BV05: datapoint 6 is `water_consumed` (was
+  `water_consumed_total`). Rules on the old keys need updating.
+- **Aqara JY-GZ-01AQ smoke detector showed no smoke alarm**: it now decodes
+  the IAS zone notification (`smoke`, tamper, battery_low), as z2m v26.115.0
+  (#13338).
+- **Zemismart ZM25RX-08/30** had no cover action and published
+  `motor_direction` as "reverse": one definition for its three
+  manufacturers with z2m's full table — state, position, motor_direction
+  normal / reversed, `motor_state` with `stopped` (#13293), battery, and the
+  `program` / `click_control` step commands.
 - **Tuya `phaseVariant2WithPhase` reads 24-bit current and power again** (z2m
   v26.111.0, #13203 — the second widening after v26.105.0's revert). Negative
   power is `power − 0x99999A` at or above 0x800000, so −100 W arrives as
@@ -78,6 +91,16 @@ across the ZHAC platform.
 
 ### Added
 
+- Purmo/Radson Yali Parada Plus: `keypad_lockout` (z2m v26.112.0, #13247),
+  read at pairing; white labels Yali Digital Plus (Purmo/Radson, LVI). Generic
+  `kFzHvacUserInterface` / `kTzKeypadLockout` / `kTzTemperatureDisplayMode`
+  (hvacUserInterfaceCfg) for it and the next thermostats.
+- Profalux MOT-C1ZxxC/F: `device_temperature` from endpoint 2 (#13136).
+- Bituo SDM02-U01: per-phase `energy_phase_a/b`, `produced_energy_phase_a/b`
+  exposed (#13115; already decoded).
+- Detects: Zemismart ZMS-206US-4 `_TZE28C1000000_pmbxyf97` (#13241), Moes
+  SFD02-Z `_TZE284_z98viqa6` (#13280), Philips 929004610402 + `929004610603`
+  (#13313).
 - Tuya TS0601_cover_14 (`_TZE284_a0hirjnh`, z2m v26.113.0) with
   `favorite_position`; `_TZE284_pxwixtky` on TS0601_cover_5; `_TZE200_fu14oapz`
   on TS0601_cover_2.

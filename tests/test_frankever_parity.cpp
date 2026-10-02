@@ -8,9 +8,13 @@
 // wired kFzOnOff, which never matches a TuyaDp-family frame. z2m decodes the
 // whole device over the 0xEF00 DP stream via `legacy.fz.frankever_valve`:
 //
-//   DP 1   -> state     Bool     ON/OFF
-//   DP 101 -> threshold Numeric  raw value
-//   DP 9   -> timer     Numeric  value / 60  (seconds -> minutes)
+//   DP 1   -> state               Bool     ON/OFF
+//   DP 9   -> countdown           Numeric  seconds
+//   DP 27  -> power_off_state     Enum     off / on / maintain
+//   DP 101 -> set_valve_position  Numeric  raw %
+//
+// z2m v26.114.0 (#13285) replaced the legacy frankever_valve converters
+// (`threshold`, `timer` in minutes) with this datapoint table.
 //
 // These tests resolve the def and decode real 0xEF00 (manuSpecificTuya) DP
 // frames, asserting all three keys surface with the right values and scale, and
@@ -123,8 +127,8 @@ static void test_state_dp_routes_through_tuya_map() {
     assert(v && v->type == ValueType::Bool && v->b == true);
 }
 
-// --- DP101 (Numeric, divisor 1) -> threshold, raw pass-through. -------------
-static void test_threshold_dp_raw() {
+// --- DP101 (Numeric, divisor 1) -> set_valve_position, raw pass-through. ----
+static void test_valve_position_dp_raw() {
     const auto& d = resolve("_TZE200_1n2zev06");
     const NumDp w = be32(50);
     const TuyaDpRecord recs[] = {
@@ -132,17 +136,16 @@ static void test_threshold_dp_raw() {
     };
     const auto result = dispatch_dp(d, std::span<const TuyaDpRecord>(recs, 1));
     assert(result.any_matched);
-    const Value* v = result.merged.find("threshold");
-    assert(v && "DP101 must surface threshold");
-    // divisor 1 -> integer pass-through (Uint/Int), value unchanged.
+    assert(result.merged.find("threshold") == nullptr && "threshold is gone (#13285)");
+    const Value* v = result.merged.find("set_valve_position");
+    assert(v && "DP101 must surface set_valve_position");
     if (v->type == ValueType::Uint)       assert(v->u == 50);
     else if (v->type == ValueType::Int)   assert(v->i == 50);
-    else                                  assert(false && "threshold must be integer");
+    else                                  assert(false && "set_valve_position must be integer");
 }
 
-// --- DP9 (Numeric, divisor 60) -> timer, seconds -> minutes. ----------------
-// z2m: {timer: value / 60}. 300 s -> 5 min.
-static void test_timer_dp_scaled_seconds_to_minutes() {
+// --- DP9 (Numeric, divisor 1) -> countdown in seconds (was timer in min). ---
+static void test_countdown_dp_seconds() {
     const auto& d = resolve("_TZE200_wt9agwf3");
     const NumDp w = be32(300);
     const TuyaDpRecord recs[] = {
@@ -150,34 +153,47 @@ static void test_timer_dp_scaled_seconds_to_minutes() {
     };
     const auto result = dispatch_dp(d, std::span<const TuyaDpRecord>(recs, 1));
     assert(result.any_matched);
-    const Value* v = result.merged.find("timer");
-    assert(v && v->type == ValueType::Float && "timer scaled -> Float");
-    const float diff = v->f - 5.0f;
-    assert(diff > -0.001f && diff < 0.001f && "300 s / 60 == 5 min");
+    assert(result.merged.find("timer") == nullptr && "timer is gone (#13285)");
+    const Value* v = result.merged.find("countdown");
+    assert(v && "DP9 must surface countdown");
+    if (v->type == ValueType::Uint)       assert(v->u == 300);
+    else if (v->type == ValueType::Int)   assert(v->i == 300);
+    else                                  assert(false && "countdown must be integer seconds");
 }
 
-// --- Exposes carry all three StateSet keys (state/threshold/timer). ---------
+// --- DP27 (Enum) -> power_off_state. -----------------------------------------
+static void test_power_off_state_dp() {
+    const auto& d = resolve("_TZE200_wt9agwf3");
+    const std::uint8_t m[] = { 0x02 };
+    const TuyaDpRecord recs[] = {
+        { 27, 0x04, std::span<const std::uint8_t>(m, 1) },
+    };
+    const auto result = dispatch_dp(d, std::span<const TuyaDpRecord>(recs, 1));
+    const Value* v = result.merged.find("power_off_state");
+    assert(v && v->type == ValueType::StringRef && std::strcmp(v->str, "maintain") == 0);
+}
+
+// --- Exposes carry the four StateSet keys. ----------------------------------
 static void test_exposes_complete() {
     const auto& d = resolve("_TZE200_wt9agwf3");
-    bool has_state = false, has_threshold = false, has_timer = false;
+    int found = 0;
     for (std::size_t i = 0; i < d.exposes_count; ++i) {
         const char* n = d.exposes[i].name;
-        if (std::strcmp(n, "state") == 0)     has_state = true;
-        if (std::strcmp(n, "threshold") == 0) has_threshold = true;
-        if (std::strcmp(n, "timer") == 0)     has_timer = true;
+        for (const char* k : { "state", "countdown", "power_off_state", "set_valve_position" })
+            if (std::strcmp(n, k) == 0) ++found;
         // every channel is writable in z2m (STATE_SET).
         assert(d.exposes[i].access == Access::StateSet);
     }
-    assert(has_state && has_threshold && has_timer &&
-           "state + threshold + timer must all be exposed");
+    assert(found == 4 && "state + countdown + power_off_state + set_valve_position exposed");
 }
 
 int main() {
     test_all_mfr_names_resolve();
     test_binds_tuya_cluster_not_genonoff();
     test_state_dp_routes_through_tuya_map();
-    test_threshold_dp_raw();
-    test_timer_dp_scaled_seconds_to_minutes();
+    test_valve_position_dp_raw();
+    test_countdown_dp_seconds();
+    test_power_off_state_dp();
     test_exposes_complete();
     return 0;
 }

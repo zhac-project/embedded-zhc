@@ -34,6 +34,13 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"produced_energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
+    // z2m v26.107.0 (#13115) adds bituo_fz.phase_energy here: tier 1/2 summation
+    // delivered/received as per-phase energy. kFzBituoMeteringExtras already
+    // decoded them; only the exposes were missing.
+    {"energy_phase_a", ExposeType::Numeric, Access::State, "kWh", "Energy phase A", nullptr, 0},
+    {"produced_energy_phase_a", ExposeType::Numeric, Access::State, "kWh", "Produced energy phase A", nullptr, 0},
+    {"energy_phase_b", ExposeType::Numeric, Access::State, "kWh", "Energy phase B", nullptr, 0},
+    {"produced_energy_phase_b", ExposeType::Numeric, Access::State, "kWh", "Produced energy phase B", nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"power_phase_b", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"power_reactive", ExposeType::Numeric, Access::State, "VAR", nullptr, nullptr, 0},

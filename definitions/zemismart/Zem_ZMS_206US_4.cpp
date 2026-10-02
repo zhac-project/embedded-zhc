@@ -102,7 +102,9 @@ constexpr Expose kExposes[] = {
 constexpr const char* kModels[] = { "TS0601" };
 constexpr const char* kManus[]  = { "_TZE204_wwaeqnrf", "_TZE284_wwaeqnrf", "_TZE204_y4jqpry8", "_TZE284_y4jqpry8",
     "_TZE204_xibaabmu", "_TZE284_xibaabmu", "_TZE28C1000000_xibaabmu", "_TZE204_08qc13ct",
-    "_TZE28C1000000_y4jqpry8" };
+    "_TZE28C1000000_y4jqpry8",
+    // z2m v26.112.0 (#13241); a new suffix, so matcher pass 1b cannot reach it.
+    "_TZE28C1000000_pmbxyf97" };
 
 }  // namespace
 

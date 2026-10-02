@@ -779,6 +779,15 @@ constexpr TzConverter zcl_write_tz(const char* cluster, std::uint16_t cluster_id
     };
 }
 
+// hvacUserInterfaceCfg (0x0204): z2m fz.hvac_user_interface decodes
+// keypadLockout (attr 0x0001) through constants.keypadLockoutMode
+// {unlock, lock1 … lock5} and tempDisplayMode (0x0000) as celsius /
+// fahrenheit; tz.thermostat_keypad_lockout / _temperature_display_mode write
+// them back (enum8).
+extern const FzConverter kFzHvacUserInterface;
+extern const TzConverter kTzKeypadLockout;
+extern const TzConverter kTzTemperatureDisplayMode;
+
 // closuresDoorLock command 0x20 (programming-event notification).
 // Decodes program_event_code into z2m's `action` enum
 // ("master_code_changed" / "pin_code_added" / …) plus `action_user`,

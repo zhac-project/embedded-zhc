@@ -202,6 +202,7 @@ constexpr ::zhc::TzConverter kTzOccupancy{
 
 const FzConverter* const kFz_Yali_Parada_Plus[] = {
     &kFzPurmoThermostatExtras,
+    &::zhc::generic::kFzHvacUserInterface,     // keypad_lockout (z2m v26.112.0, #13247)
 };
 const TzConverter* const kTz_Yali_Parada_Plus[] = {
     &::zhc::generic::kTzThermostat,            // occupied_heating_setpoint + system_mode
@@ -209,7 +210,10 @@ const TzConverter* const kTz_Yali_Parada_Plus[] = {
     &::zhc::generic::kTzMaxHeatSetpointLimit,  // max_heat_setpoint_limit (0x0016)
     &kTzLocalTemperatureCalibration,
     &kTzOccupancy,
+    &::zhc::generic::kTzKeypadLockout,
 };
+
+constexpr const char* kKeypadLockoutOpts[] = { "unlock", "lock1", "lock2" };
 
 // Thermostats ship FLAT exposes (no ExposeType::Climate). Setpoint
 // ranges 5–30 °C step 0.5 per z2m; system_mode/running_mode/running_state
@@ -224,6 +228,20 @@ constexpr Expose kExp_Yali_Parada_Plus[] = {
     { "running_state",                  ExposeType::Enum,    ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
     { "running_mode",                   ExposeType::Enum,    ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
     { "max_heat_setpoint_limit",        ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
+    { "keypad_lockout",                 ExposeType::Enum,    ::zhc::Access::StateSet, nullptr,
+        "Enables/disables physical input on the device", kKeypadLockoutOpts, 3 },
+};
+
+// z2m v26.112.0 white labels.
+constexpr WhiteLabel kWL_Yali_Parada_Plus[] = {
+    { "Purmo/Radson", "Yali Digital Plus" },
+    { "LVI", "Yali Digital Plus" },
+};
+
+// z2m reads keypadLockout once at configure so the initial state is known.
+constexpr std::uint8_t kReadKeypadLockout[] = { 0x01, 0x00 };
+constexpr ConfigStep kSteps_Yali_Parada_Plus[] = {
+    { ConfigStepOp::Read, 1, 0x0204, 0, 0, kReadKeypadLockout, sizeof(kReadKeypadLockout), 0, 0 },
 };
 
 constexpr BindingSpec kBind_Yali_Parada_Plus[] = {
@@ -239,11 +257,12 @@ extern const PreparedDefinition kDef_Yali_Parada_Plus{
     .model="Yali Parada Plus", .vendor="Purmo",
     .meta=nullptr,
     .exposes=kExp_Yali_Parada_Plus, .exposes_count=sizeof(kExp_Yali_Parada_Plus)/sizeof(kExp_Yali_Parada_Plus[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWL_Yali_Parada_Plus, .white_labels_count=sizeof(kWL_Yali_Parada_Plus)/sizeof(kWL_Yali_Parada_Plus[0]),
     .from_zigbee=kFz_Yali_Parada_Plus, .from_zigbee_count=sizeof(kFz_Yali_Parada_Plus)/sizeof(kFz_Yali_Parada_Plus[0]),
     .to_zigbee=kTz_Yali_Parada_Plus,   .to_zigbee_count=sizeof(kTz_Yali_Parada_Plus)/sizeof(kTz_Yali_Parada_Plus[0]),
     .configure=nullptr, .on_event=nullptr,
     .bindings=kBind_Yali_Parada_Plus, .bindings_count=sizeof(kBind_Yali_Parada_Plus)/sizeof(kBind_Yali_Parada_Plus[0]),
+    .config_steps=kSteps_Yali_Parada_Plus, .config_steps_count=sizeof(kSteps_Yali_Parada_Plus)/sizeof(kSteps_Yali_Parada_Plus[0]),
 };
 
 }  // namespace zhc::devices::purmo

@@ -30,6 +30,9 @@
 //     on a non-BSO motor that never reports attr 0x0009),
 //   - bound closuresWindowCovering (0x0102) on EP2 and set
 //     default_endpoint=2 so outbound commands route to the cover EP.
+// z2m v26.108.0 (#13136): the motor reports its internal temperature
+// (genDeviceTempCfg) from endpoint 2 — `device_temperature`, read-only, no
+// reporting configured (m.deviceTemperature()).
 // z2m-source: profalux.ts #MOT-C1ZxxC/F.
 #include "definitions/_generic/_shared.hpp"
 
@@ -38,6 +41,7 @@ namespace {
 const FzConverter* const kFz_MOT_C1ZxxC_F[] = {
     &::zhc::generic::kFzCoverPosition,
     &::zhc::generic::kFzCoverTilt,
+    &::zhc::generic::kFzDeviceTemperature,
 };
 const TzConverter* const kTz_MOT_C1ZxxC_F[] = {
     &::zhc::generic::kTzCoverState,
@@ -51,6 +55,8 @@ constexpr const char* kModels_MOT_C1ZxxC_F[] = { "MOT-C1Z06C", "MOT-C1Z10C", "MO
 constexpr Expose kExp_MOT_C1ZxxC_F[] = {
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
     {"tilt",     ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", "Temperature of the device", nullptr, 0,
+     ExposeCategory::Diagnostic},
 };
 
 // z2m binds closuresWindowCovering on EP2 (the cover lives on EP2).

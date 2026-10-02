@@ -66,7 +66,7 @@ constexpr Expose kExposes[] = {
 };
 
 constexpr const char* kModels[] = { "TS0601" };
-constexpr const char* kManus[]  = { "_TZE284_t88bjhfu" };
+constexpr const char* kManus[]  = { "_TZE284_t88bjhfu", "_TZE284_z98viqa6" };  // z98viqa6: z2m v26.113.0 (#13280)
 
 }  // namespace
 

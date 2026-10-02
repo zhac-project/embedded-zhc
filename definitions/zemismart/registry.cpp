@@ -7,11 +7,9 @@
 namespace zhc::devices::zemismart {
 
 extern const PreparedDefinition kDefZem__TZE200_1vxgqfba;
-extern const PreparedDefinition kDefZem__TZE200_7eue9vhc;
-extern const PreparedDefinition kDefZem__TZE200_bv1jcqqu;
+extern const PreparedDefinition kDef_ZM25RX_08_30;
 extern const PreparedDefinition kDefZem__TZE200_sq6affpe;
 extern const PreparedDefinition kDefZem__TZE200_wdfurkoa;
-extern const PreparedDefinition kDefZem__TZE200_wehza30a;
 extern const PreparedDefinition kDefZem__TZE204_iyki9kjp;
 extern const PreparedDefinition kDefZem__TZE204_k7v0eqke;
 extern const PreparedDefinition kDef_ZN_USC1U_HT;
@@ -51,11 +49,9 @@ extern const PreparedDefinition kDef_ZMZ609_2;
 
 const PreparedDefinition* const kZemismartRegistry[] = {
     &kDefZem__TZE200_1vxgqfba,
-    &kDefZem__TZE200_7eue9vhc,
-    &kDefZem__TZE200_bv1jcqqu,
+    &kDef_ZM25RX_08_30,
     &kDefZem__TZE200_sq6affpe,
     &kDefZem__TZE200_wdfurkoa,
-    &kDefZem__TZE200_wehza30a,
     &kDefZem__TZE204_iyki9kjp,
     &kDefZem__TZE204_k7v0eqke,
     &kDef_ZN_USC1U_HT,

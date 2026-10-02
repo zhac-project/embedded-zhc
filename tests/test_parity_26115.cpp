@@ -39,8 +39,16 @@ namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_TS060
                                       extern const PreparedDefinition kDef_TS0601_fan_5_levels_and_light_switch;
                                       extern const PreparedDefinition kDef_ZHT_002;
                                       extern const PreparedDefinition kDef_Tervix_6kijc7nd; }
-namespace zhc::devices::moes        { extern const PreparedDefinition kDef_ZS_SR_EUC_cover; }
-namespace zhc::devices::zemismart   { extern const PreparedDefinition kDef_ZN_USC1U_HT; }
+namespace zhc::devices::moes        { extern const PreparedDefinition kDef_ZS_SR_EUC_cover;
+                                      extern const PreparedDefinition kDef_SFD02_Z; }
+namespace zhc::devices::zemismart   { extern const PreparedDefinition kDef_ZN_USC1U_HT;
+                                      extern const PreparedDefinition kDef_ZM25RX_08_30;
+                                      extern const PreparedDefinition kDef_ZMS_206US_4; }
+namespace zhc::devices::lumi        { extern const PreparedDefinition kDefJYGZ01AQ; }
+namespace zhc::devices::profalux    { extern const PreparedDefinition kDef_MOT_C1ZxxC_F; }
+namespace zhc::devices::purmo       { extern const PreparedDefinition kDef_Yali_Parada_Plus; }
+namespace zhc::devices::bituo_technik { extern const PreparedDefinition kDef_SDM02_U01; }
+namespace zhc::devices::philips     { extern const PreparedDefinition kDef_D929004610402; }
 
 using namespace zhc;
 
@@ -378,6 +386,46 @@ void test_tuya_thermostats_meters() {
       check(approx(float_of(o, "position"), 100.f), "ZS-SR-EUC 102 -> 100 (open overshoot)"); }
 }
 
+// IAS Zone Status Change Notification (cmd 0x00, cluster-specific, server->client).
+std::vector<std::uint8_t> ias_notif(std::uint16_t status) {
+    return {0x09, 0x10, 0x00, std::uint8_t(status & 0xFF), std::uint8_t(status >> 8), 0x00, 0x01, 0x00, 0x00};
+}
+
+void test_misc_fixes() {
+    std::printf("JY-GZ-01AQ smoke, MOT-C1Z temperature, Yali keypad lock, SDM02 phases, ZM25RX, detects\n");
+    RuntimeContext ctx{};
+    // #13338: smoke via IAS zone.
+    { auto f = ias_notif(0x0001);
+      auto d = dispatch(devices::lumi::kDefJYGZ01AQ, 0x0500, 1, std::span<const std::uint8_t>(f.data(), f.size()));
+      check(r_bool(d, "smoke", true), "JY-GZ-01AQ IAS bit0 -> smoke"); }
+    check(has_expose(devices::lumi::kDefJYGZ01AQ, "smoke"), "JY-GZ-01AQ exposes smoke");
+    // #13136: device temperature on endpoint 2.
+    { Report r; r.u16(0x0000, 0x29, 23);
+      auto d = dispatch(devices::profalux::kDef_MOT_C1ZxxC_F, 0x0002, 2, r.span());
+      check(approx(r_float(d, "device_temperature"), 23.f), "MOT-C1Z device_temperature 23"); }
+    // #13247: keypad lockout decode + write.
+    { Report r; r.u8(0x0001, 0x30, 1);
+      auto d = dispatch(devices::purmo::kDef_Yali_Parada_Plus, 0x0204, 1, r.span());
+      check(r_str(d, "keypad_lockout", "lock1"), "Yali keypad_lockout lock1"); }
+    { auto e = encode(devices::purmo::kDef_Yali_Parada_Plus, "keypad_lockout", str("lock2"));
+      check(e.ok && e.cluster == 0x0204 && e.frame.size() == 7 && e.frame[3] == 0x01 && e.frame[5] == 0x30 && e.frame[6] == 2,
+            "Yali keypad_lockout write enum8 2"); }
+    // #13115: per-phase energy exposed.
+    check(has_expose(devices::bituo_technik::kDef_SDM02_U01, "energy_phase_a") &&
+          has_expose(devices::bituo_technik::kDef_SDM02_U01, "produced_energy_phase_b"), "SDM02-U01 phase energy exposed");
+    // #13293: ZM25RX motor_state stopped; DP1 action; motor_direction 'reversed'.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::zemismart::kDef_ZM25RX_08_30, 7, 2, ctx, o);
+      check(str_is(o, "motor_state", "stopped"), "ZM25RX DP7 stopped"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::zemismart::kDef_ZM25RX_08_30, 5, 1, ctx, o);
+      check(str_is(o, "motor_direction", "reversed"), "ZM25RX DP5 reversed (was 'reverse')"); }
+    { auto e = encode(devices::zemismart::kDef_ZM25RX_08_30, "state", str("CLOSE"));
+      check(e.ok, "ZM25RX state writable"); }
+    // Detects.
+    check(has_manu(devices::zemismart::kDef_ZMS_206US_4, "_TZE28C1000000_pmbxyf97"), "ZMS-206US-4 + pmbxyf97 (#13241)");
+    check(has_manu(devices::moes::kDef_SFD02_Z, "_TZE284_z98viqa6"), "SFD02-Z + z98viqa6 (#13280)");
+    check(has_model(devices::philips::kDef_D929004610402, "929004610603"), "929004610402 + 929004610603 (#13313)");
+}
+
 }  // namespace
 
 int main() {
@@ -387,6 +435,7 @@ int main() {
     test_zosung_learn_stop();
     test_tuya_covers();
     test_tuya_thermostats_meters();
+    test_misc_fixes();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;
