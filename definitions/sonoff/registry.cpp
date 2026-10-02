@@ -14,7 +14,7 @@ extern const PreparedDefinition kDef_MG1_5RZ;
 extern const PreparedDefinition kDef_MINI_ZB1GS;
 extern const PreparedDefinition kDef_MINI_ZB2GS;
 extern const PreparedDefinition kDef_MINI_ZB2GS_L;
-extern const PreparedDefinition kDef_MINI_ZBD;
+extern const PreparedDefinition kDefSonoff_MINI_ZBD;
 extern const PreparedDefinition kDef_MINI_ZBDIM;
 extern const PreparedDefinition kDef_MINI_ZBRBS;
 extern const PreparedDefinition kDef_NSPanelP_Router;
@@ -32,9 +32,9 @@ extern const PreparedDefinition kDef_SNZB_02;
 extern const PreparedDefinition kDef_SNZB_02B;
 extern const PreparedDefinition kDef_SNZB_02D;
 extern const PreparedDefinition kDef_SNZB_02DR2;
-extern const PreparedDefinition kDef_SNZB_02LD;
+extern const PreparedDefinition kDefSonoff_SNZB_02LD;
 extern const PreparedDefinition kDef_SNZB_02P;
-extern const PreparedDefinition kDef_SNZB_02WD;
+extern const PreparedDefinition kDefSonoff_SNZB_02WD;
 extern const PreparedDefinition kDef_SNZB_02M;
 extern const PreparedDefinition kDef_SNZB_02UL;
 extern const PreparedDefinition kDef_SNZB_03;
@@ -73,7 +73,7 @@ const PreparedDefinition* const kSonoffRegistry[] = {
     &kDef_MINI_ZB1GS,
     &kDef_MINI_ZB2GS,
     &kDef_MINI_ZB2GS_L,
-    &kDef_MINI_ZBD,
+    &kDefSonoff_MINI_ZBD,
     &kDef_MINI_ZBDIM,
     &kDef_MINI_ZBRBS,
     &kDef_NSPanelP_Router,
@@ -91,9 +91,9 @@ const PreparedDefinition* const kSonoffRegistry[] = {
     &kDef_SNZB_02B,
     &kDef_SNZB_02D,
     &kDef_SNZB_02DR2,
-    &kDef_SNZB_02LD,
+    &kDefSonoff_SNZB_02LD,
     &kDef_SNZB_02P,
-    &kDef_SNZB_02WD,
+    &kDefSonoff_SNZB_02WD,
     &kDef_SNZB_02M,
     &kDef_SNZB_02UL,
     &kDef_SNZB_03,

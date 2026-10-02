@@ -1,18 +1,21 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Manual override (was auto-generated): HOBEIAN ZG-204Z PIR — IAS Zone
-// + sensitivity / keep_time configuration.
+// Tier 2: HOBEIAN ZG-204Z PIR — IAS Zone + sensitivity / keep_time
+// configuration. Graduated from the generated tree for z2m v26.115.1, which
+// moves it to its own hobeian.ts entry with zoneAttributes ["alarm_1"]: only
+// occupancy comes from the zone, no tamper / battery_low
+// (kFzIasMotionAlarmOnly).
 //
-// z2m-source: tuya.ts zigbeeModel "ZG-204Z" → IH012-RT01 entry.
+// z2m-source: hobeian.ts #ZG-204Z (until v26.115.1: tuya.ts IH012-RT01 entry).
 // Uses m.iasZoneAlarm({zoneType:"occupancy", zoneAttributes:
-// ["alarm_1","battery_low"]}) + fz.ZM35HQ_attr (read) +
-// tz.ZM35HQ_attr (write) + fz.battery.
+// ["alarm_1"]}) + fz.zg204_attr (read) +
+// tz.zg204_attr (write) + fz.battery.
 //
 // Wire layout:
 //   genPowerCfg (0x0001) attrs
 //     → battery %, battery voltage      via kFzBattery
 //   ssIasZone   (0x0500) cmd 0x00
-//     → occupancy + tamper + battery_low via kFzIasMotionAlarm
+//     → occupancy                       via kFzIasMotionAlarmOnly
 //   ssIasZone   (0x0500) attr report / read response
 //     attr 0x0013 currentZoneSensitivityLevel (ENUM8)
 //       → "sensitivity" "low"|"medium"|"high"
@@ -34,7 +37,7 @@ using ::zhc::generic::ZclWriteSpec;
 
 const FzConverter* const kFzGen_ZG_204Z[] = {
     &::zhc::generic::kFzBattery,         // genPowerCfg → battery + voltage
-    &::zhc::generic::kFzIasMotionAlarm,  // ssIasZone cmd 0x00 → occupancy/tamper/battery_low
+    &::zhc::generic::kFzIasMotionAlarmOnly,  // ssIasZone cmd 0x00 → occupancy
     &::zhc::generic::kFzIasZoneConfig,   // ssIasZone attr 0x0013/0xF001 → sensitivity/keep_time
 };
 constexpr const char* kModelsGen_ZG_204Z[] = { "ZG-204Z" };
@@ -43,8 +46,6 @@ constexpr Expose kAutoExposes[] = {
     {"battery",     ExposeType::Numeric, Access::State,    "%",  nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, Access::State,    "mV", nullptr, nullptr, 0},
     {"occupancy",   ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
-    {"tamper",      ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
-    {"battery_low", ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
     {"sensitivity", ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"keep_time",   ExposeType::Enum,    Access::StateSet, "s",  nullptr, nullptr, 0},
 };
@@ -150,8 +151,8 @@ const TzConverter* const kTzGen_ZG_204Z[] = {
 };
 }  // namespace
 
-extern const PreparedDefinition kDefGen_ZG_204Z{
-    .zigbee_models=kModelsGen_ZG_204Z, .zigbee_models_count=1,
+extern const PreparedDefinition kDef_ZG_204Z{
+    .zigbee_models=kModelsGen_ZG_204Z, .zigbee_models_count=sizeof(kModelsGen_ZG_204Z)/sizeof(kModelsGen_ZG_204Z[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="ZG-204Z", .vendor="HOBEIAN",

@@ -1306,6 +1306,8 @@ constexpr IasAlarmLabel kLbl_Sos         { "sos",             0 };
 // zoneType "contact", zoneAttributes ["alarm_1"] only (Sonoff SNZT-04P,
 // whose tamper is 0xFC11 attribute 0x2000).
 constexpr IasAlarmLabel kLbl_ContactOnly { "contact",         0, true, true };
+// zoneType "occupancy", zoneAttributes ["alarm_1"] only (HOBEIAN ZG-204Z).
+constexpr IasAlarmLabel kLbl_MotionOnly  { "occupancy",       0, false, true };
 // z2m lumi_smoke: `test` = zoneStatus bit 1 (test mode), next to the
 // smoke alarm (Xiaomi JTYJ-GD-01LM/BW).
 constexpr IasAlarmLabel kLbl_Test        { "test",            1 };
@@ -1349,6 +1351,7 @@ ZHC_IAS_TYPED_CVT(kFzIasGenericAlarm,   &kLbl_Alarm);
 ZHC_IAS_TYPED_CVT(kFzIasSosAlarm2,      &kLbl_Sos2);
 ZHC_IAS_TYPED_CVT(kFzIasSosAlarm,       &kLbl_Sos);
 ZHC_IAS_TYPED_CVT(kFzIasContactAlarmOnly, &kLbl_ContactOnly);
+ZHC_IAS_TYPED_CVT(kFzIasMotionAlarmOnly,  &kLbl_MotionOnly);
 ZHC_IAS_TYPED_CVT(kFzIasTestBit,        &kLbl_Test);
 
 // ── ssIasAce arm / panic command decoders ───────────────────────────

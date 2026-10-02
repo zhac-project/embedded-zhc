@@ -831,6 +831,49 @@ void test_vendor_fixes() {
     resolves(all, {"TS0601", "_TZE200_nlrfgpny", "NAS-AB06B2"});
 }
 
+// SONOFF sensors / relay and the HOBEIAN moves.
+void test_sonoff_hobeian() {
+    std::printf("SONOFF SNZB-02LD / 02WD / 02M / MINI-ZBD; HOBEIAN ZG-102ZA / 204Z / 223Z / 103Z\n");
+    const auto& reg = registries();
+    const std::span<const PreparedDefinition* const> all(reg.data(), reg.size());
+    auto resolved = [&](const char* zm, const char* manu) { return find_definition(zm, manu, all); };
+    { const auto* d = resolved("SNZB-02LD", "SONOFF");
+      Report r; r.u16(0x0000, 0x29, 2150);
+      check(d && approx(r_float(dispatch(*d, 0x0402, 1, r.span()), "temperature"), 21.5f), "SNZB-02LD temperature"); }
+    { const auto* d = resolved("SNZB-02WD", "SONOFF");
+      Report r; r.u16(0x0000, 0x21, 5530);
+      check(d && approx(r_float(dispatch(*d, 0x0405, 1, r.span()), "humidity"), 55.3f), "SNZB-02WD humidity");
+      auto e = d ? encode(*d, "humidity_calibration", num(-1.5)) : Encoded{};
+      check(e.ok && e.cluster == 0xFC11 && e.frame.size() >= 2 &&
+            e.frame[e.frame.size() - 2] == 0x6A && e.frame[e.frame.size() - 1] == 0xFF, "SNZB-02WD humidity_calibration -1.5 -> -150"); }
+    { const auto* d = resolved("SNZB-02M", "SONOFF");
+      Report r; r.u32(0x0004, 0x2B, 101325);
+      check(d && approx(r_float(dispatch(*d, 0x0403, 1, r.span()), "pressure"), 1013.25f, 0.01f), "SNZB-02M pressure from 0x0004"); }
+    { const auto* d = resolved("ZBMINIR2", "SONOFF");
+      Report r; r.u8(0x0028, 0x20, 2);
+      check(d && r_str(dispatch(*d, 0xFC11, 1, r.span()), "action", "double_click"), "ZBMINIR2 0x0028 -> double_click"); }
+    const Want wants[] = {
+        {"ZG-102Z", "HOBEIAN", "ZG-102ZA"},
+        {"HS118Z", "HYSYIOT", "ZG-223Z"}, {"ZG-223Z", "HOBEIAN", "ZG-223Z"}, {"TS0601", "_TZE200_gt1gge3x", "ZG-223Z"},
+        {"TS0601", "_TZE200_yjryxpot", "ZG-102ZM"}, {"ZG-103Z", "HOBEIAN", "ZG-103Z"},
+        {"AY-101Z", "AOYAN  ", "TS0203"},
+    };
+    for (const Want& w : wants) resolves(all, w);
+    { const auto* d = resolved("ZG-204Z", "HOBEIAN");
+      auto f = ias_notif(0x000D);   // motion + tamper + battery_low bits
+      auto r = d ? dispatch(*d, 0x0500, 1, std::span<const std::uint8_t>(f.data(), f.size())) : DispatchResult{};
+      check(d && r_bool(r, "occupancy", true) && r_find(r, "tamper") == nullptr && r_find(r, "battery_low") == nullptr,
+            "ZG-204Z zone: occupancy only"); }
+    { const auto* d = resolved("ZG-102Z", "HOBEIAN");
+      Report r; r.u16(0x0002, 0x19, 0x0000);
+      auto x = d ? dispatch(*d, 0x0500, 1, r.span()) : DispatchResult{};
+      check(d && r_bool(x, "contact", true), "ZG-102ZA zoneStatus report 0 -> contact"); }
+    { const auto* d = resolved("TS0601", "_TZE200_gt1gge3x");
+      RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{};
+      if (d) dp_enum(*d, 1, 1, ctx, o);
+      check(d && str_is(o, "rainwater", "raining"), "ZG-223Z DP1 -> raining"); }
+}
+
 }  // namespace
 
 int main() {
@@ -846,6 +889,7 @@ int main() {
     test_detects_and_graduations();
     test_twin_pins();
     test_vendor_fixes();
+    test_sonoff_hobeian();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;

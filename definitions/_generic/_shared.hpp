@@ -377,6 +377,8 @@ extern const FzConverter kFzIasSosAlarm;
 // zoneAttributes ["alarm_1"] on a device that reports tamper on another
 // cluster (Sonoff SNZT-04P).
 extern const FzConverter kFzIasContactAlarmOnly;
+// Occupancy (bit 0) alone, for zoneAttributes ["alarm_1"] (HOBEIAN ZG-204Z).
+extern const FzConverter kFzIasMotionAlarmOnly;
 
 // ── genOnOff power-on behaviour (standard ZCL attribute 0x4003) ─────
 //

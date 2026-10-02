@@ -23,6 +23,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **SONOFF SNZB-02LD and SNZB-02WD decoded only their battery**: the
+  generated copies had no temperature / humidity converter. Graduated with
+  temperature (+ humidity) reported every 5 s .. 1 h on a 0.2 C / 1 % change
+  (z2m window), the eWeLink 0xFC11 screen unit and calibrations, and the
+  genPollCtrl bind.
+- **HOBEIAN ZG-223Z (rain) and ZG-103Z (vibration) never matched by
+  zigbeeModel** (the generated copies required a Tuya manufacturer name for
+  `ZG-223Z` / `ZG-103Z` too, and exposed only a stray `action`); each is now a
+  datapoint definition plus a zigbeeModel-only twin. z2m v26.115.1 moves them
+  to hobeian.ts, adds HYSYIOT HS118Z and `_TZE200_gt1gge3x` to ZG-223Z and
+  `_TZE200_yjryxpot` from ZG-103Z to ZG-102ZM.
+- **HOBEIAN ZG-102Z is ZG-102ZA**, its own definition (contact from the zone
+  command and the zoneStatus report, battery), no longer a TS0203 model; TS0203
+  gains AY-101Z and the Mowe MW811D white label. ZG-204Z publishes occupancy
+  alone from its zone (no tamper / battery_low), as z2m's own entry now does.
 - **Door locks: operation and programming events were swapped.** ZCL (and
   zigbee-herdsman) send the operation event notification as command 0x20 and
   the programming event notification as 0x21; `kFzLockOperationEvent` /
@@ -146,6 +161,10 @@ across the ZHAC platform.
   from `noise_state`, as upstream). Datapoints z2m maps to strings
   (MW836P 107–109) or to energy / backlight writes MakeGood does through
   custom converters are not ported yet (see R8 worklist).
+- **SONOFF MINI-ZBD / ZBMINIR2** external switch actions: `toggle`, and
+  `double_click` / `long_press` from 0xFC11 attribute 0x0028 (firmware 1.1.0,
+  z2m window). **SNZB-02M** pressure from msPressureMeasurement 0x0004
+  (hundredths of hPa) with reporting.
 - **Aqara ZNMHLDJ01LM curtain attributes** (z2m v26.107.0, #13116):
   manual_open_close, status, last_manual_operation, traverse_time,
   calibration_status, calibrated, identify_beep on manuSpecificLumi.

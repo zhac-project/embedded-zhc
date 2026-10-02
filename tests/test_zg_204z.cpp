@@ -12,7 +12,10 @@
 // Before the def was rewritten this dispatcher returned `no match`
 // because the generator emitted Tuya MCU converters on cluster
 // 0xEF00. After: kFzBattery + kFzIasMotionAlarm bound to clusters
-// 0x0001 + 0x0500. These tests lock that pairing.
+// 0x0001 + 0x0500. These tests lock that pairing. z2m v26.115.1 (own
+// hobeian.ts entry, zoneAttributes ["alarm_1"]) publishes occupancy alone:
+// the zone's tamper / battery_low bits are no longer surfaced
+// (kFzIasMotionAlarmOnly).
 
 // Force assert() to remain enabled even when the rest of the tree is
 // built with -DNDEBUG; without this Release builds elide every check
@@ -32,7 +35,7 @@
 using namespace zhc;
 
 namespace zhc::devices::tuya {
-extern const PreparedDefinition kDefGen_ZG_204Z;
+extern const PreparedDefinition kDef_ZG_204Z;
 }  // namespace zhc::devices::tuya
 
 namespace {
@@ -76,7 +79,7 @@ DispatchResult dispatch_ias(const IasFrame& f) {
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
     RuntimeContext ctx{};
-    return dispatch_from_zigbee(msg, {}, devices::tuya::kDefGen_ZG_204Z,
+    return dispatch_from_zigbee(msg, {}, devices::tuya::kDef_ZG_204Z,
                                 raw, ctx);
 }
 
@@ -87,13 +90,13 @@ bool b_false(const Value* v) { return v && v->type == ValueType::Bool && !v->b; 
 
 // Motion detected: zoneStatus = 0x0001 (alarm_1 set, all other bits clear).
 // This is the canonical "movement seen" packet captured on the user's
-// network. Expect occupancy=true, tamper=false, battery_low=false.
+// network. Expect occupancy=true and nothing else from the zone.
 static void test_motion_present() {
     auto r = dispatch_ias(ias_notif(0x0001));
     assert(r.any_matched);
     assert(b(r.merged.find("occupancy")));
-    assert(b_false(r.merged.find("tamper")));
-    assert(b_false(r.merged.find("battery_low")));
+    assert(r.merged.find("tamper") == nullptr);
+    assert(r.merged.find("battery_low") == nullptr);
 }
 
 // Motion cleared: zoneStatus = 0x0000.
@@ -101,27 +104,28 @@ static void test_motion_clear() {
     auto r = dispatch_ias(ias_notif(0x0000));
     assert(r.any_matched);
     assert(b_false(r.merged.find("occupancy")));
-    assert(b_false(r.merged.find("tamper")));
-    assert(b_false(r.merged.find("battery_low")));
+    assert(r.merged.find("tamper") == nullptr);
+    assert(r.merged.find("battery_low") == nullptr);
 }
 
-// Tamper alarm: bit 2 set without bit 0 (motion).
+// Tamper bit (bit 2) without motion: no occupancy, and the bit is not
+// published (z2m v26.115.1 zoneAttributes ["alarm_1"]).
 static void test_tamper_only() {
     auto r = dispatch_ias(ias_notif(0x0004));
     assert(r.any_matched);
     assert(b_false(r.merged.find("occupancy")));
-    assert(b(r.merged.find("tamper")));
-    assert(b_false(r.merged.find("battery_low")));
+    assert(r.merged.find("tamper") == nullptr);
+    assert(r.merged.find("battery_low") == nullptr);
 }
 
-// Battery low: bit 3 — sensors report this when cell drops below the
-// internal threshold. Motion may or may not be co-asserted.
+// Battery-low bit (bit 3) with motion: occupancy only; the battery level
+// comes from genPowerCfg.
 static void test_battery_low_with_motion() {
     auto r = dispatch_ias(ias_notif(0x0009));   // bit0 + bit3
     assert(r.any_matched);
     assert(b(r.merged.find("occupancy")));
-    assert(b_false(r.merged.find("tamper")));
-    assert(b(r.merged.find("battery_low")));
+    assert(r.merged.find("tamper") == nullptr);
+    assert(r.merged.find("battery_low") == nullptr);
 }
 
 // Sanity: kFzIasMotionAlarm only fires on cmd 0x00 (Zone Status Change
@@ -137,7 +141,7 @@ static void test_other_cmd_does_not_match() {
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
     RuntimeContext ctx{};
-    auto r = dispatch_from_zigbee(msg, {}, devices::tuya::kDefGen_ZG_204Z,
+    auto r = dispatch_from_zigbee(msg, {}, devices::tuya::kDef_ZG_204Z,
                                    raw, ctx);
     assert(!r.any_matched);
 }
@@ -162,7 +166,7 @@ DispatchResult dispatch_attr_report(std::span<const std::uint8_t> bytes) {
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
     RuntimeContext ctx{};
-    return dispatch_from_zigbee(msg, {}, devices::tuya::kDefGen_ZG_204Z,
+    return dispatch_from_zigbee(msg, {}, devices::tuya::kDef_ZG_204Z,
                                  raw, ctx);
 }
 
@@ -351,7 +355,7 @@ static void test_configure_pipeline() {
     ctx.configure_report = &capture_report;
     ctx.configure_read   = &capture_read;
 
-    const bool ok = zhc::run_configure(devices::tuya::kDefGen_ZG_204Z, ctx);
+    const bool ok = zhc::run_configure(devices::tuya::kDef_ZG_204Z, ctx);
     assert(ok);
 
     // Bindings: genPowerCfg (0x0001) + ssIasZone (0x0500) on EP1.

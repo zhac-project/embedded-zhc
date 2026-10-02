@@ -39,8 +39,9 @@ extern const PreparedDefinition kDefGen_ZG_101ZD;
 extern const PreparedDefinition kDefGen_ZG_102Z;
 extern const PreparedDefinition kDefGen_ZG_102ZL;
 extern const PreparedDefinition kDef_ZG_102ZM;
-extern const PreparedDefinition kDefGen_ZG_103Z;
-extern const PreparedDefinition kDefGen_ZG_204Z;
+extern const PreparedDefinition kDef_ZG_103Z;
+extern const PreparedDefinition kDef_ZG_103Z_model;
+extern const PreparedDefinition kDef_ZG_204Z;
 extern const PreparedDefinition kDefGen_ZG_204ZE;
 extern const PreparedDefinition kDef_ZG_204ZH;
 extern const PreparedDefinition kDef_ZG_204ZK;
@@ -70,7 +71,8 @@ extern const PreparedDefinition kDef_ZG_204ZV;
 extern const PreparedDefinition kDefGen_ZG_204ZX;
 extern const PreparedDefinition kDefGen_ZG_205ZL;
 extern const PreparedDefinition kDefGen_ZG_222Z;
-extern const PreparedDefinition kDefGen_ZG_223Z;
+extern const PreparedDefinition kDef_ZG_223Z;
+extern const PreparedDefinition kDef_ZG_223Z_model;
 extern const PreparedDefinition kDefGen_ZG_225Z;
 extern const PreparedDefinition kDefGen_ZG_226Z;
 extern const PreparedDefinition kDefGen_ZG_228Z;
@@ -1510,6 +1512,7 @@ extern const PreparedDefinition kDef_CK_TLSR8258_L5PI_01_7009;
 extern const PreparedDefinition kDef_TS0601_switch_4_gang_1_58of2pfn;
 extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq;
 extern const PreparedDefinition kDef_TOQCB2_80_lyqazpe6;
+extern const PreparedDefinition kDef_ZG_102ZA;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_CK_BL702_AL_01_Z102,
@@ -1533,8 +1536,9 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_102Z,
     &kDefGen_ZG_102ZL,
     &kDef_ZG_102ZM,
-    &kDefGen_ZG_103Z,
-    &kDefGen_ZG_204Z,
+    &kDef_ZG_103Z,
+    &kDef_ZG_103Z_model,
+    &kDef_ZG_204Z,
     &kDefGen_ZG_204ZE,
     &kDef_ZG_204ZH,
     &kDef_ZG_204ZK,
@@ -1563,7 +1567,8 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_ZG_204ZX,
     &kDefGen_ZG_205ZL,
     &kDefGen_ZG_222Z,
-    &kDefGen_ZG_223Z,
+    &kDef_ZG_223Z,
+    &kDef_ZG_223Z_model,
     &kDefGen_ZG_225Z,
     &kDefGen_ZG_226Z,
     &kDefGen_ZG_228Z,
@@ -3005,6 +3010,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_TS0601_switch_4_gang_1_58of2pfn,
     &kDef_TS0601_switch_6_gang_znkkcauq,
     &kDef_TOQCB2_80_lyqazpe6,
+    &kDef_ZG_102ZA,
 };
 
 extern const std::size_t kTuyaRegistryCount =
