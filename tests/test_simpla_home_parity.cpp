@@ -69,10 +69,6 @@ bool f_near(const Value* v, float expect) {
     return (d < 0.01f) && (d > -0.01f);
 }
 
-bool u_eq(const Value* v, std::uint64_t expect) {
-    return v && v->type == ValueType::Uint && v->u == expect;
-}
-
 // ── ZCL attribute report builder: fc=0x18, tsn, cmd=0x0A, then records ─
 std::vector<std::uint8_t> attr_report(std::uint16_t attr_id, std::uint8_t type,
                                       std::span<const std::uint8_t> value) {
@@ -173,13 +169,14 @@ static void test_temperature_bare_on_ep1() {
     assert(r.merged.find("temperature_z1_top") == nullptr);
 }
 
-// illuminance on ep 1 stays bare, passed through as raw u16.
+// illuminance on ep 1 stays bare; in lux since R8 (z2m m.illuminance luxScale:
+// 789 -> 10^(788 / 10000) = 1.199 lx).
 static void test_illuminance_bare_on_ep1() {
     auto bytes = le16(static_cast<std::uint16_t>(789));
     auto rep = attr_report(0x0000, 0x21, std::span<const std::uint8_t>(bytes.data(), 2));
     auto r = dispatch_zcl(def(), 0x0400, "msIlluminanceMeasurement", /*src_ep=*/1,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
-    assert(u_eq(r.merged.find("illuminance"), 789));
+    assert(f_near(r.merged.find("illuminance"), 1.199f));
 }
 
 int main() {

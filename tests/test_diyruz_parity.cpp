@@ -181,12 +181,13 @@ int main() {
         const Value* h = r.merged.find("humidity_bme");
         assert(h && h->type == ValueType::Float && near(h->f, 67.89f));
     }
-    // regression: illuminance (m.illuminance(), 0x0400) -> "illuminance_bme"
+    // regression: illuminance (m.illuminance(), 0x0400) -> "illuminance_bme",
+    // in lux since R8 (z2m luxScale: 10^((12345 - 1) / 10000) = 17.155 lx)
     {
         auto r = report_u16(kDef_DIYRuZ_Flower, 0x0400, 1, 12345);
         assert(r.any_matched);
         const Value* l = r.merged.find("illuminance_bme");
-        assert(l && l->type == ValueType::Uint && l->u == 12345);
+        assert(l && l->type == ValueType::Float && near(l->f, 17.155f));
     }
 
     // ===== DIYRuZ_AirSense: co2 restored (was dropped) ====================

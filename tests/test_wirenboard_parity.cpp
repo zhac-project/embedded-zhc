@@ -27,6 +27,7 @@
 
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -172,14 +173,15 @@ void check_v4() {
     // v.4 declares an endpoint_map → endpoint-1 keys gain `_default`.
     check_common(def, "_default");
 
-    // ── v.4 adds illuminance (msIlluminanceMeasurement 0x0400, raw lx). ─
+    // ── v.4 adds illuminance (msIlluminanceMeasurement 0x0400), in lux since
+    // R8 (z2m m.illuminance luxScale: 1000 -> 10^(999 / 10000) = 1.2586 lx). ─
     assert(def_exposes(def, "illuminance"));
     const std::uint8_t lux[] = {0xE8, 0x03};   // 0x03E8 = 1000 raw lux
     auto rl = dispatch_zcl(def, 0x0400, "msIlluminanceMeasurement", 1,
                            attr_report(0x0000, 0x21, lux));
     assert(rl.any_matched);
     const Value* lv = rl.merged.find("illuminance_default");
-    assert(lv && lv->type == ValueType::Uint && lv->u == 1000u);
+    assert(lv && lv->type == ValueType::Float && std::fabs(lv->f - 1.2586f) < 0.001f);
 }
 
 }  // namespace

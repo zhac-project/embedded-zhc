@@ -241,12 +241,15 @@ void test_fingerprints() {
     std::printf("fingerprints folded this window\n");
     check(has_manu(devices::tuya::kDefTS0601_cover, "_TZE28C1000000_1fuxihti") &&
           has_manu(devices::tuya::kDefTS0601_cover, "_TZE204_1fuxihti"), "TS0601_cover carries 1fuxihti");
-    check(devices::tuya::kDefTS0601_cover.manufacturer_names_count == 12, "TS0601_cover count is sizeof-derived (12)");
+    // R8 (z2m v26.111.0 / v26.113.0): -_TZE200_pk0sfzvr (now WSER40), +_TZE200_fu14oapz,
+    // +_TZE204_zuq5xxib / _TZE284_zuq5xxib.
+    check(devices::tuya::kDefTS0601_cover.manufacturer_names_count == 14, "TS0601_cover count is sizeof-derived (14)");
     check(has_manu(devices::tuya::kDef_ZTH05Z_onenuo, "_TZE284_qf5mzewi") &&
           has_manu(devices::tuya::kDef_ZTH05Z_onenuo, "_TZE2841000000_qf5mzewi"), "ONENUO TH05Z both names");
     check(has_manu(devices::zemismart::kDef_ZMS_206US_4, "_TZE28C1000000_xibaabmu") &&
           has_manu(devices::zemismart::kDef_ZMS_206US_4, "_TZE28C1000000_y4jqpry8") &&
-          devices::zemismart::kDef_ZMS_206US_4.manufacturer_names_count == 9, "ZMS-206US-4 9 names");
+          devices::zemismart::kDef_ZMS_206US_4.manufacturer_names_count == 10,   // R8 + _TZE28C1000000_pmbxyf97
+          "ZMS-206US-4 10 names");
     check(has_manu(devices::zemismart::kDef_ZMS_206EU_2, "_TZE28C1000000_dmckrsxg") &&
           devices::zemismart::kDef_ZMS_206EU_2.manufacturer_names_count == 4, "ZMS-206EU-2 4 names");
     check(has_expose(devices::zemismart::kDef_ZMS_206US_4, "relay_status_l4"), "ZMS-206US-4 relay_status_l4 wired");

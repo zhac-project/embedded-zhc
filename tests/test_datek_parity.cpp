@@ -174,9 +174,14 @@ void check_hse2927e() {
     const auto& def = devices::datek::kDef_HSE2927E;
 
     // msIlluminanceMeasurement 0x0400 measuredValue (attr 0x0000, u16)
-    // -> "illuminance" via generic kFzIlluminance.
-    expect_uint(def, MS_ILLUM, "msIlluminanceMeasurement", 0x0000, 0x21,
-                u16(12345), "illuminance", 12345);
+    // -> "illuminance" via generic kFzIlluminance, in lux since R8 (z2m
+    // luxScale: 10^((12345 - 1) / 10000) = 17.155 lx).
+    {
+        assert(def_exposes(def, "illuminance"));
+        const Value* v = decode_one(def, MS_ILLUM, "msIlluminanceMeasurement", 0x0000, 0x21,
+                                    u16(12345), "illuminance");
+        assert(v && v->type == ValueType::Float && v->f > 17.15f && v->f < 17.16f);
+    }
 
     // Regression: existing channels still decode/expose.
     assert(def_exposes(def, "temperature"));
