@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Develco SPLZB-141 — auto-generated.
+// Tier 2: Develco SPLZB-141 smart plug, graduated from the generated copy.
+// z2m v26.111.0 (#13224, continuous acFrequency reporting; refactor to
+// m.electricityMeter / m.onOff, z2m issue #29548): the plug
+// works on endpoint 2 — genOnOff on endpoint 1 fails to set up — so binding
+// and reporting go to endpoint 2. The generated copy bound endpoint 1.
 // Power plug
 // z2m-source: develco.ts #SPLZB-141.
 #include "definitions/_generic/_shared.hpp"
@@ -30,13 +34,20 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0702},
-    {1, 0x0B04},
+    {2, 0x0006},
+    {2, 0x0702},
+    {2, 0x0B04},
+};
+constexpr ReportingSpec kReports[] = {
+    {2, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0},     // onOff
+    {2, 0x0B04, 0x050B, 0x29, 5, 3600, 1, 0},     // activePower
+    {2, 0x0B04, 0x0508, 0x21, 5, 3600, 1, 0},     // rmsCurrent
+    {2, 0x0B04, 0x0505, 0x21, 5, 3600, 1, 0},     // rmsVoltage
+    {2, 0x0702, 0x0000, 0x25, 5, 3600, 257, 0},   // currentSummDelivered
 };
 // --- end auto-generated block ---
 
-extern const PreparedDefinition kDef_SPLZB_141{
+extern const PreparedDefinition kDefDevelco_SPLZB_141{
     .zigbee_models=kModels_SPLZB_141, .zigbee_models_count=sizeof(kModels_SPLZB_141)/sizeof(kModels_SPLZB_141[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
@@ -47,6 +58,7 @@ extern const PreparedDefinition kDef_SPLZB_141{
     .to_zigbee=kTz_SPLZB_141, .to_zigbee_count=sizeof(kTz_SPLZB_141)/sizeof(kTz_SPLZB_141[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=kReports, .reports_count=sizeof(kReports)/sizeof(kReports[0]),
 };
 
 }  // namespace zhc::devices::develco

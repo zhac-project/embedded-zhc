@@ -16,8 +16,10 @@
 #include "definitions/tuya/_shared.hpp"
 #include "zhc/cluster_names.hpp"
 #include "zhc/devices/candeo_registry.hpp"
+#include "zhc/devices/develco_registry.hpp"
 #include "zhc/devices/efekta_registry.hpp"
 #include "zhc/devices/immax_registry.hpp"
+#include "zhc/devices/ledvance_registry.hpp"
 #include "zhc/devices/legrand_registry.hpp"
 #include "zhc/devices/lincukoo_registry.hpp"
 #include "zhc/devices/lumi_registry.hpp"
@@ -25,8 +27,10 @@
 #include "zhc/devices/owon_registry.hpp"
 #include "zhc/devices/philips_registry.hpp"
 #include "zhc/devices/qa_registry.hpp"
+#include "zhc/devices/schneider_registry.hpp"
 #include "zhc/devices/sinope_registry.hpp"
 #include "zhc/devices/sonoff_registry.hpp"
+#include "zhc/devices/third_reality_registry.hpp"
 #include "zhc/devices/tier_e_registries.hpp"
 #include "zhc/devices/tuya_registry.hpp"
 #include "zhc/devices/zemismart_registry.hpp"
@@ -84,6 +88,13 @@ namespace zhc::devices::moes        { extern const PreparedDefinition kDef_SFL02
                                       extern const PreparedDefinition kDef_ZC_HM_dp;
                                       extern const PreparedDefinition kDef_FWJZCEH18A001_dp; }
 namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_CK_BL702_AL_01_Z102; }
+namespace zhc::devices::yale        { extern const PreparedDefinition kDef_LIA; }
+namespace zhc::devices::lumi        { extern const PreparedDefinition kDefZNMHLDJ01LM;
+                                      extern const PreparedDefinition kDefWSDCGQ12LM; }
+namespace zhc::devices::schneider   { extern const PreparedDefinition kDefSchneider_CCTFR6000; }
+namespace zhc::devices::third_reality { extern const PreparedDefinition kDefThirdReality_3RDP01072Z; }
+namespace zhc::devices::climax      { extern const PreparedDefinition kDef_SRAC_23B_ZBSR; }
+namespace zhc::devices::develco     { extern const PreparedDefinition kDef_SMSZB_120; }
 namespace zhc::devices::efekta      { extern const PreparedDefinition kDefEfekta_PST_V1;
                                       extern const PreparedDefinition kDefEfekta_PST_DUO_V1;
                                       extern const PreparedDefinition kDefEfekta_TH_POW;
@@ -486,6 +497,10 @@ const std::vector<const PreparedDefinition*>& registries() {
     add(devices::moes::kMoesRegistry, devices::moes::kMoesRegistryCount);
     add(devices::lincukoo::kLincukooRegistry, devices::lincukoo::kLincukooRegistryCount);
     add(devices::efekta::kEfektaRegistry, devices::efekta::kEfektaRegistryCount);
+    add(devices::ledvance::kLedvanceRegistry, devices::ledvance::kLedvanceRegistryCount);
+    add(devices::schneider::kSchneiderRegistry, devices::schneider::kSchneiderRegistryCount);
+    add(devices::third_reality::kThirdRealityRegistry, devices::third_reality::kThirdRealityRegistryCount);
+    add(devices::develco::kDevelcoRegistry, devices::develco::kDevelcoRegistryCount);
     for (std::size_t i = 0; i < devices::tier_e::kTierERegistriesCount; ++i)
         add(devices::tier_e::kTierERegistries[i].reg, devices::tier_e::kTierERegistries[i].count);
     return reg;
@@ -744,6 +759,78 @@ void test_twin_pins() {
     }
 }
 
+const Expose* expose_of(const PreparedDefinition& d, const char* name) {
+    for (std::size_t i = 0; i < d.exposes_count; ++i)
+        if (std::strcmp(d.exposes[i].name, name) == 0) return &d.exposes[i];
+    return nullptr;
+}
+bool binds(const PreparedDefinition& d, std::uint8_t ep, std::uint16_t cluster) {
+    for (std::size_t i = 0; i < d.bindings_count; ++i)
+        if (d.bindings[i].endpoint == ep && d.bindings[i].cluster_id == cluster) return true;
+    return false;
+}
+
+// Vendor changes of the window on existing definitions.
+void test_vendor_fixes() {
+    std::printf("Lock events, Yale LIA, Aqara curtain / T1, Ledvance, Schneider, Third Reality, Develco\n");
+    // ZCL: operationEventNotification is 0x20, programmingEventNotification 0x21.
+    { std::vector<std::uint8_t> f{0x09, 0x11, 0x20, 0x04, 0x02, 0x03, 0x00};
+      auto d = dispatch(devices::yale::kDef_LIA, 0x0101, 1, std::span<const std::uint8_t>(f.data(), f.size()));
+      check(r_str(d, "action", "unlock") && r_str(d, "action_source_name", "fingerprint") &&
+            approx(r_float(d, "action_user"), 3.f), "LIA operation event 0x20 -> unlock by fingerprint, user 3"); }
+    { std::vector<std::uint8_t> f{0x09, 0x12, 0x21, 0x00, 0x02, 0x07, 0x00};
+      auto d = dispatch(devices::yale::kDef_LIA, 0x0101, 1, std::span<const std::uint8_t>(f.data(), f.size()));
+      check(r_find(d, "action") == nullptr, "0x21 is not an operation event"); }
+    // ZNMHLDJ01LM: Lumi curtain attributes on 0xFCC0 (manufacturer 0x115F).
+    { Report r(0x115F); r.u8(0x0401, 0x10, 0).u8(0x0421, 0x20, 2).u8(0x0426, 0x20, 2);
+      auto d = dispatch(devices::lumi::kDefZNMHLDJ01LM, 0xFCC0, 1, r.span());
+      check(r_bool(d, "manual_open_close", true) && r_str(d, "status", "stopped") &&
+            r_str(d, "calibration_status", "fully_calibrated"), "ZNMHLDJ01LM curtain attributes"); }
+    { auto e = encode(devices::lumi::kDefZNMHLDJ01LM, "identify_beep", str("long"));
+      check(e.ok && e.cluster == 0xFCC0 && e.frame.size() >= 3 && e.frame[1] == 0x5F && e.frame[2] == 0x11 &&
+            e.frame.back() == 2, "ZNMHLDJ01LM identify_beep long, manufacturer-specific"); }
+    // WSDCGQ12LM reports temperature / humidity / pressure / battery.
+    check(binds(devices::lumi::kDefWSDCGQ12LM, 1, 0x0402) && binds(devices::lumi::kDefWSDCGQ12LM, 1, 0x0403) &&
+          devices::lumi::kDefWSDCGQ12LM.reports_count == 5 && expose_of(devices::lumi::kDefWSDCGQ12LM, "pressure"),
+          "WSDCGQ12LM binds and reports its sensors");
+    // Graduated definitions: what the registry hands out for these models.
+    const auto& reg = registries();
+    const std::span<const PreparedDefinition* const> all(reg.data(), reg.size());
+    auto resolved = [&](const char* zm) { return find_definition(zm, "x", all); };
+    { const auto* d = resolved("A60 RGBW T");
+      check(d && expose_of(*d, "power_on_behavior"), "4058075729025 power_on_behavior"); }
+    { const auto* d = resolved("TUBE_T8_CON_1200_16W_840ZBV");
+      check(d && expose_of(*d, "brightness"), "4058075823976 brightness"); }
+    { const auto* d = resolved("UFH");
+      check(d && expose_of(*d, "demand_percentage") && expose_of(*d, "cycle_time"), "CCTFR6000 resolves with demand / cycle time"); }
+    { const auto* d = resolved("3RDP01072Z");
+      check(d && expose_of(*d, "metering_only_mode"), "3RDP01072Z resolves with metering_only_mode"); }
+    { const auto* d = resolved("SPLZB-137");
+      check(d && binds(*d, 2, 0x0006) && !binds(*d, 1, 0x0006), "SPLZB-137 resolves to the endpoint-2 binds"); }
+    // CCTFR6000: demand per channel on 0xFF16.
+    { Report r(0x105E); r.u8(0x0000, 0x20, 55);
+      auto d = dispatch(devices::schneider::kDefSchneider_CCTFR6000, 0xFF16, 3, r.span());
+      check(approx(r_float(d, "demand_percentage_3"), 55.f), "CCTFR6000 channel 3 demand 55 %"); }
+    { auto e = encode(devices::schneider::kDefSchneider_CCTFR6000, "cycle_time", num(900));
+      check(e.ok && e.cluster == 0xFF16 && e.frame.size() >= 3 && e.frame[1] == 0x5E && e.frame[2] == 0x10,
+            "CCTFR6000 cycle_time write, manufacturer 0x105E"); }
+    // 3RDP01072Z: metering-only mode per outlet.
+    { Report r(0x1407); r.u8(0x0050, 0x20, 1);
+      auto d = dispatch(devices::third_reality::kDefThirdReality_3RDP01072Z, 0xFF03, 2, r.span());
+      check(r_bool(d, "metering_only_mode_2", true), "3RDP01072Z outlet 2 metering_only_mode"); }
+    // Climax SRAC-23B-ZBSR max_duration 0..600.
+    { const Expose* x = expose_of(devices::climax::kDef_SRAC_23B_ZBSR, "max_duration");
+      check(x && x->value_max == 600, "SRAC-23B-ZBSR max_duration up to 600 s"); }
+    // Develco: smoke alarm binds on its real endpoints; fault status.
+    check(!binds(devices::develco::kDef_SMSZB_120, 1, 0x0402) && binds(devices::develco::kDef_SMSZB_120, 38, 0x0402) &&
+          binds(devices::develco::kDef_SMSZB_120, 35, 0x000F), "SMSZB-120 binds endpoints 35 / 38");
+    { Report r; r.u8(0x0067, 0x30, 7).u8(0x006F, 0x18, 1);
+      auto d = dispatch(devices::develco::kDef_SMSZB_120, 0x000F, 35, r.span());
+      check(r_str(d, "reliability", "unreliable_other") && r_bool(d, "fault", true), "SMSZB-120 reliability / fault"); }
+    // Neo NAS-AB06B2 `_TZE200_nlrfgpny` was taken by an invented "TS0601_pressure".
+    resolves(all, {"TS0601", "_TZE200_nlrfgpny", "NAS-AB06B2"});
+}
+
 }  // namespace
 
 int main() {
@@ -758,6 +845,7 @@ int main() {
     test_new_zcl_devices();
     test_detects_and_graduations();
     test_twin_pins();
+    test_vendor_fixes();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;

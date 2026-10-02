@@ -154,7 +154,7 @@ void check_battery(const PreparedDefinition& def) {
     assert(u_eq(r.merged.find("battery"), 100));
 }
 
-// ── operation-event "action" stream (closuresDoorLock cmd 0x21,
+// ── operation-event "action" stream (closuresDoorLock cmd 0x20,
 //    server->client). Body: src:u8 code:u8 user_id:u16le.
 //    code 2 = unlock, src 0 = keypad. ──
 void check_operation_event(const PreparedDefinition& def) {
@@ -165,7 +165,7 @@ void check_operation_event(const PreparedDefinition& def) {
     // src=0 (keypad), code=2 (unlock), user_id=7.
     const std::uint8_t body[] = {0x00, 0x02, 0x07, 0x00};
     auto r = dispatch_zcl(def, 0x0101, "closuresDoorLock", 2,
-                          cmd_frame(0x21, body));
+                          cmd_frame(0x20, body));
     assert(r.any_matched);
     assert(s_eq(r.merged.find("action"), "unlock"));
     assert(s_eq(r.merged.find("action_source_name"), "keypad"));
@@ -174,7 +174,7 @@ void check_operation_event(const PreparedDefinition& def) {
     // src=2 (manual), code=1 (lock), user_id=0.
     const std::uint8_t body2[] = {0x02, 0x01, 0x00, 0x00};
     auto r2 = dispatch_zcl(def, 0x0101, "closuresDoorLock", 2,
-                           cmd_frame(0x21, body2));
+                           cmd_frame(0x20, body2));
     assert(r2.any_matched);
     assert(s_eq(r2.merged.find("action"), "lock"));
     assert(s_eq(r2.merged.find("action_source_name"), "manual"));

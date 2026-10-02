@@ -139,7 +139,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0210.cpp
     definitions/tuya/TZE200_soil.cpp
     definitions/tuya/TZE200_rain.cpp
-    definitions/tuya/TZE200_pressure.cpp
     definitions/tuya/TZE200_air_pressure.cpp
     definitions/tuya/TZE200_uv.cpp
     definitions/tuya/TZE200_battery_mon.cpp

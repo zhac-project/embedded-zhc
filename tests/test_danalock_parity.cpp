@@ -8,14 +8,14 @@
 // fz.lock_operation_event + fz.lock_programming_event (the lock `action`
 // stream → action / action_user / action_source / action_source_name) and
 // tz.pincode_lock (the `pin_code` write). The generic closuresDoorLock
-// helpers kFzLockOperationEvent (cmd 0x21) / kFzLockProgrammingEvent
-// (cmd 0x20) / kTzLockPinCode already exist (used by datek/onesti/kwikset)
+// helpers kFzLockOperationEvent (cmd 0x20) / kFzLockProgrammingEvent
+// (cmd 0x21) / kTzLockPinCode already exist (used by datek/onesti/kwikset)
 // and are now wired into the danalock def.
 //
 // Verified here at the dispatch_from_zigbee boundary:
-//   * operation-event cmd 0x21 → action="lock", action_user, action_source,
+//   * operation-event cmd 0x20 → action="lock", action_user, action_source,
 //     action_source_name="manual".
-//   * programming-event cmd 0x20 → action="pin_code_added".
+//   * programming-event cmd 0x21 → action="pin_code_added".
 //   * Regression: battery / lock_state still decode + are exposed; the
 //     closuresDoorLock + genPowerCfg binds + pin_code expose are present.
 //
@@ -108,11 +108,11 @@ std::vector<std::uint8_t> u8v(std::uint8_t x) { return {x}; }
 void check_v3() {
     const auto& def = devices::danalock::kDef_V3_BTZB_V3_BTZBE;
 
-    // ── The fix: lock operation event (cmd 0x21). src=2 (manual),
+    // ── The fix: lock operation event (cmd 0x20). src=2 (manual),
     //    code=1 (lock), user_id=10. → action="lock", action_user=10,
     //    action_source=2, action_source_name="manual". ──
     {
-        auto ev = lock_event(0x21, /*src*/2, /*code*/1, /*user*/10);
+        auto ev = lock_event(0x20, /*src*/2, /*code*/1, /*user*/10);
         auto r  = dispatch_zcl(def, CLOSURES_DOORLOCK, "closuresDoorLock", 1, ev);
         assert(r.any_matched);
 
@@ -131,9 +131,9 @@ void check_v3() {
                std::strcmp(asn->str, "manual") == 0);
     }
 
-    // ── Lock programming event (cmd 0x20). code=2 → "pin_code_added". ──
+    // ── Lock programming event (cmd 0x21). code=2 → "pin_code_added". ──
     {
-        auto ev = lock_event(0x20, /*src*/0, /*code*/2, /*user*/7);
+        auto ev = lock_event(0x21, /*src*/0, /*code*/2, /*user*/7);
         auto r  = dispatch_zcl(def, CLOSURES_DOORLOCK, "closuresDoorLock", 1, ev);
         assert(r.any_matched);
         const Value* a = r.merged.find("action");

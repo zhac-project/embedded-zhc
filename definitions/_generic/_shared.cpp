@@ -2992,6 +2992,7 @@ bool fz_zcl_attr_map(const DecodedMessage& msg,
             else if (v->type == ValueType::Uint) o.b = v->u != 0;
             else if (v->type == ValueType::Int)  o.b = v->i != 0;
             else continue;
+            if (r.flags & kZclAttrFlagInvert) o.b = !o.b;
             any |= out.put(r.key, o);
             continue;
         }
@@ -3747,7 +3748,7 @@ extern const FzConverter kFzLockProgrammingEvent{
     .family            = FrameFamily::Zcl,
     .cluster           = "closuresDoorLock",
     .type_mask         = type_bit(MessageType::Command),
-    .command_id        = 0x20,
+    .command_id        = 0x21  /* programmingEventNotification */,
     .attr_id           = WILDCARD_ATTR_ID,
     .endpoint          = WILDCARD_ENDPOINT,
     .frame_flags_mask  = 0,
@@ -3761,7 +3762,7 @@ extern const FzConverter kFzLockOperationEvent{
     .family            = FrameFamily::Zcl,
     .cluster           = "closuresDoorLock",
     .type_mask         = type_bit(MessageType::Command),
-    .command_id        = 0x21,
+    .command_id        = 0x20  /* operationEventNotification */,
     .attr_id           = WILDCARD_ATTR_ID,
     .endpoint          = WILDCARD_ENDPOINT,
     .frame_flags_mask  = 0,

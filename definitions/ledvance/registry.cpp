@@ -33,7 +33,7 @@ extern const PreparedDefinition kDef_D4058075485174;
 extern const PreparedDefinition kDef_D4058075724587;
 extern const PreparedDefinition kDef_D4058075728981;
 extern const PreparedDefinition kDef_D4058075729001;
-extern const PreparedDefinition kDef_D4058075729025;
+extern const PreparedDefinition kDefLedvance_4058075729025;
 extern const PreparedDefinition kDef_D4058075729049;
 extern const PreparedDefinition kDef_D4058075729063;
 extern const PreparedDefinition kDef_D4058075729087;
@@ -51,7 +51,7 @@ extern const PreparedDefinition kDef_D4058075729322;
 extern const PreparedDefinition kDef_D4058075729346;
 extern const PreparedDefinition kDef_D4058075729360;
 extern const PreparedDefinition kDef_D4058075729384;
-extern const PreparedDefinition kDef_D4058075823976;
+extern const PreparedDefinition kDefLedvance_4058075823976;
 extern const PreparedDefinition kDef_D4099854513718;
 extern const PreparedDefinition kDef_D74746;
 extern const PreparedDefinition kDef_GPDRPLOP401100CE;
@@ -86,7 +86,7 @@ const PreparedDefinition* const kLedvanceRegistry[] = {
     &kDef_D4058075724587,
     &kDef_D4058075728981,
     &kDef_D4058075729001,
-    &kDef_D4058075729025,
+    &kDefLedvance_4058075729025,
     &kDef_D4058075729049,
     &kDef_D4058075729063,
     &kDef_D4058075729087,
@@ -104,7 +104,7 @@ const PreparedDefinition* const kLedvanceRegistry[] = {
     &kDef_D4058075729346,
     &kDef_D4058075729360,
     &kDef_D4058075729384,
-    &kDef_D4058075823976,
+    &kDefLedvance_4058075823976,
     &kDef_D4099854513718,
     &kDef_D74746,
     &kDef_GPDRPLOP401100CE,

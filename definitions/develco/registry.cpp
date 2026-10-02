@@ -18,8 +18,8 @@ extern const PreparedDefinition kDef_SMSZB_120;
 extern const PreparedDefinition kDef_SPLZB_131;
 extern const PreparedDefinition kDef_SPLZB_132;
 extern const PreparedDefinition kDef_SPLZB_134;
-extern const PreparedDefinition kDef_SPLZB_137;
-extern const PreparedDefinition kDef_SPLZB_141;
+extern const PreparedDefinition kDefDevelco_SPLZB_137;
+extern const PreparedDefinition kDefDevelco_SPLZB_141;
 extern const PreparedDefinition kDef_AQSZB_110;
 extern const PreparedDefinition kDef_EMIZB_132;
 extern const PreparedDefinition kDef_FLSZB_110;
@@ -49,8 +49,8 @@ const PreparedDefinition* const kDevelcoRegistry[] = {
     &kDef_SPLZB_131,
     &kDef_SPLZB_132,
     &kDef_SPLZB_134,
-    &kDef_SPLZB_137,
-    &kDef_SPLZB_141,
+    &kDefDevelco_SPLZB_137,
+    &kDefDevelco_SPLZB_141,
     &kDef_AQSZB_110,
     &kDef_EMIZB_132,
     &kDef_FLSZB_110,

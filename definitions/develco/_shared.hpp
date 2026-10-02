@@ -107,4 +107,11 @@ extern const FzConverter kFzDevelcoOccupancyTimeout;
 extern const TzConverter kTzDevelcoLedControl;
 extern const TzConverter kTzDevelcoOccupancyTimeout;
 
+// ── Fault status (develcoModernExtend.faultStatus, z2m v26.114.0) ──
+//
+// genBinaryInput reliability (0x0067) -> `reliability` (0 no_fault_detected,
+// 7 unreliable_other, 8 process_error) and statusFlags (0x006F) -> `fault`
+// (true when the flags are exactly 1, as upstream).
+extern const FzConverter kFzDevelcoFaultStatus;
+
 }  // namespace zhc::develco

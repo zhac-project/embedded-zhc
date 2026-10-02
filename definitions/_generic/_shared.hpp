@@ -716,13 +716,16 @@ struct ZclWriteSpec {
 //   * `lookup` set   -> the raw value maps to a StringRef label; values the
 //                       table does not know are dropped (z2m publishes
 //                       undefined, which never reaches state).
-//   * kZclAttrFlagBool -> nonzero raw publishes Bool true.
+//   * kZclAttrFlagBool -> nonzero raw publishes Bool true (kZclAttrFlagInvert:
+//                       false).
 //   * `divisor` > 1  -> Float raw / divisor (z2m `scale: N` on the read).
 //   * otherwise      -> the decoded Value as-is (Uint/Int/Float/Bool).
 // `manufacturer_code` != 0 restricts the map to frames carrying that code,
 // which matters on unnamed custom clusters: an unlabelled cluster fails open
 // in dispatch, so every converter of the def sees it.
 inline constexpr std::uint8_t kZclAttrFlagBool = 0x01;
+// With kZclAttrFlagBool: publish the opposite (z2m valueOn: ["ON", 0]).
+inline constexpr std::uint8_t kZclAttrFlagInvert = 0x02;
 
 struct ZclAttrRow {
     std::uint16_t attr_id;
@@ -801,13 +804,14 @@ inline constexpr ZclWriteLookup kTemperatureDisplayModes[] = { {"celsius", 0}, {
 inline constexpr ZclWriteSpec kKeypadLockoutSpec{ "keypad_lockout", 0x0001, 0x30, 0, kKeypadLockoutModes, 6 };
 inline constexpr ZclWriteSpec kTemperatureDisplayModeSpec{ "temperature_display_mode", 0x0000, 0x30, 0, kTemperatureDisplayModes, 2 };
 
-// closuresDoorLock command 0x20 (programming-event notification).
+// closuresDoorLock command 0x21 (programming-event notification; ZCL /
+// herdsman programmingEventNotification — R8 found 0x20 / 0x21 swapped).
 // Decodes program_event_code into z2m's `action` enum
 // ("master_code_changed" / "pin_code_added" / …) plus `action_user`,
 // `action_source`, `action_source_name`. Use cross-vendor on locks.
 extern const FzConverter kFzLockProgrammingEvent;
 
-// closuresDoorLock command 0x21 (operation-event notification).
+// closuresDoorLock command 0x20 (operation-event notification).
 // Decodes op_event_code into `action` ("lock" / "unlock" /
 // "key_unlock" / …) plus the same auxiliary fields as above.
 extern const FzConverter kFzLockOperationEvent;

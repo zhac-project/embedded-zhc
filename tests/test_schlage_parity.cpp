@@ -7,7 +7,7 @@
 // Bug fixed (Sch_BE468 graduated generated/ -> Tier-2 parent):
 //
 //   * Dropped lock-action stream. z2m wires fz.lock_operation_event +
-//     fz.lock_programming_event (closuresDoorLock cmds 0x21/0x20,
+//     fz.lock_programming_event (closuresDoorLock cmds 0x20/0x21,
 //     server->client) -> action / action_user / action_source /
 //     action_source_name, plus tz.pincode_lock -> pin_code. The auto-port
 //     wired only kFzLock + kFzBattery and exposed battery/voltage/lock_state,
@@ -156,13 +156,13 @@ void test_battery() {
     assert(u_eq(r.merged.find("battery"), 100));
 }
 
-// ── operation-event "action" stream (closuresDoorLock cmd 0x21,
+// ── operation-event "action" stream (closuresDoorLock cmd 0x20,
 //    server->client). Body: src:u8 code:u8 user_id:u16le. ──
 void test_operation_event() {
     // src=0 (keypad), code=2 (unlock), user_id=7.
     const std::uint8_t body[] = {0x00, 0x02, 0x07, 0x00};
     auto r = dispatch_zcl(kDef_BE468, 0x0101, "closuresDoorLock", 1,
-                          cmd_frame(0x21, body));
+                          cmd_frame(0x20, body));
     assert(r.any_matched);
     assert(s_eq(r.merged.find("action"), "unlock"));
     assert(s_eq(r.merged.find("action_source_name"), "keypad"));
@@ -171,18 +171,18 @@ void test_operation_event() {
     // src=2 (manual), code=13 (manual_lock), user_id=0.
     const std::uint8_t body2[] = {0x02, 0x0D, 0x00, 0x00};
     auto r2 = dispatch_zcl(kDef_BE468, 0x0101, "closuresDoorLock", 1,
-                           cmd_frame(0x21, body2));
+                           cmd_frame(0x20, body2));
     assert(r2.any_matched);
     assert(s_eq(r2.merged.find("action"), "manual_lock"));
     assert(s_eq(r2.merged.find("action_source_name"), "manual"));
 }
 
-// ── programming-event "action" stream (closuresDoorLock cmd 0x20). ──
+// ── programming-event "action" stream (closuresDoorLock cmd 0x21). ──
 void test_programming_event() {
     // src=0 (keypad), code=2 (pin_code_added), user_id=3.
     const std::uint8_t body[] = {0x00, 0x02, 0x03, 0x00};
     auto r = dispatch_zcl(kDef_BE468, 0x0101, "closuresDoorLock", 1,
-                          cmd_frame(0x20, body));
+                          cmd_frame(0x21, body));
     assert(r.any_matched);
     assert(s_eq(r.merged.find("action"), "pin_code_added"));
     assert(u_eq(r.merged.find("action_user"), 3));

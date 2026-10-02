@@ -41,7 +41,8 @@ constexpr Expose kExp_SRAC_23B_ZBSR[] = {
     {"battery_low",  ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
     {"warning",      ExposeType::Binary,  Access::Set,      nullptr, nullptr, nullptr, 0},
     {"squawk",       ExposeType::Binary,  Access::Set,      nullptr, nullptr, nullptr, 0},
-    {"max_duration", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0},
+    // z2m v26.115.1 window: m.iasWarning({maxDuration: {min: 0, max: 600}}).
+    {"max_duration", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 0, 600, 1},
 };
 
 constexpr BindingSpec kBind_SRAC_23B_ZBSR[] = {

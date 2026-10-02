@@ -1358,7 +1358,6 @@ extern const PreparedDefinition kDefTZE200_pm25;
 extern const PreparedDefinition kDefTZE200_pool_thermo;
 extern const PreparedDefinition kDefTZE200_presence_th;
 extern const PreparedDefinition kDefTZE200_presence_zone;
-extern const PreparedDefinition kDefTZE200_pressure;
 extern const PreparedDefinition kDefTZE200_pressure_vessel;
 extern const PreparedDefinition kDefTZE200_proj_screen;
 extern const PreparedDefinition kDefTZE200_purifier;
@@ -2849,7 +2848,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_pool_thermo,
     &kDefTZE200_presence_th,
     &kDefTZE200_presence_zone,
-    &kDefTZE200_pressure,
     &kDefTZE200_pressure_vessel,
     &kDefTZE200_proj_screen,
     &kDefTZE200_purifier,

@@ -7,7 +7,7 @@
 namespace zhc::devices::third_reality {
 
 extern const PreparedDefinition kDef_D3RCB01057Z;
-extern const PreparedDefinition kDef_D3RDP01072Z;
+extern const PreparedDefinition kDefThirdReality_3RDP01072Z;
 extern const PreparedDefinition kDef_D3RPL01084Z;
 extern const PreparedDefinition kDef_D3RSB015BZ;
 extern const PreparedDefinition kDef_D3RSB02015Z;
@@ -44,7 +44,7 @@ extern const PreparedDefinition kDef_3RKS030Z;
 
 const PreparedDefinition* const kThirdRealityRegistry[] = {
     &kDef_D3RCB01057Z,
-    &kDef_D3RDP01072Z,
+    &kDefThirdReality_3RDP01072Z,
     &kDef_D3RPL01084Z,
     &kDef_D3RSB015BZ,
     &kDef_D3RSB02015Z,

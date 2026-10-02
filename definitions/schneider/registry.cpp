@@ -11,7 +11,7 @@ extern const PreparedDefinition kDef_CCT5010_0003;
 extern const PreparedDefinition kDef_CCT5011_0001_CCT5011_0002_MEG5011_0001;
 extern const PreparedDefinition kDef_CCT5015_0001;
 extern const PreparedDefinition kDef_CCT711119;
-extern const PreparedDefinition kDef_CCTFR6000;
+extern const PreparedDefinition kDefSchneider_CCTFR6000;
 extern const PreparedDefinition kDef_CCTFR6100Z3;
 extern const PreparedDefinition kDef_CCTFR6400;
 extern const PreparedDefinition kDef_CCTFR6700;
@@ -89,7 +89,7 @@ const PreparedDefinition* const kSchneiderRegistry[] = {
     &kDef_CCT5011_0001_CCT5011_0002_MEG5011_0001,
     &kDef_CCT5015_0001,
     &kDef_CCT711119,
-    &kDef_CCTFR6000,
+    &kDefSchneider_CCTFR6000,
     &kDef_CCTFR6100Z3,
     &kDef_CCTFR6400,
     &kDef_CCTFR6700,

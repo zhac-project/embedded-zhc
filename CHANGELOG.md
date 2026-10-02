@@ -23,6 +23,31 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Door locks: operation and programming events were swapped.** ZCL (and
+  zigbee-herdsman) send the operation event notification as command 0x20 and
+  the programming event notification as 0x21; `kFzLockOperationEvent` /
+  `kFzLockProgrammingEvent` had them the other way round, so a keypad or
+  manual unlock decoded through the programming table and the reverse. Found
+  through z2m v26.115.0's Yale LIA change (#13341). Every lock using them
+  (Kwikset, Weiser, Schlage, Wyze, Danalock, Onesti) is affected; their
+  tests now build the frames with the spec ids.
+- **Yale LIA reports lock actions**: action / action_source(_name) /
+  action_user from the operation event, source 4 = fingerprint (z2m
+  v26.115.0).
+- **Develco SMSZB-120 / HESZB-120 smoke and heat alarms bound endpoint 1,
+  which they do not have**, so battery and temperature never reported. They
+  now bind genBinaryInput and genPowerCfg on endpoint 35 and temperature on
+  38 (at most four bindings, as z2m v26.114.0 / v26.115.0), report the
+  Develco fault status (`reliability`, `fault`) and expose `max_duration`
+  0..600. Needs a hardware check.
+- **Develco SPLZB-137 / SPLZB-141 plugs bound endpoint 1**; they work on
+  endpoint 2 (z2m v26.111.0, #13224), where binding and reporting now go.
+- **Neo NAS-AB06B2 `_TZE200_nlrfgpny` was decoded as a pressure sensor** by an
+  invented `TS0601_pressure` definition (no z2m source) that the Tuya registry
+  matched first; the definition is removed.
+- **Aqara WSDCGQ12LM did not report** (z2m v26.110.0, #13169): temperature,
+  humidity, pressure and battery are now bound and their reporting
+  configured, and the three sensors are exposed.
 - **Moes SFL02-Z-2, ZC-HM and FWJZCEH18A001 are one definition each, from
   z2m's datapoints.** Each was a generated model-level stub that decoded the
   Tuya datapoint device with ZCL converters (genOnOff, IAS zone,
@@ -121,6 +146,17 @@ across the ZHAC platform.
   from `noise_state`, as upstream). Datapoints z2m maps to strings
   (MW836P 107–109) or to energy / backlight writes MakeGood does through
   custom converters are not ported yet (see R8 worklist).
+- **Aqara ZNMHLDJ01LM curtain attributes** (z2m v26.107.0, #13116):
+  manual_open_close, status, last_manual_operation, traverse_time,
+  calibration_status, calibrated, identify_beep on manuSpecificLumi.
+  `kZclAttrFlagInvert` for z2m binaries whose ON is 0.
+- **Schneider CCTFR6000**: per-channel `demand_percentage` and `cycle_time`
+  (cluster 0xFF16, z2m v26.109.0) and white labels CCTFR6600 / CCTFR6610.
+- **Third Reality 3RDP01072Z**: per-outlet `metering_only_mode` (z2m window),
+  with the custom-cluster surface the generated copy lacked
+  (reset_total_energy, countdowns, red_led_brightness).
+- **Ledvance 4058075729025** power_on_behavior, **4058075823976** brightness
+  (z2m v26.114.0). Climax SRAC-23B-ZBSR `max_duration` range 0..600.
 - **Detects from the same window**: TS0601_switch_4_gang_1 `_TZE204_58of2pfn`
   (Tuya DIY-DC-04), TS0601_switch_6_gang `_TZE284_znkkcauq` (Ekaza
   EKGD-T4085P-4Z), TOQCB2-80 `_TZE204_lyqazpe6` / `_TZE284_lyqazpe6` (copies

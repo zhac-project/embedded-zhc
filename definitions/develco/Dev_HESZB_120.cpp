@@ -10,9 +10,18 @@
 // msTemperatureMeasurement channel z2m wires via
 // develcoModernExtend.temperature(). kTzWarning (IAS WD) kept.
 //
+// z2m v26.114.0 / v26.115.0 ("fix temperature"): the device accepts only
+// four bindings, so z2m binds just genBinaryInput on the IAS endpoint 35 and
+// lets battery (35) and temperature (38) bind through their extends; it adds
+// develcoModernExtend.faultStatus (reliability / fault, reported) and
+// max_duration 0..600. Bindings here were on endpoint 1, which this device
+// does not have, so none of them took. Not ported: zoneStatus reporting
+// (v26.115.2 removed it again) and the supervision / restore / test zone bits.
+//
 // z2m-source: develco.ts #HESZB-120 — fz.ias_smoke_alarm_1_develco +
 //             develcoModernExtend.temperature().
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/develco/_shared.hpp"
 
 namespace zhc::devices::develco {
 namespace {
@@ -20,9 +29,21 @@ const FzConverter* const kFz_HESZB_120[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzIasSmokeAlarm,
     &::zhc::generic::kFzTemperature,
+    &::zhc::develco::kFzDevelcoFaultStatus,
+    &::zhc::generic::kFzIasWdMaxDuration,
 };
 const TzConverter* const kTz_HESZB_120[] = {
     &::zhc::generic::kTzWarning,
+    &::zhc::generic::kTzIasWdMaxDuration,
+};
+constexpr const char* kReliability[] = { "no_fault_detected", "unreliable_other", "process_error" };
+constexpr std::uint8_t kReadZone[] = { 0x10, 0x00, 0x00, 0x00, 0x11, 0x00 };   // iasCieAddr, zoneState, zoneId
+constexpr std::uint8_t kReadFault[] = { 0x67, 0x00, 0x6F, 0x00 };              // reliability, statusFlags
+constexpr std::uint8_t kReadMaxDuration[] = { 0x00, 0x00 };
+constexpr ConfigStep kSteps[] = {
+    { ConfigStepOp::Read, 35, 0x0500, 0x00, 0, kReadZone, sizeof(kReadZone), 0 },
+    { ConfigStepOp::Read, 35, 0x000F, 0x00, 0, kReadFault, sizeof(kReadFault), 0 },
+    { ConfigStepOp::Read, 35, 0x0502, 0x00, 0, kReadMaxDuration, sizeof(kReadMaxDuration), 0 },
 };
 constexpr const char* kModels_HESZB_120[] = { "HESZB-120" };
 
@@ -37,12 +58,24 @@ constexpr Expose kAutoExposes[] = {
     {"smoke", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"reliability", ExposeType::Enum, Access::State, nullptr, "Indicates reason if any fault", kReliability, 3},
+    {"fault", ExposeType::Binary, Access::State, nullptr, "Indicates whether the device are in fault state", nullptr, 0},
+    {"max_duration", ExposeType::Numeric, Access::StateSet, "s", "Max duration in seconds of the alarm", nullptr, 0,
+     ExposeCategory::State, 0, 600, 1},
 };
 
+// Four bindings at most on this device: genBinaryInput (35), genPowerCfg
+// (35), msTemperatureMeasurement (38).
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0001},
-    {1, 0x0402},
-    {1, 0x0500},
+    {35, 0x000F},
+    {35, 0x0001},
+    {38, 0x0402},
+};
+constexpr ReportingSpec kReports[] = {
+    {35, 0x000F, 0x0067, 0x30, 0, 65000, 0, 0},    // reliability
+    {35, 0x000F, 0x006F, 0x18, 0, 65000, 0, 0},    // statusFlags
+    {35, 0x0001, 0x0020, 0x20, 3600, 65000, 10, 0}, // batteryVoltage
+    {38, 0x0402, 0x0000, 0x29, 10, 3600, 100, 0},   // temperature
 };
 // --- end auto-generated block ---
 
@@ -61,6 +94,8 @@ extern const PreparedDefinition kDef_HESZB_120{
     .to_zigbee=kTz_HESZB_120, .to_zigbee_count=sizeof(kTz_HESZB_120)/sizeof(kTz_HESZB_120[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=kReports, .reports_count=sizeof(kReports)/sizeof(kReports[0]),
+    .config_steps=kSteps, .config_steps_count=sizeof(kSteps)/sizeof(kSteps[0]),
 };
 
 }  // namespace zhc::devices::develco

@@ -209,4 +209,43 @@ ZHC_DEVELCO_TZ(kTzDevelcoOccupancyTimeout,
 
 #undef ZHC_DEVELCO_TZ
 
+// ── Fault status ────────────────────────────────────────────────────
+namespace {
+bool fz_develco_fault_status(const DecodedMessage& msg, const FzConverter&, const PreparedDefinition&,
+                             RuntimeContext&, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    bool any = false;
+    if (const Value* v = msg.payload.find("103")) {          // reliability
+        if (v->type == ValueType::Uint) {
+            const char* label = v->u == 0 ? "no_fault_detected" : v->u == 7 ? "unreliable_other"
+                              : v->u == 8 ? "process_error" : nullptr;
+            if (label) {
+                Value o{}; o.type = ValueType::StringRef; o.str = label;
+                any |= out.put("reliability", o);
+            }
+        }
+    }
+    if (const Value* v = msg.payload.find("111")) {          // statusFlags
+        if (v->type == ValueType::Uint) {
+            Value o{}; o.type = ValueType::Bool; o.b = v->u == 1;
+            any |= out.put("fault", o);
+        }
+    }
+    return any;
+}
+}  // namespace
+
+extern const FzConverter kFzDevelcoFaultStatus{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genBinaryInput",
+    .type_mask         = type_bit(MessageType::AttributeReport) | type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_develco_fault_status },
+    .user_config       = nullptr,
+};
+
 }  // namespace zhc::develco

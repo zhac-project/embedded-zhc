@@ -6,13 +6,13 @@
 // z2m wires fromZigbee: [fz.lock, fz.lock_operation_event, fz.battery].
 // The auto-generated port wired only fz.lock + fz.battery and DROPPED
 // fz.lock_operation_event — the closuresDoorLock (0x0101) cluster-specific
-// command 0x21 (Operation Event Notification, ServerToClient) that reports
+// command 0x20 (Operation Event Notification, ServerToClient) that reports
 // HOW the lock was operated (manual / keypad / rf, lock vs unlock, user id).
 // Fixed by wiring the generic kFzLockOperationEvent alongside the existing
 // kFzLock + kFzBattery converters.
 //
 // Verified here:
-//   * lock operation event (cmd 0x21) -> action / action_user /
+//   * lock operation event (cmd 0x20) -> action / action_user /
 //     action_source / action_source_name runtime keys.
 //   * Regression: kFzLock still emits lock_state (attr 0x0000) and the
 //     battery / lock_state exposes are intact.
@@ -97,14 +97,14 @@ const Value* str_val(const Value* v) {
 
 }  // namespace
 
-// ── lock operation event (cmd 0x21) — the dropped decoder ────────────
+// ── lock operation event (cmd 0x20) — the dropped decoder ────────────
 static void test_operation_event() {
     const auto& def = devices::wyze::kDef_WLCKG1;
 
     // Body: src:u8 code:u8 user_id:u16le.
     // src=2 (manual), code=14 (manual_unlock), user_id=7.
     const std::uint8_t body[] = {0x02, 0x0E, 0x07, 0x00};
-    auto frame = cmd_frame(0x21, body);
+    auto frame = cmd_frame(0x20, body);
     auto r = dispatch_zcl(def, CLOSURES_DOOR_LOCK, "closuresDoorLock", 1, frame);
     assert(r.any_matched);
 
@@ -123,7 +123,7 @@ static void test_operation_event() {
     // A different code maps to a different action ("key_lock" = code 8).
     const std::uint8_t body2[] = {0x00, 0x08, 0x00, 0x00};
     auto r2 = dispatch_zcl(def, CLOSURES_DOOR_LOCK, "closuresDoorLock", 1,
-                           cmd_frame(0x21, body2));
+                           cmd_frame(0x20, body2));
     assert(r2.any_matched);
     const Value* a2 = str_val(r2.merged.find("action"));
     assert(a2 && std::strcmp(a2->str, "key_lock") == 0);
