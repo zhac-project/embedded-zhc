@@ -25,6 +25,7 @@ extern const PreparedDefinition kDef_SOMFY_1241752;
 extern const PreparedDefinition kDef_D1800194;
 extern const PreparedDefinition kDef_D1811680;
 extern const PreparedDefinition kDef_D1811681;
+extern const PreparedDefinition kDef_D1246595;
 
 const PreparedDefinition* const kSomfyRegistry[] = {
     &kDef_D1003296,
@@ -46,6 +47,7 @@ const PreparedDefinition* const kSomfyRegistry[] = {
     &kDef_D1800194,
     &kDef_D1811680,
     &kDef_D1811681,
+    &kDef_D1246595,
 };
 const std::size_t kSomfyRegistryCount = sizeof(kSomfyRegistry) / sizeof(kSomfyRegistry[0]);
 

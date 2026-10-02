@@ -28,6 +28,7 @@ extern const PreparedDefinition kDef_LM4110ZB;
 extern const PreparedDefinition kDef_WL4200;
 extern const PreparedDefinition kDef_WL4200S;
 extern const PreparedDefinition kDef_WL4210;
+extern const PreparedDefinition kDef_OTH3600_GA_ZB;
 
 const PreparedDefinition* const kSinopeRegistry[] = {
     &kDef_DM2500ZB,
@@ -52,6 +53,7 @@ const PreparedDefinition* const kSinopeRegistry[] = {
     &kDef_WL4200,
     &kDef_WL4200S,
     &kDef_WL4210,
+    &kDef_OTH3600_GA_ZB,
 };
 const std::size_t kSinopeRegistryCount = sizeof(kSinopeRegistry) / sizeof(kSinopeRegistry[0]);
 

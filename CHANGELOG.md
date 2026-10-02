@@ -23,6 +23,10 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **ZigbeeTLc settings were written 100 times too small.** Temperature and
+  humidity calibration and the comfort limits are hundredths on the wire (z2m
+  `scale: 100`); the write specs sent the plain number, so 1.5 °C became 2
+  hundredths. They now multiply by 100.
 - **Zosung IR blasters: `learn_ir_code` OFF stops learning.** Every write
   started learning (`{"study":0}`); OFF / false now sends `{"study":1}`, as
   z2m v26.113.0 (#13267) does. WMUN ZS05, Aubess ZXZIR-02, Moes UFO-R11.
@@ -104,6 +108,28 @@ across the ZHAC platform.
   from `noise_state`, as upstream). Datapoints z2m maps to strings
   (MW836P 107–109) or to energy / backlight writes MakeGood does through
   custom converters are not ported yet (see R8 worklist).
+- **More new devices from the same window (ZCL).** Owon OPS305, WLS316,
+  PB206 (`sos` on zone bit 0, new `kFzIasSosAlarm`), WSP406; Allesin roller
+  shade (new vendor; `TLSR82xx` + `Aubor`, which the AwoX TLSR82xx light
+  definition used to take); Somfy 1246595; OpenLumi LR-DGNWG05LM /
+  LR-ZHWG11LM (split out of GWRJN5169, as upstream); Candeo C-ZB-SSFS
+  (power-on behaviour and child lock on genOnOff 0x8002 / 0x8000, metering
+  with z2m's fixed divisors); SONOFF SNZT-03P (PIR hold time, illuminance
+  offset on 0xFC11) and SNZT-04P (tamper from 0xFC11 0x2000; the zone's own
+  tamper bit is no longer published over it, new `kFzIasContactAlarmOnly`);
+  Aqara GDSD12LM track light (+ GDGSD13LM); Atlantic 100042838900 (Equateur
+  5) and the Nirvana+ 100052992400 / 100052994200 radiators (energy in Wh,
+  user-interface writes to endpoint 230); eWeLink CK-TLSR8258-L5PI-01(7009);
+  Zemismart KES-606US-L1 (TS0001 `_TZ3000_w5s3mbyn`, which fell to the
+  generic TS0001); HOBEIAN ZG-303Z-z (soil moisture on endpoint 2's
+  humidity cluster); Legrand WNP10; Ouellet OTH3600-GA-ZB (running state from
+  the heating demand; current / power derivation not ported); Waxman
+  8840100H leakSMART v2 (water leak and low battery from Appliance Events
+  and Alerts 0x0B02, now a named cluster; the model used to land on HSE2919E
+  through the substring fallback); Ekaza TS0225_EKAZA (new vendor, read
+  side only); Philips 929004320801. `kKeypadLockoutSpec` /
+  `kTemperatureDisplayModeSpec` are public for user-interface clusters on
+  another endpoint.
 - Purmo/Radson Yali Parada Plus: `keypad_lockout` (z2m v26.112.0, #13247),
   read at pairing; white labels Yali Digital Plus (Purmo/Radson, LVI). Generic
   `kFzHvacUserInterface` / `kTzKeypadLockout` / `kTzTemperatureDisplayMode`

@@ -255,6 +255,7 @@ extern const PreparedDefinition kDefZNXNKG02LM;
 extern const PreparedDefinition kDefZNXNKG03LM;
 extern const PreparedDefinition kDefZNXNKG04LM;
 extern const PreparedDefinition kDefZNXNKG05LM;
+extern const PreparedDefinition kDefGDSD12LM;
 
 extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefCTPR01,
@@ -503,6 +504,7 @@ extern const PreparedDefinition* const kLumiRegistry[] = {
     &kDefC200,
     &kDefFP310,
     &kDefSSWQD22LM,
+    &kDefGDSD12LM,
 };
 
 extern const std::size_t kLumiRegistryCount =

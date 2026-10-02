@@ -371,6 +371,12 @@ extern const FzConverter kFzIasGenericAlarm;
 // battery_low). Matches z2m `fz.ias_sos_alarm_2`, used by panic buttons
 // (Feibit SEB01ZB SOS button).
 extern const FzConverter kFzIasSosAlarm2;
+// Same, zoneStatus bit 0 (z2m iasZoneAlarm zoneType "sos" with alarm_1; Owon PB206).
+extern const FzConverter kFzIasSosAlarm;
+// Contact (inverted bit 0) without tamper / battery_low, for z2m
+// zoneAttributes ["alarm_1"] on a device that reports tamper on another
+// cluster (Sonoff SNZT-04P).
+extern const FzConverter kFzIasContactAlarmOnly;
 
 // ── genOnOff power-on behaviour (standard ZCL attribute 0x4003) ─────
 //
@@ -787,6 +793,13 @@ constexpr TzConverter zcl_write_tz(const char* cluster, std::uint16_t cluster_id
 extern const FzConverter kFzHvacUserInterface;
 extern const TzConverter kTzKeypadLockout;
 extern const TzConverter kTzTemperatureDisplayMode;
+// Their lookups and write specs, also for a device whose user-interface
+// cluster sits on another endpoint (`zcl_write_tz(..., &kKeypadLockoutSpec, ep)`).
+inline constexpr ZclWriteLookup kKeypadLockoutModes[] = {
+    {"unlock", 0}, {"lock1", 1}, {"lock2", 2}, {"lock3", 3}, {"lock4", 4}, {"lock5", 5} };
+inline constexpr ZclWriteLookup kTemperatureDisplayModes[] = { {"celsius", 0}, {"fahrenheit", 1} };
+inline constexpr ZclWriteSpec kKeypadLockoutSpec{ "keypad_lockout", 0x0001, 0x30, 0, kKeypadLockoutModes, 6 };
+inline constexpr ZclWriteSpec kTemperatureDisplayModeSpec{ "temperature_display_mode", 0x0000, 0x30, 0, kTemperatureDisplayModes, 2 };
 
 // closuresDoorLock command 0x20 (programming-event notification).
 // Decodes program_event_code into z2m's `action` enum

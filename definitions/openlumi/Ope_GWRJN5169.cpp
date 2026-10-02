@@ -18,12 +18,11 @@ namespace zhc::devices::openlumi {
 namespace {
 
 
-// z2m v26.101.0 added two more router firmwares reporting under this def —
-// the DGNWG05LM and ZHWG11LM gateways reflashed with OpenLumi.
+// z2m v26.101.0 added the DGNWG05LM and ZHWG11LM router firmwares to this
+// def; v26.115.1 moved them to definitions of their own (LR-DGNWG05LM,
+// LR-ZHWG11LM) and keeps this one for the outdated unified firmware.
 constexpr const char* kModels_GWRJN5169[] = {
     "openlumi.gw_router.jn5169",
-    "openlumi.gw_router.dgnwg05lm",
-    "openlumi.gw_router.zhwg11lm",
 };
 
 }  // namespace

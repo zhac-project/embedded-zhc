@@ -7,9 +7,11 @@
 namespace zhc::devices::waxman {
 
 extern const PreparedDefinition kDef_D8850100;
+extern const PreparedDefinition kDef_D8840100H;
 
 const PreparedDefinition* const kWaxmanRegistry[] = {
     &kDef_D8850100,
+    &kDef_D8840100H,
 };
 const std::size_t kWaxmanRegistryCount = sizeof(kWaxmanRegistry) / sizeof(kWaxmanRegistry[0]);
 

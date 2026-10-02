@@ -611,6 +611,7 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/C200.cpp
     definitions/lumi/FP310.cpp
     definitions/lumi/SSWQD22LM.cpp
+    definitions/lumi/GDSD12LM.cpp
     definitions/tuya/TS0601_1gang_switch.cpp
     definitions/tuya/TS0601_2gang_switch.cpp
     definitions/tuya/TS0601_3gang_switch.cpp
@@ -688,6 +689,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0601_wsek35um.cpp
     definitions/tuya/ZY_N1.cpp
     definitions/tuya/ZG_308Z.cpp
+    definitions/tuya/CK_TLSR8258_L5PI_01_7009.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)

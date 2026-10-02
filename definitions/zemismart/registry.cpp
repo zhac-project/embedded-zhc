@@ -46,6 +46,7 @@ extern const PreparedDefinition kDef_ZMS_206US_4;
 extern const PreparedDefinition kDef_ZMS_206EU_3;
 extern const PreparedDefinition kDef_ZMS_206US_1;
 extern const PreparedDefinition kDef_ZMZ609_2;
+extern const PreparedDefinition kDef_KES_606US_L1;
 
 const PreparedDefinition* const kZemismartRegistry[] = {
     &kDefZem__TZE200_1vxgqfba,
@@ -87,6 +88,7 @@ const PreparedDefinition* const kZemismartRegistry[] = {
     &kDef_ZMS_206EU_3,
     &kDef_ZMS_206US_1,
     &kDef_ZMZ609_2,
+    &kDef_KES_606US_L1,
 };
 const std::size_t kZemismartRegistryCount = sizeof(kZemismartRegistry) / sizeof(kZemismartRegistry[0]);
 

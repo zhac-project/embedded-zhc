@@ -1237,7 +1237,10 @@ namespace {
 // (which sets invertAlarmPayload = (zoneType==="contact")). So the contact
 // label inverts. A device that additionally sets z2m `invertAlarm:true`
 // double-inverts back to raw bit0 → use the non-inverting kLbl_ContactNI.
-struct IasAlarmLabel { const char* alarm_1; std::uint8_t bit = 0; bool invert = false; };
+// `alarm_only`: publish the alarm key alone, for z2m zoneAttributes that leave
+// out tamper / battery_low (a device that reports tamper elsewhere would
+// otherwise see the zone's always-clear bit overwrite it).
+struct IasAlarmLabel { const char* alarm_1; std::uint8_t bit = 0; bool invert = false; bool alarm_only = false; };
 
 bool fz_ias_typed(const DecodedMessage& msg, const FzConverter& self,
                    const PreparedDefinition&, RuntimeContext&,
@@ -1254,6 +1257,7 @@ bool fz_ias_typed(const DecodedMessage& msg, const FzConverter& self,
     Value v{}; v.type = ValueType::Bool;
     const bool raw_bit = (status & (1u << cfg->bit)) != 0;
     v.b = cfg->invert ? !raw_bit : raw_bit; out.put(cfg->alarm_1,  v);
+    if (cfg->alarm_only) return true;
     v.b = (status & 0x0004) != 0; out.put("tamper",      v);
     v.b = (status & 0x0008) != 0; out.put("battery_low", v);
     return true;
@@ -1296,6 +1300,12 @@ constexpr IasAlarmLabel kLbl_Alarm       { "alarm",           0 };
 // z2m fz.ias_sos_alarm_2: SOS / panic button reports on zoneStatus bit 1,
 // published as `sos` (Feibit SEB01ZB SOS button).
 constexpr IasAlarmLabel kLbl_Sos2        { "sos",             1 };
+// z2m m.iasZoneAlarm({zoneType:"sos", zoneAttributes:["alarm_1", …]}):
+// `sos` from bit 0 (Owon PB206).
+constexpr IasAlarmLabel kLbl_Sos         { "sos",             0 };
+// zoneType "contact", zoneAttributes ["alarm_1"] only (Sonoff SNZT-04P,
+// whose tamper is 0xFC11 attribute 0x2000).
+constexpr IasAlarmLabel kLbl_ContactOnly { "contact",         0, true, true };
 // z2m lumi_smoke: `test` = zoneStatus bit 1 (test mode), next to the
 // smoke alarm (Xiaomi JTYJ-GD-01LM/BW).
 constexpr IasAlarmLabel kLbl_Test        { "test",            1 };
@@ -1337,6 +1347,8 @@ ZHC_IAS_TYPED_CVT(kFzIasGasAlarm,       &kLbl_Gas);
 ZHC_IAS_TYPED_CVT(kFzIasGasAlarm2,      &kLbl_Gas2);
 ZHC_IAS_TYPED_CVT(kFzIasGenericAlarm,   &kLbl_Alarm);
 ZHC_IAS_TYPED_CVT(kFzIasSosAlarm2,      &kLbl_Sos2);
+ZHC_IAS_TYPED_CVT(kFzIasSosAlarm,       &kLbl_Sos);
+ZHC_IAS_TYPED_CVT(kFzIasContactAlarmOnly, &kLbl_ContactOnly);
 ZHC_IAS_TYPED_CVT(kFzIasTestBit,        &kLbl_Test);
 
 // ── ssIasAce arm / panic command decoders ───────────────────────────
@@ -3001,16 +3013,11 @@ bool fz_zcl_attr_map(const DecodedMessage& msg,
 // ── hvacUserInterfaceCfg (keypad lockout / display unit) ────────────
 
 namespace {
-constexpr ZclWriteLookup kKeypadLockoutModes[] = {
-    {"unlock", 0}, {"lock1", 1}, {"lock2", 2}, {"lock3", 3}, {"lock4", 4}, {"lock5", 5} };
-constexpr ZclWriteLookup kTemperatureDisplayModes[] = { {"celsius", 0}, {"fahrenheit", 1} };
 constexpr ZclAttrRow kHvacUiRows[] = {
     { 0x0001, "keypad_lockout", 1, kKeypadLockoutModes, 6 },
     { 0x0000, "temperature_display_mode", 1, kTemperatureDisplayModes, 2 },
 };
 constexpr ZclAttrMap kHvacUiMap{ kHvacUiRows, sizeof(kHvacUiRows)/sizeof(kHvacUiRows[0]) };
-constexpr ZclWriteSpec kKeypadLockoutSpec{ "keypad_lockout", 0x0001, 0x30, 0, kKeypadLockoutModes, 6 };
-constexpr ZclWriteSpec kTemperatureDisplayModeSpec{ "temperature_display_mode", 0x0000, 0x30, 0, kTemperatureDisplayModes, 2 };
 }  // namespace
 
 extern const FzConverter kFzHvacUserInterface = zcl_attr_fz("hvacUserInterfaceCfg", &kHvacUiMap);

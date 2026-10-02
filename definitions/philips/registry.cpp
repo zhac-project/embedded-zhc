@@ -616,6 +616,7 @@ extern const PreparedDefinition kDef_D929004296801;
 extern const PreparedDefinition kDef_D929004296901;
 extern const PreparedDefinition kDef_D929004295401;
 extern const PreparedDefinition kDef_D4440156P6;
+extern const PreparedDefinition kDef_D929004320801;
 
 const PreparedDefinition* const kPhilipsRegistry[] = {
     &kDef_D046677476816,
@@ -1223,6 +1224,7 @@ const PreparedDefinition* const kPhilipsRegistry[] = {
     &kDef_D929004296901,
     &kDef_D929004295401,
     &kDef_D4440156P6,
+    &kDef_D929004320801,
 };
 const std::size_t kPhilipsRegistryCount =
     sizeof(kPhilipsRegistry) / sizeof(kPhilipsRegistry[0]);

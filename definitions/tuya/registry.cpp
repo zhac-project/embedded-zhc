@@ -1507,6 +1507,7 @@ extern const PreparedDefinition kDef_ZAS_01P;
 extern const PreparedDefinition kDef_TS0601_wsek35um;
 extern const PreparedDefinition kDef_ZY_N1;
 extern const PreparedDefinition kDef_ZG_308Z;
+extern const PreparedDefinition kDef_CK_TLSR8258_L5PI_01_7009;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_CK_BL702_AL_01_7008_Z102LG01_1_,
@@ -2999,6 +3000,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_TS0601_wsek35um,
     &kDef_ZY_N1,
     &kDef_ZG_308Z,
+    &kDef_CK_TLSR8258_L5PI_01_7009,
 };
 
 extern const std::size_t kTuyaRegistryCount =

@@ -34,22 +34,22 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecComfortSmiley{
     ::zhc::generic::kZclWriteFlagInvertBool,  // valueOn=[true,0]
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecTemperatureCalibration{
-    "temperature_calibration",  0x0100, 0x29, 0, nullptr, 0,
+    "temperature_calibration",  0x0100, 0x29, 0, nullptr, 0, 0, 100,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecHumidityCalibration{
-    "humidity_calibration",     0x0101, 0x29, 0, nullptr, 0,
+    "humidity_calibration",     0x0101, 0x29, 0, nullptr, 0, 0, 100,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecComfortTemperatureMin{
-    "comfort_temperature_min",  0x0102, 0x29, 0, nullptr, 0,
+    "comfort_temperature_min",  0x0102, 0x29, 0, nullptr, 0, 0, 100,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecComfortTemperatureMax{
-    "comfort_temperature_max",  0x0103, 0x29, 0, nullptr, 0,
+    "comfort_temperature_max",  0x0103, 0x29, 0, nullptr, 0, 0, 100,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecComfortHumidityMin{
-    "comfort_humidity_min",     0x0104, 0x21, 0, nullptr, 0,
+    "comfort_humidity_min",     0x0104, 0x21, 0, nullptr, 0, 0, 100,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecComfortHumidityMax{
-    "comfort_humidity_max",     0x0105, 0x21, 0, nullptr, 0,
+    "comfort_humidity_max",     0x0105, 0x21, 0, nullptr, 0, 0, 100,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecEnableDisplay{
     "enable_display",           0x0106, 0x30, 0, nullptr, 0,

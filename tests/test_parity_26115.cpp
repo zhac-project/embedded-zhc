@@ -15,10 +15,18 @@
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
 #include "zhc/cluster_names.hpp"
+#include "zhc/devices/candeo_registry.hpp"
 #include "zhc/devices/immax_registry.hpp"
+#include "zhc/devices/legrand_registry.hpp"
+#include "zhc/devices/lumi_registry.hpp"
+#include "zhc/devices/owon_registry.hpp"
+#include "zhc/devices/philips_registry.hpp"
 #include "zhc/devices/qa_registry.hpp"
+#include "zhc/devices/sinope_registry.hpp"
+#include "zhc/devices/sonoff_registry.hpp"
 #include "zhc/devices/tier_e_registries.hpp"
 #include "zhc/devices/tuya_registry.hpp"
+#include "zhc/devices/zemismart_registry.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/definition_runtime.hpp"
 #include "zhc/runtime/dispatch.hpp"
@@ -58,6 +66,17 @@ namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_TS060
                                       extern const PreparedDefinition kDef_ZY_N1; }
 namespace zhc::devices::avatto      { extern const PreparedDefinition kDef_ZSD20; }
 namespace zhc::devices::qa          { extern const PreparedDefinition kDef_QADZ1LR; }
+namespace zhc::devices::owon        { extern const PreparedDefinition kDef_PB206; }
+namespace zhc::devices::sonoff      { extern const PreparedDefinition kDef_SNZT_03P;
+                                      extern const PreparedDefinition kDef_SNZT_04P; }
+namespace zhc::devices::candeo      { extern const PreparedDefinition kDef_C_ZB_SSFS; }
+namespace zhc::devices::atlantic    { extern const PreparedDefinition kDef_D100042838900;
+                                      extern const PreparedDefinition kDef_D100052992400; }
+namespace zhc::devices::zigbeetlc   { extern const PreparedDefinition kDef_ZG_303Z_z; }
+namespace zhc::devices::legrand     { extern const PreparedDefinition kDef_WNP10; }
+namespace zhc::devices::sinope      { extern const PreparedDefinition kDef_OTH3600_GA_ZB; }
+namespace zhc::devices::waxman      { extern const PreparedDefinition kDef_D8840100H; }
+namespace zhc::devices::ekaza       { extern const PreparedDefinition kDef_TS0225_EKAZA; }
 
 using namespace zhc;
 
@@ -435,20 +454,44 @@ void test_misc_fixes() {
     check(has_model(devices::philips::kDef_D929004610402, "929004610603"), "929004610402 + 929004610603 (#13313)");
 }
 
+// The registries the new devices land in, plus the ones whose definitions
+// claim the same zigbeeModels (generic TS0001 / TS0202 / TLSR82xx), in the
+// adapter's order: vendor registries first, tier E last.
+const std::vector<const PreparedDefinition*>& registries() {
+    static std::vector<const PreparedDefinition*> reg;
+    if (!reg.empty()) return reg;
+    auto add = [&](const PreparedDefinition* const* r, std::size_t n) { reg.insert(reg.end(), r, r + n); };
+    add(devices::tuya::kTuyaRegistry, devices::tuya::kTuyaRegistryCount);
+    add(devices::immax::kImmaxRegistry, devices::immax::kImmaxRegistryCount);
+    add(devices::qa::kQaRegistry, devices::qa::kQaRegistryCount);
+    add(devices::owon::kOwonRegistry, devices::owon::kOwonRegistryCount);
+    add(devices::candeo::kCandeoRegistry, devices::candeo::kCandeoRegistryCount);
+    add(devices::sonoff::kSonoffRegistry, devices::sonoff::kSonoffRegistryCount);
+    add(devices::lumi::kLumiRegistry, devices::lumi::kLumiRegistryCount);
+    add(devices::zemismart::kZemismartRegistry, devices::zemismart::kZemismartRegistryCount);
+    add(devices::legrand::kLegrandRegistry, devices::legrand::kLegrandRegistryCount);
+    add(devices::sinope::kSinopeRegistry, devices::sinope::kSinopeRegistryCount);
+    add(devices::philips::kPhilipsRegistry, devices::philips::kPhilipsRegistryCount);
+    for (std::size_t i = 0; i < devices::tier_e::kTierERegistriesCount; ++i)
+        add(devices::tier_e::kTierERegistries[i].reg, devices::tier_e::kTierERegistries[i].count);
+    return reg;
+}
+struct Want { const char* zm; const char* manu; const char* model; };
+void resolves(std::span<const PreparedDefinition* const> all, const Want& w) {
+    const PreparedDefinition* d = find_definition(w.zm, w.manu, all);
+    if (!d || std::strcmp(d->model, w.model) != 0) {
+        std::printf("  %s/%s -> %s (want %s)\n", w.zm, w.manu, d ? d->model : "none", w.model);
+        check(false, "new device resolves");
+    }
+}
+
 // New devices: resolved through the same registries the adapter walks
 // (Tuya, Immax, QA and the tier-E vendors), then one datapoint each where
 // the mapping is not a plain numeric.
 void test_new_devices() {
     std::printf("New devices resolve; ZY-N1, wsek35um, ZSD20, QADZ1LR decode\n");
-    std::vector<const PreparedDefinition*> reg;
-    auto add = [&](const PreparedDefinition* const* r, std::size_t n) { reg.insert(reg.end(), r, r + n); };
-    add(devices::tuya::kTuyaRegistry, devices::tuya::kTuyaRegistryCount);
-    add(devices::immax::kImmaxRegistry, devices::immax::kImmaxRegistryCount);
-    add(devices::qa::kQaRegistry, devices::qa::kQaRegistryCount);
-    for (std::size_t i = 0; i < devices::tier_e::kTierERegistriesCount; ++i)
-        add(devices::tier_e::kTierERegistries[i].reg, devices::tier_e::kTierERegistries[i].count);
+    const auto& reg = registries();
     const std::span<const PreparedDefinition* const> all(reg.data(), reg.size());
-    struct Want { const char* zm; const char* manu; const char* model; };
     const Want wants[] = {
         {"TS0601", "_TZE284_1oft6qso", "CH8Z"},
         {"TS0601", "_TZE284_16m4bgsv", "1443ZK"},
@@ -476,11 +519,7 @@ void test_new_devices() {
         {"TS0601", "_TZE204_6ewjlefg", "BVRF-L001"},
     };
     for (const Want& w : wants) {
-        const PreparedDefinition* d = find_definition(w.zm, w.manu, all);
-        if (!d || std::strcmp(d->model, w.model) != 0) {
-            std::printf("  %s/%s -> %s (want %s)\n", w.zm, w.manu, d ? d->model : "none", w.model);
-            check(false, "new device resolves");
-        }
+        resolves(all, w);
     }
     RuntimeContext ctx{};
     // ZY-N1: DP101 is noise_state, and noise_detected for 0/2/3.
@@ -502,6 +541,114 @@ void test_new_devices() {
       check(approx(float_of(o, "brightness"), 254.f, 0.5f), "QADZ1LR DP2 1000 -> 254"); }
 }
 
+// New ZCL devices: fingerprints, and the converters that are not stock.
+void test_new_zcl_devices() {
+    std::printf("New ZCL devices resolve; alerts, IAS, custom attributes, endpoint routing\n");
+    const auto& reg = registries();
+    const std::span<const PreparedDefinition* const> all(reg.data(), reg.size());
+    const Want wants[] = {
+        {"OCP305", "OWON", "OPS305"}, {"OCP_305", "OWON", "OPS305"}, {"WLS316", "OWON", "WLS316"},
+        {"PB206", "OWON", "PB206"}, {"WSP406-UK", "OWON", "WSP406"},
+        {"TLSR82xx", "Aubor", "allesin_cover"},
+        {"Glydea 2 Ultra WF Curtain", "Somfy", "1246595"},
+        {"openlumi.gw_router.dgnwg05lm", "OpenLumi", "LR-DGNWG05LM"},
+        {"openlumi.gw_router.zhwg11lm", "OpenLumi", "LR-ZHWG11LM"},
+        {"openlumi.gw_router.jn5169", "OpenLumi", "GWRJN5169"},
+        {"C-ZB-SSFS", "Candeo", "C-ZB-SSFS"},
+        {"SNZT-03P", "SONOFF", "SNZT-03P"}, {"SNZT-04P", "SONOFF", "SNZT-04P"},
+        {"lumi.light.acn037", "Aqara", "GDSD12LM"},
+        {"100042838900 ", "Atlantic", "100042838900"},
+        {"100052992700", "Atlantic", "100052992400"},
+        {"100052994300", "Atlantic", "100052994200"},
+        {"CK-TLSR8258-L5PI-01(7009)", "eWeLink", "CK-TLSR8258-L5PI-01(7009)"},
+        {"TS0001", "_TZ3000_w5s3mbyn", "KES-606US-L1"},
+        {"ZG-303Z-z", "HOBEIAN", "ZG-303Z-z"},
+        {"Hospitality on off plug", "Legrand", "WNP10"},
+        {"OTH3600-GA-ZB", "Ouellet", "OTH3600-GA-ZB"},
+        {"leakSMART Water Sensor V2", "Waxman", "8840100H"},
+        {"TS0225", "_TZ3210_eep3fewj", "TS0225_EKAZA"},
+        {"929004320801", "Signify Netherlands B.V.", "929004320801"},
+    };
+    for (const Want& w : wants) resolves(all, w);
+
+    // Waxman leakSMART: alertsNotification lists the active alerts.
+    auto alerts = [](std::initializer_list<std::uint8_t> body) {
+        std::vector<std::uint8_t> f{0x09, 0x10, 0x01};
+        f.insert(f.end(), body);
+        return dispatch(devices::waxman::kDef_D8840100H, 0x0B02, 1, std::span<const std::uint8_t>(f.data(), f.size()));
+    };
+    { auto d = alerts({0x01, 0x82, 0x11, 0x00});
+      check(r_bool(d, "battery_low", true) && r_bool(d, "water_leak", false), "leakSMART 0x1182 -> battery_low only"); }
+    { auto d = alerts({0x01, 0x05, 0x12, 0x00});
+      check(r_bool(d, "water_leak", true) && r_bool(d, "battery_low", false), "leakSMART unknown present alert -> water_leak"); }
+    { auto d = alerts({0x01, 0x05, 0x02, 0x00});
+      check(r_bool(d, "water_leak", false), "leakSMART recovered alert -> dry"); }
+    { auto d = alerts({0x00});
+      check(r_bool(d, "water_leak", false) && r_bool(d, "battery_low", false), "leakSMART empty list clears"); }
+    // Owon PB206: SOS on zone-status bit 0.
+    { auto f = ias_notif(0x0001);
+      auto d = dispatch(devices::owon::kDef_PB206, 0x0500, 1, std::span<const std::uint8_t>(f.data(), f.size()));
+      check(r_bool(d, "sos", true), "PB206 bit 0 -> sos"); }
+    // SNZT-04P: contact from the zone, tamper only from 0xFC11 0x2000.
+    { auto f = ias_notif(0x0005);
+      auto d = dispatch(devices::sonoff::kDef_SNZT_04P, 0x0500, 1, std::span<const std::uint8_t>(f.data(), f.size()));
+      check(r_bool(d, "contact", false) && r_find(d, "tamper") == nullptr, "SNZT-04P zone: contact only, no tamper"); }
+    { Report r; r.u8(0x2000, 0x20, 1);
+      auto d = dispatch(devices::sonoff::kDef_SNZT_04P, 0xFC11, 1, r.span());
+      check(r_bool(d, "tamper", true), "SNZT-04P 0xFC11 0x2000 -> tamper"); }
+    // SNZT-03P: hold time under 0x0010 or 0x3C00; offset written as int16 on 0xFC11.
+    { Report r; r.u16(0x0010, 0x21, 30);
+      auto d = dispatch(devices::sonoff::kDef_SNZT_03P, 0x0406, 1, r.span());
+      check(approx(r_float(d, "pir_occupied_to_unoccupied_delay"), 30.f), "SNZT-03P 0x0010 -> 30 s"); }
+    { Report r; r.u16(0x3C00, 0x21, 45);
+      auto d = dispatch(devices::sonoff::kDef_SNZT_03P, 0x0406, 1, r.span());
+      check(approx(r_float(d, "pir_occupied_to_unoccupied_delay"), 45.f), "SNZT-03P 0x3C00 -> 45 s"); }
+    { auto e = encode(devices::sonoff::kDef_SNZT_03P, "illumination_compensation_offset", num(-100));
+      check(e.ok && e.cluster == 0xFC11 && e.frame.size() >= 2 &&
+            e.frame[e.frame.size() - 2] == 0x9C && e.frame[e.frame.size() - 1] == 0xFF, "SNZT-03P offset -100 -> int16"); }
+    // Candeo C-ZB-SSFS: 0x8002 / 0x8000 on genOnOff, current / 1000.
+    { Report r; r.u8(0x8002, 0x30, 2).u8(0x8000, 0x10, 1);
+      auto d = dispatch(devices::candeo::kDef_C_ZB_SSFS, 0x0006, 1, r.span());
+      check(r_str(d, "power_on_behavior", "previous") && r_bool(d, "child_lock", true), "C-ZB-SSFS POB previous + child_lock"); }
+    { Report r; r.u16(0x0508, 0x21, 1500);
+      auto d = dispatch(devices::candeo::kDef_C_ZB_SSFS, 0x0B04, 1, r.span());
+      check(approx(r_float(d, "current"), 1.5f), "C-ZB-SSFS current / 1000"); }
+    { auto e = encode(devices::candeo::kDef_C_ZB_SSFS, "child_lock", str("LOCK"));
+      check(e.ok && e.cluster == 0x0006 && e.frame.size() >= 2 &&
+            e.frame[e.frame.size() - 2] == 0x10 && e.frame[e.frame.size() - 1] == 1, "C-ZB-SSFS child_lock LOCK -> bool 1"); }
+    // Atlantic: energy in Wh; Nirvana+ UI writes go to endpoint 230.
+    { Report r; r.u32(0x0000, 0x23, 12345);
+      auto d = dispatch(devices::atlantic::kDef_D100042838900, 0x0702, 1, r.span());
+      check(approx(r_float(d, "energy"), 12.345f, 0.001f), "Equateur 5 energy Wh -> kWh"); }
+    { auto e = encode(devices::atlantic::kDef_D100052992400, "keypad_lockout", str("lock1"));
+      check(e.ok && e.cluster == 0x0204 && e.ep == 230, "Nirvana+ keypad_lockout -> endpoint 230"); }
+    // ZG-303Z-z: endpoint 1 humidity is air, endpoint 2 is soil.
+    { Report r; r.u16(0x0000, 0x21, 4550);
+      auto d1 = dispatch(devices::zigbeetlc::kDef_ZG_303Z_z, 0x0405, 1, r.span());
+      auto d2 = dispatch(devices::zigbeetlc::kDef_ZG_303Z_z, 0x0405, 2, r.span());
+      check(approx(r_float(d1, "humidity"), 45.5f) && r_find(d1, "soil_moisture") == nullptr &&
+            approx(r_float(d2, "soil_moisture"), 45.5f) && r_find(d2, "humidity") == nullptr, "ZG-303Z-z humidity by endpoint"); }
+    // ZigbeeTLc calibration is written in hundredths (z2m scale 100).
+    { auto e = encode(devices::zigbeetlc::kDef_ZG_303Z_z, "temperature_calibration", num(1.5));
+      check(e.ok && e.frame.size() >= 2 && e.frame[e.frame.size() - 2] == 150 && e.frame[e.frame.size() - 1] == 0,
+            "ZigbeeTLc temperature_calibration 1.5 -> 150"); }
+    // WNP10: genBinaryInput presentValue is the relay state.
+    { Report r; r.u8(0x0055, 0x10, 1);
+      auto d = dispatch(devices::legrand::kDef_WNP10, 0x000F, 1, r.span());
+      check(r_bool(d, "state", true), "WNP10 binary input -> state"); }
+    // OTH3600-GA-ZB: running_state from the heating demand.
+    { Report r; r.u8(0x0008, 0x20, 35);
+      auto d = dispatch(devices::sinope::kDef_OTH3600_GA_ZB, 0x0201, 1, r.span());
+      check(r_str(d, "running_state", "heat") && approx(r_float(d, "pi_heating_demand"), 35.f), "OTH3600 demand 35 -> heat"); }
+    { Report r; r.u8(0x0008, 0x20, 5);
+      auto d = dispatch(devices::sinope::kDef_OTH3600_GA_ZB, 0x0201, 1, r.span());
+      check(r_str(d, "running_state", "idle"), "OTH3600 demand 5 -> idle"); }
+    // Ekaza TS0225: datapoint 104 illuminance.
+    { RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{};
+      dp_num(devices::ekaza::kDef_TS0225_EKAZA, 104, 321, ctx, o);
+      check(approx(float_of(o, "illuminance"), 321.f), "TS0225_EKAZA DP104 illuminance"); }
+}
+
 }  // namespace
 
 int main() {
@@ -513,6 +660,7 @@ int main() {
     test_tuya_thermostats_meters();
     test_misc_fixes();
     test_new_devices();
+    test_new_zcl_devices();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;

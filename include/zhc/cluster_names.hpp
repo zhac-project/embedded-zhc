@@ -82,6 +82,7 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
 
         // Home automation
         case 0x0B01: return "haMeterIdentification";
+        case 0x0B02: return "haApplianceEventsAlerts";
         case 0x0B04: return "haElectricalMeasurement";
         case 0x0B05: return "haDiagnostic";
 

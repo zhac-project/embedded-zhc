@@ -34,6 +34,7 @@ extern const PreparedDefinition kDef_C_ZB_SEMO;
 extern const PreparedDefinition kDef_C_ZB_SETE;
 extern const PreparedDefinition kDef_C_ZB_SEWA;
 extern const PreparedDefinition kDef_C_ZB_RD1Pv2_DIM;
+extern const PreparedDefinition kDef_C_ZB_SSFS;
 
 const PreparedDefinition* const kCandeoRegistry[] = {
     &kDef_C201,
@@ -64,6 +65,7 @@ const PreparedDefinition* const kCandeoRegistry[] = {
     &kDef_C_ZB_SETE,
     &kDef_C_ZB_SEWA,
     &kDef_C_ZB_RD1Pv2_DIM,
+    &kDef_C_ZB_SSFS,
 };
 const std::size_t kCandeoRegistryCount = sizeof(kCandeoRegistry) / sizeof(kCandeoRegistry[0]);
 
