@@ -1843,16 +1843,19 @@ bool tuya_dp_expand_phase_variant2_phase(const TuyaDpMapEntry& e, const Value& r
     const auto* k = static_cast<const TuyaPhaseKeys*>(e.expand_cfg);
     if (!k) return false;
 
-    // 16-bit reads again: upstream reverted its 24-bit widening of this
-    // converter in z2m v26.105.0 (52542ec, reverting #12928). Negative power
-    // is offset-encoded rather than two's complement -- a reading above
-    // 0x7FFF is `0x999A - power`, so -100 W arrives as 0x9936.
-    constexpr std::int64_t kNegativePowerBase = 0x999A;
+    // 24-bit current and power (z2m v26.111.0, #13203 -- the second time:
+    // v26.97.0 widened, v26.105.0 reverted). Negative power is offset-encoded,
+    // not two's complement: at or above 0x800000 it is `power - 0x99999A`, the
+    // 24-bit truncation of the 0x1999999A offset; -100 W arrives as 0x999936.
+    constexpr std::int64_t kNegativePowerOffset    = 0x99999A;
+    constexpr std::int64_t kNegativePowerThreshold = 0x800000;
 
     const std::uint32_t voltage = (static_cast<std::uint32_t>(b[0]) << 8) | b[1];
-    const std::uint32_t current = (static_cast<std::uint32_t>(b[3]) << 8) | b[4];
-    std::int64_t power = (static_cast<std::int64_t>(b[6]) << 8) | b[7];
-    if (power > 0x7FFF) power = power - kNegativePowerBase;
+    const std::uint32_t current = (static_cast<std::uint32_t>(b[2]) << 16) |
+                                  (static_cast<std::uint32_t>(b[3]) << 8) | b[4];
+    std::int64_t power = (static_cast<std::int64_t>(b[5]) << 16) |
+                         (static_cast<std::int64_t>(b[6]) << 8) | b[7];
+    if (power >= kNegativePowerThreshold) power -= kNegativePowerOffset;
 
     put_float(out, k->voltage, static_cast<float>(voltage) / 10.0f);
     put_float(out, k->current, static_cast<float>(current) / 1000.0f);

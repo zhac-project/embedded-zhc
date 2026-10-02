@@ -7,10 +7,11 @@
 // here against hand-built payloads.
 //
 // Covered:
-//   * phaseVariant2WithPhase — 16-bit current/power reads and the
+//   * phaseVariant2WithPhase — 24-bit current/power reads and the
 //     offset-encoded negative power. z2m v26.97.0 widened the reads to 24
-//     bits (#12928) and v26.105.0 reverted that (52542ec); the port follows
-//     upstream, so the 70 A case below pins the WRAP, not the wide read.
+//     bits (#12928), v26.105.0 reverted that (52542ec), and v26.111.0 put
+//     the 24-bit reads back with a 24-bit negative offset (#13203): power
+//     at or above 0x800000 is `power - 0x99999A`.
 //   * phaseVariant2 — the plain variant, same narrow reads, no sign handling.
 //   * parseThresholds — 4-byte records, flag-only entries, unknown ids.
 //   * circuitBreakerFaults1 — bit positions to a joined string.
@@ -108,37 +109,50 @@ void test_phase_variant2_with_phase() {
         check(int_of(out, "power_a") == 2800, "power 2800");
     }
 
-    // 70 A — 70000 mA = 0x011170. Only b[3..4] = 0x1170 is read, so this
-    // decodes as 4.464 A. Upstream briefly read the third byte (v26.97.0 ..
-    // v26.104.0) and reverted; the wrap is pinned so the port tracks upstream
-    // and nobody re-widens it by accident.
+    // 70 A — 70000 mA = 0x011170. All three current bytes are read again
+    // (v26.111.0, #13203), so this no longer wraps to 4.464 A.
     {
         const std::uint8_t body[] = {0x08,0xFC, 0x01,0x11,0x70, 0x00,0x00,0x64};
         RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
         check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
-        check(approx(float_of(out, "current_a"), 4.464f, 0.001f), "current 4.464 (16-bit read, as upstream)");
+        check(approx(float_of(out, "current_a"), 70.0f, 0.001f), "current 70.000 (24-bit read)");
     }
 
-    // Negative power: a reading above 0x7FFF is 0x999A - power, NOT two's
-    // complement. -100 W arrives as 0x9936.
+    // Upstream's own capture (_TZE200_nslr42tt): [9,38,0,0,146,153,153,134].
+    // Power 0x999986 is at/above 0x800000, so it is 0x999986 - 0x99999A = -20 W.
     {
-        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x00,0x00, 0x00,0x99,0x36};
+        const std::uint8_t body[] = {9,38, 0,0,146, 153,153,134};
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
+        check(approx(float_of(out, "voltage_a"), 234.2f), "voltage 234.2");
+        check(approx(float_of(out, "current_a"), 0.146f), "current 0.146");
+        check(int_of(out, "power_a") == -20, "power -20 (24-bit offset-decoded)");
+    }
+
+    // -100 W is 0x99999A - 100 = 0x999936. The old 16-bit encoding
+    // (0x00 0x99 0x36) is now an ordinary positive 39222 W.
+    {
+        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x00,0x00, 0x99,0x99,0x36};
         RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
         check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
         check(int_of(out, "power_a") == -100, "power -100 (offset-decoded)");
-    }
-
-    // The sign branch is taken strictly above 0x7FFF: 32767 W stays
-    // positive, 0x8000 decodes as 0x8000 - 0x999A = -6554.
-    {
-        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x00,0x00, 0x00,0x7F,0xFF};
-        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
-        check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
-        check(int_of(out, "power_a") == 0x7FFF, "power 32767 stays positive");
-        const std::uint8_t body2[] = {0x08,0xFC, 0x00,0x00,0x00, 0x00,0x80,0x00};
+        const std::uint8_t body2[] = {0x08,0xFC, 0x00,0x00,0x00, 0x00,0x99,0x36};
         RuntimeContext c2{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o2{};
         check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body2, 8)}, c2, o2), "decodes");
-        check(int_of(o2, "power_a") == -6554, "power 0x8000 -> -6554");
+        check(int_of(o2, "power_a") == 0x9936, "0x009936 is a positive 39222 W");
+    }
+
+    // The sign branch starts at 0x800000: 0x7FFFFF stays positive,
+    // 0x800000 decodes as 0x800000 - 0x99999A = -1677722.
+    {
+        const std::uint8_t body[] = {0x08,0xFC, 0x00,0x00,0x00, 0x7F,0xFF,0xFF};
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
+        check(int_of(out, "power_a") == 0x7FFFFF, "power 0x7FFFFF stays positive");
+        const std::uint8_t body2[] = {0x08,0xFC, 0x00,0x00,0x00, 0x80,0x00,0x00};
+        RuntimeContext c2{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o2{};
+        check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body2, 8)}, c2, o2), "decodes");
+        check(int_of(o2, "power_a") == -1677722, "power 0x800000 -> -1677722");
     }
 
     // Short payload must abstain rather than read past the end.

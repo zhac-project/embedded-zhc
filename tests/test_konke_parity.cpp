@@ -147,12 +147,12 @@ void test_kk_es_j01w_sensor() {
     assert(hv && hv->type == ValueType::Float);
     assert(std::fabs(as_num(hv) - 42.0) < 0.01);
 
-    // msIlluminanceMeasurement 0x0400 attr 0x0000 UINT16 (0x21): raw passthrough.
+    // msIlluminanceMeasurement 0x0400 attr 0x0000 UINT16 (0x21): z2m lux curve.
     auto l = dispatch_u16(d, 0x0400, "msIlluminanceMeasurement", 0x0000, 0x21, 12345);
     assert(l.any_matched);
     const Value* lv = l.merged.find("illuminance");
-    assert(lv && lv->type == ValueType::Uint);
-    assert(std::fabs(as_num(lv) - 12345.0) < 0.5);
+    assert(lv && lv->type == ValueType::Float);
+    assert(std::fabs(as_num(lv) - 17.1554) < 0.01);
 }
 
 // ── 2AJZ4KPKEY — multi-function button action (regression pin) ────────

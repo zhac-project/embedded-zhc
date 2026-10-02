@@ -24,6 +24,7 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <span>
@@ -139,7 +140,8 @@ static void test_hssa18_illuminance() {
     auto r = dispatch_zcl(*d, 0x0400, "msIlluminanceMeasurement", kIllu);
     assert(r.any_matched);
     const Value* lx = r.merged.find("illuminance");
-    assert(lx && lx->type == ValueType::Uint && lx->u == 500);
+    // z2m m.illuminance(): 10^((raw-1)/10000) lux (lux curve since R8, v26.115 parity).
+    assert(lx && lx->type == ValueType::Float && std::fabs(lx->f - 1.12176f) < 0.001f);
 }
 
 // msOccupancySensing 0x0406 attr 0x0000 (bitmap8) bit 0 = occupied.

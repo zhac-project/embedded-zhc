@@ -513,17 +513,18 @@ bool tuya_dp_expand_phase_variant2(const TuyaDpMapEntry& e, const Value& raw,
                                     RuntimeContext& ctx,
                                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 
-// z2m `valueConverter.phaseVariant2WithPhase(phase)`. Same 8-byte layout and
-// the same 16-bit reads:
+// z2m `valueConverter.phaseVariant2WithPhase(phase)`. Same 8-byte layout,
+// 24-bit current and power:
 //   voltage = be16(0..1) / 10
-//   current = be16(3..4) / 1000
-//   power   = be16(6..7), offset-corrected
+//   current = be24(2..4) / 1000
+//   power   = be24(5..7), offset-corrected
 //
-// Negative power is NOT two's complement: a reading above 0x7FFF is
-// `0x999A - power` (so -100 W arrives as 0x9936).
+// Negative power is NOT two's complement: at or above 0x800000 it is
+// `power - 0x99999A` (so -100 W arrives as 0x999936).
 //
-// History: z2m v26.97.0 (#12928) widened both reads to 24 bits and this port
-// followed; v26.105.0 reverted that upstream (52542ec) and so did this.
+// History: z2m v26.97.0 (#12928) widened both reads to 24 bits, v26.105.0
+// reverted that (52542ec), v26.111.0 (#13203) widened them again with the
+// 24-bit offset. This port has followed each step.
 //
 // `expand_cfg` is a `const TuyaPhaseKeys*` naming the three output keys.
 bool tuya_dp_expand_phase_variant2_phase(const TuyaDpMapEntry& e, const Value& raw,

@@ -21,6 +21,7 @@
 
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <span>
@@ -140,7 +141,8 @@ void test_ms100_occupancy_and_illuminance() {
     auto lux = dispatch_illum(def, illum_report(0x0064));  // raw 100
     assert(lux.any_matched);
     const Value* iv = lux.merged.find("illuminance");
-    assert(iv && iv->type == ValueType::Uint && iv->u == 100);
+    // z2m m.illuminance(): 10^((raw-1)/10000) lux (lux curve since R8, v26.115 parity).
+    assert(iv && iv->type == ValueType::Float && std::fabs(iv->f - 1.02306f) < 0.001f);
 }
 
 // CS100: contact is INVERTED from bit0 (z2m fz.ias_contact_alarm_1). Closed

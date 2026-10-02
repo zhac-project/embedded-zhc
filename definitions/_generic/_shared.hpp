@@ -205,10 +205,19 @@ extern const FzConverter kFzHumidity;
 // z2m-source: fromZigbee.ts `fz.pressure`.
 extern const FzConverter kFzPressure;
 
-// `msIlluminanceMeasurement` (cluster 0x0400) attr 0x0000 (u16 raw).
-//   illuminance = raw
-// z2m-source: fromZigbee.ts `fz.illuminance`.
+// `msIlluminanceMeasurement` (cluster 0x0400) attr 0x0000 (u16 measuredValue).
+//   illuminance = measuredValue == 0 ? 0 : 10^((measuredValue - 1) / 10000)  (lux, Float)
+// z2m-source: modernExtend.ts `m.illuminance()` / `luxScale` (0 -> 0 since
+// v26.107.0). Until z2m v26.115 parity this converter published the raw
+// register, i.e. 10000*log10(lux)+1, under the lux unit.
+float lux_from_measured_value(std::uint64_t raw);
 extern const FzConverter kFzIlluminance;
+
+// Same attribute, published unscaled: for the devices whose firmware puts
+// lux straight into measuredValue, which z2m declares with
+// `m.illuminance({scale: (value) => value})` (ShinaSystem USM-300ZB,
+// Sunricher SR-ZG9030F-PS).
+extern const FzConverter kFzIlluminanceRaw;
 
 // `msSoilMoisture` (cluster 0x0408) attr 0x0000 (u16 0.01 %).
 //   soil_moisture = raw / 100.0
@@ -688,7 +697,65 @@ struct ZclWriteSpec {
     const ZclWriteLookup* lookup;       // optional string-lookup
     std::uint8_t          lookup_count;
     std::uint8_t          flags = 0;    // kZclWriteFlag*
+    // Numeric inputs are multiplied by this before rounding to the wire
+    // integer: z2m `m.numeric({scale: N})` writes `value * N`. 1 = as-is.
+    std::int32_t          multiplier = 1;
 };
+
+// ── Data-driven attribute DECODER (the read side of ZclWriteSpec) ──
+//
+// z2m `m.numeric` / `m.binary` / `m.enumLookup` over plain or custom
+// attributes. One row per attribute; a def wraps its rows in a ZclAttrMap
+// and an FzConverter built by `zcl_attr_fz(cluster, &map)`.
+//   * `lookup` set   -> the raw value maps to a StringRef label; values the
+//                       table does not know are dropped (z2m publishes
+//                       undefined, which never reaches state).
+//   * kZclAttrFlagBool -> nonzero raw publishes Bool true.
+//   * `divisor` > 1  -> Float raw / divisor (z2m `scale: N` on the read).
+//   * otherwise      -> the decoded Value as-is (Uint/Int/Float/Bool).
+// `manufacturer_code` != 0 restricts the map to frames carrying that code,
+// which matters on unnamed custom clusters: an unlabelled cluster fails open
+// in dispatch, so every converter of the def sees it.
+inline constexpr std::uint8_t kZclAttrFlagBool = 0x01;
+
+struct ZclAttrRow {
+    std::uint16_t attr_id;
+    const char*   key;
+    std::int32_t  divisor = 1;
+    const ZclWriteLookup* lookup = nullptr;
+    std::uint8_t  lookup_count = 0;
+    std::uint8_t  flags = 0;
+};
+
+struct ZclAttrMap {
+    const ZclAttrRow* rows;
+    std::uint8_t      count;
+    std::uint16_t     manufacturer_code = 0;
+};
+
+bool fz_zcl_attr_map(const DecodedMessage& msg,
+                      const FzConverter& self,
+                      const PreparedDefinition& def,
+                      RuntimeContext& ctx,
+                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
+constexpr FzConverter zcl_attr_fz(const char* cluster, const ZclAttrMap* map) {
+    return FzConverter{
+        .family            = FrameFamily::Zcl,
+        .cluster           = cluster,
+        .type_mask         = type_bit(MessageType::AttributeReport) |
+                             type_bit(MessageType::ReadResponse),
+        .command_id        = WILDCARD_CMD_ID,
+        .attr_id           = WILDCARD_ATTR_ID,
+        .endpoint          = WILDCARD_ENDPOINT,
+        .frame_flags_mask  = 0,
+        .frame_flags_value = 0,
+        .direction         = Direction::ServerToClient,
+        .fn                = { .zcl_fn = fz_zcl_attr_map },
+        .user_config       = map,
+    };
+}
+
 
 bool tz_zcl_write_attr(std::string_view key,
                         const Value& input,
@@ -697,6 +764,20 @@ bool tz_zcl_write_attr(std::string_view key,
                         RuntimeContext& ctx,
                         std::span<std::uint8_t> out_frame,
                         std::size_t& out_size);
+
+// Write-side companion: a TzConverter over one ZclWriteSpec.
+constexpr TzConverter zcl_write_tz(const char* cluster, std::uint16_t cluster_id,
+                                    const ZclWriteSpec* spec, std::uint8_t endpoint = 0) {
+    return TzConverter{
+        .key         = spec->key,
+        .cluster     = cluster,
+        .cluster_id  = cluster_id,
+        .command_id  = 0x02,
+        .fn          = tz_zcl_write_attr,
+        .user_config = spec,
+        .endpoint    = endpoint,
+    };
+}
 
 // closuresDoorLock command 0x20 (programming-event notification).
 // Decodes program_event_code into z2m's `action` enum

@@ -12,6 +12,9 @@
 // kFzOccupancy + kFzIlluminance, the illuminance expose, and the
 // 0x0400 binding.
 //
+// Illuminance is kFzIlluminanceRaw: z2m declares this sensor with
+// `m.illuminance({scale: (value) => value})`, the firmware reports lux.
+//
 // z2m-source: shinasystem.ts #USM-300ZB.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/shinasystem/_shared.hpp"
@@ -23,7 +26,7 @@ const FzConverter* const kFz_USM_300ZB[] = {
     &::zhc::generic::kFzTemperature,
     &::zhc::generic::kFzHumidity,
     &::zhc::generic::kFzOccupancy,
-    &::zhc::generic::kFzIlluminance,
+    &::zhc::generic::kFzIlluminanceRaw,
 };
 
 constexpr const char* kModels_USM_300ZB[] = { "USM-300Z" };

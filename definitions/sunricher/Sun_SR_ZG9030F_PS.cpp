@@ -9,9 +9,9 @@
 // sensor as a controllable on/off RELAY (genOnOff server, kFzOnOff/kTzOnOff, expose
 // "state"). The device has no relay — its core outputs are occupancy
 // (msOccupancySensing) and illuminance (msIlluminanceMeasurement). Replace the
-// relay with kFzOccupancy + kFzIlluminance and expose `occupancy` + `illuminance`
-// to match z2m. The generic kFzIlluminance passes the raw measuredValue, identical
-// to z2m's `scale: (value) => value`.
+// relay with kFzOccupancy + kFzIlluminanceRaw and expose `occupancy` + `illuminance`
+// to match z2m. kFzIlluminanceRaw passes the raw measuredValue, identical to
+// z2m's `scale: (value) => value` (kFzIlluminance applies the lux curve).
 //
 // DEFERRED (infra, not a device-function gap): m.commandsOnOff() surfaces emitted
 // on/off commands as an `action` — there is no generic genOnOff-command->action
@@ -23,7 +23,7 @@ namespace zhc::devices::sunricher {
 namespace {
 const FzConverter* const kFz_SR_ZG9030F_PS[] = {
     &::zhc::generic::kFzOccupancy,
-    &::zhc::generic::kFzIlluminance,
+    &::zhc::generic::kFzIlluminanceRaw,
 };
 constexpr const char* kModels_SR_ZG9030F_PS[] = { "HK-SENSOR-PRE" };
 

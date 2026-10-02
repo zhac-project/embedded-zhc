@@ -186,15 +186,18 @@ void check_occupancy(const PreparedDefinition& def, std::uint8_t src_ep) {
     assert(b_false(rc.merged.find(key.c_str())));
 }
 
-// ── Illuminance: msIlluminanceMeasurement attr 0x0000 u16, raw (z2m identity) ─
-void check_illuminance(const PreparedDefinition& def, std::uint8_t src_ep) {
+// ── Illuminance: msIlluminanceMeasurement attr 0x0000 u16 ─────────────────────
+// SR-ZG9030F-PS is `m.illuminance({scale: identity})` (raw); the others use
+// z2m's lux curve 10^((raw-1)/10000).
+void check_illuminance(const PreparedDefinition& def, std::uint8_t src_ep, bool raw = false) {
     assert(def_exposes(def, "illuminance"));
     const std::uint8_t lux[] = {0xE8, 0x03};            // 0x03E8 = 1000
     auto r = dispatch_zcl_ep(def, 0x0400, src_ep, "msIlluminanceMeasurement",
                              attr_report(0x0000, 0x21, lux));
     assert(r.any_matched);
     const Value* lv = r.merged.find(merged_key(def, "illuminance", src_ep).c_str());
-    assert(lv && lv->type == ValueType::Uint && lv->u == 1000);
+    if (raw) assert(lv && lv->type == ValueType::Uint && lv->u == 1000);
+    else     assert(lv && lv->type == ValueType::Float && std::fabs(lv->f - 1.25864f) < 0.001f);
 }
 
 // ── Temperature: msTemperatureMeasurement attr 0x0000 s16 (×0.01) ─────
@@ -237,7 +240,7 @@ int main() {
     // 2. Presence sensor: occupancy + illuminance, relay "state" gone.
     assert(!def_exposes(kDef_SR_ZG9030F_PS, "state"));
     check_occupancy(kDef_SR_ZG9030F_PS, 1);
-    check_illuminance(kDef_SR_ZG9030F_PS, 1);
+    check_illuminance(kDef_SR_ZG9030F_PS, 1, /*raw=*/true);
 
     // 3a. 4-in-1: occupancy + temperature + humidity + illuminance (all ep1).
     check_occupancy(kDef_HK_SENSOR_4IN1_A, 1);

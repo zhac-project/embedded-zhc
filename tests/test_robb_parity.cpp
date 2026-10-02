@@ -39,6 +39,7 @@
 
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -232,7 +233,8 @@ void check_pir_sensor(const PreparedDefinition& def) {
                                           std::span<const std::uint8_t>(lux.data(), lux.size())));
     assert(rl.any_matched);
     const Value* lv = rl.merged.find(merged_key(def, "illuminance", 5).c_str());
-    assert(lv && lv->type == ValueType::Uint && lv->u == 1000);
+    // z2m m.illuminance(): 10^((raw-1)/10000) lux (lux curve since R8, v26.115 parity).
+    assert(lv && lv->type == ValueType::Float && std::fabs(lv->f - 1.25864f) < 0.001f);
 
     // The original IAS path is retained alongside the new sensors: its zone
     // alarm/tamper/battery_low exposes must still be present (kFzIasZone is

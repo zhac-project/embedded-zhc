@@ -6,6 +6,7 @@
 
 #include "definitions/_generic/_shared.hpp"
 
+#include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -978,6 +979,15 @@ extern const FzConverter kFzCommandCoverStop{
 
 // ── Temperature / humidity / pressure / illuminance ──────────────────
 
+// z2m modernExtend `luxScale`: the ZCL measuredValue is 10000 * log10(lux) + 1,
+// and 0 means "too low to be measured", published as 0 lux (v26.107.0, #13124)
+// instead of the curve's 0.9998. Not rounded -- `m.illuminance()` sets no
+// precision, so z2m publishes the float as computed.
+float lux_from_measured_value(std::uint64_t raw) {
+    if (raw == 0) return 0.0f;
+    return static_cast<float>(std::pow(10.0, (static_cast<double>(raw) - 1.0) / 10000.0));
+}
+
 namespace {
 
 bool fz_temperature(const DecodedMessage& msg, const FzConverter&,
@@ -1055,6 +1065,16 @@ bool fz_pressure(const DecodedMessage& msg, const FzConverter&,
 bool fz_illuminance(const DecodedMessage& msg, const FzConverter&,
                      const PreparedDefinition&, RuntimeContext&,
                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");
+    if (!v || v->type != ValueType::Uint) return false;
+    Value o{}; o.type = ValueType::Float; o.f = lux_from_measured_value(v->u);
+    out.put("illuminance", o);
+    return true;
+}
+
+bool fz_illuminance_raw(const DecodedMessage& msg, const FzConverter&,
+                         const PreparedDefinition&, RuntimeContext&,
+                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     const Value* v = msg.payload.find("0");
     if (!v || v->type != ValueType::Uint) return false;
     Value o{}; o.type = ValueType::Uint; o.u = v->u;
@@ -1155,6 +1175,21 @@ extern const FzConverter kFzIlluminance{
     .frame_flags_value = 0,
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_illuminance },
+    .user_config       = nullptr,
+};
+
+extern const FzConverter kFzIlluminanceRaw{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "msIlluminanceMeasurement",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_illuminance_raw },
     .user_config       = nullptr,
 };
 
@@ -2867,6 +2902,15 @@ bool tz_zcl_write_attr(std::string_view key,
         input.type == ValueType::Bool) {
         v = v ? 0 : 1;
     }
+    if (spec->multiplier != 1) {
+        double d = 0.0;
+        if (input.type == ValueType::Float)     d = static_cast<double>(input.f);
+        else if (input.type == ValueType::Int)  d = static_cast<double>(input.i);
+        else if (input.type == ValueType::Uint) d = static_cast<double>(input.u);
+        else return false;   // a scaled attribute takes numbers only
+        d *= static_cast<double>(spec->multiplier);
+        v = static_cast<std::uint32_t>(static_cast<std::int64_t>(d + (d >= 0.0 ? 0.5 : -0.5)));
+    }
     const std::size_t vlen = zcl_type_len(spec->attr_type);
     if (vlen == 0) return false;
 
@@ -2892,6 +2936,66 @@ bool tz_zcl_write_attr(std::string_view key,
     }
     out_size = total;
     return true;
+}
+
+// ── fz_zcl_attr_map — data-driven attribute decoder ─────────────────
+
+bool fz_zcl_attr_map(const DecodedMessage& msg,
+                      const FzConverter& self,
+                      const PreparedDefinition&,
+                      RuntimeContext&,
+                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const auto* map = static_cast<const ZclAttrMap*>(self.user_config);
+    if (!map || !map->rows) return false;
+    if (map->manufacturer_code != 0 &&
+        (!msg.manufacturer_specific || msg.manufacturer_code != map->manufacturer_code)) {
+        return false;
+    }
+    bool any = false;
+    for (std::uint8_t i = 0; i < map->count; ++i) {
+        const ZclAttrRow& r = map->rows[i];
+        char key[8];
+        std::snprintf(key, sizeof(key), "%u", static_cast<unsigned>(r.attr_id));
+        const Value* v = msg.payload.find(key);
+        if (!v) continue;
+
+        if (r.lookup) {
+            std::int64_t raw = 0;
+            if (v->type == ValueType::Uint)      raw = static_cast<std::int64_t>(v->u);
+            else if (v->type == ValueType::Int)  raw = v->i;
+            else if (v->type == ValueType::Bool) raw = v->b ? 1 : 0;
+            else continue;
+            const char* label = nullptr;
+            for (std::uint8_t k = 0; k < r.lookup_count; ++k) {
+                if (static_cast<std::int64_t>(r.lookup[k].value) == raw) { label = r.lookup[k].label; break; }
+            }
+            if (!label) continue;
+            Value o{}; o.type = ValueType::StringRef; o.str = label;
+            any |= out.put(r.key, o);
+            continue;
+        }
+        if (r.flags & kZclAttrFlagBool) {
+            Value o{}; o.type = ValueType::Bool;
+            if (v->type == ValueType::Bool)      o.b = v->b;
+            else if (v->type == ValueType::Uint) o.b = v->u != 0;
+            else if (v->type == ValueType::Int)  o.b = v->i != 0;
+            else continue;
+            any |= out.put(r.key, o);
+            continue;
+        }
+        if (r.divisor > 1) {
+            float f = 0.0f;
+            if (v->type == ValueType::Uint)       f = static_cast<float>(v->u);
+            else if (v->type == ValueType::Int)   f = static_cast<float>(v->i);
+            else if (v->type == ValueType::Float) f = v->f;
+            else continue;
+            Value o{}; o.type = ValueType::Float; o.f = f / static_cast<float>(r.divisor);
+            any |= out.put(r.key, o);
+            continue;
+        }
+        any |= out.put(r.key, *v);
+    }
+    return any;
 }
 
 // ── fz_lock (closuresDoorLock 0x0101) ───────────────────────────────

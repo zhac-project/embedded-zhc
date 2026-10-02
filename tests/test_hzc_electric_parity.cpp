@@ -26,6 +26,7 @@
 
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <span>
@@ -215,8 +216,9 @@ static void test_s902m_illuminance() {
     auto r = dispatch_from_zigbee(msg, {}, def, raw, ctx);
     assert(r.any_matched);
     const Value* l = r.merged.find("illuminance");
-    assert(l && l->type == ValueType::Uint);
-    assert(l->u == 12345);
+    // z2m m.illuminance(): 10^((raw-1)/10000) lux (lux curve since R8, v26.115 parity).
+    assert(l && l->type == ValueType::Float);
+    assert(std::fabs(l->f - 17.1554f) < 0.01f);
 }
 
 int main() {

@@ -112,7 +112,8 @@ int main() {
                             0x0400 /* msIlluminanceMeasurement */, 12345);
         assert(r.any_matched);
         const Value* l = r.merged.find("illuminance");
-        assert(l && l->type == ValueType::Uint && l->u == 12345);
+        // z2m m.illuminance(): 10^((raw-1)/10000) lux (lux curve since R8, v26.115 parity).
+        assert(l && l->type == ValueType::Float && std::fabs(l->f - 17.1554f) < 0.01f);
     }
 
     std::printf("bacchus parity tests passed\n");

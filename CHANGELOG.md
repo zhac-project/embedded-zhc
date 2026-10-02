@@ -8,7 +8,35 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Changed
+
+- **Illuminance is published in lux, as z2m does.** The generic
+  msIlluminanceMeasurement decoder (`kFzIlluminance`) published the raw
+  register — 10000·log10(lux)+1 — under the lux unit, so 1000 lx showed as
+  30001. It now applies z2m's `m.illuminance()` curve, 10^((raw−1)/10000)
+  as a float, and 0 ("too low to be measured") publishes 0, as z2m v26.107.0
+  (#13124) does. 69 definitions use it, plus the hub's fallback definition for
+  unknown devices. Rules or dashboards written against the old numbers need
+  their thresholds converted. `kFzIlluminanceRaw` keeps the raw value for the
+  sensors z2m declares with an identity scale, whose firmware already reports
+  lux: ShinaSystem USM-300ZB and Sunricher SR-ZG9030F-PS.
+
+### Fixed
+
+- **Tuya `phaseVariant2WithPhase` reads 24-bit current and power again** (z2m
+  v26.111.0, #13203 — the second widening after v26.105.0's revert). Negative
+  power is `power − 0x99999A` at or above 0x800000, so −100 W arrives as
+  0x999936; currents above 65.535 A no longer wrap. Nous D4Z-M and every other
+  user of `dp::phase_variant2_with_phase`. `zhc_tuya_packed_dp_tests` pins
+  upstream's capture (`[9,38,0,0,146,153,153,134]` → −20 W).
+
 ### Added
+
+- Data-driven attribute decoder `generic::zcl_attr_fz` / `ZclAttrMap` — the
+  read side of `ZclWriteSpec` — for z2m `m.numeric` / `m.binary` /
+  `m.enumLookup` over plain or custom attributes (divisor, label lookup,
+  boolean, optional manufacturer-code gate), and `generic::zcl_write_tz`.
+  `ZclWriteSpec::multiplier` writes `value × N` (z2m `scale: N`).
 
 - **Aqara WS-USC03, WS-USC04 and WS-EUK02 are definitions of their own**, as in z2m. They were matched by QBKG21LM, QBKG22LM and WS-EUK03 and got those switches' settings: the two US switches a genBasic decoupled mode they do not implement, no heartbeat and no event mode; the two-rocker WS-EUK02 one decoupled mode, for its left rocker only. Each now has z2m's exposes and converters: on/off per rocker (`state_top` / `state_bottom`, `state_left` / `state_right`, sent to that rocker's endpoint), decoupled mode per button (0x0200 on the button's endpoint), `power_outage_memory`, `flip_indicator_light`, and on WS-EUK02 `led_disabled_night` and `mode_switch` (anti_flicker_mode / quick_mode, 0x0004 u16), each read back when the switch reports it (`kFzLumiSettings`); button presses as z2m names them (`single_top`, `double_left`, `single_both`, …; `single` / `double` on WS-USC03); power on the two with a neutral; the 0x00F7 heartbeat, event mode at pairing and the answer to the reset request. QBKG21LM, QBKG22LM and WS-EUK03 are otherwise unchanged.
 - **Aqara modern heartbeat (0xFCC0 attribute 0x00F7) decoded** on the 114 definitions whose z2m models decode it: battery %, voltage, device temperature, power-outage count, and energy / power / voltage / current on the mains devices that report them there. Newer Aqara gear (the E1/T1/H1/P1 generations, H1/H2 switches, the P100, the FP300) sends its battery and health only there, so battery showed nothing (or only what a genPowerCfg read gave). Per model as z2m's `numericAttributes2Payload`: battery on each model's curve (2850–3000 mV; 2475–3000 on JY-GZ-01AQ), rounded as z2m rounds; no temperature on the models whose tag 3 is a constant 25 °C; voltage ×0.01 on KD-R01D and WS-K05E, energy ÷1000 on LLKZMK12LM, battery from tag 102 on TH-S04D and tag 101 ÷ 2 on ZNCLBL01LM, the outage count from tag 2 on JT-BZ-01AQ/A; `lumiBattery` on DJT12LM, ZNXNKG02LM, DWZTCGQ11LM, PS-S04D and FP310. PS-S04D (FP300) is asked for it at pairing, as z2m does: its firmware does not send it on its own. `kFzLumiHeartbeat` / `kFzLumiHeartbeatBattery` / `kFzLumiBattery`, `lumi_heartbeat_converter()`.

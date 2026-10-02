@@ -41,6 +41,7 @@
 
 #include <array>
 #include <cassert>
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <span>
@@ -187,7 +188,8 @@ void check_pir() {
                                           std::span<const std::uint8_t>(lux.data(), lux.size())));
     assert(il.any_matched);
     const Value* lv = il.merged.find("illuminance");
-    assert(lv && lv->type == ValueType::Uint && lv->u == 500);
+    // z2m m.illuminance(): 10^((raw-1)/10000) lux (lux curve since R8, v26.115 parity).
+    assert(lv && lv->type == ValueType::Float && std::fabs(lv->f - 1.12176f) < 0.001f);
 
     // Binds: ssIasZone + msIlluminanceMeasurement.
     assert(def_binds(def, 1, 0x0500));
