@@ -23,6 +23,32 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Zosung IR blasters: `learn_ir_code` OFF stops learning.** Every write
+  started learning (`{"study":0}`); OFF / false now sends `{"study":1}`, as
+  z2m v26.113.0 (#13267) does. WMUN ZS05, Aubess ZXZIR-02, Moes UFO-R11.
+- **Tuya curtain switches: `motor_steering` is now `motor_direction`**
+  (normal / reversed, datapoint 8), z2m v26.111.0 (#13207): TS0601_cover_5,
+  TS0601_cover_switch_2, TS0601_cover_with_1_switch / _2_switch. Rules on
+  `motor_steering` FORWARD / BACKWARD need the new key. The cover state words
+  follow upstream (OPEN / STOP / CLOSE, START / END); `_TZE284_waa352qv` keeps
+  its own order (STOP / CLOSE / OPEN) and `_TZE284_uqfph8ah` (BSEED) its
+  quick-calibration and indicator settings, each as a definition of its own.
+  Three generated per-manufacturer copies are retired.
+- **Tuya `_TZE200_jhkttplm` (Homeetec 37022493) was decoded as a contact
+  sensor**; it is z2m's TS0601_cover_with_1_switch, a curtain switch with one
+  gang, and now decodes as one.
+- **Tuya TS0601_cover_12 family**: datapoint 7 is z2m's `motor_state`
+  (opening / closing / stopped), it was `work_state` without `stopped`;
+  `_TZE200_mlglxwp3` is named TS0601_cover_12 and lists its exposes;
+  `auto_power` on `_TZE204_tgl8i2np` is a switch.
+- **RINNconnect WSER40 (`_TZE200_pk0sfzvr`) was not controllable**: it was
+  listed with the legacy cover layout (datapoints 1 / 2). Own definition, as
+  z2m v26.113.0 (#13302): state OPEN / CLOSE / STOP on datapoint 1, position
+  on 102 / 103.
+- **Tuya `_TZE204_zuq5xxib` / `_TZE284_zuq5xxib` (Zemismart ZMS1-TYZ)
+  curtain track**: the generated copy was a genOnOff placeholder that decoded
+  nothing; both now decode as TS0601_cover (state + position).
+
 - **Tuya `phaseVariant2WithPhase` reads 24-bit current and power again** (z2m
   v26.111.0, #13203 — the second widening after v26.105.0's revert). Negative
   power is `power − 0x99999A` at or above 0x800000, so −100 W arrives as
@@ -32,6 +58,9 @@ across the ZHAC platform.
 
 ### Added
 
+- Tuya TS0601_cover_14 (`_TZE284_a0hirjnh`, z2m v26.113.0) with
+  `favorite_position`; `_TZE284_pxwixtky` on TS0601_cover_5; `_TZE200_fu14oapz`
+  on TS0601_cover_2.
 - Data-driven attribute decoder `generic::zcl_attr_fz` / `ZclAttrMap` — the
   read side of `ZclWriteSpec` — for z2m `m.numeric` / `m.binary` /
   `m.enumLookup` over plain or custom attributes (divisor, label lookup,

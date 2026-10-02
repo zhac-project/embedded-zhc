@@ -576,8 +576,9 @@ bool tz_zosung_ir_code_to_send(std::string_view key,
 // ── tz_zosung_learn_ir_code ────────────────────────────────────────
 //
 // Inbound `learn_ir_code` write. Sends IRControl cmd 00 with payload
-// `{"study":0}` to put the device into learn mode.
-// z2m-ref: zosung.ts:445-459.
+// `{"study":0}` to put the device into learn mode, or `{"study":1}` to stop
+// it when the write is OFF / false (z2m v26.113.0, #13267).
+// z2m-ref: zosung.ts zosung_learn_ir_code.
 
 bool tz_zosung_learn_ir_code(std::string_view key,
                               const Value& input,
@@ -588,18 +589,22 @@ bool tz_zosung_learn_ir_code(std::string_view key,
                               std::size_t& out_size) {
     out_size = 0;
     if (key != "learn_ir_code") return false;
-    // z2m doesn't gate on the value — any write triggers learn mode
-    // (UI sends "ON"). We accept any input shape.
-    (void)input;
+    // z2m: `const stop = value === "OFF" || value === false`; anything else
+    // (the UI sends "ON") starts learning.
+    const bool stop = (input.type == ValueType::Bool && !input.b) ||
+                      (input.type == ValueType::StringRef && input.str &&
+                       std::strcmp(input.str, "OFF") == 0);
+    const char* json = stop ? kStudyAckJson : kStudyStartJson;
 
-    // Frame: FC(0x11) TSN(00) cmdID(0x00) + OCTET_STR("{\"study\":0}")
+    // Frame: FC(0x11) TSN(00) cmdID(0x00) + OCTET_STR("{\"study\":N}")
     constexpr std::size_t kJsonLen = sizeof(kStudyStartJson) - 1;
+    static_assert(sizeof(kStudyStartJson) == sizeof(kStudyAckJson));
     if (out_frame.size() < 3 + 1 + kJsonLen) return false;
     out_frame[0] = kFcCmdNoDefRsp;
     out_frame[1] = 0x00;
     out_frame[2] = cmd::kControlCmd00;
     out_frame[3] = static_cast<std::uint8_t>(kJsonLen);
-    std::memcpy(&out_frame[4], kStudyStartJson, kJsonLen);
+    std::memcpy(&out_frame[4], json, kJsonLen);
     out_size = 3 + 1 + kJsonLen;
     return true;
 }

@@ -164,7 +164,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_fall.cpp
     definitions/tuya/TZE200_sleep.cpp
     definitions/tuya/TZE200_motion_lux.cpp
-    definitions/tuya/TZE200_contact_t1.cpp
+    definitions/tuya/TS0601_cover_with_switch.cpp
     definitions/tuya/TZE200_light_sensor.cpp
     definitions/tuya/TZE200_radar_v5.cpp
     definitions/tuya/TZE200_noise.cpp

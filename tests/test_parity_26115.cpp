@@ -10,6 +10,7 @@
 #include <cstdio>
 #include <cstring>
 #include <span>
+#include <string>
 #include <vector>
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
@@ -22,6 +23,18 @@
 
 namespace zhc::devices::tplink      { extern const PreparedDefinition kDef_MS100; }
 namespace zhc::devices::shinasystem { extern const PreparedDefinition kDef_USM_300ZB; }
+namespace zhc::devices::wmun        { extern const PreparedDefinition kDef_ZS05; }
+namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_TS0601_cover_5;
+                                      extern const PreparedDefinition kDef_TS0601_cover_5_uqfph8ah;
+                                      extern const PreparedDefinition kDef_TS0601_cover_5_waa352qv;
+                                      extern const PreparedDefinition kDef_TS0601_cover_switch_2;
+                                      extern const PreparedDefinition kDef_TS0601_cover_with_1_switch;
+                                      extern const PreparedDefinition kDef_TS0601_cover_with_2_switch;
+                                      extern const PreparedDefinition kDef_TS0601_cover_13;
+                                      extern const PreparedDefinition kDef_TS0601_cover_14;
+                                      extern const PreparedDefinition kDef_TZE200_mlglxwp3;
+                                      extern const PreparedDefinition kDefTS0601_cover;
+                                      extern const PreparedDefinition kDef_WSER40; }
 
 using namespace zhc;
 
@@ -97,7 +110,7 @@ struct Encoded { bool ok = false; std::uint16_t cluster = 0; std::uint8_t ep = 0
     std::uint8_t buf[96] = {};
     for (std::size_t i = 0; i < def.to_zigbee_count; ++i) {
         const TzConverter* c = def.to_zigbee[i];
-        if (!c || !c->key || std::strcmp(c->key, key) != 0) continue;
+        if (!c || (c->key && std::strcmp(c->key, key) != 0)) continue;   // null key = wildcard
         std::size_t n = 0;
         if (c->fn(key, v, *c, def, ctx, std::span<std::uint8_t>(buf, sizeof(buf)), n) && n) {
             e.ok = true; e.cluster = c->cluster_id; e.ep = c->endpoint;
@@ -244,12 +257,79 @@ void test_attr_map_and_write_multiplier() {
     }
 }
 
+
+void test_zosung_learn_stop() {
+    std::printf("zosung learn_ir_code OFF stops learning\n");
+    const auto& def = devices::wmun::kDef_ZS05;
+    auto body = [](const Encoded& e) {
+        return e.frame.size() > 4 ? std::string(e.frame.begin() + 4, e.frame.end()) : std::string();
+    };
+    auto on  = encode(def, "learn_ir_code", str("ON"));
+    auto off = encode(def, "learn_ir_code", str("OFF"));
+    auto f   = encode(def, "learn_ir_code", boolean(false));
+    check(on.ok && body(on) == "{\"study\":0}", "ON starts learning (study 0)");
+    check(off.ok && body(off) == "{\"study\":1}", "OFF stops learning (study 1)");
+    check(f.ok && body(f) == "{\"study\":1}", "false stops learning (study 1)");
+}
+
+void test_tuya_covers() {
+    std::printf("Tuya covers: motor_direction, cover_12/13/14, WSER40, cover_with_1_switch\n");
+    using namespace devices::tuya;
+    RuntimeContext ctx{};
+    // #13207: DP8 motor_steering -> motor_direction {normal, reversed}.
+    for (const PreparedDefinition* d : { &kDef_TS0601_cover_5, &kDef_TS0601_cover_5_uqfph8ah,
+                                         &kDef_TS0601_cover_5_waa352qv, &kDef_TS0601_cover_switch_2,
+                                         &kDef_TS0601_cover_with_1_switch, &kDef_TS0601_cover_with_2_switch }) {
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{};
+        check(dp_enum(*d, 8, 1, ctx, o), d->model);
+        check(str_is(o, "motor_direction", "reversed"), "DP8 1 -> motor_direction reversed");
+        check(o.find("motor_steering") == nullptr, "no motor_steering any more");
+        check(has_expose(*d, "motor_direction") && !has_expose(*d, "motor_steering"), "motor_direction exposed");
+        auto e = encode(*d, "motor_direction", str("normal"));
+        check(e.ok, "motor_direction writable");
+    }
+    check(has_manu(kDef_TS0601_cover_5, "_TZE284_pxwixtky"), "cover_5 + _TZE284_pxwixtky (#13261)");
+    check(has_manu(kDef_TS0601_cover_5, "_TZE204_p6vz3wzt"), "cover_5 lists _TZE204_p6vz3wzt");
+    // _TZE284_waa352qv reports DP1 in another order.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(kDef_TS0601_cover_5_waa352qv, 1, 0, ctx, o);
+      check(str_is(o, "state", "STOP"), "waa352qv DP1 0 = STOP"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(kDef_TS0601_cover_5, 1, 0, ctx, o);
+      check(str_is(o, "state", "OPEN"), "cover_5 DP1 0 = OPEN"); }
+    check(has_expose(kDef_TS0601_cover_5_uqfph8ah, "quick_calibration") &&
+          !has_expose(kDef_TS0601_cover_5_uqfph8ah, "child_lock"), "BSEED variant exposes quick_calibration");
+    // _TZE200_jhkttplm is a curtain switch (DP1 cover action), not a contact sensor.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(kDef_TS0601_cover_with_1_switch, 1, 2, ctx, o);
+      check(str_is(o, "state", "CLOSE") && o.find("contact") == nullptr, "jhkttplm DP1 is the cover action"); }
+    // TS0601_cover_12 family: motor_state with stopped; variant-only datapoints.
+    for (const PreparedDefinition* d : { &kDef_TZE200_mlglxwp3, &kDef_TS0601_cover_13, &kDef_TS0601_cover_14 }) {
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{};
+        dp_enum(*d, 7, 2, ctx, o);
+        check(str_is(o, "motor_state", "stopped") && o.find("work_state") == nullptr, "DP7 motor_state stopped");
+    }
+    check(std::strcmp(kDef_TZE200_mlglxwp3.model, "TS0601_cover_12") == 0, "mlglxwp3 is TS0601_cover_12");
+    check(has_manu(kDef_TS0601_cover_14, "_TZE284_a0hirjnh"), "cover_14 fingerprint (#13295)");
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(kDef_TS0601_cover_14, 19, 40, ctx, o);
+      check(approx(float_of(o, "favorite_position"), 40.f), "cover_14 DP19 favorite_position"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_bool(kDef_TS0601_cover_13, 6, true, ctx, o);
+      check(bool_is(o, "auto_power", true), "cover_13 DP6 auto_power boolean"); }
+    // WSER40 off the legacy layout; cover_2 + ZMS1-TYZ manufacturers.
+    check(!has_manu(kDefTS0601_cover, "_TZE200_pk0sfzvr") && has_manu(kDef_WSER40, "_TZE200_pk0sfzvr"), "pk0sfzvr -> WSER40");
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(kDef_WSER40, 103, 55, ctx, o);
+      check(approx(float_of(o, "position"), 55.f), "WSER40 DP103 position"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(kDef_WSER40, 1, 1, ctx, o);
+      check(str_is(o, "state", "CLOSE"), "WSER40 DP1 1 = CLOSE"); }
+    check(has_manu(kDefTS0601_cover, "_TZE200_fu14oapz"), "TS0601_cover_2 + _TZE200_fu14oapz (#13208)");
+    check(has_manu(kDefTS0601_cover, "_TZE284_zuq5xxib"), "ZMS1-TYZ + _TZE284_zuq5xxib (#13222)");
+}
+
 }  // namespace
 
 int main() {
     std::printf("== z2m parity window v26.105.0 -> v26.115.1 ==\n");
     test_illuminance_lux();
     test_attr_map_and_write_multiplier();
+    test_zosung_learn_stop();
+    test_tuya_covers();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;

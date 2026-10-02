@@ -1,90 +1,58 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 3: TZE200_mlglxwp3 cover motor — z2m parity v26.95.0.
-// GRADUATED from definitions/tuya/generated/Gen__TZE200_mlglxwp3.cpp.
-// z2m v26.95.0 renamed the motor_direction labels: the inline lookup
-// {forward:0, back:1} became valueConverter.tubularMotorDirection,
-// {normal:0, reversed:1}. Wire values unchanged; only the published
-// strings differ. Renamed for z2m parity (product decision).
-// Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE200_mlglxwp3).
+// Tier 3: Tuya TS0601_cover_12 curtain motor, `_TZE200_mlglxwp3` (the only
+// variant upstream gives a battery, DP103). z2m v26.115.1 parity.
+// GRADUATED from definitions/tuya/generated/Gen__TZE200_mlglxwp3.cpp (v26.95.0).
+//
+// v26.115.1 fixes: model name TS0601_cover_12 (was "TS0601__TZE200_mlglxwp3");
+// DP7 is z2m's `motor_state` {opening, closing, stopped} (was `work_state`
+// without `stopped`); DP1 coverAction gains CONTINUE; exposes listed. The
+// tgl8i2np / a0hirjnh variants live in TS0601_cover_13.cpp.
+// z2m-source: tuya.ts #TS0601_cover_12.
 #include "definitions/tuya/_shared.hpp"
+#include "definitions/tuya/dp.hpp"
 #include "definitions/tuya/extend.hpp"
+#include "definitions/tuya/factories.hpp"
 namespace zhc::devices::tuya {
 namespace {
-
-constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_mlglxwp3_state_dp1[] = {
-    { 0, "OPEN" },
-    { 1, "STOP" },
-    { 2, "CLOSE" },
-};
-
-constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_mlglxwp3_motor_direction_dp5[] = {
-    { 0, "normal" },
-    { 1, "reversed" },
-};
-
-constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_mlglxwp3_work_state_dp7[] = {
-    { 0, "opening" },
-    { 1, "closing" },
-};
-
-constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_mlglxwp3_situation_set_dp11[] = {
-    { 0, "fully_close" },
-    { 1, "fully_open" },
-};
-
-constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE200_mlglxwp3[] = {
-    { 1, "state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_mlglxwp3_state_dp1, sizeof(kEnum__TZE200_mlglxwp3_state_dp1)/sizeof(kEnum__TZE200_mlglxwp3_state_dp1[0]) },
-    { 2, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 3, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 5, "motor_direction", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_mlglxwp3_motor_direction_dp5, sizeof(kEnum__TZE200_mlglxwp3_motor_direction_dp5)/sizeof(kEnum__TZE200_mlglxwp3_motor_direction_dp5[0]) },
-    { 7, "work_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_mlglxwp3_work_state_dp7, sizeof(kEnum__TZE200_mlglxwp3_work_state_dp7)/sizeof(kEnum__TZE200_mlglxwp3_work_state_dp7[0]) },
-    { 10, "total_time", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 11, "situation_set", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_mlglxwp3_situation_set_dp11, sizeof(kEnum__TZE200_mlglxwp3_situation_set_dp11)/sizeof(kEnum__TZE200_mlglxwp3_situation_set_dp11[0]) },
-    { 12, "fault", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 103, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-};
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE200_mlglxwp3{ kEntries__TZE200_mlglxwp3, 9 };
-constexpr FzConverter kFzDp__TZE200_mlglxwp3{
-    .family            = FrameFamily::TuyaDp,
-    .cluster           = "manuSpecificTuya",
-    .type_mask         = type_bit(MessageType::Command),
-    .command_id        = WILDCARD_CMD_ID,
-    .attr_id           = WILDCARD_ATTR_ID,
-    .endpoint          = WILDCARD_ENDPOINT,
-    .frame_flags_mask  = 0,
-    .frame_flags_value = 0,
-    .direction         = Direction::ServerToClient,
-    .fn                = { .tuya_fn = &::zhc::tuya::fz_tuya_datapoints },
-    .user_config       = &kMap__TZE200_mlglxwp3,
-};
-const FzConverter* const kFz__TZE200_mlglxwp3[] = {
-    &::zhc::tuya::kFzTuyaMcuSyncTime,
-    &kFzDp__TZE200_mlglxwp3,
-};
-constexpr TzConverter kTzDp__TZE200_mlglxwp3{
-    .key         = nullptr,                // wildcard — claims any mapped key
-    .cluster     = "manuSpecificTuya",
-    .cluster_id  = 0xEF00,
-    .command_id  = 0x00,
-    .fn          = &::zhc::tuya::tz_tuya_datapoints,
-    .user_config = &kMap__TZE200_mlglxwp3,
-};
-const TzConverter* const kTz__TZE200_mlglxwp3[] = { &kTzDp__TZE200_mlglxwp3 };
-constexpr const char* kM__TZE200_mlglxwp3[] = { "TS0601" };
-constexpr const char* kN__TZE200_mlglxwp3[] = { "_TZE200_mlglxwp3" };
-}  // namespace
+constexpr ::zhc::tuya::TuyaEnumEntry kSt[]={{0,"OPEN"},{1,"STOP"},{2,"CLOSE"},{3,"CONTINUE"}};
+constexpr ::zhc::tuya::TuyaEnumEntry kDir[]={{0,"normal"},{1,"reversed"}};
+constexpr ::zhc::tuya::TuyaEnumEntry kMotor[]={{0,"opening"},{1,"closing"},{2,"stopped"}};
+constexpr ::zhc::tuya::TuyaEnumEntry kSit[]={{0,"fully_close"},{1,"fully_open"}};
+struct cfg { static constexpr ::zhc::tuya::TuyaDpMapEntry e[]={
+    ::zhc::tuya::dp::enum_lookup(1,"state",kSt,4),
+    ::zhc::tuya::dp::numeric(2,"position",1),
+    ::zhc::tuya::dp::numeric(3,"position",1),
+    ::zhc::tuya::dp::enum_lookup(5,"motor_direction",kDir,2),
+    ::zhc::tuya::dp::enum_lookup(7,"motor_state",kMotor,3),
+    ::zhc::tuya::dp::numeric(10,"total_time",1),
+    ::zhc::tuya::dp::enum_lookup(11,"situation_set",kSit,2),
+    ::zhc::tuya::dp::numeric(12,"fault",1),
+    ::zhc::tuya::dp::numeric(103,"battery",1)};
+    static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{e,sizeof(e)/sizeof(e[0])}; };
+using FX=::zhc::tuya::factory::TuyaRw<cfg>;
+constexpr const char* kM[]={"TS0601"};
+constexpr const char* kN[]={"_TZE200_mlglxwp3"};
+constexpr const char* kStOpts[]={"OPEN","CLOSE","STOP"};
+constexpr const char* kDirOpts[]={"normal","reversed"};
+constexpr const char* kMotorOpts[]={"opening","closing","stopped"};
+constexpr const char* kSitOpts[]={"fully_close","fully_open"};
+constexpr Expose kExp[]={
+    {"state",           ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kStOpts,    3},
+    {"position",        ExposeType::Numeric, Access::StateSet, "%",     nullptr, nullptr,    0},
+    {"motor_direction", ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kDirOpts,   2},
+    {"motor_state",     ExposeType::Enum,    Access::State,    nullptr, nullptr, kMotorOpts, 3},
+    {"total_time",      ExposeType::Numeric, Access::State,    "ms",    "Total running time in milliseconds", nullptr, 0},
+    {"situation_set",   ExposeType::Enum,    Access::StateSet, nullptr, "Set fully open or fully close position", kSitOpts, 2},
+    {"fault",           ExposeType::Numeric, Access::State,    nullptr, "Fault details", nullptr, 0},
+    {"battery",         ExposeType::Numeric, Access::State,    "%",     nullptr, nullptr, 0}};
+}
 extern const PreparedDefinition kDef_TZE200_mlglxwp3{
-    .zigbee_models=kM__TZE200_mlglxwp3,.zigbee_models_count=1,
-    .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN__TZE200_mlglxwp3,.manufacturer_names_count=1,
-    .model="TS0601__TZE200_mlglxwp3",.vendor="Tuya",
-    .meta=nullptr,.exposes=nullptr,.exposes_count=0,
+    .zigbee_models=kM,.zigbee_models_count=sizeof(kM)/sizeof(kM[0]),.manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kN,.manufacturer_names_count=sizeof(kN)/sizeof(kN[0]),.model="TS0601_cover_12",
+    .vendor="Tuya",.meta=nullptr,.exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
     .white_labels=nullptr,.white_labels_count=0,
-    .from_zigbee=kFz__TZE200_mlglxwp3,
-    .from_zigbee_count=sizeof(kFz__TZE200_mlglxwp3)/sizeof(kFz__TZE200_mlglxwp3[0]),
-    .to_zigbee=kTz__TZE200_mlglxwp3,
-    .to_zigbee_count=sizeof(kTz__TZE200_mlglxwp3)/sizeof(kTz__TZE200_mlglxwp3[0]),
-    .configure=::zhc::tuya::extend::tuya_base_configure(),
-    .on_event=nullptr };
+    .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
+    .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
+    .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };
 }  // namespace zhc::devices::tuya
