@@ -34,7 +34,13 @@ namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_TS060
                                       extern const PreparedDefinition kDef_TS0601_cover_14;
                                       extern const PreparedDefinition kDef_TZE200_mlglxwp3;
                                       extern const PreparedDefinition kDefTS0601_cover;
-                                      extern const PreparedDefinition kDef_WSER40; }
+                                      extern const PreparedDefinition kDef_WSER40;
+                                      extern const PreparedDefinition kDef_TS0601_heat_meter;
+                                      extern const PreparedDefinition kDef_TS0601_fan_5_levels_and_light_switch;
+                                      extern const PreparedDefinition kDef_ZHT_002;
+                                      extern const PreparedDefinition kDef_Tervix_6kijc7nd; }
+namespace zhc::devices::moes        { extern const PreparedDefinition kDef_ZS_SR_EUC_cover; }
+namespace zhc::devices::zemismart   { extern const PreparedDefinition kDef_ZN_USC1U_HT; }
 
 using namespace zhc;
 
@@ -322,6 +328,56 @@ void test_tuya_covers() {
     check(has_manu(kDefTS0601_cover, "_TZE284_zuq5xxib"), "ZMS1-TYZ + _TZE284_zuq5xxib (#13222)");
 }
 
+void test_tuya_thermostats_meters() {
+    std::printf("Tuya heat meter, fan, ZHT-002, Tervix, ZS-SR-EUC, ZN-USC1U-HT\n");
+    using namespace devices::tuya;
+    RuntimeContext ctx{};
+    // #13184: DP7 is the metering switch, DP8 the cumulative heat.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_bool(kDef_TS0601_heat_meter, 7, true, ctx, o);
+      check(bool_is(o, "prepayment_switch", true) && o.find("cumulative_heat") == nullptr, "DP7 prepayment_switch"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(kDef_TS0601_heat_meter, 8, 12345, ctx, o);
+      check(approx(float_of(o, "cumulative_heat"), 123.45f), "DP8 cumulative_heat /100"); }
+    { const std::uint8_t b[] = {0,0,0,0, 0,0,0x30,0x39};   // bytes 4..7 = 12345 -> 12.345 m3
+      FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_raw(kDef_TS0601_heat_meter, 2, b, ctx, o);
+      check(approx(float_of(o, "monthly_water_consumption"), 12.345f, 0.001f), "DP2 waterConsumption bytes 4..7 / 1000"); }
+    { const std::uint8_t b[] = {0,0,0x04,0xD2};             // 1234 -> 1.234 m3/h
+      FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_raw(kDef_TS0601_heat_meter, 19, b, ctx, o);
+      check(approx(float_of(o, "instantaneous_flow_rate"), 1.234f, 0.001f), "DP19 flow rate / 1000"); }
+    { const std::uint8_t b[] = {0x05};                      // bits 0 + 2
+      FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; run_dp(kDef_TS0601_heat_meter, {5, 0x05, std::span<const std::uint8_t>(b, 1)}, ctx, o);
+      check(str_is(o, "fault", "battery_alarm, cover_alarm"), "DP5 fault names joined with \", \""); }
+    { const std::uint8_t b[] = {0x00};
+      FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; run_dp(kDef_TS0601_heat_meter, {5, 0x05, std::span<const std::uint8_t>(b, 1)}, ctx, o);
+      check(str_is(o, "fault", "OK"), "DP5 zero fault -> OK"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(kDef_TS0601_heat_meter, 24, 360, ctx, o);
+      check(approx(float_of(o, "voltage"), 3600.f), "DP24 voltage x10"); }
+    // #13151: fan speed key.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(kDef_TS0601_fan_5_levels_and_light_switch, 3, 2, ctx, o);
+      check(str_is(o, "speed", "3") && o.find("fan_speed") == nullptr, "DP3 speed '3'"); }
+    check(has_manu(kDef_TS0601_fan_5_levels_and_light_switch, "_TZE204_lawxy9e2"), "fan lists _TZE204_lawxy9e2");
+    // ZHT-002: DP47 running_state, DP1 system_mode next to state.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(kDef_ZHT_002, 47, 1, ctx, o);
+      check(str_is(o, "running_state", "heat") && o.find("valve_state") == nullptr, "ZHT-002 DP47 running_state heat"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_bool(kDef_ZHT_002, 1, false, ctx, o);
+      check(str_is(o, "system_mode", "off") && bool_is(o, "state", false), "ZHT-002 DP1 -> state + system_mode off"); }
+    // #13329: Tervix DP1 is a boolean system_mode.
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_bool(kDef_Tervix_6kijc7nd, 1, true, ctx, o);
+      check(str_is(o, "system_mode", "heat"), "Tervix DP1 true -> heat"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(kDef_Tervix_6kijc7nd, 58, 2, ctx, o);
+      check(str_is(o, "run_mode", "cool_mode"), "Tervix DP58 numeric lookup"); }
+    { auto e = encode(kDef_Tervix_6kijc7nd, "system_mode", str("heat"));
+      check(e.ok, "Tervix system_mode writable"); }
+    // Moes ZS-SR-EUC / Zemismart ZN-USC1U-HT: motor_direction, overshoot clamp.
+    for (const PreparedDefinition* d : { &devices::moes::kDef_ZS_SR_EUC_cover, &devices::zemismart::kDef_ZN_USC1U_HT }) {
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(*d, 8, 1, ctx, o);
+        check(str_is(o, "motor_direction", "reversed"), "DP8 motor_direction reversed");
+    }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(devices::moes::kDef_ZS_SR_EUC_cover, 2, 254, ctx, o);
+      check(approx(float_of(o, "position"), 0.f), "ZS-SR-EUC 254 -> 0 (closed overshoot)"); }
+    { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(devices::moes::kDef_ZS_SR_EUC_cover, 2, 102, ctx, o);
+      check(approx(float_of(o, "position"), 100.f), "ZS-SR-EUC 102 -> 100 (open overshoot)"); }
+}
+
 }  // namespace
 
 int main() {
@@ -330,6 +386,7 @@ int main() {
     test_attr_map_and_write_multiplier();
     test_zosung_learn_stop();
     test_tuya_covers();
+    test_tuya_thermostats_meters();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26115 checks passed\n");
     return 0;

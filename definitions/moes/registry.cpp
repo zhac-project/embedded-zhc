@@ -50,7 +50,7 @@ extern const PreparedDefinition kDefMoes__TZE200_ydkqbmpt;
 extern const PreparedDefinition kDefMoes__TZE200_z3u99qxt;
 extern const PreparedDefinition kDefMoes__TZE200_zo0cfekv;
 extern const PreparedDefinition kDefMoes__TZE204_5slehgeo;
-extern const PreparedDefinition kDefMoes__TZE204_srmahpwl;
+extern const PreparedDefinition kDef_ZS_SR_EUC_cover;
 extern const PreparedDefinition kDefMoes__TZE204_vawy74yh;
 extern const PreparedDefinition kDefMoes__TZE204_x9usygq1;
 extern const PreparedDefinition kDefMoes__TZE204_xtrnjaoz;
@@ -92,7 +92,6 @@ extern const PreparedDefinition kDef_ZS_D1;
 extern const PreparedDefinition kDef_MS_104BZ;
 extern const PreparedDefinition kDef_ZHT_S03;
 extern const PreparedDefinition kDef_ZC_LP01;
-extern const PreparedDefinition kDef_ZS_SR_EUC;
 extern const PreparedDefinition kDef_GM25TEQ_TYZ_2_25;
 extern const PreparedDefinition kDef_ZC_HM;
 extern const PreparedDefinition kDef_ZP_LZ_FR2U;
@@ -158,7 +157,7 @@ extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDefMoes__TZE200_z3u99qxt,
     &kDefMoes__TZE200_zo0cfekv,
     &kDefMoes__TZE204_5slehgeo,
-    &kDefMoes__TZE204_srmahpwl,
+    &kDef_ZS_SR_EUC_cover,
     &kDefMoes__TZE204_vawy74yh,
     &kDefMoes__TZE204_x9usygq1,
     &kDefMoes__TZE204_xtrnjaoz,
@@ -199,7 +198,6 @@ extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDef_MS_104BZ,
     &kDef_ZHT_S03,
     &kDef_ZC_LP01,
-    &kDef_ZS_SR_EUC,
     &kDef_GM25TEQ_TYZ_2_25,
     &kDef_ZC_HM,
     &kDef_ZP_LZ_FR2U,

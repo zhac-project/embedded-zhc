@@ -558,11 +558,38 @@ bool tuya_dp_expand_fault_bitmap(const TuyaDpMapEntry& e, const Value& raw,
                                   FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 
 // Bit-index -> fault name. Index is the BIT POSITION, so order matters and
-// gaps must be spelled with a null.
+// gaps must be spelled with a null. `separator` joins the active names
+// (circuitBreakerFaults1 uses ","; most inline z2m fault converters ", ").
+// `none`, when set, is published for a zero bitmap instead of "" (z2m's
+// heat meter says "OK", AVATTO ZSD20 "No faults").
 struct TuyaFaultTable {
     const char* const* names;
     std::uint8_t       count;
+    const char*        separator = ",";
+    const char*        none      = nullptr;
 };
+
+// Cover position that overshoots at the limits: some curtain switches keep
+// counting past the end of travel (101, 102, … when fully open; 255, 254, …
+// when fully closed). z2m (Moes ZS-SR-EUC) maps above 150 to 0 and 101..150 to
+// 100. Decode-only expander; the entry's own Numeric type still encodes.
+bool tuya_dp_expand_position_overflow(const TuyaDpMapEntry& e, const Value& raw,
+                                       RuntimeContext& ctx,
+                                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
+// Big-endian u32 read out of a Raw datapoint at `offset` (payload at least
+// `min_len` bytes), published as Float u32 / `divisor`. z2m's heat-meter
+// converters: valueConverter.waterConsumption (offset 4, 8 bytes, /1000) and
+// the inline instantaneous-flow reader (offset 0, 4 bytes, /1000). A payload
+// shorter than `min_len` publishes 0, as upstream returns 0 for it.
+struct TuyaRawU32Spec {
+    std::uint8_t  offset;
+    std::uint8_t  min_len;
+    std::uint32_t divisor;
+};
+bool tuya_dp_expand_raw_u32(const TuyaDpMapEntry& e, const Value& raw,
+                             RuntimeContext& ctx,
+                             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 
 // The plain (unsuffixed) voltage/current/power triple.
 extern const TuyaPhaseKeys kTuyaPhaseKeysPlain;

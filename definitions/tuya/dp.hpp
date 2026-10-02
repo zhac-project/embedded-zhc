@@ -102,4 +102,19 @@ constexpr TuyaDpMapEntry fault_bitmap(std::uint8_t dp_id, const char* key,
              &tuya_dp_expand_fault_bitmap, table };
 }
 
+// `position_overflow(dp_id, key)` — numeric cover position clamped the way
+// z2m's ZS-SR-EUC converter clamps it (>150 -> 0, 101..150 -> 100).
+constexpr TuyaDpMapEntry position_overflow(std::uint8_t dp_id, const char* key) {
+    return { dp_id, key, TuyaDpType::Numeric, 1, nullptr, 0, 0, 0.0f,
+             &tuya_dp_expand_position_overflow, nullptr };
+}
+
+// `raw_u32(dp_id, key, spec)` — big-endian u32 at `spec->offset` of a Raw
+// payload, divided by `spec->divisor` (see TuyaRawU32Spec).
+constexpr TuyaDpMapEntry raw_u32(std::uint8_t dp_id, const char* key,
+                                  const TuyaRawU32Spec* spec) {
+    return { dp_id, key, TuyaDpType::Raw, 1, nullptr, 0, 0, 0.0f,
+             &tuya_dp_expand_raw_u32, spec };
+}
+
 }  // namespace zhc::tuya::dp

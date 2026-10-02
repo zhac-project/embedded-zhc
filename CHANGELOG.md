@@ -49,6 +49,26 @@ across the ZHAC platform.
   curtain track**: the generated copy was a genOnOff placeholder that decoded
   nothing; both now decode as TS0601_cover (state + position).
 
+- **Tuya TS0601_heat_meter (`_TZE200_jt50ea5d`) published the metering switch
+  as heat and lost the heat value**: z2m v26.110.0 (#13184) moved
+  `prepayment_switch` to datapoint 7 and `cumulative_heat` to 8. Also read
+  now: monthly / daily water (bytes 4..7 of a raw payload / 1000), the
+  instantaneous flow rate, the `fault` names ("OK" when clear), and `voltage`
+  under z2m's key (it was `battery_voltage`).
+- **Tuya TS0601_fan_5_levels_and_light_switch**: the fan speed is `speed`, as
+  z2m v26.108.0 (#13151) exposes the device as a fan (was `fan_speed`).
+- **Moes ZHT-002**: datapoint 47 is `running_state` idle / heat (was
+  `valve_state`), datapoint 1 also drives `system_mode` off / heat (z2m
+  v26.106.0 #13106, v26.110.0 #13200); the calibration is no longer divided
+  by 10.
+- **Tervix thermostat (`_TZE284_6kijc7nd` / `_TZE204_6kijc7nd`) could not be
+  switched on or off**: the generated copies had no datapoint 1. It is z2m
+  v26.114.0's (#13329) boolean `system_mode` off / heat; mode, working status,
+  window state, sensor choice and run mode are decoded too.
+- **Moes ZS-SR-EUC and Zemismart ZN-USC1U-HT**: `motor_direction` (normal /
+  reversed) replaces `motor_steering` (#13207). ZS-SR-EUC was registered three
+  times (one copy a ZCL stub); its position clamps the motor's overshoot past
+  the end stops as z2m does (above 150 → 0, 101–150 → 100).
 - **Tuya `phaseVariant2WithPhase` reads 24-bit current and power again** (z2m
   v26.111.0, #13203 — the second widening after v26.105.0's revert). Negative
   power is `power − 0x99999A` at or above 0x800000, so −100 W arrives as

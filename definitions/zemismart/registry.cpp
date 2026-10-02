@@ -14,7 +14,7 @@ extern const PreparedDefinition kDefZem__TZE200_wdfurkoa;
 extern const PreparedDefinition kDefZem__TZE200_wehza30a;
 extern const PreparedDefinition kDefZem__TZE204_iyki9kjp;
 extern const PreparedDefinition kDefZem__TZE204_k7v0eqke;
-extern const PreparedDefinition kDefZem__TZE204_mpg22jc1;
+extern const PreparedDefinition kDef_ZN_USC1U_HT;
 extern const PreparedDefinition kDefZem__TZE204_sa2ueffe;
 extern const PreparedDefinition kDefZem__TZE204_zuepxzck;
 extern const PreparedDefinition kDefZem__TZE284_3mzb0sdz;
@@ -58,7 +58,7 @@ const PreparedDefinition* const kZemismartRegistry[] = {
     &kDefZem__TZE200_wehza30a,
     &kDefZem__TZE204_iyki9kjp,
     &kDefZem__TZE204_k7v0eqke,
-    &kDefZem__TZE204_mpg22jc1,
+    &kDef_ZN_USC1U_HT,
     &kDefZem__TZE204_sa2ueffe,
     &kDefZem__TZE204_zuepxzck,
     &kDefZem__TZE284_3mzb0sdz,

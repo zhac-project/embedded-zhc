@@ -1904,16 +1904,23 @@ bool tuya_dp_expand_fault_bitmap(const TuyaDpMapEntry& e, const Value& raw,
     else if (raw.type == ValueType::Int)  bits = static_cast<std::uint64_t>(raw.i);
     else return false;
 
-    char   joined[128];
+    if (bits == 0 && tbl->none) {
+        Value v{}; v.type = ValueType::StringRef; v.str = tbl->none;
+        out.put(e.out_key, v);
+        return true;
+    }
+    const char* sep = tbl->separator ? tbl->separator : ",";
+    const std::size_t sep_len = std::strlen(sep);
+    char   joined[192];
     std::size_t used = 0;
     for (std::uint8_t i = 0; i < tbl->count && i < 64; ++i) {
         if (((bits >> i) & 1u) == 0) continue;
         const char* name = tbl->names[i];
         if (!name) continue;                       // documented gap in the table
         const std::size_t n = std::strlen(name);
-        const std::size_t need = n + (used ? 1 : 0);
+        const std::size_t need = n + (used ? sep_len : 0);
         if (used + need + 1 > sizeof(joined)) break;   // keep what fits
-        if (used) joined[used++] = ',';
+        if (used) { std::memcpy(joined + used, sep, sep_len); used += sep_len; }
         std::memcpy(joined + used, name, n);
         used += n;
     }
@@ -1926,6 +1933,38 @@ bool tuya_dp_expand_fault_bitmap(const TuyaDpMapEntry& e, const Value& raw,
     return true;
 }
 
+
+bool tuya_dp_expand_position_overflow(const TuyaDpMapEntry& e, const Value& raw,
+                                       RuntimeContext&,
+                                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    std::int64_t v = 0;
+    if (raw.type == ValueType::Int)       v = raw.i;
+    else if (raw.type == ValueType::Uint) v = static_cast<std::int64_t>(raw.u);
+    else return false;
+    if (v > 100) v = v > 150 ? 0 : 100;
+    Value o{}; o.type = ValueType::Int; o.i = v;
+    out.put(e.out_key, o);
+    return true;
+}
+
+bool tuya_dp_expand_raw_u32(const TuyaDpMapEntry& e, const Value& raw,
+                             RuntimeContext&,
+                             FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const auto* spec = static_cast<const TuyaRawU32Spec*>(e.expand_cfg);
+    if (!spec || raw.type != ValueType::BytesRef) return false;
+    float f = 0.0f;
+    const auto b = raw.bytes;
+    if (b.size() >= spec->min_len && b.size() >= static_cast<std::size_t>(spec->offset) + 4) {
+        const std::uint32_t u = (static_cast<std::uint32_t>(b[spec->offset]) << 24) |
+                                (static_cast<std::uint32_t>(b[spec->offset + 1]) << 16) |
+                                (static_cast<std::uint32_t>(b[spec->offset + 2]) << 8) |
+                                 static_cast<std::uint32_t>(b[spec->offset + 3]);
+        f = static_cast<float>(u) / static_cast<float>(spec->divisor ? spec->divisor : 1);
+    }
+    Value v{}; v.type = ValueType::Float; v.f = f;
+    out.put(e.out_key, v);
+    return true;
+}
 
 // ── exposes_from_dp_map ──────────────────────────────────────────────────
 namespace {

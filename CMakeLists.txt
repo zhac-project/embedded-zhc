@@ -671,6 +671,10 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE204_mpbki2zm.cpp
     definitions/tuya/ZN231392.cpp
     definitions/tuya/TS0601_soil.cpp
+    definitions/tuya/TS0601_heat_meter.cpp
+    definitions/tuya/TS0601_fan_5_levels_and_light_switch.cpp
+    definitions/tuya/ZHT_002.cpp
+    definitions/tuya/Tervix_6kijc7nd.cpp
 )
 target_include_directories(zhc_definitions PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(zhc_definitions PUBLIC zhc_parser zhc_runtime)
