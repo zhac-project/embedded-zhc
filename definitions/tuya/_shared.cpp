@@ -1947,6 +1947,20 @@ bool tuya_dp_expand_position_overflow(const TuyaDpMapEntry& e, const Value& raw,
     return true;
 }
 
+bool tuya_dp_expand_drop_above(const TuyaDpMapEntry& e, const Value& raw,
+                                RuntimeContext&,
+                                FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const auto* max = static_cast<const std::int32_t*>(e.expand_cfg);
+    std::int64_t v = 0;
+    if (raw.type == ValueType::Int)       v = raw.i;
+    else if (raw.type == ValueType::Uint) v = static_cast<std::int64_t>(raw.u);
+    else return false;
+    if (max && v > *max) return true;   // claimed, nothing published
+    Value o{}; o.type = ValueType::Int; o.i = v;
+    out.put(e.out_key, o);
+    return true;
+}
+
 bool tuya_dp_expand_raw_u32(const TuyaDpMapEntry& e, const Value& raw,
                              RuntimeContext&,
                              FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {

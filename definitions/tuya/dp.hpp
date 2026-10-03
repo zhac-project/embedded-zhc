@@ -109,6 +109,14 @@ constexpr TuyaDpMapEntry position_overflow(std::uint8_t dp_id, const char* key) 
              &tuya_dp_expand_position_overflow, nullptr };
 }
 
+// `numeric_max(dp_id, key, max)` — raw numeric; readings above `*max` are
+// dropped the way z2m drops them (see tuya_dp_expand_drop_above).
+constexpr TuyaDpMapEntry numeric_max(std::uint8_t dp_id, const char* key,
+                                     const std::int32_t* max) {
+    return { dp_id, key, TuyaDpType::Numeric, 1, nullptr, 0, 0, 0.0f,
+             &tuya_dp_expand_drop_above, max };
+}
+
 // `raw_u32(dp_id, key, spec)` — big-endian u32 at `spec->offset` of a Raw
 // payload, divided by `spec->divisor` (see TuyaRawU32Spec).
 constexpr TuyaDpMapEntry raw_u32(std::uint8_t dp_id, const char* key,

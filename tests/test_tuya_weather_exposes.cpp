@@ -6,7 +6,7 @@
 // humidity units — previously only WSD500A did, because the others shipped
 // `.exposes=nullptr` (device.get → empty array → no units anywhere).
 //   _TZE204_upagmta9 : temperature "C", humidity "%", battery_state (enum) — pure T/H.
-//   air_house_keeper : temperature "C", humidity "%", voc, co2, pm25 — multi-sensor.
+//   air_house_keeper : temperature "°C", humidity "%", voc, co2, pm25, formaldehyd — multi-sensor.
 // The DP decode itself is unchanged (covered by the _TZE204_upagmta9 fixture test); this
 // asserts only the declared exposes + units (the fix).
 
@@ -46,14 +46,15 @@ int main() {
         assert(!find_expose(d, "state"));   // not an on/off device
     }
 
-    // air_house_keeper — multi-sensor; must keep ALL five readouts (with units on temp/hum).
+    // air_house_keeper — multi-sensor; must keep ALL six readouts, units as z2m declares them.
     {
         const auto& d = devices::tuya::kDefTS0601_air_house_keeper;
-        assert(numeric_with_unit(find_expose(d, "temperature"), "C"));
+        assert(numeric_with_unit(find_expose(d, "temperature"), "°C"));
         assert(numeric_with_unit(find_expose(d, "humidity"), "%"));
-        assert(find_expose(d, "voc"));
-        assert(find_expose(d, "co2"));
-        assert(find_expose(d, "pm25"));
+        assert(numeric_with_unit(find_expose(d, "voc"), "ppb"));
+        assert(numeric_with_unit(find_expose(d, "co2"), "ppm"));
+        assert(numeric_with_unit(find_expose(d, "pm25"), "µg/m³"));
+        assert(numeric_with_unit(find_expose(d, "formaldehyd"), "µg/m³"));
         assert(!find_expose(d, "state"));
     }
     return 0;

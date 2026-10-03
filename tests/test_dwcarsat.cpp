@@ -3,7 +3,8 @@
 // Parity tests for the z2m tuya_air_quality (Smart Air Box / Housekeeper)
 // family — devices whose DPs the legacy converter remaps per manufacturer.
 // z2m-source: lib/legacy.ts tuya_air_quality.
-//   _TZE200/_TZE204_dwcarsat: DP22 -> co2, DP2 -> pm25.
+//   _TZE200/_TZE204_dwcarsat: DP22 -> co2, DP2 -> pm25 (dropped above 1000),
+//                             DP20 -> formaldehyd (tuyaSahkFormaldehyd).
 //   _TZE200_mja3fuja:         DP22 -> co2, DP2 -> formaldehyde.
 //   default branch (3ejwxpmu/ogkdpgy2/blfcpsxz/c2fmom5z/yvx5lh6k):
 //                             DP2 -> co2, DP22 -> formaldehyde.
@@ -86,8 +87,65 @@ static void test_dwcarsat_air_quality_dps() {
     const Value* pm25 = result.merged.find("pm25");  // DP2 remap
     assert(pm25 && pm25->type == ValueType::Int && pm25->i == 35);
 
-    // No spurious formaldehyde key for this variant.
+    // DP22/DP2 never yield formaldehyde on this variant; only DP20 does.
+    assert(result.merged.find("formaldehyd") == nullptr);
     assert(result.merged.find("formaldehyde") == nullptr);
+}
+
+// The device reports one DP per frame; dispatch it the same way so the raw
+// `dp_<id>` fallback (fires only when nothing claimed the frame) is exercised.
+static DispatchResult dispatch_dwcarsat_dp(std::uint8_t dp,
+                                           const std::uint8_t (&be)[4],
+                                           RuntimeContext& ctx) {
+    const TuyaDpRecord rec{ dp, 0x02, std::span<const std::uint8_t>(be, 4) };
+
+    DecodedMessage msg{};
+    msg.family       = FrameFamily::TuyaDp;
+    msg.type         = MessageType::Command;
+    msg.cluster      = "manuSpecificTuya";
+    msg.direction    = Direction::ServerToClient;
+    msg.command_id   = 0x02;
+    msg.src_endpoint = 1;
+    msg.dst_endpoint = 1;
+
+    InboundApsFrame raw{};
+    raw.cluster_id   = 0xEF00;
+    raw.src_endpoint = 1;
+    raw.dst_endpoint = 1;
+
+    return dispatch_from_zigbee(msg, std::span<const TuyaDpRecord>(&rec, 1),
+                                devices::tuya::kDefTS0601_air_house_keeper,
+                                raw, ctx);
+}
+
+// DP20 is the Housekeeper's formaldehyde reading (z2m tuyaSahkFormaldehyd,
+// raw µg/m³). Unmapped, it showed up as a raw `dp_20` row on the device page.
+static void test_dwcarsat_dp20_formaldehyd() {
+    const std::uint8_t k5[] = { 0x00, 0x00, 0x00, 0x05 };
+    RuntimeContext ctx{};
+    const auto r = dispatch_dwcarsat_dp(20, k5, ctx);
+    const Value* f = r.merged.find("formaldehyd");
+    assert(f && f->type == ValueType::Int && f->i == 5);
+    assert(r.merged.find("dp_20") == nullptr);
+}
+
+// z2m discards DP2 readings above the sensor's 0-1000 µg/m³ range: the device
+// sends "strange big values" (zigbee2mqtt#11033). A dropped reading must not
+// resurface as a raw `dp_2` row either.
+static void test_dwcarsat_pm25_above_range_dropped() {
+    const std::uint8_t k1000[] = { 0x00, 0x00, 0x03, 0xE8 };
+    const std::uint8_t k1001[] = { 0x00, 0x00, 0x03, 0xE9 };
+    {
+        RuntimeContext ctx{};
+        const auto r = dispatch_dwcarsat_dp(2, k1000, ctx);
+        const Value* p = r.merged.find("pm25");
+        assert(p && p->type == ValueType::Int && p->i == 1000);
+    }
+    {
+        RuntimeContext ctx{};
+        const auto r = dispatch_dwcarsat_dp(2, k1001, ctx);
+        assert(r.merged.count == 0);
+    }
 }
 
 static void test_dwcarsat_definition_shape() {
@@ -216,6 +274,8 @@ static void test_air_quality_default_dps() {
 
 int main() {
     test_dwcarsat_air_quality_dps();
+    test_dwcarsat_dp20_formaldehyd();
+    test_dwcarsat_pm25_above_range_dropped();
     test_dwcarsat_definition_shape();
     test_mja3fuja_air_quality_dps();
     test_air_quality_default_dps();

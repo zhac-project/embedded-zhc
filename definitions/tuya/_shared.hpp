@@ -577,6 +577,14 @@ bool tuya_dp_expand_position_overflow(const TuyaDpMapEntry& e, const Value& raw,
                                        RuntimeContext& ctx,
                                        FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 
+// Raw numeric reading that z2m discards above the sensor's range
+// (`expand_cfg` → const std::int32_t max), e.g. tuya_air_quality's dwcarsat
+// PM2.5: `if (value > 1000) return;`. A dropped reading still claims the DP,
+// so it doesn't resurface as a raw `dp_<id>` key either.
+bool tuya_dp_expand_drop_above(const TuyaDpMapEntry& e, const Value& raw,
+                                RuntimeContext& ctx,
+                                FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
 // Big-endian u32 read out of a Raw datapoint at `offset` (payload at least
 // `min_len` bytes), published as Float u32 / `divisor`. z2m's heat-meter
 // converters: valueConverter.waterConsumption (offset 4, 8 bytes, /1000) and

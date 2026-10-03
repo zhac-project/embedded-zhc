@@ -23,6 +23,13 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Tuya Smart Air Housekeeper (`_TZE200_dwcarsat` / `_TZE204_dwcarsat`)
+  showed a raw `dp_20` row**: datapoint 20 is the formaldehyde reading and
+  now publishes as `formaldehyd` (µg/m³), as z2m's `tuya_air_quality` does.
+  Temperature is in `°C` (was `C`) and PM2.5 in `µg/m³` (was `ug/m3`). A
+  PM2.5 reading above 1000 µg/m³, the sensor's range, is dropped as z2m drops
+  it (the device sends stray large values, zigbee2mqtt#11033); new expander
+  `dp::numeric_max` / `tuya_dp_expand_drop_above`.
 - **Tongou TO-Q-SYS-JZT (`_TZE284_6ocnqlhn`) was a stub** decoding this Tuya
   datapoint meter with ZCL metering converters; it now carries z2m's
   datapoints, including v26.115.1's LCD / recloser settings and the
