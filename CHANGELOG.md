@@ -30,6 +30,23 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Two Tuya devices were the wrong kind of device** (Tuya DP coverage
+  audit's two safety-relevant findings). z2m has listed both fingerprints
+  unchanged since it first added them:
+  - `_TZE200_vzekyi4c` is a smoke sensor (z2m `TS0601_smoke_4`, since
+    2022-12-11, zigbee2mqtt#15483). It was ported as a PIR, so its alarm
+    published `occupancy`: a fire raised presence and no smoke alert. It now
+    decodes like its siblings: `smoke` (0 = alarm), `battery_state`,
+    `battery`.
+  - `_TZE200_nw1r9hp6` is a Zemismart ZM85EL-2Z curtain motor (z2m
+    `TS0601_cover_3`, since 2023-06-03, zigbee2mqtt#11251). It was ported as
+    a smoke detector, so the motor's command datapoint published `smoke`. It
+    now decodes as a cover (`state`, `position`, `reverse_direction`,
+    `motor_fault`, `battery`, `cover_limit`, `click_control`).
+  The unregistered, IAS-based `generated/Tuy_TS0601_smoke_4.cpp` is removed:
+  these smoke sensors report over Tuya datapoints. Test
+  `tests/test_tuya_misidentified.cpp`.
+
 - **Celsius is "°C" everywhere**: 827 temperature units in 543 definitions
   (about half of them: Aqara/Xiaomi, EFEKTA, Sinopé, Schneider, Lytko,
   thermostats' setpoints, …) were the bare "C", so the web UIs showed

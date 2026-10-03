@@ -1389,7 +1389,7 @@ extern const PreparedDefinition kDefTZE200_sleep_v2;
 extern const PreparedDefinition kDefTZE200_smart_breaker;
 extern const PreparedDefinition kDefTZE200_smoke;
 extern const PreparedDefinition kDefTZE200_smoke2;
-extern const PreparedDefinition kDefTZE200_smoke3;
+extern const PreparedDefinition kDefTZE200_nw1r9hp6;
 extern const PreparedDefinition kDefTZE200_snow;
 extern const PreparedDefinition kDefTZE200_socket_v3;
 extern const PreparedDefinition kDefTZE200_soil;
@@ -2883,7 +2883,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_smart_breaker,
     &kDefTZE200_smoke,
     &kDefTZE200_smoke2,
-    &kDefTZE200_smoke3,
+    &kDefTZE200_nw1r9hp6,
     &kDefTZE200_snow,
     &kDefTZE200_socket_v3,
     &kDefTZE200_soil,
