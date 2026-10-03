@@ -5,7 +5,7 @@
 // web-ui and the cloud (both render units from the device's exposes) show temperature/
 // humidity units — previously only WSD500A did, because the others shipped
 // `.exposes=nullptr` (device.get → empty array → no units anywhere).
-//   _TZE204_upagmta9 : temperature "C", humidity "%", battery_state (enum) — pure T/H.
+//   _TZE204_upagmta9 : temperature "°C", humidity "%", battery_state (enum) — pure T/H.
 //   air_house_keeper : temperature "°C", humidity "%", voc, co2, pm25, formaldehyd — multi-sensor.
 // The DP decode itself is unchanged (covered by the _TZE204_upagmta9 fixture test); this
 // asserts only the declared exposes + units (the fix).
@@ -39,7 +39,7 @@ int main() {
     // _TZE204_upagmta9 — pure temperature/humidity sensor → climate_sensor in the cloud.
     {
         const auto& d = devices::tuya::kDef_TS0601_TZE204_upagmta9;
-        assert(numeric_with_unit(find_expose(d, "temperature"), "C"));
+        assert(numeric_with_unit(find_expose(d, "temperature"), "°C"));
         assert(numeric_with_unit(find_expose(d, "humidity"), "%"));
         const Expose* bs = find_expose(d, "battery_state");
         assert(bs && bs->type == ExposeType::Enum && bs->enum_count == 3);  // low/medium/high

@@ -36,7 +36,7 @@ constexpr const char* kM[]={"ZG-303B","ZG-303L"};
 constexpr const char* kUnitOpts[]={"celsius","fahrenheit"};
 constexpr Expose kExp[]={
     {"dry",                     ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr,   0},
-    {"temperature",             ExposeType::Numeric, Access::State, "C",     nullptr, nullptr,   0},
+    {"temperature",             ExposeType::Numeric, Access::State, "°C",    nullptr, nullptr,   0},
     {"soil_moisture",           ExposeType::Numeric, Access::State, "%",     nullptr, nullptr,   0},
     {"battery",                 ExposeType::Numeric, Access::State, "%",     nullptr, nullptr,   0},
     {"temperature_unit",        ExposeType::Enum,    Access::State, nullptr, nullptr, kUnitOpts, 2},

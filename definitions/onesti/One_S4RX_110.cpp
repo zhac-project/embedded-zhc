@@ -37,7 +37,7 @@ constexpr Expose kAutoExposes[] = {
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

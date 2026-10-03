@@ -28,7 +28,7 @@ constexpr Expose kAutoExposes[] = {
         ExposeCategory::Diagnostic},
     {"voltage",     ExposeType::Numeric, Access::State, "mV",  nullptr, nullptr, 0,
         ExposeCategory::Diagnostic},
-    {"temperature", ExposeType::Numeric, Access::State, "C",   nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C",  nullptr, nullptr, 0},
     {"humidity",    ExposeType::Numeric, Access::State, "%",   nullptr, nullptr, 0},
 };
 

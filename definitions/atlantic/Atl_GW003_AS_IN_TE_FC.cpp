@@ -258,11 +258,11 @@ constexpr const char* kModels_GW003_AS_IN_TE_FC[] = { "Adapter Zigbee FUJITSU" }
 // ── exposes — hand-aligned to z2m ──────────────────────────────────
 
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature",          ExposeType::Numeric, Access::State,    "C",
+    {"local_temperature",          ExposeType::Numeric, Access::State,    "°C",
         nullptr, nullptr, 0},
-    {"current_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "C",
+    {"current_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "°C",
         nullptr, nullptr, 0},
-    {"occupied_cooling_setpoint",  ExposeType::Numeric, Access::StateSet, "C",
+    {"occupied_cooling_setpoint",  ExposeType::Numeric, Access::StateSet, "°C",
         "z2m: setpoint 18..30 step 0.5 — INBOUND read now decoded (attr 0x0011 via "
         "kFzAtlanticThermostatExtras); outbound write not yet wired (kTzThermostat is heat-only)",
         nullptr, 0},

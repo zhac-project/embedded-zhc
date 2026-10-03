@@ -44,15 +44,15 @@ constexpr const char* kModels_H1[] = { "H1" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     // Parity fix: decoded by kFzUbisysThermostatExtras (attrs 0x0008/0x001E).
     {"pi_heating_demand", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"running_mode",      ExposeType::Enum,    Access::State, nullptr, nullptr, nullptr, 0},
-    {"local_temperature_offset",    ExposeType::Numeric, Access::StateSet, "C",  nullptr, nullptr, 0},
+    {"local_temperature_offset",    ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"vacation_mode",               ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"remote_temperature",          ExposeType::Numeric, Access::StateSet, "C",  nullptr, nullptr, 0},
+    {"remote_temperature",          ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"remote_temperature_duration", ExposeType::Numeric, Access::StateSet, "s",  nullptr, nullptr, 0},
 };
 

@@ -40,23 +40,23 @@ const TzConverter* const kTz_L101Ze_DBN[] = {
 
 constexpr Expose kExp_L101Ze_DBN[] = {
     // Per-channel thermostat surface (suffixed _3 / _4 by dispatch).
-    {"local_temperature_3", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint_3", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature_3", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint_3", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode_3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_mode_3", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
-    {"local_temperature_calibration_3", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"local_temperature_4", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint_4", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature_calibration_3", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"local_temperature_4", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint_4", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode_4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_mode_4", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
-    {"local_temperature_calibration_4", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature_calibration_4", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     // Device-level config (endpoint 1; write-only manuSpec encoders).
     {"sensor_type", ExposeType::Enum, Access::StateSet, nullptr, "External sensor resistance kOhm", nullptr, 0},
     {"target_temp_first", ExposeType::Binary, Access::StateSet, nullptr, "Display target/current first", nullptr, 0},
     {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, "Physical input lock", nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, "%", "Display brightness (active)", nullptr, 0},
     {"brightness_standby", ExposeType::Numeric, Access::StateSet, "%", "Display brightness (standby)", nullptr, 0},
-    {"occupied_setback", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"occupied_setback", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kBind_L101Ze_DBN[] = {

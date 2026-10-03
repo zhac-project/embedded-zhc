@@ -67,7 +67,7 @@ PreparedDefinition make_def(const FzConverter* const* fz, std::uint8_t n,
 
 struct temperature_opts {
     static constexpr const char*   name    = "temperature";
-    static constexpr const char*   unit    = "C";
+    static constexpr const char*   unit    = "°C";
     static constexpr const char*   cluster = "msTemperatureMeasurement";
     static constexpr std::uint16_t attr    = 0x0000;
     static constexpr std::uint32_t divisor = 100;

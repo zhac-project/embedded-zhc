@@ -58,12 +58,12 @@ constexpr const char* kManus_E6[] = {
 };
 
 constexpr Expose kExp_E6[] = {
-    { "temperature",     ExposeType::Numeric, ::zhc::Access::State,    "C", nullptr, nullptr, 0 },
+    { "temperature",     ExposeType::Numeric, ::zhc::Access::State,    "°C", nullptr, nullptr, 0 },
     { "humidity",        ExposeType::Numeric, ::zhc::Access::State,    "%", nullptr, nullptr, 0 },
     { "battery",         ExposeType::Numeric, ::zhc::Access::State,    "%", nullptr, nullptr, 0 },
     { "battery_low",     ExposeType::Binary,  ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
-    { "max_temperature", ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
-    { "min_temperature", ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
+    { "max_temperature", ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
+    { "min_temperature", ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
     { "max_humidity",    ExposeType::Numeric, ::zhc::Access::StateSet, "%", nullptr, nullptr, 0 },
     { "min_humidity",    ExposeType::Numeric, ::zhc::Access::StateSet, "%", nullptr, nullptr, 0 },
 };

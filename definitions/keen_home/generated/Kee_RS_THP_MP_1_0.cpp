@@ -22,7 +22,7 @@ constexpr const char* kModels_RS_THP_MP_1_0[] = { "RS-THP-MP-1.0" };
 constexpr Expose kExp_RS_THP_MP_1_0[] = {
     {"battery",     ExposeType::Numeric, ::zhc::Access::State, "%",   nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, ::zhc::Access::State, "mV",  nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, ::zhc::Access::State, "C",   nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, ::zhc::Access::State, "°C",  nullptr, nullptr, 0},
     {"humidity",    ExposeType::Numeric, ::zhc::Access::State, "%",   nullptr, nullptr, 0},
     {"pressure",    ExposeType::Numeric, ::zhc::Access::State, "hPa", nullptr, nullptr, 0},
 };

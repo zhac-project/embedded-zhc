@@ -43,7 +43,7 @@ constexpr const char* kActions_WXKG01LM[] = {
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"action",   ExposeType::Enum,    Access::State, nullptr, nullptr,
      kActions_WXKG01LM, sizeof(kActions_WXKG01LM)/sizeof(kActions_WXKG01LM[0])},

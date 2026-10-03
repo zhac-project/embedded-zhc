@@ -91,7 +91,7 @@ constexpr Expose kExposes[] = {
     {"selftest", ExposeType::Enum, Access::Set, nullptr, nullptr, kSelftestValues, 1},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"test", ExposeType::Binary, Access::State, nullptr, "Test mode activated", nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
 };
 

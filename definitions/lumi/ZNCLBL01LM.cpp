@@ -15,7 +15,7 @@ constexpr const char* kModels[] = { "lumi.curtain.acn003", "lumi.curtain.agl001"
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
 };

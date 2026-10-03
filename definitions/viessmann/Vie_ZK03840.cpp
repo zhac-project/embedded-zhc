@@ -33,8 +33,8 @@ constexpr const char* kModels_ZK03840[] = { "7637434" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"occupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"occupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"window_open", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"window_open_force", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},

@@ -981,19 +981,19 @@ void item7_split() {
     constexpr auto R = Access::State, RW = Access::StateSet;
     exposes_are(usc03, {{"state", B, RW, nullptr}, {"action", E, R, nullptr},
                         {"flip_indicator_light", B, RW, nullptr}, {"power_outage_count", N, R, nullptr},
-                        {"device_temperature", N, R, "C"}, {"power", N, R, "W"}, {"energy", N, R, "kWh"},
+                        {"device_temperature", N, R, "°C"}, {"power", N, R, "W"}, {"energy", N, R, "kWh"},
                         {"voltage", N, R, "V"}, {"power_outage_memory", B, RW, nullptr},
                         {"operation_mode", E, RW, nullptr}});
     exposes_are(usc04, {{"state_top", B, RW, nullptr}, {"state_bottom", B, RW, nullptr},
                         {"operation_mode_top", E, RW, nullptr}, {"operation_mode_bottom", E, RW, nullptr},
-                        {"power_outage_count", N, R, nullptr}, {"device_temperature", N, R, "C"},
+                        {"power_outage_count", N, R, nullptr}, {"device_temperature", N, R, "°C"},
                         {"flip_indicator_light", B, RW, nullptr}, {"power", N, R, "W"},
                         {"energy", N, R, "kWh"}, {"voltage", N, R, "V"},
                         {"power_outage_memory", B, RW, nullptr}, {"action", E, R, nullptr}});
     exposes_are(euk02, {{"state_left", B, RW, nullptr}, {"state_right", B, RW, nullptr},
                         {"power_outage_memory", B, RW, nullptr}, {"flip_indicator_light", B, RW, nullptr},
                         {"led_disabled_night", B, RW, nullptr}, {"power_outage_count", N, R, nullptr},
-                        {"device_temperature", N, R, "C"}, {"operation_mode_left", E, RW, nullptr},
+                        {"device_temperature", N, R, "°C"}, {"operation_mode_left", E, RW, nullptr},
                         {"operation_mode_right", E, RW, nullptr}, {"mode_switch", E, RW, nullptr},
                         {"action", E, R, nullptr}});
     assert(enum_is(expose_of(usc03, "action"), {"single", "double"}));

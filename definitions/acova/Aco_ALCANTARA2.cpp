@@ -38,9 +38,9 @@ constexpr const char* kModels_ALCANTARA2[] = { "ALCANTARA2 D1.00P1.01Z1.00", "AL
 
 
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature",            ExposeType::Numeric, Access::State,    "C", nullptr, nullptr, 0},
-    {"occupied_heating_setpoint",    ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"unoccupied_heating_setpoint",  ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",            ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"occupied_heating_setpoint",    ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"unoccupied_heating_setpoint",  ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",                  ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_state",                ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
 };

@@ -45,14 +45,14 @@ constexpr ::zhc::EndpointLabel kEndpoints_BRI4P[] = { {"l1", 1}, {"l2", 2}, {"l3
 // min/max setpoint limits for both. Keys stay BARE — dispatch suffixes
 // them to <key>_l<n> for the endpoints in kEndpoints_BRI4P.
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"current_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"current_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"min_heat_setpoint_limit", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"max_heat_setpoint_limit", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"min_cool_setpoint_limit", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"max_cool_setpoint_limit", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"min_heat_setpoint_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"max_heat_setpoint_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"min_cool_setpoint_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"max_cool_setpoint_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

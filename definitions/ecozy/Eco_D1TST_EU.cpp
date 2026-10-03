@@ -133,11 +133,11 @@ const TzConverter* const kTz_D1TST_EU[] = {
 constexpr Expose kExp_D1TST_EU[] = {
     { "battery",                       ExposeType::Numeric, ::zhc::Access::State,    "%", nullptr, nullptr, 0 },
     { "voltage",                       ExposeType::Numeric, ::zhc::Access::State,    "mV", nullptr, nullptr, 0 },
-    { "local_temperature",             ExposeType::Numeric, ::zhc::Access::State,    "C", nullptr, nullptr, 0 },
-    { "current_heating_setpoint",      ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
+    { "local_temperature",             ExposeType::Numeric, ::zhc::Access::State,    "°C", nullptr, nullptr, 0 },
+    { "current_heating_setpoint",      ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
     { "system_mode",                   ExposeType::Enum,    ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "running_state",                 ExposeType::Enum,    ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
-    { "local_temperature_calibration", ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
+    { "local_temperature_calibration", ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
     { "pi_heating_demand",             ExposeType::Numeric, ::zhc::Access::State,    "%", nullptr, nullptr, 0 },
 };
 

@@ -28,8 +28,8 @@ const TzConverter* const kTz_Mill_gen_4[] = {
     &::zhc::generic::kTzThermostat,
 };
 constexpr Expose kExp_Mill_gen_4[] = {
-    { "local_temperature",        ExposeType::Numeric, ::zhc::Access::State,    "C", nullptr, nullptr, 0 },
-    { "current_heating_setpoint", ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
+    { "local_temperature",        ExposeType::Numeric, ::zhc::Access::State,    "°C", nullptr, nullptr, 0 },
+    { "current_heating_setpoint", ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
     { "system_mode",              ExposeType::Enum,    ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
 };
 constexpr BindingSpec kBind_Mill_gen_4[] = {

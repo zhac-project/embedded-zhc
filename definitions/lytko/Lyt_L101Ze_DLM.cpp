@@ -37,18 +37,18 @@ const TzConverter* const kTz_L101Ze_DLM[] = {
 };
 
 constexpr Expose kExp_L101Ze_DLM[] = {
-    {"local_temperature_3", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint_3", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature_3", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint_3", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode_3", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_mode_3", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
-    {"local_temperature_calibration_3", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"local_temperature_4", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint_4", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature_calibration_3", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"local_temperature_4", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint_4", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode_4", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_mode_4", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
-    {"local_temperature_calibration_4", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature_calibration_4", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"sensor_type", ExposeType::Enum, Access::StateSet, nullptr, "External sensor resistance kOhm", nullptr, 0},
-    {"occupied_setback", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"occupied_setback", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kBind_L101Ze_DLM[] = {

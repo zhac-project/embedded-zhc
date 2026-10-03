@@ -30,7 +30,7 @@ constexpr const char* kModels_LM4110ZB[] = { "LM4110-ZB" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"tank_level", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 

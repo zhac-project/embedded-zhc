@@ -59,7 +59,7 @@ const TzConverter* const kTz__TZE204_upagmta9[] = { &kTzDp__TZE204_upagmta9 };
 
 constexpr const char* kBatteryStateVals__TZE204_upagmta9[] = { "low", "medium", "high" };
 constexpr Expose kExp__TZE204_upagmta9[] = {
-    { "temperature",   ExposeType::Numeric, ::zhc::Access::State, "C", nullptr, nullptr, 0 },
+    { "temperature",   ExposeType::Numeric, ::zhc::Access::State, "°C", nullptr, nullptr, 0 },
     { "humidity",      ExposeType::Numeric, ::zhc::Access::State, "%", nullptr, nullptr, 0 },
     { "battery_state", ExposeType::Enum,    ::zhc::Access::State, nullptr, nullptr,
                        kBatteryStateVals__TZE204_upagmta9,

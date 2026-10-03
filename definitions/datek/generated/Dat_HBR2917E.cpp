@@ -35,7 +35,7 @@ constexpr const char* kAutoOpts_HBR2917E_action[] = {"recall_1", "recall_2", "re
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_HBR2917E_action, 9},
 };
 

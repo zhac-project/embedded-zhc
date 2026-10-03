@@ -17,7 +17,7 @@ constexpr const char* kModels_E5[] = { "TS0201" };
 constexpr const char* kManus_E5[] = { "_TZ3000_lbtpiody" };
 
 constexpr Expose kExp_E5[] = {
-    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "C",  nullptr, nullptr, 0 },
+    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "°C", nullptr, nullptr, 0 },
     { "humidity",    ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
     { "battery",     ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
     { "voltage",     ExposeType::Numeric, ::zhc::Access::State, "mV", nullptr, nullptr, 0 },

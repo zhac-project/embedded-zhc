@@ -63,9 +63,9 @@ constexpr ::zhc::EndpointLabel kEndpoints_intuisradiator[] = { {"1", 1} };
 // power:false (no instantaneous demand) → only "energy" is exposed.
 constexpr Expose kAutoExposes[] = {
     {"energy",                      ExposeType::Numeric, Access::State,    "kWh", nullptr, nullptr, 0},
-    {"local_temperature",           ExposeType::Numeric, Access::State,    "C",   nullptr, nullptr, 0},
-    {"occupied_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "C",   nullptr, nullptr, 0},
-    {"unoccupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C",   nullptr, nullptr, 0},
+    {"local_temperature",           ExposeType::Numeric, Access::State,    "°C",  nullptr, nullptr, 0},
+    {"occupied_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "°C",  nullptr, nullptr, 0},
+    {"unoccupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C",  nullptr, nullptr, 0},
     {"running_state",               ExposeType::Enum,    Access::State,    nullptr, nullptr, nullptr, 0},
     {"system_mode",                 ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"occupancy",                   ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},

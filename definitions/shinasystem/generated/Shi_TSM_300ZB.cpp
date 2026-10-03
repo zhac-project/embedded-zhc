@@ -23,7 +23,7 @@ constexpr const char* kModels_TSM_300ZB[] = { "TSM-300Z" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 

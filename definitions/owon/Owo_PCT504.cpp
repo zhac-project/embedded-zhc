@@ -37,9 +37,9 @@ constexpr const char* kModels_PCT504[] = { "PCT504", "PCT504-E" };
 // keypad_lockout (hvacUserInterface 0x0204) has no generic decoder yet — its
 // binding is registered but the value will not decode (tracked as PARTIAL).
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature",          ExposeType::Numeric, Access::State,    "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"current_cooling_setpoint",   ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",          ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"current_cooling_setpoint",   ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",                ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_state",              ExposeType::Enum,    Access::State,    nullptr, nullptr, nullptr, 0},
     {"fan_mode",                   ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},

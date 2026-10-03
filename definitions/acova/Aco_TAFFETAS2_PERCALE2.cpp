@@ -46,10 +46,10 @@ constexpr const char* kModels_TAFFETAS2_PERCALE2[] = { "PERCALE2 D1.00P1.01Z1.00
 
 
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature",              ExposeType::Numeric, Access::State,    "C", nullptr, nullptr, 0},
-    {"occupied_heating_setpoint",      ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"unoccupied_heating_setpoint",    ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"local_temperature_calibration",  ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",              ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"occupied_heating_setpoint",      ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"unoccupied_heating_setpoint",    ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration",  ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",                    ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_state",                  ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
     {"occupancy",                      ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},

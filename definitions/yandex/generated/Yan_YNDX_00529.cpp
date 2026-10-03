@@ -21,7 +21,7 @@ constexpr const char* kModels_YNDX_00529[] = { "YNDX-00529" };
 
 // --- hand-authored exposes / bindings (parity sweep 2026-04-28) ---
 constexpr Expose kAutoExposes[] = {
-    {"temperature", ExposeType::Numeric, Access::State, "C",   nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C",  nullptr, nullptr, 0},
     {"humidity",    ExposeType::Numeric, Access::State, "%",   nullptr, nullptr, 0},
     {"pressure",    ExposeType::Numeric, Access::State, "hPa", nullptr, nullptr, 0},
     {"battery",     ExposeType::Numeric, Access::State, "%",   nullptr, nullptr, 0},

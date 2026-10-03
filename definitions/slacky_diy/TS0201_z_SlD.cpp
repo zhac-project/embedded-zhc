@@ -31,7 +31,7 @@ constexpr const char* kModels_TS0201_z_SlD[] = { "TS0201-z-SlD", "TS0201-z15-SlD
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 

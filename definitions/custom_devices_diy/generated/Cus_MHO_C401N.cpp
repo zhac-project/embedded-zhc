@@ -24,7 +24,7 @@ constexpr const char* kModels_MHO_C401N[] = { "MHO-C401N" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 

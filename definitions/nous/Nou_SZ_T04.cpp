@@ -66,13 +66,13 @@ constexpr const char* kManus_SZ_T04[] = {
 };
 
 constexpr Expose kExp_SZ_T04[] = {
-    { "temperature",                ExposeType::Numeric, ::zhc::Access::State,    "C",   nullptr, nullptr, 0 },
+    { "temperature",                ExposeType::Numeric, ::zhc::Access::State,    "°C",  nullptr, nullptr, 0 },
     { "humidity",                   ExposeType::Numeric, ::zhc::Access::State,    "%",   nullptr, nullptr, 0 },
     { "battery",                    ExposeType::Numeric, ::zhc::Access::State,    "%",   nullptr, nullptr, 0 },
     { "temperature_report_interval",ExposeType::Numeric, ::zhc::Access::StateSet, "min", nullptr, nullptr, 0 },
     { "humidity_report_interval",   ExposeType::Numeric, ::zhc::Access::StateSet, "min", nullptr, nullptr, 0 },
-    { "max_temperature",            ExposeType::Numeric, ::zhc::Access::StateSet, "C",   nullptr, nullptr, 0 },
-    { "min_temperature",            ExposeType::Numeric, ::zhc::Access::StateSet, "C",   nullptr, nullptr, 0 },
+    { "max_temperature",            ExposeType::Numeric, ::zhc::Access::StateSet, "°C",  nullptr, nullptr, 0 },
+    { "min_temperature",            ExposeType::Numeric, ::zhc::Access::StateSet, "°C",  nullptr, nullptr, 0 },
     { "max_humidity",               ExposeType::Numeric, ::zhc::Access::StateSet, "%",   nullptr, nullptr, 0 },
     { "min_humidity",               ExposeType::Numeric, ::zhc::Access::StateSet, "%",   nullptr, nullptr, 0 },
 };

@@ -32,9 +32,9 @@ constexpr const char* kTrvModeValues[]    = { "1", "2" };
 constexpr Expose kAutoExposes[] = {
     {"battery",                ExposeType::Numeric, Access::State,    "%",  nullptr, nullptr, 0},
     {"voltage",                ExposeType::Numeric, Access::State,    "mV", nullptr, nullptr, 0},
-    {"local_temperature",      ExposeType::Numeric, Access::State,    "C",  nullptr, nullptr, 0},
-    {"occupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint",  ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",      ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"occupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint",  ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"pi_heating_demand",      ExposeType::Numeric, Access::State,    "%",  nullptr, nullptr, 0},
     {"running_state",          ExposeType::Enum,    Access::State,    nullptr, nullptr,
      kSystemModeValues, 2},

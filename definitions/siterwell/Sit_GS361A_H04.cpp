@@ -63,8 +63,8 @@ constexpr Expose kAutoExposes[] = {
     {"window_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"valve_detection", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kSystemModeOpts_GS361A_H04, 3},
     {"position", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };

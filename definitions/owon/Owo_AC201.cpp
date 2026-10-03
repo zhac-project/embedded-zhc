@@ -27,9 +27,9 @@ constexpr const char* kModels_AC201[] = { "AC201", "AC201P_019E" };
 
 // z2m: climate(off/heat/cool/auto) + heating + cooling + ac_louver + fan_mode + local_temperature.
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature",        ExposeType::Numeric, Access::State,    "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"current_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",        ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"current_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",              ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"fan_mode",                 ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"ac_louver_position",       ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},

@@ -32,8 +32,8 @@ constexpr const char* kModels_PCT512[] = { "PCT512" };
 // + humidity + occupancy (extend). running_state decodes via kFzOwonThermostatExtras
 // (attr 0x0029); occupancy decodes via kFzOccupancy (msOccupancySensing).
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature",        ExposeType::Numeric, Access::State,    "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",        ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",              ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_state",            ExposeType::Enum,    Access::State,    nullptr, nullptr, nullptr, 0},
     {"humidity",                 ExposeType::Numeric, Access::State,    "%", nullptr, nullptr, 0},

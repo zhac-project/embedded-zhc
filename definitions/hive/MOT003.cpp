@@ -28,7 +28,7 @@ constexpr const char* kModels_MOT003[] = { "MOT003" };
 
 
 constexpr Expose kAutoExposes[] = {
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},

@@ -23,6 +23,13 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Celsius is "°C" everywhere**: 827 temperature units in 543 definitions
+  (about half of them: Aqara/Xiaomi, EFEKTA, Sinopé, Schneider, Lytko,
+  thermostats' setpoints, …) were the bare "C", so the web UIs showed
+  "25.4 C" and the Home Assistant bridge sent "C" as `unit_of_measurement`,
+  which Home Assistant does not accept for a temperature. Home Assistant may
+  ask once to fix the long-term statistics of those sensors after the update.
+  New ctest guard `zhc_celsius_unit_guard` (`tools/lint_celsius_unit.py`).
 - **Tuya Smart Air Housekeeper (`_TZE200_dwcarsat` / `_TZE204_dwcarsat`)
   showed a raw `dp_20` row**: datapoint 20 is the formaldehyde reading and
   now publishes as `formaldehyd` (µg/m³), as z2m's `tuya_air_quality` does.

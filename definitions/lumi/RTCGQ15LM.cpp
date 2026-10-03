@@ -22,7 +22,7 @@ constexpr const char* kModels[] = { "lumi.motion.acn001" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"motion_sensitivity", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},

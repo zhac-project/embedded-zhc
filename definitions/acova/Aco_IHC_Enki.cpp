@@ -36,9 +36,9 @@ const TzConverter* const kTz_IHC_Enki[] = {
 };
 
 constexpr Expose kExp_IHC_Enki[] = {
-    {"local_temperature",              ExposeType::Numeric, Access::State,    "C", nullptr, nullptr, 0},
-    {"occupied_heating_setpoint",      ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"local_temperature_calibration",  ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",              ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"occupied_heating_setpoint",      ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration",  ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",                    ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 

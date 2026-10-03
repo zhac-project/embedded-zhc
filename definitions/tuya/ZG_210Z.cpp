@@ -30,7 +30,7 @@ constexpr const char* kPsOpts[]={"none","sit","sedentary"};
 constexpr Expose kExp[]={
     {"pressure_state",          ExposeType::Enum,    Access::State, nullptr, nullptr, kPsOpts, 3},
     {"current_pressure",        ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
-    {"temperature",             ExposeType::Numeric, Access::State, "C",     nullptr, nullptr, 0},
+    {"temperature",             ExposeType::Numeric, Access::State, "°C",    nullptr, nullptr, 0},
     {"humidity",                ExposeType::Numeric, Access::State, "%",     nullptr, nullptr, 0},
     {"battery",                 ExposeType::Numeric, Access::State, "%",     nullptr, nullptr, 0},
     {"pressure_intensity",      ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},

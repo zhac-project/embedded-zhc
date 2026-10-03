@@ -16,7 +16,7 @@ const FzConverter* const kFz_TI0001_hygrometer[] = {
 constexpr const char* kModels_TI0001_hygrometer[] = { "TI0001-hygrometer" };
 
 constexpr Expose kAutoExposes[] = {
-    { "temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0 },
+    { "temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0 },
     { "humidity",    ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0 },
 };
 

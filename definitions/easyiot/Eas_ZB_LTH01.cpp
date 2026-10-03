@@ -22,7 +22,7 @@ const FzConverter* const kFz_ZB_LTH01[] = {
 constexpr const char* kModels_ZB_LTH01[] = { "ZB-LTH01" };
 
 constexpr Expose kExposes_ZB_LTH01[] = {
-    {"temperature", ExposeType::Numeric, Access::State, "C",  nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"humidity",    ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
     {"battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},

@@ -18,7 +18,7 @@ constexpr const char* kManus_R7048[] = { "_TZ3000_rusu2vzb", "_TZ3000_amqudjr0" 
 constexpr Expose kExp_R7048[] = {
     {"battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C",  nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"humidity",    ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
 };
 

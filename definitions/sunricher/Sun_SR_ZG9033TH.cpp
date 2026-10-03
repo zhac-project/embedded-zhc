@@ -35,7 +35,7 @@ constexpr ::zhc::EndpointLabel kEndpoints_SR_ZG9033TH[] = { {"1", 1}, {"2", 2} }
 constexpr Expose kExposes_SR_ZG9033TH[] = {
     {"battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C",  nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"humidity",    ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
 };
 

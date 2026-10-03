@@ -35,14 +35,14 @@ constexpr const char* kModels_TH1124ZB_G2[] = { "TH1124ZB-G2" };
 constexpr Expose kAutoExposes[] = {
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"keypad_lockout", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"time_format", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"backlight_auto_dim", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"second_display_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"thermostat_outdoor_temperature", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"thermostat_outdoor_temperature", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"eco_mode", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 

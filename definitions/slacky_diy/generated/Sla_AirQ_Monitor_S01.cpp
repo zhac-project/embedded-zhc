@@ -30,7 +30,7 @@ constexpr Expose kExp_min_AirQ_Monitor_S01[] = {
     { "state",       ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "battery",     ExposeType::Numeric, ::zhc::Access::State,    "%",  nullptr, nullptr, 0 },
     { "voltage",     ExposeType::Numeric, ::zhc::Access::State,    "mV", nullptr, nullptr, 0 },
-    { "temperature", ExposeType::Numeric, ::zhc::Access::State,    "C",  nullptr, nullptr, 0 },
+    { "temperature", ExposeType::Numeric, ::zhc::Access::State,    "°C", nullptr, nullptr, 0 },
     { "humidity",    ExposeType::Numeric, ::zhc::Access::State,    "%",  nullptr, nullptr, 0 },
 };
 constexpr BindingSpec kBind_min_AirQ_Monitor_S01[] = {

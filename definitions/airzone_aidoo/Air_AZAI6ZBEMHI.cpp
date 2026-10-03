@@ -37,9 +37,9 @@ constexpr const char* kModels_AZAI6ZBEMHI[] = { "Aidoo Zigbee" };
 // from the airzone extras converter as current_cooling_setpoint.
 constexpr Expose kAutoExposes[] = {
     {"state",                    ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"local_temperature",        ExposeType::Numeric, Access::State,    "C",     nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C",     nullptr, nullptr, 0},
-    {"current_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "C",     nullptr, nullptr, 0},
+    {"local_temperature",        ExposeType::Numeric, Access::State,    "°C",    nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C",    nullptr, nullptr, 0},
+    {"current_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "°C",    nullptr, nullptr, 0},
     {"system_mode",              ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"fan_mode",                 ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
 };

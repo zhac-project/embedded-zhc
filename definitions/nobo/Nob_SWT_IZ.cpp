@@ -37,9 +37,9 @@ const TzConverter* const kTz_SWT_IZ[] = {
     &::zhc::generic::kTzThermostat,
 };
 constexpr Expose kExp_SWT_IZ[] = {
-    {"local_temperature",           ExposeType::Numeric, Access::State,    "C", nullptr, nullptr, 0},
-    {"occupied_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"unoccupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",           ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"occupied_heating_setpoint",   ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"unoccupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",                 ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_mode",                ExposeType::Enum,    Access::State,    nullptr, nullptr, nullptr, 0},
 };

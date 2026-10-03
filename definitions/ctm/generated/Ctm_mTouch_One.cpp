@@ -37,8 +37,8 @@ constexpr const char* kModels_mTouch_One[] = { "mTouch One" };
 // regulator_mode, night_switching, power_status) need a vendor fz
 // decoder — TODO.
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},

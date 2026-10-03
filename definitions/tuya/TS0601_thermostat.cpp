@@ -43,7 +43,7 @@ constexpr const char* kN[]={
     "_TZE200_rndg81sf","_TZE200_rufdtfyv","_TZE200_ywdxldoj","_TZE200_znlqjmih",
     "_TZE284_znlqjmih"};
 constexpr Expose kExp[]={
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0}};
 }
 extern const PreparedDefinition kDefTS0601_thermostat{

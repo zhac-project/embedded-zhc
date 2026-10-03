@@ -28,7 +28,7 @@ constexpr const char* kZigbeeModels[] = { "lumi.light.acn040" };
 
 // --- expose block mirrors LGZCDD01LM (LumiLight{level,color_temp}) ---
 constexpr Expose kAutoExposes[] = {
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},

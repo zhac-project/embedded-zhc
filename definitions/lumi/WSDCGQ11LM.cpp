@@ -17,7 +17,7 @@ namespace {
 // Standard ms-cluster paths, via modern-extend Numeric helpers.
 struct ms_temp_opts {
     static constexpr const char*   name    = "temperature";
-    static constexpr const char*   unit    = "C";
+    static constexpr const char*   unit    = "°C";
     static constexpr const char*   cluster = "msTemperatureMeasurement";
     static constexpr std::uint16_t attr    = 0x0000;
     static constexpr std::uint32_t divisor = 100;
@@ -69,7 +69,7 @@ constexpr const char* kModels[] = { "lumi.weather" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
 };
 

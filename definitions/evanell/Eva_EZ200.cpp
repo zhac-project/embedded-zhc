@@ -54,8 +54,8 @@ constexpr const char* kManus_EZ200[]  = { "_TZE200_dmfguuli", "_TZE200_rxypyjkw"
 // local_temperature, system_mode {off,heat,auto}).
 constexpr const char* kSystemModeValues[] = { "off", "heat", "auto" };
 constexpr Expose kExposes_EZ200[] = {
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr,
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr,
      nullptr, 0, ExposeCategory::State, 5, 30, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr,
      kSystemModeValues, 3},

@@ -6,7 +6,7 @@
 #include "zhc/modern_extend.hpp"
 namespace zhc::devices::lumi {
 namespace {
-struct t_opts { static constexpr const char* name="temperature", *unit="C", *cluster="msTemperatureMeasurement"; static constexpr std::uint16_t attr=0x0000; static constexpr std::uint32_t divisor=100; };
+struct t_opts { static constexpr const char* name="temperature", *unit="°C", *cluster="msTemperatureMeasurement"; static constexpr std::uint16_t attr=0x0000; static constexpr std::uint32_t divisor=100; };
 struct h_opts { static constexpr const char* name="humidity",    *unit="%", *cluster="msRelativeHumidity";     static constexpr std::uint16_t attr=0x0000; static constexpr std::uint32_t divisor=100; };
 using T = ::zhc::m::Numeric<t_opts>;
 using H = ::zhc::m::Numeric<h_opts>;
@@ -27,7 +27,7 @@ constexpr const char* kModels[] = { "lumi.weather.agl03" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
 };
 

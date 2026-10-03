@@ -39,8 +39,8 @@ constexpr const char* kModels_YNDX_00518[] = { "YNDX-00518" };
 // --- exposes / bindings (graduated; flat thermostat surface) ---
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"display_flip", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},

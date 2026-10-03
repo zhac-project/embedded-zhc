@@ -57,7 +57,7 @@ constexpr Expose kExp_HALO_[] = {
     { "test",                  ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
     { "mains_power_connected", ExposeType::Binary,  ::zhc::Access::State, nullptr, nullptr, nullptr, 0 },
     // Environmental sensors (standard clusters on EP1, bare keys).
-    { "temperature",           ExposeType::Numeric, ::zhc::Access::State, "C",  nullptr, nullptr, 0 },
+    { "temperature",           ExposeType::Numeric, ::zhc::Access::State, "°C", nullptr, nullptr, 0 },
     { "humidity",              ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
     { "pressure",              ExposeType::Numeric, ::zhc::Access::State, "hPa",nullptr, nullptr, 0 },
     { "battery",               ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },

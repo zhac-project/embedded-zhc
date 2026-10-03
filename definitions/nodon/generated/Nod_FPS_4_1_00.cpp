@@ -37,7 +37,7 @@ constexpr Expose kAutoExposes[] = {
         nullptr, 0, ExposeCategory::Config},
     {"energy",            ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power",             ExposeType::Numeric, Access::State, "W",   nullptr, nullptr, 0},
-    {"temperature",       ExposeType::Numeric, Access::State, "C",   nullptr, nullptr, 0},
+    {"temperature",       ExposeType::Numeric, Access::State, "°C",  nullptr, nullptr, 0},
     {"humidity",          ExposeType::Numeric, Access::State, "%",   nullptr, nullptr, 0},
     // pilot_wire_mode requires custom 0xFC00 cluster — TODO.
 };

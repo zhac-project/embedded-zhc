@@ -30,8 +30,8 @@ constexpr const char* kModels_IRB_4_1_00[] = { "IRB-4-1-00" };
 
 // Hand-aligned to z2m exposes (cooling/min/max setpoints + louver TODO).
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature",        ExposeType::Numeric, Access::State,    "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature",        ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",              ExposeType::Enum,    Access::StateSet, nullptr,
         "off / heat / cool / auto / dry / fan_only", nullptr, 0},
     {"fan_mode",                 ExposeType::Enum,    Access::StateSet, nullptr,

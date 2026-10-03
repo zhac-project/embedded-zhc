@@ -285,8 +285,8 @@ constexpr const char* kManu_ZB_MIDEA_AC[]   = { "PirogovX" };
 
 constexpr Expose kExposes_ZB_MIDEA_AC[] = {
     {"state",             ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"local_temperature", ExposeType::Numeric, Access::State,    "C",     nullptr, nullptr, 0},
-    {"occupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C",
+    {"local_temperature", ExposeType::Numeric, Access::State,    "°C",    nullptr, nullptr, 0},
+    {"occupied_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C",
      nullptr, nullptr, 0, ExposeCategory::State, 16, 30, 1},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr,
      kModeValues, sizeof(kModeValues)/sizeof(kModeValues[0])},
@@ -298,7 +298,7 @@ constexpr Expose kExposes_ZB_MIDEA_AC[] = {
      kPresetValues, sizeof(kPresetValues)/sizeof(kPresetValues[0])},
     {"display", ExposeType::Binary, Access::StateSet, nullptr,
      "AC display and beep control", nullptr, 0, ExposeCategory::Config},
-    {"outdoor_temperature", ExposeType::Numeric, Access::State, "C",
+    {"outdoor_temperature", ExposeType::Numeric, Access::State, "°C",
      "Outdoor unit temperature", nullptr, 0},
     {"firmware_version", ExposeType::String, Access::State, nullptr,
      "AC controller firmware version", nullptr, 0, ExposeCategory::Diagnostic},

@@ -150,7 +150,7 @@ constexpr Expose kExp_ZbnDj63[] = {
     { "power",           ExposeType::Numeric, ::zhc::Access::State,    "W",   "Active power",    nullptr, 0 },
     { "energy",          ExposeType::Numeric, ::zhc::Access::State,    "kWh", "Total forward energy", nullptr, 0 },
     { "reverse_energy",  ExposeType::Numeric, ::zhc::Access::State,    "kWh", "Total reverse energy", nullptr, 0 },
-    { "temperature",     ExposeType::Numeric, ::zhc::Access::State,    "C",   "Current temperature",  nullptr, 0 },
+    { "temperature",     ExposeType::Numeric, ::zhc::Access::State,    "°C",  "Current temperature",  nullptr, 0 },
     { "leakage_current", ExposeType::Numeric, ::zhc::Access::State,    "mA",  "Residual current",     nullptr, 0 },
     { "fault",           ExposeType::Enum,    ::zhc::Access::State,    nullptr, "Active fault",
       kFaultOpts, sizeof(kFaultOpts)/sizeof(kFaultOpts[0]), ExposeCategory::Diagnostic },
@@ -201,7 +201,7 @@ constexpr Expose kExp_ZbnDj63[] = {
       ExposeCategory::Config, 10, 99, 1 },
     { "high_temperature_breaker",   ExposeType::Binary,  ::zhc::Access::State, nullptr, "Temperature alarm enabled", nullptr, 0,
       ExposeCategory::Config },
-    { "high_temperature_threshold", ExposeType::Numeric, ::zhc::Access::State, "C", "Temperature threshold", nullptr, 0,
+    { "high_temperature_threshold", ExposeType::Numeric, ::zhc::Access::State, "°C", "Temperature threshold", nullptr, 0,
       ExposeCategory::Config, 10, 85, 1 },
     // dp17 record id 3 and dp18 record id 8 decode too, though upstream
     // declares no expose for either. Kept so the values are not dropped.

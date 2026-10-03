@@ -80,7 +80,7 @@ constexpr const char* kActionValues[] = { "single", "double", "release", "hold" 
 constexpr Expose kExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionValues, 4},
     {"operation_mode", ExposeType::Enum, Access::StateSet, nullptr, "Decoupled mode",

@@ -78,7 +78,7 @@ constexpr Expose kExp_min_EFEKTA_Pixel_Open_Air[] = {
     { "voltage", ExposeType::Numeric, ::zhc::Access::State,    "mV", nullptr, nullptr, 0 },
     {"co2", ExposeType::Numeric, Access::State, "ppm", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
 };
 constexpr BindingSpec kBind_min_EFEKTA_Pixel_Open_Air[] = {
     { 1, 0x0001 },

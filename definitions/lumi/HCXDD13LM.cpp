@@ -39,7 +39,7 @@ constexpr Expose kExposes_HCXDD13LM[] = {
      kPowerOnBehaviourValues,
      sizeof(kPowerOnBehaviourValues)/sizeof(kPowerOnBehaviourValues[0]),
      ExposeCategory::Config},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
 };
 

@@ -45,9 +45,9 @@ constexpr const char* kModels_THERM_SLACKY_DIY_R08[] = { "Tuya_Thermostat_r08" }
 
 constexpr Expose kExposes_THERM_SLACKY_DIY_R08[] = {
     { "local_temperature",        ExposeType::Numeric, Access::State,
-      "C", nullptr, nullptr, 0 },
+      "°C", nullptr, nullptr, 0 },
     { "current_heating_setpoint", ExposeType::Numeric, Access::StateSet,
-      "C", nullptr, nullptr, 0 },
+      "°C", nullptr, nullptr, 0 },
     { "system_mode",              ExposeType::Binary,  Access::StateSet,
       nullptr, nullptr, nullptr, 0 },
 };

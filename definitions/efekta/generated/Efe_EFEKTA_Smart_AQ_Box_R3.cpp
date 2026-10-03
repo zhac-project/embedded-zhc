@@ -95,7 +95,7 @@ constexpr Expose kExp_min_EFEKTA_Smart_AQ_Box_R3[] = {
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"pm25", ExposeType::Numeric, Access::State, "ug/m3", nullptr, nullptr, 0},
     {"pressure", ExposeType::Numeric, Access::State, "hPa", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
 };
 constexpr BindingSpec kBind_min_EFEKTA_Smart_AQ_Box_R3[] = {
     { 1, 0x0001 },

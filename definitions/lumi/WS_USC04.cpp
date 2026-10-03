@@ -67,7 +67,7 @@ constexpr Expose kExposes[] = {
      ExposeCategory::Config},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr,
      "Number of power outages (since last pairing)", nullptr, 0, ExposeCategory::Diagnostic},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", "Temperature of the device",
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", "Temperature of the device",
      nullptr, 0, ExposeCategory::Diagnostic},
     {"flip_indicator_light", ExposeType::Binary, Access::StateSet, nullptr,
      "After turn on, the indicator light turns on while switch is off, and vice versa", nullptr, 0,

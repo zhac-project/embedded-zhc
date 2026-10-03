@@ -74,7 +74,7 @@ constexpr Expose kExp_min_EFEKTA_Air_Quality_Station[] = {
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
     {"pm25", ExposeType::Numeric, Access::State, "ug/m3", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
 };
 constexpr BindingSpec kBind_min_EFEKTA_Air_Quality_Station[] = {
     { 1, 0x0001 },

@@ -20,7 +20,7 @@ const FzConverter* const kFz_TH_110_ZB[] = {
 constexpr const char* kModels_TH_110_ZB[] = { "ZB30C2" };
 
 constexpr Expose kExposes_TH_110_ZB[] = {
-    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "C",  nullptr, nullptr, 0 },
+    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "°C", nullptr, nullptr, 0 },
     { "humidity",    ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
     { "battery",     ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
     { "voltage",     ExposeType::Numeric, ::zhc::Access::State, "mV", nullptr, nullptr, 0 },

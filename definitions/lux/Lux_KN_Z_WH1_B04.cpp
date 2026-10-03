@@ -36,12 +36,12 @@ constexpr const char* kModels_KN_Z_WH1_B04[] = { "KONOZ" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"fan_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     // Parity fix: decoded by kFzLuxThermostatExtras (attrs 0x0011/0x0029/0x001E).
-    {"occupied_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"occupied_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
     {"running_mode",  ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
 };

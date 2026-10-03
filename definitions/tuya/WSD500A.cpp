@@ -28,7 +28,7 @@ const FzConverter* const kFz_WSD500A[] = {
     &::zhc::generic::kFzHumidity,       // msRelativeHumidity 0x0405 (/100)
 };
 constexpr Expose kExp_WSD500A[] = {
-    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "C",  nullptr, nullptr, 0 },
+    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "°C", nullptr, nullptr, 0 },
     { "humidity",    ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
     { "battery",     ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
     { "voltage",     ExposeType::Numeric, ::zhc::Access::State, "mV", nullptr, nullptr, 0 },

@@ -219,15 +219,15 @@ constexpr const char* kKeypadLockoutOpts[] = { "unlock", "lock1", "lock2" };
 // ranges 5–30 °C step 0.5 per z2m; system_mode/running_mode/running_state
 // are enums.
 constexpr Expose kExp_Yali_Parada_Plus[] = {
-    { "local_temperature",              ExposeType::Numeric, ::zhc::Access::State,    "C", nullptr, nullptr, 0 },
-    { "current_heating_setpoint",       ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
-    { "unoccupied_heating_setpoint",    ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
+    { "local_temperature",              ExposeType::Numeric, ::zhc::Access::State,    "°C", nullptr, nullptr, 0 },
+    { "current_heating_setpoint",       ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
+    { "unoccupied_heating_setpoint",    ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
     { "system_mode",                    ExposeType::Enum,    ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
-    { "local_temperature_calibration",  ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0,
+    { "local_temperature_calibration",  ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0,
         ExposeCategory::Config },
     { "running_state",                  ExposeType::Enum,    ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
     { "running_mode",                   ExposeType::Enum,    ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
-    { "max_heat_setpoint_limit",        ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
+    { "max_heat_setpoint_limit",        ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
     { "keypad_lockout",                 ExposeType::Enum,    ::zhc::Access::StateSet, nullptr,
         "Enables/disables physical input on the device", kKeypadLockoutOpts, 3 },
 };

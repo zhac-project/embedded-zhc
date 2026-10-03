@@ -32,17 +32,17 @@ const TzConverter* const kTz_L101Ze_SBN[] = {
 };
 
 constexpr Expose kExp_L101Ze_SBN[] = {
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"running_mode", ExposeType::Enum, Access::State, nullptr, nullptr, nullptr, 0},
-    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"sensor_type", ExposeType::Enum, Access::StateSet, nullptr, "External sensor resistance kOhm", nullptr, 0},
     {"target_temp_first", ExposeType::Binary, Access::StateSet, nullptr, "Display target/current first", nullptr, 0},
     {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, "Physical input lock", nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, "%", "Display brightness (active)", nullptr, 0},
     {"brightness_standby", ExposeType::Numeric, Access::StateSet, "%", "Display brightness (standby)", nullptr, 0},
-    {"occupied_setback", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"occupied_setback", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kBind_L101Ze_SBN[] = {

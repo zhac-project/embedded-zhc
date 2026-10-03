@@ -33,7 +33,7 @@ constexpr Expose kExposes_HK_SENSOR_4IN1_A[] = {
     {"battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"occupancy",   ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C",  nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"humidity",    ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
 };

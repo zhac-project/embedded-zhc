@@ -84,7 +84,7 @@ constexpr Expose kExp_min_EFEKTA_iAQ_S_II[] = {
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
     {"pressure", ExposeType::Numeric, Access::State, "hPa", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
 };
 constexpr BindingSpec kBind_min_EFEKTA_iAQ_S_II[] = {
     { 1, 0x0001 },

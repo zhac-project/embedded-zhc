@@ -57,7 +57,7 @@ constexpr Expose kAutoExposes[] = {
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Aeo_ZGA002, 12},
 };
 

@@ -68,7 +68,7 @@ constexpr Expose kExposes[] = {
      "Enable/disable the LED at night", nullptr, 0, ExposeCategory::Config},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr,
      "Number of power outages (since last pairing)", nullptr, 0, ExposeCategory::Diagnostic},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", "Temperature of the device",
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", "Temperature of the device",
      nullptr, 0, ExposeCategory::Diagnostic},
     {"operation_mode_left", ExposeType::Enum, Access::StateSet, nullptr, "Decoupled mode for left button",
      ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues),

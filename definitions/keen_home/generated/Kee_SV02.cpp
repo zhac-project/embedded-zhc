@@ -33,7 +33,7 @@ constexpr Expose kExp_SV02[] = {
     {"voltage",     ExposeType::Numeric, ::zhc::Access::State,    "mV",  nullptr, nullptr, 0},
     {"position",    ExposeType::Numeric, ::zhc::Access::StateSet, "%",   nullptr, nullptr, 0},
     {"state",       ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, ::zhc::Access::State,    "C",   nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, ::zhc::Access::State,    "°C",  nullptr, nullptr, 0},
     {"pressure",    ExposeType::Numeric, ::zhc::Access::State,    "hPa", nullptr, nullptr, 0},
 };
 

@@ -34,7 +34,7 @@ const FzConverter* const kFz_STHZB[] = {
 constexpr const char* kModels_STHZB[] = { "STHZB" };
 
 constexpr Expose kExposes_STHZB[] = {
-    {"temperature", ExposeType::Numeric, Access::State, "C",  nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"humidity",    ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0,
      ExposeCategory::Diagnostic},

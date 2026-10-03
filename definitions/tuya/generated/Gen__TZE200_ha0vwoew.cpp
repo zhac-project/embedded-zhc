@@ -77,7 +77,7 @@ constexpr Expose kAutoExposes__TZE200_ha0vwoew[] = {
     {"power_rating", ExposeType::Numeric, Access::StateSet, "W", nullptr, nullptr, 0, ExposeCategory::State, 0, 4500, 100},
     {"open_window_active", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"open_window_sensing_time", ExposeType::Numeric, Access::StateSet, "minutes", nullptr, nullptr, 0, ExposeCategory::State, 1, 30, 1},
-    {"open_window_drop_limit", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0, ExposeCategory::State, 2, 4, 1},
+    {"open_window_drop_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 2, 4, 1},
     {"open_window_off_time", ExposeType::Numeric, Access::StateSet, "minutes", nullptr, nullptr, 0, ExposeCategory::State, 10, 60, 5},
 };
 // --- end auto-generated exposes ---

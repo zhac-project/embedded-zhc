@@ -69,7 +69,7 @@ constexpr const char* kAlarmOpts[] = { "lower_alarm", "upper_alarm", "cancel" };
 constexpr const char* kBattOpts[]  = { "low", "medium", "high" };
 
 constexpr Expose kExposes_Onenuo[] = {
-    { "temperature",                 ExposeType::Numeric, ::zhc::Access::State,    "C",   "Temperature",                 nullptr, 0 },
+    { "temperature",                 ExposeType::Numeric, ::zhc::Access::State,    "°C",  "Temperature",                 nullptr, 0 },
     { "humidity",                    ExposeType::Numeric, ::zhc::Access::State,    "%",   "Humidity",                    nullptr, 0 },
     { "battery",                     ExposeType::Numeric, ::zhc::Access::State,    "%",   "Battery",                     nullptr, 0,
       ExposeCategory::Diagnostic },
@@ -77,9 +77,9 @@ constexpr Expose kExposes_Onenuo[] = {
       ExposeCategory::Diagnostic },
     { "temperature_unit",            ExposeType::Enum,    ::zhc::Access::StateSet, nullptr, "Temperature unit",          kUnitOpts, 2,
       ExposeCategory::Config },
-    { "max_temperature_alarm",       ExposeType::Numeric, ::zhc::Access::StateSet, "C",   "Alarm temperature max",       nullptr, 0,
+    { "max_temperature_alarm",       ExposeType::Numeric, ::zhc::Access::StateSet, "°C",  "Alarm temperature max",       nullptr, 0,
       ExposeCategory::Config, -20, 60, 1 },
-    { "min_temperature_alarm",       ExposeType::Numeric, ::zhc::Access::StateSet, "C",   "Alarm temperature min",       nullptr, 0,
+    { "min_temperature_alarm",       ExposeType::Numeric, ::zhc::Access::StateSet, "°C",  "Alarm temperature min",       nullptr, 0,
       ExposeCategory::Config, -20, 60, 1 },
     { "max_humidity_alarm",          ExposeType::Numeric, ::zhc::Access::StateSet, "%",   "Alarm humidity max",          nullptr, 0,
       ExposeCategory::Config, 0, 100, 1 },
@@ -91,11 +91,11 @@ constexpr Expose kExposes_Onenuo[] = {
       ExposeCategory::Config, 1, 120, 1 },
     // Wider than the other ZTH05Z batches: 0.6..2.0 C and 6..20 %. Bounds are
     // stored pre-scaled the way the DP divisor delivers them (÷10 -> 6..20).
-    { "temperature_sensitivity",     ExposeType::Numeric, ::zhc::Access::StateSet, "C",   "Sensitivity of temperature",  nullptr, 0,
+    { "temperature_sensitivity",     ExposeType::Numeric, ::zhc::Access::StateSet, "°C",  "Sensitivity of temperature",  nullptr, 0,
       ExposeCategory::Config, 6, 20, 1 },
     { "humidity_sensitivity",        ExposeType::Numeric, ::zhc::Access::StateSet, "%",   "Sensitivity of humidity",     nullptr, 0,
       ExposeCategory::Config, 6, 20, 1 },
-    { "temperature_calibration",     ExposeType::Numeric, ::zhc::Access::StateSet, "C",   "Temperature calibration",     nullptr, 0,
+    { "temperature_calibration",     ExposeType::Numeric, ::zhc::Access::StateSet, "°C",  "Temperature calibration",     nullptr, 0,
       ExposeCategory::Config },
     { "humidity_calibration",        ExposeType::Numeric, ::zhc::Access::StateSet, "%",   "Humidity calibration",        nullptr, 0,
       ExposeCategory::Config },

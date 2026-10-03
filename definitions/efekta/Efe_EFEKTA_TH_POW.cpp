@@ -68,7 +68,7 @@ constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"dew_point", ExposeType::Numeric, Access::State, "°C", "Dew point calculated from built-in sensor data", nullptr, 0},
     {"air_enthalpy", ExposeType::Numeric, Access::State, "kJ/kg", "Air enthalpy derived from built-in sensor", nullptr, 0},
     {"vpd", ExposeType::Numeric, Access::State, "kPa", "Vapor Pressure Deficit (VPD) from built-in sensor", nullptr, 0},

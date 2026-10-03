@@ -51,7 +51,7 @@ constexpr const char* kModels_D106_03[] = { "106-03" };
 constexpr Expose kAutoExposes[] = {
     {"battery",            ExposeType::Numeric, Access::State,    "%",  nullptr, nullptr, 0},
     {"voltage",            ExposeType::Numeric, Access::State,    "mV", nullptr, nullptr, 0},
-    {"local_temperature",  ExposeType::Numeric, Access::State,    "C",  nullptr, nullptr, 0},
+    {"local_temperature",  ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
     {"pi_heating_demand",  ExposeType::Numeric, Access::State,    "%",  nullptr, nullptr, 0},
     {"valve_position",     ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"force",              ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},

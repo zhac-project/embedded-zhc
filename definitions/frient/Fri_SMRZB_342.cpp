@@ -28,7 +28,7 @@ constexpr Expose kExposes[] = {
     {"energy",             ExposeType::Numeric, Access::State,    "kWh",   "Cumulative energy",  nullptr, 0},
     {"voltage",            ExposeType::Numeric, Access::State,    "V",     "Voltage",            nullptr, 0},
     {"current",            ExposeType::Numeric, Access::State,    "A",     "Current",            nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State,    "C",     "Device temperature", nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State,    "°C",    "Device temperature", nullptr, 0},
 };
 
 constexpr BindingSpec kBindings[] = {

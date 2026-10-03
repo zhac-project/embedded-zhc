@@ -123,12 +123,12 @@ constexpr const char* kModels_R7067[] = { "TS0601" };
 constexpr const char* kManus_R7067[] = { "_TZE200_wnvhlcgl" };
 
 constexpr Expose kExp_R7067[] = {
-    {"local_temperature",             ExposeType::Numeric, Access::State,    "C",     nullptr, nullptr, 0},
-    {"current_heating_setpoint",      ExposeType::Numeric, Access::StateSet, "C",     nullptr, nullptr, 0},
-    {"comfort_temperature",           ExposeType::Numeric, Access::StateSet, "C",     nullptr, nullptr, 0},
-    {"eco_temperature",               ExposeType::Numeric, Access::StateSet, "C",     nullptr, nullptr, 0},
-    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "C",     nullptr, nullptr, 0},
-    {"window_detection_temperature",  ExposeType::Numeric, Access::StateSet, "C",     nullptr, nullptr, 0},
+    {"local_temperature",             ExposeType::Numeric, Access::State,    "°C",    nullptr, nullptr, 0},
+    {"current_heating_setpoint",      ExposeType::Numeric, Access::StateSet, "°C",    nullptr, nullptr, 0},
+    {"comfort_temperature",           ExposeType::Numeric, Access::StateSet, "°C",    nullptr, nullptr, 0},
+    {"eco_temperature",               ExposeType::Numeric, Access::StateSet, "°C",    nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C",    nullptr, nullptr, 0},
+    {"window_detection_temperature",  ExposeType::Numeric, Access::StateSet, "°C",    nullptr, nullptr, 0},
     {"window_detection_time",         ExposeType::Numeric, Access::StateSet, "min",   nullptr, nullptr, 0},
     {"boost_heating_countdown",       ExposeType::Numeric, Access::State,    "s",     nullptr, nullptr, 0},
     {"system_mode",                   ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},

@@ -175,20 +175,20 @@ const TzConverter* const kTz_FRZ1[] = {
 };
 
 constexpr Expose kExp_FRZ1[] = {
-    { "local_temperature",                ExposeType::Numeric, ::zhc::Access::State,    "C", nullptr, nullptr, 0 },
-    { "current_heating_setpoint",         ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
+    { "local_temperature",                ExposeType::Numeric, ::zhc::Access::State,    "°C", nullptr, nullptr, 0 },
+    { "current_heating_setpoint",         ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
     { "system_mode",                      ExposeType::Enum,    ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "running_state",                    ExposeType::Enum,    ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
     { "control_sequence_of_operation",    ExposeType::Enum,    ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
-    { "min_heat_setpoint_limit",          ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
-    { "max_heat_setpoint_limit",          ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0 },
-    { "temperature",                      ExposeType::Numeric, ::zhc::Access::State,    "C", nullptr, nullptr, 0 },
+    { "min_heat_setpoint_limit",          ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
+    { "max_heat_setpoint_limit",          ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0 },
+    { "temperature",                      ExposeType::Numeric, ::zhc::Access::State,    "°C", nullptr, nullptr, 0 },
     { "humidity",                         ExposeType::Numeric, ::zhc::Access::State,    "%", nullptr, nullptr, 0 },
-    { "remote_temperature",               ExposeType::Numeric, ::zhc::Access::StateSet, "C", nullptr, nullptr, 0,
+    { "remote_temperature",               ExposeType::Numeric, ::zhc::Access::StateSet, "°C", nullptr, nullptr, 0,
         ExposeCategory::Config },
     { "use_remote_temperature",           ExposeType::Binary,  ::zhc::Access::Set,      nullptr, nullptr, nullptr, 0,
         ExposeCategory::Config },
-    { "target_water_temperature",         ExposeType::Numeric, ::zhc::Access::State,    "C", nullptr, nullptr, 0,
+    { "target_water_temperature",         ExposeType::Numeric, ::zhc::Access::State,    "°C", nullptr, nullptr, 0,
         ExposeCategory::Diagnostic },
 };
 

@@ -28,10 +28,10 @@ constexpr const char* kModels_RC_2000WH[] = { "65A01-1" };
 
 
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"occupied_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"occupied_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"pi_heating_demand", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"fan_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},

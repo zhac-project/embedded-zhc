@@ -72,12 +72,12 @@ constexpr const char* kM_BRT_100[] = { "TS0601" };
 constexpr const char* kN_BRT_100[] = { "_TZE200_qsoecqlk" };
 
 constexpr Expose kExp_BRT_100[] = {
-    { "current_heating_setpoint",      ExposeType::Numeric, ::zhc::Access::StateSet, "C",     nullptr, nullptr, 0 },
-    { "local_temperature",             ExposeType::Numeric, ::zhc::Access::State,    "C",     nullptr, nullptr, 0 },
-    { "local_temperature_calibration", ExposeType::Numeric, ::zhc::Access::StateSet, "C",     nullptr, nullptr, 0 },
-    { "max_temperature",               ExposeType::Numeric, ::zhc::Access::StateSet, "C",     nullptr, nullptr, 0 },
-    { "min_temperature",               ExposeType::Numeric, ::zhc::Access::StateSet, "C",     nullptr, nullptr, 0 },
-    { "eco_temperature",               ExposeType::Numeric, ::zhc::Access::StateSet, "C",     nullptr, nullptr, 0 },
+    { "current_heating_setpoint",      ExposeType::Numeric, ::zhc::Access::StateSet, "°C",    nullptr, nullptr, 0 },
+    { "local_temperature",             ExposeType::Numeric, ::zhc::Access::State,    "°C",    nullptr, nullptr, 0 },
+    { "local_temperature_calibration", ExposeType::Numeric, ::zhc::Access::StateSet, "°C",    nullptr, nullptr, 0 },
+    { "max_temperature",               ExposeType::Numeric, ::zhc::Access::StateSet, "°C",    nullptr, nullptr, 0 },
+    { "min_temperature",               ExposeType::Numeric, ::zhc::Access::StateSet, "°C",    nullptr, nullptr, 0 },
+    { "eco_temperature",               ExposeType::Numeric, ::zhc::Access::StateSet, "°C",    nullptr, nullptr, 0 },
     { "battery",                       ExposeType::Numeric, ::zhc::Access::State,    "%",     nullptr, nullptr, 0 },
     { "position",                      ExposeType::Numeric, ::zhc::Access::State,    "%",     nullptr, nullptr, 0 },
     { "preset",                        ExposeType::Enum,    ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },

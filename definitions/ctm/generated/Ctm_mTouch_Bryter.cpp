@@ -34,7 +34,7 @@ constexpr const char* kAutoOpts_mTouch_Bryter_action[] = {"recall_1", "recall_2"
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts_mTouch_Bryter_action, 9},
 };
 

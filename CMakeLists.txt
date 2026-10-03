@@ -3822,6 +3822,14 @@ add_test(NAME zhc_literal_count_guard
                  ${CMAKE_CURRENT_SOURCE_DIR}/tools/lint_literal_counts.py
                  ${CMAKE_CURRENT_SOURCE_DIR}/definitions)
 
+# Celsius-unit guard: "°C", never the bare "C" that half the definitions used
+# (the UIs printed "25.4 C" and Home Assistant refused it). See
+# tools/lint_celsius_unit.py.
+add_test(NAME zhc_celsius_unit_guard
+         COMMAND ${CMAKE_COMMAND} -E env python3
+                 ${CMAKE_CURRENT_SOURCE_DIR}/tools/lint_celsius_unit.py
+                 ${CMAKE_CURRENT_SOURCE_DIR}/definitions)
+
 # Constant-init guard: a definition whose initialiser reads a value from
 # another TU (an `extern const` count) gets a static constructor, which on
 # the ESP32 moves it from flash .rodata into internal RAM .data — 1,093 of

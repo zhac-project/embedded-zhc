@@ -16,7 +16,7 @@ const FzConverter* const kFz_TS0201[] = {
 constexpr const char* kModels_TS0201[] = { "TS0201", "SNTZ003", "TY0201" };
 
 constexpr Expose kExposes_TS0201[] = {
-    { "temperature", ExposeType::Numeric, Access::State, "C",  nullptr, nullptr, 0 },
+    { "temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0 },
     { "humidity",    ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0 },
     { "battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0 },
     { "voltage",     ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0 },

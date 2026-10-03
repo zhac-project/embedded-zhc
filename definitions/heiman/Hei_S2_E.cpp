@@ -36,7 +36,7 @@ constexpr Expose kExposes_S2_E[] = {
     {"smoke",       ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
     {"test",        ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
-    {"temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"battery",     ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0,
      ExposeCategory::Diagnostic},
 };

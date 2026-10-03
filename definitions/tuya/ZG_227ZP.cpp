@@ -47,18 +47,18 @@ constexpr const char* kUnitOpts227[]  = { "celsius", "fahrenheit" };
 constexpr const char* kNtcAlarmOpts[] = { "loweralarm", "upperalarm", "cancel" };
 
 constexpr Expose kExposes_Zg227[] = {
-    { "temperature",                   ExposeType::Numeric, ::zhc::Access::State,    "C", "On-board temperature", nullptr, 0 },
+    { "temperature",                   ExposeType::Numeric, ::zhc::Access::State,    "°C", "On-board temperature", nullptr, 0 },
     { "humidity",                      ExposeType::Numeric, ::zhc::Access::State,    "%", "Humidity",             nullptr, 0 },
-    { "ntc_temperature",               ExposeType::Numeric, ::zhc::Access::State,    "C", "External NTC probe temperature", nullptr, 0 },
+    { "ntc_temperature",               ExposeType::Numeric, ::zhc::Access::State,    "°C", "External NTC probe temperature", nullptr, 0 },
     { "battery",                       ExposeType::Numeric, ::zhc::Access::State,    "%", "Battery", nullptr, 0, ExposeCategory::Diagnostic },
     { "ntc_alarm",                     ExposeType::Enum,    ::zhc::Access::State,    nullptr, "NTC probe alarm", kNtcAlarmOpts, 3 },
     { "temperature_unit",              ExposeType::Enum,    ::zhc::Access::StateSet, nullptr, "Temperature unit", kUnitOpts227, 2, ExposeCategory::Config },
     { "temperature_sampling",          ExposeType::Numeric, ::zhc::Access::StateSet, "s", "Sampling interval",   nullptr, 0, ExposeCategory::Config },
-    { "temperature_calibration",       ExposeType::Numeric, ::zhc::Access::StateSet, "C", "On-board temperature calibration", nullptr, 0, ExposeCategory::Config },
+    { "temperature_calibration",       ExposeType::Numeric, ::zhc::Access::StateSet, "°C", "On-board temperature calibration", nullptr, 0, ExposeCategory::Config },
     { "humidity_calibration",          ExposeType::Numeric, ::zhc::Access::StateSet, "%", "Humidity calibration", nullptr, 0, ExposeCategory::Config },
-    { "ntc_temperature_calibration",   ExposeType::Numeric, ::zhc::Access::StateSet, "C", "NTC probe calibration", nullptr, 0, ExposeCategory::Config },
-    { "ntc_high_temp_alarm_threshold", ExposeType::Numeric, ::zhc::Access::StateSet, "C", "NTC high-temperature alarm threshold", nullptr, 0, ExposeCategory::Config },
-    { "ntc_low_temp_alarm_threshold",  ExposeType::Numeric, ::zhc::Access::StateSet, "C", "NTC low-temperature alarm threshold",  nullptr, 0, ExposeCategory::Config },
+    { "ntc_temperature_calibration",   ExposeType::Numeric, ::zhc::Access::StateSet, "°C", "NTC probe calibration", nullptr, 0, ExposeCategory::Config },
+    { "ntc_high_temp_alarm_threshold", ExposeType::Numeric, ::zhc::Access::StateSet, "°C", "NTC high-temperature alarm threshold", nullptr, 0, ExposeCategory::Config },
+    { "ntc_low_temp_alarm_threshold",  ExposeType::Numeric, ::zhc::Access::StateSet, "°C", "NTC low-temperature alarm threshold",  nullptr, 0, ExposeCategory::Config },
 };
 
 constexpr const char* kM_Zg227[] = { "ZG-227ZP", "ZG-227ZH" };

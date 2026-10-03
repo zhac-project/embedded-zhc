@@ -32,7 +32,7 @@ const FzConverter* const kFz_AC01353010G[] = {
 constexpr const char* kModels_AC01353010G[] = { "Motion Sensor-A" };
 
 constexpr Expose kExposes_AC01353010G[] = {
-    {"temperature", ExposeType::Numeric, Access::State, "C",  nullptr, nullptr, 0},
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"occupancy",   ExposeType::Binary,  Access::State, nullptr, nullptr, nullptr, 0},
     {"battery",     ExposeType::Numeric, Access::State, "%",  nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},

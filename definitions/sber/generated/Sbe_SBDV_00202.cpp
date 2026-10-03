@@ -46,7 +46,7 @@ constexpr Expose kAutoExposes[] = {
     {"v_threshold_hi", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0},
     {"v_threshold_lo", ExposeType::Numeric, Access::StateSet, "V", nullptr, nullptr, 0},
     {"i_threshold_hi", ExposeType::Numeric, Access::StateSet, "mA", nullptr, nullptr, 0},
-    {"t_threshold_hi", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"t_threshold_hi", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

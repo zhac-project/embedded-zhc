@@ -31,8 +31,8 @@ constexpr Expose kAutoExposes[] = {
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"temperature_display_mode", ExposeType::Enum, Access::StateSet, nullptr, "Unit shown on the device's own screen.", kDisplayUnits, 2, ExposeCategory::Config},
 };

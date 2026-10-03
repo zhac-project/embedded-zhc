@@ -31,7 +31,7 @@ constexpr Expose kExposes_PM_B540_ZB[] = {
     {"state",              ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"energy",             ExposeType::Numeric, Access::State,    "kWh",   nullptr, nullptr, 0},
     {"power",              ExposeType::Numeric, Access::State,    "W",     nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State,    "C",     nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State,    "°C",    nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kBindings_PM_B540_ZB[] = {

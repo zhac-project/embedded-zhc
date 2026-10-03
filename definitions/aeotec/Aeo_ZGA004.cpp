@@ -59,7 +59,7 @@ static constexpr const char* kActionOpts_Aeo_ZGA004[] = {"on", "off", "toggle", 
 constexpr Expose kAutoExposes[] = {
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
     {"tilt", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
-    {"device_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
+    {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActionOpts_Aeo_ZGA004, 12},
 };
 

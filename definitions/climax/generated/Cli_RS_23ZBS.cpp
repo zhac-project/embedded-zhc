@@ -16,7 +16,7 @@ const FzConverter* const kFz_RS_23ZBS[] = {
     &::zhc::generic::kFzHumidity,
 };
 constexpr Expose kExp_RS_23ZBS[] = {
-    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "C",  nullptr, nullptr, 0 },
+    { "temperature", ExposeType::Numeric, ::zhc::Access::State, "°C", nullptr, nullptr, 0 },
     { "humidity",    ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
 };
 constexpr BindingSpec kBind_RS_23ZBS[] = {

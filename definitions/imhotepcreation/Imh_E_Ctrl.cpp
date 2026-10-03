@@ -36,11 +36,11 @@ constexpr const char* kModels_E_Ctrl[] = { "E-Ctrl", "RPH E-Ctrl", "RSS E-Ctrl" 
 
 // --- exposes match z2m climate + occupancy + min/max setpoint limits ---
 constexpr Expose kAutoExposes[] = {
-    {"local_temperature", ExposeType::Numeric, Access::State, "C", nullptr, nullptr, 0},
-    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"min_heat_setpoint_limit", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
-    {"max_heat_setpoint_limit", ExposeType::Numeric, Access::StateSet, "C", nullptr, nullptr, 0},
+    {"min_heat_setpoint_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
+    {"max_heat_setpoint_limit", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"setpoint_raise_lower", ExposeType::Numeric, Access::Set, nullptr, nullptr, nullptr, 0},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
