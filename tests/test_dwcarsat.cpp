@@ -23,6 +23,7 @@ namespace zhc::devices::tuya {
 extern const PreparedDefinition kDefTS0601_air_house_keeper;
 extern const PreparedDefinition kDefTZE200_mja3fuja;
 extern const PreparedDefinition kDefTS0601_air_quality;
+extern const PreparedDefinition kDefGen__TZE200_blfcpsxz;
 }
 
 using namespace zhc;
@@ -146,6 +147,17 @@ static void test_dwcarsat_pm25_above_range_dropped() {
         const auto r = dispatch_dwcarsat_dp(2, k1001, ctx);
         assert(r.merged.count == 0);
     }
+}
+
+// The hub drops a raw `dp_<id>` value it saved before the definition learnt
+// that datapoint; this is the check it asks. Every datapoint map counts.
+static void test_definition_decodes_dp() {
+    using tuya::definition_decodes_dp;
+    assert(definition_decodes_dp(devices::tuya::kDefTS0601_air_house_keeper, 20));
+    assert(definition_decodes_dp(devices::tuya::kDefTS0601_air_house_keeper, 2));
+    assert(!definition_decodes_dp(devices::tuya::kDefTS0601_air_house_keeper, 99));
+    assert(!definition_decodes_dp(devices::tuya::kDefTZE200_mja3fuja, 20));     // not on this variant
+    assert(!definition_decodes_dp(devices::tuya::kDefGen__TZE200_blfcpsxz, 2)); // no datapoint map
 }
 
 static void test_dwcarsat_definition_shape() {
@@ -276,6 +288,7 @@ int main() {
     test_dwcarsat_air_quality_dps();
     test_dwcarsat_dp20_formaldehyd();
     test_dwcarsat_pm25_above_range_dropped();
+    test_definition_decodes_dp();
     test_dwcarsat_definition_shape();
     test_mja3fuja_air_quality_dps();
     test_air_quality_default_dps();

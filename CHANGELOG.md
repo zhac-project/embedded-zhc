@@ -21,6 +21,13 @@ across the ZHAC platform.
   sensors z2m declares with an identity scale, whose firmware already reports
   lux: ShinaSystem USM-300ZB and Sunricher SR-ZG9030F-PS.
 
+### Added
+
+- **`tuya::definition_decodes_dp(def, dp_id)`**: true when one of the
+  definition's datapoint maps has an entry for the datapoint. zhac-components
+  uses it to retire a raw `dp_<id>` value the hub saved while the datapoint
+  was still unmapped.
+
 ### Fixed
 
 - **Celsius is "°C" everywhere**: 827 temperature units in 543 definitions

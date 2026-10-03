@@ -697,6 +697,19 @@ extern const FzConverter kFzTuyaDatapoints{
     .user_config       = nullptr,
 };
 
+bool definition_decodes_dp(const PreparedDefinition& def, std::uint8_t dp_id) {
+    for (std::uint8_t i = 0; i < def.from_zigbee_count; ++i) {
+        const FzConverter* c = def.from_zigbee[i];
+        if (!c || c->family != FrameFamily::TuyaDp || c->fn.tuya_fn != &fz_tuya_datapoints) continue;
+        const auto* map = static_cast<const TuyaDatapointMap*>(c->user_config);
+        if (!map || !map->entries) continue;
+        for (std::uint8_t j = 0; j < map->count; ++j) {
+            if (map->entries[j].dp_id == dp_id) return true;
+        }
+    }
+    return false;
+}
+
 // ── Non-DP Tuya attribute converters ───────────────────────────────
 
 namespace {

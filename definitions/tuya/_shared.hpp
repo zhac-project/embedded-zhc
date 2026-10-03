@@ -224,6 +224,11 @@ bool fz_tuya_datapoints(std::span<const TuyaDpRecord> dps,
 
 extern const FzConverter kFzTuyaDatapoints;
 
+// True when one of `def`'s datapoint maps (any converter running
+// fz_tuya_datapoints) has an entry for `dp_id`. The hub asks it to retire a
+// raw `dp_<id>` value it saved while that datapoint was still unmapped.
+bool definition_decodes_dp(const PreparedDefinition& def, std::uint8_t dp_id);
+
 // ── Non-DP Tuya converters ─────────────────────────────────────────
 
 bool fz_tuya_power_on_behavior(const DecodedMessage& msg,
