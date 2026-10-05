@@ -589,7 +589,9 @@ extern const TzConverter kTzOnOff;
 // when a non-zero brightness arrives. `transition_time` is fixed at 0
 // in v1; per-device curves can override via `user_config` later.
 //
-// Accepts `Value::Uint` with 0 ≤ level ≤ 254.
+// Accepts `Value::Uint` 0-254, and 255 sent as 254 (z2m
+// tz.light_onoff_brightness); a `Value::Float` rounds to the nearest level
+// first. NaN, negatives and anything above 255 are refused.
 bool tz_brightness(std::string_view key,
                     const Value& input,
                     const TzConverter& self,

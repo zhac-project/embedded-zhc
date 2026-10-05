@@ -1696,6 +1696,8 @@ bool tz_tuya_min_brightness(std::string_view key, const Value& input, const TzCo
     std::uint64_t min = 0;
     if (input.type == ValueType::Uint) min = input.u;
     else if (input.type == ValueType::Int && input.i > 0) min = static_cast<std::uint64_t>(input.i);
+    else if (input.type == ValueType::Float && input.f >= 0.0f && input.f < 255.5f)   // not NaN
+        min = static_cast<std::uint64_t>(input.f + 0.5f);   // rounds, as tz_brightness
     if (min < 1 || min > 255 || out.size() < 8) return false;
     const std::uint8_t frame[] = {0x10, 0x00, 0x02, 0x00, 0xFC, 0x21,
                                   0xFF, static_cast<std::uint8_t>(min)};

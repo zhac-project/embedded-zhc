@@ -92,6 +92,7 @@ Sent send(const PreparedDefinition& def, const char* key, const Value& v) {
 Value str_v(const char* s)      { Value v{}; v.type = ValueType::StringRef; v.str = s; return v; }
 Value bool_v(bool b)            { Value v{}; v.type = ValueType::Bool; v.b = b; return v; }
 Value uint_v(std::uint64_t u)   { Value v{}; v.type = ValueType::Uint; v.u = u; return v; }
+Value float_v(float f)          { Value v{}; v.type = ValueType::Float; v.f = f; return v; }
 bool is_str(const Value* v, const char* s) {
     return v && v->type == ValueType::StringRef && v->str && std::strcmp(v->str, s) == 0;
 }
@@ -119,7 +120,11 @@ void check_writes(const PreparedDefinition& def) {
         assert(b.cluster == 0x0008 &&
                b.frame == (Bytes{0x11, 0x00, 0x04, static_cast<std::uint8_t>(level), 0x00, 0x00}));
     }
-    assert(!send(def, "brightness", uint_v(255)).ok);
+    // z2m: 255 (this light reports 0xF000 brightness on 0-255) goes out as
+    // 254, more is refused; a decimal rounds to the nearest level first.
+    assert(send(def, "brightness", uint_v(255)).frame == (Bytes{0x11, 0x00, 0x04, 254, 0x00, 0x00}));
+    assert(!send(def, "brightness", uint_v(256)).ok);
+    assert(send(def, "brightness", float_v(127.6f)).frame == (Bytes{0x11, 0x00, 0x04, 128, 0x00, 0x00}));
 
     const Sent on = send(def, "state", str_v("ON"));
     assert(on.ok && on.cluster == 0x0006 && on.frame == (Bytes{0x11, 0x00, 0x01}));
@@ -132,6 +137,7 @@ void check_writes(const PreparedDefinition& def) {
            mb.frame == (Bytes{0x10, 0x00, 0x02, 0x00, 0xFC, 0x21, 0xFF, 0x14}));
     assert(!send(def, "min_brightness", uint_v(0)).ok);
     assert(!send(def, "min_brightness", uint_v(256)).ok);
+    assert(send(def, "min_brightness", float_v(19.6f)).frame == mb.frame);
 
     // power_on_behavior / switch_type: manuSpecificTuya3 (0xE001) enum8 writes.
     const Sent pob = send(def, "power_on_behavior", str_v("previous"));

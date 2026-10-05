@@ -45,6 +45,16 @@ across the ZHAC platform.
   (genLevelCtrl 0xFC00) and `kFzTuyaPowerOnBehavior2` /
   `kTzTuyaPowerOnBehavior2` (manuSpecificTuya3 0xD010). Test
   `tests/test_tuya_ts0052.cpp`.
+- **Brightness writes take 255 and decimals, as z2m does.** The generic
+  brightness writer (`kTzBrightness`, `kTzBrightnessMoveToLevel`) refused 255
+  and any decimal, so a light that reports brightness on 0-255 (Tuya's 0xF000
+  attribute) could not be set back to the value it showed, and a rule or
+  client sending `127.6` got "no zhc converter". Now 255 goes out as 254
+  (z2m `light_onoff_brightness`, "for backwards compatibility"; 256 and up
+  are still refused) and a decimal rounds to the nearest level first
+  (127.6 → 128); NaN and negative values are refused. The Tuya
+  `min_brightness` writer rounds a decimal the same way. Tests
+  `tests/test_generic.cpp`, `tests/test_tuya_ts0052.cpp`.
 - **Two Tuya devices were the wrong kind of device** (Tuya DP coverage
   audit's two safety-relevant findings). z2m has listed both fingerprints
   unchanged since it first added them:

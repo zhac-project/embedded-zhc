@@ -2344,8 +2344,21 @@ bool tz_brightness(std::string_view key, const Value& input,
                     std::span<std::uint8_t> out_frame, std::size_t& out_size) {
     out_size = 0;
     if (key != "brightness") return false;
-    if (input.type != ValueType::Uint) return false;
-    if (input.u > 254) return false;
+    // A decimal rounds to the nearest level, as the other raw level writers
+    // do; NaN and negatives fail the bounds, which also keep the cast defined.
+    std::uint64_t level;
+    if (input.type == ValueType::Uint) {
+        level = input.u;
+    } else if (input.type == ValueType::Float) {
+        if (!(input.f >= 0.0f && input.f < 255.5f)) return false;
+        level = static_cast<std::uint64_t>(input.f + 0.5f);
+    } else {
+        return false;
+    }
+    // z2m tz.light_onoff_brightness: 255 goes out as 254 ("backwards
+    // compatibility"), anything else above 254 is refused.
+    if (level == 255) level = 254;
+    if (level > 254) return false;
 
     // moveToLevelWithOnOff (0x04) or moveToLevel (0x00), per the converter —
     // payload: level u8, transtime u16 LE.
@@ -2353,7 +2366,7 @@ bool tz_brightness(std::string_view key, const Value& input,
                       /*payload_len=*/3, out_size)) {
         return false;
     }
-    out_frame[3] = static_cast<std::uint8_t>(input.u);
+    out_frame[3] = static_cast<std::uint8_t>(level);
     out_frame[4] = 0x00;     // transition time LSB
     out_frame[5] = 0x00;     // transition time MSB
     return true;

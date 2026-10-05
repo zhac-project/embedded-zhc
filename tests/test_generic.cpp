@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include <limits>
 
 #include "definitions/_generic/_shared.hpp"
 #include "zhc/runtime/dispatch.hpp"
@@ -315,6 +316,42 @@ static void test_tz_brightness_out_of_range_rejected() {
     assert(n == 0);
 }
 
+// The level tz_brightness sends for `v` (moveToLevelWithOnOff), or false.
+static bool brightness_level(const Value& v, std::uint8_t& level) {
+    std::uint8_t buf[8]{};
+    std::size_t  n{};
+    PreparedDefinition def{};
+    RuntimeContext ctx{};
+    if (!generic::tz_brightness("brightness", v, ::zhc::generic::kTzBrightness, def, ctx, buf, n)) {
+        assert(n == 0);
+        return false;
+    }
+    assert(n == 6 && buf[2] == 0x04 && buf[4] == 0x00 && buf[5] == 0x00);
+    level = buf[3];
+    return true;
+}
+
+// z2m tz.light_onoff_brightness: 0-254, and 255 ("backwards compatibility")
+// goes out as 254; NaN, negative and anything above 255 are refused. A
+// decimal — the hub sends any JSON decimal as a Float — rounds to the
+// nearest level first, as the other raw level writers do.
+static void test_tz_brightness_z2m_rule() {
+    std::uint8_t level = 0;
+    Value u{}; u.type = ValueType::Uint;
+    u.u = 254; assert(brightness_level(u, level) && level == 254);
+    u.u = 255; assert(brightness_level(u, level) && level == 254);
+    u.u = 256; assert(!brightness_level(u, level));
+
+    Value f{}; f.type = ValueType::Float;
+    f.f = 127.6f; assert(brightness_level(f, level) && level == 128);
+    f.f = 200.0f; assert(brightness_level(f, level) && level == 200);
+    f.f = 254.7f; assert(brightness_level(f, level) && level == 254);   // 255 → 254
+    f.f = 255.5f; assert(!brightness_level(f, level));                  // 256
+    f.f = -0.4f;  assert(!brightness_level(f, level));
+    f.f = std::numeric_limits<float>::quiet_NaN();
+    assert(!brightness_level(f, level));
+}
+
 static void test_tz_color_temp_250_mireds() {
     std::uint8_t buf[8]{};
     std::size_t  n{};
@@ -355,6 +392,7 @@ int main() {
     test_tz_on_off_wrong_key_rejected();
     test_tz_brightness_mid_level();
     test_tz_brightness_out_of_range_rejected();
+    test_tz_brightness_z2m_rule();
     test_tz_color_temp_250_mireds();
     test_tz_descriptor_cluster_ids();
     return 0;
