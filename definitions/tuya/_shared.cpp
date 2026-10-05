@@ -1583,6 +1583,16 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecTuyaSwitchType{
     "switch_type", 0xD030, 0x30, 0, kSwitchTypeLut, 3,
 };
 
+// manuSpecificTuya3 (0xE001) powerOnBehavior: ENUM8 attr 0xD010, the same
+// {off: 0, on: 1, previous: 2} as genOnOff 0x8002.
+constexpr ::zhc::generic::ZclWriteSpec kSpecTuyaPowerOnBehavior2{
+    "power_on_behavior", 0xD010, 0x30, 0, kPowerOnLut, 3,
+};
+constexpr ::zhc::generic::ZclAttrRow kRowsTuyaPowerOnBehavior2[] = {
+    {0xD010, "power_on_behavior", 1, kPowerOnLut, 3},
+};
+constexpr ::zhc::generic::ZclAttrMap kMapTuyaPowerOnBehavior2{kRowsTuyaPowerOnBehavior2, 1};
+
 // fz: manuSpecificTuya3 (0xE001) attr 0xD030 (53296) attribute report
 // → emit `switch_type` as StringRef. Mirrors the tuyaTz lookup
 // (toggle=0/state=1/momentary=2).
@@ -1646,6 +1656,11 @@ extern const FzConverter kFzTuyaSwitchType{
     .user_config       = nullptr,
 };
 
+extern const TzConverter kTzTuyaPowerOnBehavior2 =
+    ::zhc::generic::zcl_write_tz("manuSpecificTuya2", 0xE001, &kSpecTuyaPowerOnBehavior2);
+extern const FzConverter kFzTuyaPowerOnBehavior2 =
+    ::zhc::generic::zcl_attr_fz("manuSpecificTuya2", &kMapTuyaPowerOnBehavior2);
+
 // ── tuyaLight extras (see _shared.hpp) ────────────────────────────────
 
 namespace {
@@ -1657,6 +1672,35 @@ bool fz_tuya_brightness(const DecodedMessage& msg, const FzConverter&,
     if (!v || v->type != ValueType::Uint) return false;
     Value o{}; o.type = ValueType::Uint; o.u = (v->u * 255 + 500) / 1000;   // z2m rounds
     out.put("brightness", o);
+    return true;
+}
+
+// 0xFC00 = min << 8 | max. z2m reads the first two hex digits of the value,
+// which is the high byte only for a minimum of 16 and up; the high byte here.
+bool fz_tuya_min_brightness(const DecodedMessage& msg, const FzConverter&,
+                            const PreparedDefinition&, RuntimeContext&,
+                            FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("64512");  // 0xFC00
+    if (!v || v->type != ValueType::Uint) return false;
+    Value o{}; o.type = ValueType::Uint; o.u = (v->u >> 8) & 0xFF;
+    out.put("min_brightness", o);
+    return true;
+}
+
+// Write Attributes 0xFC00 (uint16, LE) = min << 8 | 0xFF, no default response.
+bool tz_tuya_min_brightness(std::string_view key, const Value& input, const TzConverter&,
+                            const PreparedDefinition&, RuntimeContext&,
+                            std::span<std::uint8_t> out, std::size_t& out_size) {
+    out_size = 0;
+    if (key != "min_brightness") return false;
+    std::uint64_t min = 0;
+    if (input.type == ValueType::Uint) min = input.u;
+    else if (input.type == ValueType::Int && input.i > 0) min = static_cast<std::uint64_t>(input.i);
+    if (min < 1 || min > 255 || out.size() < 8) return false;
+    const std::uint8_t frame[] = {0x10, 0x00, 0x02, 0x00, 0xFC, 0x21,
+                                  0xFF, static_cast<std::uint8_t>(min)};
+    std::memcpy(out.data(), frame, sizeof(frame));
+    out_size = sizeof(frame);
     return true;
 }
 
@@ -1736,6 +1780,30 @@ extern const FzConverter kFzTuyaBrightness{
     .direction         = Direction::ServerToClient,
     .fn                = { .zcl_fn = fz_tuya_brightness },
     .user_config       = nullptr,
+};
+
+extern const FzConverter kFzTuyaMinBrightness{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genLevelCtrl",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_tuya_min_brightness },
+    .user_config       = nullptr,
+};
+
+extern const TzConverter kTzTuyaMinBrightness{
+    .key         = "min_brightness",
+    .cluster     = "genLevelCtrl",
+    .cluster_id  = 0x0008,
+    .command_id  = 0x02,        // Write Attributes
+    .fn          = tz_tuya_min_brightness,
+    .user_config = nullptr,
 };
 
 extern const TzConverter kTzTuyaDoNotDisturb{

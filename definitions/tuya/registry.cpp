@@ -25,6 +25,7 @@ extern const PreparedDefinition kDefGen_TS0041A;
 extern const PreparedDefinition kDefGen_TS0046;
 extern const PreparedDefinition kDefGen_TS0049;
 extern const PreparedDefinition kDefGen_TS0052;
+extern const PreparedDefinition kDefGen_TS0052_2;
 extern const PreparedDefinition kDefGen_TS0105;
 extern const PreparedDefinition kDefGen_TS0115;
 extern const PreparedDefinition kDefGen_TS0207;
@@ -237,7 +238,6 @@ extern const PreparedDefinition kDefGen__TZ3000_knoj8lpk;
 extern const PreparedDefinition kDefGen__TZ3000_kpatq5pq;
 extern const PreparedDefinition kDefGen__TZ3000_kqvb5akv;
 extern const PreparedDefinition kDefGen__TZ3000_ktuoyvt5;
-extern const PreparedDefinition kDefGen__TZ3000_kvwrdf47;
 extern const PreparedDefinition kDefGen__TZ3000_kxlmv9ag;
 extern const PreparedDefinition kDefGen__TZ3000_ky0fq4ho;
 extern const PreparedDefinition kDefGen__TZ3000_kycczpw8;
@@ -400,7 +400,6 @@ extern const PreparedDefinition kDefGen__TZ3000_ypgri8yz;
 extern const PreparedDefinition kDefGen__TZ3000_ysiog9xi;
 extern const PreparedDefinition kDefGen__TZ3000_zbfya6h0;
 extern const PreparedDefinition kDefGen__TZ3000_zjchz7pd;
-extern const PreparedDefinition kDefGen__TZ3000_zjtxnoft;
 extern const PreparedDefinition kDefGen__TZ3000_zmy4lslw;
 extern const PreparedDefinition kDefGen__TZ3000_zrm3oxsh;
 extern const PreparedDefinition kDefGen__TZ3000_zsh6uat3;
@@ -1523,6 +1522,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen_TS0046,
     &kDefGen_TS0049,
     &kDefGen_TS0052,
+    &kDefGen_TS0052_2,
     &kDefGen_TS0105,
     &kDefGen_TS0115,
     &kDefGen_TS0207,
@@ -1732,7 +1732,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZ3000_kpatq5pq,
     &kDefGen__TZ3000_kqvb5akv,
     &kDefGen__TZ3000_ktuoyvt5,
-    &kDefGen__TZ3000_kvwrdf47,
     &kDefGen__TZ3000_kxlmv9ag,
     &kDefGen__TZ3000_ky0fq4ho,
     &kDefGen__TZ3000_kycczpw8,
@@ -1895,7 +1894,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZ3000_ysiog9xi,
     &kDefGen__TZ3000_zbfya6h0,
     &kDefGen__TZ3000_zjchz7pd,
-    &kDefGen__TZ3000_zjtxnoft,
     &kDefGen__TZ3000_zmy4lslw,
     &kDefGen__TZ3000_zrm3oxsh,
     &kDefGen__TZ3000_zsh6uat3,

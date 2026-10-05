@@ -378,6 +378,10 @@ extern const TzConverter kTzTuyaChildLock;         // attr 0x8000 bool
 // z2m-source: lib/tuya.ts tuyaFz.switch_type / tuyaTz.switch_type.
 extern const FzConverter kFzTuyaSwitchType;
 extern const TzConverter kTzTuyaSwitchType;
+// powerOnBehavior {off, on, previous}, as tuyaLight({powerOnBehavior: true}).
+// z2m-source: lib/tuya.ts tuyaFz.power_on_behavior_2 / tuyaTz.power_on_behavior_2.
+extern const FzConverter kFzTuyaPowerOnBehavior2;
+extern const TzConverter kTzTuyaPowerOnBehavior2;
 
 // ── tuyaLight extras ─────────────────────────────────────────────────
 //
@@ -392,6 +396,13 @@ extern const TzConverter kTzTuyaSwitchType;
 extern const FzConverter kFzTuyaBrightness;
 extern const TzConverter kTzTuyaDoNotDisturb;
 extern const TzConverter kTzTuyaColorPowerOnBehavior;
+// kFzTuyaMinBrightness / kTzTuyaMinBrightness: tuyaLight({minBrightness:
+// "attribute"}) — genLevelCtrl attr 0xFC00 (uint16) holds the minimum
+// brightness in its high byte and the maximum in its low byte; min_brightness
+// 1-255 reads the high byte and writes min << 8 | 0xFF (maximum left at full).
+// z2m-source: lib/tuya.ts tuyaFz/tuyaTz.min_brightness_attribute.
+extern const FzConverter kFzTuyaMinBrightness;
+extern const TzConverter kTzTuyaMinBrightness;
 
 // z2m tuya.configureMagicPacket — genBasic read of manufacturerName,
 // zclVersion, appVersion, modelId, powerSource, 0xFFFE (LE attr ids), as

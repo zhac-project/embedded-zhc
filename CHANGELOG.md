@@ -30,6 +30,21 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Tuya TS0052 dimmer modules are dimmable lights.** The 1-channel module
+  (white label Tuya FS-05R, `_TZ3000_mgusv51k`) matched a generated stub that
+  exposed only an `action` and had no write converter, so the hub logged
+  "key='brightness' no converter / encode failed" and brightness worked only
+  through the hub's cluster fallback, when at all. The 2-channel modules
+  (`_TZ3000_zjtxnoft`, `_TZ3000_kvwrdf47`) were battery + on/off stubs, and
+  `_TZ3000_sfibawtr` fell through to the 1-channel stub. Both are now z2m's
+  `tuyaLight` (TS0052 / TS0052_2): `state`, `brightness` (0-254, the range is
+  on the expose), `min_brightness`, `effect`, `do_not_disturb`,
+  `power_on_behavior`, `switch_type`, per channel `_l1` / `_l2` on the
+  2-channel module; genOnOff + genLevelCtrl are bound and reported. New
+  shared converters `tuya::kFzTuyaMinBrightness` / `kTzTuyaMinBrightness`
+  (genLevelCtrl 0xFC00) and `kFzTuyaPowerOnBehavior2` /
+  `kTzTuyaPowerOnBehavior2` (manuSpecificTuya3 0xD010). Test
+  `tests/test_tuya_ts0052.cpp`.
 - **Two Tuya devices were the wrong kind of device** (Tuya DP coverage
   audit's two safety-relevant findings). z2m has listed both fingerprints
   unchanged since it first added them:
