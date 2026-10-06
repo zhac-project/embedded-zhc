@@ -149,8 +149,8 @@ void check_color_mode(const PreparedDefinition& def) {
 }
 
 // color_hex "#rrggbb": the colour at full brightness, published with the xy
-// the light reports. And Tuya's 0xF000 brightness tops out at 254, the highest
-// level any brightness control or write takes.
+// the light reports, and taken as a write (moveToColor). And Tuya's 0xF000
+// brightness tops out at 254: the light's range is 0..254.
 void check_color_hex(const PreparedDefinition& def) {
     // x = 0x5333, y = 0x6666: color_hex is the xy colour at full brightness
     DispatchResult r = report(def, 0x0300, {0x03, 0x00, 0x21, 0x33, 0x53,
@@ -163,6 +163,10 @@ void check_color_hex(const PreparedDefinition& def) {
     DispatchResult b = report(def, 0x0008, {0x00, 0xF0, 0x21, 0xE8, 0x03});
     const Value* br = b.merged.find("brightness");
     assert(br && br->type == ValueType::Uint && br->u == 254);
+    // color_hex is also a write: moveToColor; a string that is no colour sends nothing
+    const Sent s = send(def, "color_hex", str_v("#ff0000"));
+    assert(s.cluster == 0x0300 && s.frame.size() == 9 && s.frame[2] == 0x07);
+    assert(send(def, "color_hex", str_v("red")).frame.empty());
 }
 
 void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {

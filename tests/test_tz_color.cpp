@@ -7,6 +7,7 @@
 // mode is remembered the same way.
 #include <cassert>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <span>
 
@@ -218,6 +219,58 @@ int main() {
         FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
         assert(generic::fz_color(msg, generic::kFzColor, def, ctx, out));
         assert(out.find("color_hex") == nullptr);
+    }
+
+    // ── color_hex: write ──
+    {   // color_hex on an xy light: moveToColor at the colour's chromaticity
+        RuntimeContext ctx = ctx_with_store();
+        assert(generic::tz_color("color_hex", strv("#ff0000"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n));
+        assert(n == 9 && frame[2] == 0x07);
+        assert(std::abs(int(le16(frame + 3)) - 41942) < 70 && std::abs(int(le16(frame + 5)) - 21627) < 70);
+        assert(!generic::tz_color("color_hex", strv("ff0000"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n) && n == 0);
+        assert(!generic::tz_color("color_hex", strv("#ff00"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n) && n == 0);
+        assert(!generic::tz_color("color_hex", strv("#000000"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n) && n == 0);
+        assert(!generic::tz_color("color_hex", uintv(5), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n) && n == 0);
+        // the refusals left the colour memory alone: a y write still pairs with the red's x
+        assert(generic::tz_color("color_y", floatv(0.5f), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n));
+        assert(std::abs(int(le16(frame + 3)) - 41942) < 70 && le16(frame + 5) == 32768);
+    }
+    {   // color_hex on an HS-only light (hue/saturation rows only): moveToHueAndSaturation
+        static constexpr Expose kHs[] = {
+            {"hue", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+            {"saturation", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0}};
+        PreparedDefinition hs{}; hs.exposes = kHs; hs.exposes_count = 2;
+        RuntimeContext ctx = ctx_with_store();
+        assert(generic::tz_color("color_hex", strv("#00ff00"), generic::kTzColor, hs, ctx, std::span<std::uint8_t>(frame), n));
+        assert(n == 7 && frame[2] == 0x06 && frame[3] == 85 && frame[4] == 254);
+        // black is refused here too (rgb_to_hs would take it as hue 0, saturation 0)
+        assert(!generic::tz_color("color_hex", strv("#000000"), generic::kTzColor, hs, ctx, std::span<std::uint8_t>(frame), n) && n == 0);
+    }
+    {   // what a definition does with color_hex
+        static const FzConverter* const kFz[] = {&generic::kFzColor};
+        static const TzConverter* const kTz[] = {&generic::kTzColor};
+        static constexpr Expose kRows[] = {
+            {"color_x", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+            {"hue", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0}};
+        PreparedDefinition d{};
+        d.from_zigbee = kFz; d.from_zigbee_count = 1; d.to_zigbee = kTz; d.to_zigbee_count = 1;
+        d.exposes = kRows; d.exposes_count = 2;
+        generic::ColorHexSupport s = generic::color_hex_support(d);
+        assert(s.read && s.write && std::strcmp(s.mode, "xy") == 0);
+        PreparedDefinition ro{}; ro.from_zigbee = kFz; ro.from_zigbee_count = 1;
+        s = generic::color_hex_support(ro);
+        assert(s.read && !s.write);
+        assert(!generic::color_hex_support(PreparedDefinition{}).read);
+        // the paired rows count as well: color_hs alone is an HS light, color_xy beside hue is xy
+        static constexpr Expose kHsRow[] = {
+            {"color_hs", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0}};
+        static constexpr Expose kXyRows[] = {
+            {"hue", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+            {"color_xy", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0}};
+        PreparedDefinition hp{}; hp.exposes = kHsRow; hp.exposes_count = 1;
+        PreparedDefinition xp{}; xp.exposes = kXyRows; xp.exposes_count = 2;
+        assert(std::strcmp(generic::color_hex_support(hp).mode, "hs") == 0);
+        assert(std::strcmp(generic::color_hex_support(xp).mode, "xy") == 0);
     }
     return 0;
 }

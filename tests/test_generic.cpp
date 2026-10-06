@@ -366,6 +366,28 @@ static void test_tz_color_temp_250_mireds() {
     assert(std::memcmp(buf, want, n) == 0);
 }
 
+static void test_tz_color_temp_clamps_to_the_light() {
+    static constexpr Expose kEx[] = {{"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0,
+                                      ExposeCategory::State, 153, 370, 1}};
+    PreparedDefinition def{}; def.exposes = kEx; def.exposes_count = 1;
+    PreparedDefinition bare{};
+    RuntimeContext ctx{};
+    std::uint8_t buf[8]{}; std::size_t n{};
+    auto mireds = [&]() { return static_cast<unsigned>(buf[3] | (buf[4] << 8)); };
+    Value u{}; u.type = ValueType::Uint;
+    u.u = 500; assert(generic::tz_color_temp("color_temp", u, generic::kTzColorTemp, def, ctx, buf, n) && mireds() == 370);
+    u.u = 100; assert(generic::tz_color_temp("color_temp", u, generic::kTzColorTemp, def, ctx, buf, n) && mireds() == 153);
+    u.u = 500; assert(generic::tz_color_temp("color_temp", u, generic::kTzColorTemp, bare, ctx, buf, n) && mireds() == 500);
+    Value f{}; f.type = ValueType::Float; f.f = 250.4f;
+    assert(generic::tz_color_temp("color_temp", f, generic::kTzColorTemp, bare, ctx, buf, n) && mireds() == 250);
+    f.f = 250.6f; assert(generic::tz_color_temp("color_temp", f, generic::kTzColorTemp, bare, ctx, buf, n) && mireds() == 251);
+    f.f = -1.0f; assert(!generic::tz_color_temp("color_temp", f, generic::kTzColorTemp, bare, ctx, buf, n));
+    // a color_temp row with no bounds of its own (most definitions) does not clamp
+    static constexpr Expose kNoBounds[] = {{"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0}};
+    PreparedDefinition unbounded{}; unbounded.exposes = kNoBounds; unbounded.exposes_count = 1;
+    u.u = 500; assert(generic::tz_color_temp("color_temp", u, generic::kTzColorTemp, unbounded, ctx, buf, n) && mireds() == 500);
+}
+
 static void test_tz_descriptor_cluster_ids() {
     assert(generic::kTzOnOff.cluster_id      == 0x0006);
     assert(generic::kTzBrightness.cluster_id == 0x0008);
@@ -394,6 +416,7 @@ int main() {
     test_tz_brightness_out_of_range_rejected();
     test_tz_brightness_z2m_rule();
     test_tz_color_temp_250_mireds();
+    test_tz_color_temp_clamps_to_the_light();
     test_tz_descriptor_cluster_ids();
     return 0;
 }

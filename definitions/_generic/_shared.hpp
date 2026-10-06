@@ -620,7 +620,11 @@ extern const TzConverter kTzEffect;
 extern const TzConverter kTzEffectColorLoop;
 
 // lightingColorCtrl (0x0300) "color_temp" setter. Emits the
-// `moveToColorTemp` (0x0A) command. Accepts `Value::Uint` mireds.
+// `moveToColorTemp` (0x0A) command. Accepts `Value::Uint` or `Value::Float`
+// mireds (a Float rounds to the nearest); clamped to the definition's
+// `color_temp` row `value_min..value_max` when one is declared (z2m
+// clampColorTemp), sent as given when none is. NaN, negatives and anything
+// above 65535 are refused.
 // Remembers colour mode "color_temp" for kFzColor.
 bool tz_color_temp(std::string_view key,
                     const Value& input,
@@ -633,13 +637,21 @@ bool tz_color_temp(std::string_view key,
 extern const TzConverter kTzColorTemp;
 
 // lightingColorCtrl (0x0300) wildcard color setter. Single TzConverter
-// claiming any of `color_x` / `color_y` / `hue` / `saturation`, emitting
-// the matching ZCL command:
+// claiming any of `color_x` / `color_y` / `color_xy` / `color_hs` /
+// `color_hex` / `hue` / `saturation`, emitting the matching ZCL command:
 //
 //   key="color_x" or "color_y"   → moveToColor (0x07)
 //        payload: x u16 LE, y u16 LE, transition u16 LE
 //        Value can be Float in [0,1] (z2m shape) or Uint raw u16
 //        ([0, 65535]). Missing axis defaults to 0x8000 (centre).
+//   key="color_xy"               → moveToColor (0x07), StringRef "x,y"
+//   key="color_hs"               → moveToHueAndSaturation (0x06),
+//        StringRef "h,s" (0-360, 0-100)
+//   key="color_hex"              → moveToColor (0x07), or
+//        moveToHueAndSaturation (0x06) on a definition that lists hue /
+//        saturation rows but no x/y rows (see color_hex_support). StringRef
+//        "#rrggbb" in either case; a malformed string and "#000000" (black
+//        has no colour) are refused, the colour memory untouched.
 //   key="hue"                    → moveToHue (0x00)
 //        payload: hue u8 [0,254], direction u8 (0 shortest), transition u16
 //   key="saturation"             → moveToSaturation (0x03)
@@ -662,6 +674,13 @@ bool tz_color(std::string_view key,
                std::size_t& out_size);
 
 extern const TzConverter kTzColor;
+
+// What a definition does with `color_hex` ("#rrggbb"): published when it
+// decodes colour (kFzColor), writable when it also wires kTzColor. `mode` is
+// the colour mode a write uses: "hs" when the definition lists hue/saturation
+// rows but no x/y rows, else "xy" (z2m `color: true` is xy).
+struct ColorHexSupport { bool read{false}; bool write{false}; const char* mode{nullptr}; };
+ColorHexSupport color_hex_support(const PreparedDefinition& def);
 
 // closuresWindowCovering (0x0102) position/state setter.
 extern const TzConverter kTzCoverPosition;

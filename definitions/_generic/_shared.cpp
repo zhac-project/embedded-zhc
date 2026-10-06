@@ -2512,20 +2512,49 @@ extern const TzConverter kTzCoverViaBrightness{
     .user_config  = nullptr,
 };
 
+namespace {
+
+// The light's own colour-temperature range, when its definition declares one.
+bool color_temp_range(const PreparedDefinition& def, std::int32_t& lo, std::int32_t& hi) {
+    if (!def.exposes) return false;
+    for (std::uint8_t i = 0; i < def.exposes_count; i++) {
+        const auto& e = def.exposes[i];
+        if (e.name && std::strcmp(e.name, "color_temp") == 0 && e.value_max > e.value_min) {
+            lo = e.value_min; hi = e.value_max;
+            return true;
+        }
+    }
+    return false;
+}
+
+}  // namespace
+
+// Uint or Float mireds; clamped to the definition's color_temp range when declared.
 bool tz_color_temp(std::string_view key, const Value& input,
                     const TzConverter&,
-                    const PreparedDefinition&, RuntimeContext& ctx,
+                    const PreparedDefinition& def, RuntimeContext& ctx,
                     std::span<std::uint8_t> out_frame, std::size_t& out_size) {
     out_size = 0;
     if (key != "color_temp") return false;
-    if (input.type != ValueType::Uint) return false;
-    if (input.u > 0xFFFF) return false;
+    std::uint64_t mireds_in = 0;
+    if (input.type == ValueType::Uint) mireds_in = input.u;
+    else if (input.type == ValueType::Float) {
+        if (!(input.f >= 0.0f && input.f < 65535.5f)) return false;
+        mireds_in = static_cast<std::uint64_t>(input.f + 0.5f);
+    } else return false;
+    if (mireds_in > 0xFFFF) return false;
+    // z2m clampColorTemp: the light's own range wins, when it has one.
+    std::int32_t lo = 0, hi = 0;
+    if (color_temp_range(def, lo, hi)) {
+        if (mireds_in < static_cast<std::uint64_t>(lo)) mireds_in = static_cast<std::uint64_t>(lo);
+        if (mireds_in > static_cast<std::uint64_t>(hi)) mireds_in = static_cast<std::uint64_t>(hi);
+    }
 
     // moveToColorTemp (0x0A) — payload: colortemp u16 LE, transtime u16 LE.
     if (!write_header(out_frame, 0x0A, /*payload_len=*/4, out_size)) {
         return false;
     }
-    const std::uint16_t mireds = static_cast<std::uint16_t>(input.u);
+    const std::uint16_t mireds = static_cast<std::uint16_t>(mireds_in);
     out_frame[3] = static_cast<std::uint8_t>(mireds & 0xFF);
     out_frame[4] = static_cast<std::uint8_t>((mireds >> 8) & 0xFF);
     out_frame[5] = 0x00;
@@ -2552,6 +2581,13 @@ extern const TzConverter kTzColorTemp{
 // `hue` / `saturation`. Each key encodes a different ZCL command on
 // the same cluster. See header docs for input shape contract.
 namespace {
+
+bool has_expose(const PreparedDefinition& def, const char* name) {
+    if (!def.exposes) return false;
+    for (std::uint8_t i = 0; i < def.exposes_count; i++)
+        if (def.exposes[i].name && std::strcmp(def.exposes[i].name, name) == 0) return true;
+    return false;
+}
 
 // Convert a Value-shaped color axis to a u16 ZCL CIE x/y. Accepts
 // Float in [0,1] (z2m's normalised shape) or Uint already in [0,
@@ -2589,14 +2625,16 @@ bool color_u8_arg(const Value& v, std::uint8_t& out) {
 }  // namespace
 
 // Claims `color_x` / `color_y` (the other axis from memory, centre when
-// unknown), `color_xy` "x,y" in [0,1], `color_hs` "h,s" (0-360, 0-100) and
-// the single `hue` / `saturation`. Every write also updates the memory, so
-// two axis writes in a row land where the caller meant, and records the
-// command's colour mode (moveToColor xy, the hue/saturation moves hs), which
-// z2m's tz.light_color returns as state.
+// unknown), `color_xy` "x,y" in [0,1], `color_hs` "h,s" (0-360, 0-100),
+// `color_hex` "#rrggbb" (moveToColor, or moveToHueAndSaturation on a
+// hue/saturation-only light; malformed and black are refused) and the single
+// `hue` / `saturation`. Every write also updates the memory, so two axis
+// writes in a row land where the caller meant, and records the command's
+// colour mode (moveToColor xy, the hue/saturation moves hs), which z2m's
+// tz.light_color returns as state.
 bool tz_color(std::string_view key, const Value& input,
                const TzConverter&,
-               const PreparedDefinition&, RuntimeContext& ctx,
+               const PreparedDefinition& def, RuntimeContext& ctx,
                std::span<std::uint8_t> out_frame, std::size_t& out_size) {
     out_size = 0;
     ColorMem mem{};
@@ -2613,6 +2651,18 @@ bool tz_color(std::string_view key, const Value& input,
         out_frame[8] = 0x00;
         mem.x = x; mem.y = y; mem.have |= kHaveX | kHaveY;
         set_mode(mem, kModeXy);
+        remember();
+        return true;
+    };
+    auto move_to_hs = [&](float h, float sat) {
+        // moveToHueAndSaturation (0x06): hue u8, saturation u8, transition u16 LE.
+        if (!write_header(out_frame, 0x06, /*payload_len=*/4, out_size)) return false;
+        out_frame[3] = static_cast<std::uint8_t>(h * 254.0f / 360.0f + 0.5f);
+        out_frame[4] = static_cast<std::uint8_t>(sat * 254.0f / 100.0f + 0.5f);
+        out_frame[5] = 0x00;
+        out_frame[6] = 0x00;
+        mem.hue = out_frame[3]; mem.sat = out_frame[4]; mem.have |= kHaveHue | kHaveSat;
+        set_mode(mem, kModeHs);
         remember();
         return true;
     };
@@ -2635,16 +2685,21 @@ bool tz_color(std::string_view key, const Value& input,
         float h = 0, sat = 0;
         if (input.type != ValueType::StringRef || !parse_pair(input.str, h, sat)) return false;
         if (h < 0.0f || h > 360.0f || sat < 0.0f || sat > 100.0f) return false;
-        // moveToHueAndSaturation (0x06): hue u8, saturation u8, transition u16 LE.
-        if (!write_header(out_frame, 0x06, /*payload_len=*/4, out_size)) return false;
-        out_frame[3] = static_cast<std::uint8_t>(h * 254.0f / 360.0f + 0.5f);
-        out_frame[4] = static_cast<std::uint8_t>(sat * 254.0f / 100.0f + 0.5f);
-        out_frame[5] = 0x00;
-        out_frame[6] = 0x00;
-        mem.hue = out_frame[3]; mem.sat = out_frame[4]; mem.have |= kHaveHue | kHaveSat;
-        set_mode(mem, kModeHs);
-        remember();
-        return true;
+        return move_to_hs(h, sat);
+    }
+    if (key == "color_hex") {
+        zhc::color::Rgb rgb{};
+        if (input.type != ValueType::StringRef || !zhc::color::parse_hex(input.str, rgb)) return false;
+        if (rgb.r == 0 && rgb.g == 0 && rgb.b == 0) return false;   // black has no colour
+        if (color_hex_support(def).mode == kColorModes[0]) {        // an HS-only light
+            float h = 0, sat = 0;
+            zhc::color::rgb_to_hs(rgb, h, sat);
+            return move_to_hs(h, sat * 100.0f);
+        }
+        float x = 0, y = 0;
+        if (!zhc::color::rgb_to_xy(rgb, x, y)) return false;
+        return move_to_color(static_cast<std::uint16_t>(x * 65535.0f + 0.5f),
+                             static_cast<std::uint16_t>(y * 65535.0f + 0.5f));
     }
     if (key == "hue") {
         std::uint8_t hue = 0;
@@ -2684,6 +2739,18 @@ extern const TzConverter kTzColor{
     .fn           = tz_color,
     .user_config  = nullptr,
 };
+
+ColorHexSupport color_hex_support(const PreparedDefinition& def) {
+    ColorHexSupport s{};
+    for (std::uint8_t i = 0; def.from_zigbee && i < def.from_zigbee_count; i++)
+        if (def.from_zigbee[i] == &kFzColor) s.read = true;
+    for (std::uint8_t i = 0; def.to_zigbee && i < def.to_zigbee_count; i++)
+        if (def.to_zigbee[i] == &kTzColor) s.write = true;
+    const bool xy = has_expose(def, "color_x") || has_expose(def, "color_xy");
+    const bool hs = has_expose(def, "hue") || has_expose(def, "color_hs");
+    s.mode = (hs && !xy) ? kColorModes[0] : kColorModes[1];
+    return s;
+}
 
 // ── tz_lock (closuresDoorLock 0x0101) ───────────────────────────────
 //

@@ -27,6 +27,13 @@ across the ZHAC platform.
   definition's datapoint maps has an entry for the datapoint. zhac-components
   uses it to retire a raw `dp_<id>` value the hub saved while the datapoint
   was still unmapped.
+- **Colour lights speak `color_hex`.** Every colour report also publishes
+  `color_hex` ("#rrggbb", the colour at full brightness) and `kTzColor` takes
+  it as a write (moveToColor, or moveToHueAndSaturation on
+  hue/saturation-only lights); `color_temp` writes clamp to a light's declared
+  range and accept decimals; Tuya brightness 0xF000 tops out at 254. Tests:
+  `test_color_hex.cpp`, `test_tz_color.cpp`, `test_generic.cpp`,
+  `test_tuya_ts0505b.cpp`.
 
 ### Fixed
 

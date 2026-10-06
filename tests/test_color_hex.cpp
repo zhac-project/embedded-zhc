@@ -30,7 +30,8 @@ int main() {
     zhc::color::format_hex(Rgb{0xff, 0x8a, 0x3d}, out);
     assert(std::strcmp(out, "#ff8a3d") == 0);
 
-    // xy -> sRGB: the vectors zhac-tiles' ColourTest uses, +-2 per channel.
+    // xy -> sRGB reference vectors: the sRGB primaries, D65 white, a warm white and an
+    // out-of-gamut cyan, +-2 per channel.
     assert(zhc::color::xy_to_rgb(0.64f, 0.33f, c) && near(c, 255, 0, 0));
     assert(zhc::color::xy_to_rgb(0.30f, 0.60f, c) && near(c, 0, 255, 0));
     assert(zhc::color::xy_to_rgb(0.15f, 0.06f, c) && near(c, 0, 0, 255));
