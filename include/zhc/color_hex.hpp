@@ -3,9 +3,10 @@
 //
 // Colour maths for `color_hex` ("#rrggbb": the light's colour at full
 // brightness). Header-only, no allocation.
-//  - xy <-> sRGB: same maths as zhac-tiles `Colour.xyToRgb` (sRGB D65 matrix,
-//    scale in linear light, then the sRGB curve). z2m and Home Assistant use
-//    the Hue wide-gamut matrix instead; do not "fix" this toward them.
+//  - xy <-> sRGB: CIE 1931 at Y = 1, sRGB (D65) matrix, negative channels
+//    clamped, the brightest channel scaled to full (in linear light), then the
+//    sRGB curve. z2m and Home Assistant use the Philips Hue wide-gamut matrix
+//    instead; do not "fix" this toward them.
 //  - hue (degrees) / saturation (0..1) <-> sRGB at full value (HSV).
 #pragma once
 

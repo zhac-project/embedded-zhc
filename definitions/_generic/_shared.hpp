@@ -86,6 +86,12 @@ extern const FzConverter kFzColorTemperature;
 //                                                       ("hs" / "xy" / "color_temp")
 //   attr 0x4000 enhancedCurrentHue    (u16)          → "enhanced_hue"
 // XY are encoded by z2m as `raw / 65535` per the ZCL CIE 1931 spec.
+// It also emits the pairs, completed from the remembered other axis when a
+// report carries only one:
+//   "color_xy"  "x,y"      (CIE 1931, four decimals)
+//   "color_hs"  "h,s"      (0-360, 0-100)
+//   "color_hex" "#rrggbb"  (the colour at full brightness: from xy, or from hue
+//                           + saturation when the light is in hs mode)
 // A colour frame without colorMode still carries "color_mode" once the
 // light's mode is known (runtime memory, single-endpoint defs): its last
 // colorMode, or the mode of the last kTzColor / kTzColorTemp command — z2m

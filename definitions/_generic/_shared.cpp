@@ -308,7 +308,9 @@ bool fz_color(const DecodedMessage& msg,
     // we don't need a separate fz per axis. Besides the single axes it
     // emits the pairs Home Assistant speaks: `color_xy` "x,y" (CIE 1931,
     // four decimals) and `color_hs` "h,s" (0-360, 0-100), completed from
-    // the remembered other axis when a report carries only one.
+    // the remembered other axis when a report carries only one, and
+    // `color_hex` "#rrggbb" (the colour at full brightness: from xy, or from
+    // hue + saturation in hs mode).
     bool emitted = false;
     ColorMem mem{};
     const bool have_mem = color_mem_load(ctx, mem);
@@ -379,6 +381,7 @@ bool fz_color(const DecodedMessage& msg,
     // color_hex "#rrggbb": the colour at full brightness, which every UI's
     // colour picker shows. From xy unless the light is in hs mode (or only
     // hue/saturation are known); a string, so no x100 float rounding.
+    // ponytail: per-device memory, as color_xy/color_hs: a multi-endpoint light's pair can mix endpoints.
     if (xy_changed || hs_changed || mode_seen) {
         const bool have_xy = (mem.have & kHaveX) && (mem.have & kHaveY);
         const bool have_hs = (mem.have & kHaveHue) && (mem.have & kHaveSat);
