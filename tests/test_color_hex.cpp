@@ -60,6 +60,21 @@ int main() {
     assert(std::fabs(h - 35.0f) < 0.5f && std::fabs(s - 1.0f) < 0.01f);
     zhc::color::rgb_to_hs(Rgb{0x80, 0x80, 0x80}, h, s);
     assert(s == 0.0f);
+
+    // Branches the vectors above do not reach: g- and b-dominant hue, the hue wrap
+    // below 0, sub-full saturation (the Green, Blue and Pink presets), the
+    // saturation clamp, NaN hue, a seven-character string with no '#', and x == 0.
+    zhc::color::rgb_to_hs(Rgb{0x34, 0xc7, 0x59}, h, s);
+    assert(std::fabs(h - 135.1f) < 0.5f && std::fabs(s - 0.739f) < 0.01f);
+    zhc::color::rgb_to_hs(Rgb{0x0a, 0x84, 0xff}, h, s);
+    assert(std::fabs(h - 210.1f) < 0.5f && std::fabs(s - 0.961f) < 0.01f);
+    zhc::color::rgb_to_hs(Rgb{0xff, 0x2d, 0x55}, h, s);
+    assert(std::fabs(h - 348.6f) < 0.5f && std::fabs(s - 0.824f) < 0.01f);
+    assert(near(zhc::color::hs_to_rgb(-30.0f, 1.0f), 255, 0, 128));
+    assert(near(zhc::color::hs_to_rgb(30.0f, 7.0f), 255, 128, 0));
+    assert(near(zhc::color::hs_to_rgb(std::nanf(""), 1.0f), 255, 0, 0));
+    assert(!zhc::color::parse_hex("0ff8a3d", c));
+    assert(!zhc::color::xy_to_rgb(0.0f, 0.3f, c));
     std::puts("color_hex: all passed");
     return 0;
 }
