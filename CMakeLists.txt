@@ -889,6 +889,9 @@ target_link_libraries(zhc_timer_tests PRIVATE zhc_core)
 add_executable(zhc_expose_range_tests tests/test_expose_range.cpp)
 target_link_libraries(zhc_expose_range_tests PRIVATE zhc_core)
 
+add_executable(zhc_color_hex_tests tests/test_color_hex.cpp)
+target_link_libraries(zhc_color_hex_tests PRIVATE zhc_core)
+
 add_executable(zhc_wxkg01lm_tests tests/test_wxkg01lm.cpp)
 target_link_libraries(zhc_wxkg01lm_tests PRIVATE zhc_definitions)
 
@@ -3485,6 +3488,7 @@ add_test(NAME zhc_configure_write_defs_tests COMMAND zhc_configure_write_defs_te
 add_test(NAME zhc_matcher_tests   COMMAND zhc_matcher_tests)
 add_test(NAME zhc_timer_tests     COMMAND zhc_timer_tests)
 add_test(NAME zhc_expose_range_tests COMMAND zhc_expose_range_tests)
+add_test(NAME zhc_color_hex_tests COMMAND zhc_color_hex_tests)
 add_test(NAME zhc_wxkg01lm_tests  COMMAND zhc_wxkg01lm_tests)
 add_test(NAME zhc_rtcgq11lm_tests COMMAND zhc_rtcgq11lm_tests)
 add_test(NAME zhc_philips_motion_tests COMMAND zhc_philips_motion_tests)
