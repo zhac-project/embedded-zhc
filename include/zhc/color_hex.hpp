@@ -3,9 +3,9 @@
 //
 // Colour maths for `color_hex` ("#rrggbb": the light's colour at full
 // brightness). Header-only, no allocation.
-//  - xy <-> sRGB: CIE 1931 at Y = 1, sRGB (D65) matrix, negative channels
-//    clamped, the brightest channel scaled to full, then the sRGB curve
-//    (the conversion z2m and Home Assistant use).
+//  - xy <-> sRGB: same maths as zhac-tiles `Colour.xyToRgb` (sRGB D65 matrix,
+//    scale in linear light, then the sRGB curve). z2m and Home Assistant use
+//    the Hue wide-gamut matrix instead; do not "fix" this toward them.
 //  - hue (degrees) / saturation (0..1) <-> sRGB at full value (HSV).
 #pragma once
 
@@ -39,6 +39,8 @@ inline float min3(float a, float b, float c) { return a < b ? (a < c ? a : c) : 
 }  // namespace detail
 
 // "#rrggbb" in either case, exactly seven characters; anything else is refused.
+// `out` is left untouched when false.
+// "#000000" parses: refusing black (no colour) is the caller's job.
 inline bool parse_hex(const char* s, Rgb& out) {
     if (!s || s[0] != '#') return false;
     int v[6];
@@ -66,7 +68,7 @@ inline void format_hex(const Rgb& c, char (&out)[8]) {
 }
 
 // CIE xy -> sRGB. False when (x, y) is no colour: x or y not above 0, x + y
-// above 1, or not a number.
+// above 1, or not a number. `out` is left untouched when false.
 inline bool xy_to_rgb(float x, float y, Rgb& out) {
     if (!(x > 0.0f) || !(y > 0.0f) || !(x + y <= 1.0f)) return false;
     const float X = x / y, Y = 1.0f, Z = (1.0f - x - y) / y;
@@ -84,7 +86,8 @@ inline bool xy_to_rgb(float x, float y, Rgb& out) {
     return true;
 }
 
-// sRGB -> CIE xy. False for black, which has no chromaticity.
+// sRGB -> CIE xy. False for black, which has no chromaticity; `x` and `y` are
+// left untouched then.
 inline bool rgb_to_xy(const Rgb& c, float& x, float& y) {
     const float r = detail::to_linear(c.r / 255.0f);
     const float g = detail::to_linear(c.g / 255.0f);
