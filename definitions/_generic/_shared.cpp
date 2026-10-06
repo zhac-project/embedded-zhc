@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "zhc/color_hex.hpp"
 #include "zhc/runtime/dispatch.hpp"   // RuntimeContext::alloc_str
 
 namespace zhc::generic {
@@ -373,6 +374,30 @@ bool fz_color(const DecodedMessage& msg,
         if (const char* str = (n > 0) ? ctx.alloc_str(b, static_cast<std::size_t>(n)) : nullptr) {
             Value o{}; o.type = ValueType::StringRef; o.str = str;
             out.put("color_hs", o);
+        }
+    }
+    // color_hex "#rrggbb": the colour at full brightness, which every UI's
+    // colour picker shows. From xy unless the light is in hs mode (or only
+    // hue/saturation are known); a string, so no x100 float rounding.
+    if (xy_changed || hs_changed || mode_seen) {
+        const bool have_xy = (mem.have & kHaveX) && (mem.have & kHaveY);
+        const bool have_hs = (mem.have & kHaveHue) && (mem.have & kHaveSat);
+        const bool hs_mode = ((mem.have >> 4) & 0x03) == kModeHs + 1;
+        zhc::color::Rgb rgb{};
+        bool have_rgb = false;
+        if (have_xy && !(hs_mode && have_hs)) {
+            have_rgb = zhc::color::xy_to_rgb(mem.x / 65535.0f, mem.y / 65535.0f, rgb);
+        } else if (have_hs) {
+            rgb = zhc::color::hs_to_rgb(mem.hue * 360.0f / 254.0f, mem.sat / 254.0f);
+            have_rgb = true;
+        }
+        if (have_rgb) {
+            char hex[8];
+            zhc::color::format_hex(rgb, hex);
+            if (const char* str = ctx.alloc_str(hex, 7)) {
+                Value o{}; o.type = ValueType::StringRef; o.str = str;
+                out.put("color_hex", o);
+            }
         }
     }
     // Attr 0x0007 colorTemperature (u16 mireds). Same as fz_color_temp

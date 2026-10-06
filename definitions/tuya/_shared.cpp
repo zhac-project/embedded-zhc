@@ -1670,7 +1670,10 @@ bool fz_tuya_brightness(const DecodedMessage& msg, const FzConverter&,
                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     const Value* v = msg.payload.find("61440");  // 0xF000, 0-1000
     if (!v || v->type != ValueType::Uint) return false;
-    Value o{}; o.type = ValueType::Uint; o.u = (v->u * 255 + 500) / 1000;   // z2m rounds
+    // 0-1000 -> 0-254 (z2m rounds; 1000 would make 255, which no brightness
+    // control and no write accepts).
+    const std::uint64_t level = (v->u * 255 + 500) / 1000;
+    Value o{}; o.type = ValueType::Uint; o.u = level > 254 ? 254 : level;
     out.put("brightness", o);
     return true;
 }

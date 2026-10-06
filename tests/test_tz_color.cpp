@@ -11,6 +11,7 @@
 #include <span>
 
 #include "definitions/_generic/_shared.hpp"
+#include "zhc/color_hex.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/runtime/store.hpp"
 
@@ -22,6 +23,15 @@ static RuntimeContext ctx_with_store() {
     c.store = &g_store;
     c.store_get = &RuntimeStore<2>::get;
     c.device_index = 0;
+    return c;
+}
+// A light the hub has not heard from: device 1, colour memory empty. Device 0
+// carries one memory through the whole of main() and is in hs mode by the end,
+// which would decide the colour of any later report.
+static RuntimeContext ctx_fresh_light() {
+    RuntimeContext c = ctx_with_store();
+    c.device_index = 1;
+    c.device_state()->scratch.fill(0);
     return c;
 }
 static Value uintv(std::uint64_t u) { Value v{}; v.type = ValueType::Uint; v.u = u; return v; }
@@ -126,6 +136,78 @@ int main() {
         FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out2{};
         assert(generic::fz_color(msg, generic::kFzColor, multi, ctx, out2));
         assert(out2.find("color_x") && !out2.find("color_mode"));
+    }
+
+    // ── color_hex ──
+    {   // an xy report also yields color_hex (0.64, 0.33 = pure red)
+        RuntimeContext ctx = ctx_fresh_light();
+        DecodedMessage msg{};
+        msg.payload.put("3", uintv(41943));
+        msg.payload.put("4", uintv(21627));
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        assert(generic::fz_color(msg, generic::kFzColor, def, ctx, out));
+        assert(str_is(out.find("color_hex"), "#ff0000"));
+    }
+    {   // a hue/saturation report in hs mode yields color_hex from hue + sat
+        RuntimeContext ctx = ctx_fresh_light();
+        DecodedMessage msg{};
+        msg.payload.put("0", uintv(85));    // 120 degrees
+        msg.payload.put("1", uintv(254));   // full saturation
+        msg.payload.put("8", uintv(0));     // colorMode hs
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        assert(generic::fz_color(msg, generic::kFzColor, def, ctx, out));
+        zhc::color::Rgb want = zhc::color::hs_to_rgb(85 * 360.0f / 254.0f, 1.0f);
+        char w[8]; zhc::color::format_hex(want, w);
+        assert(str_is(out.find("color_hex"), w));
+    }
+    {   // one axis and no memory: no pair, so no color_hex
+        RuntimeContext ctx{};
+        DecodedMessage msg{};
+        msg.payload.put("3", uintv(41943));
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        assert(generic::fz_color(msg, generic::kFzColor, def, ctx, out));
+        assert(out.find("color_hex") == nullptr);
+    }
+    {   // a light last set to hs is in hs mode: an xy report leaves color_hex on
+        // the remembered hue + sat (device 0, color_hs 180,50 above)
+        RuntimeContext ctx = ctx_with_store();
+        DecodedMessage msg{};
+        msg.payload.put("3", uintv(41943));
+        msg.payload.put("4", uintv(21627));
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        assert(generic::fz_color(msg, generic::kFzColor, def, ctx, out));
+        assert(str_is(out.find("color_hex"), "#80ffff"));   // hue 180, saturation 50 %
+    }
+    {   // a light that knows both pairs shows the one its mode names, and a
+        // colorMode report alone is enough to switch
+        RuntimeContext ctx = ctx_fresh_light();
+        DecodedMessage msg{};
+        msg.payload.put("0", uintv(127));   // hue 180, saturation 50 %: #80ffff
+        msg.payload.put("1", uintv(127));
+        msg.payload.put("3", uintv(41943)); // xy: #ff0000
+        msg.payload.put("4", uintv(21627));
+        msg.payload.put("8", uintv(1));     // colorMode xy
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        assert(generic::fz_color(msg, generic::kFzColor, def, ctx, out));
+        assert(str_is(out.find("color_hex"), "#ff0000"));
+        DecodedMessage mode_only{};
+        mode_only.payload.put("8", uintv(0));   // colorMode hs
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out2{};
+        assert(generic::fz_color(mode_only, generic::kFzColor, def, ctx, out2));
+        assert(str_is(out2.find("color_hex"), "#80ffff"));
+    }
+    {   // a pair needs both axes: a hue alone shows no colour, the saturation that
+        // follows completes it, and an x alone does not pull color_hex to xy
+        RuntimeContext ctx = ctx_fresh_light();
+        auto feed = [&](const char* attr, std::uint64_t v, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+            DecodedMessage msg{};
+            msg.payload.put(attr, uintv(v));
+            return generic::fz_color(msg, generic::kFzColor, def, ctx, out);
+        };
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> hue{}, sat{}, x{};
+        assert(feed("0", 127, hue) && hue.find("color_hex") == nullptr);
+        assert(feed("1", 127, sat) && str_is(sat.find("color_hex"), "#80ffff"));
+        assert(feed("3", 41943, x) && str_is(x.find("color_hex"), "#80ffff"));
     }
     return 0;
 }

@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "zhc/cluster_names.hpp"
+#include "zhc/color_hex.hpp"
 #include "zhc/devices/tuya_registry.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/definition_runtime.hpp"
@@ -143,6 +144,23 @@ void check_color_mode(const PreparedDefinition& def) {
     for (std::uint8_t m = 0; m < 3; ++m) assert(std::strcmp(cm->enum_values[m], names[m]) == 0);
 }
 
+// color_hex "#rrggbb": the colour at full brightness, published with the xy
+// the light reports. And Tuya's 0xF000 brightness tops out at 254, the highest
+// level any brightness control or write takes.
+void check_color_hex(const PreparedDefinition& def) {
+    // x = 0x5333, y = 0x6666: color_hex is the xy colour at full brightness
+    DispatchResult r = report(def, 0x0300, {0x03, 0x00, 0x21, 0x33, 0x53,
+                                            0x04, 0x00, 0x21, 0x66, 0x66});
+    zhc::color::Rgb rgb{};
+    assert(zhc::color::xy_to_rgb(0x5333 / 65535.0f, 0x6666 / 65535.0f, rgb));
+    char want[8]; zhc::color::format_hex(rgb, want);
+    assert(is_str(r.merged.find("color_hex"), want));
+    // Tuya brightness 0xF000 = 1000 is full brightness: 254, never 255
+    DispatchResult b = report(def, 0x0008, {0x00, 0xF0, 0x21, 0xE8, 0x03});
+    const Value* br = b.merged.find("brightness");
+    assert(br && br->type == ValueType::Uint && br->u == 254);
+}
+
 void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {
     // Exposes: the light, colour, and tuyaLight's three extras; no power_on_behavior.
     for (const char* k : {"state", "brightness", "color_temp", "color_x", "color_y"})
@@ -204,6 +222,8 @@ int main() {
     check_def(kDefTS0505B_moveToLevel, 0x00);
     check_color_mode(kDefTS0505B);
     check_color_mode(kDefTS0505B_moveToLevel);
+    check_color_hex(kDefTS0505B);
+    check_color_hex(kDefTS0505B_moveToLevel);
 
     // The six moveToLevelWithOnOffDisable manufacturers (z2m v26.105.0) get the
     // moveToLevel definition; every other TS0505B keeps the generic one.
