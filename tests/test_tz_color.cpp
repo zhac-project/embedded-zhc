@@ -209,5 +209,15 @@ int main() {
         assert(feed("1", 127, sat) && str_is(sat.find("color_hex"), "#80ffff"));
         assert(feed("3", 41943, x) && str_is(x.find("color_hex"), "#80ffff"));
     }
+    {   // an xy that is no colour (x = y = 1, so x + y > 1) and no hue/sat to fall
+        // back on: nothing is published, in particular not black
+        RuntimeContext ctx = ctx_fresh_light();
+        DecodedMessage msg{};
+        msg.payload.put("3", uintv(65535));
+        msg.payload.put("4", uintv(65535));
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        assert(generic::fz_color(msg, generic::kFzColor, def, ctx, out));
+        assert(out.find("color_hex") == nullptr);
+    }
     return 0;
 }

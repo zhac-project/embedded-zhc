@@ -74,7 +74,11 @@ DispatchResult report(const PreparedDefinition& def, std::uint16_t cluster, cons
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(cluster);
-    RuntimeContext ctx = new_ctx(mem);
+    // Static: a StringRef in the result (alloc_str, as color_hex) points into the
+    // context's arena, so the context must outlive the call. The strings stay valid
+    // until the next report().
+    static RuntimeContext ctx;
+    ctx = new_ctx(mem);
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -183,7 +187,7 @@ void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {
     const Value* x = rc.merged.find("color_x");
     const Value* y = rc.merged.find("color_y");
     assert(x && y && std::fabs(x->f - 0x5333 / 65535.0f) < 1e-4f && std::fabs(y->f - 0.4f) < 1e-4f);
-    // … and Tuya's 0xF000 brightness (0-1000) lands on the 0-255 scale.
+    // … and Tuya's 0xF000 brightness (0-1000) lands on the 0-254 scale.
     const auto rb = report(def, 0x0008, {0x00, 0xF0, 0x21, 0xF4, 0x01});  // 500
     const Value* br = rb.merged.find("brightness");
     assert(br && br->type == ValueType::Uint && br->u == 128);
