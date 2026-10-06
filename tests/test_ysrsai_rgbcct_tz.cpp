@@ -6,6 +6,8 @@
 // the 6 standard effects + lightingColorCtrl 0x0300/0x44 colorLoopSet for
 // colorloop / stop_colorloop). Exercises the REAL kDef_ converter wiring,
 // including the two-converters-share-"effect" dispatcher fall-through.
+// Also the colour write both this light and the Kurvia ZB-CL01 take through
+// the generic kTzColor (color_hex -> moveToColor), as z2m's light colour does.
 //
 // Frame layout (per the _generic write_header convention):
 //   [0]=FC=0x11 (cluster-specific, default-response suppressed)
@@ -15,8 +17,11 @@
 
 #include <cassert>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
+#include <span>
 
+#include "definitions/_generic/_shared.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
@@ -25,6 +30,9 @@ using namespace zhc;
 
 namespace zhc::devices::ysrsai {
 extern const PreparedDefinition kDef_YSR_MINI_01_rgbcct;
+}
+namespace zhc::devices::kurvia {
+extern const PreparedDefinition kDef_ZB_CL01;
 }
 
 namespace {
@@ -205,6 +213,39 @@ void test_power_on_behavior_removed() {
     assert(!r.ok);
 }
 
+// ── colour writes (generic kTzColor, wired in the definition) ────────
+// z2m gives the YSR-MINI-01 RGBCCT (tuyaLight color:true) and the Kurvia
+// ZB-CL01 (m.light colour) the standard light_color converter. color_hex is
+// the hub's write path (the color_x / color_y rows stay read-only). "#ff0000"
+// goes out as moveToColor (0x0300 cmd 0x07, 9 bytes) at the chromaticity
+// test_tz_color.cpp pins for red (x 41942, y 21627, each within 70 counts),
+// byte for byte what the generic converter sends.
+void check_takes_color_hex(const PreparedDefinition& def) {
+    const generic::ColorHexSupport s = generic::color_hex_support(def);
+    assert(s.read && s.write && std::strcmp(s.mode, "xy") == 0);
+
+    RuntimeContext ctx{};
+    std::uint8_t frame[32]{};
+    auto r = dispatch_to_zigbee(def, "color_hex", str_val("#ff0000"), ctx, frame);
+    assert(r.ok);
+    assert(r.cluster_id == 0x0300 && r.command_id == 0x07);
+    assert(r.frame_size == 9 && frame[0] == 0x11 && frame[2] == 0x07);
+    const int x = frame[3] | (frame[4] << 8);
+    const int y = frame[5] | (frame[6] << 8);
+    assert(std::abs(x - 41942) < 70 && std::abs(y - 21627) < 70);
+    assert(frame[7] == 0x00 && frame[8] == 0x00);       // no transition
+
+    std::uint8_t want[32]{};
+    std::size_t n = 0;
+    RuntimeContext gctx{};
+    assert(generic::tz_color("color_hex", str_val("#ff0000"), generic::kTzColor, def, gctx,
+                             std::span<std::uint8_t>(want), n));
+    assert(n == r.frame_size && std::memcmp(frame, want, n) == 0);
+
+    // black has no colour: refused, nothing sent
+    assert(!dispatch_to_zigbee(def, "color_hex", str_val("#000000"), ctx, frame).ok);
+}
+
 }  // namespace
 
 int main() {
@@ -220,5 +261,7 @@ int main() {
     test_effect_stop_colorloop();
     test_effect_bad_label_rejected();
     test_power_on_behavior_removed();
+    check_takes_color_hex(devices::ysrsai::kDef_YSR_MINI_01_rgbcct);
+    check_takes_color_hex(devices::kurvia::kDef_ZB_CL01);   // same z2m colour wiring; no other test reaches it
     return 0;
 }

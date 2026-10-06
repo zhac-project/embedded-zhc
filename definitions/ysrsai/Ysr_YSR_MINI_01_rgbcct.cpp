@@ -7,6 +7,12 @@
 // z2m-source: ysrsai.ts #YSR-MINI-01_rgbcct.
 //
 // z2m: tuya.modernExtend.tuyaLight({colorTemp:{range:[160,370]}, color:true}).
+// The colour is z2m's standard light colour (tuyaLight turns on `color` with
+// applyRedFix and enhancedHue:false): kFzColor reads it and the generic
+// kTzColor writes it (color_hex, color_xy, color_hs, hue, saturation). The
+// color_x / color_y rows stay read-only; the hub adds a writable `color_hex`
+// row for the write. Not ported: applyRedFix (it only nudges Home
+// Assistant's exact red 0.701/0.299).
 // Beyond the standard light (state/brightness/color_temp/color x-y), the
 // `tuyaLight` modern-extend layers on three WRITE-ONLY controls that the
 // Tier-1 auto-port dropped, and — importantly — sets `powerOnBehavior:false`,
@@ -208,13 +214,12 @@ const TzConverter* const kTz_min_YSR_MINI_01_rgbcct[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
+    &::zhc::generic::kTzColor,   // colour write: color_hex / color_xy / color_hs / hue / saturation
     // Write-only tuyaLight control parity (vendor-local, this file):
     &::zhc::tuya::kTzTuyaColorPowerOnBehavior,   // 0x0300 cmd 0xf9
     &::zhc::tuya::kTzTuyaDoNotDisturb,           // 0x0300 cmd 0xfa
     &kTzEffectIdentify,    // effect (6 std)          — 0x0003 cmd 0x40
     &kTzEffectColorLoop,   // effect (colour loop)    — 0x0300 cmd 0x44
-    // tz for XY color write-back not yet in the library — fz lands the
-    // reading, write-back is follow-up.
 };
 constexpr Expose kExp_min_YSR_MINI_01_rgbcct[] = {
     { "state",      ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },

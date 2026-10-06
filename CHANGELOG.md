@@ -37,6 +37,11 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **The YSR-MINI-01 RGBCCT and Kurvia ZB-CL01 lights take colour writes.**
+  Both decoded colour but listed no colour writer, so `color_xy`, `color_hs`
+  and `color_hex` found no converter. They now take the generic `kTzColor`, as
+  in z2m; the `color_x` / `color_y` rows stay read-only. Test:
+  `test_ysrsai_rgbcct_tz.cpp`.
 - **Tuya TS0052 dimmer modules are dimmable lights.** The 1-channel module
   (white label Tuya FS-05R, `_TZ3000_mgusv51k`) matched a generated stub that
   exposed only an `action` and had no write converter, so the hub logged
