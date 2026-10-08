@@ -9,10 +9,15 @@
 // z2m: tuya.modernExtend.tuyaLight({colorTemp:{range:[160,370]}, color:true}).
 // The colour is z2m's standard light colour (tuyaLight turns on `color` with
 // applyRedFix and enhancedHue:false): kFzColor reads it and the generic
-// kTzColor writes it (color_hex, color_xy, color_hs, hue, saturation). The
-// color_x / color_y rows stay read-only; the hub adds a writable `color_hex`
-// row for the write. Not ported: applyRedFix (it only nudges Home
-// Assistant's exact red 0.701/0.299).
+// kTzColor writes it (color_hex, color_xy, color_hs, color_x / color_y, hue,
+// saturation). The color_x / color_y rows are writable, as in z2m, so Home
+// Assistant offers colour (it needs both, or a color_xy row); the hub adds a
+// writable `color_hex` row for its own picker. color_temp carries z2m's range.
+// Not ported: applyRedFix. z2m turns an exact x 0.701 / y 0.299 (the red Home
+// Assistant's colour wheel sends) into 0.7006 / 0.2993, because some bulbs do
+// not respond at all to that exact value; here it reaches the light as sent,
+// as on the TS0505B. The hub's own picker never sends it (its red is 0.64 /
+// 0.33).
 // Beyond the standard light (state/brightness/color_temp/color x-y), the
 // `tuyaLight` modern-extend layers on three WRITE-ONLY controls that the
 // Tier-1 auto-port dropped, and — importantly — sets `powerOnBehavior:false`,
@@ -214,7 +219,7 @@ const TzConverter* const kTz_min_YSR_MINI_01_rgbcct[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
     &::zhc::generic::kTzColorTemp,
-    &::zhc::generic::kTzColor,   // colour write: color_hex / color_xy / color_hs / hue / saturation
+    &::zhc::generic::kTzColor,   // colour write: color_hex / color_xy / color_hs / color_x / color_y / hue / saturation
     // Write-only tuyaLight control parity (vendor-local, this file):
     &::zhc::tuya::kTzTuyaColorPowerOnBehavior,   // 0x0300 cmd 0xf9
     &::zhc::tuya::kTzTuyaDoNotDisturb,           // 0x0300 cmd 0xfa
@@ -224,9 +229,10 @@ const TzConverter* const kTz_min_YSR_MINI_01_rgbcct[] = {
 constexpr Expose kExp_min_YSR_MINI_01_rgbcct[] = {
     { "state",      ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "brightness", ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
-    { "color_temp", ExposeType::Numeric, ::zhc::Access::StateSet, "mired", nullptr, nullptr, 0 },
-    { "color_x",    ExposeType::Numeric, ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
-    { "color_y",    ExposeType::Numeric, ::zhc::Access::State,    nullptr, nullptr, nullptr, 0 },
+    { "color_temp", ExposeType::Numeric, ::zhc::Access::StateSet, "mired", nullptr, nullptr, 0,
+      ::zhc::ExposeCategory::State, 160, 370, 0 },   // z2m tuyaLight colorTemp range
+    { "color_x",    ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
+    { "color_y",    ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
     { "color_mode", ExposeType::Enum,    ::zhc::Access::State,    nullptr, nullptr,
       kColorMode_Light, sizeof(kColorMode_Light)/sizeof(kColorMode_Light[0]) },
     // ── tuyaLight write-only control parity ──────────────────────────

@@ -620,11 +620,8 @@ extern const TzConverter kTzEffect;
 extern const TzConverter kTzEffectColorLoop;
 
 // lightingColorCtrl (0x0300) "color_temp" setter. Emits the
-// `moveToColorTemp` (0x0A) command. Accepts `Value::Uint` or `Value::Float`
-// mireds (a Float rounds to the nearest); clamped to the definition's
-// `color_temp` row `value_min..value_max` when one is declared (z2m
-// clampColorTemp), sent as given when none is. NaN, negatives and anything
-// above 65535 are refused.
+// `moveToColorTemp` (0x0A) command with the mireds color_temp_to_send gives
+// (refused when it gives -1).
 // Remembers colour mode "color_temp" for kFzColor.
 bool tz_color_temp(std::string_view key,
                     const Value& input,
@@ -635,6 +632,14 @@ bool tz_color_temp(std::string_view key,
                     std::size_t& out_size);
 
 extern const TzConverter kTzColorTemp;
+
+// The mireds a `color_temp` write sends: a `Value::Uint`, or a `Value::Float`
+// rounded half up; clamped to the definition's `color_temp` row
+// `value_min..value_max` when it declares one inside 0..65535 (z2m
+// clampColorTemp; a range outside that counts as undeclared), sent as given
+// when none is. -1 when refused: another type, NaN, negative, above 65535.
+// The hub mirrors this into its shadow, so it shows what the light was sent.
+std::int32_t color_temp_to_send(const PreparedDefinition& def, const Value& input);
 
 // lightingColorCtrl (0x0300) wildcard color setter. Single TzConverter
 // claiming any of `color_x` / `color_y` / `color_xy` / `color_hs` /
@@ -675,12 +680,22 @@ bool tz_color(std::string_view key,
 
 extern const TzConverter kTzColor;
 
-// What a definition does with `color_hex` ("#rrggbb"): published when it
-// decodes colour (kFzColor), writable when it also wires kTzColor. `mode` is
-// the colour mode a write uses: "hs" when the definition lists hue/saturation
-// rows but no x/y rows, else "xy" (z2m `color: true` is xy).
+// What a definition does with `color_hex` ("#rrggbb"): `read` when it decodes
+// colour (kFzColor), `write` when it wires kTzColor; the two are independent
+// (a definition can have either without the other). `mode` is the colour mode
+// a write uses: "hs" when the definition lists hue/saturation rows but no x/y
+// rows, else "xy" (z2m `color: true` is xy).
 struct ColorHexSupport { bool read{false}; bool write{false}; const char* mode{nullptr}; };
 ColorHexSupport color_hex_support(const PreparedDefinition& def);
+
+// The colour kFzColor publishes for a light now, from its colour memory (left
+// by the last colour report or colour write): `hex` "#rrggbb" when a whole
+// colour is known, else ""; `mode` "xy" / "hs" / "color_temp" when known, else
+// nullptr. Both empty without a store. After a colour write the hub mirrors
+// them into its shadow, so it shows at once what the light's next report
+// carries (the colour at full brightness, not the text that was picked).
+struct ColorState { char hex[8]{}; const char* mode{nullptr}; };
+ColorState color_state(RuntimeContext& ctx);
 
 // closuresWindowCovering (0x0102) position/state setter.
 extern const TzConverter kTzCoverPosition;

@@ -12,9 +12,9 @@
 
 using zhc::color::Rgb;
 
-static bool near(const Rgb& c, int r, int g, int b) {
-    return std::abs(c.r - r) <= 2 && std::abs(c.g - g) <= 2 && std::abs(c.b - b) <= 2;
-}
+// Exact: every vector below comes out to the count, so a one-count change in
+// the rounding or either curve's linear segment fails here.
+static bool same(const Rgb& c, int r, int g, int b) { return c.r == r && c.g == g && c.b == b; }
 
 int main() {
     Rgb c{};
@@ -31,31 +31,40 @@ int main() {
     assert(std::strcmp(out, "#ff8a3d") == 0);
 
     // xy -> sRGB reference vectors: the sRGB primaries, D65 white, a warm white and an
-    // out-of-gamut cyan, +-2 per channel.
-    assert(zhc::color::xy_to_rgb(0.64f, 0.33f, c) && near(c, 255, 0, 0));
-    assert(zhc::color::xy_to_rgb(0.30f, 0.60f, c) && near(c, 0, 255, 0));
-    assert(zhc::color::xy_to_rgb(0.15f, 0.06f, c) && near(c, 0, 0, 255));
-    assert(zhc::color::xy_to_rgb(0.3127f, 0.3290f, c) && near(c, 255, 255, 255));
-    assert(zhc::color::xy_to_rgb(0.4573f, 0.41f, c) && near(c, 255, 174, 91));
-    assert(zhc::color::xy_to_rgb(0.2f, 0.3f, c) && near(c, 0, 233, 255));
+    // out-of-gamut cyan (r < 0).
+    assert(zhc::color::xy_to_rgb(0.64f, 0.33f, c) && same(c, 255, 0, 0));
+    assert(zhc::color::xy_to_rgb(0.30f, 0.60f, c) && same(c, 0, 255, 0));
+    assert(zhc::color::xy_to_rgb(0.15f, 0.06f, c) && same(c, 0, 0, 255));
+    assert(zhc::color::xy_to_rgb(0.3127f, 0.3290f, c) && same(c, 255, 255, 255));
+    assert(zhc::color::xy_to_rgb(0.4573f, 0.41f, c) && same(c, 255, 174, 91));
+    assert(zhc::color::xy_to_rgb(0.2f, 0.3f, c) && same(c, 0, 233, 255));
+    // The Hue gamut C corners, outside sRGB: g < 0 and b < 0 clamp, and the
+    // blue corner's red sits just above the sRGB curve's linear knee.
+    assert(zhc::color::xy_to_rgb(0.6915f, 0.3083f, c) && same(c, 255, 0, 0));
+    assert(zhc::color::xy_to_rgb(0.17f, 0.7f, c) && same(c, 0, 255, 12));
+    assert(zhc::color::xy_to_rgb(0.1532f, 0.0475f, c) && same(c, 48, 0, 255));
     assert(!zhc::color::xy_to_rgb(0.3f, 0.0f, c));
     assert(!zhc::color::xy_to_rgb(-0.1f, 0.3f, c));
     assert(!zhc::color::xy_to_rgb(0.7f, 0.5f, c));
     assert(!zhc::color::xy_to_rgb(std::nanf(""), 0.3f, c));
+    // A denormal y overflows x / y to infinity: no colour, not black (the wire
+    // never carries one, its smallest y is 1 / 65535).
+    assert(!zhc::color::xy_to_rgb(0.3f, 1e-40f, c));
 
     // sRGB -> xy, and the round trip back.
     float x = 0, y = 0;
     assert(zhc::color::rgb_to_xy(Rgb{255, 0, 0}, x, y) && std::fabs(x - 0.64f) < 0.002f && std::fabs(y - 0.33f) < 0.002f);
     assert(zhc::color::rgb_to_xy(Rgb{255, 255, 255}, x, y) && std::fabs(x - 0.3127f) < 0.002f && std::fabs(y - 0.3290f) < 0.002f);
     assert(!zhc::color::rgb_to_xy(Rgb{0, 0, 0}, x, y));
-    assert(zhc::color::rgb_to_xy(Rgb{0xff, 0x8a, 0x3d}, x, y) && zhc::color::xy_to_rgb(x, y, c) && near(c, 0xff, 0x8a, 0x3d));
+    assert(zhc::color::rgb_to_xy(Rgb{0xff, 0x8a, 0x3d}, x, y) && zhc::color::xy_to_rgb(x, y, c) && same(c, 0xff, 0x8a, 0x3d));
 
-    // hue / saturation at full value.
-    assert(near(zhc::color::hs_to_rgb(0.0f, 1.0f), 255, 0, 0));
-    assert(near(zhc::color::hs_to_rgb(120.0f, 1.0f), 0, 255, 0));
-    assert(near(zhc::color::hs_to_rgb(240.0f, 1.0f), 0, 0, 255));
-    assert(near(zhc::color::hs_to_rgb(360.0f, 1.0f), 255, 0, 0));
-    assert(near(zhc::color::hs_to_rgb(0.0f, 0.0f), 255, 255, 255));
+    // hue / saturation at full value; half saturation pins the rounding (127.5 -> 128).
+    assert(same(zhc::color::hs_to_rgb(0.0f, 1.0f), 255, 0, 0));
+    assert(same(zhc::color::hs_to_rgb(120.0f, 1.0f), 0, 255, 0));
+    assert(same(zhc::color::hs_to_rgb(240.0f, 1.0f), 0, 0, 255));
+    assert(same(zhc::color::hs_to_rgb(360.0f, 1.0f), 255, 0, 0));
+    assert(same(zhc::color::hs_to_rgb(0.0f, 0.0f), 255, 255, 255));
+    assert(same(zhc::color::hs_to_rgb(0.0f, 0.5f), 255, 128, 128));
     float h = 0, s = 0;
     zhc::color::rgb_to_hs(Rgb{0xff, 0x95, 0x00}, h, s);
     assert(std::fabs(h - 35.0f) < 0.5f && std::fabs(s - 1.0f) < 0.01f);
@@ -71,9 +80,9 @@ int main() {
     assert(std::fabs(h - 210.1f) < 0.5f && std::fabs(s - 0.961f) < 0.01f);
     zhc::color::rgb_to_hs(Rgb{0xff, 0x2d, 0x55}, h, s);
     assert(std::fabs(h - 348.6f) < 0.5f && std::fabs(s - 0.824f) < 0.01f);
-    assert(near(zhc::color::hs_to_rgb(-30.0f, 1.0f), 255, 0, 128));
-    assert(near(zhc::color::hs_to_rgb(30.0f, 7.0f), 255, 128, 0));
-    assert(near(zhc::color::hs_to_rgb(std::nanf(""), 1.0f), 255, 0, 0));
+    assert(same(zhc::color::hs_to_rgb(-30.0f, 1.0f), 255, 0, 128));
+    assert(same(zhc::color::hs_to_rgb(30.0f, 7.0f), 255, 128, 0));
+    assert(same(zhc::color::hs_to_rgb(std::nanf(""), 1.0f), 255, 0, 0));
     assert(!zhc::color::parse_hex("0ff8a3d", c));
     assert(!zhc::color::xy_to_rgb(0.0f, 0.3f, c));
     std::puts("color_hex: all passed");

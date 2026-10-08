@@ -223,10 +223,15 @@ int main() {
 
     // ── color_hex: write ──
     {   // color_hex on an xy light: moveToColor at the colour's chromaticity
-        RuntimeContext ctx = ctx_with_store();
+        RuntimeContext ctx = ctx_fresh_light();
         assert(generic::tz_color("color_hex", strv("#ff0000"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n));
         assert(n == 9 && frame[2] == 0x07);
         assert(std::abs(int(le16(frame + 3)) - 41942) < 70 && std::abs(int(le16(frame + 5)) - 21627) < 70);
+        // upper case is the same colour: the same frame
+        std::uint8_t lower[16];
+        std::memcpy(lower, frame, n);
+        assert(generic::tz_color("color_hex", strv("#FF0000"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n));
+        assert(n == 9 && std::memcmp(frame, lower, n) == 0);
         assert(!generic::tz_color("color_hex", strv("ff0000"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n) && n == 0);
         assert(!generic::tz_color("color_hex", strv("#ff00"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n) && n == 0);
         assert(!generic::tz_color("color_hex", strv("#000000"), generic::kTzColor, def, ctx, std::span<std::uint8_t>(frame), n) && n == 0);
@@ -240,7 +245,7 @@ int main() {
             {"hue", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
             {"saturation", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0}};
         PreparedDefinition hs{}; hs.exposes = kHs; hs.exposes_count = 2;
-        RuntimeContext ctx = ctx_with_store();
+        RuntimeContext ctx = ctx_fresh_light();
         assert(generic::tz_color("color_hex", strv("#00ff00"), generic::kTzColor, hs, ctx, std::span<std::uint8_t>(frame), n));
         assert(n == 7 && frame[2] == 0x06 && frame[3] == 85 && frame[4] == 254);
         // black is refused here too (rgb_to_hs would take it as hue 0, saturation 0)
@@ -271,6 +276,74 @@ int main() {
         PreparedDefinition xp{}; xp.exposes = kXyRows; xp.exposes_count = 2;
         assert(std::strcmp(generic::color_hex_support(hp).mode, "hs") == 0);
         assert(std::strcmp(generic::color_hex_support(xp).mode, "xy") == 0);
+    }
+
+    // ── colour state: what the hub mirrors after a write ──
+    // A pick shows as the light will report it: the colour at full brightness
+    // the frame carries, not the text that was picked. Every colour key leaves
+    // the colour and its mode, not only color_hex.
+    {
+        // what a report carrying exactly the frame's axes publishes (both axes in
+        // one report need no memory)
+        auto reported = [&](const char* want) {
+            RuntimeContext rc{};
+            DecodedMessage msg{};
+            if (frame[2] == 0x07) {
+                msg.payload.put("3", uintv(le16(frame + 3)));
+                msg.payload.put("4", uintv(le16(frame + 5)));
+            } else {
+                msg.payload.put("0", uintv(frame[3]));
+                msg.payload.put("1", uintv(frame[4]));
+            }
+            FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+            return generic::fz_color(msg, generic::kFzColor, def, rc, out) && str_is(out.find("color_hex"), want);
+        };
+        auto is = [](const generic::ColorState& s, const char* hex, const char* mode) {
+            return std::strcmp(s.hex, hex) == 0 && s.mode && std::strcmp(s.mode, mode) == 0;
+        };
+        auto send = [&](RuntimeContext& c, const char* key, const Value& v, const PreparedDefinition& d) {
+            return generic::tz_color(key, v, generic::kTzColor, d, c, std::span<std::uint8_t>(frame), n);
+        };
+        RuntimeContext ctx = ctx_fresh_light();
+        generic::ColorState s = generic::color_state(ctx);
+        assert(s.hex[0] == '\0' && s.mode == nullptr);               // nothing known yet
+        assert(send(ctx, "color_hex", strv("#34C759"), def));          // the Green preset
+        s = generic::color_state(ctx);
+        assert(is(s, "#45ff74", "xy") && reported(s.hex));
+        assert(send(ctx, "color_hex", strv("#400000"), def));          // a dark red is red
+        s = generic::color_state(ctx);
+        assert(is(s, "#ff0000", "xy") && reported(s.hex));
+        assert(send(ctx, "color_hs", strv("120,100"), def));           // Home Assistant's hs
+        s = generic::color_state(ctx);
+        assert(s.mode && std::strcmp(s.mode, "hs") == 0 && reported(s.hex));
+        assert(send(ctx, "hue", uintv(0), def));                       // a rule's hue: red at that saturation
+        assert(is(generic::color_state(ctx), "#ff0000", "hs"));
+        assert(send(ctx, "color_xy", strv("0.15,0.06"), def));         // Home Assistant's xy
+        s = generic::color_state(ctx);
+        assert(is(s, "#0000ff", "xy") && reported(s.hex));
+        assert(send(ctx, "color_x", floatv(0.64f), def));              // one axis: the other from memory
+        s = generic::color_state(ctx);
+        assert(s.mode && std::strcmp(s.mode, "xy") == 0 && std::strcmp(s.hex, "#0000ff") != 0 && reported(s.hex));
+        const generic::ColorState last = s;
+        // a white pick: white mode, the colour stays the last one
+        assert(generic::tz_color_temp("color_temp", uintv(300), generic::kTzColorTemp, def, ctx, std::span<std::uint8_t>(frame), n));
+        assert(is(generic::color_state(ctx), last.hex, "color_temp"));
+        // a refused write changes nothing
+        assert(!send(ctx, "color_hex", strv("#000000"), def));
+        assert(is(generic::color_state(ctx), last.hex, "color_temp"));
+        // an HS-only light: the colour its hue and saturation bytes give
+        static constexpr Expose kHsOnly[] = {
+            {"hue", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+            {"saturation", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0}};
+        PreparedDefinition hs{}; hs.exposes = kHsOnly; hs.exposes_count = 2;
+        RuntimeContext hctx = ctx_fresh_light();
+        assert(send(hctx, "color_hex", strv("#34c759"), hs) && frame[2] == 0x06);
+        s = generic::color_state(hctx);
+        assert(s.mode && std::strcmp(s.mode, "hs") == 0 && std::strcmp(s.hex, "#34c759") != 0 && reported(s.hex));
+        // no store: nothing to tell
+        RuntimeContext bare{};
+        s = generic::color_state(bare);
+        assert(s.hex[0] == '\0' && s.mode == nullptr);
     }
     return 0;
 }

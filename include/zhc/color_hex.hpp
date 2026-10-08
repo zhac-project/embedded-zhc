@@ -69,7 +69,8 @@ inline void format_hex(const Rgb& c, char (&out)[8]) {
 }
 
 // CIE xy -> sRGB. False when (x, y) is no colour: x or y not above 0, x + y
-// above 1, or not a number. `out` is left untouched when false.
+// above 1, not a number, or y so small that x / y overflows. `out` is left
+// untouched when false.
 inline bool xy_to_rgb(float x, float y, Rgb& out) {
     if (!(x > 0.0f) || !(y > 0.0f) || !(x + y <= 1.0f)) return false;
     const float X = x / y, Y = 1.0f, Z = (1.0f - x - y) / y;
@@ -80,7 +81,7 @@ inline bool xy_to_rgb(float x, float y, Rgb& out) {
     if (g < 0.0f) g = 0.0f;
     if (b < 0.0f) b = 0.0f;
     const float m = detail::max3(r, g, b);
-    if (!(m > 0.0f)) return false;
+    if (!(m > 0.0f) || !std::isfinite(m)) return false;
     out.r = detail::to_byte(detail::to_srgb(r / m));
     out.g = detail::to_byte(detail::to_srgb(g / m));
     out.b = detail::to_byte(detail::to_srgb(b / m));

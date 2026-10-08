@@ -1272,7 +1272,9 @@ target_link_libraries(zhc_tuya_weather_exposes_tests PRIVATE zhc_definitions)
 # the def was graduated out of generated/. Pins the exact command frames
 # (0x0300/0xf9, 0x0300/0xfa, 0x0003/0x40, 0x0300/0x44) + the two-converter
 # "effect" dispatcher fall-through, and that the wrong power_on_behavior
-# is gone.
+# is gone. Also the colour of the YSR-MINI-01_rgbcct and the Kurvia ZB-CL01
+# (the only test that names kDef_ZB_CL01): both take color_hex through
+# kTzColor, list writable color_x / color_y and z2m's color_temp range.
 add_executable(zhc_ysrsai_rgbcct_tz_tests tests/test_ysrsai_rgbcct_tz.cpp)
 target_link_libraries(zhc_ysrsai_rgbcct_tz_tests PRIVATE zhc_definitions)
 # Parity for the WMUN ZS05 universal IR remote (TS1201). The auto-port

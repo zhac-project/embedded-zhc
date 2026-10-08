@@ -216,7 +216,7 @@ void test_power_on_behavior_removed() {
 // ── colour writes (generic kTzColor, wired in the definition) ────────
 // z2m gives the YSR-MINI-01 RGBCCT (tuyaLight color:true) and the Kurvia
 // ZB-CL01 (m.light colour) the standard light_color converter. color_hex is
-// the hub's write path (the color_x / color_y rows stay read-only). "#ff0000"
+// the hub's write path (Home Assistant's is color_xy). "#ff0000"
 // goes out as moveToColor (0x0300 cmd 0x07, 9 bytes) at the chromaticity
 // test_tz_color.cpp pins for red (x 41942, y 21627, each within 70 counts),
 // byte for byte what the generic converter sends.
@@ -246,6 +246,32 @@ void check_takes_color_hex(const PreparedDefinition& def) {
     assert(!dispatch_to_zigbee(def, "color_hex", str_val("#000000"), ctx, frame).ok);
 }
 
+// ── z2m's rows: writable x / y, the white's own range ───────────────
+// Home Assistant offers colour only on writable color_x and color_y (or a
+// color_xy row), and z2m declares both lights' colour-temperature range
+// (YSR-MINI-01 RGBCCT 160..370, ZB-CL01 250..454 mired): the card's white
+// rail spans it, and a white write is clamped to it through the definition's
+// own converters.
+void check_z2m_rows(const PreparedDefinition& def, std::int32_t lo, std::int32_t hi) {
+    bool x = false, y = false, ct = false;
+    for (std::uint8_t i = 0; i < def.exposes_count; ++i) {
+        const Expose& e = def.exposes[i];
+        if (std::strcmp(e.name, "color_x") == 0) x = e.access == Access::StateSet;
+        if (std::strcmp(e.name, "color_y") == 0) y = e.access == Access::StateSet;
+        if (std::strcmp(e.name, "color_temp") == 0) ct = e.value_min == lo && e.value_max == hi;
+    }
+    assert(x && y && ct);
+    RuntimeContext ctx{};
+    std::uint8_t frame[32]{};
+    auto sent = [&](std::uint64_t mireds) {
+        Value v{}; v.type = ValueType::Uint; v.u = mireds;
+        const auto r = dispatch_to_zigbee(def, "color_temp", v, ctx, frame);
+        assert(r.ok && r.cluster_id == 0x0300 && r.command_id == 0x0A);
+        return static_cast<std::int32_t>(frame[3] | (frame[4] << 8));
+    };
+    assert(sent(500) == hi && sent(100) == lo && sent(300) == 300);
+}
+
 }  // namespace
 
 int main() {
@@ -263,5 +289,7 @@ int main() {
     test_power_on_behavior_removed();
     check_takes_color_hex(devices::ysrsai::kDef_YSR_MINI_01_rgbcct);
     check_takes_color_hex(devices::kurvia::kDef_ZB_CL01);   // same z2m colour wiring; no other test reaches it
+    check_z2m_rows(devices::ysrsai::kDef_YSR_MINI_01_rgbcct, 160, 370);
+    check_z2m_rows(devices::kurvia::kDef_ZB_CL01, 250, 454);
     return 0;
 }

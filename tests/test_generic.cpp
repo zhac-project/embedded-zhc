@@ -388,6 +388,44 @@ static void test_tz_color_temp_clamps_to_the_light() {
     u.u = 500; assert(generic::tz_color_temp("color_temp", u, generic::kTzColorTemp, unbounded, ctx, buf, n) && mireds() == 500);
 }
 
+// The mireds a write sends, which the hub also mirrors: rounded, clamped to the
+// light's range, -1 when refused. A range outside 0..65535 is no range: its
+// bounds are compared as signed and never wrapped into the u16 wire value.
+static void test_color_temp_to_send() {
+    using generic::color_temp_to_send;
+    static constexpr Expose kEx[] = {{"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0,
+                                      ExposeCategory::State, 153, 370, 1}};
+    static constexpr Expose kNeg[] = {{"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0,
+                                       ExposeCategory::State, -1, 500, 0}};
+    static constexpr Expose kHuge[] = {{"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0,
+                                        ExposeCategory::State, 70000, 80000, 0}};
+    PreparedDefinition def{}; def.exposes = kEx; def.exposes_count = 1;
+    PreparedDefinition neg{}; neg.exposes = kNeg; neg.exposes_count = 1;
+    PreparedDefinition huge{}; huge.exposes = kHuge; huge.exposes_count = 1;
+    PreparedDefinition bare{};
+    // [-1, 500] used to send 500 for every write and [70000, 80000] sent 4464
+    RuntimeContext ctx{};
+    std::uint8_t buf[8]{}; std::size_t n{};
+    auto mireds = [&]() { return static_cast<unsigned>(buf[3] | (buf[4] << 8)); };
+    Value u{}; u.type = ValueType::Uint;
+    u.u = 300;
+    assert(generic::tz_color_temp("color_temp", u, generic::kTzColorTemp, neg, ctx, buf, n) && mireds() == 300);
+    assert(generic::tz_color_temp("color_temp", u, generic::kTzColorTemp, huge, ctx, buf, n) && mireds() == 300);
+    assert(color_temp_to_send(neg, u) == 300 && color_temp_to_send(huge, u) == 300);
+    u.u = 500; assert(color_temp_to_send(def, u) == 370);
+    u.u = 100; assert(color_temp_to_send(def, u) == 153);
+    u.u = 250; assert(color_temp_to_send(def, u) == 250);
+    u.u = 500; assert(color_temp_to_send(bare, u) == 500);
+    u.u = 65535; assert(color_temp_to_send(bare, u) == 65535);
+    u.u = 65536; assert(color_temp_to_send(bare, u) == -1);
+    Value f{}; f.type = ValueType::Float;
+    f.f = 250.5f; assert(color_temp_to_send(bare, f) == 251);
+    f.f = 369.6f; assert(color_temp_to_send(def, f) == 370);
+    f.f = -1.0f; assert(color_temp_to_send(bare, f) == -1);
+    f.f = std::numeric_limits<float>::quiet_NaN(); assert(color_temp_to_send(bare, f) == -1);
+    Value i{}; i.type = ValueType::Int; i.i = 300; assert(color_temp_to_send(bare, i) == -1);
+}
+
 static void test_tz_descriptor_cluster_ids() {
     assert(generic::kTzOnOff.cluster_id      == 0x0006);
     assert(generic::kTzBrightness.cluster_id == 0x0008);
@@ -417,6 +455,7 @@ int main() {
     test_tz_brightness_z2m_rule();
     test_tz_color_temp_250_mireds();
     test_tz_color_temp_clamps_to_the_light();
+    test_color_temp_to_send();
     test_tz_descriptor_cluster_ids();
     return 0;
 }
