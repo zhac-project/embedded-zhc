@@ -2044,6 +2044,11 @@ bool tuya_dp_expand_drop_above(const TuyaDpMapEntry& e, const Value& raw,
     return true;
 }
 
+bool tuya_dp_expand_ignore(const TuyaDpMapEntry&, const Value&, RuntimeContext&,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>&) {
+    return true;  // claimed, nothing published
+}
+
 bool tuya_dp_expand_raw_u32(const TuyaDpMapEntry& e, const Value& raw,
                              RuntimeContext&,
                              FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {

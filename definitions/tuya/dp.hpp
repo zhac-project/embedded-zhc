@@ -117,6 +117,14 @@ constexpr TuyaDpMapEntry numeric_max(std::uint8_t dp_id, const char* key,
              &tuya_dp_expand_drop_above, max };
 }
 
+// `ignored(dp_id)` — a datapoint z2m leaves out on purpose: claimed and
+// dropped, never published as a raw `dp_<id>` (see tuya_dp_expand_ignore).
+// No key, so the write path can't reach it.
+constexpr TuyaDpMapEntry ignored(std::uint8_t dp_id) {
+    return { dp_id, nullptr, TuyaDpType::Raw, 1, nullptr, 0, 0, 0.0f,
+             &tuya_dp_expand_ignore, nullptr };
+}
+
 // `raw_u32(dp_id, key, spec)` — big-endian u32 at `spec->offset` of a Raw
 // payload, divided by `spec->divisor` (see TuyaRawU32Spec).
 constexpr TuyaDpMapEntry raw_u32(std::uint8_t dp_id, const char* key,

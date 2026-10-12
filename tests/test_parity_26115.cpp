@@ -558,6 +558,14 @@ void test_new_devices() {
       check(str_is(o, "noise_state", "noise_2min") && bool_is(o, "noise_detected", true), "ZY-N1 DP101 2 -> noise_2min, detected"); }
     { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_enum(devices::tuya::kDef_ZY_N1, 101, 1, ctx, o);
       check(str_is(o, "noise_state", "no_noise") && bool_is(o, "noise_detected", false), "ZY-N1 DP101 1 -> no_noise"); }
+    // ZY-N1: DP2 (frequency, always 0) and DP12 (battery on a USB device) are
+    // claimed but publish nothing, so they never surface as raw dp_2 / dp_12,
+    // and a dp_2 / dp_12 row left from before counts as stale.
+    for (const std::uint8_t dp : {std::uint8_t{2}, std::uint8_t{12}}) {
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{};
+        check(dp_num(devices::tuya::kDef_ZY_N1, dp, 0, ctx, o) && o.count == 0, "ZY-N1 DP2/DP12 claimed, nothing published");
+        check(tuya::definition_decodes_dp(devices::tuya::kDef_ZY_N1, dp), "ZY-N1 DP2/DP12 known to the def");
+    }
     // wsek35um: mode Off reads as a 5 degree setpoint; other modes leave it alone.
     { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; dp_num(devices::tuya::kDef_TS0601_wsek35um, 2, 0, ctx, o);
       check(str_is(o, "mode", "Off") && approx(float_of(o, "current_heating_setpoint"), 5.f), "wsek35um DP2 Off -> setpoint 5"); }

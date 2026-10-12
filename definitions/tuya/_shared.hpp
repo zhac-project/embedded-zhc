@@ -601,6 +601,13 @@ bool tuya_dp_expand_drop_above(const TuyaDpMapEntry& e, const Value& raw,
                                 RuntimeContext& ctx,
                                 FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
 
+// A datapoint z2m knows and deliberately leaves out (a comment where the map
+// entry would be, e.g. ZY-N1's always-0 frequency). Claimed with nothing
+// published, so it doesn't surface as a raw `dp_<id>` key.
+bool tuya_dp_expand_ignore(const TuyaDpMapEntry& e, const Value& raw,
+                           RuntimeContext& ctx,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
 // Big-endian u32 read out of a Raw datapoint at `offset` (payload at least
 // `min_len` bytes), published as Float u32 / `divisor`. z2m's heat-meter
 // converters: valueConverter.waterConsumption (offset 4, 8 bytes, /1000) and

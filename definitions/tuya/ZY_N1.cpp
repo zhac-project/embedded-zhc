@@ -19,7 +19,9 @@ constexpr ::zhc::tuya::TuyaEnumEntry kNoiseDetected[] = { {0,"noise"}, {2,"noise
 struct cfg {
     static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
         ::zhc::tuya::dp::numeric(1, "noise", 1),
+        ::zhc::tuya::dp::ignored(2),   // sound frequency: not implemented by the firmware (always 0)
         ::zhc::tuya::dp::enum_lookup(8, "noise_status", kNoiseStatus8, 3),
+        ::zhc::tuya::dp::ignored(12),  // battery percentage: meaningless on this USB powered device
         ::zhc::tuya::dp::enum_lookup(13, "report_mode", kReportMode13, 3),
         ::zhc::tuya::dp::numeric(16, "noise_lower_limit", 1),
         ::zhc::tuya::dp::numeric(18, "collect_time", 1),

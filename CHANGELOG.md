@@ -30,6 +30,14 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Tuya ZY-N1 sound sensor no longer shows `dp_2` and `dp_12`.** z2m leaves
+  both datapoints out on purpose (DP2 sound frequency, which the firmware
+  always reports as 0; DP12 battery percentage, meaningless on a USB powered
+  device), so the definition had no entry for them and the hub surfaced them
+  as raw `dp_2` / `dp_12` rows. A new map helper, `dp::ignored(dp_id)`,
+  claims such a datapoint and publishes nothing; ZY-N1 (`_TZE204_r6kfl9ta`)
+  ignores DP2 and DP12, and the hub drops the stale raw rows on the next
+  report.
 - **Tuya TS0052 dimmer modules are dimmable lights.** The 1-channel module
   (white label Tuya FS-05R, `_TZ3000_mgusv51k`) matched a generated stub that
   exposed only an `action` and had no write converter, so the hub logged
