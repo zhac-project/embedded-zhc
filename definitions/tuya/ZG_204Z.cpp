@@ -17,11 +17,14 @@
 //   ssIasZone   (0x0500) cmd 0x00
 //     → occupancy                       via kFzIasMotionAlarmOnly
 //   ssIasZone   (0x0500) attr report / read response
-//     attr 0x0013 currentZoneSensitivityLevel (ENUM8)
+//     attr 0x0013 currentZoneSensitivityLevel
 //       → "sensitivity" "low"|"medium"|"high"
-//     attr 0xF001 (61441, manuSpec, ENUM8)
+//     attr 0xF001 (61441, manuSpec)
 //       → "keep_time"   "30"|"60"|"120" (seconds)
-//   Set-path writes those same attrs via tz_zcl_write_attr.
+//   Set-path writes those same attrs via tz_zcl_write_attr as UINT8 (0x20),
+//   exactly as z2m: tz.zg204_attr names type 0x20 for 0xF001, and
+//   zigbee-herdsman types 0x0013 UINT8. The sensor refuses ENUM8 (0x30):
+//   on a live S31 hub a "60" write read back 30 (2026-10-13).
 //
 // Generator previously bound 0xEF00/0x0006 (wrong); real device speaks
 // pure IAS Zone — no manuSpecificTuya, no genOnOff. Generator follow-up
@@ -42,12 +45,17 @@ const FzConverter* const kFzGen_ZG_204Z[] = {
 };
 constexpr const char* kModelsGen_ZG_204Z[] = { "ZG-204Z" };
 
+// z2m: e.enum("sensitivity", …, ["low","medium","high"]) and
+// e.enum("keep_time", …, [30, 60, 120]) -- the web UI's picker.
+constexpr const char* kSensitivityValues[] = { "low", "medium", "high" };
+constexpr const char* kKeepTimeValues[]    = { "30", "60", "120" };
+
 constexpr Expose kAutoExposes[] = {
     {"battery",     ExposeType::Numeric, Access::State,    "%",  nullptr, nullptr, 0},
     {"voltage",     ExposeType::Numeric, Access::State,    "mV", nullptr, nullptr, 0},
     {"occupancy",   ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
-    {"sensitivity", ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"keep_time",   ExposeType::Enum,    Access::StateSet, "s",  nullptr, nullptr, 0},
+    {"sensitivity", ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kSensitivityValues, 3},
+    {"keep_time",   ExposeType::Enum,    Access::StateSet, "s",  nullptr, kKeepTimeValues, 3},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -101,7 +109,7 @@ constexpr ::zhc::ConfigStep kConfigSteps_ZG_204Z[] = {
 // ── ssIasZone writes for sensitivity + keep_time ────────────────────
 //
 // String labels match what the FZ emits and what the SPA enum picker
-// surfaces; the device-side ENUM8 value is the lookup index.
+// surfaces; the device-side value is the lookup index, written as UINT8.
 
 constexpr ZclWriteLookup kLookup_Sensitivity[] = {
     {"low",    0},
@@ -114,14 +122,14 @@ constexpr ZclWriteLookup kLookup_KeepTime[] = {
     {"120", 2},
 };
 
-// std attr 0x0013 currentZoneSensitivityLevel (ENUM8).
+// std attr 0x0013 currentZoneSensitivityLevel (UINT8 in zigbee-herdsman).
 constexpr ZclWriteSpec kSpec_Sensitivity{
-    "sensitivity", 0x0013, 0x30 /* ENUM8 */, 0,
+    "sensitivity", 0x0013, 0x20 /* UINT8 */, 0,
     kLookup_Sensitivity, sizeof(kLookup_Sensitivity) / sizeof(kLookup_Sensitivity[0]),
 };
-// manuSpec attr 0xF001 (61441), ENUM8.
+// manuSpec attr 0xF001 (61441); z2m writes {value, type: 0x20}.
 constexpr ZclWriteSpec kSpec_KeepTime{
-    "keep_time", 0xF001, 0x30 /* ENUM8 */, 0,
+    "keep_time", 0xF001, 0x20 /* UINT8 */, 0,
     kLookup_KeepTime, sizeof(kLookup_KeepTime) / sizeof(kLookup_KeepTime[0]),
 };
 

@@ -25,8 +25,8 @@
 //       DP 111 fantemLedEnable             bool → led_enable (inverted)
 //       DP 112 fantemReportingEnable       bool → reporting_enable
 //   * Sensitivity / keep_time settings are written to ssIasZone:
-//       attr 0x0013 currentZoneSensitivityLevel (ENUM8) → sensitivity
-//       attr 0xF001 (61441) custom (ENUM8)            → keep_time
+//       attr 0x0013 currentZoneSensitivityLevel (UINT8) → sensitivity
+//       attr 0xF001 (61441) custom (UINT8)            → keep_time
 //
 // Surface gap (PARTIAL): illuminance reading itself is reported via a
 // Tuya-private ssIasZone attr 0xF002 (61442) that the generic ZHC IAS
@@ -120,14 +120,15 @@ constexpr ZclWriteLookup kLookup_KeepTime[] = {
     {"480", 5},
 };
 
-// std attr 0x0013 currentZoneSensitivityLevel (ENUM8).
+// std attr 0x0013 currentZoneSensitivityLevel (UINT8 in zigbee-herdsman;
+// z2m legacy tz.ZB003X writes it untyped, so herdsman sends 0x20).
 constexpr ZclWriteSpec kSpec_Sensitivity{
-    "sensitivity", 0x0013, 0x30 /* ENUM8 */, 0,
+    "sensitivity", 0x0013, 0x20 /* UINT8 */, 0,
     kLookup_Sensitivity, sizeof(kLookup_Sensitivity) / sizeof(kLookup_Sensitivity[0]),
 };
-// custom attr 0xF001 (61441) ENUM8.
+// custom attr 0xF001 (61441); z2m writes {value, type: 0x20}.
 constexpr ZclWriteSpec kSpec_KeepTime{
-    "keep_time",   0xF001, 0x30 /* ENUM8 */, 0,
+    "keep_time",   0xF001, 0x20 /* UINT8 */, 0,
     kLookup_KeepTime, sizeof(kLookup_KeepTime) / sizeof(kLookup_KeepTime[0]),
 };
 
@@ -168,6 +169,11 @@ constexpr const char* kManus_ZB003_X[]  = {
     "_TZ3210_wuhzzfqg", "_TZ3210_ohvnwamm", "_TZ3210_oekbi7o4",
 };
 
+// z2m: e.enum("sensitivity", …, ["low","medium","high"]) and
+// e.enum("keep_time", …, ["0","30","60","120","240","480"]) -- the web UI's picker.
+constexpr const char* kSensitivityValues[] = { "low", "medium", "high" };
+constexpr const char* kKeepTimeValues[]    = { "0", "30", "60", "120", "240", "480" };
+
 constexpr Expose kExposes_ZB003_X[] = {
     {"occupancy",                ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
     {"tamper",                   ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr, 0},
@@ -184,8 +190,8 @@ constexpr Expose kExposes_ZB003_X[] = {
     {"reporting_time",           ExposeType::Numeric, Access::StateSet, "min", nullptr, nullptr, 0},
     {"led_enable",               ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"pir_enable",               ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"sensitivity",              ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"keep_time",                ExposeType::Enum,    Access::StateSet, "s",   nullptr, nullptr, 0},
+    {"sensitivity",              ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kSensitivityValues, 3},
+    {"keep_time",                ExposeType::Enum,    Access::StateSet, "s",   nullptr, kKeepTimeValues, 6},
 };
 
 constexpr BindingSpec kBindings_ZB003_X[] = {

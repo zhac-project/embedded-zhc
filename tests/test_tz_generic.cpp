@@ -126,6 +126,34 @@ static void test_zcl_write_enum_manu_specific() {
     assert(std::memcmp(frame, want, n) == 0);
 }
 
+// A number on a key whose labels are numbers maps through the label, as z2m's
+// getFromLookup does: keep_time 60 is lookup index 1 on the wire, not 60. A
+// number no label names still goes out as-is.
+static void test_zcl_write_number_through_numeric_label() {
+    using namespace zhc::generic;
+    static constexpr ZclWriteLookup lut[] = { {"30", 0}, {"60", 1}, {"120", 2} };
+    static constexpr ZclWriteSpec spec{
+        .key = "keep_time", .attr_id = 0xF001, .attr_type = 0x20,
+        .manufacturer_code = 0, .lookup = lut, .lookup_count = 3,
+    };
+    TzConverter cvt{
+        .key = "keep_time", .cluster = "ssIasZone", .cluster_id = 0x0500,
+        .command_id = 0x02, .fn = &tz_zcl_write_attr, .user_config = &spec,
+    };
+    RuntimeContext ctx{};
+    std::uint8_t frame[16] = {};
+    std::size_t n = 0;
+    Value v{}; v.type = ValueType::Uint; v.u = 60;
+    assert(tz_zcl_write_attr("keep_time", v, cvt, PreparedDefinition{}, ctx, frame, n));
+    assert(n == 7 && frame[5] == 0x20 && frame[6] == 1);
+    v.type = ValueType::Int; v.i = 120;
+    assert(tz_zcl_write_attr("keep_time", v, cvt, PreparedDefinition{}, ctx, frame, n));
+    assert(frame[6] == 2);
+    v.type = ValueType::Uint; v.u = 1;   // no label "1": the raw index
+    assert(tz_zcl_write_attr("keep_time", v, cvt, PreparedDefinition{}, ctx, frame, n));
+    assert(frame[6] == 1);
+}
+
 // A decimal on a raw attribute write is rounded, not refused or truncated:
 // 21.6 -> 22 on an int16 attribute (the wire unit is whatever the attribute
 // uses; the caller chose the value).
@@ -188,6 +216,7 @@ int main() {
     test_ts0001_unknown_key();
     test_zcl_write_bool_non_manu();
     test_zcl_write_enum_manu_specific();
+    test_zcl_write_number_through_numeric_label();
     test_zcl_write_float_rounds();
     test_tuya_numeric_float_scales();
     return 0;

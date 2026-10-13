@@ -2888,6 +2888,22 @@ std::size_t zcl_type_len(std::uint8_t t) {
 
 bool zcl_coerce(const Value& in, const ZclWriteSpec& s,
                  std::uint32_t& out) {
+    // A whole number on a key whose labels are numbers names the label, as
+    // z2m's getFromLookup does (keep_time 60 -> index 1). A number no label
+    // names goes out as-is below.
+    if (s.lookup && (in.type == ValueType::Uint || in.type == ValueType::Int)) {
+        char num[24];
+        if (in.type == ValueType::Uint) {
+            std::snprintf(num, sizeof(num), "%llu", static_cast<unsigned long long>(in.u));
+        } else {
+            std::snprintf(num, sizeof(num), "%lld", static_cast<long long>(in.i));
+        }
+        for (std::uint8_t i = 0; i < s.lookup_count; ++i) {
+            if (s.lookup[i].label && std::strcmp(s.lookup[i].label, num) == 0) {
+                out = s.lookup[i].value; return true;
+            }
+        }
+    }
     if (in.type == ValueType::Bool) { out = in.b ? 1 : 0; return true; }
     if (in.type == ValueType::Uint) { out = static_cast<std::uint32_t>(in.u); return true; }
     if (in.type == ValueType::Int)  { out = static_cast<std::uint32_t>(in.i); return true; }

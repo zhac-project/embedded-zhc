@@ -38,6 +38,54 @@ namespace zhc::devices::tuya {
 extern const PreparedDefinition kDef_ZG_204Z;
 }  // namespace zhc::devices::tuya
 
+// ── Set path: what z2m (hobeian.ts tz.zg204_attr) writes ───────────
+//
+// keep_time: attr 0xF001, type 0x20 (z2m names the type explicitly),
+// value = index of 30/60/120. sensitivity: attr 0x0013, type 0x20
+// (zigbee-herdsman's currentZoneSensitivityLevel is UINT8). The sensor
+// refused 0x30 (ENUM8) live: keep_time read back 30 after a "60" write.
+static void test_write_frames_match_z2m() {
+    using namespace zhc;
+    auto write = [](const char* key, const Value& v, std::uint8_t* frame, std::size_t& n) {
+        RuntimeContext ctx{};
+        auto r = dispatch_to_zigbee(devices::tuya::kDef_ZG_204Z, key, v, ctx,
+                                    std::span<std::uint8_t>(frame, 16));
+        n = r.frame_size;
+        return r.ok && r.cluster_id == 0x0500;
+    };
+    std::uint8_t f[16] = {};
+    std::size_t n = 0;
+    Value v{}; v.type = ValueType::StringRef; v.str = "60";
+    assert(write("keep_time", v, f, n));
+    const std::uint8_t keep60[] = { 0x10, 0x00, 0x02, 0x01, 0xF0, 0x20, 0x01 };
+    assert(n == sizeof(keep60) && std::memcmp(f, keep60, n) == 0);
+
+    v.type = ValueType::Uint; v.u = 120;          // a number names the label too
+    assert(write("keep_time", v, f, n) && f[6] == 0x02);
+
+    v.type = ValueType::StringRef; v.str = "high";
+    assert(write("sensitivity", v, f, n));
+    const std::uint8_t sensHigh[] = { 0x10, 0x00, 0x02, 0x13, 0x00, 0x20, 0x02 };
+    assert(n == sizeof(sensHigh) && std::memcmp(f, sensHigh, n) == 0);
+}
+
+// The hub page draws a picker from these; without them it showed a text box.
+static void test_enum_exposes_list_the_values() {
+    const auto& d = zhc::devices::tuya::kDef_ZG_204Z;
+    bool keep = false, sens = false;
+    for (std::size_t i = 0; i < d.exposes_count; ++i) {
+        const auto& x = d.exposes[i];
+        if (std::strcmp(x.name, "keep_time") == 0) {
+            keep = x.enum_count == 3 && std::strcmp(x.enum_values[0], "30") == 0 &&
+                   std::strcmp(x.enum_values[2], "120") == 0;
+        }
+        if (std::strcmp(x.name, "sensitivity") == 0) {
+            sens = x.enum_count == 3 && std::strcmp(x.enum_values[1], "medium") == 0;
+        }
+    }
+    assert(keep && sens);
+}
+
 namespace {
 
 InboundApsFrame make_frame(std::uint16_t cluster,
@@ -511,5 +559,7 @@ int main() {
     test_configure_pipeline();
     test_report_mandatory_failure_aborts();
     test_report_optional_failure_continues();
+    test_write_frames_match_z2m();
+    test_enum_exposes_list_the_values();
     return 0;
 }
