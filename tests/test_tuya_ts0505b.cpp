@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "zhc/cluster_names.hpp"
+#include "zhc/color_hex.hpp"
 #include "zhc/devices/tuya_registry.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/definition_runtime.hpp"
@@ -73,7 +74,11 @@ DispatchResult report(const PreparedDefinition& def, std::uint16_t cluster, cons
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(cluster);
-    RuntimeContext ctx = new_ctx(mem);
+    // Static: a StringRef in the result (alloc_str, as color_hex) points into the
+    // context's arena, so the context must outlive the call. The strings stay valid
+    // until the next report().
+    static RuntimeContext ctx;
+    ctx = new_ctx(mem);
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -143,6 +148,27 @@ void check_color_mode(const PreparedDefinition& def) {
     for (std::uint8_t m = 0; m < 3; ++m) assert(std::strcmp(cm->enum_values[m], names[m]) == 0);
 }
 
+// color_hex "#rrggbb": the colour at full brightness, published with the xy
+// the light reports, and taken as a write (moveToColor). And Tuya's 0xF000
+// brightness tops out at 254: the light's range is 0..254.
+void check_color_hex(const PreparedDefinition& def) {
+    // x = 0x5333, y = 0x6666: color_hex is the xy colour at full brightness
+    DispatchResult r = report(def, 0x0300, {0x03, 0x00, 0x21, 0x33, 0x53,
+                                            0x04, 0x00, 0x21, 0x66, 0x66});
+    zhc::color::Rgb rgb{};
+    assert(zhc::color::xy_to_rgb(0x5333 / 65535.0f, 0x6666 / 65535.0f, rgb));
+    char want[8]; zhc::color::format_hex(rgb, want);
+    assert(is_str(r.merged.find("color_hex"), want));
+    // Tuya brightness 0xF000 = 1000 is full brightness: 254, never 255
+    DispatchResult b = report(def, 0x0008, {0x00, 0xF0, 0x21, 0xE8, 0x03});
+    const Value* br = b.merged.find("brightness");
+    assert(br && br->type == ValueType::Uint && br->u == 254);
+    // color_hex is also a write: moveToColor; a string that is no colour sends nothing
+    const Sent s = send(def, "color_hex", str_v("#ff0000"));
+    assert(s.cluster == 0x0300 && s.frame.size() == 9 && s.frame[2] == 0x07);
+    assert(send(def, "color_hex", str_v("red")).frame.empty());
+}
+
 void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {
     // Exposes: the light, colour, and tuyaLight's three extras; no power_on_behavior.
     for (const char* k : {"state", "brightness", "color_temp", "color_x", "color_y"})
@@ -165,7 +191,7 @@ void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {
     const Value* x = rc.merged.find("color_x");
     const Value* y = rc.merged.find("color_y");
     assert(x && y && std::fabs(x->f - 0x5333 / 65535.0f) < 1e-4f && std::fabs(y->f - 0.4f) < 1e-4f);
-    // … and Tuya's 0xF000 brightness (0-1000) lands on the 0-255 scale.
+    // … and Tuya's 0xF000 brightness (0-1000) lands on the 0-254 scale.
     const auto rb = report(def, 0x0008, {0x00, 0xF0, 0x21, 0xF4, 0x01});  // 500
     const Value* br = rb.merged.find("brightness");
     assert(br && br->type == ValueType::Uint && br->u == 128);
@@ -204,6 +230,8 @@ int main() {
     check_def(kDefTS0505B_moveToLevel, 0x00);
     check_color_mode(kDefTS0505B);
     check_color_mode(kDefTS0505B_moveToLevel);
+    check_color_hex(kDefTS0505B);
+    check_color_hex(kDefTS0505B_moveToLevel);
 
     // The six moveToLevelWithOnOffDisable manufacturers (z2m v26.105.0) get the
     // moveToLevel definition; every other TS0505B keeps the generic one.

@@ -86,6 +86,12 @@ extern const FzConverter kFzColorTemperature;
 //                                                       ("hs" / "xy" / "color_temp")
 //   attr 0x4000 enhancedCurrentHue    (u16)          → "enhanced_hue"
 // XY are encoded by z2m as `raw / 65535` per the ZCL CIE 1931 spec.
+// It also emits the pairs, completed from the remembered other axis when a
+// report carries only one:
+//   "color_xy"  "x,y"      (CIE 1931, four decimals)
+//   "color_hs"  "h,s"      (0-360, 0-100)
+//   "color_hex" "#rrggbb"  (the colour at full brightness: from xy, or from hue
+//                           + saturation when the light is in hs mode)
 // A colour frame without colorMode still carries "color_mode" once the
 // light's mode is known (runtime memory, single-endpoint defs): its last
 // colorMode, or the mode of the last kTzColor / kTzColorTemp command — z2m
@@ -614,7 +620,8 @@ extern const TzConverter kTzEffect;
 extern const TzConverter kTzEffectColorLoop;
 
 // lightingColorCtrl (0x0300) "color_temp" setter. Emits the
-// `moveToColorTemp` (0x0A) command. Accepts `Value::Uint` mireds.
+// `moveToColorTemp` (0x0A) command with the mireds color_temp_to_send gives
+// (refused when it gives -1).
 // Remembers colour mode "color_temp" for kFzColor.
 bool tz_color_temp(std::string_view key,
                     const Value& input,
@@ -626,14 +633,30 @@ bool tz_color_temp(std::string_view key,
 
 extern const TzConverter kTzColorTemp;
 
+// The mireds a `color_temp` write sends: a `Value::Uint`, or a `Value::Float`
+// rounded half up; clamped to the definition's `color_temp` row
+// `value_min..value_max` when it declares one inside 0..65535 (z2m
+// clampColorTemp; a range outside that counts as undeclared), sent as given
+// when none is. -1 when refused: another type, NaN, negative, above 65535.
+// The hub mirrors this into its shadow, so it shows what the light was sent.
+std::int32_t color_temp_to_send(const PreparedDefinition& def, const Value& input);
+
 // lightingColorCtrl (0x0300) wildcard color setter. Single TzConverter
-// claiming any of `color_x` / `color_y` / `hue` / `saturation`, emitting
-// the matching ZCL command:
+// claiming any of `color_x` / `color_y` / `color_xy` / `color_hs` /
+// `color_hex` / `hue` / `saturation`, emitting the matching ZCL command:
 //
 //   key="color_x" or "color_y"   → moveToColor (0x07)
 //        payload: x u16 LE, y u16 LE, transition u16 LE
 //        Value can be Float in [0,1] (z2m shape) or Uint raw u16
 //        ([0, 65535]). Missing axis defaults to 0x8000 (centre).
+//   key="color_xy"               → moveToColor (0x07), StringRef "x,y"
+//   key="color_hs"               → moveToHueAndSaturation (0x06),
+//        StringRef "h,s" (0-360, 0-100)
+//   key="color_hex"              → moveToColor (0x07), or
+//        moveToHueAndSaturation (0x06) on a definition that lists hue /
+//        saturation rows but no x/y rows (see color_hex_support). StringRef
+//        "#rrggbb" in either case; a malformed string and "#000000" (black
+//        has no colour) are refused, the colour memory untouched.
 //   key="hue"                    → moveToHue (0x00)
 //        payload: hue u8 [0,254], direction u8 (0 shortest), transition u16
 //   key="saturation"             → moveToSaturation (0x03)
@@ -656,6 +679,23 @@ bool tz_color(std::string_view key,
                std::size_t& out_size);
 
 extern const TzConverter kTzColor;
+
+// What a definition does with `color_hex` ("#rrggbb"): `read` when it decodes
+// colour (kFzColor), `write` when it wires kTzColor; the two are independent
+// (a definition can have either without the other). `mode` is the colour mode
+// a write uses: "hs" when the definition lists hue/saturation rows but no x/y
+// rows, else "xy" (z2m `color: true` is xy).
+struct ColorHexSupport { bool read{false}; bool write{false}; const char* mode{nullptr}; };
+ColorHexSupport color_hex_support(const PreparedDefinition& def);
+
+// The colour kFzColor publishes for a light now, from its colour memory (left
+// by the last colour report or colour write): `hex` "#rrggbb" when a whole
+// colour is known, else ""; `mode` "xy" / "hs" / "color_temp" when known, else
+// nullptr. Both empty without a store. After a colour write the hub mirrors
+// them into its shadow, so it shows at once what the light's next report
+// carries (the colour at full brightness, not the text that was picked).
+struct ColorState { char hex[8]{}; const char* mode{nullptr}; };
+ColorState color_state(RuntimeContext& ctx);
 
 // closuresWindowCovering (0x0102) position/state setter.
 extern const TzConverter kTzCoverPosition;

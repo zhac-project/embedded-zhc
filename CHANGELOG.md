@@ -27,6 +27,24 @@ across the ZHAC platform.
   definition's datapoint maps has an entry for the datapoint. zhac-components
   uses it to retire a raw `dp_<id>` value the hub saved while the datapoint
   was still unmapped.
+- **Colour lights speak `color_hex`.** Colour reports on the shared decoder
+  (`kFzColor`) publish `color_hex` ("#rrggbb", the colour at full brightness)
+  whenever they carry a whole colour, and `kTzColor` takes it as a write
+  (moveToColor, or moveToHueAndSaturation on hue/saturation-only lights);
+  `generic::color_hex_support()` says which definitions do which.
+  `color_temp` writes clamp to a light's declared range (a range outside
+  0..65535 counts as none) and accept decimals; Tuya brightness 0xF000 tops
+  out at 254. Tests: `test_color_hex.cpp`, `test_tz_color.cpp`,
+  `test_generic.cpp`, `test_tuya_ts0505b.cpp`.
+- **What a colour or white write leaves, for the hub's shadow.**
+  `generic::color_state(ctx)` gives the `color_hex` and `color_mode` the
+  decoder publishes from a light's colour memory, which every colour write
+  (`color_hex`, `color_xy`, `color_hs`, `color_x` / `color_y`, `hue`,
+  `saturation`) updates; `generic::color_temp_to_send(def, value)` gives the
+  mireds a `color_temp` write sends, rounded and clamped. zhac-components
+  mirrors both after a write, so the hub shows what the light will report
+  (a picked `#34c759` shows as `#45ff74`). Tests: `test_tz_color.cpp`,
+  `test_generic.cpp`.
 
 ### Fixed
 
@@ -41,6 +59,14 @@ across the ZHAC platform.
   claims such a datapoint and publishes nothing; ZY-N1 (`_TZE204_r6kfl9ta`)
   ignores DP2 and DP12, and the hub drops the stale raw rows on the next
   report.
+- **The YSR-MINI-01 RGBCCT and Kurvia ZB-CL01 lights take colour writes.**
+  Both decoded colour but listed no colour writer, so `color_xy` and
+  `color_hs` (and the new `color_hex`) found no converter. They now take the
+  generic `kTzColor`, as in z2m. Their `color_x` / `color_y` rows are
+  writable, as in z2m, so Home Assistant offers colour, and `color_temp`
+  carries z2m's range (160-370 and 250-454 mired), so the white slider spans
+  the light's own whites and writes clamp to them. Test:
+  `test_ysrsai_rgbcct_tz.cpp`.
 - **Tuya TS0052 dimmer modules are dimmable lights.** The 1-channel module
   (white label Tuya FS-05R, `_TZ3000_mgusv51k`) matched a generated stub that
   exposed only an `action` and had no write converter, so the hub logged

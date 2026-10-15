@@ -385,8 +385,9 @@ extern const TzConverter kTzTuyaPowerOnBehavior2;
 
 // ── tuyaLight extras ─────────────────────────────────────────────────
 //
-// kFzTuyaBrightness: genLevelCtrl attr 0xF000 (0-1000) → brightness 0-255
-// (z2m tuyaFz.brightness). Wire next to the generic brightness decode.
+// kFzTuyaBrightness: genLevelCtrl attr 0xF000 (0-1000) → brightness 0-254
+// (z2m tuyaFz.brightness rounds to 0-255; 1000 is clamped to 254 here, the
+// light's range). Wire next to the generic brightness decode.
 // kTzTuyaDoNotDisturb: lightingColorCtrl cmd 0xFA tuyaDoNotDisturb [enable].
 // kTzTuyaColorPowerOnBehavior: lightingColorCtrl cmd 0xF9 tuyaOnStartUp,
 // {initial, previous, customized} → mode u16 LE = value × 256 + 10 zero bytes.

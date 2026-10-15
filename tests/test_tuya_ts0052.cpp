@@ -197,7 +197,7 @@ int main() {
     assert(!find_expose(*one, "action"));
 
     // currentLevel (0x0000, uint8) is brightness as is; Tuya's 0xF000 (0-1000)
-    // lands on the 0-255 scale.
+    // lands on the 0-254 scale.
     assert(is_uint(report(*one, 0x0008, {0x00, 0x00, 0x20, 200}).merged.find("brightness"), 200));
     assert(is_uint(report(*one, 0x0008, {0x00, 0xF0, 0x21, 0xF4, 0x01}).merged.find("brightness"), 128));
     const auto rmb = report(*one, 0x0008, {0x00, 0xFC, 0x21, 0xFF, 0x14});   // 0x14FF
