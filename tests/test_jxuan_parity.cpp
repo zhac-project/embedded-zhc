@@ -39,6 +39,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::jxuan {
 extern const PreparedDefinition kDef_PRZ01;  // occupancy (IAS bit0) + battery
@@ -99,7 +100,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -115,7 +116,7 @@ DispatchResult dispatch_wsz(const PreparedDefinition& def, std::uint8_t code) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(0xFE05);  // "manuSpecificJxuan"
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

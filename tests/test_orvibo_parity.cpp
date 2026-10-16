@@ -34,6 +34,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::orvibo {
 extern const PreparedDefinition kDef_CR11S8UZ;  // 4-button sticker switch (raw_1)
@@ -76,7 +77,7 @@ DispatchResult run(const PreparedDefinition& def, const RawFrame& rf) {
                                                         rf.bytes.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

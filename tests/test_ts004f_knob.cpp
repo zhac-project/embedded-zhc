@@ -28,6 +28,7 @@
 #include "zhc/zcl/decoder.hpp"
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
+#include "test_ctx.hpp"
 
 using namespace zhc;
 
@@ -107,7 +108,7 @@ DispatchResult dispatch_zcl(std::uint16_t cluster_id, const char* cluster_name,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, devices::tuya::kDef_TS004F_knob, raw, ctx);
 }
 }  // namespace

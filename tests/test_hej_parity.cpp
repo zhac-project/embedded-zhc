@@ -29,6 +29,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::hej {
 extern const PreparedDefinition kDef_KKZ_DO021;     // contact   (ias_contact_alarm_1)
@@ -80,7 +81,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -124,7 +125,7 @@ DispatchResult dispatch_onoff_report(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "genOnOff";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

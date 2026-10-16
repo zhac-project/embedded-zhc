@@ -22,6 +22,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::ezex {
 extern const PreparedDefinition kDef_ECW_100_A03;
@@ -50,7 +51,7 @@ DispatchResult onoff_report(const PreparedDefinition& def, std::uint8_t src_ep) 
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "genOnOff";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

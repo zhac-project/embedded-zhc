@@ -41,6 +41,7 @@
 #include "zhc/runtime/store.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::tplink      { extern const PreparedDefinition kDef_MS100; }
 namespace zhc::devices::shinasystem { extern const PreparedDefinition kDef_USM_300ZB; }
@@ -201,8 +202,7 @@ struct Encoded { bool ok = false; std::uint16_t cluster = 0; std::uint8_t ep = 0
     raw.data         = bytes;
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
-    return dispatch_from_zigbee(msg, {}, def, raw, ctx_in ? *ctx_in : ctx);
+    return dispatch_from_zigbee(msg, {}, def, raw, ctx_in ? *ctx_in : test_ctx());
 }
 // Attribute report builder: frame control 0x18 (server->client, no default
 // response), or 0x1C with a manufacturer code.

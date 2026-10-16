@@ -37,6 +37,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::msh {
 extern const PreparedDefinition kDef_msh_bme280psm;
@@ -97,7 +98,7 @@ DispatchResult report_s16(const PreparedDefinition& def, std::uint16_t cluster,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(cluster);
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -115,7 +116,7 @@ DispatchResult report_u16(const PreparedDefinition& def, std::uint16_t cluster,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(cluster);
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -131,7 +132,7 @@ DispatchResult report_battery_pct(const PreparedDefinition& def, std::uint8_t ra
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(0x0001);
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -153,7 +154,7 @@ DispatchResult report_co2_float(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(0x040D);
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

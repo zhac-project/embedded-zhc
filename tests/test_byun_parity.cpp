@@ -29,6 +29,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::byun {
 extern const PreparedDefinition kDef_M415_5C;
@@ -73,7 +74,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -94,7 +95,7 @@ DispatchResult dispatch_ph(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "pHMeasurement";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -112,7 +113,7 @@ DispatchResult dispatch_gas_raw(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "byunGasRaw";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

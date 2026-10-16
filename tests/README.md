@@ -110,6 +110,12 @@ assert(v && v->type == ValueType::Float);
 assert(approx(v->f, 23.5f, 0.001f));
 ```
 
+The result's suffixed keys and text values point into `ctx`, so read them
+while `ctx` is alive. A helper that dispatches and returns the result takes
+its context from `test_ctx()` (`#include "test_ctx.hpp"`) instead of a local
+`RuntimeContext ctx{};`, and never returns a pointer into a result of its own:
+CI runs the suite under ASan, which reports both as stack-use-after-return.
+
 ### 4. Capturing emitted commands (response-builder tests)
 
 For converters that emit cluster commands (Zosung IR, configure hooks,

@@ -33,6 +33,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::smartthings {
 extern const PreparedDefinition kDef_D3305_S;       // occupancy (alarm_2) + temp
@@ -99,7 +100,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -118,7 +119,7 @@ DispatchResult dispatch_temp(const PreparedDefinition& def, std::int16_t centide
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "msTemperatureMeasurement";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

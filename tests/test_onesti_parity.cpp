@@ -53,6 +53,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::onesti {
 extern const PreparedDefinition kDef_S4RX_110;
@@ -94,7 +95,7 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def, std::uint16_t cluster
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

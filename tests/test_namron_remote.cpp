@@ -19,6 +19,7 @@
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::namron {
 extern const PreparedDefinition kDef_D4512793;
@@ -51,7 +52,7 @@ const char* decode_action(std::span<const std::uint8_t> body) {
     auto msg = make_raw_msg();
     msg.raw_body = body;
     auto raw = make_raw_frame();
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();   // the action text may live in it
     const auto r = dispatch_from_zigbee(
         msg, std::span<const TuyaDpRecord>(), devices::namron::kDef_D4512793, raw, ctx);
     const Value* a = r.merged.find("action");

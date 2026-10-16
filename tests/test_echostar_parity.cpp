@@ -33,6 +33,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::echostar {
 extern const PreparedDefinition kDef_SAGE206611;  // single gang switch
@@ -72,7 +73,7 @@ DispatchResult run_cmd(const PreparedDefinition& def, std::uint8_t cmd) {
                                                         cf.bytes.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

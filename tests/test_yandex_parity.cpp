@@ -34,6 +34,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::yandex {
 extern const PreparedDefinition kDef_YNDX_00518;  // TRV (hvacThermostat)
@@ -92,7 +93,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

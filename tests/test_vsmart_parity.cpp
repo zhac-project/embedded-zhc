@@ -40,6 +40,7 @@
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
 #include "definitions/vsmart/_shared.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::vsmart {
 extern const PreparedDefinition kDef_HS_SEDR00ZB_VNM;
@@ -76,7 +77,7 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def, std::uint16_t cluster
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

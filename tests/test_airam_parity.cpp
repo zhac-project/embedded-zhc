@@ -30,6 +30,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::airam {
 extern const PreparedDefinition kDef_AIRAM_CTR_U;
@@ -59,7 +60,7 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def, std::uint16_t cluster
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(cluster_id);
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

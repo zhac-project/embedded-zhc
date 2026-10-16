@@ -35,6 +35,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::pushok {
 extern const PreparedDefinition kDef_POK003;
@@ -77,7 +78,7 @@ DispatchResult report_u16_attr0(const PreparedDefinition& def,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -94,7 +95,7 @@ DispatchResult report_s16_attr0(const PreparedDefinition& def,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -110,7 +111,7 @@ DispatchResult report_binary_input(const PreparedDefinition& def,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -126,7 +127,7 @@ DispatchResult report_cover_position(const PreparedDefinition& def,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

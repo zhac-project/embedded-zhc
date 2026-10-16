@@ -13,6 +13,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/runtime/store.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::lumi {
 extern const PreparedDefinition kDefWXKG11LM;
@@ -47,7 +48,7 @@ DispatchResult dispatch(std::uint16_t raw_value, RuntimeStore<4>& store) {
     if (!decode_frame(raw, {}, msg)) return {};
     msg.cluster = "genMultistateInput";
 
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     ctx.store        = &store;
     ctx.store_get    = &RuntimeStore<4>::get;
     ctx.device_index = 0;

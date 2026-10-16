@@ -43,6 +43,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::essentialb {
 extern const PreparedDefinition kDef_EB_E14_P45_RGBW;   // RGBW bulb (colorTemp + color)
@@ -101,7 +102,7 @@ DispatchResult dispatch_report(const PreparedDefinition& def, std::uint16_t clus
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -117,7 +118,7 @@ DispatchResult dispatch_cmd(const PreparedDefinition& def, std::uint16_t cluster
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

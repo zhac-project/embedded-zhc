@@ -44,6 +44,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::lidl {
 extern const PreparedDefinition kDef_HG06335_HG07310;   // motion  -> occupancy
@@ -108,7 +109,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -149,7 +150,7 @@ DispatchResult on_off_cmd(const PreparedDefinition& def, std::uint8_t cmd) {
                           std::span<const std::uint8_t>(b.data(), b.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -160,7 +161,7 @@ DispatchResult level_step(const PreparedDefinition& def, std::uint8_t mode) {
                           std::span<const std::uint8_t>(b.data(), b.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -171,7 +172,7 @@ DispatchResult level_move(const PreparedDefinition& def, std::uint8_t mode) {
                           std::span<const std::uint8_t>(b.data(), b.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -182,7 +183,7 @@ DispatchResult level_stop(const PreparedDefinition& def) {
                           std::span<const std::uint8_t>(b.data(), b.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -220,7 +221,7 @@ DispatchResult attr_report(const PreparedDefinition& def, std::uint16_t cluster,
                           std::span<const std::uint8_t>(buf.data(), n));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

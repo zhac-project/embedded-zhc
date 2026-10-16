@@ -36,6 +36,7 @@
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::namron {
 extern const PreparedDefinition kDefNam__TZE204_p3lqqy2r;
@@ -71,7 +72,7 @@ InboundApsFrame make_raw() {
 DispatchResult dispatch_dp(std::span<const TuyaDpRecord> recs) {
     auto msg = make_msg();
     auto raw = make_raw();
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(
         msg, recs, devices::namron::kDefNam__TZE204_p3lqqy2r, raw, ctx);
 }

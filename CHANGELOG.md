@@ -48,6 +48,13 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **The host suite passes under ASan + UBSan again (CI `host-tests`).** 299 test helpers
+  dispatched with a `RuntimeContext` of their own and returned the `DispatchResult`, whose
+  suffixed keys and `alloc_str()` texts live in that context: the caller read a dead stack
+  frame (39 tests reported stack-use-after-return; the rest passed by luck). They now take
+  their context from `tests/test_ctx.hpp` (a ring of 64), and the helpers that returned a
+  pointer into their own result keep it alive. Test-only: the firmware reads every result
+  while its context is alive. `tests/README.md` states the rule.
 - **HOBEIAN ZG-204Z and Fantem ZB003-X: keep_time and sensitivity can be set.** Both definitions wrote IAS Zone `0x0013` (sensitivity) and `0xF001` (keep_time) as ENUM8 (`0x30`); zigbee2mqtt writes UINT8 (`0x20`, named explicitly for `0xF001`, zigbee-herdsman's type for `0x0013`). A ZG-204Z refused the ENUM8 write live (keep_time read back 30 after "60"). Both now write `0x20`, and both exposes list their values as z2m does (ZG-204Z keep_time 30/60/120, ZB003-X 0/30/60/120/240/480, sensitivity low/medium/high), so the web UI shows a picker instead of a text box.
 - **A number written to an enum whose labels are numbers names the label** (`_generic/_shared.cpp` `zcl_coerce`, as z2m's `getFromLookup`): keep_time `60` is index 1 on the wire, not 60. A number no label names still goes out as-is. Also corrects the other three numeric-label writes: Schneider indicator luminance (100 → 0), Lytko sensor type, eWeLink NAS-AB06B3 melody.
 

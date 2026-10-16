@@ -39,6 +39,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::muller_licht {
 extern const PreparedDefinition kDef_MLI_404011_MLI_404049;  // 4-button RGB+CCT remote
@@ -86,7 +87,7 @@ DispatchResult dispatch_cmd(const PreparedDefinition& def, std::uint16_t cluster
     auto raw = make_frame(cluster_id, src_ep, bytes);
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

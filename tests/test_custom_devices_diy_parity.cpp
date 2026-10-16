@@ -34,6 +34,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::custom_devices_diy {
 extern const PreparedDefinition kDef_ZeeFlora;
@@ -70,7 +71,7 @@ DispatchResult report_u16(const PreparedDefinition& def, std::uint16_t cluster,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

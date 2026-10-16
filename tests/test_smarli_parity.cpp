@@ -34,6 +34,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::smarli {
 extern const PreparedDefinition kDef_S_ZB_PDM1_R251;
@@ -88,7 +89,7 @@ DispatchResult dispatch_report(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, std::span<const TuyaDpRecord>{}, def, raw, ctx);
 }
 

@@ -31,6 +31,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::legrand {
 extern const PreparedDefinition kDef_D067694;   // toggle remote (on/off/toggle)
@@ -82,7 +83,7 @@ DispatchResult dispatch_cmd(const PreparedDefinition& def, std::uint16_t cluster
     auto raw = make_frame(cluster_id, src_ep, bytes);
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

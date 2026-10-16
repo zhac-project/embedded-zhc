@@ -31,6 +31,7 @@
 #include "zhc/types.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 using namespace zhc;
 
@@ -126,7 +127,7 @@ DispatchResult dispatch_ias(const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, devices::tuya::kDef_ZG_204Z,
                                 raw, ctx);
 }
@@ -213,7 +214,7 @@ DispatchResult dispatch_attr_report(std::span<const std::uint8_t> bytes) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, devices::tuya::kDef_ZG_204Z,
                                  raw, ctx);
 }

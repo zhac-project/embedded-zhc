@@ -37,6 +37,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::easyaccess {
 extern const PreparedDefinition kDef_EasyCode903G2_1;
@@ -68,7 +69,7 @@ DispatchResult dispatch_action(std::uint8_t data3, std::uint8_t data4) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "closuresDoorLock";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, zhc::devices::easyaccess::kDef_EasyCode903G2_1,
                                raw, ctx);
 }
@@ -87,7 +88,7 @@ DispatchResult dispatch_attr(std::uint16_t attr, std::uint8_t value) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "closuresDoorLock";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, zhc::devices::easyaccess::kDef_EasyCode903G2_1,
                                raw, ctx);
 }

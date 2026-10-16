@@ -26,6 +26,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::letv {
 extern const PreparedDefinition kDef_LeTV_8KEY;
@@ -67,7 +68,7 @@ DispatchResult dispatch_ms(const PreparedDefinition& def, std::uint8_t src_ep,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "genMultistateInput";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

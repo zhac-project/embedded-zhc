@@ -34,6 +34,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 using namespace zhc;
 
@@ -84,7 +85,7 @@ DispatchResult report_on_off(const PreparedDefinition& def,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

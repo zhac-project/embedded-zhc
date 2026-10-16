@@ -31,6 +31,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::sowilo {
 extern const PreparedDefinition kDef_L258;
@@ -82,7 +83,7 @@ DispatchResult dispatch_color_temp(const PreparedDefinition& def, std::uint16_t 
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "lightingColorCtrl";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -99,7 +100,7 @@ DispatchResult dispatch_hue_sat(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "lightingColorCtrl";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

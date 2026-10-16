@@ -27,6 +27,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/runtime/store.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 using namespace zhc;
 
@@ -94,7 +95,7 @@ DispatchResult dispatch_press(std::uint8_t src_ep, std::uint8_t click,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "genOnOff";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     ctx.device_index = dev_idx;
     // Wire the test store so DeviceRuntimeState (where H-2 moved dedup
     // state) is reachable. dev_idx == 0 callers still bypass dedup by

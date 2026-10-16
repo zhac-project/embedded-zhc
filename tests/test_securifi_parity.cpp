@@ -31,6 +31,7 @@
 #include "zhc/runtime/definition_runtime.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
+#include "test_ctx.hpp"
 
 using namespace zhc;
 
@@ -81,7 +82,7 @@ DispatchResult dispatch_arm(const PreparedDefinition& def, std::uint8_t armmode)
     raw.src_endpoint = 1;
     raw.dst_endpoint = 1;
     raw.linkquality  = 0xC8;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

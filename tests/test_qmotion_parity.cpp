@@ -32,6 +32,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::qmotion {
 extern const PreparedDefinition kDef_QZR_ZIG2400;  // 5 channel remote
@@ -62,7 +63,7 @@ DispatchResult run(const PreparedDefinition& def, std::uint16_t cluster,
     // in production). Stamp it so cluster-scoped converters self-filter, as
     // they do on-device.
     msg.cluster = cluster_id_to_name(cluster);
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

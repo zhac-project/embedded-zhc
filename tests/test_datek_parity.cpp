@@ -46,6 +46,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::datek {
 extern const PreparedDefinition kDef_HSE2905E;
@@ -85,7 +86,7 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def, std::uint16_t cluster
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -112,7 +113,8 @@ std::vector<std::uint8_t> u48(std::uint64_t x) {
 const Value* decode_one(const PreparedDefinition& def, std::uint16_t cluster,
                         const char* cname, std::uint16_t attr, std::uint8_t type,
                         const std::vector<std::uint8_t>& val, const char* key) {
-    auto r = dispatch_zcl(def, cluster, cname, 1, attr_report(attr, type, val));
+    static DispatchResult r;   // the Value returned points into it
+    r = dispatch_zcl(def, cluster, cname, 1, attr_report(attr, type, val));
     assert(r.any_matched);
     return r.merged.find(key);
 }

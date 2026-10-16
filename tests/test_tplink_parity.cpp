@@ -30,6 +30,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::tplink {
 extern const PreparedDefinition kDef_MS100;  // motion / occupancy (bit0)
@@ -71,7 +72,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -96,7 +97,7 @@ DispatchResult dispatch_illum(const PreparedDefinition& def, const AttrFrame& f)
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "msIlluminanceMeasurement";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

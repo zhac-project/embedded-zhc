@@ -29,6 +29,7 @@
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::qa {
 extern const PreparedDefinition kDef_QAT44Z4H;   // 4-gang Tuya-DP wall switch
@@ -67,7 +68,7 @@ DispatchResult dispatch_dp(const PreparedDefinition& def,
                            std::span<const TuyaDpRecord> recs) {
     auto msg = make_msg();
     auto raw = make_raw();
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, recs, def, raw, ctx);
 }
 

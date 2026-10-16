@@ -40,6 +40,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::livolo {
 extern const PreparedDefinition kDef_TI0001;                // 4-gang switch
@@ -78,7 +79,7 @@ DispatchResult dispatch_raw(const PreparedDefinition& def,
     assert(msg.type == MessageType::Raw);
     assert(msg.direction == Direction::ServerToClient);
     msg.cluster = "genPowerCfg";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

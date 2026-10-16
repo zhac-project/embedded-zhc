@@ -13,6 +13,7 @@
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::lumi {
 extern const PreparedDefinition kDefLGZCDD01LM;
@@ -39,7 +40,7 @@ DispatchResult dispatch(std::uint16_t cluster, const char* cluster_name,
     DecodedMessage msg{};
     if (!decode_frame(raw, {}, msg)) return {};
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, devices::lumi::kDefLGZCDD01LM,
                                   raw, ctx);
 }

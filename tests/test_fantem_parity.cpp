@@ -29,6 +29,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::fantem {
 extern const PreparedDefinition kDef_ZB003_X;  // 4-in-1 multi sensor
@@ -78,7 +79,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -100,7 +101,7 @@ DispatchResult dispatch_dp(const PreparedDefinition& def,
     raw.dst_endpoint = 1;
     raw.linkquality  = 0xC8;
 
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, recs, def, raw, ctx);
 }
 

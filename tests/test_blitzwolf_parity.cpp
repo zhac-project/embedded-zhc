@@ -35,6 +35,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::blitzwolf {
 extern const PreparedDefinition kDef_BW_IS3;  // PIR motion (Tuya DP3 occupancy)
@@ -86,7 +87,7 @@ DispatchResult dispatch_dp(const PreparedDefinition& def,
                            std::span<const TuyaDpRecord> recs) {
     auto msg = make_dp_msg();
     auto raw = make_dp_raw();
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, recs, def, raw, ctx);
 }
 
@@ -119,7 +120,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def, const IasFrame& f) {
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

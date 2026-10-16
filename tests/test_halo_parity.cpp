@@ -30,6 +30,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::halo_smart_labs {
 extern const PreparedDefinition kDef_HALO;
@@ -87,7 +88,7 @@ DispatchResult dispatch_zs(const PreparedDefinition& def, std::uint8_t src_ep,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

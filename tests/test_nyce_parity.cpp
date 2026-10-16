@@ -41,6 +41,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::nyce {
 extern const PreparedDefinition kDef_NCZ_3010;     // contact (alarm_1 / bit 0)
@@ -80,7 +81,7 @@ DispatchResult dispatch_ias(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "ssIasZone";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -98,7 +99,7 @@ DispatchResult report_u16(const PreparedDefinition& def, std::uint16_t cluster,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -114,7 +115,7 @@ DispatchResult report_occupancy(const PreparedDefinition& def,
                           std::span<const std::uint8_t>(rep.data(), rep.size()));
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

@@ -25,6 +25,7 @@
 #include "definitions/tuya/_shared.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::saswell {
 extern const PreparedDefinition kDef_SEA801;
@@ -78,7 +79,7 @@ const char* decode_day(std::uint8_t dp, const std::uint8_t* bytes, const char* k
 }
 
 TzDispatchResult encode_day(const char* key, const char* program, std::uint8_t (&frame)[64]) {
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     Value v{}; v.type = ValueType::StringRef; v.str = program;
     return dispatch_to_zigbee(devices::saswell::kDef_SEA801, key, v, ctx, frame);
 }

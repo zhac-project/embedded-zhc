@@ -42,6 +42,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::amina {
 extern const PreparedDefinition kDef_amina_S;
@@ -93,7 +94,7 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def, std::uint16_t cluster
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -121,7 +122,8 @@ const Value* decode_one(const PreparedDefinition& def, std::uint16_t cluster,
                         const char* cname, std::uint16_t attr, std::uint8_t type,
                         const std::vector<std::uint8_t>& val, const char* key,
                         std::uint16_t mfg = 0) {
-    auto r = dispatch_zcl(def, cluster, cname, 10, attr_report(attr, type, val, mfg));
+    static DispatchResult r;   // the Value returned points into it
+    r = dispatch_zcl(def, cluster, cname, 10, attr_report(attr, type, val, mfg));
     assert(r.any_matched);
     return r.merged.find(key);
 }

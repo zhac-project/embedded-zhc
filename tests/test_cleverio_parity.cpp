@@ -30,6 +30,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/zcl/decoder.hpp"
 #include "zhc/types.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::cleverio {
 extern const PreparedDefinition kDef_SA100;  // siren  → IAS alarm-only
@@ -83,7 +84,7 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

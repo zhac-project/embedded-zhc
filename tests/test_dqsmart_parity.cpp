@@ -25,6 +25,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::dqsmart {
 extern const PreparedDefinition kDef_dqhome_re4;  // 4-gang on/off
@@ -50,7 +51,7 @@ DispatchResult dispatch(const PreparedDefinition& def, std::uint16_t cluster,
     auto raw = make_frame(cluster, src_ep, bytes);
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

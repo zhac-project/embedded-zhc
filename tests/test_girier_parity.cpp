@@ -29,6 +29,7 @@
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::girier {
 extern const PreparedDefinition kDef_JR_ZDS01;
@@ -89,7 +90,7 @@ DispatchResult dispatch(const PreparedDefinition& def, std::uint16_t cluster_id,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(cluster_id);
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

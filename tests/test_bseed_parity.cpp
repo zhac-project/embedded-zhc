@@ -30,6 +30,7 @@
 #include "zhc/runtime/definition_runtime.hpp"
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
+#include "test_ctx.hpp"
 
 using namespace zhc;
 
@@ -96,7 +97,7 @@ DispatchResult decode_value(const PreparedDefinition& def, std::uint8_t dp,
     };
     auto msg = make_dp_msg();
     auto raw = make_dp_raw();
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, std::span<const TuyaDpRecord>(recs, 1),
                                 def, raw, ctx);
 }

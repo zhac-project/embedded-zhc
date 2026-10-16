@@ -36,6 +36,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/zcl/decoder.hpp"
 #include "zhc/types.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::konke {
 extern const PreparedDefinition kDef_D2AJZ4KPFT;  // temp + humidity
@@ -90,7 +91,7 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_name;
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

@@ -37,6 +37,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 using namespace zhc;
 using Bytes = std::vector<std::uint8_t>;
@@ -76,7 +77,7 @@ DispatchResult report(const PreparedDefinition& def, std::uint16_t cluster, cons
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = cluster_id_to_name(cluster);
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -202,7 +203,8 @@ int main() {
     assert(is_uint(report(*one, 0x0008, {0x00, 0xF0, 0x21, 0xF4, 0x01}).merged.find("brightness"), 128));
     const auto rmb = report(*one, 0x0008, {0x00, 0xFC, 0x21, 0xFF, 0x14});   // 0x14FF
     assert(is_uint(rmb.merged.find("min_brightness"), 20) && !rmb.merged.find("brightness"));
-    const Value* on = report(*one, 0x0006, {0x00, 0x00, 0x10, 0x01}).merged.find("state");
+    const auto ron = report(*one, 0x0006, {0x00, 0x00, 0x10, 0x01});
+    const Value* on = ron.merged.find("state");
     assert(on && on->type == ValueType::Bool && on->b);
     assert(is_str(report(*one, 0xE001, {0x10, 0xD0, 0x30, 0x02}).merged.find("power_on_behavior"), "previous"));
     assert(is_str(report(*one, 0xE001, {0x30, 0xD0, 0x30, 0x02}).merged.find("switch_type"), "momentary"));
@@ -229,7 +231,8 @@ int main() {
 
     // Reports land on the channel they come from.
     assert(is_uint(report(*two, 0x0008, {0x00, 0x00, 0x20, 77}, 2).merged.find("brightness_l2"), 77));
-    const Value* on1 = report(*two, 0x0006, {0x00, 0x00, 0x10, 0x01}, 1).merged.find("state_l1");
+    const auto ron1 = report(*two, 0x0006, {0x00, 0x00, 0x10, 0x01}, 1);
+    const Value* on1 = ron1.merged.find("state_l1");
     assert(on1 && on1->type == ValueType::Bool && on1->b);
     assert(is_str(report(*two, 0xE001, {0x10, 0xD0, 0x30, 0x00}, 2).merged.find("power_on_behavior_l2"), "off"));
     assert(is_uint(report(*two, 0x0008, {0x00, 0xFC, 0x21, 0xFF, 0x0A}, 1).merged.find("min_brightness_l1"), 10));

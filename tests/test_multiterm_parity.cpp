@@ -35,6 +35,7 @@
 #include "zhc/runtime/dispatch.hpp"
 #include "zhc/types.hpp"
 #include "zhc/zcl/decoder.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::multiterm {
 extern const PreparedDefinition kDef_ZC0101;
@@ -82,7 +83,7 @@ DispatchResult run_bin_out(const PreparedDefinition& def, std::uint8_t src_ep,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "genBinaryOutput";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
@@ -104,7 +105,7 @@ DispatchResult run_fan(const PreparedDefinition& def, std::uint8_t src_ep,
     DecodedMessage msg{};
     assert(decode_frame(raw, {}, msg));
     msg.cluster = "hvacFanCtrl";
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 

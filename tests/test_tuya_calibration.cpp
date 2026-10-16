@@ -25,6 +25,7 @@
 #include "definitions/tuya/_shared.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/dispatch.hpp"
+#include "test_ctx.hpp"
 
 namespace zhc::devices::tuya {
 extern const PreparedDefinition kDef__TZE284_agcxaw3f;
@@ -62,7 +63,7 @@ const Value* decode_dp19(std::span<const std::uint8_t> payload,
     const TuyaDpRecord recs[] = { { 19, 0x02, payload } };
     auto msg = make_msg();
     auto raw = make_raw();
-    RuntimeContext ctx{};
+    RuntimeContext& ctx = test_ctx();
     keep_alive = dispatch_from_zigbee(
         msg, std::span<const TuyaDpRecord>(recs, 1),
         devices::tuya::kDef__TZE284_agcxaw3f, raw, ctx);
