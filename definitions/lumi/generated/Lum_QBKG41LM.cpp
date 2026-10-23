@@ -28,11 +28,6 @@ constexpr const char* kModels_QBKG41LM[] = { "lumi.switch.b2nc01" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0xFCC0},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_QBKG41LM{
@@ -45,7 +40,6 @@ extern const PreparedDefinition kDef_QBKG41LM{
     .from_zigbee=kFz_QBKG41LM, .from_zigbee_count=sizeof(kFz_QBKG41LM)/sizeof(kFz_QBKG41LM[0]),
     .to_zigbee=kTz_QBKG41LM, .to_zigbee_count=sizeof(kTz_QBKG41LM)/sizeof(kTz_QBKG41LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

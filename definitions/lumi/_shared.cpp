@@ -1414,6 +1414,37 @@ extern const FzConverter kFzOccupancy{
     .user_config       = nullptr,
 };
 
+// z2m lumi_illuminance: raw lux, and motion -- the sensor sends it only when
+// it sees someone. The definition's occupancy_timeout clears it again.
+bool fz_lumi_illuminance(const DecodedMessage& msg,
+                         const FzConverter&,
+                         const PreparedDefinition&,
+                         RuntimeContext&,
+                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("0");  // measuredValue
+    if (!v || v->type != ValueType::Uint) return false;
+    Value lux{}; lux.type = ValueType::Uint; lux.u = v->u;
+    out.put("illuminance", lux);
+    Value o{}; o.type = ValueType::Bool; o.b = true;
+    out.put("occupancy", o);
+    return true;
+}
+
+extern const FzConverter kFzLumiIlluminance{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "msIlluminanceMeasurement",
+    .type_mask         = type_bit(MessageType::AttributeReport) |
+                         type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_lumi_illuminance },
+    .user_config       = nullptr,
+};
+
 // ── fz_lumi_specific ────────────────────────────────────────────────
 
 namespace {

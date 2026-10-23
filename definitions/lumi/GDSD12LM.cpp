@@ -32,9 +32,6 @@ constexpr Expose kExp[] = {
 constexpr const char* kM[] = { "lumi.light.acn037" };
 constexpr WhiteLabel kWL[] = { {"Aqara", "GDGSD13LM"} };
 constexpr BindingSpec kBind[] = {
-    {1, 0x0006},
-    {1, 0x0008},
-    {1, 0x0300},
     {1, 0x0B04},
     {1, 0x0702},
 };

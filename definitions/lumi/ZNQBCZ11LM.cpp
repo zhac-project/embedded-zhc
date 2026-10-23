@@ -24,10 +24,6 @@ constexpr Expose kAutoExposes[] = {
     {"button_lock", ExposeType::Binary, Access::StateSet, nullptr,
      "Disables the physical switch button", nullptr, 0, ExposeCategory::Config},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefZNQBCZ11LM{
@@ -39,6 +35,5 @@ extern const PreparedDefinition kDefZNQBCZ11LM{
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee = kTz, .to_zigbee_count = sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 }

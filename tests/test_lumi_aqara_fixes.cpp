@@ -636,17 +636,15 @@ void item4_legacy_heartbeat() {
 // ── 5  bindings ──────────────────────────────────────────────────────
 //
 // z2m binds manuSpecificLumi only on the H1/H2 EU switches' button endpoints and the
-// FP300; none of these eleven. Their other bindings stay as they were.
+// FP300; none of these eleven. The sensors bind nothing at all: z2m makes no bind on
+// them (Basic and Occupancy came from the generator, and a sleeping sensor never
+// answered them). ZNCZ15LM keeps the binds its reporting needs.
 void item5_bindings() {
     struct Want { const char* model; std::vector<BindingSpec> binds; };
     const Want wants[] = {
-        {"MCCGQ13LM", {{1, 0x0000}}},  {"MCCGQ14LM", {{1, 0x0000}}},
-        {"MCCGQ16LM", {{1, 0x0000}}},  {"MCCGQ17LM", {{1, 0x0000}}},
-        {"MCCGQ18LM", {{1, 0x0000}}},  {"MCCGQ19LM", {{1, 0x0000}}},
-        {"RTCGQ13LM", {{1, 0x0000}, {1, 0x0406}}},
-        {"RTCGQ14LM", {{1, 0x0406}, {1, 0x0000}}},
-        {"RTCGQ15LM", {{1, 0x0000}, {1, 0x0406}}},
-        {"RTCGQ16LM", {{1, 0x0000}, {1, 0x0406}}},
+        {"MCCGQ13LM", {}}, {"MCCGQ14LM", {}}, {"MCCGQ16LM", {}}, {"MCCGQ17LM", {}},
+        {"MCCGQ18LM", {}}, {"MCCGQ19LM", {}}, {"RTCGQ13LM", {}}, {"RTCGQ14LM", {}},
+        {"RTCGQ15LM", {}}, {"RTCGQ16LM", {}},
         {"ZNCZ15LM", {{1, 0x0006}, {1, 0x0702}, {1, 0x0B04}}},
     };
     for (const Want& w : wants) {
@@ -658,8 +656,10 @@ void item5_bindings() {
             ++i;
         }
     }
+    // z2m binds genBasic on no Aqara/Xiaomi device (its configure() checked 2026-10-23).
     each_lumi([](const PreparedDefinition& def) {
-        for (std::uint8_t i = 0; i < def.bindings_count; ++i) assert(def.bindings[i].cluster_id != 0xFCC0);
+        for (std::uint8_t i = 0; i < def.bindings_count; ++i)
+            assert(def.bindings[i].cluster_id != 0xFCC0 && def.bindings[i].cluster_id != 0x0000);
     });
 }
 
@@ -958,11 +958,12 @@ void item7_split() {
             assert(false);
         }
     }
-    // The three they came out of keep everything but that fingerprint.
+    // The three they came out of keep everything but that fingerprint, and bind
+    // nothing, as z2m.
     struct Shape { const char* model; const char* fp; std::uint8_t fz, tz, exposes, binds, steps; };
-    for (const Shape& s : {Shape{"QBKG21LM", "lumi.switch.b1lacn02", 4, 4, 6, 2, 0},
-                           Shape{"QBKG22LM", "lumi.switch.b2lacn02", 4, 5, 7, 2, 0},
-                           Shape{"WS-EUK03", "lumi.switch.n1aeu1", 5, 4, 4, 2, 1}}) {
+    for (const Shape& s : {Shape{"QBKG21LM", "lumi.switch.b1lacn02", 4, 4, 6, 0, 0},
+                           Shape{"QBKG22LM", "lumi.switch.b2lacn02", 4, 5, 7, 0, 0},
+                           Shape{"WS-EUK03", "lumi.switch.n1aeu1", 5, 4, 4, 0, 1}}) {
         const auto& d = def_of(s.model);
         assert(d.zigbee_models_count == 1 && std::strcmp(d.zigbee_models[0], s.fp) == 0);
         if (d.from_zigbee_count != s.fz || d.to_zigbee_count != s.tz || d.exposes_count != s.exposes ||

@@ -10,6 +10,27 @@ across the ZHAC platform.
 
 ### Changed
 
+- **Aqara/Xiaomi devices are bound only where z2m binds them.** The
+  generator (`tools/emit_expose_bindings.py`) gave every Aqara/Xiaomi
+  definition a bind per decoder — Basic for the heartbeat, OnOff, IAS Zone,
+  Occupancy, … — which z2m never makes: it binds these devices per model in
+  configure, and for most of them not at all. A sleepy sensor never answers
+  the bind, so its configure failed five times, then was re-run (and failed)
+  on every wake: on one hub an RTCGQ11LM and a WSDCGQ11LM logged nine failed
+  binds in seven minutes. Each definition now keeps only the binds z2m
+  26.115.1's own configure() makes for that model (run against a stand-in
+  device that claims every cluster, so a bind z2m makes only on some
+  hardware is kept). 350 definitions changed: 361 bound something, 103 still
+  do, and the rest finish configure at once. For the 77 with no z2m
+  definition, only clusters z2m binds on no Aqara/Xiaomi device at all were
+  dropped (Basic, Occupancy, Analog Output). A cluster a definition sets up
+  reporting for stays bound: ZNCZ15LM keeps all its binds and ZNCZ02LM keeps
+  OnOff, though z2m 26.115.1 no longer binds or reports anything on the
+  ZNCZ02LM. The generator no longer adds bindings under `definitions/lumi`.
+- **RTCGQ11LM shows illuminance.** It had no decoder for
+  msIlluminanceMeasurement, so every report was dropped. It now follows z2m's
+  `lumi_illuminance`: lux as reported, and the report also counts as motion
+  (the sensor sends it only when it sees someone).
 - **Illuminance is published in lux, as z2m does.** The generic
   msIlluminanceMeasurement decoder (`kFzIlluminance`) published the raw
   register — 10000·log10(lux)+1 — under the lux unit, so 1000 lx showed as

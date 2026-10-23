@@ -29,11 +29,6 @@ constexpr Expose kAutoExposes[] = {
     {"detection_period", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0},
     {"trigger_indicator", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-    {1, 0x0406},
-};
 // --- end auto-generated block ---
 
 
@@ -46,7 +41,6 @@ extern const PreparedDefinition kDefRTCGQ15LM{
     .from_zigbee = kFz, .from_zigbee_count = sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee = nullptr, .to_zigbee_count = 0,
     .configure = nullptr, .on_event = nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
     // z2m lumi_occupancy_illuminance: the hub clears occupancy detection_interval (60) + 2 s after the last motion.
     .occupancy_timeout = 62,
 };

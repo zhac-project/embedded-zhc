@@ -43,13 +43,6 @@ constexpr Expose kExposes_HCXDD13LM[] = {
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
-constexpr BindingSpec kBindings_HCXDD13LM[] = {
-    {1, 0x0000},   // genBasic (lumi 0xFCC0 rides here)
-    {1, 0x0006},   // genOnOff
-    {1, 0x0008},   // genLevelCtrl
-    {1, 0x0300},   // lightingColorCtrl
-};
-
 }  // namespace
 
 extern const PreparedDefinition kDefHCXDD13LM{
@@ -63,8 +56,6 @@ extern const PreparedDefinition kDefHCXDD13LM{
     .from_zigbee=FX::fz_list, .from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list, .to_zigbee_count=FX::tz_count,
     .configure=nullptr, .on_event=nullptr,
-    .bindings=kBindings_HCXDD13LM,
-    .bindings_count=sizeof(kBindings_HCXDD13LM)/sizeof(kBindings_HCXDD13LM[0]),
 };
 
 }  // namespace zhc::devices::lumi

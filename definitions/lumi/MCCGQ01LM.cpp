@@ -32,10 +32,6 @@ constexpr Expose kAutoExposes[] = {
     {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-};
 // --- end auto-generated block ---
 
 
@@ -54,7 +50,6 @@ extern const PreparedDefinition kDefMCCGQ01LM{
     .to_zigbee_count     = 0,
     .configure           = nullptr,
     .on_event            = nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

@@ -54,7 +54,6 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0402},  // msTemperatureMeasurement
     {1, 0x0405},  // msRelativeHumidity
     {1, 0x0400},  // msIlluminanceMeasurement
-    {1, 0x0406},  // msOccupancySensing
 };
 
 extern const PreparedDefinition kDefFP310{

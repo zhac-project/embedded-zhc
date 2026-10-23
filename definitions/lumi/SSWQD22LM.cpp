@@ -34,12 +34,6 @@ constexpr Expose kAutoExposes[] = {
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},  // genBasic
-    {1, 0x0006},  // genOnOff
-    {1, 0x0008},  // genLevelCtrl
-};
-
 extern const PreparedDefinition kDefSSWQD22LM{
     .zigbee_models=kZigbeeModels,.zigbee_models_count=sizeof(kZigbeeModels)/sizeof(kZigbeeModels[0]),
     .model="SSWQD22LM",.vendor="Xiaomi",
@@ -49,6 +43,5 @@ extern const PreparedDefinition kDefSSWQD22LM{
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 }  // namespace zhc::devices::lumi

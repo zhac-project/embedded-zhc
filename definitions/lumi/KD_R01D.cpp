@@ -28,11 +28,6 @@ constexpr Expose kAutoExposes[] = {
      "Decoupled mode for knob",
      ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-    {1, 0x0012},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefKD_R01D{
@@ -44,6 +39,5 @@ extern const PreparedDefinition kDefKD_R01D{
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee = kTz, .to_zigbee_count = sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 }

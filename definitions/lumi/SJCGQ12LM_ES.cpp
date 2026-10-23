@@ -27,9 +27,7 @@ constexpr Expose kExposes[] = {
     {"water_leak",  ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
 };
-constexpr BindingSpec kBindings[] = {
-    {1, 0x0500},
-};
+
 }  // namespace
 
 extern const PreparedDefinition kDefSJCGQ12LM_ES{
@@ -41,6 +39,5 @@ extern const PreparedDefinition kDefSJCGQ12LM_ES{
     .from_zigbee = kFz, .from_zigbee_count = sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee = nullptr, .to_zigbee_count = 0,
     .configure = nullptr, .on_event = nullptr,
-    .bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
 };
 }  // namespace zhc::devices::lumi

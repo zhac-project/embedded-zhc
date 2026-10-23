@@ -48,12 +48,6 @@ constexpr Expose kAutoExposes[] = {
     {"angle",             ExposeType::Numeric, Access::State, "deg", nullptr, nullptr, 0},
     {"action_angle",      ExposeType::Numeric, Access::State, "deg", nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-    {1, 0x0012},
-    {1, 0x000C},
-};
 // --- end auto-generated block ---
 
 
@@ -69,6 +63,5 @@ extern const PreparedDefinition kDefMFKZQ01LM{
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 }

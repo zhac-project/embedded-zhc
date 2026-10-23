@@ -81,8 +81,9 @@ constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
 
+// genOnOff stays bound for the onOff reporting below, though z2m 26.115.1
+// no longer binds or reports anything on this plug.
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
     {1, 0x0006},
 };
 // --- end auto-generated block ---

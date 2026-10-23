@@ -50,10 +50,6 @@ constexpr Expose kAutoExposes[] = {
     {"duration", ExposeType::Numeric, Access::State, "ms", nullptr, nullptr, 0},
     {"click_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-};
 // --- end auto-generated block ---
 
 // Lumi mfg-specific Read of Basic-cluster attr 0xFF01 — wakes old
@@ -93,7 +89,6 @@ extern const PreparedDefinition kDefWXKG01LM{
     .to_zigbee_count    = 0,
     .configure          = nullptr,
     .on_event           = nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
     .config_steps       = kConfigSteps,
     .config_steps_count = sizeof(kConfigSteps) / sizeof(kConfigSteps[0]),
 };

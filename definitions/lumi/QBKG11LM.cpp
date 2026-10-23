@@ -88,11 +88,6 @@ constexpr Expose kExposes[] = {
      ExposeCategory::Config},
 };
 
-constexpr BindingSpec kBindings[] = {
-    {1, 0x0000},
-    {1, 0x0006},
-};
-
 extern const PreparedDefinition kDefQBKG11LM{
     .zigbee_models=kZigbeeModels,.zigbee_models_count=sizeof(kZigbeeModels)/sizeof(kZigbeeModels[0]),
     .model               = "QBKG11LM",
@@ -108,7 +103,6 @@ extern const PreparedDefinition kDefQBKG11LM{
     .to_zigbee_count     = sizeof(kTz)/sizeof(kTz[0]),
     .configure           = nullptr,
     .on_event            = nullptr,
-.bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
     // z2m m.forcePowerSource({powerSource: "Mains (single phase)"}).
     .power_source_override=0x01,
 };

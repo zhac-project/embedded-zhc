@@ -32,12 +32,6 @@ constexpr Expose kAutoExposes[] = {
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0001},
-    {1, 0x0500},
-    {1, 0xFCC0},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_RTCGQ12LM{
@@ -50,7 +44,6 @@ extern const PreparedDefinition kDef_RTCGQ12LM{
     .from_zigbee=kFz_RTCGQ12LM, .from_zigbee_count=sizeof(kFz_RTCGQ12LM)/sizeof(kFz_RTCGQ12LM[0]),
     .to_zigbee=kTz_RTCGQ12LM, .to_zigbee_count=sizeof(kTz_RTCGQ12LM)/sizeof(kTz_RTCGQ12LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

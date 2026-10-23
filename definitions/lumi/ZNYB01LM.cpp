@@ -52,13 +52,6 @@ constexpr Expose kExposes[] = {
     {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", "Colour temperature", nullptr, 0},
 };
 
-constexpr BindingSpec kBindings[] = {
-    {1, 0x0000},
-    {1, 0x0006},
-    {1, 0x0008},
-    {1, 0x0300},
-};
-
 }  // namespace
 
 extern const PreparedDefinition kDef_ZNYB01LM{
@@ -76,8 +69,6 @@ extern const PreparedDefinition kDef_ZNYB01LM{
     .to_zigbee_count     = FX::tz_count,
     .configure           = nullptr,
     .on_event            = nullptr,
-    .bindings            = kBindings,
-    .bindings_count      = sizeof(kBindings)/sizeof(kBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

@@ -28,11 +28,6 @@ constexpr const char* kModels_WS_EUK02[] = { "lumi.switch.l2aeu1" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0xFCC0},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_WS_EUK02{
@@ -45,7 +40,6 @@ extern const PreparedDefinition kDef_WS_EUK02{
     .from_zigbee=kFz_WS_EUK02, .from_zigbee_count=sizeof(kFz_WS_EUK02)/sizeof(kFz_WS_EUK02[0]),
     .to_zigbee=kTz_WS_EUK02, .to_zigbee_count=sizeof(kTz_WS_EUK02)/sizeof(kTz_WS_EUK02[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

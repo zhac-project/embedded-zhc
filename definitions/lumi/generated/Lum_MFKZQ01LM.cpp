@@ -25,10 +25,6 @@ constexpr const char* kModels_MFKZQ01LM[] = { "lumi.sensor_cube", "lumi.sensor_c
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_MFKZQ01LM{
@@ -41,7 +37,6 @@ extern const PreparedDefinition kDef_MFKZQ01LM{
     .from_zigbee=kFz_MFKZQ01LM, .from_zigbee_count=sizeof(kFz_MFKZQ01LM)/sizeof(kFz_MFKZQ01LM[0]),
     .to_zigbee=kTz_MFKZQ01LM, .to_zigbee_count=sizeof(kTz_MFKZQ01LM)/sizeof(kTz_MFKZQ01LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

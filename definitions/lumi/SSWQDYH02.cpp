@@ -41,13 +41,6 @@ constexpr Expose kExposes[] = {
     {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", "Colour temperature",  nullptr, 0},
 };
 
-constexpr BindingSpec kBindings[] = {
-    {1, 0x0000},
-    {1, 0x0006},
-    {1, 0x0008},
-    {1, 0x0300},
-};
-
 constexpr WhiteLabel kWhiteLabels[] = {
     {"Aqara", "ZNSD01LM"},
     {"Aqara", "ZNSD02LM"},
@@ -71,8 +64,6 @@ extern const PreparedDefinition kDef_SSWQDYH02{
     .to_zigbee_count     = FX::tz_count,
     .configure           = nullptr,
     .on_event            = nullptr,
-    .bindings            = kBindings,
-    .bindings_count      = sizeof(kBindings)/sizeof(kBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

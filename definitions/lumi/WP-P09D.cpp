@@ -69,14 +69,9 @@ constexpr Expose kExposes_WP_P09D[] = {
 };
 
 constexpr BindingSpec kBindings_WP_P09D[] = {
-    {1, 0x0000},   // genBasic — lumi 0xFCC0 rides here
     {1, 0x0006},   // genOnOff — socket 1
     {2, 0x0006},   // genOnOff — socket 2
     {3, 0x0006},   // genOnOff — USB
-    {1, 0x0B04},   // haElectricalMeasurement — whole outlet
-    {2, 0x0B04},   // haElectricalMeasurement — socket 1 + USB
-    {3, 0x0B04},   // haElectricalMeasurement — socket 2
-    {1, 0x0702},   // seMetering — energy
 };
 
 }  // namespace

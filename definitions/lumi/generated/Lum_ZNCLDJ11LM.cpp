@@ -25,10 +25,6 @@ constexpr const char* kModels_ZNCLDJ11LM[] = { "lumi.curtain" };
 constexpr Expose kAutoExposes[] = {
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0102},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_ZNCLDJ11LM{
@@ -41,7 +37,6 @@ extern const PreparedDefinition kDef_ZNCLDJ11LM{
     .from_zigbee=kFz_ZNCLDJ11LM, .from_zigbee_count=sizeof(kFz_ZNCLDJ11LM)/sizeof(kFz_ZNCLDJ11LM[0]),
     .to_zigbee=kTz_ZNCLDJ11LM, .to_zigbee_count=sizeof(kTz_ZNCLDJ11LM)/sizeof(kTz_ZNCLDJ11LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

@@ -39,7 +39,6 @@ constexpr BindingSpec kAutoBindings[] = {
 // independent loops, so a report on cluster 0x0002 needs 0x0002 bound.
 // z2m-source: lumi.ts #SSM-U01 reporting.bind(genOnOff, genDeviceTempCfg).
 constexpr BindingSpec kBindings[] = {
-    {1, 0x0000},    // genBasic
     {1, 0x0006},    // genOnOff
     {1, 0x0002},    // genDeviceTempCfg
 };

@@ -482,6 +482,16 @@ bool fz_occupancy(const DecodedMessage& msg,
 
 extern const FzConverter kFzOccupancy;
 
+// z2m lumi.fromZigbee.lumi_illuminance (RTCGQ11LM): msIlluminanceMeasurement
+// → `illuminance` (raw lux) plus `occupancy` true.
+bool fz_lumi_illuminance(const DecodedMessage& msg,
+                         const FzConverter& self,
+                         const PreparedDefinition& def,
+                         RuntimeContext& ctx,
+                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
+extern const FzConverter kFzLumiIlluminance;
+
 // ── fz_lumi_specific + TagMap ──────────────────────────────────────
 //
 // Extends `fz_lumi_basic` to decode the richer Xiaomi / Aqara TLV tag
