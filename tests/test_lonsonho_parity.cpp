@@ -206,8 +206,9 @@ static void test_rgbcw_colour_surface() {
     assert(def_binds(def, 0x0300) && "colour bulb binds lightingColorCtrl");
     // It must resolve for an eWeLink ZB-CL01 variant (cross-product manu list).
     assert(registry_resolves("ZB-RGBCW", "eWeLink"));
-    // "eWeLi" + 0x01 0x00 0x10 as the hub stores it (zigbee_copy_text, review 2026-10-24 ZR-03).
-    assert(registry_resolves("ZB-RGBCW", "eWeLi???"));
+    // "eWeLi" + 0x01 0x00 0x10 as the hub stores it: 0x01 as '?', and the NUL ends the text
+    // (zigbee_copy_text, review 2026-10-24 ZR-03; zhac-components zigbee_mgr G14 checks the same).
+    assert(registry_resolves("ZB-RGBCW", "eWeLi?"));
 }
 
 int main() {

@@ -16,8 +16,9 @@ across the ZHAC platform.
   and the matcher compares exactly. The Aqara SJCGQ12LM-ES engineering build
   (modelID `lumi.flood.agl02` + TAB + `F` + 0x01) is now `"lumi.flood.agl02?F?"`,
   so it is matched as itself again instead of as the production SJCGQ12LM; the
-  Lonsonho ZB-RGBCW manufacturer `eWeLi` + 0x01 0x00 0x10 is now `"eWeLi???"` (the
-  old literal stopped at its NUL byte). zhac-tools' generator must emit the same
+  Lonsonho ZB-RGBCW manufacturer `eWeLi` + 0x01 0x00 0x10 is now `"eWeLi?"`: the
+  0x01 becomes `?` and the NUL ends the stored text (zhac-components' zigbee_mgr host
+  test G14 checks both stored forms). zhac-tools' generator must emit the same
   form for these (private ticket).
 
 - **Thermostat temperatures are published and written in °C, as z2m does.**
