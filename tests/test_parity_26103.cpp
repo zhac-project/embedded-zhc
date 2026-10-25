@@ -265,8 +265,10 @@ void test_fingerprints() {
     check(has_manu(devices::tuya::kDef_MG_DIM02Z, "_TZE284_da26abzz"), "MG-DIM02Z");
     check(std::strcmp(devices::rti_tek::kDef_STHZB.model, "STHZB") == 0, "STH1Z renamed STHZB");
     const auto& es = devices::lumi::kDefSJCGQ12LM_ES;
-    check(std::strcmp(es.zigbee_models[0], "lumi.flood.agl02\tF\x01") == 0 &&
-          std::strlen(es.zigbee_models[0]) == 19, "SJCGQ12LM-ES modelID keeps \\t F \\x01");
+    // The hub stores device text JSON-safe (zhac-components zigbee_copy_text, review 2026-10-24
+    // ZR-03: a control byte becomes '?'), so the literal is the modelID as stored, not as sent.
+    check(std::strcmp(es.zigbee_models[0], "lumi.flood.agl02?F?") == 0,
+          "SJCGQ12LM-ES modelID as the hub stores it (\\t and \\x01 as ?)");
     check(has_expose(devices::lumi::kDefSJCGQ12LM, "water_leak"), "SJCGQ12LM water_leak wired");
 }
 

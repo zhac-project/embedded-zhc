@@ -10,6 +10,16 @@ across the ZHAC platform.
 
 ### Changed
 
+- **Two identity strings are written as the hub now stores them.** zhac-components
+  stores a device's model and manufacturer text JSON-safe, each control byte or
+  invalid UTF-8 byte as `?` (`zigbee_copy_text`, firmware review 2026-10-24 ZR-03),
+  and the matcher compares exactly. The Aqara SJCGQ12LM-ES engineering build
+  (modelID `lumi.flood.agl02` + TAB + `F` + 0x01) is now `"lumi.flood.agl02?F?"`,
+  so it is matched as itself again instead of as the production SJCGQ12LM; the
+  Lonsonho ZB-RGBCW manufacturer `eWeLi` + 0x01 0x00 0x10 is now `"eWeLi???"` (the
+  old literal stopped at its NUL byte). zhac-tools' generator must emit the same
+  form for these (private ticket).
+
 - **Thermostat temperatures are published and written in °C, as z2m does.**
   The generic hvacThermostat decoder (`kFzThermostat`, 173 definitions)
   published `local_temperature` and `current_heating_setpoint` as the raw
