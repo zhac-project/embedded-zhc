@@ -177,8 +177,8 @@ static void test_r08_decodes_local_temperature() {
 
     assert(result.any_matched);
     const Value* t = result.merged.find("local_temperature");
-    assert(t && t->type == ValueType::Int);
-    assert(t->i == 2346);
+    assert(t && t->type == ValueType::Float);
+    assert(t->f == 23.46f);
 }
 
 static void test_r08_decodes_setpoint() {
@@ -194,8 +194,8 @@ static void test_r08_decodes_setpoint() {
 
     assert(result.any_matched);
     const Value* s = result.merged.find("current_heating_setpoint");
-    assert(s && s->type == ValueType::Int);
-    assert(s->i == 3000);
+    assert(s && s->type == ValueType::Float);
+    assert(s->f == 30.0f);
 }
 
 static void test_r08_decodes_system_mode() {

@@ -135,13 +135,13 @@ void check_thermostat(const PreparedDefinition& def) {
     assert(def_exposes(def, "system_mode"));
     assert(def_exposes(def, "running_state"));
 
-    // LocalTemperature (0x0000 s16) = 0x0834 = 2100 (21.00 °C raw int).
+    // LocalTemperature (0x0000 s16) = 0x0834 = 2100 → 21.0 °C.
     const std::uint8_t lt[] = {0x34, 0x08};
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0000, 0x29, lt));
     assert(rt.any_matched);
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     // SystemMode (0x001C u8) raw enum passes through.
     const std::uint8_t sm[] = {0x04};

@@ -151,7 +151,7 @@ void check_d106_03() {
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 }
 
 // ── 170-01 Emma: cooling setpoint + running_state + calibration +
@@ -170,13 +170,13 @@ void check_d170_01() {
     assert(def_exposes(def, "system_mode"));
 
     // ── Parity fix 1: attr 0x0011 OccupiedCoolingSetpoint, s16 =
-    //    0x0898 = 2200 → occupied_cooling_setpoint (raw, runtime /100). ──
+    //    0x0898 = 2200 → occupied_cooling_setpoint (→ 22.0 °C). ──
     const std::uint8_t cool[] = {0x98, 0x08};
     auto rc = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0011, 0x29, cool));
     assert(rc.any_matched);
     const Value* cv = rc.merged.find("occupied_cooling_setpoint");
-    assert(cv && cv->type == ValueType::Int && cv->i == 2200);
+    assert(cv && cv->type == ValueType::Float && cv->f == 22.0f);
 
     // ── Parity fix 2: attr 0x0029 ThermostatRunningState, map16. ──
     //   2 → "cool"
@@ -197,22 +197,22 @@ void check_d170_01() {
     assert(streq(ri.merged.find("running_state"), "idle"));
 
     // ── Parity fix 3: attr 0x0010 LocalTemperatureCalibration, s8 =
-    //    0xFB = -5 → local_temperature_calibration (raw Int). ──
+    //    0xFB = -5 → local_temperature_calibration (→ -0.5 °C). ──
     const std::uint8_t cal[] = {0xFB};   // s8 -5
     auto rcal = dispatch_zcl(def, 0x0201, "hvacThermostat",
                              attr_report(0x0010, 0x28, cal));
     assert(rcal.any_matched);
     const Value* clv = rcal.merged.find("local_temperature_calibration");
-    assert(clv && clv->type == ValueType::Int && clv->i == -5);
+    assert(clv && clv->type == ValueType::Float && clv->f == -0.5f);
 
     // ── Parity fix 4: attr 0x0001 OutdoorTemperature, s16 =
-    //    0x04B0 = 1200 → outdoor_temperature (raw, runtime /100). ──
+    //    0x04B0 = 1200 → outdoor_temperature (→ 12.0 °C). ──
     const std::uint8_t out[] = {0xB0, 0x04};
     auto ro = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0001, 0x29, out));
     assert(ro.any_matched);
     const Value* ov = ro.merged.find("outdoor_temperature");
-    assert(ov && ov->type == ValueType::Int && ov->i == 1200);
+    assert(ov && ov->type == ValueType::Float && ov->f == 12.0f);
 
     // ── Parity fix 5: attr 0x0008 PIHeatingDemand → boiler_setpoint (Emma
     //    overload, def-local converter). 60 → 60. ──
@@ -234,14 +234,14 @@ void check_d170_01() {
     auto rsp = dispatch_zcl(def, 0x0201, "hvacThermostat",
                             attr_report(0x0012, 0x29, sp));
     const Value* sv = rsp.merged.find("current_heating_setpoint");
-    assert(sv && sv->type == ValueType::Int && sv->i == 2000);
+    assert(sv && sv->type == ValueType::Float && sv->f == 20.0f);
 
     // ── Regression: manuSpec boiler_water_temperature (0xF002 INT16). ──
     const std::uint8_t bwt[] = {0xA4, 0x0E};   // 0x0EA4 = 3748 → 37.48 °C raw
     auto rbw = dispatch_zcl(def, 0x0201, "hvacThermostat",
                             attr_report_mfg(0xF002, 0x29, bwt));
     const Value* bwv = rbw.merged.find("boiler_water_temperature");
-    assert(bwv && bwv->type == ValueType::Int && bwv->i == 3748);
+    assert(bwv && bwv->type == ValueType::Float && bwv->f == 37.48f);
 }
 
 // ── 158-01 Lisa: pure generic thermostat (regression only) ────────────
@@ -260,7 +260,7 @@ void check_d158_01() {
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     const std::uint8_t sm[] = {0x01};   // auto
     auto rm = dispatch_zcl(def, 0x0201, "hvacThermostat",

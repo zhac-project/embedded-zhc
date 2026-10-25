@@ -29,10 +29,11 @@ namespace zhc::devices::plugwise {
 // the manufacturer-specific 0x40xx/0xF0xx attributes AND the standard
 // ZCL attributes that the generic kFzThermostat skips (it only handles
 // 0x0000 / 0x0012 / 0x001C):
-//   0x0001 OutdoorTemperature (INT16)           -> "outdoor_temperature"
+// (every temperature in °C):
+//   0x0001 OutdoorTemperature (INT16)           -> "outdoor_temperature" (/100)
 //   0x0008 PIHeatingDemand (UINT8, 0..100)      -> "pi_heating_demand"
-//   0x0010 LocalTemperatureCalibration (INT8)   -> "local_temperature_calibration"
-//   0x0011 OccupiedCoolingSetpoint (INT16)      -> "occupied_cooling_setpoint"
+//   0x0010 LocalTemperatureCalibration (INT8)   -> "local_temperature_calibration" (/10)
+//   0x0011 OccupiedCoolingSetpoint (INT16)      -> "occupied_cooling_setpoint" (/100)
 //   0x0029 ThermostatRunningState (MAP16)       -> "running_state" (idle/heat/cool/fan_only)
 // Manufacturer-specific (mfg 0x1172) attributes:
 //   0x4001 plugwiseValvePosition (UINT8)        -> "valve_position"
@@ -41,7 +42,7 @@ namespace zhc::devices::plugwise {
 //   0x4008 plugwiseTDiff INT16                  -> "plugwise_t_diff"
 //   0x4012 plugwisePushForce UINT32             -> "force" (lookup -> "standard"/"high"/"very_high")
 //   0x4014 plugwiseRadioStrength BOOLEAN        -> "radio_strength" ("normal"/"high")
-//   0xF000 plugwiseExternalHeatDemand UINT16    -> "external_heat_demand"
+//   0xF000 plugwiseExternalHeatDemand UINT16    -> "external_heat_demand" (/100)
 //   0xF001 plugwiseExternalHeatDemandTimeout    -> "external_heat_demand_timeout"
 //   0xF002 plugwiseBoilerWaterTemp INT16        -> "boiler_water_temperature" (/100)
 //   0xF003 plugwiseDhwTemp INT16                -> "dhw_temperature" (/100)

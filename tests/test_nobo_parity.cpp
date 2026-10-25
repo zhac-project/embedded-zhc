@@ -87,8 +87,8 @@ bool str_is(const Value* v, const char* s) {
     return v && v->type == ValueType::StringRef && v->str && std::strcmp(v->str, s) == 0;
 }
 
-bool int_is(const Value* v, std::int64_t i) {
-    return v && v->type == ValueType::Int && v->i == i;
+bool celsius_is(const Value* v, float c) {
+    return v && v->type == ValueType::Float && v->f == c;
 }
 
 // Exercise the full thermostat surface for one Nobø def.
@@ -105,31 +105,31 @@ void check_thermostat(const PreparedDefinition& def) {
     assert(!def_exposes(def, "voltage"));
     assert(!def_exposes(def, "current_heating_setpoint"));
 
-    // local_temperature (0x0000 s16) = 2100 (21.00 °C raw), bare key.
+    // local_temperature (0x0000 s16) = 2100 → 21.0 °C, bare key.
     {
         const std::uint8_t b[] = {0x34, 0x08};
         auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                               attr_report(0x0000, 0x29, b));
         assert(r.any_matched);
-        assert(int_is(r.merged.find("local_temperature"), 2100));
+        assert(celsius_is(r.merged.find("local_temperature"), 21.0f));
     }
-    // occupied_heating_setpoint (0x0012 s16) = 2000 — NOT the generic
+    // occupied_heating_setpoint (0x0012 s16) = 2000 → 20.0 °C — NOT the generic
     // dead key current_heating_setpoint.
     {
         const std::uint8_t b[] = {0xD0, 0x07};
         auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                               attr_report(0x0012, 0x29, b));
         assert(r.any_matched);
-        assert(int_is(r.merged.find("occupied_heating_setpoint"), 2000));
+        assert(celsius_is(r.merged.find("occupied_heating_setpoint"), 20.0f));
         assert(r.merged.find("current_heating_setpoint") == nullptr);
     }
-    // unoccupied_heating_setpoint (0x0014 s16) = 1600.
+    // unoccupied_heating_setpoint (0x0014 s16) = 1600 → 16.0 °C.
     {
         const std::uint8_t b[] = {0x40, 0x06};
         auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                               attr_report(0x0014, 0x29, b));
         assert(r.any_matched);
-        assert(int_is(r.merged.find("unoccupied_heating_setpoint"), 1600));
+        assert(celsius_is(r.merged.find("unoccupied_heating_setpoint"), 16.0f));
     }
     // system_mode (0x001C u8 enum) raw passthrough.
     {

@@ -28,7 +28,7 @@
 //     max-heat limit, local-temperature calibration, occupancy) are now
 //     wired, matching the device's tz.thermostat_* converter list.
 //
-// fz.thermostat attr → key (decimal payload key) → out key (z2m scale):
+// fz.thermostat attr → key (decimal payload key) → out key (z2m scale, °C):
 //   0x0000 localTemp                 "0"  → local_temperature              (/100)
 //   0x0002 occupancy                 "2"  → occupancy (bit0)               (bool)
 //   0x0010 localTemperatureCalibration "16" → local_temperature_calibration (/10)
@@ -52,9 +52,8 @@ constexpr const char* kMfg_Yali_Parada_Plus[]    = { "computime" };
 // Delegates to the generic thermostat decoder (local_temperature,
 // current_heating_setpoint, system_mode), then adds the attrs the generic
 // decoder does not cover but z2m's fz.thermostat does. Enum attrs emit the
-// z2m string form (matching getFromLookup); numeric attrs emit the raw int
-// (downstream applies the per-key scale, same contract as
-// local_temperature in the generic decoder).
+// z2m string form (matching getFromLookup); temperatures are °C Floats
+// with fz.thermostat's scale, like the generic local_temperature.
 bool fz_purmo_thermostat_extras(const ::zhc::DecodedMessage& msg,
                                  const ::zhc::FzConverter& self,
                                  const ::zhc::PreparedDefinition& def,
@@ -75,41 +74,16 @@ bool fz_purmo_thermostat_extras(const ::zhc::DecodedMessage& msg,
         }
     }
 
-    // 0x0010 localTemperatureCalibration (s8, ×10 °C) — raw int read-back.
-    if (const ::zhc::Value* v = msg.payload.find("16")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int
-                      ? v->i : static_cast<std::int64_t>(v->u);
-            out.put("local_temperature_calibration", o);
-            emitted = true;
-        }
-    }
-
-    // 0x0014 unoccupiedHeatingSetpoint (s16, ×100 °C) — raw int read-back.
-    if (const ::zhc::Value* v = msg.payload.find("20")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int
-                      ? v->i : static_cast<std::int64_t>(v->u);
-            out.put("unoccupied_heating_setpoint", o);
-            emitted = true;
-        }
-    }
-
-    // 0x0016 maxHeatSetpointLimit (s16, ×100 °C) — raw int read-back.
-    if (const ::zhc::Value* v = msg.payload.find("22")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int
-                      ? v->i : static_cast<std::int64_t>(v->u);
-            out.put("max_heat_setpoint_limit", o);
-            emitted = true;
-        }
-    }
+    // 0x0010 localTemperatureCalibration (s8 / 10), 0x0014
+    // unoccupiedHeatingSetpoint (s16 / 100), 0x0016 maxHeatSetpointLimit
+    // (s16 / 100, below -273.15 dropped) — °C as z2m fz.thermostat.
+    using ::zhc::generic::put_thermostat_celsius;
+    if (put_thermostat_celsius(out, "local_temperature_calibration", msg.payload.find("16"), 10, false))
+        emitted = true;
+    if (put_thermostat_celsius(out, "unoccupied_heating_setpoint", msg.payload.find("20"), 100, false))
+        emitted = true;
+    if (put_thermostat_celsius(out, "max_heat_setpoint_limit", msg.payload.find("22"), 100, true))
+        emitted = true;
 
     // 0x001E runningMode (u8 enum) — z2m thermostatRunningMode:
     // 0=off, 3=cool, 4=heat. This device exposes only {off, heat}.
@@ -165,17 +139,18 @@ constexpr ::zhc::FzConverter kFzPurmoThermostatExtras{
 };
 
 // ── Write specs for attrs not covered by the generic kTzThermostat ───
-// kTzThermostat already covers occupied_heating_setpoint (0x0012, ×100)
+// kTzThermostat already covers occupied_heating_setpoint (0x0012, °C)
 // and system_mode (0x001C). kTzMaxHeatSetpointLimit covers 0x0016.
-// The remaining tz.thermostat_* converters from the z2m def:
-//   tz.thermostat_unoccupied_heating_setpoint   0x0014 INT16 (pre-scaled ×100)
-//   tz.thermostat_local_temperature_calibration 0x0010 INT8  (pre-scaled ×10)
+// The remaining tz.thermostat_* converters from the z2m def, in °C:
+//   tz.thermostat_unoccupied_heating_setpoint   0x0014 INT16 (°C × 100)
+//   tz.thermostat_local_temperature_calibration 0x0010 INT8  (°C × 10,
+//                                                ZCL range -2.5..2.5 °C)
 //   tz.thermostat_occupancy                      0x0002 BITMAP8
-constexpr ::zhc::generic::ZclWriteSpec kSpecUnoccupiedHeatingSetpoint{
-    "unoccupied_heating_setpoint", 0x0014, 0x29 /* INT16 */, 0, nullptr, 0,
-};
+constexpr ::zhc::generic::ZclWriteSpec kSpecUnoccupiedHeatingSetpoint =
+    ::zhc::generic::thermostat_celsius_spec("unoccupied_heating_setpoint", 0x0014);
 constexpr ::zhc::generic::ZclWriteSpec kSpecLocalTemperatureCalibration{
-    "local_temperature_calibration", 0x0010, 0x28 /* INT8 */, 0, nullptr, 0,
+    "local_temperature_calibration", 0x0010, 0x28 /* INT8 */, 0, nullptr, 0, 0,
+    10, -25, 25,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecOccupancy{
     "occupancy", 0x0002, 0x18 /* BITMAP8 */, 0, nullptr, 0,

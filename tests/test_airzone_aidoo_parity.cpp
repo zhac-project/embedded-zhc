@@ -103,26 +103,26 @@ void check_azai6zbemhi() {
     assert(expose_type(def, "fan_mode") == ExposeType::Enum);
 
     // ── Parity fix: attr 0x0011 OccupiedCoolingSetpoint, s16 =
-    //    0x0708 = 1800 → current_cooling_setpoint (raw, runtime /100). ──
+    //    0x0708 = 1800 → current_cooling_setpoint (→ 18.0 °C). ──
     const std::uint8_t cool[] = {0x08, 0x07};
     auto rc = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0011, 0x29, cool));
     assert(rc.any_matched);
     const Value* cv = rc.merged.find("current_cooling_setpoint");
-    assert(cv && cv->type == ValueType::Int && cv->i == 1800);
+    assert(cv && cv->type == ValueType::Float && cv->f == 18.0f);
 
     // ── Regression: core surface still decodes via generic kFzThermostat ──
     const std::uint8_t lt[] = {0x34, 0x08};   // 0x0834 = 2100 → 21.00 °C raw
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     const std::uint8_t hsp[] = {0xD0, 0x07};  // 0x07D0 = 2000 heating setpoint
     auto rh = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0012, 0x29, hsp));
     const Value* hv = rh.merged.find("current_heating_setpoint");
-    assert(hv && hv->type == ValueType::Int && hv->i == 2000);
+    assert(hv && hv->type == ValueType::Float && hv->f == 20.0f);
 
     const std::uint8_t sm[] = {0x03};         // system_mode = 3 (cool)
     auto rm = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,

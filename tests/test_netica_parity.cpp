@@ -116,7 +116,7 @@ int main() {
                               attr_report(0x0000, 0x29, lt));
         assert(r.any_matched);
         const Value* v = r.merged.find("local_temperature");
-        assert(v && v->type == ValueType::Int && v->i == 2100);
+        assert(v && v->type == ValueType::Float && v->f == 21.0f);
     }
     // SystemMode (0x001C u8 enum) raw passthrough.
     {
@@ -158,7 +158,7 @@ int main() {
                               attr_report(0x4000, 0x29, rt));
         assert(r.any_matched);
         const Value* v = r.merged.find("remote_temperature");
-        assert(v && v->type == ValueType::Int && v->i == 2345);
+        assert(v && v->type == ValueType::Float && v->f == 23.45f);
     }
 
     // ── target_water_temperature (manuSpec 0x4002, INT16 ×100) ───────
@@ -169,7 +169,7 @@ int main() {
                               attr_report(0x4002, 0x29, tw));
         assert(r.any_matched);
         const Value* v = r.merged.find("target_water_temperature");
-        assert(v && v->type == ValueType::Int && v->i == 4500);
+        assert(v && v->type == ValueType::Float && v->f == 45.0f);
     }
 
     // ── Temperature / humidity sensors still decode ──────────────────
@@ -190,14 +190,18 @@ int main() {
     }
 
     // ── Write path: remote_temperature → writeAttributes 0x4000 ──────
+    // In °C like the read-back (z2m scale 100): 20 °C → INT16 2000.
     {
         RuntimeContext ctx{};
         std::array<std::uint8_t, 24> frame{};
-        Value v{}; v.type = ValueType::Int; v.i = 2000;
+        Value v{}; v.type = ValueType::Int; v.i = 20;
         auto w = dispatch_to_zigbee(def, "remote_temperature", v, ctx, frame);
         assert(w.ok);
         assert(w.cluster_id == 0x0201);
         assert(w.command_id == 0x02);   // writeAttributes
+        assert(frame[w.frame_size - 2] == 0xD0 && frame[w.frame_size - 1] == 0x07);
+        v.i = 2000;                     // a raw value is no longer accepted
+        assert(!dispatch_to_zigbee(def, "remote_temperature", v, ctx, frame).ok);
     }
 
     return 0;

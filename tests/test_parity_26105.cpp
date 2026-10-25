@@ -139,6 +139,10 @@ bool r_float(const DispatchResult& r, const char* key, float want) {
                   : v->type == ValueType::Uint  ? static_cast<float>(v->u) : -1e9f;
     return approx(f, want);
 }
+bool r_celsius(const DispatchResult& r, const char* key, float want) {
+    const Value* v = r.merged.find(key);
+    return v && v->type == ValueType::Float && approx(v->f, want);
+}
 bool has_manu(const PreparedDefinition& d, const char* name) {
     for (std::size_t i = 0; i < d.manufacturer_names_count; ++i)
         if (d.manufacturer_names[i] && std::strcmp(d.manufacturer_names[i], name) == 0) return true;
@@ -306,11 +310,10 @@ void test_rdz101zb() {
        .u16(0x0029, 0x19, 0x0001);// runningState: heat bit
     auto r = dispatch(def, 0x0201, 1, rep.v);
     check(r.any_matched, "thermostat report matched");
-    // The generic thermostat decoder publishes the raw ZCL values (x100
-    // temperatures, the systemMode enum number); scaling and naming happen
-    // in the JSON layer, as for every other hvacThermostat port.
-    check(r_float(r, "local_temperature", 2150.f), "local_temperature raw 2150 (21.50)");
-    check(r_float(r, "current_heating_setpoint", 2000.f), "current_heating_setpoint raw 2000 (20.00)");
+    // The generic thermostat decoder publishes temperatures in °C, as z2m
+    // does (nothing downstream scales them), and the systemMode enum number.
+    check(r_celsius(r, "local_temperature", 21.5f), "local_temperature 2150 -> 21.5 °C");
+    check(r_celsius(r, "current_heating_setpoint", 20.0f), "current_heating_setpoint 2000 -> 20.0 °C");
     check(r_float(r, "system_mode", 4.f), "system_mode 4 (heat)");
     check(r_str(r, "running_state", "heat"), "running_state heat");
     Report idle; idle.u16(0x0029, 0x19, 0x0000);

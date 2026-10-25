@@ -7,7 +7,7 @@
 // `kFzThermostat`, which decodes 0x0000 / 0x0012 / 0x001C and skips everything
 // else — leaving three declared exposes dead:
 //
-//   * occupied_cooling_setpoint     (attr 0x0011, s16, raw 1/100 °C)
+//   * occupied_cooling_setpoint     (attr 0x0011, s16, 1/100 °C → °C)
 //   * local_temperature_calibration (attr 0x0010, s8)
 //   * running_state                 (attr 0x0029, map16 enum, raw)
 //
@@ -105,14 +105,14 @@ void check_zen01() {
                            attr_report(0x0011, 0x29, cool));
     assert(rc.any_matched);
     const Value* cv = rc.merged.find("occupied_cooling_setpoint");
-    assert(cv && cv->type == ValueType::Int && cv->i == 2500);
+    assert(cv && cv->type == ValueType::Float && cv->f == 25.0f);
 
     // ── local_temperature_calibration (0x0010, s8) = -10 (0xF6) ──
     const std::uint8_t cal[] = {0xF6};
     auto rca = dispatch_zcl(def, 0x0201, "hvacThermostat", kEp,
                             attr_report(0x0010, 0x28, cal));
     const Value* lv = rca.merged.find("local_temperature_calibration");
-    assert(lv && lv->type == ValueType::Int && lv->i == -10);
+    assert(lv && lv->type == ValueType::Float && lv->f == -1.0f);
 
     // ── running_state (0x0029, map16) = 0x0002 = "cool" (raw enum forward) ──
     const std::uint8_t rs[] = {0x02, 0x00};
@@ -134,14 +134,14 @@ void check_zen01() {
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat", kEp,
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     // 0x0012 OccupiedHeatingSetpoint, s16 = 0x07D0 = 2000 → current_heating_setpoint.
     const std::uint8_t sp[] = {0xD0, 0x07};
     auto rsp = dispatch_zcl(def, 0x0201, "hvacThermostat", kEp,
                             attr_report(0x0012, 0x29, sp));
     const Value* sv = rsp.merged.find("current_heating_setpoint");
-    assert(sv && sv->type == ValueType::Int && sv->i == 2000);
+    assert(sv && sv->type == ValueType::Float && sv->f == 20.0f);
 
     // 0x001C SystemMode, u8 enum = 4 (heat).
     const std::uint8_t sm[] = {0x04};

@@ -21,8 +21,8 @@
 //     decoder were entirely missing.
 //
 // Fixed by wiring a vendor-local `kFzImhotepThermostatExtras` (read-decodes
-// the three fz.thermostat report attrs 0x0011 / 0x0015 / 0x0016, raw s16
-// pass-through, runtime /100 downstream) alongside the generic
+// the three fz.thermostat report attrs 0x0011 / 0x0015 / 0x0016 in °C,
+// s16 / 100) alongside the generic
 // kFzThermostat, and by adding the missing BRI4P exposes (the cool-limit
 // exposes are settable, driven by the tz write/get path as in z2m). The core surface (local_temperature
 // / current_heating_setpoint / system_mode) is still decoded by the
@@ -111,13 +111,13 @@ void check_e_ctrl() {
     assert(def_exposes(def, "occupancy"));
 
     // ── Parity fix: attr 0x0015 MinHeatSetpointLimit, s16 = 0x01F4 =
-    //    500 → min_heat_setpoint_limit (raw, runtime /100 → 5.00 °C). ──
+    //    500 → min_heat_setpoint_limit (→ 5.00 °C). ──
     const std::uint8_t lo[] = {0xF4, 0x01};
     auto rmin = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                              attr_report(0x0015, 0x29, lo));
     assert(rmin.any_matched);
     const Value* mn = rmin.merged.find("min_heat_setpoint_limit");
-    assert(mn && mn->type == ValueType::Int && mn->i == 500);
+    assert(mn && mn->type == ValueType::Float && mn->f == 5.0f);
 
     // ── attr 0x0016 MaxHeatSetpointLimit, s16 = 0x0BB8 = 3000 → 30 °C. ─
     const std::uint8_t hi[] = {0xB8, 0x0B};
@@ -125,20 +125,20 @@ void check_e_ctrl() {
                              attr_report(0x0016, 0x29, hi));
     assert(rmax.any_matched);
     const Value* mx = rmax.merged.find("max_heat_setpoint_limit");
-    assert(mx && mx->type == ValueType::Int && mx->i == 3000);
+    assert(mx && mx->type == ValueType::Float && mx->f == 30.0f);
 
     // ── Regression: core surface still decodes via generic kFzThermostat. ──
     const std::uint8_t lt[] = {0x34, 0x08};   // 0x0834 = 2100 → 21.00 °C raw
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     const std::uint8_t sp[] = {0xD0, 0x07};   // 0x07D0 = 2000
     auto rs = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0012, 0x29, sp));
     const Value* sv = rs.merged.find("current_heating_setpoint");
-    assert(sv && sv->type == ValueType::Int && sv->i == 2000);
+    assert(sv && sv->type == ValueType::Float && sv->f == 20.0f);
 
     const std::uint8_t sm[] = {0x04};         // system_mode = 4 (heat)
     auto rm = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
@@ -177,20 +177,20 @@ void check_bri4p() {
                            attr_report(0x0011, 0x29, cool));
     assert(rc.any_matched);
     const Value* cv = rc.merged.find("current_cooling_setpoint_l1");
-    assert(cv && cv->type == ValueType::Int && cv->i == 2200);
+    assert(cv && cv->type == ValueType::Float && cv->f == 22.0f);
 
     // ── attr 0x0015 MinHeatSetpointLimit = 500, 0x0016 Max = 3000. ──
     const std::uint8_t hlo[] = {0xF4, 0x01};
     auto rh1 = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                             attr_report(0x0015, 0x29, hlo));
     const Value* hmn = rh1.merged.find("min_heat_setpoint_limit_l1");
-    assert(hmn && hmn->type == ValueType::Int && hmn->i == 500);
+    assert(hmn && hmn->type == ValueType::Float && hmn->f == 5.0f);
 
     const std::uint8_t hhi[] = {0xB8, 0x0B};
     auto rh2 = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                             attr_report(0x0016, 0x29, hhi));
     const Value* hmx = rh2.merged.find("max_heat_setpoint_limit_l1");
-    assert(hmx && hmx->type == ValueType::Int && hmx->i == 3000);
+    assert(hmx && hmx->type == ValueType::Float && hmx->f == 30.0f);
 
     // NB: min/max_cool_setpoint_limit (0x0017/0x0018) are write-path-only in
     // z2m (fz.thermostat has no cool-limit report branch) so they are NOT
@@ -202,14 +202,14 @@ void check_bri4p() {
     auto re3 = dispatch_zcl(def, 0x0201, "hvacThermostat", 3,
                             attr_report(0x0011, 0x29, cool3));
     const Value* cv3 = re3.merged.find("current_cooling_setpoint_l3");
-    assert(cv3 && cv3->type == ValueType::Int && cv3->i == 3600);
+    assert(cv3 && cv3->type == ValueType::Float && cv3->f == 36.0f);
 
     // ── Regression: core surface via generic kFzThermostat, suffixed. ──
     const std::uint8_t lt[] = {0x34, 0x08};   // 0x0834 = 2100
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature_l1");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     const std::uint8_t sm[] = {0x03};         // system_mode = 3 (cool)
     auto rm = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,

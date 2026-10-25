@@ -116,14 +116,14 @@ void check_sln() {
                            attr_report(0x0000, 0x29, lt));
     assert(rt.any_matched);
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     // attr 0x0012 OccupiedHeatingSetpoint, s16 = 0x07D0 = 2000 → current_heating_setpoint.
     const std::uint8_t sp[] = {0xD0, 0x07};
     auto rs = dispatch_zcl(def, 0x0201, "hvacThermostat", 3,
                            attr_report(0x0012, 0x29, sp));
     const Value* sv = rs.merged.find("current_heating_setpoint");
-    assert(sv && sv->type == ValueType::Int && sv->i == 2000);
+    assert(sv && sv->type == ValueType::Float && sv->f == 20.0f);
 
     // attr 0x001C SystemMode, u8 enum = 4 (heat).
     const std::uint8_t sm[] = {0x04};
@@ -153,7 +153,7 @@ void check_dbn() {
     assert(!r3.merged.find("local_temperature"));   // un-suffixed key must NOT exist
     assert(!r3.merged.find("local_temperature_4"));  // wrong channel must NOT exist
     const Value* t3 = r3.merged.find("local_temperature_3");
-    assert(t3 && t3->type == ValueType::Int && t3->i == 2100);
+    assert(t3 && t3->type == ValueType::Float && t3->f == 21.0f);
 
     // Channel 4: setpoint = 0x08FC = 2300 must land on current_heating_setpoint_4.
     const std::uint8_t sp[] = {0xFC, 0x08};
@@ -161,7 +161,7 @@ void check_dbn() {
                            attr_report(0x0012, 0x29, sp));
     assert(r4.any_matched);
     const Value* s4 = r4.merged.find("current_heating_setpoint_4");
-    assert(s4 && s4->type == ValueType::Int && s4->i == 2300);
+    assert(s4 && s4->type == ValueType::Float && s4->f == 23.0f);
     assert(!r4.merged.find("current_heating_setpoint_3"));
 }
 

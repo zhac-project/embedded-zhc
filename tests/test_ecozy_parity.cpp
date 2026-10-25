@@ -117,7 +117,7 @@ int main() {
                               attr_report(0x0000, 0x29, lt));
         assert(r.any_matched);
         const Value* v = r.merged.find("local_temperature");
-        assert(v && v->type == ValueType::Int && v->i == 2100);
+        assert(v && v->type == ValueType::Float && v->f == 21.0f);
     }
     // OccupiedHeatingSetpoint (0x0012 s16) = 2200 → current_heating_setpoint.
     {
@@ -126,7 +126,7 @@ int main() {
                               attr_report(0x0012, 0x29, sp));
         assert(r.any_matched);
         const Value* v = r.merged.find("current_heating_setpoint");
-        assert(v && v->type == ValueType::Int && v->i == 2200);
+        assert(v && v->type == ValueType::Float && v->f == 22.0f);
     }
     // SystemMode (0x001C u8 enum) raw passthrough.
     {

@@ -24,14 +24,14 @@
 //
 // ── kFzIntuisThermostat (hvacThermostat 0x0201) ──────────────────────
 // Standalone decoder (does NOT chain the generic) emitting z2m's keys:
-//   0x0000 localTemp                → local_temperature           (raw s16, ×100)
-//   0x0012 occupiedHeatingSetpoint  → occupied_heating_setpoint   (raw s16, ×100)
-//   0x0014 unoccupiedHeatingSetpoint→ unoccupied_heating_setpoint (raw s16, ×100)
+//   0x0000 localTemp                → local_temperature           (°C, s16 / 100)
+//   0x0012 occupiedHeatingSetpoint  → occupied_heating_setpoint   (°C, s16 / 100)
+//   0x0014 unoccupiedHeatingSetpoint→ unoccupied_heating_setpoint (°C, s16 / 100)
 //   0x001C systemMode               → system_mode                 (raw u8 enum)
 //   0x0029 runningState             → running_state               (string idle/heat)
-// Numeric attrs emit the raw int (downstream applies the unit scale,
-// same contract as the generic local_temperature). system_mode keeps
-// the raw enum. running_state emits z2m's string form
+// Temperatures are °C Floats scaled as z2m fz.thermostat does
+// (put_thermostat_celsius). system_mode keeps the raw enum.
+// running_state emits z2m's string form
 // (constants.thermostatRunningStates: 0→idle, 1→heat); the device
 // exposes only {idle, heat}.
 //

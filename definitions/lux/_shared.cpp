@@ -26,9 +26,9 @@ namespace {
 //
 // running_state / running_mode emit z2m's string form (matching
 // fz.thermostat's getFromLookup against constants.thermostatRunning-
-// States / thermostatRunningMode). occupied_cooling_setpoint emits the
-// raw s16 (downstream applies the ×100 scale, same contract as
-// local_temperature / current_heating_setpoint in the generic decoder).
+// States / thermostatRunningMode). occupied_cooling_setpoint is °C
+// (s16 / 100), like local_temperature / current_heating_setpoint in the
+// generic decoder.
 bool fz_lux_thermostat_extras(const ::zhc::DecodedMessage& msg,
                               const ::zhc::FzConverter& self,
                               const ::zhc::PreparedDefinition& def,
@@ -36,19 +36,10 @@ bool fz_lux_thermostat_extras(const ::zhc::DecodedMessage& msg,
                               ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     bool emitted = ::zhc::generic::kFzThermostat.fn.zcl_fn(msg, self, def, ctx, out);
 
-    // 0x0011 OccupiedCoolingSetpoint (s16) — raw int, like the generic
-    // local_temperature / current_heating_setpoint branches.
-    if (const ::zhc::Value* v = msg.payload.find("17")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int
-                      ? v->i
-                      : static_cast<std::int64_t>(v->u);
-            out.put("occupied_cooling_setpoint", o);
-            emitted = true;
-        }
-    }
+    // 0x0011 OccupiedCoolingSetpoint (s16 / 100, °C).
+    if (::zhc::generic::put_thermostat_celsius(out, "occupied_cooling_setpoint",
+                                               msg.payload.find("17"), 100, false))
+        emitted = true;
 
     // 0x0029 ThermostatRunningState (bitmap16) — z2m
     // constants.thermostatRunningStates getFromLookup. Bit0=heat,

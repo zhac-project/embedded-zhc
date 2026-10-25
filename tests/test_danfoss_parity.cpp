@@ -125,14 +125,14 @@ void check_ally() {
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     // attr 0x0012 OccupiedHeatingSetpoint, s16 = 0x07D0 = 2000 → current_heating_setpoint.
     const std::uint8_t sp[] = {0xD0, 0x07};
     auto rs = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0012, 0x29, sp));
     const Value* sv = rs.merged.find("current_heating_setpoint");
-    assert(sv && sv->type == ValueType::Int && sv->i == 2000);
+    assert(sv && sv->type == ValueType::Float && sv->f == 20.0f);
 
     // attr 0x001C SystemMode, u8 enum = 4 (heat).
     const std::uint8_t sm[] = {0x04};

@@ -2813,72 +2813,40 @@ extern const TzConverter kTzLock{
 
 // ── tz_thermostat (hvacThermostat 0x0201 writeAttributes) ──────────
 //
-// Accepts the two most common thermostat keys and encodes a standard
-// ZCL writeAttributes (cmd 0x02) frame:
 //   "occupied_heating_setpoint" / "current_heating_setpoint"
-//        → attr 0x0012, int16, wire is 0.01 °C units.
-//        UNIT CONTRACT: caller supplies degrees Celsius (Float OR Int).
-//          - Float 21.5 → wire 2150 (21.50 °C)
-//          - Int   21   → wire 2100 (21.00 °C)
-//          - Uint  21   → wire 2100 (21.00 °C)
-//        This DIFFERS from `kTzMinHeatSetpointLimit` and friends, which
-//        accept already-scaled deci-°C int (1500 = 15.00 °C) via the
-//        generic `tz_zcl_write_attr` path. Watch the unit when wiring
-//        a Lua rule against either family.
-//   "system_mode"   → attr 0x001C, enum8 (off=0/auto=1/cool=3/heat=4)
+//        → attr 0x0012, int16 in 0.01 °C. Input °C (Float/Int/Uint):
+//          21.5 → 2150, 21 → 2100, rounded to 0.01 °C. Refused outside
+//          kThermostatTempMin..Max — a reading already in 0.01 °C
+//          (2150) used to go out as 2150 × 100 cut to 16 bits = 183.92 °C.
+//   "system_mode" → attr 0x001C, enum8 (off=0/auto=1/cool=3/heat=4, or
+//          the number as Uint).
+// Both are profile-wide writeAttributes (fc 0x10) built by
+// tz_zcl_write_attr. This used to emit fc 0x11 (cluster-specific), which
+// on hvacThermostat is command 0x02 GetWeeklySchedule, not a write.
+namespace {
+constexpr ZclWriteSpec kSpecHeatingSetpoint = thermostat_celsius_spec(nullptr, 0x0012);
+constexpr ZclWriteLookup kSystemModes[] = {
+    {"off", 0}, {"auto", 1}, {"cool", 3}, {"heat", 4},
+};
+constexpr ZclWriteSpec kSpecSystemMode{nullptr, 0x001C, 0x30, 0, kSystemModes, 4};
+}  // namespace
+
 bool tz_thermostat(std::string_view key, const Value& input,
-                    const TzConverter&,
-                    const PreparedDefinition&, RuntimeContext&,
+                    const TzConverter& self,
+                    const PreparedDefinition& def, RuntimeContext& ctx,
                     std::span<std::uint8_t> out_frame,
                     std::size_t& out_size) {
     out_size = 0;
-    std::uint16_t attr_id;
-    std::uint8_t  attr_type;
-    std::uint32_t val;
-    std::size_t   vlen;
-
-    if (key == "occupied_heating_setpoint" ||
-        key == "current_heating_setpoint") {
-        attr_id = 0x0012;
-        attr_type = 0x29;  // int16
-        vlen = 2;
-        // x100 scaling lives here only (caller supplies °C, wire is
-        // deci-°C). See unit-contract header comment above.
-        std::int32_t raw;
-        if (input.type == ValueType::Int)   raw = static_cast<std::int32_t>(input.i * 100);
-        else if (input.type == ValueType::Uint)  raw = static_cast<std::int32_t>(input.u * 100);
-        else if (input.type == ValueType::Float) raw = static_cast<std::int32_t>(input.f * 100);
-        else return false;
-        val = static_cast<std::uint32_t>(raw) & 0xFFFF;
-    } else if (key == "system_mode") {
-        attr_id = 0x001C;
-        attr_type = 0x30;  // enum8
-        vlen = 1;
-        if (input.type == ValueType::StringRef && input.str) {
-            const char* s = input.str;
-            if      (std::strcmp(s, "off")  == 0) val = 0;
-            else if (std::strcmp(s, "auto") == 0) val = 1;
-            else if (std::strcmp(s, "cool") == 0) val = 3;
-            else if (std::strcmp(s, "heat") == 0) val = 4;
-            else return false;
-        } else if (input.type == ValueType::Uint) {
-            val = static_cast<std::uint32_t>(input.u);
-        } else return false;
+    TzConverter attr = self;
+    if (key == "occupied_heating_setpoint" || key == "current_heating_setpoint") {
+        attr.user_config = &kSpecHeatingSetpoint;
+    } else if (key == "system_mode" &&
+               (input.type == ValueType::StringRef || input.type == ValueType::Uint)) {
+        attr.user_config = &kSpecSystemMode;
     } else {
         return false;
     }
-
-    // writeAttributes frame: fc + tsn + cmd(0x02) + attrId LE(2)
-    //   + attrType(1) + value(vlen)
-    const std::size_t payload = 2 + 1 + vlen;
-    if (!write_header(out_frame, 0x02, payload, out_size)) return false;
-    out_frame[3] = static_cast<std::uint8_t>(attr_id & 0xFF);
-    out_frame[4] = static_cast<std::uint8_t>((attr_id >> 8) & 0xFF);
-    out_frame[5] = attr_type;
-    for (std::size_t i = 0; i < vlen; ++i) {
-        out_frame[6 + i] = static_cast<std::uint8_t>((val >> (i * 8)) & 0xFF);
-    }
-    return true;
+    return tz_zcl_write_attr(key, input, attr, def, ctx, out_frame, out_size);
 }
 
 extern const TzConverter kTzThermostat{
@@ -3030,7 +2998,9 @@ bool zcl_coerce(const Value& in, const ZclWriteSpec& s,
     if (in.type == ValueType::Float) {
         // Raw attribute writes carry the wire unit as-is; a decimal is
         // rounded to the nearest integer rather than refused or truncated.
-        if (in.f != in.f) return false;   // NaN
+        // NaN, inf and anything no 32-bit wire value holds are refused
+        // (casting them is undefined behaviour).
+        if (!(in.f >= -2147483648.0f && in.f <= 4294967295.0f)) return false;
         out = static_cast<std::uint32_t>(static_cast<std::int64_t>(
                   in.f + (in.f >= 0.0f ? 0.5f : -0.5f)));
         return true;
@@ -3072,8 +3042,13 @@ bool tz_zcl_write_attr(std::string_view key,
         else if (input.type == ValueType::Int)  d = static_cast<double>(input.i);
         else if (input.type == ValueType::Uint) d = static_cast<double>(input.u);
         else return false;   // a scaled attribute takes numbers only
-        d *= static_cast<double>(spec->multiplier);
-        v = static_cast<std::uint32_t>(static_cast<std::int64_t>(d + (d >= 0.0 ? 0.5 : -0.5)));
+        d = std::round(d * static_cast<double>(spec->multiplier));
+        // Refused rather than cut to the attribute's width: NaN / inf, a value
+        // no 32-bit wire integer holds, and one outside the spec's range.
+        if (!(d >= -2147483648.0 && d <= 4294967295.0)) return false;
+        if (spec->max_value > spec->min_value &&
+            (d < spec->min_value || d > spec->max_value)) return false;
+        v = static_cast<std::uint32_t>(static_cast<std::int64_t>(d));
     }
     const std::size_t vlen = zcl_type_len(spec->attr_type);
     if (vlen == 0) return false;
@@ -3713,33 +3688,34 @@ extern const FzConverter kFzBinaryOutput{
 
 // ── fz_thermostat (hvacThermostat 0x0201) ───────────────────────────
 //
-// Emits "local_temperature" (s16, 1/100 °C raw), "occupied_heating_
-// setpoint" (s16), "system_mode" (u8 enum raw).
+// z2m fz.thermostat for the attributes every generic port shares:
+// "local_temperature" (0x0000) and "current_heating_setpoint" (0x0012)
+// in °C, 0x8000 "invalid" dropped; "system_mode" (0x001C) as the raw u8
+// enum. Vendors layer the other attributes with put_thermostat_celsius.
+
+bool put_thermostat_celsius(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out,
+                            const char* key, const Value* v,
+                            int divisor, bool drop_invalid) {
+    if (!v) return false;
+    std::int64_t raw = 0;
+    if (v->type == ValueType::Int)       raw = v->i;
+    else if (v->type == ValueType::Uint) raw = static_cast<std::int64_t>(v->u);
+    else return false;
+    Value o{}; o.type = ValueType::Float;
+    o.f = static_cast<float>(raw) / static_cast<float>(divisor);
+    if (drop_invalid && o.f < -273.15f) return false;
+    return out.put(key, o);
+}
 
 bool fz_thermostat(const DecodedMessage& msg,
                     const FzConverter&,
                     const PreparedDefinition&,
                     RuntimeContext&,
                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    bool emitted = false;
-    // attr 0x0000 — LocalTemperature (s16).
-    if (const Value* v = msg.payload.find("0")) {
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{}; o.type = ValueType::Int;
-            o.i = v->type == ValueType::Int ? v->i
-                                              : static_cast<std::int64_t>(v->u);
-            out.put("local_temperature", o); emitted = true;
-        }
-    }
-    // attr 0x0012 — OccupiedHeatingSetpoint (s16).
-    if (const Value* v = msg.payload.find("18")) {
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{}; o.type = ValueType::Int;
-            o.i = v->type == ValueType::Int ? v->i
-                                              : static_cast<std::int64_t>(v->u);
-            out.put("current_heating_setpoint", o); emitted = true;
-        }
-    }
+    bool emitted = put_thermostat_celsius(out, "local_temperature",
+                                          msg.payload.find("0"), 100, true);
+    if (put_thermostat_celsius(out, "current_heating_setpoint",
+                               msg.payload.find("18"), 100, true)) emitted = true;
     // attr 0x001C — SystemMode (u8 enum).
     if (const Value* v = msg.payload.find("28")) {
         if (v->type == ValueType::Uint) {
@@ -4256,25 +4232,18 @@ extern const FzConverter kFzCO{
 //
 // Closes z2m tz.thermostat_min_heat_setpoint_limit /
 // max_heat_setpoint_limit / min_cool_setpoint_limit /
-// max_cool_setpoint_limit. Attributes are INT16 in 0.01 °C units;
-// UNIT CONTRACT: caller passes the already-scaled int (e.g. 1500 =
-// 15.00 °C). DIFFERENT from `tz_thermostat` which takes °C and scales
-// internally — see the unit-contract block on tz_thermostat for the
-// rationale (limits go through the generic write-attr path).
+// max_cool_setpoint_limit. Attributes are INT16 in 0.01 °C units; the
+// input is °C (15 → 1500), like the kTzThermostat setpoint.
 
 namespace {
-constexpr ZclWriteSpec kSpecMinHeatSetpointLimit{
-    "min_heat_setpoint_limit", 0x0015, 0x29, 0, nullptr, 0,
-};
-constexpr ZclWriteSpec kSpecMaxHeatSetpointLimit{
-    "max_heat_setpoint_limit", 0x0016, 0x29, 0, nullptr, 0,
-};
-constexpr ZclWriteSpec kSpecMinCoolSetpointLimit{
-    "min_cool_setpoint_limit", 0x0017, 0x29, 0, nullptr, 0,
-};
-constexpr ZclWriteSpec kSpecMaxCoolSetpointLimit{
-    "max_cool_setpoint_limit", 0x0018, 0x29, 0, nullptr, 0,
-};
+constexpr ZclWriteSpec kSpecMinHeatSetpointLimit =
+    thermostat_celsius_spec("min_heat_setpoint_limit", 0x0015);
+constexpr ZclWriteSpec kSpecMaxHeatSetpointLimit =
+    thermostat_celsius_spec("max_heat_setpoint_limit", 0x0016);
+constexpr ZclWriteSpec kSpecMinCoolSetpointLimit =
+    thermostat_celsius_spec("min_cool_setpoint_limit", 0x0017);
+constexpr ZclWriteSpec kSpecMaxCoolSetpointLimit =
+    thermostat_celsius_spec("max_cool_setpoint_limit", 0x0018);
 }  // namespace
 
 extern const TzConverter kTzMinHeatSetpointLimit{

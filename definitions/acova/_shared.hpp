@@ -16,18 +16,18 @@
 //
 // kFzAcovaThermostatExtras decodes the exact attrs the Acova family
 // exposes, with z2m's keys:
-//   0x0000 localTemp                  → local_temperature              (raw s16, ×100)
-//   0x0010 localTemperatureCalibration→ local_temperature_calibration (raw s16, ×10)
-//   0x0012 occupiedHeatingSetpoint    → occupied_heating_setpoint      (raw s16, ×100)
-//   0x0014 unoccupiedHeatingSetpoint  → unoccupied_heating_setpoint    (raw s16, ×100)
+//   0x0000 localTemp                  → local_temperature              (°C, s16 / 100)
+//   0x0010 localTemperatureCalibration→ local_temperature_calibration (°C, s8 / 10)
+//   0x0012 occupiedHeatingSetpoint    → occupied_heating_setpoint      (°C, s16 / 100)
+//   0x0014 unoccupiedHeatingSetpoint  → unoccupied_heating_setpoint    (°C, s16 / 100)
 //   0x001C systemMode                 → system_mode                    (raw u8 enum)
 //   0x0029 runningState               → running_state                  (string idle/heat)
 //
-// Numeric attrs emit the raw int (downstream applies the unit scale, the
-// same contract as the generic local_temperature). system_mode keeps the
-// raw enum (same contract as the generic decoder). running_state emits
-// z2m's string form (matching fz.thermostat getFromLookup); the Acova
-// devices declare only {idle, heat}.
+// Temperatures are °C Floats scaled as z2m fz.thermostat does
+// (put_thermostat_celsius). system_mode keeps the raw enum (same contract
+// as the generic decoder). running_state emits z2m's string form
+// (matching fz.thermostat getFromLookup); the Acova devices declare only
+// {idle, heat}.
 #pragma once
 
 #include "definitions/_generic/_shared.hpp"

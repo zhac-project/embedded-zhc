@@ -44,8 +44,8 @@ namespace {
 // generic decoder from this def — no phantom `current_heating_setpoint`.
 //
 // Standard attrs (z2m fz.thermostat):
-//   0x0000 LocalTemperature        → local_temperature        (s16, raw 1/100 °C)
-//   0x0012 OccupiedHeatingSetpoint → occupied_heating_setpoint (s16, raw 1/100 °C)
+//   0x0000 LocalTemperature        → local_temperature        (s16 / 100, °C)
+//   0x0012 OccupiedHeatingSetpoint → occupied_heating_setpoint (s16 / 100, °C)
 //   0x001C SystemMode              → system_mode               (enum8)
 // (0x0008 pi_heating_demand is intentionally NOT emitted — z2m deletes it.)
 //
@@ -67,25 +67,14 @@ bool fz_viessmann_thermostat(const DecodedMessage& msg,
                               FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     bool emitted = false;
 
-    // attr 0x0000 — LocalTemperature (s16).
-    if (const Value* v = msg.payload.find("0")) {
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{}; o.type = ValueType::Int;
-            o.i = v->type == ValueType::Int ? v->i
-                                            : static_cast<std::int64_t>(v->u);
-            if (out.put("local_temperature", o)) emitted = true;
-        }
-    }
-
-    // attr 0x0012 — OccupiedHeatingSetpoint (s16) → occupied_heating_setpoint.
-    if (const Value* v = msg.payload.find("18")) {
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{}; o.type = ValueType::Int;
-            o.i = v->type == ValueType::Int ? v->i
-                                            : static_cast<std::int64_t>(v->u);
-            if (out.put("occupied_heating_setpoint", o)) emitted = true;
-        }
-    }
+    // attr 0x0000 — LocalTemperature, 0x0012 — OccupiedHeatingSetpoint
+    // (s16, °C / 100 as z2m fz.thermostat; below -273.15 dropped).
+    if (::zhc::generic::put_thermostat_celsius(out, "local_temperature",
+                                               msg.payload.find("0"), 100, true))
+        emitted = true;
+    if (::zhc::generic::put_thermostat_celsius(out, "occupied_heating_setpoint",
+                                               msg.payload.find("18"), 100, true))
+        emitted = true;
 
     // attr 0x001C — SystemMode (u8 enum).
     if (const Value* v = msg.payload.find("28")) {

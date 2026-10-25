@@ -14,9 +14,8 @@
 //   attr 0x0011 OccupiedCoolingSetpoint (s16) → "current_cooling_setpoint"
 //   attr 0x0029 ThermostatRunningState (bitmap16) → "running_state" (string)
 //
-// `current_cooling_setpoint` is a raw s16 pass-through (0.01 °C wire
-// units), mirroring how the generic decoder treats the heating
-// setpoint (the runtime scales /100 downstream).
+// `current_cooling_setpoint` is °C (s16 / 100), as the generic decoder
+// publishes the heating setpoint.
 //
 // `running_state` is mapped to z2m's `constants.thermostatRunningStates`
 // strings. Owon devices only ever run heat/cool/idle/fan_only, so the

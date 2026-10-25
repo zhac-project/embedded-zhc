@@ -18,22 +18,12 @@ bool fz_airzone_thermostat_extras(const DecodedMessage& msg,
                                   const PreparedDefinition&,
                                   RuntimeContext&,
                                   FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    // attr 0x0011 — OccupiedCoolingSetpoint (s16, 0.01 °C wire units).
-    // Raw pass-through as Int, mirroring the generic heating-setpoint
-    // branch (the runtime scales /100 downstream). z2m key:
+    // attr 0x0011 — OccupiedCoolingSetpoint (s16, 0.01 °C wire units) in
+    // °C, like the generic heating setpoint. z2m key:
     // "occupied_cooling_setpoint"; the Airzone climate exposes surface
     // it as "current_cooling_setpoint".
-    if (const Value* v = msg.payload.find("17")) {
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{};
-            o.type = ValueType::Int;
-            o.i    = v->type == ValueType::Int
-                         ? v->i
-                         : static_cast<std::int64_t>(v->u);
-            if (out.put("current_cooling_setpoint", o)) return true;
-        }
-    }
-    return false;
+    return generic::put_thermostat_celsius(out, "current_cooling_setpoint",
+                                           msg.payload.find("17"), 100, false);
 }
 
 }  // namespace

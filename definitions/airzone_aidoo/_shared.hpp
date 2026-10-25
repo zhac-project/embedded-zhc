@@ -12,9 +12,8 @@
 //
 //   attr 0x0011 OccupiedCoolingSetpoint (s16) → "current_cooling_setpoint"
 //
-// `current_cooling_setpoint` is a raw s16 pass-through (0.01 °C wire
-// units), mirroring how the generic decoder treats the heating setpoint
-// (the runtime scales /100 downstream).
+// `current_cooling_setpoint` is °C (s16 / 100), as the generic decoder
+// publishes the heating setpoint.
 //
 // The z2m device exposes neither running_state nor running_mode (its
 // `e.climate()` chain only adds localTemperature/systemMode/fanMode and

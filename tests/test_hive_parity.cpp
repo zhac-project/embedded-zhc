@@ -212,7 +212,7 @@ void check_receiver(const PreparedDefinition& def) {
     auto rs = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0012, 0x29, sp));
     const Value* sv = rs.merged.find("current_heating_setpoint");
-    assert(sv && sv->type == ValueType::Int && sv->i == 2000);
+    assert(sv && sv->type == ValueType::Float && sv->f == 20.0f);
 
     // Regression: local_temperature still decodes via generic kFzThermostat.
     //   attr 0x0000 LocalTemperature, s16 = 0x0834 = 2100.
@@ -220,7 +220,7 @@ void check_receiver(const PreparedDefinition& def) {
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 }
 
 }  // namespace
