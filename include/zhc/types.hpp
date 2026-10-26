@@ -172,7 +172,9 @@ struct Expose {
 //     Keys returned by the parser point into this buffer; valid for the
 //     lifetime of the DecodedMessage. ~192 bytes at default capacity.
 //   mi_struct_arena — storage for Xiaomi `0xFF01` / MI-struct payload.
-//     ObjectView pointers from `Value::obj` alias this member.
+//     ObjectView pointers from `Value::obj` alias this member. Valid only
+//     inside the converter that filled it: the MI-struct converters keep
+//     its keys on their own stack and empty it before they return.
 struct DecodedMessage {
     FrameFamily  family;
     const char*  cluster;

@@ -103,6 +103,7 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **The Lumi MI-struct converters leave no dangling keys behind** (`fz_lumi_basic`, `fz_lumi_specific`; review 2026-10-24 ZR-07). They parse attribute 0xFF01 into `DecodedMessage::mi_struct_arena` with the keys in a scratch on their own stack, and the arena kept pointing at it after they returned. Nothing read it afterwards, so this was latent; the arena is now emptied on every return.
 - **Generic thermostat writes reach the device and refuse what does not fit.**
   `kTzThermostat` (145 definitions) framed its setpoint and `system_mode`
   writes as a cluster-specific command (fc 0x11), which on hvacThermostat is
