@@ -230,6 +230,34 @@ extern const FzConverter kFzSinopeHvacManu{
     .user_config       = nullptr,
 };
 
+namespace {
+// floorTemperature / roomTemperature (0xFF01 0x0107 / 0x010D) cannot be
+// reported, so a localTemp report triggers a read of both (z2m
+// fzLocal.thermostat on TH1300ZB / TH1400ZB). Publishes nothing itself.
+bool fz_sinope_floor_room_refresh(const DecodedMessage& msg, const FzConverter&,
+                                  const PreparedDefinition&, RuntimeContext& ctx,
+                                  FixedPayload<ZHC_FIXED_PAYLOAD_CAP>&) {
+    if (!msg.payload.find("0") || !ctx.configure_read) return false;
+    ctx.configure_read(ctx.device_index, msg.src_endpoint ? msg.src_endpoint : 1, 0xFF01,
+                       kSinopeFloorRoomAttrs, 2, 0x119C);
+    return false;
+}
+}  // namespace
+
+extern const FzConverter kFzSinopeFloorRoomRefresh{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "hvacThermostat",
+    .type_mask         = type_bit(MessageType::AttributeReport),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_sinope_floor_room_refresh },
+    .user_config       = nullptr,
+};
+
 // ── ZclWriteSpec table — fields: key, attr_id, attr_type, mfg, lookup, lookup_count ───
 
 namespace {

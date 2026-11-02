@@ -3,17 +3,26 @@
 // Tier 1: Schneider MEG5779 — auto-generated.
 // Merten Connected Room Temperature Controller
 // z2m-source: schneider.ts #MEG5779.
+// window_open (hvacThermostat 0xE012, mfg 0x105E, z2m v26.125.0) rides the
+// shared Wiser thermostat decoder; the attribute is STATE_GET, so it is read
+// once at configure instead of reported.
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/schneider/_shared.hpp"
 
 namespace zhc::devices::schneider {
 namespace {
 const FzConverter* const kFz_MEG5779[] = {
     &::zhc::generic::kFzThermostat,
+    &::zhc::schneider::kFzSchneiderThermostat,
 };
 const TzConverter* const kTz_MEG5779[] = {
     &::zhc::generic::kTzThermostat,
 };
 constexpr const char* kModels_MEG5779[] = { "MEG5779" };
+constexpr std::uint8_t kReadWindowOpen[] = { 0x12, 0xE0 };
+constexpr ConfigStep kSteps_MEG5779[] = {
+    { ConfigStepOp::Read, 1, 0x0201, 0x00, 0, kReadWindowOpen, sizeof(kReadWindowOpen), 0, 0x105E },
+};
 
 }  // namespace
 
@@ -23,6 +32,7 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"window_open", ExposeType::Binary, Access::State, nullptr, "On if the window is open", nullptr, 0, ExposeCategory::Diagnostic},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -41,6 +51,8 @@ extern const PreparedDefinition kDef_MEG5779{
     .to_zigbee=kTz_MEG5779, .to_zigbee_count=sizeof(kTz_MEG5779)/sizeof(kTz_MEG5779[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=nullptr, .reports_count=0,
+    .config_steps=kSteps_MEG5779, .config_steps_count=sizeof(kSteps_MEG5779)/sizeof(kSteps_MEG5779[0]),
 };
 
 }  // namespace zhc::devices::schneider

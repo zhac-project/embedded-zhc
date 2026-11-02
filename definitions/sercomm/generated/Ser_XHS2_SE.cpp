@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 1: Sercomm XHS2-SE — auto-generated.
 // Magnetic door & window contact sensor
+// z2m v26.125.0: the binding table has two slots (genPollCtrl + one), so
+// only msTemperatureMeasurement is bound and reported; poll control is set to
+// 24 qs / 13200 qs. Not ported: the 12 h battery read (m.poll) and the
+// re-apply on deviceAnnounce.
 // z2m-source: sercomm.ts #XHS2-SE.
 #include "definitions/_generic/_shared.hpp"
 
@@ -29,9 +33,10 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0001},
     {1, 0x0402},
-    {1, 0x0500},
+};
+constexpr ReportingSpec kReports_XHS2_SE[] = {
+    {1, 0x0402, 0x0000, 0x29, 10, 3600, 100, 0},
 };
 // --- end auto-generated block ---
 
@@ -46,6 +51,9 @@ extern const PreparedDefinition kDef_XHS2_SE{
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=kReports_XHS2_SE, .reports_count=sizeof(kReports_XHS2_SE)/sizeof(kReports_XHS2_SE[0]),
+    .config_steps=::zhc::generic::kPollControl24Checkin13200,
+    .config_steps_count=sizeof(::zhc::generic::kPollControl24Checkin13200)/sizeof(ConfigStep),
 };
 
 }  // namespace zhc::devices::sercomm

@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 1: Philips 7299355PH — auto-generated.
 // Hue white and color ambiance LightStrip
+// z2m v26.125.0: philipsLight({colorTemp: true, color: true}) — the strip
+// gained colour temperature, so it uses the colour + CT set.
 // z2m-source: philips.ts #7299355PH.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/philips/_shared.hpp"
@@ -22,14 +24,14 @@ extern const PreparedDefinition kDef_D7299355PH{
     .model                   = "7299355PH",
     .vendor                  = "Philips",
     .meta                    = nullptr,
-    .exposes                 = kExposesPhilipsColorLight,
-    .exposes_count           = kExposesPhilipsColorLightCount,
+    .exposes                 = kExposesPhilipsColorCTLight,
+    .exposes_count           = kExposesPhilipsColorCTLightCount,
     .white_labels            = nullptr,
     .white_labels_count      = 0,
-    .from_zigbee             = kFzPhilipsColorLight,
-    .from_zigbee_count       = kFzPhilipsColorLightCount,
-    .to_zigbee               = kTzPhilipsColorLight,
-    .to_zigbee_count         = kTzPhilipsColorLightCount,
+    .from_zigbee             = kFzPhilipsColorCTLight,
+    .from_zigbee_count       = kFzPhilipsColorCTLightCount,
+    .to_zigbee               = kTzPhilipsColorCTLight,
+    .to_zigbee_count         = kTzPhilipsColorCTLightCount,
     .configure               = nullptr,
     .on_event                = nullptr,
     .bindings                = kBindingsPhilipsCTLight,

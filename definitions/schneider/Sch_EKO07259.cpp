@@ -15,16 +15,27 @@
 // emitter/output mode, local-temperature source select, floor sensor
 // correction/type) + running_state (runningStateFromPower) — all ride Schneider
 // manuSpecific / custom clusters with no generic converter in tree.
+// regulator_level (z2m v26.125.0): heating output % in regulator mode (P9),
+// cycle-time cluster 0xFF16 attr 0x0000 (mfg 0x105E), as on CCTFR6000.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::schneider {
 namespace {
+constexpr std::uint16_t kSchneiderManu = 0x105E;
+constexpr ::zhc::generic::ZclAttrRow kRegulatorRows[] = { { 0x0000, "regulator_level" } };
+constexpr ::zhc::generic::ZclAttrMap kRegulatorMap{ kRegulatorRows, 1, kSchneiderManu };
+constexpr FzConverter kFzRegulator = ::zhc::generic::zcl_attr_fz("schneiderCycleTime", &kRegulatorMap);
+constexpr ::zhc::generic::ZclWriteSpec kRegulatorSpec{ "regulator_level", 0x0000, 0x20, kSchneiderManu, nullptr, 0 };
+constexpr TzConverter kTzRegulator = ::zhc::generic::zcl_write_tz("schneiderCycleTime", 0xFF16, &kRegulatorSpec);
+
 const FzConverter* const kFz_EKO07259[] = {
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzThermostat,
+    &kFzRegulator,
 };
 const TzConverter* const kTz_EKO07259[] = {
     &::zhc::generic::kTzThermostat,
+    &kTzRegulator,
 };
 constexpr const char* kModels_EKO07259[] = { "EKO07259" };
 
@@ -41,6 +52,9 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"regulator_level", ExposeType::Numeric, Access::StateSet, "%",
+     "Heating output percentage when the thermostat is configured in regulator mode (P9 / NoControl)",
+     nullptr, 0, ExposeCategory::State, 0, 100, 10},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

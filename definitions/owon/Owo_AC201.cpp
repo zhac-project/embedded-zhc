@@ -6,6 +6,8 @@
 // setpoint", ...)) decoded by fz.thermostat from hvacThermostat attr 0x0011.
 // The generic kFzThermostat decodes only 0x0000/0x0012/0x001C, so
 // current_cooling_setpoint was a dead expose. Wired kFzOwonThermostatExtras.
+// ac_louver_position was dead too (nothing coded 0x0045); now on the shared
+// kFz/kTzAcLouverPosition (z2m v26.125.0 writes 1 for fully_closed).
 // z2m-source: owon.ts #AC201 + fromZigbee.ts fz.thermostat.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/owon/_shared.hpp"
@@ -16,9 +18,11 @@ const FzConverter* const kFz_AC201[] = {
     &::zhc::generic::kFzThermostat,
     &::zhc::owon::kFzOwonThermostatExtras,
     &::zhc::generic::kFzFanMode,
+    &::zhc::generic::kFzAcLouverPosition,
 };
 const TzConverter* const kTz_AC201[] = {
     &::zhc::generic::kTzThermostat,
+    &::zhc::generic::kTzAcLouverPosition,
 };
 constexpr const char* kModels_AC201[] = { "AC201", "AC201P_019E" };
 
@@ -32,7 +36,7 @@ constexpr Expose kAutoExposes[] = {
     {"current_cooling_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode",              ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"fan_mode",                 ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"ac_louver_position",       ExposeType::Enum,    Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"ac_louver_position",       ExposeType::Enum,    Access::StateSet, nullptr, nullptr, ::zhc::generic::kAcLouverPositions, 5},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

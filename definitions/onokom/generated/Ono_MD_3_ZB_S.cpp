@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 1: Onokom MD-3-ZB-S — auto-generated.
 // AIR MD-3-ZB-S (Adapter for semi-industrial MDV systems)
+// External temperature sensor controls: onokom/_shared.hpp (z2m v26.125.0).
 // z2m-source: onokom.ts #MD-3-ZB-S.
-#include "definitions/_generic/_shared.hpp"
+#include "definitions/onokom/_shared.hpp"
 
 namespace zhc::devices::onokom {
 namespace {
@@ -11,9 +12,13 @@ const FzConverter* const kFz_MD_3_ZB_S[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzThermostat,
     &::zhc::generic::kFzFanMode,
+    &kFzOnokomExternalSensor,
 };
 const TzConverter* const kTz_MD_3_ZB_S[] = {
     &::zhc::generic::kTzOnOff,
+    &kTzOnokomExternalSensorAllow,
+    &kTzOnokomExternalAirTemperature,
+    &kTzOnokomExternalSensorValidity,
     &::zhc::generic::kTzThermostat,
 };
 constexpr const char* kModels_MD_3_ZB_S[] = { "MD-3-ZB-S", "OK-AC-H-MD-3-ZB-S-A" };
@@ -27,6 +32,7 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    ZHC_ONOKOM_EXTERNAL_SENSOR_EXPOSES,
 };
 
 constexpr BindingSpec kAutoBindings[] = {

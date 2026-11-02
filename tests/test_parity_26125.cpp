@@ -833,6 +833,232 @@ void wave4_tuya() {
     }
 }
 
+// Plain writeAttributes frame: [fc tsn 0x02][attr:2][type][value...]; with a
+// manufacturer code the code sits after fc, so everything shifts by two.
+bool is_write(const Encoded& e, std::uint16_t cluster, std::uint16_t attr, std::uint8_t type, std::uint32_t v,
+              std::uint16_t manu = 0) {
+    const std::size_t o = manu ? 2 : 0;
+    if (!e.ok || e.cluster != cluster || e.frame.size() < 7 + o || e.frame[2 + o] != 0x02) return false;
+    if (manu && (e.frame[1] != (manu & 0xFF) || e.frame[2] != (manu >> 8))) return false;
+    std::uint32_t got = 0;
+    for (std::size_t i = 6 + o; i < e.frame.size(); ++i) got |= std::uint32_t(e.frame[i]) << (8 * (i - 6 - o));
+    return e.frame[3 + o] == (attr & 0xFF) && e.frame[4 + o] == (attr >> 8) && e.frame[5 + o] == type && got == v;
+}
+bool has_step(const PreparedDefinition& d, ConfigStepOp op, std::uint8_t ep, std::uint16_t cluster,
+              std::uint16_t manu = 0) {
+    for (std::size_t i = 0; i < d.config_steps_count; ++i) {
+        const ConfigStep& s = d.config_steps[i];
+        if (s.op == op && (s.endpoint ? s.endpoint : 1) == ep && s.cluster_id == cluster && s.manu_code == manu)
+            return true;
+    }
+    return false;
+}
+
+void wave4_zcl_s() {
+    std::printf("wave 4 ZCL S rows\n");
+    for (const char* zm : {"AC201", "AC221", "IRB-4-1-00"}) {   // F046 acLouverPosition
+        const PreparedDefinition& d = def_for(zm, "OWON");
+        check(is_write(encode(d, "ac_louver_position", str("fully_closed")), 0x0201, 0x0045, 0x30, 1),
+              "louver fully_closed writes 1");
+        check(is_write(encode(d, "ac_louver_position", str("half_open")), 0x0201, 0x0045, 0x30, 4),
+              "louver half_open writes 4");
+        Report z; z.u8(0x0045, 0x30, 0);
+        check(r_str(dispatch(d, 0x0201, 1, z.span()), "ac_louver_position", "fully_closed"), "louver 0 reads fully_closed");
+        check(has_expose(d, "ac_louver_position"), "louver exposed");
+    }
+    {   // I16 Schneider MEG5779 window_open
+        const PreparedDefinition& d = def_for("MEG5779", "Schneider Electric");
+        Report w(0x105E); w.u8(0xE012, 0x10, 1);
+        check(r_bool(dispatch(d, 0x0201, 1, w.span()), "window_open", true), "MEG5779 0xE012 -> window_open");
+        check(has_expose(d, "window_open") && has_step(d, ConfigStepOp::Read, 1, 0x0201, 0x105E), "MEG5779 read step");
+    }
+    {   // I33 Schneider EKO07259 regulator_level
+        const PreparedDefinition& d = def_for("EKO07259", "Schneider Electric");
+        Report r(0x105E); r.u8(0x0000, 0x20, 60);
+        check(r_float(dispatch(d, 0xFF16, 1, r.span()), "regulator_level") == 60.0f, "EKO07259 regulator_level read");
+        check(is_write(encode(d, "regulator_level", uval(70)), 0xFF16, 0x0000, 0x20, 70, 0x105E),
+              "EKO07259 regulator_level write");
+    }
+    check(def_for("eMotion Air", "LinknLink").power_source_override == 0x03, "eMotion Air battery powered");   // F088
+    {   // I17 Amina S hardware_current_limit
+        const PreparedDefinition& d = def_for("amina S", "Amina Distribution AS");
+        Report r; r.u8(0x0011, 0x20, 16);
+        check(r_float(dispatch(d, 0x0008, 10, r.span()), "hardware_current_limit") == 16.0f, "amina maxLevel");
+        check(has_expose(d, "hardware_current_limit") && has_step(d, ConfigStepOp::Read, 10, 0x0008), "amina read step");
+    }
+    {   // F028 Schneider WV704R0A0902 (iTRV)
+        const PreparedDefinition& d = def_for("iTRV", "Schneider Electric");
+        check(d.bindings_count == 2 && d.bindings[0].cluster_id == 0x0201 && d.bindings[1].cluster_id == 0x0001,
+              "iTRV binds hvacThermostat first");
+        check(has_report(d, 1, 0x0201, 0x0000, 10) && has_report(d, 1, 0x0201, 0x0012, 10) &&
+              has_report(d, 1, 0x0201, 0x0008, 10) && has_report(d, 1, 0x0001, 0x0020, 0) &&
+              has_report(d, 1, 0x0204, 0x0001, 1), "iTRV reports");
+        Report p; p.u8(0x0008, 0x20, 42);
+        check(r_float(dispatch(d, 0x0201, 1, p.span()), "pi_heating_demand") == 42.0f, "iTRV pi_heating_demand");
+        Report k; k.u8(0x0001, 0x30, 1);
+        check(r_find(dispatch(d, 0x0204, 1, k.span()), "keypad_lockout") != nullptr, "iTRV keypad_lockout");
+    }
+    {   // I04 Danfoss Ally heating_system_mode
+        const PreparedDefinition& d = def_for("eTRV0103", "Danfoss");
+        Report r(0x1246); r.u8(0x4059, 0x30, 1);
+        check(r_str(dispatch(d, 0x0201, 1, r.span()), "heating_system_mode", "boiler_heating"), "Ally 0x4059 -> boiler_heating");
+        check(is_write(encode(d, "heating_system_mode", str("default_heating")), 0x0201, 0x4059, 0x30, 2, 0x1246),
+              "Ally heating_system_mode write");
+        check(has_expose(d, "heating_system_mode"), "Ally heating_system_mode exposed");
+    }
+    {   // F063 Philips LST001 colour temperature
+        const PreparedDefinition& d = def_for("LST001", "Philips");
+        check(has_expose(d, "color_temp") && encode(d, "color_temp", uval(300)).ok, "LST001 color_temp");
+    }
+    {   // F053 Sunricher SR-ZG9095B fan
+        const PreparedDefinition& d = def_for("ZG9095B", "Sunricher");
+        Report f; f.u8(0x0000, 0x30, 3);
+        const auto r = dispatch(d, 0x0202, 1, f.span());
+        check(r_str(r, "fan_mode", "high") && r_bool(r, "fan_state", true), "ZG9095B fan high");
+        check(is_write(encode(d, "fan_mode", str("auto")), 0x0202, 0x0000, 0x30, 5), "ZG9095B fan_mode auto -> 5");
+        check(has_binding(d, 1, 0x0202) && has_expose(d, "fan_mode"), "ZG9095B fan bind + expose");
+    }
+    for (const char* zm : {"XHS2-SE", "URC4460BC0-X-R"}) {   // F050/F079 poll control
+        const PreparedDefinition& d = def_for(zm, "Sercomm");
+        bool ok = d.config_steps_count == 2;
+        if (ok) {
+            const ConfigStep& c = d.config_steps[0];
+            const ConfigStep& w = d.config_steps[1];
+            ok = c.op == ConfigStepOp::Cmd && c.cluster_id == 0x0020 && c.cmd_id == 0x02 && c.payload_len == 4 &&
+                 c.payload[0] == 24 && w.op == ConfigStepOp::Write && w.cluster_id == 0x0020 && w.attr_id == 0x0000 &&
+                 w.attr_type == 0x23 && w.payload_len == 4 && w.payload[0] == 0x90 && w.payload[1] == 0x33;
+        }
+        check(ok, "XHS2 long poll 24 qs + checkin 13200");
+    }
+    {   const PreparedDefinition& d = def_for("XHS2-SE", "Sercomm");
+        check(d.bindings_count == 1 && has_binding(d, 1, 0x0402) && has_report(d, 1, 0x0402, 0x0000, 100),
+              "XHS2-SE binds temperature only, with a report");
+    }
+}
+
+// Attribute report carrying one 48-bit unsigned (type 0x25) value.
+std::vector<std::uint8_t> u48_report(std::uint16_t attr, std::uint64_t val) {
+    std::vector<std::uint8_t> f{0x18, 0x01, 0x0A, std::uint8_t(attr & 0xFF), std::uint8_t(attr >> 8), 0x25};
+    for (int i = 0; i < 6; ++i) f.push_back(std::uint8_t(val >> (8 * i)));
+    return f;
+}
+int g_reads = 0;
+std::uint16_t g_read_cluster = 0, g_read_manu = 0;
+
+void wave4_zcl_m() {
+    std::printf("wave 4 ZCL M items\n");
+    {   // F098 EGLO 901471: CT panel on EP1 (white), RGB ring on EP3 (rgb)
+        const PreparedDefinition& d = def_for("EBF-RGB-ZMB-CLB", "EGLO");
+        Report on; on.u8(0x0000, 0x10, 1);
+        const auto r1 = dispatch(d, 0x0006, 1, on.span());
+        const auto r3 = dispatch(d, 0x0006, 3, on.span());
+        check(r_find(r1, "state_white") && r_find(r3, "state_rgb") && !r_find(r3, "state"), "901471 EP1 white / EP3 rgb");
+        check(has_expose(d, "color_temp_white") && has_expose(d, "color_x_rgb") && !has_expose(d, "color_temp_rgb") &&
+              !has_expose(d, "state"), "901471 split exposes");
+        check(has_binding(d, 1, 0x0300) && has_binding(d, 3, 0x0300) && has_binding(d, 3, 0x0006), "901471 EP3 binds");
+    }
+    {   // F044 Develco EMIZB-132 on EP2
+        const PreparedDefinition& d = def_for("EMIZB-132", "Develco Products A/S");
+        StoreCtx s;
+        Report p; p.u32(0x0304, 0x2B, 1500).u32(0x0305, 0x2B, 200);
+        auto r = dispatch(d, 0x0B04, 2, p.span(), &s.ctx);
+        check(r_float(r, "power") == 1500.0f && r_float(r, "power_reactive") == 200.0f, "EMIZB-132 total power");
+        Report v; v.u16(0x0505, 0x21, 2301).u16(0x0508, 0x21, 52).u16(0x0908, 0x21, 10);
+        r = dispatch(d, 0x0B04, 2, v.span(), &s.ctx);
+        check(approx(r_float(r, "voltage"), 230.1f) && approx(r_float(r, "current"), 5.2f) &&
+              approx(r_float(r, "current_phase_b"), 1.0f), "EMIZB-132 current /10 by default");
+        Report m(0x1015); m.u16(0x0302, 0x31, 0x0203);
+        check(r_str(dispatch(d, 0x0702, 2, m.span(), &s.ctx), "interface_mode", "kaifa_and_kamstrup"), "EMIZB-132 interface_mode");
+        r = dispatch(d, 0x0B04, 2, v.span(), &s.ctx);
+        check(approx(r_float(r, "current"), 0.052f, 0.0001f), "EMIZB-132 kaifa_and_kamstrup current /1000");
+        const auto e1 = u48_report(0x0000, 123456), e0 = u48_report(0x0000, 0), ex = u48_report(0x0000, 0xFFFFFFFFFFFFull);
+        check(approx(r_float(feed(d, 0x0702, 2, e1), "energy"), 123.456f), "EMIZB-132 energy /1000");
+        check(!r_find(feed(d, 0x0702, 2, e0), "energy") && !r_find(feed(d, 0x0702, 2, ex), "energy"),
+              "EMIZB-132 zero / invalid energy dropped");
+        const Encoded w = encode(d, "interface_mode", str("aidon_meter"));
+        check(is_write(w, 0x0702, 0x0302, 0x31, 0x0202, 0x1015) && w.ep == 2, "EMIZB-132 interface_mode write on EP2");
+        check(has_binding(d, 2, 0x0702) && has_binding(d, 2, 0x0B04) && !has_binding(d, 1, 0x0702) &&
+              has_report(d, 2, 0x0B04, 0x0304, 1) && has_report(d, 2, 0x0B04, 0x0305, 1), "EMIZB-132 EP2 binds + reports");
+    }
+    {   // F029 Sinopé TH1400ZB / TH1300ZB: a localTemp report re-reads floor/room temperature
+        RuntimeContext ctx{};
+        ctx.configure_read = [](std::uint16_t, std::uint8_t, std::uint16_t c, const std::uint8_t* ids, std::uint8_t n,
+                                std::uint16_t manu) {
+            ++g_reads; g_read_cluster = c; g_read_manu = manu;
+            return n == 2 && ids[0] == 0x07 && ids[1] == 0x01 && ids[2] == 0x0D && ids[3] == 0x01;
+        };
+        for (const char* zm : {"TH1400ZB", "TH1300ZB"}) {
+            const PreparedDefinition& d = def_for(zm, "Sinope Technologies");
+            g_reads = 0;
+            Report t; t.u16(0x0000, 0x29, 2150);
+            dispatch(d, 0x0201, 1, t.span(), &ctx);
+            check(g_reads == 1 && g_read_cluster == 0xFF01 && g_read_manu == 0x119C, "Sinopé localTemp triggers floor/room read");
+            check(has_step(d, ConfigStepOp::Read, 1, 0xFF01, 0x119C), "Sinopé initial floor/room read");
+        }
+    }
+    {   // F051 Shelly WS90 drops all-zero frames
+        const PreparedDefinition& d = def_for("Ecowitt WS90", "Shelly");
+        StoreCtx s;
+        Report h0; h0.u16(0x0000, 0x21, 0);
+        check(r_find(dispatch(d, 0x0405, 1, h0.span(), &s.ctx), "humidity") != nullptr, "WS90 humidity 0 with no history kept");
+        Report h; h.u16(0x0000, 0x21, 6000);
+        dispatch(d, 0x0405, 1, h.span(), &s.ctx);
+        check(!r_find(dispatch(d, 0x0405, 1, h0.span(), &s.ctx), "humidity"), "WS90 humidity 0 after 60 % dropped");
+        Report t; t.u16(0x0000, 0x29, 150);
+        Report t0; t0.u16(0x0000, 0x29, 0);
+        dispatch(d, 0x0402, 1, t.span(), &s.ctx);
+        check(r_find(dispatch(d, 0x0402, 1, t0.span(), &s.ctx), "temperature") != nullptr, "WS90 0 C after 1.5 C kept");
+        Report tw; tw.u16(0x0000, 0x29, 2500);
+        dispatch(d, 0x0402, 1, tw.span(), &s.ctx);
+        check(!r_find(dispatch(d, 0x0402, 1, t0.span(), &s.ctx), "temperature"), "WS90 0 C after 25 C dropped");
+        Report p0; p0.u16(0x0000, 0x29, 0);
+        check(!r_find(dispatch(d, 0x0403, 1, p0.span(), &s.ctx), "pressure"), "WS90 pressure 0 dropped");
+        Report l; l.u16(0x0000, 0x21, 30000);
+        Report l0; l0.u16(0x0000, 0x21, 0);
+        dispatch(d, 0x0400, 1, l.span(), &s.ctx);
+        check(!r_find(dispatch(d, 0x0400, 1, l0.span(), &s.ctx), "illuminance"), "WS90 illuminance 0 after daylight dropped");
+    }
+    {   // F078b Namron Edge custom attributes
+        const PreparedDefinition& d = def_for("4512783", "Namron AS");
+        StoreCtx s;
+        Report a; a.u16(0x0029, 0x19, 0x0001).u8(0x0025, 0x18, 0x04).u8(0x8004, 0x30, 6).u16(0x801d, 0x29, 40)
+                   .u8(0x8023, 0x20, 6).u8(0x8024, 0x20, 200).u8(0x8006, 0x18, 0x48).u16(0x8025, 0x29, 285)
+                   .u8(0x8000, 0x10, 1);
+        const auto r = dispatch(d, 0x0201, 1, a.span(), &s.ctx);
+        check(r_str(r, "running_state", "heat") && r_str(r, "programming_operation_mode", "eco") &&
+              r_str(r, "sensor_mode", "regulator") && r_float(r, "regulator_percentage") == 40.0f &&
+              r_float(r, "countdown_set") == 30.0f && r_float(r, "countdown_left") == 0.0f &&
+              r_str(r, "fault", "internal_sensor_error,overheat_error") && approx(r_float(r, "max_heat_temp"), 28.5f) &&
+              r_bool(r, "window_open_check", true), "Namron Edge custom attrs");
+        Report f0; f0.u8(0x8006, 0x18, 0);
+        check(r_str(dispatch(d, 0x0201, 1, f0.span(), &s.ctx), "fault", "none"), "Namron Edge fault 0 -> none");
+        Encoded e = encode(d, "sensor_mode", str("floor"));
+        check(is_write(e, 0x0201, 0x8004, 0x30, 1) && e.frame[0] == 0x00, "Edge write asks for a default response");
+        check(is_write(encode(d, "holiday_temp_set", num(12.5)), 0x0201, 0x8013, 0x29, 1250), "Edge holiday_temp_set x100");
+        check(is_write(encode(d, "frost", boolean(true)), 0x0201, 0x8001, 0x10, 1), "Edge frost write");
+        check(d.power_source_override == 0x01 && has_binding(d, 1, 0x0405) && has_report(d, 1, 0x0405, 0x0000, 100) &&
+              has_step(d, ConfigStepOp::Read, 1, 0x0201), "Edge configure");
+    }
+    for (const char* zm : {"AUX-1-ZB-S", "DK-1-ZB-S", "GR-3-ZB-S", "HR-1-ZB-S", "HS-3-ZB-S", "HT-1-ZB-S", "MD-1-ZB-S",
+                           "MD-3-ZB-S", "ME-1-ZB-S", "TCL-1-ZB-S"}) {   // I01b Onokom external sensor
+        const PreparedDefinition& d = def_for(zm, "ONOKOM");
+        check(is_write(encode(d, "external_air_temperature", num(21.5)), 0x0201, 0x4751, 0x29, 2150, 0x4703),
+              "onokom external_air_temperature x100");
+        check(has_expose(d, "allow_the_use_of_an_external_temperature_sensor") &&
+              has_expose(d, "external_temperature_sensor_validity_period"), "onokom external sensor exposes");
+    }
+    {   const PreparedDefinition& d = def_for("HT-1-ZB-S", "ONOKOM");
+        Report r(0x4703); r.u8(0x4750, 0x30, 1).u16(0x4751, 0x29, 2150).u16(0x4752, 0x21, 30);
+        const auto x = dispatch(d, 0x0201, 1, r.span());
+        check(r_str(x, "allow_the_use_of_an_external_temperature_sensor", "Yes") &&
+              approx(r_float(x, "external_air_temperature"), 21.5f) &&
+              r_float(x, "external_temperature_sensor_validity_period") == 30.0f, "onokom external sensor decode");
+        check(is_write(encode(d, "allow_the_use_of_an_external_temperature_sensor", str("Yes")), 0x0201, 0x4750, 0x30, 1,
+                       0x4703), "onokom allow write");
+        check(!has_expose(def_for("GR-1-ZB-S", "ONOKOM"), "external_air_temperature"), "GR-1 has no external sensor");
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -859,6 +1085,8 @@ int main() {
     zc301();
     wave3_zcl();
     wave4_tuya();
+    wave4_zcl_s();
+    wave4_zcl_m();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26125 checks passed\n");
     return 0;
