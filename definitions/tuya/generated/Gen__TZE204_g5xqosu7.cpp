@@ -22,15 +22,22 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_g5xqosu7_motor_working_mode_d
     { 1, "intermittently" },
 };
 
+// z2m lookup {SET: true, RESET: false} on BOOL DPs 103-105 (exposed, but the
+// generator dropped the rows).
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_g5xqosu7_stroke_limit[] = { {0, "RESET"}, {1, "SET"} };
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_g5xqosu7[] = {
     { 1, "state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_g5xqosu7_state_dp1, sizeof(kEnum__TZE204_g5xqosu7_state_dp1)/sizeof(kEnum__TZE204_g5xqosu7_state_dp1[0]) },
     { 2, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
     { 3, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
     { 5, "reverse_direction", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_g5xqosu7_reverse_direction_dp5, sizeof(kEnum__TZE204_g5xqosu7_reverse_direction_dp5)/sizeof(kEnum__TZE204_g5xqosu7_reverse_direction_dp5[0]) },
     { 12, "motor_fault", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 103, "upper_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum__TZE204_g5xqosu7_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    { 104, "middle_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum__TZE204_g5xqosu7_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    { 105, "lower_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum__TZE204_g5xqosu7_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
     { 106, "motor_working_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_g5xqosu7_motor_working_mode_dp106, sizeof(kEnum__TZE204_g5xqosu7_motor_working_mode_dp106)/sizeof(kEnum__TZE204_g5xqosu7_motor_working_mode_dp106[0]) },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_g5xqosu7{ kEntries__TZE204_g5xqosu7, 6 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_g5xqosu7{ kEntries__TZE204_g5xqosu7, sizeof(kEntries__TZE204_g5xqosu7)/sizeof(kEntries__TZE204_g5xqosu7[0]) };
 constexpr FzConverter kFzDp__TZE204_g5xqosu7{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

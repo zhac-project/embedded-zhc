@@ -59,7 +59,7 @@ constexpr TzConverter kTzDp__TZE204_adlblwab{
 };
 const TzConverter* const kTz__TZE204_adlblwab[] = { &kTzDp__TZE204_adlblwab };
 constexpr const char* kM__TZE204_adlblwab[] = { "TS0601" };
-constexpr const char* kN__TZE204_adlblwab[] = { "_TZE204_adlblwab" };
+constexpr const char* kN__TZE204_adlblwab[] = { "_TZE204_adlblwab", "_TZE284_adlblwab" };
 // --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
 constexpr const char* kAutoOpts__TZE204_adlblwab_16[] = {"off", "previous", "on"};
 constexpr Expose kAutoExposes__TZE204_adlblwab[] = {
@@ -86,7 +86,7 @@ constexpr Expose kAutoExposes__TZE204_adlblwab[] = {
 extern const PreparedDefinition kDefGen__TZE204_adlblwab{
     .zigbee_models=kM__TZE204_adlblwab,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN__TZE204_adlblwab,.manufacturer_names_count=1,
+    .manufacturer_names=kN__TZE204_adlblwab,.manufacturer_names_count=sizeof(kN__TZE204_adlblwab)/sizeof(kN__TZE204_adlblwab[0]),
     .model="TS0601__TZE204_adlblwab",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes__TZE204_adlblwab,.exposes_count=sizeof(kAutoExposes__TZE204_adlblwab)/sizeof(kAutoExposes__TZE204_adlblwab[0]),
     .white_labels=nullptr,.white_labels_count=0,

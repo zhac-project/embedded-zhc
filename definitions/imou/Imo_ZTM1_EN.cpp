@@ -20,7 +20,7 @@ const FzConverter* const kFz_ZTM1_EN[] = {
     &::zhc::generic::kFzHumidity,
 };
 
-constexpr const char* kModels_ZTM1_EN[] = { "ZTM1-EN" };
+constexpr const char* kModels_ZTM1_EN[] = { "ZTM1-EN", "ZTM2-EN" };
 
 }  // namespace
 

@@ -19,6 +19,7 @@
 #include "zhc/devices/develco_registry.hpp"
 #include "zhc/devices/efekta_registry.hpp"
 #include "zhc/devices/heiman_registry.hpp"
+#include "zhc/devices/ikea_registry.hpp"
 #include "zhc/devices/immax_registry.hpp"
 #include "zhc/devices/ledvance_registry.hpp"
 #include "zhc/devices/legrand_registry.hpp"
@@ -36,6 +37,7 @@
 #include "zhc/devices/third_reality_registry.hpp"
 #include "zhc/devices/tier_e_registries.hpp"
 #include "zhc/devices/tuya_registry.hpp"
+#include "zhc/devices/yale_registry.hpp"
 #include "zhc/devices/zemismart_registry.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/definition_runtime.hpp"
@@ -227,6 +229,8 @@ const std::vector<const PreparedDefinition*>& registries() {
     add(devices::namron::kNamronRegistry, devices::namron::kNamronRegistryCount);
     add(devices::heiman::kHeimanRegistry, devices::heiman::kHeimanRegistryCount);
     add(devices::saswell::kSaswellRegistry, devices::saswell::kSaswellRegistryCount);
+    add(devices::ikea::kIkeaRegistry, devices::ikea::kIkeaRegistryCount);
+    add(devices::yale::kYaleRegistry, devices::yale::kYaleRegistryCount);
     for (std::size_t i = 0; i < devices::tier_e::kTierERegistriesCount; ++i)
         add(devices::tier_e::kTierERegistries[i].reg, devices::tier_e::kTierERegistries[i].count);
     return reg;
@@ -438,6 +442,75 @@ void signed_8bit() {
     check(dp_num(z, 103, 127, ctx, out) && float_of(out, "z") == 127.0f, "ZG-103Z z 127 stays");
 }
 
+// ── wave 2: detections ─────────────────────────────────────────────
+
+void detections() {
+    std::printf("wave 2 detections\n");
+    const Want w[] = {
+        {"TS0225", "_TZ3210_ekjc2rzh", "TS0225_EKAZA"},
+        {"TS0601", "_TZE284_hkdl5fmv", "TS0601_din_hoch"},
+        {"TS0601", "_TZE28C1000000_19jwhi8c", "ZN-USC1U-HT"},
+        {"TS0601", "_TZE28C1000000_yxun3xvr", "TS0601_1gang_switch"},
+        {"TS0601", "_TZE204_zpvusbtv", "TS0601__TZE284_zpvusbtv"},
+        {"TS0601", "_TZE204_rfpyqax9", "Pro Line X10"},
+        {"TS0601", "_TZE284_goecjd1t", "ZWPM16"},
+        {"TS0601", "_TZE284_adlblwab", "TS0601__TZE204_adlblwab"},
+        {"TS0601", "_TZE284_xc7dve2g", "TS0601__TZE284_68utemio"},
+        {"TS0601", "_TZE2841000000_8se38w3c", "TZ-ZT01_GA4"},
+        {"929004276603", "Signify Netherlands B.V.", "929004276602"},
+        {"LCX048", "Signify Netherlands B.V.", "929004284702"},
+        {"929003811401_01", "Signify Netherlands B.V.", "929003046601"},
+        {"929003811401_02", "Signify Netherlands B.V.", "929003046601"},
+        {"LCE006", "Signify Netherlands B.V.", "929002294203"},
+        {"YRD410-PB", "Yale", "YRD410-BLE"},
+        {"ZTM2-EN", "IMOU", "ZTM1-EN"},
+        {"TRADFRI bulb E17 CWS opal 600lm", "IKEA of Sweden", "LED1624G9"},
+        {"SDM01G2W", "BITUO TECHNIK", "SDM01W-U01"},
+        {"ZBM-MG21", "Inswift", "Silabs series 2 router"},
+        {"SLZB-07MG26", "SMLIGHT", "Silabs series 2 router"},
+    };
+    for (const Want& x : w) resolves(registries(), x);
+}
+
+// TZ-ZT01_GA4 was a min stub; now decodes its four datapoints.
+void tz_zt01_ga4() {
+    std::printf("TZ-ZT01_GA4 datapoints\n");
+    const PreparedDefinition& d = def_for("TS0601", "_TZE284_8se38w3c");
+    RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    check(dp_num(d, 1, 215, ctx, out) && approx(float_of(out, "temperature"), 21.5f), "DP1 temperature /10");
+    check(dp_num(d, 2, 48, ctx, out) && float_of(out, "humidity") == 48.0f, "DP2 humidity");
+    check(dp_enum(d, 3, 1, ctx, out) && str_is(out, "battery_state", "medium"), "DP3 battery_state");
+    check(dp_num(d, 38, -52, ctx, out) && approx(float_of(out, "temperature_probe"), -5.2f), "DP38 probe /10");
+}
+
+// ZM25TQ is a TS0601_cover_8 white-label now: inverted position, BOOL stroke limits.
+void zm25tq_cover_8() {
+    std::printf("ZM25TQ / cover_8\n");
+    const PreparedDefinition& d = def_for("TS0601", "_TZE200_fzo2pocs");
+    RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    check(dp_num(d, 3, 30, ctx, out) && float_of(out, "position") == 70.0f, "DP3 30 -> position 70");
+    check(dp_bool(d, 103, true, ctx, out) && str_is(out, "upper_stroke_limit", "SET"), "DP103 true -> SET");
+    check(dp_bool(d, 12, true, ctx, out) && bool_is(out, "motor_fault", true), "DP12 motor_fault");
+    check(d.power_source_override == 0x01, "forcePowerSource mains");
+    for (const char* m : {"_TZE200_fzo2pocs", "_TZE284_fzo2pocs", "_TZE204_r0jdjrvi", "_TZE200_g5xqosu7",
+                          "_TZE204_g5xqosu7", "_TZE200_9vpe3fl1"}) {
+        const Encoded e = encode(def_for("TS0601", m), "lower_stroke_limit", str("RESET"));
+        check(e.ok && e.frame.size() == 10 && e.frame[5] == 105 && e.frame[6] == 0x01 && e.frame[9] == 0,
+              "lower_stroke_limit RESET -> BOOL DP105 false");
+    }
+}
+
+// Legrand WNP10: binds genIdentify / genOnOff / genBinaryInput, reports onOff.
+void wnp10_configure() {
+    std::printf("WNP10 configure\n");
+    const PreparedDefinition& d = def_for("Hospitality on off plug", "Legrand");
+    bool bin = false;
+    for (std::size_t i = 0; i < d.bindings_count; ++i) bin |= d.bindings[i].cluster_id == 0x000F;
+    check(bin && d.bindings_count == 3, "binds 0x0003 / 0x0006 / 0x000F");
+    check(d.reports_count == 1 && d.reports[0].cluster_id == 0x0006 && d.reports[0].max_interval == 3600,
+          "reports onOff 0..3600");
+}
+
 }  // namespace
 
 int main() {
@@ -455,6 +528,10 @@ int main() {
     zht_002();
     time_base();
     signed_8bit();
+    detections();
+    tz_zt01_ga4();
+    zm25tq_cover_8();
+    wnp10_configure();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26125 checks passed\n");
     return 0;

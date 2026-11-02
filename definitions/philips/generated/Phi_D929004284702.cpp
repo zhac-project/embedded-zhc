@@ -9,7 +9,7 @@
 namespace zhc::devices::philips {
 namespace {
 
-constexpr const char* kModels_D929004284702[] = { "LCX030" };
+constexpr const char* kModels_D929004284702[] = { "LCX030", "LCX048" };
 
 }  // namespace
 

@@ -9,14 +9,13 @@
 // kTzCoverPosition + bound 0x0102, so `position` could never decode and the
 // device surfaced nothing on the real wire.
 //
-// DP map: z2m `legacy.fz.tuya_cover` (dataPoints.coverPosition=2 set,
-// coverArrived=3 arrived → both `position`; state=1 control) plus the
-// per-model `tuyaDatapoints` meta (103/104/105 upper/middle/lower stroke
-// limits, lookup {SET:true, RESET:false}). Mirrors the ZM25RX-08/30 / ZMP1
-// sibling DP defs (DP 2 + DP 3 → "position").
+// DP map: z2m v26.125.0 folds ZM25TQ into TS0601_cover_8 as a white-label,
+// so it follows that table: DP1 coverAction, DP2 / DP3 coverPositionInverted
+// (100 - raw; the legacy tuya_cover read raw, so the direction flips), DP5
+// reverse_direction, DP12 motor_fault, DP103-105 stroke limits (lookup
+// {SET: true, RESET: false} on BOOL datapoints), DP106 motor_working_mode.
 //
-// z2m-source: zemismart.ts #ZM25TQ (legacy.fz.tuya_cover + meta.tuyaDatapoints
-// 103/104/105).
+// z2m-source: tuya.ts #TS0601_cover_8 (whiteLabel Zemismart ZM25TQ).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
 
@@ -33,14 +32,19 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZM25TQ_stroke_limit[] = {
     { 0, "RESET" },
     { 1, "SET" },
 };
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZM25TQ_reverse_direction[] = { {0, "forward"}, {1, "back"} };
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZM25TQ_motor_working_mode[] = { {0, "continuous"}, {1, "intermittently"} };
 
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries_ZM25TQ[] = {
     { 1, "state", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_state_dp1, sizeof(kEnum_ZM25TQ_state_dp1)/sizeof(kEnum_ZM25TQ_state_dp1[0]) },
-    { 2, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 3, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 103, "upper_stroke_limit", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_stroke_limit, sizeof(kEnum_ZM25TQ_stroke_limit)/sizeof(kEnum_ZM25TQ_stroke_limit[0]) },
-    { 104, "middle_stroke_limit", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_stroke_limit, sizeof(kEnum_ZM25TQ_stroke_limit)/sizeof(kEnum_ZM25TQ_stroke_limit[0]) },
-    { 105, "lower_stroke_limit", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_stroke_limit, sizeof(kEnum_ZM25TQ_stroke_limit)/sizeof(kEnum_ZM25TQ_stroke_limit[0]) },
+    { 2, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
+    { 3, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
+    { 5, "reverse_direction", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_reverse_direction, 2 },
+    { 12, "motor_fault", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 103, "upper_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum_ZM25TQ_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    { 104, "middle_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum_ZM25TQ_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    { 105, "lower_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum_ZM25TQ_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    { 106, "motor_working_mode", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_motor_working_mode, 2 },
 };
 constexpr ::zhc::tuya::TuyaDatapointMap kMap_ZM25TQ{ kEntries_ZM25TQ, sizeof(kEntries_ZM25TQ)/sizeof(kEntries_ZM25TQ[0]) };
 
@@ -73,12 +77,19 @@ const TzConverter* const kTz_ZM25TQ[] = { &kTzDp_ZM25TQ };
 constexpr const char* kModels_ZM25TQ[] = { "TS0601" };
 constexpr const char* kManus_ZM25TQ[] = { "_TZE200_fzo2pocs" };
 
+constexpr const char* kOptsState[]     = { "OPEN", "CLOSE", "STOP" };
+constexpr const char* kOptsReverse[]   = { "forward", "back" };
+constexpr const char* kOptsStroke[]    = { "SET", "RESET" };
+constexpr const char* kOptsWorkMode[]  = { "continuous", "intermittently" };
 constexpr Expose kAutoExposes[] = {
-    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0},
-    {"upper_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"middle_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"lower_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOptsState, 3},
+    {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
+    {"reverse_direction", ExposeType::Enum, Access::StateSet, nullptr, "Reverse the motor direction", kOptsReverse, 2},
+    {"motor_fault", ExposeType::Binary, Access::State, nullptr, "Motor Fault", nullptr, 0},
+    {"upper_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOptsStroke, 2, ExposeCategory::Config},
+    {"middle_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOptsStroke, 2, ExposeCategory::Config},
+    {"lower_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOptsStroke, 2, ExposeCategory::Config},
+    {"motor_working_mode", ExposeType::Enum, Access::StateSet, nullptr, "Motor operating mode", kOptsWorkMode, 2, ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -97,6 +108,7 @@ extern const PreparedDefinition kDef_ZM25TQ{
     .to_zigbee=kTz_ZM25TQ, .to_zigbee_count=sizeof(kTz_ZM25TQ)/sizeof(kTz_ZM25TQ[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,
     .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .power_source_override=0x01,   // m.forcePowerSource Mains (single phase)
 };
 
 }  // namespace zhc::devices::zemismart

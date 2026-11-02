@@ -62,7 +62,7 @@ constexpr TzConverter kTzDp__TZE284_68utemio{
 };
 const TzConverter* const kTz__TZE284_68utemio[] = { &kTzDp__TZE284_68utemio };
 constexpr const char* kM__TZE284_68utemio[] = { "TS0601" };
-constexpr const char* kN__TZE284_68utemio[] = { "_TZE284_68utemio" };
+constexpr const char* kN__TZE284_68utemio[] = { "_TZE284_68utemio", "_TZE284_xc7dve2g" };
 // --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
 constexpr const char* kAutoOpts__TZE284_68utemio_5[] = {"off", "previous", "on"};
 constexpr const char* kAutoOpts__TZE284_68utemio_6[] = {"led", "incandescent", "halogen"};
@@ -103,7 +103,7 @@ constexpr WhiteLabel kWhiteLabels_Gen_TZE284_68utemio[] = {
 extern const PreparedDefinition kDefGen__TZE284_68utemio{
     .zigbee_models=kM__TZE284_68utemio,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN__TZE284_68utemio,.manufacturer_names_count=1,
+    .manufacturer_names=kN__TZE284_68utemio,.manufacturer_names_count=sizeof(kN__TZE284_68utemio)/sizeof(kN__TZE284_68utemio[0]),
     .model="TS0601__TZE284_68utemio",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes__TZE284_68utemio,.exposes_count=sizeof(kAutoExposes__TZE284_68utemio)/sizeof(kAutoExposes__TZE284_68utemio[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_68utemio, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_68utemio)/sizeof(kWhiteLabels_Gen_TZE284_68utemio[0]),

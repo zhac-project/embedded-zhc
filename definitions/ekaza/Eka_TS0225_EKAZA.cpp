@@ -38,7 +38,8 @@ constexpr Expose kExp[] = {
      ExposeCategory::State, 1, 300, 1},
 };
 constexpr const char* kM[] = { "TS0225" };
-constexpr const char* kN[] = { "_TZ3210_eep3fewj" };
+constexpr const char* kN[] = { "_TZ3210_eep3fewj", "_TZ3210_ekjc2rzh" };
+constexpr WhiteLabel kWhiteLabels[] = { {"Girier", "TS0225_GIRIER"} };  // _TZ3210_ekjc2rzh (v26.125.0)
 constexpr std::uint8_t kReadZoneStatus[] = { 0x02, 0x00 };
 constexpr ConfigStep kSteps[] = {
     { ConfigStepOp::Read, 1, 0x0500, 0x00, 0, kReadZoneStatus, sizeof(kReadZoneStatus), 0 },
@@ -51,7 +52,7 @@ extern const PreparedDefinition kDef_TS0225_EKAZA{
     .manufacturer_names=kN, .manufacturer_names_count=sizeof(kN)/sizeof(kN[0]),
     .model="TS0225_EKAZA", .vendor="Ekaza",
     .meta=nullptr, .exposes=kExp, .exposes_count=sizeof(kExp)/sizeof(kExp[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels, .white_labels_count=sizeof(kWhiteLabels)/sizeof(kWhiteLabels[0]),
     .from_zigbee=kFz, .from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,
