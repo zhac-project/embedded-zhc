@@ -1,16 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 3: Moes ZHT-002 thermostat (TS0601 / _TZE204_xalsoe3m), z2m v26.115.1
+// Tier 3: Moes ZHT-002 thermostat (TS0601 / _TZE204_xalsoe3m), z2m v26.125.0
 // parity. Graduated from tuya/generated/Gen__TZE204_xalsoe3m.cpp.
 //
 // z2m v26.106.0 (#13106, "heat only") and v26.110.0 (#13200):
 //   * DP1 now also drives the climate `system_mode` {off, heat} next to the
 //     on/off `state` (one boolean, two rows; ZHC fires both);
 //   * DP47 is `running_state` {idle, heat}, it was `valve_state`.
-// Upstream's table still decodes DP2 (manual / auto schedule) under
-// `system_mode` while the expose list calls it `schedule_mode`; the decode is
-// mirrored as upstream has it and `schedule_mode` is not exposed, since no
-// datapoint carries that key (a write to it has nowhere to go upstream either).
+// DP2 (manual / auto schedule) is `schedule_mode` since v26.125.0; before, it
+// was decoded under `system_mode` and overwrote the climate mode from DP1.
 // Calibration (DP19) is upstream's 12-bit `localTemperatureCalibration`
 // (v > 4000 ? v - 4096 : v); this port has no 12-bit wrap yet, so negative
 // offsets read as 4095.. — the copy divided by 10, which was wrong for every
@@ -31,7 +29,7 @@ struct cfg {
     static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
         ::zhc::tuya::dp::binary(1, "state"),
         { 1, "system_mode", ::zhc::TuyaDpType::Bool, 1, kSysMode, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
-        ::zhc::tuya::dp::enum_lookup(2, "system_mode", kSchedule, 2),
+        ::zhc::tuya::dp::enum_lookup(2, "schedule_mode", kSchedule, 2),
         ::zhc::tuya::dp::numeric(16, "local_temperature", 10),
         ::zhc::tuya::dp::numeric(18, "min_temperature", 1),
         ::zhc::tuya::dp::numeric(19, "local_temperature_calibration", 1),
@@ -49,12 +47,14 @@ struct cfg {
 using FX = ::zhc::tuya::factory::TuyaRw<cfg>;
 constexpr const char* kSysModeOpts[] = { "off", "heat" };
 constexpr const char* kSensorOpts[]  = { "IN", "AL", "OU" };
+constexpr const char* kScheduleOpts[] = { "manual", "auto" };
 constexpr const char* kRunningOpts[] = { "idle", "heat" };
 constexpr Expose kExp[] = {
     {"state",                         ExposeType::Binary,  Access::StateSet, nullptr, "Turn the thermostat ON/OFF", nullptr, 0},
     {"child_lock",                    ExposeType::Binary,  Access::StateSet, nullptr, "Enables/disables physical input on the device", nullptr, 0},
     {"eco_mode",                      ExposeType::Binary,  Access::StateSet, nullptr, "ECO mode (energy saving mode)", nullptr, 0},
     {"sensor",                        ExposeType::Enum,    Access::StateSet, nullptr, "Choose which sensor to use. Default: AL", kSensorOpts, 3},
+    {"schedule_mode",                 ExposeType::Enum,    Access::StateSet, nullptr, "Manual = Manual or Schedule = Auto", kScheduleOpts, 2},
     {"min_temperature",               ExposeType::Numeric, Access::StateSet, "°C",    "Minimum temperature", nullptr, 0, ExposeCategory::State, 0, 20, 0},
     {"max_temperature",               ExposeType::Numeric, Access::StateSet, "°C",    "Maximum temperature", nullptr, 0, ExposeCategory::State, 20, 50, 0},
     {"local_temperature",             ExposeType::Numeric, Access::State,    "°C",    "Current temperature measured on the device", nullptr, 0},

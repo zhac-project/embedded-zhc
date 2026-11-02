@@ -3345,6 +3345,8 @@ add_executable(zhc_parity_26105_tests tests/test_parity_26105.cpp)
 target_link_libraries(zhc_parity_26105_tests PRIVATE zhc_definitions)
 add_executable(zhc_parity_26115_tests tests/test_parity_26115.cpp)
 target_link_libraries(zhc_parity_26115_tests PRIVATE zhc_definitions)
+add_executable(zhc_parity_26125_tests tests/test_parity_26125.cpp)
+target_link_libraries(zhc_parity_26125_tests PRIVATE zhc_definitions)
 
 # BTicino (Legrand-family): F20T60A DIN power module was ported with the
 # wrong cluster (seMetering 0x0702 + phantom energy) when z2m's
@@ -3825,6 +3827,7 @@ add_test(NAME zhc_tuya_packed_dp_tests      COMMAND zhc_tuya_packed_dp_tests)
 add_test(NAME zhc_parity_26103_tests        COMMAND zhc_parity_26103_tests)
 add_test(NAME zhc_parity_26105_tests        COMMAND zhc_parity_26105_tests)
 add_test(NAME zhc_parity_26115_tests        COMMAND zhc_parity_26115_tests)
+add_test(NAME zhc_parity_26125_tests        COMMAND zhc_parity_26125_tests)
 
 # Literal `_count` guard. Three consecutive z2m parity windows shipped a
 # definition whose hardcoded count disagreed with its array — once reading past

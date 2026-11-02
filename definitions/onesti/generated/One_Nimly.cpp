@@ -9,7 +9,7 @@
 namespace zhc::devices::onesti {
 namespace {
 const FzConverter* const kFz_Nimly[] = {
-    &::zhc::generic::kFzBattery,
+    &::zhc::generic::kFzBatteryNoDivide,  // meta.battery.dontDividePercentage
     &::zhc::generic::kFzLock,
     &::zhc::generic::kFzLockProgrammingEvent,
     &::zhc::generic::kFzLockOperationEvent,

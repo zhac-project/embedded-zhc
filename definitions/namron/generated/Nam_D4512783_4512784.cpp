@@ -17,7 +17,7 @@ const TzConverter* const kTz_D4512783_4512784[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzThermostat,
 };
-constexpr const char* kModels_D4512783_4512784[] = { "4512783", "4512784", "4566702" };
+constexpr const char* kModels_D4512783_4512784[] = { "4512783", "4512784", "4566702", "4566703" };
 
 }  // namespace
 

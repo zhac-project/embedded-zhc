@@ -33,8 +33,17 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_vjpaih9f_preset_dp2[] = {
     { 6, "off" },
 };
 
+// DP2 also carries system_mode (z2m thermostatSystemModeAndPresetMap, v26.125.0):
+// decode fans out with `preset`; a system_mode write hits the first match
+// (heat=0, auto=1, off=6), same as upstream's toMap.
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_vjpaih9f_system_mode_dp2[] = {
+    { 0, "heat" }, { 1, "auto" }, { 2, "heat" }, { 3, "heat" },
+    { 4, "heat" }, { 5, "heat" }, { 6, "off" },
+};
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_vjpaih9f[] = {
     { 2, "preset", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_vjpaih9f_preset_dp2, sizeof(kEnum__TZE204_vjpaih9f_preset_dp2)/sizeof(kEnum__TZE204_vjpaih9f_preset_dp2[0]) },
+    { 2, "system_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_vjpaih9f_system_mode_dp2, sizeof(kEnum__TZE204_vjpaih9f_system_mode_dp2)/sizeof(kEnum__TZE204_vjpaih9f_system_mode_dp2[0]) },
     { 4, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 5, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 6, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
@@ -55,7 +64,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_vjpaih9f[] = {
     { 104, "comfort_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 105, "frost_protection_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_vjpaih9f{ kEntries__TZE204_vjpaih9f, 20 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_vjpaih9f{ kEntries__TZE204_vjpaih9f, sizeof(kEntries__TZE204_vjpaih9f)/sizeof(kEntries__TZE204_vjpaih9f[0]) };
 constexpr FzConverter kFzDp__TZE204_vjpaih9f{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

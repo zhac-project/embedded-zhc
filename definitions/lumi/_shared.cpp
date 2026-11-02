@@ -1056,8 +1056,8 @@ bool fz_lumi_heartbeat(const DecodedMessage& msg, const FzConverter& self,
                     break;
                 case 3:
                     // A constant 25 °C on these (z2m issues 11126, 13253).
-                    if (!model_is(model, {"WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "MCCGQ14LM",
-                                          "GZCGQ01LM", "JY-GZ-01AQ", "JYGZ01AQ", "CTP-R01"}))
+                    if (!model_is(model, {"WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "MCCGQ13LM",
+                                          "MCCGQ14LM", "GZCGQ01LM", "JY-GZ-01AQ", "JYGZ01AQ", "CTP-R01"}))
                         temperature = *v;
                     break;
                 case 5:
