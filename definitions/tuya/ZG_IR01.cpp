@@ -11,55 +11,19 @@
 // selects, not always Celsius (z2m v26.105.0, #13090). The unit is remembered
 // per device in DeviceRuntimeState::scratch[0] by the dp111 row, and the
 // dp109 row converts a Fahrenheit reading back so `temperature` (exposed in
-// Celsius) stays consistent. Before any dp111 report the reading is taken as
-// Celsius, which is what upstream does with an unset `temperature_unit`.
+// Celsius) stays consistent (shared tuya_dp_expand_temperature_* helpers).
+// Before any dp111 report the reading is taken as Celsius, which is what
+// upstream does with an unset `temperature_unit`.
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/dp.hpp"
 #include "definitions/tuya/extend.hpp"
 #include "definitions/tuya/factories.hpp"
-#include "zhc/runtime/dispatch.hpp"
-#include "zhc/runtime/store.hpp"
 
 namespace zhc::devices::tuya {
 namespace {
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZG_IR01_111[] = { {0,"celsius"},{1,"fahrenheit"} };
 
-constexpr std::size_t  kUnitSlot       = 0;   // DeviceRuntimeState::scratch index
-constexpr std::uint8_t kUnitFahrenheit = 1;
-
-::zhc::DeviceRuntimeState* device_state(::zhc::RuntimeContext& ctx) {
-    if (!ctx.store || !ctx.store_get) return nullptr;
-    return ctx.store_get(ctx.store, ctx.device_index);
-}
-
-// dp111 -- publishes temperature_unit and caches the wire value per device.
-bool expand_ir01_unit(const ::zhc::tuya::TuyaDpMapEntry& e, const ::zhc::Value& raw,
-                      ::zhc::RuntimeContext& ctx,
-                      ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    if (raw.type != ::zhc::ValueType::Uint || raw.u > kUnitFahrenheit) return false;
-    if (auto* st = device_state(ctx)) st->scratch[kUnitSlot] = static_cast<std::uint8_t>(raw.u);
-    ::zhc::Value v{};
-    v.type = ::zhc::ValueType::StringRef;
-    v.str  = e.enum_table[raw.u].label;
-    out.put(e.out_key, v);
-    return true;
-}
-
-// dp109 -- raw / 10 in the display unit; Fahrenheit is converted to Celsius.
-bool expand_ir01_temperature(const ::zhc::tuya::TuyaDpMapEntry& e, const ::zhc::Value& raw,
-                             ::zhc::RuntimeContext& ctx,
-                             ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    if (raw.type != ::zhc::ValueType::Int) return false;
-    float t = static_cast<float>(raw.i) / 10.0f;
-    const auto* st = device_state(ctx);
-    if (st && st->scratch[kUnitSlot] == kUnitFahrenheit) t = (t - 32.0f) * 5.0f / 9.0f;
-    ::zhc::Value v{};
-    v.type = ::zhc::ValueType::Float;
-    v.f    = t;
-    out.put(e.out_key, v);
-    return true;
-}
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZG_IR01_120[] = { {0,"study"},{1,"registered"},{2,"unregistered"} };
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZG_IR01_121[] = { {0,"study"},{1,"registered"},{2,"unregistered"} };
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZG_IR01_122[] = { {0,"study"},{1,"registered"},{2,"unregistered"} };
@@ -82,11 +46,11 @@ struct cfg_ZG_IR01 {
     ::zhc::tuya::dp::binary(5,"switch5"),
     ::zhc::tuya::dp::binary(6,"switch6"),
     { 109, "temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0, 0.0f,
-      &expand_ir01_temperature, nullptr },
+      &::zhc::tuya::tuya_dp_expand_temperature_in_unit, nullptr },
     ::zhc::tuya::dp::numeric(110,"humidity",1),
     ::zhc::tuya::dp::numeric(112,"battery",1),
     { 111, "temperature_unit", ::zhc::TuyaDpType::Enum, 1, kEnum_ZG_IR01_111, 2, 0, 0.0f,
-      &expand_ir01_unit, nullptr },
+      &::zhc::tuya::tuya_dp_expand_temperature_unit, nullptr },
     ::zhc::tuya::dp::numeric(107,"temperature_calibration",10),
     ::zhc::tuya::dp::numeric(108,"humidity_calibration",1),
     ::zhc::tuya::dp::enum_lookup(120,"switch1_on",kEnum_ZG_IR01_120,3),

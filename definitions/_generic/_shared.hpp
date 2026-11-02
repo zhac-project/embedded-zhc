@@ -408,6 +408,11 @@ extern const TzConverter kTzPowerOnBehavior1;
 // ZCL spec layout: ctrlbits(1) + ontime(2 LE) + offwaittime(2 LE).
 // z2m mirrors `ontime` into `offwaittime` per Tuya doc guidance.
 extern const TzConverter kTzOnWithTimedOff;
+// Read side (z2m tuyaFz.on_off_countdown + the tuyaOnOff offWaitTime fz):
+// genOnOff onTime (0x4001) -> `countdown`; offWaitTime (0x4002), which some
+// devices (Lidl HG06620) report instead, also -> `countdown` and wins when
+// both are present, as upstream's later fz does.
+extern const FzConverter kFzOnOffCountdown;
 
 // ── Sonoff / eWeLink button action (SNZB-01 family) ──────────────────
 //

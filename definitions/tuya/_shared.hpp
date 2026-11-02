@@ -523,6 +523,21 @@ inline constexpr std::uint8_t     kReportsLightRGBCCT_1ep_count = 5;
 
 // ── packed-payload expanders ─────────────────────────────────────────
 
+// HOBEIAN temperature in the display unit (z2m hobeian.ts
+// temperatureInSelectedUnit; ZG-IR01, ZG-204ZX). The device reports the
+// temperature DP already scaled in the unit its temperature_unit DP selects.
+// The unit row (enum table {0 celsius, 1 fahrenheit}) publishes the label and
+// caches the wire value in DeviceRuntimeState::scratch[0]; the temperature
+// row publishes raw / 10 and converts a Fahrenheit reading back to Celsius.
+// Before any unit report the reading is taken as Celsius, as upstream does
+// with an unset temperature_unit.
+bool tuya_dp_expand_temperature_unit(const TuyaDpMapEntry& e, const Value& raw,
+                                      RuntimeContext& ctx,
+                                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+bool tuya_dp_expand_temperature_in_unit(const TuyaDpMapEntry& e, const Value& raw,
+                                         RuntimeContext& ctx,
+                                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
 // z2m `valueConverter.phaseVariant2`. 8-byte payload, big-endian:
 //   [0..1] voltage / 10        [3..4] current / 1000      [6..7] power
 // Reads only the LOW two bytes of current and power, exactly as upstream

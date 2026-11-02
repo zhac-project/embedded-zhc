@@ -700,6 +700,139 @@ void wave3_zcl() {
     }
 }
 
+// ── wave 4: M items + remaining S rows ─────────────────────────────
+
+Value uval(std::uint32_t n) { Value v{}; v.type = ValueType::Uint; v.u = n; return v; }
+bool has_report(const PreparedDefinition& d, std::uint8_t ep, std::uint16_t cluster, std::uint16_t attr,
+                std::uint32_t change) {
+    for (std::size_t i = 0; i < d.reports_count; ++i) {
+        const ReportingSpec& r = d.reports[i];
+        if (r.endpoint == ep && r.cluster_id == cluster && r.attr_id == attr && r.reportable_change == change)
+            return true;
+    }
+    return false;
+}
+bool has_binding(const PreparedDefinition& d, std::uint8_t ep, std::uint16_t cluster) {
+    for (std::size_t i = 0; i < d.bindings_count; ++i)
+        if (d.bindings[i].endpoint == ep && d.bindings[i].cluster_id == cluster) return true;
+    return false;
+}
+// A context with a one-device runtime store, for scratch-cached decoders.
+struct StoreCtx {
+    RuntimeStore<1> store{};
+    RuntimeContext ctx{};
+    StoreCtx() { ctx.store = &store; ctx.store_get = &RuntimeStore<1>::get; ctx.device_index = 0; }
+};
+
+void wave4_tuya() {
+    std::printf("wave 4 Tuya\n");
+    for (const char* m : {"_TZE200_bjzrowv2", "_TZE204_bjzrowv2", "_TZE284_bjzrowv2"})
+        resolves(registries(), {"TS0601", m, "TS0601_cover_15"});
+    {   // TS0601_cover_15
+        const PreparedDefinition& d = def_for("TS0601", "_TZE200_bjzrowv2");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_enum(d, 1, 2, ctx, out) && str_is(out, "state", "CLOSE"), "cover_15 DP1 2 -> CLOSE");
+        check(dp_num(d, 3, 40, ctx, out) && float_of(out, "position") == 40.0f, "cover_15 DP3 -> position");
+        check(dp_enum(d, 7, 2, ctx, out) && str_is(out, "motor_state", "stopped"), "cover_15 DP7 2 -> stopped");
+        Encoded e = encode(d, "position", num(60));
+        check(e.ok && e.frame[5] == 2 && tz_value(e) == 60, "cover_15 position -> DP2");
+        e = encode(d, "motor_direction", str("reversed"));
+        check(e.ok && e.frame[5] == 5 && tz_value(e) == 1, "cover_15 reversed -> DP5 1");
+    }
+    {   // genOnOff countdown read-back (LZWSM16-1, HG06620)
+        Report on; on.u16(0x4001, 0x21, 120);
+        check(r_float(dispatch(def_for("TS0011", "_TZ3000_hbxsdd6k"), 0x0006, 1, on.span()), "countdown") == 120.0f,
+              "LZWSM16-1 onTime -> countdown");
+        const PreparedDefinition& hg = def_for("TS0101", "_TZ3000_br3laukf");
+        Report off; off.u16(0x4002, 0x21, 300);
+        check(r_float(dispatch(hg, 0x0006, 1, off.span()), "countdown") == 300.0f, "HG06620 offWaitTime -> countdown");
+        Report both; both.u16(0x4001, 0x21, 10).u16(0x4002, 0x21, 20);
+        check(r_float(dispatch(hg, 0x0006, 1, both.span()), "countdown") == 20.0f, "offWaitTime wins over onTime");
+        Encoded e = encode(hg, "countdown", uval(600));
+        check(e.ok && e.cluster == 0x0006 && e.frame[2] == 0x42 && e.frame[4] == 0x58 && e.frame[5] == 0x02,
+              "HG06620 countdown -> onWithTimedOff 600");
+        check(has_expose(hg, "countdown") && has_report(hg, 1, 0x0006, 0x0000, 0), "HG06620 countdown expose + onOff report");
+    }
+    for (const char* m : {"_TZE204_clrdrnya", "_TZE204_dtzziy1e"}) {   // MTG distance_report
+        const PreparedDefinition& d = def_for("TS0601", m);
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_enum(d, 116, 1, ctx, out) && str_is(out, "distance_report", "ON"), "MTG DP116 1 -> ON");
+        const Encoded e = encode(d, "distance_report", str("OFF"));
+        check(e.ok && e.frame[5] == 116 && tz_value(e) == 0, "MTG distance_report OFF -> DP116 0");
+        check(has_expose(d, "distance_report"), "MTG distance_report exposed");
+    }
+    {   // HOBEIAN ZG-204ZX: temperature in the display unit; calibration divisors
+        const PreparedDefinition& d = def_for("ZG-204ZX", "_TZE200_w0ap83qu");
+        StoreCtx s; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_num(d, 111, 225, s.ctx, out) && approx(float_of(out, "temperature"), 22.5f), "ZG-204ZX 22.5 C");
+        out = {};
+        check(dp_enum(d, 109, 1, s.ctx, out) && str_is(out, "temperature_unit", "fahrenheit"), "ZG-204ZX unit F");
+        out = {};
+        check(dp_num(d, 111, 725, s.ctx, out) && approx(float_of(out, "temperature"), 22.5f), "ZG-204ZX 72.5 F -> 22.5 C");
+        out = {};
+        check(dp_num(d, 105, 15, s.ctx, out) && approx(float_of(out, "temperature_calibration"), 1.5f), "DP105 /10");
+        check(dp_num(d, 104, 5, s.ctx, out) && float_of(out, "humidity_calibration") == 5.0f, "DP104 raw");
+        check(has_expose(d, "temperature") && !has_expose(d, "action"), "ZG-204ZX exposes");
+    }
+    {   // HYSYIOT HS208Z: occupancy + battery from ZCL
+        for (const PreparedDefinition* d : {&def_for("TS0202", "_TZD200_sjjp9bti"), &def_for("HS208Z", "_TZ3000_any")}) {
+            check(r_bool(feed(*d, 0x0500, 1, ias_cmd(0x0001)), "occupancy", true), "HS208Z IAS alarm_1 -> occupancy");
+            Report b; b.u8(0x0021, 0x20, 200);
+            check(r_float(dispatch(*d, 0x0001, 1, b.span()), "battery") == 100.0f, "HS208Z genPowerCfg battery");
+            RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+            dp_bool(*d, 1, true, ctx, out);
+            check(!out.find("occupancy"), "HS208Z DP1 no longer occupancy");
+            check(has_binding(*d, 1, 0x0001) && has_report(*d, 1, 0x0001, 0x0021, 10), "HS208Z battery bind + report");
+        }
+    }
+    {   // Mercator SPP04G configure
+        const PreparedDefinition& d = def_for("TS011F", "_TZ3210_yvxjawlt");
+        check(d.config_steps_count == 1 && d.config_steps[0].op == ConfigStepOp::Read &&
+              d.config_steps[0].cluster_id == 0x0000, "SPP04G magic packet");
+        check(has_report(d, 2, 0x0006, 0x0000, 0) && has_report(d, 1, 0x0B04, 0x0505, 5) &&
+              has_report(d, 1, 0x0B04, 0x0508, 50) && has_report(d, 1, 0x0B04, 0x050B, 1), "SPP04G reports");
+    }
+    resolves(registries(), {"TS130F", "_TZE20C_xbexmf8h", "TS130F_xbexmf8h"});
+    {   // TS130F_xbexmf8h datapoints
+        const PreparedDefinition& d = def_for("TS130F", "_TZE20C_xbexmf8h");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_enum(d, 8, 1, ctx, out) && str_is(out, "motor_direction", "reversed"), "xbexmf8h DP8 -> reversed");
+        check(dp_enum(d, 3, 0, ctx, out) && str_is(out, "calibration", "ON"), "xbexmf8h DP3 0 -> ON");
+        check(dp_num(d, 10, 123, ctx, out) && approx(float_of(out, "calibration_time"), 12.3f), "DP10 /10");
+        check(dp_enum(d, 14, 1, ctx, out) && str_is(out, "backlight_mode", "OFF"), "DP14 1 -> OFF");
+        const Encoded e = encode(d, "calibration", str("OFF"));
+        check(e.ok && e.frame[5] == 3 && tz_value(e) == 1, "calibration OFF -> DP3 1");
+    }
+    for (const char* m : {"_TZE204_6a4vxfnv", "_TZE204_0hhou4yj"})
+        resolves(registries(), {"TS0601", m, "TS0601_floor_thermostat_006"});
+    {   // TS0601_floor_thermostat_006: local_temperature follows the active sensor
+        const PreparedDefinition& d = def_for("TS0601", "_TZE204_0hhou4yj");
+        check(d.tuya_time_start == 1, "floor_006 time base 1970");
+        StoreCtx s;
+        auto run = [&](auto fn) { FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o{}; fn(o); return o; };
+        auto o = run([&](auto& p) { dp_num(d, 24, 215, s.ctx, p); });
+        check(approx(float_of(o, "internal_temperature"), 21.5f) && approx(float_of(o, "local_temperature"), 21.5f),
+              "DP24 -> internal + local (sensor IN)");
+        o = run([&](auto& p) { dp_num(d, 102, 250, s.ctx, p); });
+        check(approx(float_of(o, "external_temperature_input"), 25.0f) && !o.find("local_temperature"),
+              "DP102 -> external only (sensor IN)");
+        o = run([&](auto& p) { dp_enum(d, 43, 2, s.ctx, p); });
+        check(str_is(o, "sensor", "OU"), "DP43 2 -> OU");
+        o = run([&](auto& p) { dp_num(d, 102, 260, s.ctx, p); });
+        check(approx(float_of(o, "local_temperature"), 26.0f), "DP102 -> local (sensor OU)");
+        o = run([&](auto& p) { dp_num(d, 24, 220, s.ctx, p); });
+        check(approx(float_of(o, "internal_temperature"), 22.0f) && !o.find("local_temperature"),
+              "DP24 -> internal only (sensor OU)");
+        o = run([&](auto& p) { dp_num(d, 27, 3, s.ctx, p); dp_bool(d, 40, true, s.ctx, p); dp_bool(d, 1, true, s.ctx, p);
+                               dp_enum(d, 2, 0, s.ctx, p); dp_enum(d, 36, 1, s.ctx, p); dp_num(d, 103, 15, s.ctx, p); });
+        check(float_of(o, "local_temperature_calibration") == 3.0f && bool_is(o, "eco_mode", true) &&
+              str_is(o, "system_mode", "heat") && str_is(o, "preset", "auto") && str_is(o, "running_state", "idle") &&
+              approx(float_of(o, "deadzone_temperature"), 1.5f), "floor_006 DPs 27/40/1/2/36/103");
+        const Encoded e = encode(d, "sensor", str("OU"));
+        check(e.ok && e.frame[5] == 43 && tz_value(e) == 2, "sensor OU -> DP43 2");
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -725,6 +858,7 @@ int main() {
     wave3_tuya_dps();
     zc301();
     wave3_zcl();
+    wave4_tuya();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26125 checks passed\n");
     return 0;

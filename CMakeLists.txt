@@ -225,7 +225,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_dual_dimmer.cpp
     definitions/tuya/TZE200_rf_ctrl.cpp
     definitions/tuya/TZE200_usb_sw.cpp
-    definitions/tuya/TZE200_water_boiler.cpp
     definitions/tuya/TZE200_ir_heater.cpp
     definitions/tuya/TZE200_fan_thermo.cpp
     definitions/tuya/TZE200_dehumid.cpp
@@ -341,6 +340,9 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/T119710.cpp
     definitions/tuya/ZRF01.cpp
     definitions/tuya/OXT_4CH_RELAY.cpp
+    definitions/tuya/TS0601_cover_15.cpp
+    definitions/tuya/TS130F_xbexmf8h.cpp
+    definitions/tuya/TS0601_floor_thermostat_006.cpp
     definitions/tuya/TS0502B.cpp
     definitions/tuya/TS0504B.cpp
     definitions/tuya/TZE200_aao6qtcs.cpp

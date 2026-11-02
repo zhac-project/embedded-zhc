@@ -1911,6 +1911,13 @@ extern const TzConverter kTzOnWithTimedOff{
     .user_config = nullptr,
 };
 
+namespace {
+constexpr ZclAttrRow kOnOffCountdownRows[] = { {0x4001, "countdown"}, {0x4002, "countdown"} };
+constexpr ZclAttrMap kOnOffCountdownMap{ kOnOffCountdownRows, 2 };
+}  // namespace
+
+extern const FzConverter kFzOnOffCountdown = zcl_attr_fz("genOnOff", &kOnOffCountdownMap);
+
 // ── eWeLink action (SNZB-01 family) ──────────────────────────────────
 
 namespace {

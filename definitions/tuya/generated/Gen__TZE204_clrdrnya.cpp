@@ -33,6 +33,11 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_clrdrnya_sensor_dp115[] = {
     { 3, "unoccupied" },
 };
 
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_clrdrnya_distance_report_dp116[] = {
+    { 0, "OFF" },
+    { 1, "ON" },
+};
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_clrdrnya[] = {
     { 1, "presence", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 2, "radar_sensitivity", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
@@ -55,8 +60,9 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_clrdrnya[] = {
     { 113, "parameter_setting_result", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 114, "factory_parameters", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 115, "sensor", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_clrdrnya_sensor_dp115, sizeof(kEnum__TZE204_clrdrnya_sensor_dp115)/sizeof(kEnum__TZE204_clrdrnya_sensor_dp115[0]) },
+    { 116, "distance_report", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_clrdrnya_distance_report_dp116, sizeof(kEnum__TZE204_clrdrnya_distance_report_dp116)/sizeof(kEnum__TZE204_clrdrnya_distance_report_dp116[0]) },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_clrdrnya{ kEntries__TZE204_clrdrnya, 21 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_clrdrnya{ kEntries__TZE204_clrdrnya, 22 };
 constexpr FzConverter kFzDp__TZE204_clrdrnya{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",
@@ -106,6 +112,7 @@ constexpr Expose kAutoExposes__TZE204_clrdrnya[] = {
     {"illuminance_threshold", ExposeType::Numeric, Access::StateSet, "lx", nullptr, nullptr, 0, ExposeCategory::State, 0, 420, 0},
     {"status_indication", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_clrdrnya_14, 2},
     {"sensor", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_clrdrnya_15, 4},
+    {"distance_report", ExposeType::Binary, Access::StateSet, nullptr, "Report target distance continuously (about once per second), requires MCU firmware 1.0.5 (MTG275-ZB-RL) or 1.0.4 (MTG235-ZB-RL) or newer", nullptr, 0},
 };
 // --- end auto-generated exposes ---
 }  // namespace

@@ -2162,4 +2162,35 @@ std::size_t exposes_from_dp_map(const TuyaDatapointMap& map, Expose* out, std::s
     return n;
 }
 
+namespace {
+constexpr std::size_t  kTempUnitSlot   = 0;   // DeviceRuntimeState::scratch index
+constexpr std::uint8_t kUnitFahrenheit = 1;
+}  // namespace
+
+bool tuya_dp_expand_temperature_unit(const TuyaDpMapEntry& e, const Value& raw,
+                                      RuntimeContext& ctx,
+                                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (raw.type != ValueType::Uint || raw.u > kUnitFahrenheit || e.enum_count <= raw.u) return false;
+    if (auto* st = ctx.device_state()) st->scratch[kTempUnitSlot] = static_cast<std::uint8_t>(raw.u);
+    Value v{};
+    v.type = ValueType::StringRef;
+    v.str  = e.enum_table[raw.u].label;
+    out.put(e.out_key, v);
+    return true;
+}
+
+bool tuya_dp_expand_temperature_in_unit(const TuyaDpMapEntry& e, const Value& raw,
+                                         RuntimeContext& ctx,
+                                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (raw.type != ValueType::Int) return false;
+    float t = static_cast<float>(raw.i) / 10.0f;
+    const auto* st = ctx.device_state();
+    if (st && st->scratch[kTempUnitSlot] == kUnitFahrenheit) t = (t - 32.0f) * 5.0f / 9.0f;
+    Value v{};
+    v.type = ValueType::Float;
+    v.f    = t;
+    out.put(e.out_key, v);
+    return true;
+}
+
 }  // namespace zhc::tuya
