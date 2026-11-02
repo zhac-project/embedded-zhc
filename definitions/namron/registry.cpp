@@ -67,6 +67,7 @@ extern const PreparedDefinition kDef_D4512763;
 extern const PreparedDefinition kDef_D4512764;
 extern const PreparedDefinition kDef_D4512765;
 extern const PreparedDefinition kDef_D4512770;
+extern const PreparedDefinition kDef_D4512797;
 
 const PreparedDefinition* const kNamronRegistry[] = {
     &kDefNam__TZE204_p3lqqy2r,
@@ -130,6 +131,7 @@ const PreparedDefinition* const kNamronRegistry[] = {
     &kDef_D4512764,
     &kDef_D4512765,
     &kDef_D4512770,
+    &kDef_D4512797,
 };
 const std::size_t kNamronRegistryCount = sizeof(kNamronRegistry) / sizeof(kNamronRegistry[0]);
 

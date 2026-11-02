@@ -10,12 +10,14 @@ extern const PreparedDefinition kDef_MG_AUZG01;
 extern const PreparedDefinition kDef_MG_GPO01;
 extern const PreparedDefinition kDef_MG_GPO02Z;
 extern const PreparedDefinition kDef_MG_AU03;
+extern const PreparedDefinition kDef_MG_AU01ZLMV01_XX;
 
 const PreparedDefinition* const kMakegoodRegistry[] = {
     &kDef_MG_AUZG01,
     &kDef_MG_GPO01,
     &kDef_MG_GPO02Z,
     &kDef_MG_AU03,
+    &kDef_MG_AU01ZLMV01_XX,
 };
 const std::size_t kMakegoodRegistryCount = sizeof(kMakegoodRegistry) / sizeof(kMakegoodRegistry[0]);
 

@@ -350,6 +350,8 @@
 #include "zhc/devices/nodieby_registry.hpp"
 #include "zhc/devices/pulsar_registry.hpp"
 #include "zhc/devices/nova_digital_registry.hpp"
+#include "zhc/devices/teelicht_registry.hpp"
+#include "zhc/devices/ariston_registry.hpp"
 
 namespace zhc::devices::tier_e {
 

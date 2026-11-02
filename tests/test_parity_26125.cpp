@@ -30,10 +30,13 @@
 #include "zhc/devices/owon_registry.hpp"
 #include "zhc/devices/philips_registry.hpp"
 #include "zhc/devices/qa_registry.hpp"
+#include "zhc/devices/robb_registry.hpp"
 #include "zhc/devices/saswell_registry.hpp"
 #include "zhc/devices/schneider_registry.hpp"
+#include "zhc/devices/shelly_registry.hpp"
 #include "zhc/devices/sinope_registry.hpp"
 #include "zhc/devices/sonoff_registry.hpp"
+#include "zhc/devices/sunricher_registry.hpp"
 #include "zhc/devices/third_reality_registry.hpp"
 #include "zhc/devices/tier_e_registries.hpp"
 #include "zhc/devices/tuya_registry.hpp"
@@ -231,6 +234,9 @@ const std::vector<const PreparedDefinition*>& registries() {
     add(devices::saswell::kSaswellRegistry, devices::saswell::kSaswellRegistryCount);
     add(devices::ikea::kIkeaRegistry, devices::ikea::kIkeaRegistryCount);
     add(devices::yale::kYaleRegistry, devices::yale::kYaleRegistryCount);
+    add(devices::robb::kRobbRegistry, devices::robb::kRobbRegistryCount);
+    add(devices::sunricher::kSunricherRegistry, devices::sunricher::kSunricherRegistryCount);
+    add(devices::shelly::kShellyRegistry, devices::shelly::kShellyRegistryCount);
     for (std::size_t i = 0; i < devices::tier_e::kTierERegistriesCount; ++i)
         add(devices::tier_e::kTierERegistries[i].reg, devices::tier_e::kTierERegistries[i].count);
     return reg;
@@ -511,6 +517,189 @@ void wnp10_configure() {
           "reports onOff 0..3600");
 }
 
+// ── wave 3: new devices ────────────────────────────────────────────
+
+bool has_white_label(const PreparedDefinition& d, const char* model) {
+    for (std::size_t i = 0; i < d.white_labels_count; ++i)
+        if (std::strcmp(d.white_labels[i].model, model) == 0) return true;
+    return false;
+}
+
+void new_devices() {
+    std::printf("wave 3 new devices resolve\n");
+    const Want w[] = {
+        {"929004295101", "Signify Netherlands B.V.", "929004295101"},
+        {"LCA022", "Signify Netherlands B.V.", "929003853601"},
+        {"929004320901", "Signify Netherlands B.V.", "929004320901"},
+        {"TOFSMYGGA plug outdoor", "IKEA of Sweden", "E2435-NA"},
+        {"ROB_200-012-0", "ROBB smarrt", "ROB_200-012-0"},
+        {"FH9127", "Futurehome AS", "FH9127"},
+        {"3ROR0194Z", "Third Reality, Inc", "3ROR0194Z"},
+        {"ZGRC-KEY-008", "Sunricher", "SR-ZG9001K8-CCT"},
+        {"S2100-1001", "SIMON", "S2100-1001"},
+        {"70E839TY", "SIMON", "70E839TY"},
+        {"S2100-1002", "_TZ2000_mqovtiqe8m6av6po", "70E839TY"},
+        {"S2100-1003", "_TZ2000_p4vghfngci5te7ol", "70E852TY"},
+        {"ZG-204ZV-z", "HOBEIAN", "ZG-204ZV-z"},
+        {"ZG-204ZV2-TH-z", "HOBEIAN", "ZG-204ZV2-TH-z"},
+        {"ZG-204ZM-z", "HOBEIAN", "ZG-204ZS-z"},
+        {"ZG-204Z", "HOBEIAN", "ZG-204Z"},
+        {"4512797_98", "Namron AS", "4512797"},
+        {"TRV602WZ", "Topband", "TRV602WZ"},
+        {"Rem4 Heater", "Ariston", "Rem4 Heater"},
+        {"teelicht-c6", "Teelicht", "teelicht"},
+        {"BLU DoorWindow Mini ZB", "Shelly", "SBDW-203C"},
+        {"BLU DoorWindow Outdoor ZB", "Shelly", "SBDW-302C"},
+        {"TS0505B", "_TZ3210_ffuna0nr", "TS0505B_hs"},
+        {"TS0503B", "_TZ3210_w7ge4ldo", "TS0503B_hs"},
+        {"HS118Z", "HOBEIAN", "ZG-223Z"},
+        {"TS0601", "_TZE284_tdhnhhiy", "SYZB-6W"},
+        {"TS0601", "_TZE204_nvxorhcj", "ZTS-8W-B"},
+        {"TS0601", "_TZE284_kow4ok3t", "ZTS-8B"},
+        {"TS0601", "_TZE284_48ye65rk", "HYT001ZB"},
+        {"TS0601", "_TZE284_fziifcxj", "APRM-04-005"},
+        {"TS0601", "_TZE284_xr5yfele", "119710"},
+        {"TS0601", "_TZE284_tdg4ckyh", "ZRF01"},
+        {"TS0601", "_TZE28C1000000_f5efvtbv", "OXT-4CH-RELAY-AC"},
+        {"TS0601", "_TZE204_m9dzckna", "OXT-4CH-RELAY-AC"},
+        {"TS0601", "_TZE284_y7hpvgyp", "ZM6LT1"},
+        {"TS0601", "_TZE200_xnwxmj8z", "MG-AU01ZLMV01-XX"},
+        {"TS030F", "_TZ3210_hs01bacp", "ZC301"},
+    };
+    for (const Want& x : w) resolves(registries(), x);
+    check(has_white_label(def_for("TS0601", "_TZE284_y7hpvgyp"), "ZM7LT1"), "ZM7LT1 white label");
+    check(has_white_label(def_for("TS0601", "_TZE204_m9dzckna"), "OXT-4CH-RELAY-DC"), "OXT DC white label");
+    check(std::strcmp(def_for("TS0601", "_TZE204_f5efvtbv").model, "OXT-4CH-RELAY-AC") != 0,
+          "plain _TZE204_f5efvtbv stays on its own def");
+}
+
+void wave3_tuya_dps() {
+    std::printf("wave 3 Tuya datapoints\n");
+    {   // HYT001ZB
+        const PreparedDefinition& d = def_for("TS0601", "_TZE284_48ye65rk");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_num(d, 16, 215, ctx, out) && approx(float_of(out, "local_temperature"), 21.5f), "HYT DP16 /10");
+        check(dp_bool(d, 102, true, ctx, out) && str_is(out, "running_state", "heat"), "HYT DP102 heat");
+        check(dp_enum(d, 128, 2, ctx, out) && str_is(out, "preset", "holiday"), "HYT DP128 holiday");
+        check(tz_value(encode(d, "system_mode", str("off"))) == 0, "HYT system_mode off -> DP125 false");
+    }
+    {   // APRM-04-005: DP2 carries preset and system_mode
+        const PreparedDefinition& d = def_for("TS0601", "_TZE284_fziifcxj");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_enum(d, 2, 5, ctx, out) && str_is(out, "preset", "antifrost") && str_is(out, "system_mode", "off"),
+              "APRM DP2 5 -> antifrost / off");
+        FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o2{};
+        check(dp_enum(d, 2, 0, ctx, o2) && str_is(o2, "preset", "schedule") && str_is(o2, "system_mode", "heat"),
+              "APRM DP2 0 -> schedule / heat");
+        check(dp_enum(d, 15, 1, ctx, out) && bool_is(out, "window_open", true), "APRM DP15 1 -> window_open");
+        Encoded e = encode(d, "system_mode", str("heat"));
+        check(e.ok && e.frame[5] == 2 && tz_value(e) == 3, "APRM heat -> DP2 3");
+        e = encode(d, "preset", str("antifrost"));
+        check(e.ok && e.frame[5] == 2 && tz_value(e) == 5, "APRM antifrost -> DP2 5");
+    }
+    {   // Tervix 119710
+        const PreparedDefinition& d = def_for("TS0601", "_TZE284_xr5yfele");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(d.tuya_time_start == 1, "119710 time base 1970");
+        check(dp_num(d, 27, -3, ctx, out) && float_of(out, "local_temperature_calibration") == -3.0f, "119710 DP27 signed");
+        check(dp_enum(d, 118, 1, ctx, out) && str_is(out, "running_state", "heat"), "119710 DP118 heat");
+        check(dp_num(d, 107, 30, ctx, out) && approx(float_of(out, "window_open_detection_temperature"), 3.0f),
+              "119710 DP107 /10");
+    }
+    {   // ZRF01
+        const PreparedDefinition& d = def_for("TS0601", "_TZE284_tdg4ckyh");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_enum(d, 104, 1, ctx, out) && str_is(out, "button_4", "Saved"), "ZRF01 DP104 1 -> button_4 Saved");
+        const Encoded e = encode(d, "start_3", str("Transmit"));
+        check(e.ok && e.frame[5] == 111 && e.frame[6] == 0x04 && tz_value(e) == 0, "ZRF01 start_3 -> DP111 enum 0");
+    }
+    {   // OXT-4CH-RELAY-AC
+        const PreparedDefinition& d = def_for("TS0601", "_TZE204_m9dzckna");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_enum(d, 17, 2, ctx, out) && str_is(out, "power_on_behavior_l4", "previous"), "OXT DP17 -> l4 previous");
+        check(dp_num(d, 8, 60, ctx, out) && float_of(out, "countdown_l2") == 60.0f, "OXT DP8 countdown_l2");
+    }
+    {   // Nova Digital ZTS-8B / ZTS-8W-B / SYZB-6W
+        const PreparedDefinition& d = def_for("TS0601", "_TZE284_kow4ok3t");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(dp_bool(d, 102, true, ctx, out) && bool_is(out, "state_l8", true), "ZTS-8B DP102 -> state_l8");
+        check(dp_bool(d, 16, true, ctx, out) && bool_is(out, "backlight_switch", true), "ZTS-8B DP16 backlight");
+        const PreparedDefinition& w = def_for("TS0601", "_TZE204_nvxorhcj");
+        check(dp_enum(w, 14, 2, ctx, out) && str_is(out, "power_on_behavior", "previous"), "ZTS-8W-B DP14 previous");
+        const PreparedDefinition& s6 = def_for("TS0601", "_TZE284_tdhnhhiy");
+        check(dp_bool(s6, 16, true, ctx, out) && bool_is(out, "backlight_switch", true), "SYZB-6W DP16 backlight");
+        check(s6.power_source_override == 0x01 && s6.white_labels_count == 0, "SYZB-6W mains, no white labels");
+    }
+    {   // MakeGood MG-AU01ZLMV01-XX
+        const PreparedDefinition& d = def_for("TS0601", "_TZE200_xnwxmj8z");
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(d.tuya_time_start == 1 && has_white_label(d, "SWS1TZ"), "MG-AU01 1970 + SWS1TZ");
+        check(dp_num(d, 21, 1234, ctx, out) && approx(float_of(out, "current"), 1.234f, 0.0005f), "MG-AU01 DP21 /1000");
+    }
+}
+
+// Moes ZC301: datapoints in, closuresWindowCovering out.
+void zc301() {
+    std::printf("ZC301 curtain motor\n");
+    const PreparedDefinition& d = def_for("TS030F", "_TZ3210_hs01bacp");
+    RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+    check(dp_num(d, 3, 30, ctx, out) && float_of(out, "position") == 70.0f, "DP3 30 -> position 70");
+    check(dp_enum(d, 7, 1, ctx, out) && str_is(out, "work_state", "opening") && str_is(out, "state", "OPEN"),
+          "DP7 1 -> opening / OPEN");
+    check(dp_enum(d, 5, 3, ctx, out) && bool_is(out, "calibration_completed", true), "DP5 3 -> calibrated");
+    check(dp_num(d, 10, 12345, ctx, out) && approx(float_of(out, "time_total"), 12.345f, 0.0005f), "DP10 ms -> s");
+    check(dp_bool(d, 107, true, ctx, out) && str_is(out, "curtain_close_direction", "DOWN"), "DP107 true -> DOWN");
+    Encoded e = encode(d, "position", num(30));
+    check(e.ok && e.cluster == 0x0102 && e.frame.size() == 4 && e.frame[2] == 0x05 && e.frame[3] == 70,
+          "position 30 -> goToLiftPercentage 70");
+    e = encode(d, "state", str("STOP"));
+    check(e.ok && e.cluster == 0x0102 && e.frame[2] == 0x02, "state STOP -> stop");
+    e = encode(d, "calibration", str("save_limit"));
+    check(e.ok && e.cluster == 0x0102 && e.frame.size() == 3 && e.frame[2] == 0x02, "save_limit -> stop");
+    e = encode(d, "calibration", str("up_start"));
+    check(e.ok && e.cluster == 0x0102 && e.frame[2] == 0x02 && e.frame.size() == 7 &&
+          e.frame[3] == 0x02 && e.frame[4] == 0xF0 && e.frame[5] == 0x30 && e.frame[6] == 1,
+          "up_start -> write 0xF002 enum8 1");
+    e = encode(d, "curtain_close_direction", str("DOWN"));
+    check(e.ok && e.frame[5] == 107 && tz_value(e) == 1, "DOWN -> DP107 true");
+    Report rep; rep.u8(0xF002, 0x30, 3);
+    check(r_bool(dispatch(d, 0x0102, 1, rep.span()), "calibration_completed", true), "0xF002 3 -> calibrated");
+}
+
+void wave3_zcl() {
+    std::printf("wave 3 ZCL decoders\n");
+    {   // pvvx ZG-204ZS-z occupancy bitmap
+        Report rep; rep.u8(0x0000, 0x18, 0x05);
+        const auto r = dispatch(def_for("ZG-204ZS-z", "HOBEIAN"), 0x0406, 1, rep.span());
+        check(r_bool(r, "occupancy", true) && r_bool(r, "motion", false) && r_bool(r, "presence", true),
+              "ZG-204ZS-z bitmap 0b101");
+    }
+    {   // Namron 4512797 buttonEvent: code 8 -> double
+        const std::vector<std::uint8_t> f{0x19, 0x01, 0x00, 0x01, 0x08};
+        check(r_str(feed(def_for("4512797", "Namron AS"), 0xE004, 1, f), "action", "double"), "4512797 double");
+        const std::vector<std::uint8_t> g{0x19, 0x01, 0x00, 0x01, 0x02};
+        check(!r_find(feed(def_for("4512797", "Namron AS"), 0xE004, 1, g), "action"), "4512797 code 2 ignored");
+    }
+    {   // Shelly BLU DoorWindow: alarm1 only -> tilted
+        const auto r = feed(def_for("BLU DoorWindow Mini ZB", "Shelly"), 0x0500, 1, ias_cmd(0x0001));
+        check(r_str(r, "handle_position", "tilted") && r_bool(r, "contact", false), "SBDW alarm1 -> tilted");
+        Report rep; rep.u16(0x0002, 0x19, 0x000B);
+        const auto r2 = dispatch(def_for("BLU DoorWindow Outdoor ZB", "Shelly"), 0x0500, 1, rep.span());
+        check(r_str(r2, "handle_position", "open") && r_bool(r2, "battery_low", true), "SBDW report 0x0B -> open");
+    }
+    {   // Topband TRV602WZ running state, Ariston outdoor temperature, teelicht speed
+        Report rep; rep.u16(0x0029, 0x19, 0x0001);
+        check(r_str(dispatch(def_for("TRV602WZ", "Topband"), 0x0201, 1, rep.span()), "running_state", "heat"),
+              "TRV602WZ 0x0029 1 -> heat");
+        Report out; out.u16(0x0001, 0x29, 1234);
+        check(approx(r_float(dispatch(def_for("Rem4 Heater", "Ariston"), 0x0201, 1, out.span()), "outdoor_temperature"),
+                     12.34f), "Rem4 outdoor_temperature /100");
+        Report sp; sp.u8(0x0001, 0x20, 25);
+        check(approx(r_float(dispatch(def_for("teelicht-c6", "Teelicht"), 0xFC00, 1, sp.span()), "flicker_speed"), 2.5f),
+              "teelicht flicker_speed /10");
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -532,6 +721,10 @@ int main() {
     tz_zt01_ga4();
     zm25tq_cover_8();
     wnp10_configure();
+    new_devices();
+    wave3_tuya_dps();
+    zc301();
+    wave3_zcl();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26125 checks passed\n");
     return 0;

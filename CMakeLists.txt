@@ -335,6 +335,12 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE204_thermostat_v4.cpp
     definitions/tuya/TZE200_hvac_v2.cpp
     definitions/tuya/TS0503B.cpp
+    definitions/tuya/TS050xB_hs.cpp
+    definitions/tuya/HYT001ZB.cpp
+    definitions/tuya/APRM_04_005.cpp
+    definitions/tuya/T119710.cpp
+    definitions/tuya/ZRF01.cpp
+    definitions/tuya/OXT_4CH_RELAY.cpp
     definitions/tuya/TS0502B.cpp
     definitions/tuya/TS0504B.cpp
     definitions/tuya/TZE200_aao6qtcs.cpp

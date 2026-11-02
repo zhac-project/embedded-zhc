@@ -1513,6 +1513,13 @@ extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq;
 extern const PreparedDefinition kDef_TOQCB2_80_lyqazpe6;
 extern const PreparedDefinition kDef_ZG_102ZA;
 extern const PreparedDefinition kDef_TS0001_p26flek3;
+extern const PreparedDefinition kDef_HYT001ZB;
+extern const PreparedDefinition kDef_APRM_04_005;
+extern const PreparedDefinition kDef_T119710;
+extern const PreparedDefinition kDef_ZRF01;
+extern const PreparedDefinition kDef_OXT_4CH_RELAY_AC;
+extern const PreparedDefinition kDefTS0505B_hs;
+extern const PreparedDefinition kDefTS0503B_hs;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_CK_BL702_AL_01_Z102,
@@ -3011,6 +3018,13 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_TOQCB2_80_lyqazpe6,
     &kDef_ZG_102ZA,
     &kDef_TS0001_p26flek3,
+    &kDefTS0505B_hs,
+    &kDefTS0503B_hs,
+    &kDef_HYT001ZB,
+    &kDef_APRM_04_005,
+    &kDef_T119710,
+    &kDef_ZRF01,
+    &kDef_OXT_4CH_RELAY_AC,
 };
 
 extern const std::size_t kTuyaRegistryCount =
