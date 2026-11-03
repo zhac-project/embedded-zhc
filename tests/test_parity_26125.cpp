@@ -1232,6 +1232,58 @@ void wave4_lumi() {
 
 }  // namespace
 
+// Final whole-branch review fixes.
+void final_review() {
+    std::printf("final review fixes\n");
+    // I1 / M1: a kReportFlagOptional slipped into manufacturer_code turns a
+    // standard report into a mandatory manufacturer-specific one (code 0x0001).
+    for (const PreparedDefinition* d : registries()) {
+        for (std::size_t i = 0; i < d->reports_count; ++i) {
+            const std::uint16_t m = d->reports[i].manufacturer_code;
+            if (m != 0 && m < 0x1000) {
+                std::printf("  %s report 0x%04X/0x%04X manu 0x%04X\n", d->model, d->reports[i].cluster_id,
+                            d->reports[i].attr_id, m);
+                check(false, "report manufacturer_code is 0 or a real code");
+            }
+        }
+    }
+    {   // I2: EKO07259 0xFF16 (manu 0x105E) is not decoded as metering / thermostat
+        const PreparedDefinition& d = def_for("EKO07259", "Schneider Electric");
+        Report r(0x105E); r.u8(0x0000, 0x20, 50);
+        const auto res = dispatch(d, 0xFF16, 1, r.span());
+        check(r_float(res, "regulator_level") == 50.0f && !r_find(res, "local_temperature") &&
+              !r_find(res, "energy") && !r_find(res, "state"), "EKO07259 regulator_level only");
+    }
+    {   // I3: Ariston Rem4 Heater binds and reports its zone thermostat on EP2
+        const PreparedDefinition& d = def_for("Rem4 Heater", "Ariston");
+        check(d.default_endpoint == 2 && has_binding(d, 2, 0x0006) && has_binding(d, 2, 0x0201) &&
+              has_report(d, 2, 0x0006, 0x0000, 1) && has_report(d, 2, 0x0201, 0x0000, 10) &&
+              has_report(d, 2, 0x0201, 0x0012, 10) && has_report(d, 2, 0x0201, 0x001C, 0),
+              "Ariston EP2 binds / reports / default endpoint");
+    }
+    {   // I4: ZC301 DP107 / DP155 go out as Tuya sendData (0x04)
+        const PreparedDefinition& d = def_for("TS030F", "_TZ3210_hs01bacp");
+        Encoded e = encode(d, "curtain_close_direction", str("DOWN"));
+        check(e.ok && e.cluster == 0xEF00 && e.frame[2] == 0x04 && e.frame[5] == 107 && tz_value(e) == 1,
+              "ZC301 DP107 sendData");
+        Value on{}; on.type = ValueType::Bool; on.b = true;
+        e = encode(d, "charge_led_switch", on);
+        check(e.ok && e.frame[2] == 0x04 && e.frame[5] == 155 && tz_value(e) == 1, "ZC301 DP155 sendData");
+        e = encode(d, "position", num(30));
+        check(e.ok && e.cluster == 0x0102, "ZC301 position still ZCL");
+    }
+    {   // M12 (re-graded): _TZ3210_ffuna0nr keeps the TS0505B light reporting it had
+        const PreparedDefinition& d = def_for("TS0505B", "_TZ3210_ffuna0nr");
+        check(std::strcmp(d.model, "TS0505B_hs") == 0 && has_report(d, 1, 0x0006, 0x0000, 0) &&
+              has_report(d, 1, 0x0300, 0x0003, 1), "TS0505B_hs light reporting");
+    }
+    {   // M5 (re-graded): XHS2-UE temperature / batteryVoltage reporting (triage row)
+        const PreparedDefinition& d = def_for("URC4460BC0-X-R", "Universal Electronics Inc");
+        check(has_report(d, 1, 0x0402, 0x0000, 100) && has_report(d, 1, 0x0001, 0x0020, 0),
+              "XHS2-UE temperature / battery reporting");
+    }
+}
+
 int main() {
     std::printf("== z2m parity window v26.115.1 -> v26.125.0 ==\n");
     herdsman_data_report_alt();
@@ -1259,6 +1311,7 @@ int main() {
     wave4_zcl_s();
     wave4_zcl_m();
     wave4_lumi();
+    final_review();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26125 checks passed\n");
     return 0;

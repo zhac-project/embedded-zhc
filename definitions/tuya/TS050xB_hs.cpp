@@ -90,6 +90,9 @@ extern const PreparedDefinition kDefTS0505B_hs{
     .to_zigbee=kTzRgbcw,.to_zigbee_count=sizeof(kTzRgbcw)/sizeof(kTzRgbcw[0]),
     .configure=nullptr,.on_event=nullptr,
     .bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
+    // Kept from the TS0505B def it resolved to before (kReportsLightRGBCCT_1ep).
+    .reports=::zhc::tuya::kReportsLightRGBCCT_1ep,
+    .reports_count=::zhc::tuya::kReportsLightRGBCCT_1ep_count,
 };
 
 extern const PreparedDefinition kDefTS0503B_hs{

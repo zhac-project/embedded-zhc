@@ -55,7 +55,7 @@ constexpr ReportingSpec kReports_WV704R0A0902[] = {
     {1, 0x0201, 0x0012, 0x29, 0, 3600, 10, 0},      // occupiedHeatingSetpoint
     {1, 0x0201, 0x0008, 0x20, 0, 3600, 10, 0},      // pIHeatingDemand
     // hvacUserInterfaceCfg is not bound (upstream: the bind fails TABLE_FULL)
-    {1, 0x0204, 0x0001, 0x30, 60, 3600, 1, ::zhc::kReportFlagOptional},   // keypadLockout
+    {1, 0x0204, 0x0001, 0x30, 60, 3600, 1, 0, ::zhc::kReportFlagOptional},   // keypadLockout
 };
 // --- end auto-generated block ---
 

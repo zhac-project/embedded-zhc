@@ -7,7 +7,9 @@
 // Upstream's ignoreRunningMode strips attr 0x001E before fz.thermostat; our
 // thermostat decoder never reads 0x001E, so nothing to strip. The heating_only
 // control sequence is decode-only upstream and is not decoded here.
-// Upstream tested a single zone (endpoint 2); converters accept any endpoint.
+// Upstream tested a single zone (endpoint 2): writes, binds and reporting go
+// there (m.onOff onOff 0..MAX/1, m.thermostat localTemp and setpoint
+// 0..1 h/10, systemMode 0..1 h/0); converters accept any endpoint.
 // z2m-source: ariston.ts #Rem4 Heater.
 #include "definitions/_generic/_shared.hpp"
 
@@ -43,6 +45,17 @@ constexpr Expose kExp_Rem4_Heater[] = {
      "Outdoor temperature known by the boiler", nullptr, 0},
 };
 
+constexpr BindingSpec kBindings_Rem4_Heater[] = {
+    {2, 0x0006},
+    {2, 0x0201},
+};
+constexpr ReportingSpec kReports_Rem4_Heater[] = {
+    {2, 0x0006, 0x0000, 0x10, 0, 65000, 1, 0},    // onOff
+    {2, 0x0201, 0x0000, 0x29, 0, 3600, 10, 0},    // localTemp
+    {2, 0x0201, 0x0012, 0x29, 0, 3600, 10, 0},    // occupiedHeatingSetpoint
+    {2, 0x0201, 0x001C, 0x30, 0, 3600, 0, 0},     // systemMode
+};
+
 }  // namespace
 
 extern const PreparedDefinition kDef_Rem4_Heater{
@@ -55,6 +68,11 @@ extern const PreparedDefinition kDef_Rem4_Heater{
     .from_zigbee=kFz_Rem4_Heater, .from_zigbee_count=sizeof(kFz_Rem4_Heater)/sizeof(kFz_Rem4_Heater[0]),
     .to_zigbee=kTz_Rem4_Heater, .to_zigbee_count=sizeof(kTz_Rem4_Heater)/sizeof(kTz_Rem4_Heater[0]),
     .configure=nullptr, .on_event=nullptr,
+    .bindings=kBindings_Rem4_Heater,
+    .bindings_count=sizeof(kBindings_Rem4_Heater)/sizeof(kBindings_Rem4_Heater[0]),
+    .reports=kReports_Rem4_Heater,
+    .reports_count=sizeof(kReports_Rem4_Heater)/sizeof(kReports_Rem4_Heater[0]),
+    .default_endpoint=2,
 };
 
 }  // namespace zhc::devices::ariston

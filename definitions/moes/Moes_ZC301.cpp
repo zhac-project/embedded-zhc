@@ -8,7 +8,8 @@
 //   DP7   work_state standby/opening/closing + state STOP/OPEN/CLOSE
 //   DP10  time_total, ms -> s
 //   DP13  battery, DP101 charge_state, DP107 curtain_close_direction
-//         (false UP / true DOWN), DP155 charge_led_switch
+//         (false UP / true DOWN), DP155 charge_led_switch; both written
+//         with Tuya sendData (0x04), as z2m
 // position is written as goToLiftPercentage(100 - position), the z2m
 // cover_position_tilt default, so it reads back in the same sense as DP3.
 // state OPEN/CLOSE/STOP -> upOpen/downClose/stop. calibration writes the
@@ -123,6 +124,23 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecCalibration{
 constexpr TzConverter kTzCalibration = ::zhc::generic::zcl_write_tz(
     "closuresWindowCovering", kClusterWindowCovering, &kSpecCalibration);
 
+// DP107 / DP155: z2m zc301Config writes them with sendData (0x04), not
+// dataRequest (0x00) as the shared DP writer does, so the command byte of its
+// frame (fc 0x11, no manufacturer code: byte 2) is replaced.
+bool tz_zc301_send_data(std::string_view key, const Value& input, const TzConverter&,
+                        const PreparedDefinition& def, RuntimeContext& ctx,
+                        std::span<std::uint8_t> out_frame, std::size_t& out_size) {
+    if (key != "curtain_close_direction" && key != "charge_led_switch") return false;
+    const TzConverter& dp = ::zhc::tuya::factory::detail::BoundTz<cfg>::converter;
+    if (!dp.fn(key, input, dp, def, ctx, out_frame, out_size) || out_size < 3) return false;
+    out_frame[2] = 0x04;
+    return true;
+}
+constexpr TzConverter kTzSendData{
+    .key = nullptr, .cluster = "manuSpecificTuya", .cluster_id = 0xEF00,
+    .command_id = 0x04, .fn = tz_zc301_send_data, .user_config = nullptr,
+};
+
 const FzConverter* const kFz[] = {
     &kFzCalibration,
     &::zhc::tuya::factory::detail::BoundFz<cfg>::converter,
@@ -134,6 +152,7 @@ const TzConverter* const kTz[] = {
     &::zhc::generic::kTzCoverState,
     &kTzSaveLimit,
     &kTzCalibration,
+    &kTzSendData,
     &::zhc::tuya::factory::detail::BoundTz<cfg>::converter,
 };
 

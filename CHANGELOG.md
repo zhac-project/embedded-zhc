@@ -8,6 +8,21 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Added
+
+- **z2m v26.125.0 parity (zigbee2mqtt 2.14.3).** The user-visible device
+  changes of zigbee-herdsman-converters v26.115.1 → v26.125.0, branch
+  `feat/z2m-parity-v26.125`: new definitions (Ariston Rem4 Heater, teelicht,
+  Futurehome FH9127, IKEA E2435, Imou TRV602WZ, Moes ZC301, Simon S2100,
+  Aqara SP-P06E outdoor plug and ZNJLBL01LM roller shade E1, Tuya HYT001ZB /
+  ZRF01 / OXT 4-ch relay / floor thermostat 006 and more), new fingerprints,
+  Tuya DP fixes (divisors, signed 8-bit DPs, °F temperature unit, cover
+  inversion), ZCL extras (Onokom external sensor, Namron Edge, Schneider
+  regulator level, EMIZB-132 interface mode, UEI/Sercomm poll control) and
+  Lumi extras (P1 contact action / battery / detection distance, knob
+  rotation, H2 EU wireless buttons, FP310 presence). Ledger with every
+  ruling: `zhac-tools/parity/catchup_26115_26125/PROGRESS.md`.
+
 ### Changed
 
 - **Aqara/Xiaomi devices are bound only where z2m binds them.** The

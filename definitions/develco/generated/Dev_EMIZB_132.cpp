@@ -135,13 +135,13 @@ constexpr ReportingSpec kReports[] = {
     {2, 0x0B04, 0x0304, 0x2B, 5, 3600, 1, 0},
     {2, 0x0B04, 0x0305, 0x2B, 5, 3600, 1, 0},
     {2, 0x0702, 0x0000, 0x25, 10, 65000, 100, 0},
-    {2, 0x0702, 0x0001, 0x25, 10, 65000, 100, ::zhc::kReportFlagOptional},
+    {2, 0x0702, 0x0001, 0x25, 10, 65000, 100, 0, ::zhc::kReportFlagOptional},
     {2, 0x0B04, 0x0505, 0x21, 10, 65000, 50, 0},
-    {2, 0x0B04, 0x0905, 0x21, 10, 65000, 50, ::zhc::kReportFlagOptional},
-    {2, 0x0B04, 0x0A05, 0x21, 10, 65000, 50, ::zhc::kReportFlagOptional},
+    {2, 0x0B04, 0x0905, 0x21, 10, 65000, 50, 0, ::zhc::kReportFlagOptional},
+    {2, 0x0B04, 0x0A05, 0x21, 10, 65000, 50, 0, ::zhc::kReportFlagOptional},
     {2, 0x0B04, 0x0508, 0x21, 10, 65000, 1, 0},
-    {2, 0x0B04, 0x0908, 0x21, 10, 65000, 1, ::zhc::kReportFlagOptional},
-    {2, 0x0B04, 0x0A08, 0x21, 10, 65000, 1, ::zhc::kReportFlagOptional},
+    {2, 0x0B04, 0x0908, 0x21, 10, 65000, 1, 0, ::zhc::kReportFlagOptional},
+    {2, 0x0B04, 0x0A08, 0x21, 10, 65000, 1, 0, ::zhc::kReportFlagOptional},
 };
 
 // interface_mode has no reporting: read it so the current divisor is right.

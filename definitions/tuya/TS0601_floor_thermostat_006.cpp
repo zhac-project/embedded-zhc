@@ -29,6 +29,9 @@ namespace zhc::devices::tuya {
 namespace {
 
 constexpr std::size_t  kSensorSlot = 0;   // DeviceRuntimeState::scratch index
+// ponytail: RAM only (z2m keeps it in persisted state): after a hub restart
+// local_temperature follows DP24 until the device re-sends DP43. Persist the
+// runtime scratch, or query the DPs at boot, if that bites.
 constexpr std::uint8_t kSensorOu   = 2;
 
 bool sensor_is_ou(RuntimeContext& ctx) {

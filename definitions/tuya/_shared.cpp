@@ -2164,6 +2164,9 @@ std::size_t exposes_from_dp_map(const TuyaDatapointMap& map, Expose* out, std::s
 
 namespace {
 constexpr std::size_t  kTempUnitSlot   = 0;   // DeviceRuntimeState::scratch index
+// ponytail: RAM only (z2m keeps it in persisted state): after a hub restart a
+// °F device reads as °C until it re-sends its unit DP. Persist the runtime
+// scratch, or query the DPs at boot, if that bites.
 constexpr std::uint8_t kUnitFahrenheit = 1;
 }  // namespace
 
