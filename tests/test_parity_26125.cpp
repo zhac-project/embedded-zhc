@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <map>
 #include <span>
 #include <string>
 #include <vector>
@@ -1284,6 +1285,117 @@ void final_review() {
     }
 }
 
+// F-04 (security review 2026-11-03): a setting that changes how a measurement
+// reads survives a hub restart. The restart zeroes DeviceRuntimeState; until
+// the device reports the setting again, the decoder takes the text the hub
+// kept for it (its shadow, restored from flash: RuntimeContext::state_text).
+namespace zhc::devices::tuya { extern const PreparedDefinition kDef_ZG_IR01; }
+namespace {
+std::map<std::string, std::string> g_kept;   // device 0's shadow, as restored at boot
+bool kept_text(std::uint16_t, const char* key, char* out, std::size_t cap) {
+    const auto it = g_kept.find(key);
+    if (it == g_kept.end() || it->second.size() >= cap) return false;
+    std::memcpy(out, it->second.c_str(), it->second.size() + 1);
+    return true;
+}
+// The shadow keeps the text values a decode publishes.
+void keep(const FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& p) {
+    for (std::uint8_t i = 0; i < p.count; ++i)
+        if (p.items[i].value.type == ValueType::StringRef && p.items[i].value.str)
+            g_kept[p.items[i].key] = p.items[i].value.str;
+}
+struct Hub : StoreCtx {   // one device, slot 0
+    Hub() { g_kept.clear(); ctx.state_text = &kept_text; }
+    void restart() { store = RuntimeStore<1>{}; }   // the runtime store starts zeroed; the shadow is restored
+};
+using Out = FixedPayload<ZHC_FIXED_PAYLOAD_CAP>;
+}  // namespace
+
+void settings_survive_restart() {
+    std::printf("F-04 settings survive a restart\n");
+    const PreparedDefinition& ir = devices::tuya::kDef_ZG_IR01;
+    {   // ZG-IR01: DP111 unit, DP109 temperature in that unit
+        Hub h; Out u{}, t{};
+        dp_enum(ir, 111, 1, h.ctx, u); keep(u);
+        check(dp_num(ir, 109, 770, h.ctx, t) && approx(float_of(t, "temperature"), 25.0f), "ZG-IR01 77.0 F -> 25.0 C");
+        h.restart(); t = {};
+        check(dp_num(ir, 109, 770, h.ctx, t) && approx(float_of(t, "temperature"), 25.0f),
+              "ZG-IR01 after a restart: 77.0 F still 25.0 C");
+        u = {}; t = {};
+        dp_enum(ir, 111, 0, h.ctx, u);   // the device's own report beats the kept text
+        check(dp_num(ir, 109, 225, h.ctx, t) && approx(float_of(t, "temperature"), 22.5f),
+              "ZG-IR01 a unit report after the restart wins over the kept unit");
+    }
+    {   // ZG-204ZX: DP109 unit, DP111 temperature (the same shared helpers)
+        const PreparedDefinition& d = def_for("ZG-204ZX", "_TZE200_w0ap83qu");
+        Hub h; Out u{}, t{};
+        dp_enum(d, 109, 1, h.ctx, u); keep(u);
+        h.restart();
+        check(dp_num(d, 111, 770, h.ctx, t) && approx(float_of(t, "temperature"), 25.0f),
+              "ZG-204ZX after a restart: 77.0 F still 25.0 C");
+    }
+    const PreparedDefinition& floor = def_for("TS0601", "_TZE204_0hhou4yj");
+    {   // TS0601_floor_thermostat_006: DP43 picks the probe local_temperature follows
+        Hub h; Out s{}, ext{}, in{};
+        dp_enum(floor, 43, 2, h.ctx, s); keep(s);   // OU: the external floor probe
+        h.restart();
+        dp_num(floor, 102, 300, h.ctx, ext);
+        dp_num(floor, 24, 180, h.ctx, in);
+        check(approx(float_of(ext, "local_temperature"), 30.0f), "floor_006 after a restart: DP102 still local (OU)");
+        check(approx(float_of(in, "internal_temperature"), 18.0f) && !in.find("local_temperature"),
+              "floor_006 after a restart: DP24 internal only (OU)");
+    }
+    const PreparedDefinition& meter = def_for("EMIZB-132", "Develco Products A/S");
+    Report cur; cur.u16(0x0508, 0x21, 52);
+    {   // Develco EMIZB-132: interface_mode (read at configure, never reported) sets the current divisor
+        Hub h;
+        Report m(0x1015); m.u16(0x0302, 0x31, 0x0203);
+        keep(dispatch(meter, 0x0702, 2, m.span(), &h.ctx).merged);
+        h.restart();
+        check(approx(r_float(dispatch(meter, 0x0B04, 2, cur.span(), &h.ctx), "current"), 0.052f, 0.0001f),
+              "EMIZB-132 after a restart: kaifa_and_kamstrup current still /1000");
+    }
+    {   // Neither reported since boot nor kept: upstream's unset-state defaults
+        // (Celsius, IN, norwegian_han), not cached, so a text the hub restores
+        // after the first frame still counts.
+        Hub h; Out t{}, in{};
+        check(dp_num(ir, 109, 225, h.ctx, t) && approx(float_of(t, "temperature"), 22.5f), "ZG-IR01 unit unknown: Celsius");
+        g_kept["temperature_unit"] = "fahrenheit"; t = {};
+        check(dp_num(ir, 109, 770, h.ctx, t) && approx(float_of(t, "temperature"), 25.0f),
+              "ZG-IR01 a unit kept after the first frame still counts");
+        g_kept["temperature_unit"] = "kelvin"; h.restart(); t = {};
+        check(dp_num(ir, 109, 225, h.ctx, t) && approx(float_of(t, "temperature"), 22.5f),
+              "ZG-IR01 a kept text that names no unit: Celsius");
+        Hub f;
+        dp_num(floor, 24, 180, f.ctx, in);
+        check(approx(float_of(in, "local_temperature"), 18.0f), "floor_006 sensor unknown: DP24 is local (IN)");
+        Hub m;
+        check(approx(r_float(dispatch(meter, 0x0B04, 2, cur.span(), &m.ctx), "current"), 5.2f),
+              "EMIZB-132 interface_mode unknown: current /10 (norwegian_han)");
+        RuntimeContext bare{}; t = {};
+        check(dp_num(ir, 109, 300, bare, t) && approx(float_of(t, "temperature"), 30.0f), "no store, no hook: Celsius");
+    }
+    {   // WSDCGQ12LM: the pressure scale is no state the hub keeps (z2m reads it
+        // from herdsman's attribute cache). Unknown since boot it is Aqara's -1,
+        // and the 500..2000 hPa window drops what another scale would give:
+        // a dropped frame, never a reading ten times off.
+        const PreparedDefinition& d = def_for("lumi.sensor_ht.agl02", "LUMI");
+        Hub h;
+        Report a; a.u16(0x0010, 0x29, 10132).u8(0x0014, 0x28, 0xFF);   // scale -1
+        check(approx(r_float(dispatch(d, 0x0403, 1, a.span(), &h.ctx), "pressure"), 1013.2f), "WSDCGQ12LM scale -1");
+        h.restart();
+        Report q; q.u16(0x0010, 0x29, 10045);
+        check(approx(r_float(dispatch(d, 0x0403, 1, q.span(), &h.ctx), "pressure"), 1004.5f),
+              "WSDCGQ12LM after a restart: Aqara's -1");
+        Report b; b.u16(0x0010, 0x29, 1013).u8(0x0014, 0x28, 0xFE);    // scale -2
+        check(approx(r_float(dispatch(d, 0x0403, 1, b.span(), &h.ctx), "pressure"), 1013.0f), "WSDCGQ12LM scale -2");
+        h.restart();
+        Report s; s.u16(0x0010, 0x29, 1004);
+        check(!r_find(dispatch(d, 0x0403, 1, s.span(), &h.ctx), "pressure"),
+              "WSDCGQ12LM scale -2 unknown after a restart: dropped, not 100.4 hPa");
+    }
+}
+
 int main() {
     std::printf("== z2m parity window v26.115.1 -> v26.125.0 ==\n");
     herdsman_data_report_alt();
@@ -1312,6 +1424,7 @@ int main() {
     wave4_zcl_m();
     wave4_lumi();
     final_review();
+    settings_survive_restart();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26125 checks passed\n");
     return 0;

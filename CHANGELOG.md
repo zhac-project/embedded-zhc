@@ -93,6 +93,10 @@ across the ZHAC platform.
 
 ### Added
 
+- **`RuntimeContext::state_text`** (optional hook) and
+  **`RuntimeContext::state_index(key, labels, n)`**: the text the host keeps
+  for a device key (its persisted state; zhac-components answers from the
+  device shadow), and that text's index in a label list, -1 when unknown.
 - **`tuya::definition_decodes_dp(def, dp_id)`**: true when one of the
   definition's datapoint maps has an entry for the datapoint. zhac-components
   uses it to retire a raw `dp_<id>` value the hub saved while the datapoint
@@ -118,6 +122,33 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **A °F display unit, the floor sensor in control and a meter's interface
+  mode survive a hub restart** (security review 2026-11-03 F-04). The
+  decoders kept these settings only in `DeviceRuntimeState`, which a restart
+  zeroes, so until the device sent the setting again a HOBEIAN ZG-IR01 /
+  ZG-204ZX set to °F published 77 °F as 77 °C, TS0601_floor_thermostat_006
+  on its external probe (OU) published the internal probe as
+  `local_temperature` and dropped the external one, and a Develco EMIZB-132
+  in kaifa_and_kamstrup mode published `current` 100 times too high (its
+  `interface_mode` is never reported, only read at configure). The cached
+  setting is now the wire value + 1, so 0 means "not reported since boot",
+  and until it is reported the decoder takes the text the host kept for it
+  (`RuntimeContext::state_text`), as z2m reads its persisted `meta.state`. With
+  neither, the decoders keep upstream's unset-state defaults (Celsius, IN,
+  norwegian_han) and cache nothing, so a value the host restores later still
+  counts. Aqara WSDCGQ12LM's pressure scale is no state the hub keeps (z2m
+  reads it from herdsman's attribute cache): unknown since boot it stays
+  Aqara's -1, and the 500–2000 hPa window drops what another scale would
+  give. Test: `test_parity_26125.cpp` (`settings_survive_restart`).
+- **A Tuya button in the hub's first runtime slot fires once per press**
+  (`fz_tuya_action`, security review 2026-11-03). The retransmit dedup
+  skipped `device_index` 0, meant for synthetic test frames, but
+  zhac-components gives slot 0 to the first device it hears after boot, so
+  each retransmission of that device's press (same transaction sequence,
+  within 800 ms) fired its rules again. Slot 0 now dedups like any other; a
+  context without a runtime store still skips dedup. Test: `test_ts0044.cpp`
+  (index 0 dedups; its synthetic presses now take their own transaction
+  sequence).
 - **The Lumi MI-struct converters leave no dangling keys behind** (`fz_lumi_basic`, `fz_lumi_specific`; review 2026-10-24 ZR-07). They parse attribute 0xFF01 into `DecodedMessage::mi_struct_arena` with the keys in a scratch on their own stack, and the arena kept pointing at it after they returned. Nothing read it afterwards, so this was latent; the arena is now emptied on every return.
 - **Generic thermostat writes reach the device and refuse what does not fit.**
   `kTzThermostat` (145 definitions) framed its setpoint and `system_mode`

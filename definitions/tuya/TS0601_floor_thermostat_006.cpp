@@ -12,7 +12,8 @@
 // external sensor /10, 103 deadzone /10. local_temperature follows the
 // active sensor: DP24 feeds it unless sensor = OU, DP102 only when it is OU;
 // the sensor is cached per device in DeviceRuntimeState::scratch[0] (before
-// any DP43 report it is taken as IN, as upstream does with unset state).
+// any DP43 report since boot, the hub's persisted `sensor`; with neither it
+// is taken as IN, as upstream does with unset state).
 // Not ported: republishing local_temperature from the cached reading the
 // moment DP43 changes (the next sensor report updates it) and the weekly
 // schedule DPs 101/105-110 (thermostatScheduleDayMultiDP has no codec here).
@@ -29,14 +30,20 @@ namespace zhc::devices::tuya {
 namespace {
 
 constexpr std::size_t  kSensorSlot = 0;   // DeviceRuntimeState::scratch index
-// ponytail: RAM only (z2m keeps it in persisted state): after a hub restart
-// local_temperature follows DP24 until the device re-sends DP43. Persist the
-// runtime scratch, or query the DPs at boot, if that bites.
+// scratch holds DP43's wire value + 1 (0 = not reported since boot); until
+// then the host's persisted `sensor` decides, as z2m's meta.state does across
+// a restart (security review 2026-11-03 F-04).
 constexpr std::uint8_t kSensorOu   = 2;
+constexpr const char*  kSensorLabels[] = { "IN", "AL", "OU" };   // wire order
 
+// Neither reported nor kept: IN, as upstream with an unset sensor. Not
+// cached, so a value the host restores after this frame still counts.
 bool sensor_is_ou(RuntimeContext& ctx) {
-    const auto* st = ctx.device_state();
-    return st && st->scratch[kSensorSlot] == kSensorOu;
+    auto* st = ctx.device_state();
+    const int s = st && st->scratch[kSensorSlot] ? st->scratch[kSensorSlot] - 1
+                                                 : ctx.state_index("sensor", kSensorLabels, 3);
+    if (st && s >= 0) st->scratch[kSensorSlot] = static_cast<std::uint8_t>(s + 1);
+    return s == kSensorOu;
 }
 
 void put_float(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out, const char* key, float f) {
@@ -68,11 +75,11 @@ bool expand_external(const ::zhc::tuya::TuyaDpMapEntry&, const Value& raw, Runti
 
 constexpr ::zhc::tuya::TuyaEnumEntry kSensor[] = { {0, "IN"}, {1, "AL"}, {2, "OU"} };
 
-// DP43 sensor: publishes the label and caches the wire value.
+// DP43 sensor: publishes the label and caches the wire value + 1.
 bool expand_sensor(const ::zhc::tuya::TuyaDpMapEntry& e, const Value& raw, RuntimeContext& ctx,
                    FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     if (raw.type != ValueType::Uint || raw.u > kSensorOu) return false;
-    if (auto* st = ctx.device_state()) st->scratch[kSensorSlot] = static_cast<std::uint8_t>(raw.u);
+    if (auto* st = ctx.device_state()) st->scratch[kSensorSlot] = static_cast<std::uint8_t>(raw.u + 1);
     Value v{}; v.type = ValueType::StringRef; v.str = kSensor[raw.u].label;
     out.put(e.out_key, v);
     return true;

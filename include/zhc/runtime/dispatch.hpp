@@ -91,6 +91,14 @@ using ConfigureWriteFn = bool (*)(std::uint16_t device_index,
 // scheduler).
 using ConfigureSleepFn = void (*)(std::uint16_t wait_ms);
 
+// Platform hook: the text the host last kept for `key` on this device (its
+// persisted state, restored at boot; z2m's meta.state), copied NUL-terminated
+// into out[0..cap). False when it keeps none or it does not fit. Converters
+// read a device setting through it while the setting has not been reported
+// since boot (DeviceRuntimeState starts zeroed). Null → unknown.
+using StateTextFn = bool (*)(std::uint16_t device_index, const char* key,
+                             char* out, std::size_t cap);
+
 struct RuntimeContext {
     NowMsFn              now_ms;
     LogFn                log;
@@ -105,6 +113,7 @@ struct RuntimeContext {
     ConfigureReadFn      configure_read;    // optional — join-time ZCL read
     ConfigureWriteFn     configure_write;   // optional — join-time ZCL write
     ConfigureSleepFn     configure_sleep;   // optional — Wait-op hook
+    StateTextFn          state_text;        // optional — persisted settings (see state_index)
     std::uint16_t        device_nwk;        // populated at run_configure time for Callback op
     std::uint16_t        device_index;
 
@@ -152,6 +161,17 @@ struct RuntimeContext {
     }
 
     std::uint32_t now() const { return now_ms ? now_ms() : 0; }
+
+    // Index of the host's persisted text of `key` in labels[0..n); -1 when
+    // unknown (no hook, nothing kept, or a text not in the list).
+    int state_index(const char* key, const char* const* labels, std::size_t n) const {
+        char b[48];   // the hub keeps up to 47 bytes of text (device_shadow)
+        if (!state_text || !state_text(device_index, key, b, sizeof b)) return -1;
+        b[sizeof b - 1] = '\0';
+        for (std::size_t i = 0; i < n; ++i)
+            if (std::strcmp(b, labels[i]) == 0) return static_cast<int>(i);
+        return -1;
+    }
 };
 
 struct DispatchResult {

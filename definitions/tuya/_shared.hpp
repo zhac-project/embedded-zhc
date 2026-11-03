@@ -527,10 +527,12 @@ inline constexpr std::uint8_t     kReportsLightRGBCCT_1ep_count = 5;
 // temperatureInSelectedUnit; ZG-IR01, ZG-204ZX). The device reports the
 // temperature DP already scaled in the unit its temperature_unit DP selects.
 // The unit row (enum table {0 celsius, 1 fahrenheit}) publishes the label and
-// caches the wire value in DeviceRuntimeState::scratch[0]; the temperature
+// caches the wire value + 1 in DeviceRuntimeState::scratch[0]; the temperature
 // row publishes raw / 10 and converts a Fahrenheit reading back to Celsius.
-// Before any unit report the reading is taken as Celsius, as upstream does
-// with an unset temperature_unit.
+// While the unit has not been reported since boot, the host's persisted
+// temperature_unit (RuntimeContext::state_text) decides, as upstream's
+// persisted state does; with neither, the reading is taken as Celsius, as
+// upstream does with an unset temperature_unit.
 bool tuya_dp_expand_temperature_unit(const TuyaDpMapEntry& e, const Value& raw,
                                       RuntimeContext& ctx,
                                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);

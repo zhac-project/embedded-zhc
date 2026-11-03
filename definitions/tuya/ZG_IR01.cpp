@@ -12,7 +12,8 @@
 // per device in DeviceRuntimeState::scratch[0] by the dp111 row, and the
 // dp109 row converts a Fahrenheit reading back so `temperature` (exposed in
 // Celsius) stays consistent (shared tuya_dp_expand_temperature_* helpers).
-// Before any dp111 report the reading is taken as Celsius, which is what
+// Before any dp111 report since boot the hub's persisted `temperature_unit`
+// decides; with neither the reading is taken as Celsius, which is what
 // upstream does with an unset `temperature_unit`.
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/dp.hpp"
