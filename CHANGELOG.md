@@ -140,6 +140,15 @@ across the ZHAC platform.
   reads it from herdsman's attribute cache): unknown since boot it stays
   Aqara's -1, and the 500–2000 hPa window drops what another scale would
   give. Test: `test_parity_26125.cpp` (`settings_survive_restart`).
+- **A Tuya button in the hub's first runtime slot fires once per press**
+  (`fz_tuya_action`, security review 2026-11-03). The retransmit dedup
+  skipped `device_index` 0, meant for synthetic test frames, but
+  zhac-components gives slot 0 to the first device it hears after boot, so
+  each retransmission of that device's press (same transaction sequence,
+  within 800 ms) fired its rules again. Slot 0 now dedups like any other; a
+  context without a runtime store still skips dedup. Test: `test_ts0044.cpp`
+  (index 0 dedups; its synthetic presses now take their own transaction
+  sequence).
 - **The Lumi MI-struct converters leave no dangling keys behind** (`fz_lumi_basic`, `fz_lumi_specific`; review 2026-10-24 ZR-07). They parse attribute 0xFF01 into `DecodedMessage::mi_struct_arena` with the keys in a scratch on their own stack, and the arena kept pointing at it after they returned. Nothing read it afterwards, so this was latent; the arena is now emptied on every return.
 - **Generic thermostat writes reach the device and refuse what does not fit.**
   `kTzThermostat` (145 definitions) framed its setpoint and `system_mode`

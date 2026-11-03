@@ -82,11 +82,16 @@ ActionFrame action_press(std::uint8_t click, std::uint8_t tsn = 0x0C) {
     return ActionFrame{ { 0x01, tsn, 0xFD, click } };
 }
 
-// `dev_idx == 0` keeps the dedup logic disabled (default for the
-// pre-existing tests that synthesise repeated frames). Pass a nonzero
-// index when exercising dedup behaviour.
+// Each synthetic press takes its own transaction sequence unless the test
+// passes one: device 0 dedups like any other device, so a repeated tsn
+// would be swallowed as a retransmit.
+std::uint8_t next_tsn() {
+    static std::uint8_t tsn = 0x0C;
+    return tsn++;
+}
+
 DispatchResult dispatch_press(std::uint8_t src_ep, std::uint8_t click,
-                                std::uint8_t  tsn     = 0x0C,
+                                std::uint8_t  tsn     = next_tsn(),
                                 std::uint16_t dev_idx = 0) {
     auto f = action_press(click, tsn);
     auto raw = make_frame(0x0006, src_ep,
@@ -98,8 +103,7 @@ DispatchResult dispatch_press(std::uint8_t src_ep, std::uint8_t click,
     RuntimeContext& ctx = test_ctx();
     ctx.device_index = dev_idx;
     // Wire the test store so DeviceRuntimeState (where H-2 moved dedup
-    // state) is reachable. dev_idx == 0 callers still bypass dedup by
-    // design, store wiring or not.
+    // state) is reachable.
     ctx.store     = &g_test_store;
     ctx.store_get = &decltype(g_test_store)::get;
     return dispatch_from_zigbee(msg, {}, devices::tuya::kDefTS0044, raw, ctx);
@@ -253,10 +257,11 @@ static void test_distinct_device_both_fire() {
     expect_action(r2, "1_single");
 }
 
-// device_index == 0 (default / synthetic frames) bypasses dedup, so
-// the existing "all combinations" test that reuses tsn 0x0C across
-// 12 calls keeps working. Lock that contract.
-static void test_zero_device_index_skips_dedup() {
+// device_index 0 is a real device on the hub (zhc_adapter hands slot 0 to
+// the first device it hears after boot), so its retransmits are swallowed
+// like any other device's (security review 2026-11-03: it used to skip
+// dedup, and a button in slot 0 fired its rules two or three times).
+static void test_zero_device_index_dedups() {
     reset_test_dedup();
     auto r1 = dispatch_press(/*ep=*/4, /*click=*/2,
                               /*tsn=*/0xAA, /*dev_idx=*/0);
@@ -264,7 +269,7 @@ static void test_zero_device_index_skips_dedup() {
 
     auto r2 = dispatch_press(/*ep=*/4, /*click=*/2,
                               /*tsn=*/0xAA, /*dev_idx=*/0);
-    expect_action(r2, "4_hold");
+    assert(r2.any_matched && r2.merged.find("action") == nullptr);
 }
 
 int main() {
@@ -277,6 +282,6 @@ int main() {
     test_retx_with_same_tsn_dedups();
     test_distinct_tsn_both_fire();
     test_distinct_device_both_fire();
-    test_zero_device_index_skips_dedup();
+    test_zero_device_index_dedups();
     return 0;
 }

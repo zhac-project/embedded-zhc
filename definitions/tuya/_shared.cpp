@@ -891,15 +891,15 @@ constexpr TuyaActionConfig kCfgActPerEp { /*prefix=*/true  };
 // State lives on `DeviceRuntimeState` so each device has its own slot
 // (no cross-device interference, no test-order coupling). Devices
 // without a backing store (host fixtures with no RuntimeStore wired)
-// skip dedup and surface every frame — same fallback as `device_index
-// == 0` (synthetic test frames).
+// skip dedup and surface every frame. device_index 0 is a real device
+// (the hub gives it to the first device it hears after boot) and dedups
+// like any other.
 
 constexpr std::uint32_t kDedupWindowMs = 800;
 
 bool is_action_retransmit(RuntimeContext& ctx,
                            std::uint8_t   tsn,
                            std::uint32_t  now_ms) {
-    if (ctx.device_index == 0) return false;
     DeviceRuntimeState* st = ctx.device_state();
     if (!st) return false;
     if (st->tuya_action_seen) {
