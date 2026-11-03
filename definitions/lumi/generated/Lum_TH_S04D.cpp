@@ -29,11 +29,6 @@ constexpr ::zhc::EndpointLabel kEndpoints_TH_S04D[] = { {"plus", 1}, {"center", 
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0xFCC0},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_TH_S04D{
@@ -46,7 +41,6 @@ extern const PreparedDefinition kDef_TH_S04D{
     .from_zigbee=kFz_TH_S04D, .from_zigbee_count=sizeof(kFz_TH_S04D)/sizeof(kFz_TH_S04D[0]),
     .to_zigbee=kTz_TH_S04D, .to_zigbee_count=sizeof(kTz_TH_S04D)/sizeof(kTz_TH_S04D[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
     .endpoint_map       = kEndpoints_TH_S04D,
     .endpoint_map_count = sizeof(kEndpoints_TH_S04D)/sizeof(kEndpoints_TH_S04D[0]),
 };

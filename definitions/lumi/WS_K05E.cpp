@@ -37,11 +37,6 @@ constexpr Expose kAutoExposes[] = {
      "Decoupled mode for the brightness down button (disabled when power is decoupled)",
      ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-    {1, 0x0012},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDefWS_K05E{
@@ -53,7 +48,6 @@ extern const PreparedDefinition kDefWS_K05E{
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee = kTz, .to_zigbee_count = sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
     // z2m: manuSpecificLumi mode (0x0009) = 1, "event", at configure.
     .config_steps = ::zhc::lumi::kConfigStepsLumiEventMode,
     .config_steps_count = std::size(::zhc::lumi::kConfigStepsLumiEventMode),

@@ -25,10 +25,6 @@ constexpr const char* kModels_WXKG02LM_rev1[] = { "lumi.sensor_86sw2", "lumi.sen
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_WXKG02LM_rev1{
@@ -41,7 +37,6 @@ extern const PreparedDefinition kDef_WXKG02LM_rev1{
     .from_zigbee=kFz_WXKG02LM_rev1, .from_zigbee_count=sizeof(kFz_WXKG02LM_rev1)/sizeof(kFz_WXKG02LM_rev1[0]),
     .to_zigbee=kTz_WXKG02LM_rev1, .to_zigbee_count=sizeof(kTz_WXKG02LM_rev1)/sizeof(kTz_WXKG02LM_rev1[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

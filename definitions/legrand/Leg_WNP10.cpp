@@ -4,8 +4,8 @@
 // The model id is "Hospitality on off plug" padded with NULs, which end the
 // C string. z2m: fz.on_off + binary_input_on_off (genBinaryInput presentValue
 // -> state) + cluster_fc01 (LED modes) + m.commandsOnOff (action); tz on_off +
-// led_mode. z2m's configure is an empty placeholder; only commandsOnOff's
-// genOnOff bind is kept.
+// led_mode. Configure (v26.125.0): bind genIdentify / genOnOff /
+// genBinaryInput and report onOff (0 / 3600 / 0).
 // z2m-source: legrand.ts #WNP10.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/legrand/_shared.hpp"
@@ -37,7 +37,12 @@ constexpr Expose kExp[] = {
 };
 constexpr const char* kM[] = { "Hospitality on off plug" };
 constexpr BindingSpec kBind[] = {
+    {1, 0x0003},
     {1, 0x0006},
+    {1, 0x000F},
+};
+constexpr ReportingSpec kReports[] = {
+    {1, 0x0006, 0x0000, 0x10, 0, 3600, 0, 0},
 };
 }  // namespace
 
@@ -52,6 +57,7 @@ extern const PreparedDefinition kDef_WNP10{
     .to_zigbee=kTz, .to_zigbee_count=sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr, .on_event=nullptr,
     .bindings=kBind, .bindings_count=sizeof(kBind)/sizeof(kBind[0]),
+    .reports=kReports, .reports_count=sizeof(kReports)/sizeof(kReports[0]),
 };
 
 }  // namespace zhc::devices::legrand

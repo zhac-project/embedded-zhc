@@ -3,10 +3,18 @@
 // Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE204_wbhaespm).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
+#include "definitions/tuya/dp.hpp"
 namespace zhc::devices::tuya {
 namespace {
 
+// z2m phaseVariant2WithPhase on DP6/7/8 (the generator dropped these rows).
+constexpr ::zhc::tuya::TuyaPhaseKeys kPhaseA{ "voltage_a", "current_a", "power_a" };
+constexpr ::zhc::tuya::TuyaPhaseKeys kPhaseB{ "voltage_b", "current_b", "power_b" };
+constexpr ::zhc::tuya::TuyaPhaseKeys kPhaseC{ "voltage_c", "current_c", "power_c" };
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_wbhaespm[] = {
+    ::zhc::tuya::dp::phase_variant2_with_phase(6, &kPhaseA),
+    ::zhc::tuya::dp::phase_variant2_with_phase(7, &kPhaseB),
+    ::zhc::tuya::dp::phase_variant2_with_phase(8, &kPhaseC),
     { 1, "energy", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
     { 16, "state", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 17, "overload_breaker", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
@@ -26,7 +34,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_wbhaespm[] = {
     { 21, "leakage_test", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 102, "temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_wbhaespm{ kEntries__TZE204_wbhaespm, 18 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_wbhaespm{ kEntries__TZE204_wbhaespm, sizeof(kEntries__TZE204_wbhaespm)/sizeof(kEntries__TZE204_wbhaespm[0]) };
 constexpr FzConverter kFzDp__TZE204_wbhaespm{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

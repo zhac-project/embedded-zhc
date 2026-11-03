@@ -19,6 +19,7 @@ const char* const kZigbeeModels[] = { "lumi.sensor_motion.aq2" };
 const FzConverter* const kFromZigbee[] = {
     &zhc::lumi::kFzLumiBasic,   // battery / voltage / device_temperature
     &zhc::lumi::kFzOccupancy,    // occupancy bool on msOccupancySensing
+    &zhc::lumi::kFzLumiIlluminance,  // illuminance (lx) + occupancy
 };
 
 }  // namespace
@@ -31,13 +32,12 @@ constexpr Expose kAutoExposes[] = {
     {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-};
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-    {1, 0x0406},
+    {"illuminance", ExposeType::Numeric, Access::State, "lx", nullptr, nullptr, 0},
 };
 // --- end auto-generated block ---
+// No bindings: z2m binds nothing for this sensor (configure only sets the
+// 1 h check-in). It sleeps through ZDO binds and reports to the coordinator
+// anyway.
 
 
 extern const PreparedDefinition kDefRTCGQ11LM{
@@ -56,7 +56,6 @@ extern const PreparedDefinition kDefRTCGQ11LM{
     .to_zigbee_count    = 0,
     .configure          = nullptr,
     .on_event           = nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
     // z2m fz.occupancy_with_timeout: the hub clears occupancy 90 s after the last motion.
     .occupancy_timeout = 90,
 };

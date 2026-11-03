@@ -34,7 +34,6 @@ constexpr Expose kAutoExposes[] = {
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0102},  // closuresWindowCovering (cover state + go-to-position)
-    {1, 0x000C},  // genAnalogOutput (live position, attr 0x0055)
 };
 
 extern const PreparedDefinition kDefC200{

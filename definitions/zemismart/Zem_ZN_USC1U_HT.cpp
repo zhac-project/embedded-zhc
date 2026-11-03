@@ -38,7 +38,7 @@ constexpr Expose kExp[] = {
      ExposeCategory::State, 0, 500, 0},
 };
 constexpr const char* kM[] = { "TS0601" };
-constexpr const char* kN[] = { "_TZE204_mpg22jc1" };
+constexpr const char* kN[] = { "_TZE204_mpg22jc1", "_TZE28C1000000_19jwhi8c" };
 }  // namespace
 
 extern const PreparedDefinition kDef_ZN_USC1U_HT{

@@ -95,10 +95,6 @@ constexpr Expose kExposes[] = {
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
 };
 
-constexpr BindingSpec kBindings[] = {
-    {1, 0x0000},
-};
-
 extern const PreparedDefinition kDefJTYJGD01LM{
     .zigbee_models=kModels,.zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
     .model = "JTYJGD01LM", .vendor = "Xiaomi",
@@ -108,6 +104,5 @@ extern const PreparedDefinition kDefJTYJGD01LM{
     .from_zigbee = kFz, .from_zigbee_count = sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee = kTz, .to_zigbee_count = sizeof(kTz)/sizeof(kTz[0]),
     .configure = nullptr, .on_event = nullptr,
-.bindings=kBindings,.bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
 };
 }

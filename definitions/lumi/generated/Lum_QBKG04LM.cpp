@@ -24,10 +24,6 @@ constexpr const char* kModels_QBKG04LM[] = { "lumi.ctrl_neutral1" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_QBKG04LM{
@@ -40,7 +36,6 @@ extern const PreparedDefinition kDef_QBKG04LM{
     .from_zigbee=kFz_QBKG04LM, .from_zigbee_count=sizeof(kFz_QBKG04LM)/sizeof(kFz_QBKG04LM[0]),
     .to_zigbee=kTz_QBKG04LM, .to_zigbee_count=sizeof(kTz_QBKG04LM)/sizeof(kTz_QBKG04LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

@@ -338,14 +338,14 @@ constexpr const char* kHeartbeatModels[] = {
     "QBKG18LM", "QBKG19LM", "QBKG20LM", "QBKG24LM", "QBKG25LM", "QBKG26LM", "QBKG27LM",
     "QBKG28LM", "QBKG29LM", "QBKG30LM", "QBKG31LM", "QBKG32LM", "QBKG33LM", "QBKG34LM",
     "QBKG38LM", "QBKG39LM", "QBKG40LM", "QBKG41LM", "RTCGQ12LM", "RTCGQ13LM", "RTCGQ14LM",
-    "RTCGQ15LM", "RTCZCGQ11LM", "SJCGQ12LM", "SJCGQ13LM", "SP-EUC01", "SSM-U01", "SSM-U02",
+    "RTCGQ15LM", "RTCZCGQ11LM", "SJCGQ12LM", "SJCGQ13LM", "SP-EUC01", "SP-P06E", "SSM-U01", "SSM-U02",
     "SSWQD03LM", "SSWQD22LM", "SSWQDYH02", "T2_E27", "T2_E27_CCT", "TDL01LM", "TH-S04D",
     "VOCKQJK11LM", "WP-P09D", "WP-P01D", "WSDCGQ12LM", "WS-EUK01", "WS-EUK02", "WS-EUK03",
     "WS-EUK04", "WS-K01D", "WS-K02E", "WS-K03E", "WS-K04E", "WS-K05E", "WS-K07E", "WS-K08D",
     "WS-USC01", "WS-USC02", "WS-USC03", "WS-USC04", "WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM",
     "WXKG04LM", "WXKG13LM", "WXKG14LM",
     "WXKG15LM", "WXKG16LM", "WXKG17LM", "WXKG20LM", "WXKG21LM", "WXKG22LM", "ZNCLBL01LM",
-    "ZNCZ04LM", "ZNCZ12LM", "ZNCZ15LM", "ZNDDQDQ11LM", "ZNDDQDQ12LM", "ZNDDQDQ13LM",
+    "ZNCZ04LM", "ZNCZ12LM", "ZNCZ15LM", "ZNDDQDQ11LM", "ZNDDQDQ12LM", "ZNDDQDQ13LM", "ZNJLBL01LM",
     "ZNLDP12LM", "ZNLDP13LM", "ZNLDP14LM", "ZNLDP18LM", "ZNLDP19LM", "ZNQBCZ11LM",
     "ZNQBKG16LM", "ZNQBKG38LM", "ZNQBKG39LM", "ZNQBKG40LM", "ZNQBKG41LM", "ZNQBKG42LM",
     "ZNQBKG43LM", "ZNQBKG44LM", "ZNQBKG45LM", "ZNTGMK12LM", "ZNWXKG01LM", "ZNXNKG01LM",
@@ -379,11 +379,14 @@ constexpr const char* kBatteryModels[] = {
     "MCCGQ12LM", "MCCGQ13LM", "MCCGQ14LM", "PS-S04D", "RTCGQ12LM", "RTCGQ13LM", "RTCGQ14LM",
     "RTCGQ15LM", "SJCGQ12LM", "SJCGQ13LM", "TH-S04D", "VOCKQJK11LM", "WSDCGQ12LM",
     "WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "WXKG04LM", "WXKG13LM", "WXKG14LM", "WXKG15LM",
-    "WXKG16LM", "WXKG17LM", "WXKG20LM", "WXKG21LM", "WXKG22LM", "ZNCLBL01LM", "ZNXNKG02LM",
+    "WXKG16LM", "WXKG17LM", "WXKG20LM", "WXKG21LM", "WXKG22LM", "ZNCLBL01LM", "ZNJLBL01LM",
+    "ZNXNKG02LM",
 };
 // z2m exposes battery % on all of them, and the millivolts on all but TH-S04D, whose
-// mV expose ZHAC keeps.
-bool millivolts(const char* model) { return in(kBatteryModels, model); }
+// mV expose ZHAC keeps, and ZNJLBL01LM (e.battery() only, its % from tag 101 / 0x040A).
+bool millivolts(const char* model) {
+    return in(kBatteryModels, model) && std::strcmp(model, "ZNJLBL01LM") != 0;
+}
 
 void item3_heartbeat() {
     // Real, SJCGQ12LM (z2m #20764): 3013 mV, 25 °C, tag 5 = 17.
@@ -636,17 +639,15 @@ void item4_legacy_heartbeat() {
 // ── 5  bindings ──────────────────────────────────────────────────────
 //
 // z2m binds manuSpecificLumi only on the H1/H2 EU switches' button endpoints and the
-// FP300; none of these eleven. Their other bindings stay as they were.
+// FP300; none of these eleven. The sensors bind nothing at all: z2m makes no bind on
+// them (Basic and Occupancy came from the generator, and a sleeping sensor never
+// answered them). ZNCZ15LM keeps the binds its reporting needs.
 void item5_bindings() {
     struct Want { const char* model; std::vector<BindingSpec> binds; };
     const Want wants[] = {
-        {"MCCGQ13LM", {{1, 0x0000}}},  {"MCCGQ14LM", {{1, 0x0000}}},
-        {"MCCGQ16LM", {{1, 0x0000}}},  {"MCCGQ17LM", {{1, 0x0000}}},
-        {"MCCGQ18LM", {{1, 0x0000}}},  {"MCCGQ19LM", {{1, 0x0000}}},
-        {"RTCGQ13LM", {{1, 0x0000}, {1, 0x0406}}},
-        {"RTCGQ14LM", {{1, 0x0406}, {1, 0x0000}}},
-        {"RTCGQ15LM", {{1, 0x0000}, {1, 0x0406}}},
-        {"RTCGQ16LM", {{1, 0x0000}, {1, 0x0406}}},
+        {"MCCGQ13LM", {}}, {"MCCGQ14LM", {}}, {"MCCGQ16LM", {}}, {"MCCGQ17LM", {}},
+        {"MCCGQ18LM", {}}, {"MCCGQ19LM", {}}, {"RTCGQ13LM", {}}, {"RTCGQ14LM", {}},
+        {"RTCGQ15LM", {}}, {"RTCGQ16LM", {}},
         {"ZNCZ15LM", {{1, 0x0006}, {1, 0x0702}, {1, 0x0B04}}},
     };
     for (const Want& w : wants) {
@@ -658,8 +659,10 @@ void item5_bindings() {
             ++i;
         }
     }
+    // z2m binds genBasic on no Aqara/Xiaomi device (its configure() checked 2026-10-23).
     each_lumi([](const PreparedDefinition& def) {
-        for (std::uint8_t i = 0; i < def.bindings_count; ++i) assert(def.bindings[i].cluster_id != 0xFCC0);
+        for (std::uint8_t i = 0; i < def.bindings_count; ++i)
+            assert(def.bindings[i].cluster_id != 0xFCC0 && def.bindings[i].cluster_id != 0x0000);
     });
 }
 
@@ -958,11 +961,12 @@ void item7_split() {
             assert(false);
         }
     }
-    // The three they came out of keep everything but that fingerprint.
+    // The three they came out of keep everything but that fingerprint, and bind
+    // nothing, as z2m.
     struct Shape { const char* model; const char* fp; std::uint8_t fz, tz, exposes, binds, steps; };
-    for (const Shape& s : {Shape{"QBKG21LM", "lumi.switch.b1lacn02", 4, 4, 6, 2, 0},
-                           Shape{"QBKG22LM", "lumi.switch.b2lacn02", 4, 5, 7, 2, 0},
-                           Shape{"WS-EUK03", "lumi.switch.n1aeu1", 5, 4, 4, 2, 1}}) {
+    for (const Shape& s : {Shape{"QBKG21LM", "lumi.switch.b1lacn02", 4, 4, 6, 0, 0},
+                           Shape{"QBKG22LM", "lumi.switch.b2lacn02", 4, 5, 7, 0, 0},
+                           Shape{"WS-EUK03", "lumi.switch.n1aeu1", 5, 4, 4, 0, 1}}) {
         const auto& d = def_of(s.model);
         assert(d.zigbee_models_count == 1 && std::strcmp(d.zigbee_models[0], s.fp) == 0);
         if (d.from_zigbee_count != s.fz || d.to_zigbee_count != s.tz || d.exposes_count != s.exposes ||

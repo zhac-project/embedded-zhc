@@ -37,13 +37,6 @@ constexpr Expose kAutoExposes[] = {
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0702},
-    {1, 0x0B04},
-    {1, 0xFCC0},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_LLKZMK12LM{
@@ -56,7 +49,6 @@ extern const PreparedDefinition kDef_LLKZMK12LM{
     .from_zigbee=kFz_LLKZMK12LM, .from_zigbee_count=sizeof(kFz_LLKZMK12LM)/sizeof(kFz_LLKZMK12LM[0]),
     .to_zigbee=kTz_LLKZMK12LM, .to_zigbee_count=sizeof(kTz_LLKZMK12LM)/sizeof(kTz_LLKZMK12LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
     .endpoint_map       = kEndpoints_LLKZMK12LM,
     .endpoint_map_count = sizeof(kEndpoints_LLKZMK12LM)/sizeof(kEndpoints_LLKZMK12LM[0]),
 };

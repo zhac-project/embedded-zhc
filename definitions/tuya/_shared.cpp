@@ -125,7 +125,7 @@ extern const FzConverter kFzTuyaMcuSyncTime{
 // ── time_start ─────────────────────────────────────────────────────
 
 namespace {
-// z2m v26.105.0 definitions that pass tuyaBase({timeStart}): their fingerprint
+// z2m v26.125.0 definitions that pass tuyaBase({timeStart}): their fingerprint
 // manufacturerNames (and the zigbeeModel of the two that match on one), one
 // comment per definition. No name is in both lists, and z2m lists none of
 // them in a definition without timeStart. Refresh on a z2m parity catch-up
@@ -133,6 +133,10 @@ namespace {
 constexpr const char* kTimeStart1970[] = {
     // engo EONE
     "_TZE204_djurk6p5",
+    // engo EONE-230W (1970 since v26.125.0)
+    "_TZE200_awnadkan", "_TZE204_ca3i8m8p",
+    // engo EONE-BATB (1970 since v26.125.0)
+    "_TZE200_gtouvmvl",
     // engo E40
     "_TZE204_glk6viwg", "_TZE204_lnxdk2ch",
     // essentials _TZE200_i48qyn9s
@@ -154,7 +158,7 @@ constexpr const char* kTimeStart1970[] = {
     // moes ZHT-S03
     "_TZE204_zxkwaztm",
     // moes SFL02-Z-1
-    "_TZE200_stvgmdjz", "_TZE200_ydkqbmpt", "_TZE200_z3u99qxt",
+    "_TZE200_stvgmdjz", "_TZE200_ydkqbmpt", "_TZE200_z3u99qxt", "_TZE284_stvgmdjz",
     // moes SFL02-Z-2
     "_TZE200_hktk6hze", "_TZE200_tzyy0rtq", "_TZE200_uenof8jd",
     // moes SFL02-Z-3
@@ -301,7 +305,9 @@ constexpr const char* kTimeStart1970[] = {
     // zemismart ZMS-206US-4
     "_TZE204_08qc13ct", "_TZE204_wwaeqnrf", "_TZE204_xibaabmu", "_TZE204_y4jqpry8",
     "_TZE284_wwaeqnrf", "_TZE284_xibaabmu", "_TZE284_y4jqpry8", "_TZE28C1000000_xibaabmu",
-    "_TZE28C1000000_y4jqpry8",
+    "_TZE28C1000000_y4jqpry8", "_TZE28C1000000_pmbxyf97",
+    // tuya TRV602Z (1970 since v26.125.0)
+    "_TZE204_ltwbm23f", "_TZE204_qyr2m29i", "_TZE284_ltwbm23f",
     // zemismart ZMZ609-2
     "_TZE284_o409r73p", "_TZE28C1000000_o409r73p",
 };
@@ -312,10 +318,6 @@ constexpr const char* kTimeStart2000[] = {
     "_TZE204_xdtnpp1a", "_TZE284_xdtnpp1a",
     // engo ECB62-ZB
     "_TZE200_oahqgdig", "_TZE200_zaabefnt",
-    // engo EONE-230W
-    "_TZE200_awnadkan", "_TZE204_ca3i8m8p",
-    // engo EONE-BATB
-    "_TZE200_gtouvmvl",
     // evanell EZ200
     "_TZE200_dmfguuli", "_TZE200_rxypyjkw",
     // futurehome TS0601_futurehome_thermostat
@@ -349,8 +351,6 @@ constexpr const char* kTimeStart2000[] = {
     "_TYST11_wv90ladg", "_TZE200_wv90ladg",
     // tuya HT-10
     "_TYST11_2dpplnsn", "_TZE200_2dpplnsn",
-    // tuya TRV602Z
-    "_TZE204_ltwbm23f", "_TZE204_qyr2m29i", "_TZE284_ltwbm23f",
     // tuya ZHT-002
     "_TZE204_xalsoe3m",
     // tuya HY08WE
@@ -449,6 +449,7 @@ bool emit_from_entry(const TuyaDpMapEntry& e,
                 }
                 return false;  // unmapped number, as upstream
             }
+            if ((e.flags & kTuyaDpFlagSigned8) && v_int >= 128) v_int -= 256;
             if (e.flags & kTuyaDpFlagInvertPosition) {
                 // F30 (FINDINGS.md): clamp to [0,100] — a malformed cover
                 // position must not surface as a negative/garbage percent.
@@ -1222,6 +1223,7 @@ bool encode_numeric(const TuyaDpMapEntry& e, const Value& in,
             else if (d < 0) raw = raw / static_cast<std::int64_t>(-d); // reverse fz multiply
         }
     }
+    if ((e.flags & kTuyaDpFlagSigned8) && raw < 0) raw += 256;   // z2m scaled + 2^8
     if (e.flags & kTuyaDpFlagInvertPosition) {
         // F30: position percent — clamp to [0,100] so a malformed input can't
         // emit a garbage datapoint.
@@ -1930,18 +1932,21 @@ bool tuya_dp_expand_phase_variant2_phase(const TuyaDpMapEntry& e, const Value& r
     if (!k) return false;
 
     // 24-bit current and power (z2m v26.111.0, #13203 -- the second time:
-    // v26.97.0 widened, v26.105.0 reverted). Negative power is offset-encoded,
-    // not two's complement: at or above 0x800000 it is `power - 0x99999A`, the
-    // 24-bit truncation of the 0x1999999A offset; -100 W arrives as 0x999936.
+    // v26.97.0 widened, v26.105.0 reverted). Negative power comes in two
+    // non-overlapping encodings (v26.125.0): 0x800000..0x99999A is offset-
+    // encoded, `power - 0x99999A` (-100 W arrives as 0x999936); above
+    // 0x99999A it is plain 24-bit two's complement (0xFFFFF7 = -9 W).
     constexpr std::int64_t kNegativePowerOffset    = 0x99999A;
     constexpr std::int64_t kNegativePowerThreshold = 0x800000;
+    constexpr std::int64_t kTwosComplementModulus  = 0x1000000;
 
     const std::uint32_t voltage = (static_cast<std::uint32_t>(b[0]) << 8) | b[1];
     const std::uint32_t current = (static_cast<std::uint32_t>(b[2]) << 16) |
                                   (static_cast<std::uint32_t>(b[3]) << 8) | b[4];
     std::int64_t power = (static_cast<std::int64_t>(b[5]) << 16) |
                          (static_cast<std::int64_t>(b[6]) << 8) | b[7];
-    if (power >= kNegativePowerThreshold) power -= kNegativePowerOffset;
+    if (power > kNegativePowerOffset)            power -= kTwosComplementModulus;
+    else if (power >= kNegativePowerThreshold)  power -= kNegativePowerOffset;
 
     put_float(out, k->voltage, static_cast<float>(voltage) / 10.0f);
     put_float(out, k->current, static_cast<float>(current) / 1000.0f);
@@ -2155,6 +2160,40 @@ std::size_t exposes_from_dp_map(const TuyaDatapointMap& map, Expose* out, std::s
         out[n++] = x;
     }
     return n;
+}
+
+namespace {
+constexpr std::size_t  kTempUnitSlot   = 0;   // DeviceRuntimeState::scratch index
+// ponytail: RAM only (z2m keeps it in persisted state): after a hub restart a
+// °F device reads as °C until it re-sends its unit DP. Persist the runtime
+// scratch, or query the DPs at boot, if that bites.
+constexpr std::uint8_t kUnitFahrenheit = 1;
+}  // namespace
+
+bool tuya_dp_expand_temperature_unit(const TuyaDpMapEntry& e, const Value& raw,
+                                      RuntimeContext& ctx,
+                                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (raw.type != ValueType::Uint || raw.u > kUnitFahrenheit || e.enum_count <= raw.u) return false;
+    if (auto* st = ctx.device_state()) st->scratch[kTempUnitSlot] = static_cast<std::uint8_t>(raw.u);
+    Value v{};
+    v.type = ValueType::StringRef;
+    v.str  = e.enum_table[raw.u].label;
+    out.put(e.out_key, v);
+    return true;
+}
+
+bool tuya_dp_expand_temperature_in_unit(const TuyaDpMapEntry& e, const Value& raw,
+                                         RuntimeContext& ctx,
+                                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (raw.type != ValueType::Int) return false;
+    float t = static_cast<float>(raw.i) / 10.0f;
+    const auto* st = ctx.device_state();
+    if (st && st->scratch[kTempUnitSlot] == kUnitFahrenheit) t = (t - 32.0f) * 5.0f / 9.0f;
+    Value v{};
+    v.type = ValueType::Float;
+    v.f    = t;
+    out.put(e.out_key, v);
+    return true;
 }
 
 }  // namespace zhc::tuya

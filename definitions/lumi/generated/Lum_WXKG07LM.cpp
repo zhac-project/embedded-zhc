@@ -25,10 +25,6 @@ constexpr const char* kModels_WXKG07LM[] = { "lumi.remote.b286acn02" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_WXKG07LM{
@@ -41,7 +37,6 @@ extern const PreparedDefinition kDef_WXKG07LM{
     .from_zigbee=kFz_WXKG07LM, .from_zigbee_count=sizeof(kFz_WXKG07LM)/sizeof(kFz_WXKG07LM[0]),
     .to_zigbee=kTz_WXKG07LM, .to_zigbee_count=sizeof(kTz_WXKG07LM)/sizeof(kTz_WXKG07LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

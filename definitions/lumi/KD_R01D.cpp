@@ -1,19 +1,30 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
 // Tier 1: Aqara KD-R01D — auto-generated stub (battery + action).
+// z2m v26.125.0: event_mode (0xFCC0 0x0009 {command 0, event 1}), lumiSwitchMode
+// (mode_switch 0x0004) and lumiKnobRotation with the knob press on EP72. Not
+// ported: m.light (no dimming), sensitivity / phase / min_brightness.
 // z2m-source: lumi.ts #KD-R01D.
 #include "definitions/lumi/_shared.hpp"
 namespace zhc::devices::lumi {
 namespace {
+constexpr ::zhc::lumi::LumiKnobOpts kKnob{ .pressed_endpoint = 72 };
+constexpr FzConverter kFzKnob = ::zhc::lumi::lumi_knob_rotation_converter(&kKnob);
+constexpr const char* kActions[] = {
+    "hold", "single", "double", "release", "start_rotating", "rotation", "stop_rotating" };
+constexpr const char* kEventModes[] = { "command", "event" };
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
     &::zhc::lumi::kFzLumiActionMultistate,
     &::zhc::lumi::kFzLumiHeartbeat,
     &::zhc::lumi::kFzLumiPreventLeave,
-    &::zhc::lumi::kFzLumiOperationMode,
+    &::zhc::lumi::kFzLumiSettings,
+    &kFzKnob,
 };
 const TzConverter* const kTz[] = {
     &::zhc::lumi::kTzLumiOperationMode,
+    &::zhc::lumi::kTzLumiEventMode,
+    &::zhc::lumi::kTzLumiModeSwitch,
 };
 constexpr const char* kModels[] = { "lumi.switch.agl011" };
 }
@@ -23,15 +34,16 @@ constexpr Expose kAutoExposes[] = {
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActions, std::size(kActions)},
     {"operation_mode", ExposeType::Enum, Access::StateSet, nullptr,
      "Decoupled mode for knob",
      ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
-};
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
-    {1, 0x0012},
+    {"event_mode", ExposeType::Enum, Access::StateSet, nullptr, "Aqara command/event mode",
+     kEventModes, std::size(kEventModes), ExposeCategory::Config},
+    {"mode_switch", ExposeType::Enum, Access::StateSet, nullptr,
+     "Anti flicker mode can be used to solve blinking issues of some lights. Quick mode makes the device respond faster.",
+     ::zhc::lumi::kLumiModeSwitchValues, std::size(::zhc::lumi::kLumiModeSwitchValues), ExposeCategory::Config},
+    ZHC_LUMI_KNOB_ROTATION_EXPOSES,
 };
 // --- end auto-generated block ---
 
@@ -44,6 +56,5 @@ extern const PreparedDefinition kDefKD_R01D{
     .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee = kTz, .to_zigbee_count = sizeof(kTz)/sizeof(kTz[0]),
     .configure=nullptr,.on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 }

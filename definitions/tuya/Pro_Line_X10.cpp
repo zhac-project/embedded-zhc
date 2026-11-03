@@ -46,7 +46,7 @@ constexpr Expose kExp[] = {
     {"boiler", ExposeType::Binary, Access::State, nullptr, "Boiler dry contact, only active in heat mode", nullptr, 0},
 };
 constexpr const char* kM[] = { "TS0601" };
-constexpr const char* kN[] = { "_TZE284_rfpyqax9" };
+constexpr const char* kN[] = { "_TZE284_rfpyqax9", "_TZE204_rfpyqax9" };
 }  // namespace
 
 extern const PreparedDefinition kDef_Pro_Line_X10{

@@ -103,11 +103,11 @@ constexpr TzConverter kTzHoch{
 const TzConverter* const kTz[] = { &kTzHoch };
 
 constexpr const char* kM[]={"TS0601"};
-constexpr const char* kN[]={"_TZE200_hkdl5fmv"};
+constexpr const char* kN[]={"_TZE200_hkdl5fmv", "_TZE284_hkdl5fmv"};
 }  // namespace
 extern const PreparedDefinition kDefHochDin{
     .zigbee_models=kM,.zigbee_models_count=1,.manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN,.manufacturer_names_count=1,.model="TS0601_din_hoch",
+    .manufacturer_names=kN,.manufacturer_names_count=sizeof(kN)/sizeof(kN[0]),.model="TS0601_din_hoch",
     .vendor="HOCH",.meta=nullptr,.exposes=nullptr,.exposes_count=0,
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=kFz,.from_zigbee_count=2,

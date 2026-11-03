@@ -25,6 +25,8 @@ extern const PreparedDefinition kDef_S4SN_0U61X;
 extern const PreparedDefinition kDef_SBHT_103C;
 extern const PreparedDefinition kDef_SBHT_203C;
 extern const PreparedDefinition kDef_WS90;
+extern const PreparedDefinition kDef_SBDW_203C;
+extern const PreparedDefinition kDef_SBDW_302C;
 
 const PreparedDefinition* const kShellyRegistry[] = {
     &kDef_S4DM_0A101WWL,
@@ -46,6 +48,8 @@ const PreparedDefinition* const kShellyRegistry[] = {
     &kDef_SBHT_103C,
     &kDef_SBHT_203C,
     &kDef_WS90,
+    &kDef_SBDW_203C,
+    &kDef_SBDW_302C,
 };
 const std::size_t kShellyRegistryCount = sizeof(kShellyRegistry) / sizeof(kShellyRegistry[0]);
 

@@ -12,6 +12,7 @@ extern const PreparedDefinition kDef_ZGA1_EN;
 extern const PreparedDefinition kDef_ZP1_EN;
 extern const PreparedDefinition kDef_ZR1_EN;
 extern const PreparedDefinition kDef_ZTM1_EN;
+extern const PreparedDefinition kDef_TRV602WZ;
 
 const PreparedDefinition* const kImouRegistry[] = {
     &kDef_ZD1_EN,
@@ -20,6 +21,7 @@ const PreparedDefinition* const kImouRegistry[] = {
     &kDef_ZP1_EN,
     &kDef_ZR1_EN,
     &kDef_ZTM1_EN,
+    &kDef_TRV602WZ,
 };
 const std::size_t kImouRegistryCount = sizeof(kImouRegistry) / sizeof(kImouRegistry[0]);
 

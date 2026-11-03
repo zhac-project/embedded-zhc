@@ -96,7 +96,7 @@ struct TuyaDpMapEntry {
                                          //  <0 → raw * abs(divisor) as Int.
     const TuyaEnumEntry* enum_table;   // optional, used when type == Enum
     std::uint8_t         enum_count;
-    std::uint8_t         flags{0};     // bit 0 = invert Bool (trueFalse0)
+    std::uint16_t        flags{0};     // kTuyaDpFlag* bits (bit 0 = invert Bool)
     // Float divisor for fractional scaling (e.g. fl-oz → L = /33.814).
     // Non-zero takes precedence over the int `divisor`. Decode emits
     // Float = raw / divisor_f. Encode multiplies input by divisor_f
@@ -191,8 +191,12 @@ inline constexpr std::uint8_t kTuyaDpFlagNumericLookup  = 0x40;
 // so encode derives the day from the entry's dp_id (123..129) and sends DP 109.
 // Encode accepts 1..4 strictly ascending periods, 5..30 °C, and pads to four
 // with the last period as z2m does. Put the flag on the seven day entries only.
-// Last free bit of the uint8_t flags field.
 inline constexpr std::uint8_t kTuyaDpFlagSaswellSchedule = 0x80;
+// Signed 8-bit NUMERIC datapoint — z2m `valueConverter.twosComplement8Bit` /
+// `twosComplement8BitScaled10x` (twosComplementWithBitsizeScaled(8[, 10])).
+// Decode: a value >= 128 is v - 256, then the usual divisor. Encode: the
+// scaled value + 256 when negative. ZS-300Z calibrations, ZG-103Z axes.
+inline constexpr std::uint16_t kTuyaDpFlagSigned8       = 0x100;
 
 struct TuyaDatapointMap {
     const TuyaDpMapEntry* entries;
@@ -519,6 +523,21 @@ inline constexpr std::uint8_t     kReportsLightRGBCCT_1ep_count = 5;
 
 // ── packed-payload expanders ─────────────────────────────────────────
 
+// HOBEIAN temperature in the display unit (z2m hobeian.ts
+// temperatureInSelectedUnit; ZG-IR01, ZG-204ZX). The device reports the
+// temperature DP already scaled in the unit its temperature_unit DP selects.
+// The unit row (enum table {0 celsius, 1 fahrenheit}) publishes the label and
+// caches the wire value in DeviceRuntimeState::scratch[0]; the temperature
+// row publishes raw / 10 and converts a Fahrenheit reading back to Celsius.
+// Before any unit report the reading is taken as Celsius, as upstream does
+// with an unset temperature_unit.
+bool tuya_dp_expand_temperature_unit(const TuyaDpMapEntry& e, const Value& raw,
+                                      RuntimeContext& ctx,
+                                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+bool tuya_dp_expand_temperature_in_unit(const TuyaDpMapEntry& e, const Value& raw,
+                                         RuntimeContext& ctx,
+                                         FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+
 // z2m `valueConverter.phaseVariant2`. 8-byte payload, big-endian:
 //   [0..1] voltage / 10        [3..4] current / 1000      [6..7] power
 // Reads only the LOW two bytes of current and power, exactly as upstream
@@ -536,8 +555,9 @@ bool tuya_dp_expand_phase_variant2(const TuyaDpMapEntry& e, const Value& raw,
 //   current = be24(2..4) / 1000
 //   power   = be24(5..7), offset-corrected
 //
-// Negative power is NOT two's complement: at or above 0x800000 it is
-// `power - 0x99999A` (so -100 W arrives as 0x999936).
+// Negative power: 0x800000..0x99999A is `power - 0x99999A` (so -100 W
+// arrives as 0x999936); above 0x99999A it is 24-bit two's complement
+// (0xFFFFF7 = -9 W). The two ranges do not overlap (v26.125.0).
 //
 // History: z2m v26.97.0 (#12928) widened both reads to 24 bits, v26.105.0
 // reverted that (52542ec), v26.111.0 (#13203) widened them again with the

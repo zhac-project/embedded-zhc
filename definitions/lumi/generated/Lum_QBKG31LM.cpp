@@ -36,13 +36,6 @@ constexpr Expose kAutoExposes[] = {
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0702},
-    {1, 0x0B04},
-    {1, 0xFCC0},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_QBKG31LM{
@@ -55,7 +48,6 @@ extern const PreparedDefinition kDef_QBKG31LM{
     .from_zigbee=kFz_QBKG31LM, .from_zigbee_count=sizeof(kFz_QBKG31LM)/sizeof(kFz_QBKG31LM[0]),
     .to_zigbee=kTz_QBKG31LM, .to_zigbee_count=sizeof(kTz_QBKG31LM)/sizeof(kTz_QBKG31LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

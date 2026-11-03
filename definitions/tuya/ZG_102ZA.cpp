@@ -2,21 +2,25 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 3: HOBEIAN ZG-102ZA door/window sensor (zigbeeModel ZG-102Z). z2m v26.115.1
 // splits it out of TS0203 into hobeian.ts: contact from the IAS zone (command
-// and zoneStatus attribute report, inverted bit 0), battery percentage and
-// voltage; no tamper / battery_low. Not ported: the 3V_1500_2800 voltage curve
-// (the percentage comes from batteryPercentageRemaining).
+// and zoneStatus attribute report, inverted bit 0, tamper bit 2, battery_low
+// bit 3), battery percentage and voltage. v26.125.0 exposes tamper and
+// battery_low (fz.ias_contact_alarm_1 always published them). Not ported: the
+// 3V_1500_2800 voltage curve (the percentage comes from batteryPercentageRemaining).
 // z2m-source: hobeian.ts #ZG-102ZA.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::tuya {
 namespace {
-// fz.ias_contact_alarm_1_report: zoneStatus attribute (0x0002) -> contact = !bit0.
+// fz.ias_contact_alarm_1_report: zoneStatus attribute (0x0002) -> contact = !bit0,
+// tamper = bit2, battery_low = bit3.
 bool fz_contact_report(const DecodedMessage& msg, const FzConverter&, const PreparedDefinition&, RuntimeContext&,
                        FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     const Value* v = msg.payload.find("2");
     if (!v || v->type != ValueType::Uint) return false;
-    Value o{}; o.type = ValueType::Bool; o.b = (v->u & 0x1) == 0;
-    return out.put("contact", o);
+    Value o{}; o.type = ValueType::Bool;
+    o.b = (v->u & 0x1) == 0; out.put("contact", o);
+    o.b = (v->u & 0x4) != 0; out.put("tamper", o);
+    o.b = (v->u & 0x8) != 0; return out.put("battery_low", o);
 }
 constexpr FzConverter kFzContactReport{
     .family = FrameFamily::Zcl, .cluster = "ssIasZone",
@@ -26,12 +30,14 @@ constexpr FzConverter kFzContactReport{
     .fn = { .zcl_fn = fz_contact_report }, .user_config = nullptr,
 };
 const FzConverter* const kFz[] = {
-    &::zhc::generic::kFzIasContactAlarmOnly,
+    &::zhc::generic::kFzIasContactAlarm,
     &kFzContactReport,
     &::zhc::generic::kFzBattery,
 };
 constexpr Expose kExp[] = {
     {"contact", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
 };

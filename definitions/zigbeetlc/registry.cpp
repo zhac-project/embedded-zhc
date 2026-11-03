@@ -18,6 +18,11 @@ extern const PreparedDefinition kDef_TS0201_z;
 extern const PreparedDefinition kDef_ZG_227Z_z;
 extern const PreparedDefinition kDef_TS202PIR1_z;
 extern const PreparedDefinition kDef_ZG_303Z_z;
+extern const PreparedDefinition kDef_ZG_204ZV_z;
+extern const PreparedDefinition kDef_ZG_204ZV1_z;
+extern const PreparedDefinition kDef_ZG_204ZV2_TH_z;
+extern const PreparedDefinition kDef_ZG_204ZV2_z;
+extern const PreparedDefinition kDef_ZG_204ZS_z;
 
 const PreparedDefinition* const kZigbeetlcRegistry[] = {
     &kDef_CGDK2,
@@ -32,6 +37,11 @@ const PreparedDefinition* const kZigbeetlcRegistry[] = {
     &kDef_ZG_227Z_z,
     &kDef_TS202PIR1_z,
     &kDef_ZG_303Z_z,
+    &kDef_ZG_204ZV_z,
+    &kDef_ZG_204ZV1_z,
+    &kDef_ZG_204ZV2_TH_z,
+    &kDef_ZG_204ZV2_z,
+    &kDef_ZG_204ZS_z,
 };
 const std::size_t kZigbeetlcRegistryCount = sizeof(kZigbeetlcRegistry) / sizeof(kZigbeetlcRegistry[0]);
 

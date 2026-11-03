@@ -31,7 +31,8 @@ Mapping:
                                  for lumi_action)
 
 Devices that already declare `.exposes = ` / `.bindings = ` non-null
-are left untouched. Run:
+are left untouched. Files under definitions/lumi get exposes only, no
+bindings (see patch_cpp). Run:
     python3 tools/emit_expose_bindings.py [lumi|tuya|moes]
 """
 
@@ -326,7 +327,11 @@ def patch_cpp(path: Path) -> str:
     text = path.read_text()
     if "kAutoExposes" in text or "kAutoBindings" in text:
         return "skip-already"
-    if already_has_field(text, "exposes") and already_has_field(text, "bindings"):
+    # No bindings for Aqara/Xiaomi: z2m binds those per model in configure(),
+    # never per converter, and the sleepy ones never answer a ZDO bind
+    # (checked against z2m 26.115.1 on 2026-10-23: none binds genBasic).
+    lumi = "lumi" in path.parts
+    if already_has_field(text, "exposes") and (lumi or already_has_field(text, "bindings")):
         return "skip-already"
     cvts = detected_converters(text)
     dp_entries = detect_dp_entries(text)
@@ -334,6 +339,8 @@ def patch_cpp(path: Path) -> str:
         return "skip-no-converters"
 
     exp_src, bind_src = build_snippets(cvts, dp_entries)
+    if lumi:
+        bind_src = ""
     if not exp_src and not bind_src:
         return "skip-no-mappings"
 

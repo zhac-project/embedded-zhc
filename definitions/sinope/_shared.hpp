@@ -62,6 +62,11 @@ bool fz_sinope_hvac_manu(const DecodedMessage& msg,
 // Sentinel FzConverters — bind these into the device's `kFz` array.
 extern const FzConverter kFzSinopeManu;       // cluster 0xFF01
 extern const FzConverter kFzSinopeHvacManu;   // cluster 0x0201, manuSpec attrs
+// TH1300ZB / TH1400ZB: a localTemp report re-reads floor/room temperature
+// (0xFF01 0x0107 / 0x010D, mfg 0x119C), which the device cannot report.
+// Pair it with a Read config step on the same list for the initial value.
+extern const FzConverter kFzSinopeFloorRoomRefresh;
+inline constexpr std::uint8_t kSinopeFloorRoomAttrs[] = { 0x07, 0x01, 0x0D, 0x01 };
 
 // ── Sinopé water-valve (VA42xx) position/state ────────────────────────
 //

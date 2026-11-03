@@ -408,6 +408,11 @@ extern const TzConverter kTzPowerOnBehavior1;
 // ZCL spec layout: ctrlbits(1) + ontime(2 LE) + offwaittime(2 LE).
 // z2m mirrors `ontime` into `offwaittime` per Tuya doc guidance.
 extern const TzConverter kTzOnWithTimedOff;
+// Read side (z2m tuyaFz.on_off_countdown + the tuyaOnOff offWaitTime fz):
+// genOnOff onTime (0x4001) -> `countdown`; offWaitTime (0x4002), which some
+// devices (Lidl HG06620) report instead, also -> `countdown` and wins when
+// both are present, as upstream's later fz does.
+extern const FzConverter kFzOnOffCountdown;
 
 // ── Sonoff / eWeLink button action (SNZB-01 family) ──────────────────
 //
@@ -728,7 +733,7 @@ extern const TzConverter kTzThermostat;
 //
 // Devices wire per-attribute TzConverters with a
 // `ZclWriteSpec*` in `user_config`. Supports Bool/Uint8/Uint16/Uint32
-// /Int8/Int16 + optional string-label → uint lookup.
+// /Int8/Int16/Enum8/Enum16 + optional string-label → uint lookup.
 struct ZclWriteLookup {
     const char*   label;
     std::uint32_t value;
@@ -738,6 +743,10 @@ struct ZclWriteLookup {
 // pattern where the device's register is the opposite polarity from the
 // user-facing label (e.g. zigbeetlc enable_display: 0=on, 1=off).
 constexpr std::uint8_t kZclWriteFlagInvertBool = 0x01;
+// `kZclWriteFlagDefaultResponse` sends the write with default responses
+// enabled (fc 0x00 / 0x04): z2m `disableDefaultResponse: false`, which some
+// firmwares (Namron Edge) need or they answer NOT_AUTHORIZED.
+constexpr std::uint8_t kZclWriteFlagDefaultResponse = 0x02;
 
 struct ZclWriteSpec {
     const char*   key;                  // input payload key
@@ -831,6 +840,23 @@ constexpr TzConverter zcl_write_tz(const char* cluster, std::uint16_t cluster_id
         .endpoint    = endpoint,
     };
 }
+
+// hvacThermostat acLouverPosition (0x0045, enum8) <-> `ac_louver_position`.
+// fully_closed writes 1 (z2m v26.125.0); a read of 0 or 1 is fully_closed.
+extern const FzConverter kFzAcLouverPosition;
+extern const TzConverter kTzAcLouverPosition;
+inline constexpr const char* kAcLouverPositions[] = {
+    "fully_open", "fully_closed", "half_open", "quarter_open", "three_quarters_open" };
+
+// z2m m.pollControl({longPollInterval: 24, checkinInterval: 13200}) as config
+// steps: genPollCtrl setLongPollInterval (cmd 0x02, u32 quarter-seconds),
+// then a checkinInterval (0x0000, u32) write. Not re-applied on announce.
+inline constexpr std::uint8_t kLongPoll24qs[]     = { 24, 0x00, 0x00, 0x00 };
+inline constexpr std::uint8_t kCheckin13200qs[]   = { 0x90, 0x33, 0x00, 0x00 };
+inline constexpr ConfigStep kPollControl24Checkin13200[] = {
+    { ConfigStepOp::Cmd,   1, 0x0020, 0x02, 0, kLongPoll24qs, sizeof(kLongPoll24qs), 0, 0 },
+    { ConfigStepOp::Write, 1, 0x0020, 0x00, 0, kCheckin13200qs, sizeof(kCheckin13200qs), 0, 0, 0x0000, 0x23 },
+};
 
 // hvacUserInterfaceCfg (0x0204): z2m fz.hvac_user_interface decodes
 // keypadLockout (attr 0x0001) through constants.keypadLockoutMode

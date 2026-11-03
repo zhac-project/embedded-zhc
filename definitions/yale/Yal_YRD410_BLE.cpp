@@ -16,7 +16,7 @@ const FzConverter* const kFz_YRD410_BLE[] = {
 const TzConverter* const kTz_YRD410_BLE[] = {
     &::zhc::generic::kTzLock,
 };
-constexpr const char* kModels_YRD410_BLE[] = { "YRD410 TS", "YRD410 PB" };
+constexpr const char* kModels_YRD410_BLE[] = { "YRD410 TS", "YRD410 PB", "YRD410-PB" };
 
 }  // namespace
 

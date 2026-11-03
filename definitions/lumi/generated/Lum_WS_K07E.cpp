@@ -32,7 +32,6 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0702},
     {1, 0xFCC0},
 };
 // --- end auto-generated block ---

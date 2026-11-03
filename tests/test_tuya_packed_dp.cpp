@@ -155,6 +155,24 @@ void test_phase_variant2_with_phase() {
         check(int_of(o2, "power_a") == -1677722, "power 0x800000 -> -1677722");
     }
 
+    // v26.125.0: above 0x99999A it is 24-bit two's complement. Upstream's
+    // capture [9,38,0,0,29,255,255,247] -> 0xFFFFF7 = -9 W; 0x99999A itself
+    // is still the offset branch (0 W), 0x99999B is the first two's-complement value.
+    {
+        const std::uint8_t body[] = {9,38, 0,0,29, 255,255,247};
+        RuntimeContext ctx{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> out{};
+        check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body, 8)}, ctx, out), "decodes");
+        check(int_of(out, "power_a") == -9, "power 0xFFFFF7 -> -9 (two's complement)");
+        const std::uint8_t body2[] = {0x08,0xFC, 0x00,0x00,0x00, 0x99,0x99,0x9A};
+        RuntimeContext c2{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o2{};
+        check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body2, 8)}, c2, o2), "decodes");
+        check(int_of(o2, "power_a") == 0, "power 0x99999A -> 0 (offset branch)");
+        const std::uint8_t body3[] = {0x08,0xFC, 0x00,0x00,0x00, 0x99,0x99,0x9B};
+        RuntimeContext c3{}; FixedPayload<ZHC_FIXED_PAYLOAD_CAP> o3{};
+        check(run(kMap, {6, 0x00, std::span<const std::uint8_t>(body3, 8)}, c3, o3), "decodes");
+        check(int_of(o3, "power_a") == 0x99999B - 0x1000000, "power 0x99999B -> two's complement");
+    }
+
     // Short payload must abstain rather than read past the end.
     {
         const std::uint8_t body[] = {0x08,0xFC, 0x00};

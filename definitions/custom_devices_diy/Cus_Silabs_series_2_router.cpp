@@ -29,7 +29,10 @@ constexpr const char* kModels_Silabs_series_2_router[] = {
     "SLZB-06Mg26U",
     // z2m v26.100.0 added the SMLIGHT MG24 USB and MR-series router variants.
     "SLZB-06MG24U", "SLZB-06MU",
-    "SLZB-MR1U", "SLZB-MR2U", "SLZB-MR3U", "SLZB-MR4U", "SLZB-MR5U" };
+    "SLZB-MR1U", "SLZB-MR2U", "SLZB-MR3U", "SLZB-MR4U", "SLZB-MR5U",
+    // z2m v26.125.0: Inswift ZBM-MG21, SMLIGHT SLZB-07MG26. EGONY "V6" is not
+    // carried: a bare 2-char modelID needs the manufacturer gate this def lacks.
+    "ZBM-MG21", "SLZB-07MG26" };
 }  // namespace
 extern const PreparedDefinition kDef_Silabs_series_2_router{
     .zigbee_models=kModels_Silabs_series_2_router, .zigbee_models_count=sizeof(kModels_Silabs_series_2_router)/sizeof(kModels_Silabs_series_2_router[0]),

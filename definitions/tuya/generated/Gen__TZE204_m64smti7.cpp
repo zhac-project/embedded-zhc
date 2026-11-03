@@ -3,10 +3,14 @@
 // Auto-generated from z2m devices/tuya.ts (fingerprint TS0601 / _TZE204_m64smti7).
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/extend.hpp"
+#include "definitions/tuya/dp.hpp"
 namespace zhc::devices::tuya {
 namespace {
 
+// z2m phaseVariant2WithPhase on DP6/7/8 (the generator dropped these rows).
+constexpr ::zhc::tuya::TuyaPhaseKeys kPhaseA{ "voltage_a", "current_a", "power_a" };
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_m64smti7[] = {
+    ::zhc::tuya::dp::phase_variant2_with_phase(6, &kPhaseA),
     { 1, "energy", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
     { 16, "state", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 17, "high_temperature_threshold", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
@@ -19,7 +23,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_m64smti7[] = {
     { 18, "under_voltage_breaker", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 103, "temperature", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_m64smti7{ kEntries__TZE204_m64smti7, 11 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_m64smti7{ kEntries__TZE204_m64smti7, sizeof(kEntries__TZE204_m64smti7)/sizeof(kEntries__TZE204_m64smti7[0]) };
 constexpr FzConverter kFzDp__TZE204_m64smti7{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

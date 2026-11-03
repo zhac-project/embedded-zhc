@@ -4,6 +4,8 @@
 // Weather station
 // z2m-source: shelly.ts #WS90.
 #include "definitions/_generic/_shared.hpp"
+#include "zhc/runtime/dispatch.hpp"
+#include "zhc/runtime/store.hpp"
 
 namespace zhc::devices::shelly {
 namespace {
@@ -14,12 +16,73 @@ namespace {
 // apparent_temperature / weather_condition / rain_rate calculated
 // values. None are decoded here — TODO: see SHELLY_PARITY.md
 // "shellyWS90Wind".
+//
+// z2m v26.125.0 ws90IgnoreZeroFrames: now and then the station sends an
+// all-zero frame (pressure, humidity, temperature, illuminance read 0). A 0
+// that cannot be real is dropped, judged against the last published value:
+// pressure 0 always; humidity 0 after > 5 %; temperature 0 after |t| > 2 °C;
+// illuminance 0 after > 50 lx. Whether the last value was above its
+// threshold is kept per device in DeviceRuntimeState::scratch[0..2].
+struct Ws90Gate {
+    const FzConverter* inner;
+    const char*        key;
+    std::size_t        slot;        // scratch index (unused when always_drop)
+    float              threshold;
+    bool               magnitude;   // compare |value|
+    bool               always_drop;
+};
+
+bool fz_ws90_gate(const DecodedMessage& msg, const FzConverter& self, const PreparedDefinition& def,
+                  RuntimeContext& ctx, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const auto& g = *static_cast<const Ws90Gate*>(self.user_config);
+    auto* st = ctx.device_state();
+    const Value* raw = msg.payload.find("0");   // measuredValue
+    const bool zero = raw && ((raw->type == ValueType::Uint && raw->u == 0) ||
+                              (raw->type == ValueType::Int && raw->i == 0));
+    if (zero && (g.always_drop || (st && st->scratch[g.slot]))) return false;
+    if (!g.inner->fn.zcl_fn(msg, *g.inner, def, ctx, out)) return false;
+    const Value* v = out.find(g.key);
+    if (st && !g.always_drop && v) {
+        float f = v->type == ValueType::Float ? v->f
+                : v->type == ValueType::Int   ? static_cast<float>(v->i)
+                : v->type == ValueType::Uint  ? static_cast<float>(v->u) : 0.0f;
+        if (g.magnitude && f < 0) f = -f;
+        st->scratch[g.slot] = f > g.threshold ? 1 : 0;
+    }
+    return true;
+}
+
+constexpr Ws90Gate kGateTemperature{ &::zhc::generic::kFzTemperature, "temperature", 0, 2.0f, true, false };
+constexpr Ws90Gate kGateHumidity{ &::zhc::generic::kFzHumidity, "humidity", 1, 5.0f, false, false };
+constexpr Ws90Gate kGateIlluminance{ &::zhc::generic::kFzIlluminance, "illuminance", 2, 50.0f, false, false };
+constexpr Ws90Gate kGatePressure{ &::zhc::generic::kFzPressure, "pressure", 0, 0.0f, false, true };
+
+constexpr FzConverter gated(const char* cluster, const Ws90Gate* g) {
+    return FzConverter{
+        .family            = FrameFamily::Zcl,
+        .cluster           = cluster,
+        .type_mask         = type_bit(MessageType::AttributeReport) | type_bit(MessageType::ReadResponse),
+        .command_id        = WILDCARD_CMD_ID,
+        .attr_id           = WILDCARD_ATTR_ID,
+        .endpoint          = WILDCARD_ENDPOINT,
+        .frame_flags_mask  = 0,
+        .frame_flags_value = 0,
+        .direction         = Direction::ServerToClient,
+        .fn                = { .zcl_fn = fz_ws90_gate },
+        .user_config       = g,
+    };
+}
+constexpr FzConverter kFzTemperature = gated("msTemperatureMeasurement", &kGateTemperature);
+constexpr FzConverter kFzHumidity = gated("msRelativeHumidity", &kGateHumidity);
+constexpr FzConverter kFzPressure = gated("msPressureMeasurement", &kGatePressure);
+constexpr FzConverter kFzIlluminance = gated("msIlluminanceMeasurement", &kGateIlluminance);
+
 const FzConverter* const kFz_WS90[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzTemperature,
-    &::zhc::generic::kFzHumidity,
-    &::zhc::generic::kFzPressure,
-    &::zhc::generic::kFzIlluminance,
+    &kFzTemperature,
+    &kFzHumidity,
+    &kFzPressure,
+    &kFzIlluminance,
 };
 
 constexpr const char* kModels_WS90[] = { "Ecowitt WS90" };

@@ -25,7 +25,6 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0000},
     {1, 0x0006},
     {1, 0x0B04},
     {1, 0x0702},

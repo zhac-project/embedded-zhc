@@ -8,8 +8,44 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Added
+
+- **z2m v26.125.0 parity (zigbee2mqtt 2.14.3).** The user-visible device
+  changes of zigbee-herdsman-converters v26.115.1 → v26.125.0, branch
+  `feat/z2m-parity-v26.125`: new definitions (Ariston Rem4 Heater, teelicht,
+  Futurehome FH9127, IKEA E2435, Imou TRV602WZ, Moes ZC301, Simon S2100,
+  Aqara SP-P06E outdoor plug and ZNJLBL01LM roller shade E1, Tuya HYT001ZB /
+  ZRF01 / OXT 4-ch relay / floor thermostat 006 and more), new fingerprints,
+  Tuya DP fixes (divisors, signed 8-bit DPs, °F temperature unit, cover
+  inversion), ZCL extras (Onokom external sensor, Namron Edge, Schneider
+  regulator level, EMIZB-132 interface mode, UEI/Sercomm poll control) and
+  Lumi extras (P1 contact action / battery / detection distance, knob
+  rotation, H2 EU wireless buttons, FP310 presence). Ledger with every
+  ruling: `zhac-tools/parity/catchup_26115_26125/PROGRESS.md`.
+
 ### Changed
 
+- **Aqara/Xiaomi devices are bound only where z2m binds them.** The
+  generator (`tools/emit_expose_bindings.py`) gave every Aqara/Xiaomi
+  definition a bind per decoder — Basic for the heartbeat, OnOff, IAS Zone,
+  Occupancy, … — which z2m never makes: it binds these devices per model in
+  configure, and for most of them not at all. A sleepy sensor never answers
+  the bind, so its configure failed five times, then was re-run (and failed)
+  on every wake: on one hub an RTCGQ11LM and a WSDCGQ11LM logged nine failed
+  binds in seven minutes. Each definition now keeps only the binds z2m
+  26.115.1's own configure() makes for that model (run against a stand-in
+  device that claims every cluster, so a bind z2m makes only on some
+  hardware is kept). 350 definitions changed: 361 bound something, 103 still
+  do, and the rest finish configure at once. For the 77 with no z2m
+  definition, only clusters z2m binds on no Aqara/Xiaomi device at all were
+  dropped (Basic, Occupancy, Analog Output). A cluster a definition sets up
+  reporting for stays bound: ZNCZ15LM keeps all its binds and ZNCZ02LM keeps
+  OnOff, though z2m 26.115.1 no longer binds or reports anything on the
+  ZNCZ02LM. The generator no longer adds bindings under `definitions/lumi`.
+- **RTCGQ11LM shows illuminance.** It had no decoder for
+  msIlluminanceMeasurement, so every report was dropped. It now follows z2m's
+  `lumi_illuminance`: lux as reported, and the report also counts as motion
+  (the sensor sends it only when it sees someone).
 - **Illuminance is published in lux, as z2m does.** The generic
   msIlluminanceMeasurement decoder (`kFzIlluminance`) published the raw
   register — 10000·log10(lux)+1 — under the lux unit, so 1000 lx showed as

@@ -188,14 +188,15 @@ static void test_zm25tq_declares_dp_surface() {
 }
 
 // Real-wire decode through the dispatcher against the graduated ZM25TQ def.
-// DP 3 (coverArrived) Numeric -> position; DP 1 Enum {0:OPEN,1:STOP,2:CLOSE}
-// -> state="CLOSE". The removed generic-cover stub bound 0x0102 and decoded
-// nothing on this 0xEF00 frame.
+// DP 3 (coverArrived) Numeric -> position, inverted since z2m v26.125.0 moved
+// ZM25TQ onto TS0601_cover_8 (raw 60 -> position 40); DP 1 Enum
+// {0:OPEN,1:STOP,2:CLOSE} -> state="CLOSE". The removed generic-cover stub
+// bound 0x0102 and decoded nothing on this 0xEF00 frame.
 static void test_zm25tq_position_and_state_decode() {
     const auto* d = find_definition("TS0601", "_TZE200_fzo2pocs", zemismart_registry());
     assert(d);
 
-    // DP 3 numeric (4-byte BE): 60 -> position 60.
+    // DP 3 numeric (4-byte BE): raw 60 -> position 40 (inverted).
     const std::uint8_t kPos60[]   = { 0x00, 0x00, 0x00, 0x3C };
     const std::uint8_t kStateCl[] = { 0x02 };  // enum 2 -> CLOSE
     const TuyaDpRecord recs[] = {
@@ -208,7 +209,7 @@ static void test_zm25tq_position_and_state_decode() {
     const Value* pos = result.merged.find("position");
     assert(pos && (pos->type == ValueType::Int || pos->type == ValueType::Float));
     const double pv = (pos->type == ValueType::Int) ? double(pos->i) : pos->f;
-    assert(pv > 59.5 && pv < 60.5);
+    assert(pv > 39.5 && pv < 40.5);
 
     const Value* st = result.merged.find("state");
     assert(st && st->type == ValueType::StringRef);

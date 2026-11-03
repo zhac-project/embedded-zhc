@@ -6,7 +6,8 @@
 // z2m lowers `tuyaOnOff({switchType: true, onOffCountdown: true})` into:
 //   - genOnOff state + bind/report
 //   - switch_type (enum toggle/state/momentary) on manuSpecificTuya3 0xD030
-//   - countdown numeric via genOnOff onWithTimedOff (cmd 0x42)
+//   - countdown numeric via genOnOff onWithTimedOff (cmd 0x42); read back
+//     from onTime / offWaitTime reports
 // Plus `m.forcePowerSource({powerSource: "Mains (single phase)"})` — pinned
 // power_source override. Will be wired through Phase C `power_source_override`
 // field once that lands; for now the device's ZCL Basic 0x0007 read still
@@ -21,6 +22,7 @@ namespace {
 const FzConverter* const kFz_LZWSM16_1[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::tuya::kFzTuyaSwitchType,
+    &::zhc::generic::kFzOnOffCountdown,
 };
 const TzConverter* const kTz_LZWSM16_1[] = {
     &::zhc::generic::kTzOnOff,

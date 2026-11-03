@@ -32,12 +32,6 @@ constexpr Expose kAutoExposes[] = {
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0001},
-    {1, 0x0201},
-    {1, 0xFCC0},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_SRTS_A01{
@@ -50,7 +44,6 @@ extern const PreparedDefinition kDef_SRTS_A01{
     .from_zigbee=kFz_SRTS_A01, .from_zigbee_count=sizeof(kFz_SRTS_A01)/sizeof(kFz_SRTS_A01[0]),
     .to_zigbee=kTz_SRTS_A01, .to_zigbee_count=sizeof(kTz_SRTS_A01)/sizeof(kTz_SRTS_A01[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

@@ -78,6 +78,7 @@ extern const PreparedDefinition kDef_SR_ZG9050C_WS;
 extern const PreparedDefinition kDef_SR_ZG9060A_GS;
 extern const PreparedDefinition kDef_SR_ZG9060B_CS;
 extern const PreparedDefinition kDef_SR_ZG9070A_SS;
+extern const PreparedDefinition kDef_SR_ZG9001K8_CCT;
 
 const PreparedDefinition* const kSunricherRegistry[] = {
     &kDef_D50208693,
@@ -152,6 +153,7 @@ const PreparedDefinition* const kSunricherRegistry[] = {
     &kDef_SR_ZG9060A_GS,
     &kDef_SR_ZG9060B_CS,
     &kDef_SR_ZG9070A_SS,
+    &kDef_SR_ZG9001K8_CCT,
 };
 const std::size_t kSunricherRegistryCount = sizeof(kSunricherRegistry) / sizeof(kSunricherRegistry[0]);
 

@@ -24,14 +24,17 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_yzr43ayq[] = {
     { 102, "illuminance", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 14, "battery_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_yzr43ayq_battery_state_dp14, sizeof(kEnum__TZE284_yzr43ayq_battery_state_dp14)/sizeof(kEnum__TZE284_yzr43ayq_battery_state_dp14[0]) },
     { 103, "soil_sampling", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 104, "soil_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 105, "humidity_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 106, "illuminance_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 107, "temperature_calibration", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
-    { 110, "soil_warning", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 104, "soil_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagSigned8 },
+    { 105, "humidity_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagSigned8 },
+    { 106, "illuminance_calibration", ::zhc::TuyaDpType::Numeric, -10, nullptr, 0, 0 },
+    { 107, "temperature_calibration", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, ::zhc::tuya::kTuyaDpFlagSigned8 },
+    // DP110 is asymmetric (v26.125.0): the device reports the warning state, a
+    // write sets the threshold. Decode-only row first, write-only row second.
+    { 110, "soil_moisture_warning", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 110, "soil_moisture_warning_threshold", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, 0.0f, &::zhc::tuya::tuya_dp_expand_ignore, nullptr },
     { 111, "water_warning", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_yzr43ayq_water_warning_dp111, sizeof(kEnum__TZE284_yzr43ayq_water_warning_dp111)/sizeof(kEnum__TZE284_yzr43ayq_water_warning_dp111[0]) },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_yzr43ayq{ kEntries__TZE284_yzr43ayq, 12 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_yzr43ayq{ kEntries__TZE284_yzr43ayq, sizeof(kEntries__TZE284_yzr43ayq)/sizeof(kEntries__TZE284_yzr43ayq[0]) };
 constexpr FzConverter kFzDp__TZE284_yzr43ayq{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",
@@ -73,9 +76,10 @@ constexpr Expose kAutoExposes__TZE284_yzr43ayq[] = {
     {"soil_sampling", ExposeType::Numeric, Access::StateSet, "s", nullptr, nullptr, 0, ExposeCategory::State, 5, 3600, 1},
     {"soil_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
     {"humidity_calibration", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, -30, 30, 1},
-    {"illuminance_calibration", ExposeType::Numeric, Access::StateSet, "lx", nullptr, nullptr, 0, ExposeCategory::State, -1000, 1000, 1},
+    {"illuminance_calibration", ExposeType::Numeric, Access::StateSet, "lx", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
     {"temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -2, 2, 0},
-    {"soil_warning", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 1},
+    {"soil_moisture_warning", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"soil_moisture_warning_threshold", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::Config, 0, 100, 1},
 };
 // --- end auto-generated exposes ---
 }  // namespace

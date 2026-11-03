@@ -29,11 +29,6 @@ constexpr Expose kAutoExposes[] = {
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
 };
-
-constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0702},
-};
 // --- end auto-generated block ---
 
 extern const PreparedDefinition kDef_ZNCZ02LM{
@@ -46,7 +41,6 @@ extern const PreparedDefinition kDef_ZNCZ02LM{
     .from_zigbee=kFz_ZNCZ02LM, .from_zigbee_count=sizeof(kFz_ZNCZ02LM)/sizeof(kFz_ZNCZ02LM[0]),
     .to_zigbee=kTz_ZNCZ02LM, .to_zigbee_count=sizeof(kTz_ZNCZ02LM)/sizeof(kTz_ZNCZ02LM[0]),
     .configure=nullptr, .on_event=nullptr,
-.bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
 };
 
 }  // namespace zhc::devices::lumi

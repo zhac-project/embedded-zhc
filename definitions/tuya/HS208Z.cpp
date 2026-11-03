@@ -4,7 +4,11 @@
 // Upstream matches TS0202 + `_TZD200_sjjp9bti`, or the zigbeeModel HS208Z alone; the
 // matcher's manufacturer list applies to every listed model, so the bare-model
 // fingerprint is the second definition, kDef_HS208Z_model, in this file.
+// z2m v26.125.0: occupancy and battery moved off DP1/DP4 onto ZCL
+// (iasZoneAlarm occupancy alarm_1 + m.battery: genPowerCfg bind and
+// percentage reporting 1 h / max / 10); the DP rows are gone upstream.
 // z2m-source: tuya.ts #HS208Z.
+#include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
 #include "definitions/tuya/dp.hpp"
 #include "definitions/tuya/extend.hpp"
@@ -19,9 +23,7 @@ constexpr ::zhc::tuya::TuyaEnumEntry kTemperatureUnit109[] = { {0,"celsius"}, {1
 constexpr ::zhc::tuya::TuyaEnumEntry kMotionDetectionMode122[] = { {0,"pir_and_radar"}, {1,"pir_or_radar"}, {2,"only_radar"} };
 struct cfg {
     static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
-        ::zhc::tuya::dp::binary_inv(1, "occupancy"),
         { 3, "battery_state", ::zhc::TuyaDpType::Numeric, 1, kBatteryState3, 3, ::zhc::tuya::kTuyaDpFlagNumericLookup },
-        ::zhc::tuya::dp::numeric(4, "battery", 1),
         { 9, "pir_sensitivity", ::zhc::TuyaDpType::Numeric, 1, kPirSensitivity9, 3, ::zhc::tuya::kTuyaDpFlagNumericLookup },
         ::zhc::tuya::dp::numeric(11, "illuminance", 1),
         ::zhc::tuya::dp::numeric(12, "pir_delay", 1),
@@ -44,6 +46,16 @@ struct cfg {
     static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{ e, sizeof(e)/sizeof(e[0]) };
 };
 using FX = ::zhc::tuya::factory::TuyaRw<cfg>;
+const FzConverter* const kFz[] = {
+    &::zhc::tuya::kFzTuyaMcuSyncTime,
+    &::zhc::tuya::factory::detail::BoundFz<cfg>::converter,
+    &::zhc::generic::kFzIasMotionAlarmOnly,
+    &::zhc::generic::kFzBattery,
+};
+constexpr BindingSpec kBindings[] = { {1, 0x0001} };
+constexpr ReportingSpec kReports[] = {
+    {1, 0x0001, 0x0021, 0x20, 3600, 65000, 10, 0},   // batteryPercentageRemaining
+};
 constexpr const char* kOpts1[] = { "none", "move", "Micro-move", "static" };
 constexpr const char* kOpts7[] = { "celsius", "fahrenheit" };
 constexpr const char* kOpts8[] = { "low", "middle", "high" };
@@ -69,7 +81,7 @@ constexpr Expose kExp[] = {
     {"indicator", ExposeType::Binary, Access::StateSet, nullptr, "LED indicator mode", nullptr, 0},
     {"temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", "Temperature Calibration", nullptr, 0},
     {"humidity_calibration", ExposeType::Numeric, Access::StateSet, "%", "Humidity Calibration", nullptr, 0, ExposeCategory::State, -10, 10, 0},
-    {"vibration_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, "Vibration Sensitivity", nullptr, 0, ExposeCategory::State, 1, 50, 0},
+    {"vibration_sensitivity", ExposeType::Numeric, Access::StateSet, nullptr, "Vibration Sensitivity", nullptr, 0, ExposeCategory::State, 1, 100, 0},
     {"vibration_delay", ExposeType::Numeric, Access::StateSet, "s", "Vibration Clear Delay Time", nullptr, 0, ExposeCategory::State, 1, 1440, 0},
 };
 constexpr const char* kM[] = { "TS0202" };
@@ -82,9 +94,11 @@ extern const PreparedDefinition kDef_HS208Z{
     .model="HS208Z",.vendor="HYSYIOT",.meta=nullptr,
     .exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
     .white_labels=nullptr,.white_labels_count=0,
-    .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
+    .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
-    .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };
+    .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr,
+    .bindings=kBindings,.bindings_count=1,
+    .reports=kReports,.reports_count=1 };
 
 }  // namespace zhc::devices::tuya
 
@@ -100,8 +114,10 @@ extern const PreparedDefinition kDef_HS208Z_model{
     .model="HS208Z",.vendor="HYSYIOT",.meta=nullptr,
     .exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
     .white_labels=nullptr,.white_labels_count=0,
-    .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
+    .from_zigbee=kFz,.from_zigbee_count=sizeof(kFz)/sizeof(kFz[0]),
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
-    .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };
+    .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr,
+    .bindings=kBindings,.bindings_count=1,
+    .reports=kReports,.reports_count=1 };
 
 }  // namespace zhc::devices::tuya

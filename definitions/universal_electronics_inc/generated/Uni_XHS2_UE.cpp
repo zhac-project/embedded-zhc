@@ -14,6 +14,8 @@
 //   kFzTemperature, kFzBattery — fully covered.
 //
 // FULL: every z2m converter is mapped; no toZigbee path on this device.
+// z2m v26.125.0 m.pollControl: long poll 24 qs, check-in 13200 qs at configure
+// (the re-apply on deviceAnnounce is not ported).
 // Previous auto-port wired kFzIasZone (attribute 0x0002 reader); the device
 // only emits the ssIasZone command 0x00 status-change frame. Replaced with
 // the typed contact variant and renamed `alarm` → `contact` in exposes.
@@ -43,6 +45,12 @@ constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0402},  // msTemperatureMeasurement
     {1, 0x0500},  // ssIasZone
 };
+// z2m configure: reporting.temperature (10 s..1 h, 1 °C) and
+// reporting.batteryVoltage (1 h..MAX, change 0).
+constexpr ReportingSpec kReports_XHS2_UE[] = {
+    {1, 0x0402, 0x0000, 0x29, 10, 3600, 100, 0},
+    {1, 0x0001, 0x0020, 0x20, 3600, 65000, 0, 0},
+};
 
 }  // namespace
 
@@ -57,6 +65,9 @@ extern const PreparedDefinition kDef_XHS2_UE{
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
     .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=kReports_XHS2_UE, .reports_count=sizeof(kReports_XHS2_UE)/sizeof(kReports_XHS2_UE[0]),
+    .config_steps=::zhc::generic::kPollControl24Checkin13200,
+    .config_steps_count=sizeof(::zhc::generic::kPollControl24Checkin13200)/sizeof(ConfigStep),
 };
 
 }  // namespace zhc::devices::universal_electronics_inc
