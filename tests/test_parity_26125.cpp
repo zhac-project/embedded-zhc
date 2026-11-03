@@ -264,6 +264,10 @@ DispatchResult feed(const PreparedDefinition& def, std::uint16_t cluster, std::u
                     const std::vector<std::uint8_t>& f) {
     return dispatch(def, cluster, ep, std::span<const std::uint8_t>(f.data(), f.size()));
 }
+DispatchResult feed_ctx(const PreparedDefinition& def, std::uint16_t cluster, std::uint8_t ep,
+                        const std::vector<std::uint8_t>& f, RuntimeContext& ctx) {
+    return dispatch(def, cluster, ep, std::span<const std::uint8_t>(f.data(), f.size()), &ctx);
+}
 // Tuya setData frame: [fc tsn cmd][seq:2][dp][type][len:2][value].
 std::int32_t tz_value(const Encoded& e) {
     if (!e.ok || e.frame.size() < 10) return INT32_MIN;
@@ -1059,6 +1063,173 @@ void wave4_zcl_m() {
     }
 }
 
+// ── wave 4 Lumi ─────────────────────────────────────────────────────
+
+// genBasic attribute report of modelId (0x0005, char string) with `tsn`.
+std::vector<std::uint8_t> model_id_report(std::uint8_t tsn, const char* model) {
+    const std::size_t n = std::strlen(model);
+    std::vector<std::uint8_t> f{0x18, tsn, 0x0A, 0x05, 0x00, 0x42, std::uint8_t(n)};
+    f.insert(f.end(), model, model + n);
+    return f;
+}
+std::uint32_t f32_bits(float f) { std::uint32_t u = 0; std::memcpy(&u, &f, sizeof(u)); return u; }
+
+void wave4_lumi() {
+    std::printf("wave 4 Lumi\n");
+    {   // I12b / I12d / I12e MCCGQ13LM
+        const PreparedDefinition& d = def_for("lumi.magnet.ac01", "LUMI");
+        StoreCtx s;
+        const auto b1 = model_id_report(0x21, "lumi.magnet.ac01");
+        check(r_str(feed_ctx(d, 0x0000, 1, b1, s.ctx), "action", "single"), "MCCGQ13LM button press -> action single");
+        check(!r_find(feed_ctx(d, 0x0000, 1, b1, s.ctx), "action"), "MCCGQ13LM same-tsn repeat dropped");
+        const auto b2 = model_id_report(0x22, "lumi.magnet.agl01");
+        check(!r_find(feed_ctx(d, 0x0000, 1, b2, s.ctx), "action"), "MCCGQ13LM other modelId: no action");
+        Report p; p.u8(0x0020, 0x20, 29);
+        const auto r = dispatch(d, 0x0001, 1, p.span());
+        check(r_float(r, "voltage") == 2900.0f && r_float(r, "battery") == 33.0f, "MCCGQ13LM batteryVoltage x100 on the 2850-3000 curve");
+        Report bad; bad.u8(0x0020, 0x20, 0xFF);
+        check(!r_find(dispatch(d, 0x0001, 1, bad.span()), "voltage"), "MCCGQ13LM batteryVoltage 255 ignored");
+        check(is_write(encode(d, "detection_distance", str("20mm")), 0xFCC0, 0x010C, 0x20, 2, 0x115F),
+              "MCCGQ13LM detection_distance write");
+        Report dd(0x115F); dd.u8(0x010C, 0x20, 3);
+        check(r_str(dispatch(d, 0xFCC0, 1, dd.span()), "detection_distance", "30mm"), "MCCGQ13LM detection_distance read");
+        Report d0(0x115F); d0.u8(0x010C, 0x20, 0);
+        check(!r_find(dispatch(d, 0xFCC0, 1, d0.span()), "detection_distance"), "MCCGQ13LM detection_distance 0 ignored");
+        check(has_expose(d, "detection_distance") && has_expose(d, "action"), "MCCGQ13LM exposes");
+    }
+    {   // I18a / I18b / I18c KD-R01D + knob rotation on ZNXNKG01LM / ZNXNKG02LM
+        const PreparedDefinition& d = def_for("lumi.switch.agl011", "LUMI");
+        check(is_write(encode(d, "event_mode", str("event")), 0xFCC0, 0x0009, 0x20, 1, 0x115F), "KD-R01D event_mode write");
+        Report em(0x115F); em.u8(0x0009, 0x20, 0);
+        check(r_str(dispatch(d, 0xFCC0, 1, em.span()), "event_mode", "command"), "KD-R01D event_mode read");
+        check(is_write(encode(d, "mode_switch", str("quick_mode")), 0xFCC0, 0x0004, 0x21, 1, 0x115F), "KD-R01D mode_switch write");
+        Report ms(0x115F); ms.u16(0x0004, 0x21, 4);
+        check(r_str(dispatch(d, 0xFCC0, 1, ms.span()), "mode_switch", "anti_flicker_mode"), "KD-R01D mode_switch read");
+        Report rot(0x115F); rot.u8(570, 0x20, 2).u16(558, 0x29, 30).u16(563, 0x29, 8);
+        auto r = dispatch(d, 0xFCC0, 1, rot.span());
+        check(r_str(r, "action", "rotation") && r_str(r, "action_rotation_button_state", "released") &&
+              r_float(r, "action_rotation_angle") == 30.0f && r_float(r, "action_rotation_percent") == 8.0f,
+              "KD-R01D knob rotation");
+        check(r_str(dispatch(d, 0xFCC0, 72, rot.span()), "action_rotation_button_state", "pressed"), "KD-R01D EP72 = pressed");
+        Report rp(0x115F); rp.u8(570, 0x20, 0x81);
+        r = dispatch(d, 0xFCC0, 1, rp.span());
+        check(r_str(r, "action", "start_rotating") && r_str(r, "action_rotation_button_state", "pressed"), "KD-R01D bit 7 = pressed");
+        check(has_expose(d, "event_mode") && has_expose(d, "mode_switch") && has_expose(d, "action_rotation_angle") &&
+              has_expose(d, "action_rotation_button_state"), "KD-R01D exposes");
+        for (const char* zm : {"lumi.switch.rkna01", "lumi.remote.rkba01"}) {
+            const PreparedDefinition& k = def_for(zm, "LUMI");
+            r = dispatch(k, 0xFCC0, 72, rot.span());
+            check(r_str(r, "action", "rotation") && r_str(r, "action_rotation_button_state", "released") &&
+                  has_expose(k, "action_rotation_percent"), "ZNXNKG knob rotation (no pressed endpoint)");
+        }
+    }
+    {   // F072 DS-K02D/E wireless buttons on EP3 / EP4
+        const PreparedDefinition& d = def_for("lumi.switch.aeu003", "LUMI");
+        Report a; a.u16(0x0055, 0x21, 1);
+        check(r_str(dispatch(d, 0x0012, 3, a.span()), "action", "single_top_wireless_button"), "DS-K02D EP3 single_top");
+        Report h; h.u16(0x0055, 0x21, 0);
+        check(r_str(dispatch(d, 0x0012, 4, h.span()), "action", "hold_bottom_wireless_button"), "DS-K02D EP4 hold_bottom");
+        check(!r_find(dispatch(d, 0x0012, 1, a.span()), "action"), "DS-K02D EP1: no action");
+        Report t; t.u16(0x0055, 0x21, 3);
+        check(!r_find(dispatch(d, 0x0012, 3, t.span()), "action"), "DS-K02D triple dropped");
+        const std::vector<std::uint8_t> rr{0x18, 0x01, 0x01, 0x55, 0x00, 0x00, 0x21, 0x01, 0x00};
+        check(!r_find(feed(d, 0x0012, 3, rr), "action"), "DS-K02D readResponse ignored");
+        check(has_binding(d, 3, 0x0012) && has_binding(d, 4, 0x0012) && !has_binding(d, 3, 0xFCC0) &&
+              !has_binding(d, 4, 0xFCC0) && !has_binding(d, 1, 0x0012),
+              "DS-K02D binds EP3/EP4 multistate (no 0xFCC0 bind: house rule since 3b74e93)");
+        bool off = d.reports_count == 2;
+        for (std::size_t i = 0; i < d.reports_count; ++i)
+            off = off && d.reports[i].cluster_id == 0x0012 && d.reports[i].attr_id == 0x0055 &&
+                  d.reports[i].max_interval == 0xFFFF && d.reports[i].reportable_change == 1;
+        check(off && has_report(d, 3, 0x0012, 0x0055, 1) && has_report(d, 4, 0x0012, 0x0055, 1),
+              "DS-K02D presentValue reporting off (max 0xFFFF)");
+    }
+    {   // F073 WSDCGQ12LM scaledValue pressure + 500..2000 hPa filter
+        const PreparedDefinition& d = def_for("lumi.sensor_ht.agl02", "LUMI");
+        StoreCtx s;
+        Report p; p.u16(0x0000, 0x29, 1013).u16(0x0010, 0x29, 10132).u8(0x0014, 0x28, 0xFF);
+        check(approx(r_float(dispatch(d, 0x0403, 1, p.span(), &s.ctx), "pressure"), 1013.2f), "WSDCGQ12LM scaledValue pressure");
+        Report q; q.u16(0x0010, 0x29, 10045);
+        check(approx(r_float(dispatch(d, 0x0403, 1, q.span(), &s.ctx), "pressure"), 1004.5f), "WSDCGQ12LM cached scale");
+        StoreCtx fresh;
+        check(approx(r_float(dispatch(d, 0x0403, 1, q.span(), &fresh.ctx), "pressure"), 1004.5f), "WSDCGQ12LM default scale -1");
+        Report m; m.u16(0x0000, 0x29, 1001);
+        check(r_float(dispatch(d, 0x0403, 1, m.span(), &s.ctx), "pressure") == 1001.0f, "WSDCGQ12LM measuredValue fallback");
+        Report junk; junk.u16(0x0000, 0x29, 0);
+        check(!r_find(dispatch(d, 0x0403, 1, junk.span(), &s.ctx), "pressure"), "WSDCGQ12LM out-of-range pressure dropped");
+    }
+    {   // F083 FP310 presence (0xFCC0 0x0142)
+        const PreparedDefinition& d = def_for("lumi.sensor_occupy.acn1", "LUMI");
+        Report on(0x115F); on.u8(0x0142, 0x20, 1);
+        check(r_bool(dispatch(d, 0xFCC0, 1, on.span()), "presence", true), "FP310 presence 1 -> true");
+        Report off(0x115F); off.u8(0x0142, 0x20, 0);
+        check(r_bool(dispatch(d, 0xFCC0, 1, off.span()), "presence", false), "FP310 presence 0 -> false");
+        check(!has_binding(d, 1, 0xFCC0) && has_report(d, 1, 0xFCC0, 0x0142, 1) && has_expose(d, "presence"),
+              "FP310 presence bind / report / expose");
+        check(has_step(d, ConfigStepOp::Read, 1, 0xFCC0, 0x115F), "FP310 reads presence at configure");
+    }
+    {   // N20 SP-P06E Outdoor plug H2 EU
+        const PreparedDefinition& d = def_for("lumi.plug.aeu006", "LUMI");
+        check(d.model && std::strcmp(d.model, "SP-P06E") == 0, "lumi.plug.aeu006 is SP-P06E");
+        Report on; on.u8(0x0000, 0x10, 1);
+        check(r_find(dispatch(d, 0x0006, 1, on.span()), "state") != nullptr, "SP-P06E on/off");
+        Report pw; pw.u16(0x050B, 0x29, 1200);
+        check(r_float(dispatch(d, 0x0B04, 1, pw.span()), "power") == 1200.0f, "SP-P06E activePower W");
+        check(is_write(encode(d, "led_indicator", boolean(true)), 0xFCC0, 0x0203, 0x10, 1, 0x115F), "SP-P06E led_indicator");
+        check(is_write(encode(d, "child_lock", str("LOCK")), 0xFCC0, 0x0285, 0x20, 1, 0x115F), "SP-P06E child_lock");
+        check(is_write(encode(d, "charging_protection", boolean(true)), 0xFCC0, 0x0202, 0x10, 1, 0x115F),
+              "SP-P06E charging_protection");
+        check(is_write(encode(d, "power_on_behavior", str("previous")), 0xFCC0, 0x0517, 0x20, 1, 0x115F),
+              "SP-P06E power_on_behavior");
+        check(is_write(encode(d, "flip_indicator_light", str("ON")), 0xFCC0, 0x00F0, 0x20, 1, 0x115F),
+              "SP-P06E flip_indicator_light");
+        Report st(0x115F); st.u8(0x0285, 0x20, 1).u8(0x0517, 0x20, 2).u8(0x0202, 0x10, 1).u8(0x0203, 0x10, 0);
+        const auto r = dispatch(d, 0xFCC0, 1, st.span());
+        check(r_bool(r, "child_lock", true) && r_str(r, "power_on_behavior", "off") && r_bool(r, "charging_protection", true) &&
+              r_bool(r, "led_indicator", false), "SP-P06E settings read");
+        check(has_expose(d, "power_on_behavior") && has_expose(d, "child_lock") && has_expose(d, "energy") &&
+              !has_expose(d, "overload_protection") && has_report(d, 1, 0x0006, 0x0000, 0) &&
+              has_report(d, 1, 0x0B04, 0x050B, 5), "SP-P06E exposes + reports");
+    }
+    {   // F043 ZNJLBL01LM roller shade driver E1 (lumi.curtain.acn002 off ZNCLDJ14LM)
+        const PreparedDefinition& d = def_for("lumi.curtain.acn002", "LUMI");
+        check(d.model && std::strcmp(d.model, "ZNJLBL01LM") == 0, "lumi.curtain.acn002 is ZNJLBL01LM");
+        const PreparedDefinition& h = def_for("lumi.curtain.hagl07", "LUMI");
+        check(h.model && std::strcmp(h.model, "ZNCLDJ14LM") == 0, "lumi.curtain.hagl07 stays ZNCLDJ14LM");
+        check(is_write(encode(d, "position", num(40)), 0x000D, 0x0055, 0x39, f32_bits(40.0f)),
+              "ZNJLBL01LM position -> genAnalogOutput presentValue");
+        check(is_write(encode(d, "state", str("CLOSE")), 0x000D, 0x0055, 0x39, f32_bits(0.0f)), "ZNJLBL01LM CLOSE -> 0");
+        check(is_write(encode(d, "state", str("OPEN")), 0x000D, 0x0055, 0x39, f32_bits(100.0f)), "ZNJLBL01LM OPEN -> 100");
+        check(is_write(encode(d, "state", str("STOP")), 0x0013, 0x0055, 0x21, 2), "ZNJLBL01LM STOP -> genMultistateOutput 2");
+        check(is_write(encode(d, "reverse_direction", boolean(true)), 0xFCC0, 0x0400, 0x10, 1, 0x115F),
+              "ZNJLBL01LM reverse_direction write");
+        check(is_write(encode(d, "motor_speed", str("high")), 0xFCC0, 0x0408, 0x20, 2, 0x115F), "ZNJLBL01LM motor_speed write");
+        Report o(0x115F); o.u8(0x0400, 0x10, 1).u8(0x0409, 0x10, 1).u8(0x040A, 0x20, 87).u8(0x0408, 0x20, 1);
+        auto r = dispatch(d, 0xFCC0, 1, o.span());
+        check(r_bool(r, "reverse_direction", true) && r_bool(r, "charging_status", true) &&
+              r_float(r, "battery") == 87.0f && r_str(r, "motor_speed", "medium"), "ZNJLBL01LM options / charging / battery");
+        Report pos; pos.u32(0x0055, 0x39, f32_bits(55.0f));
+        check(r_float(dispatch(d, 0x000D, 1, pos.span()), "position") == 55.0f, "ZNJLBL01LM position report");
+        RuntimeContext ctx{};
+        ctx.configure_read = [](std::uint16_t, std::uint8_t, std::uint16_t c, const std::uint8_t* ids, std::uint8_t n,
+                                std::uint16_t manu) {
+            ++g_reads; g_read_cluster = c; g_read_manu = manu;
+            return n == 1 && ids[0] == 0x55 && ids[1] == 0x00;
+        };
+        g_reads = 0;
+        Report mv; mv.u16(0x0055, 0x21, 1);
+        r = dispatch(d, 0x0013, 1, mv.span(), &ctx);
+        check(r_str(r, "motor_state", "opening") && r_bool(r, "running", true) && g_reads == 0, "ZNJLBL01LM opening");
+        Report bl; bl.u16(0x0055, 0x21, 3);
+        r = dispatch(d, 0x0013, 1, bl.span(), &ctx);
+        check(r_str(r, "motor_state", "blocked") && r_bool(r, "running", false) && g_reads == 1 && g_read_cluster == 0x000D &&
+              g_read_manu == 0, "ZNJLBL01LM stop re-reads the position");
+        check(has_expose(d, "reverse_direction") && has_expose(d, "motor_state") && has_expose(d, "charging_status") &&
+              has_expose(d, "motor_speed") && d.power_source_override == 0x03 &&
+              has_step(d, ConfigStepOp::Read, 1, 0xFCC0, 0x115F), "ZNJLBL01LM exposes / battery / configure read");
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -1087,6 +1258,7 @@ int main() {
     wave4_tuya();
     wave4_zcl_s();
     wave4_zcl_m();
+    wave4_lumi();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26125 checks passed\n");
     return 0;

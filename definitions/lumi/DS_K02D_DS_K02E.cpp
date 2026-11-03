@@ -1,13 +1,44 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
 // Tier 1: Aqara DS-K02D/DS-K02E — auto-generated stub (battery + action).
+// z2m v26.125.0 lumiAqaraH2EuShutterSwitchAction: only the wireless buttons
+// (EP3 top, EP4 bottom) send actions, `<hold|single|double|release>_<button>`
+// from attribute reports (no triple, no read responses). configure binds
+// manuSpecificLumi + genMultistateInput on EP3 / EP4 and turns presentValue
+// reporting off (max 0xFFFF), which stops the hourly stale replays. Not
+// ported: the cover, metering and per-button multi-click mode.
 // z2m-source: lumi.ts #DS-K02D/DS-K02E.
 #include "definitions/lumi/_shared.hpp"
 namespace zhc::devices::lumi {
 namespace {
+constexpr ::zhc::lumi::LumiButton kWireless[] = { {3, "top_wireless_button"}, {4, "bottom_wireless_button"} };
+constexpr ::zhc::lumi::LumiButtons kButtons{ kWireless, 2 };
+bool fz_wireless_action(const DecodedMessage& msg, const FzConverter& self, const PreparedDefinition& def,
+                        RuntimeContext& ctx, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("85");   // presentValue
+    if (v && v->type == ValueType::Uint && v->u == 3) return false;   // triple is not in the action map
+    return ::zhc::lumi::fz_lumi_switch_action(msg, self, def, ctx, out);
+}
+constexpr FzConverter kFzWirelessAction{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genMultistateInput",
+    .type_mask         = type_bit(MessageType::AttributeReport),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_wireless_action },
+    .user_config       = &kButtons,
+};
+constexpr const char* kActions[] = {
+    "hold_top_wireless_button", "hold_bottom_wireless_button", "single_top_wireless_button",
+    "single_bottom_wireless_button", "double_top_wireless_button", "double_bottom_wireless_button",
+    "release_top_wireless_button", "release_bottom_wireless_button" };
 const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiBasic,
-    &::zhc::lumi::kFzLumiActionMultistate,
+    &kFzWirelessAction,
 };
 constexpr const char* kModels[] = { "lumi.switch.aeu003" };
 }
@@ -18,11 +49,16 @@ constexpr Expose kAutoExposes[] = {
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
     {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActions, std::size(kActions)},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0012},
+    {3, 0x0012},   // z2m also binds manuSpecificLumi here; no lumi def does (3b74e93)
+    {4, 0x0012},
+};
+constexpr ReportingSpec kReports[] = {
+    {3, 0x0012, 0x0055, 0x21, 0, 0xFFFF, 1, 0},   // presentValue: reporting off
+    {4, 0x0012, 0x0055, 0x21, 0, 0xFFFF, 1, 0},
 };
 // --- end auto-generated block ---
 
@@ -36,5 +72,6 @@ extern const PreparedDefinition kDefDS_K02D_DS_K02E{
     .to_zigbee=nullptr,.to_zigbee_count=0,
     .configure=nullptr,.on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=kReports, .reports_count=sizeof(kReports)/sizeof(kReports[0]),
 };
 }

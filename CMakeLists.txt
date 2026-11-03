@@ -599,6 +599,8 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNCLDJ11LM.cpp
     definitions/lumi/ZNCLDJ12LM.cpp
     definitions/lumi/ZNCLDJ14LM.cpp
+    definitions/lumi/ZNJLBL01LM.cpp
+    definitions/lumi/SP_P06E.cpp
     definitions/lumi/ZNCLBL01LM.cpp
     definitions/lumi/ZNMS11LM.cpp
     definitions/lumi/ZNMS12LM.cpp

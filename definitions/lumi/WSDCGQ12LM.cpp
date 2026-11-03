@@ -11,6 +11,10 @@
 
 #include "definitions/lumi/_shared.hpp"
 #include "zhc/modern_extend.hpp"
+#include "zhc/runtime/dispatch.hpp"
+#include "zhc/runtime/store.hpp"
+
+#include <cmath>
 
 namespace zhc::devices::lumi {
 namespace {
@@ -28,16 +32,47 @@ struct humidity_opts {
     static constexpr std::uint16_t attr    = 0x0000;
     static constexpr std::uint32_t divisor = 100;
 };
-struct pressure_opts {
-    static constexpr const char*   name    = "pressure";
-    static constexpr const char*   unit    = "hPa";
-    static constexpr const char*   cluster = "msPressureMeasurement";
-    static constexpr std::uint16_t attr    = 0x0000;
-    static constexpr std::uint32_t divisor = 1;
+// z2m lumi_pressure (fz.pressure kept within 500 < p < 2000 hPa):
+// scaledValue (0x0010) / 10^scale / 100 when the report carries it, else
+// measuredValue (0x0000). scale (0x0014) comes from the same report or the last
+// one seen (z2m reads it from the attribute cache), else Aqara's -1.
+// DeviceRuntimeState::scratch[0] = scale known, scratch[1] = scale (int8).
+bool as_num(const Value* v, double& out) {
+    if (!v) return false;
+    if (v->type == ValueType::Int)  { out = static_cast<double>(v->i); return true; }
+    if (v->type == ValueType::Uint) { out = static_cast<double>(v->u); return true; }
+    return false;
+}
+bool fz_pressure(const DecodedMessage& msg, const FzConverter&, const PreparedDefinition&,
+                 RuntimeContext& ctx, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    auto* st = ctx.device_state();
+    double scale = -1, p = 0;
+    if (as_num(msg.payload.find("20"), scale)) {
+        if (st) { st->scratch[0] = 1; st->scratch[1] = static_cast<std::uint8_t>(static_cast<std::int8_t>(scale)); }
+    } else if (st && st->scratch[0]) {
+        scale = static_cast<std::int8_t>(st->scratch[1]);
+    }
+    if (as_num(msg.payload.find("16"), p)) p = p / std::pow(10.0, scale) / 100.0;
+    else if (!as_num(msg.payload.find("0"), p)) return false;
+    if (!(p > 500.0 && p < 2000.0)) return false;
+    Value o{}; o.type = ValueType::Float; o.f = static_cast<float>(p);
+    return out.put("pressure", o);
+}
+constexpr FzConverter kFzPressure{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "msPressureMeasurement",
+    .type_mask         = type_bit(MessageType::AttributeReport) | type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_pressure },
+    .user_config       = nullptr,
 };
 using Temp     = ::zhc::m::Numeric<temp_opts>;
 using Humidity = ::zhc::m::Numeric<humidity_opts>;
-using Pressure = ::zhc::m::Numeric<pressure_opts>;
 
 constexpr ::zhc::lumi::LumiTagEntry kTagEntries[] = {
     { ::zhc::lumi::kLumiTagVoltage,    "voltage",     1   },
@@ -53,7 +88,7 @@ const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiSpecific,
     &Temp::converter,
     &Humidity::converter,
-    &Pressure::converter,
+    &kFzPressure,
     &::zhc::lumi::kFzLumiHeartbeatBattery,
 };
 constexpr const char* kModels[] = { "lumi.sensor_ht.agl02", "lumi.weather.v2" };
