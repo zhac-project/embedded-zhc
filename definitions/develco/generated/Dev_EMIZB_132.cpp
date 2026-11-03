@@ -10,8 +10,9 @@
 //   haElectricalMeasurement 0x0304 power / 0x0305 power_reactive (W / VAr),
 //   voltage /10 and current /10 on all three phases — current /1000 once the
 //   meter reports interface_mode kaifa_and_kamstrup (cached per device in
-//   DeviceRuntimeState::scratch[0]; before any report it is norwegian_han,
-//   as upstream defaults).
+//   DeviceRuntimeState::scratch[0]; before any report since boot, the hub's
+//   persisted interface_mode, as upstream's meta.state; with neither it is
+//   norwegian_han, as upstream defaults).
 // Not ported: the cluster divisor attributes (fixed /10 as upstream's
 // electricityMeter config) and readGenBasicPrimaryVersions.
 // z2m-source: develco.ts #EMIZB-132.
@@ -29,6 +30,8 @@ constexpr std::uint8_t  kModeKaifa   = 0x03;   // interface mode low byte
 constexpr ::zhc::generic::ZclWriteLookup kInterfaceModes[] = {
     {"norwegian_han", 0x0200}, {"norwegian_han_extra_load", 0x0201},
     {"aidon_meter", 0x0202}, {"kaifa_and_kamstrup", 0x0203} };
+constexpr const char* kInterfaceModeOpts[] = {   // index = the mode's low byte
+    "norwegian_han", "norwegian_han_extra_load", "aidon_meter", "kaifa_and_kamstrup" };
 
 bool as_num(const Value* v, double& out) {
     if (!v) return false;
@@ -52,7 +55,7 @@ bool fz_emizb_metering(const DecodedMessage& msg, const FzConverter&, const Prep
     if (as_num(msg.payload.find("770"), v)) {                                       // 0x0302
         for (const auto& m : kInterfaceModes) {
             if (m.value != static_cast<std::uint32_t>(v)) continue;
-            if (auto* st = ctx.device_state()) st->scratch[kModeSlot] = static_cast<std::uint8_t>(m.value & 0xFF);
+            if (auto* st = ctx.device_state()) st->scratch[kModeSlot] = static_cast<std::uint8_t>((m.value & 0xFF) + 1);
             Value o{}; o.type = ValueType::StringRef; o.str = m.label;
             any |= out.put("interface_mode", o);
         }
@@ -62,8 +65,15 @@ bool fz_emizb_metering(const DecodedMessage& msg, const FzConverter&, const Prep
 
 bool fz_emizb_electrical(const DecodedMessage& msg, const FzConverter&, const PreparedDefinition&,
                          RuntimeContext& ctx, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    const auto* st = ctx.device_state();
-    const double current_div = (st && st->scratch[kModeSlot] == kModeKaifa) ? 1000.0 : 10.0;
+    // scratch holds the mode's low byte + 1 (0 = not reported since boot);
+    // then the host's persisted interface_mode decides, as upstream reads
+    // meta.state.interface_mode (security review 2026-11-03 F-04). Neither:
+    // norwegian_han, upstream's default, not cached.
+    auto* st = ctx.device_state();
+    const int mode = st && st->scratch[kModeSlot] ? st->scratch[kModeSlot] - 1
+                                                  : ctx.state_index("interface_mode", kInterfaceModeOpts, 4);
+    if (st && mode >= 0) st->scratch[kModeSlot] = static_cast<std::uint8_t>(mode + 1);
+    const double current_div = mode == kModeKaifa ? 1000.0 : 10.0;
     struct Row { const char* attr; const char* key; double div; };
     const Row rows[] = {
         {"772", "power", 1}, {"773", "power_reactive", 1},                          // 0x0304 / 0x0305
@@ -106,8 +116,6 @@ const FzConverter* const kFz_EMIZB_132[] = { &kFzMetering, &kFzElectrical };
 const TzConverter* const kTz_EMIZB_132[] = { &kTzInterfaceMode };
 constexpr const char* kModels_EMIZB_132[] = { "EMIZB-132" };
 
-constexpr const char* kInterfaceModeOpts[] = {
-    "norwegian_han", "norwegian_han_extra_load", "aidon_meter", "kaifa_and_kamstrup" };
 constexpr Expose kExposes[] = {
     {"power", ExposeType::Numeric, Access::State, "W", "Total active power", nullptr, 0},
     {"power_reactive", ExposeType::Numeric, Access::State, "VAr", "Total reactive power", nullptr, 0},

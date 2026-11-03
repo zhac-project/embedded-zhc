@@ -2164,17 +2164,18 @@ std::size_t exposes_from_dp_map(const TuyaDatapointMap& map, Expose* out, std::s
 
 namespace {
 constexpr std::size_t  kTempUnitSlot   = 0;   // DeviceRuntimeState::scratch index
-// ponytail: RAM only (z2m keeps it in persisted state): after a hub restart a
-// °F device reads as °C until it re-sends its unit DP. Persist the runtime
-// scratch, or query the DPs at boot, if that bites.
+// scratch holds the unit DP's wire value + 1 (0 = not reported since boot);
+// until then the host's persisted temperature_unit decides, as z2m's
+// meta.state does across a restart (security review 2026-11-03 F-04).
 constexpr std::uint8_t kUnitFahrenheit = 1;
+constexpr const char*  kUnitLabels[]   = { "celsius", "fahrenheit" };
 }  // namespace
 
 bool tuya_dp_expand_temperature_unit(const TuyaDpMapEntry& e, const Value& raw,
                                       RuntimeContext& ctx,
                                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     if (raw.type != ValueType::Uint || raw.u > kUnitFahrenheit || e.enum_count <= raw.u) return false;
-    if (auto* st = ctx.device_state()) st->scratch[kTempUnitSlot] = static_cast<std::uint8_t>(raw.u);
+    if (auto* st = ctx.device_state()) st->scratch[kTempUnitSlot] = static_cast<std::uint8_t>(raw.u + 1);
     Value v{};
     v.type = ValueType::StringRef;
     v.str  = e.enum_table[raw.u].label;
@@ -2187,8 +2188,13 @@ bool tuya_dp_expand_temperature_in_unit(const TuyaDpMapEntry& e, const Value& ra
                                          FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     if (raw.type != ValueType::Int) return false;
     float t = static_cast<float>(raw.i) / 10.0f;
-    const auto* st = ctx.device_state();
-    if (st && st->scratch[kTempUnitSlot] == kUnitFahrenheit) t = (t - 32.0f) * 5.0f / 9.0f;
+    auto* st = ctx.device_state();
+    // Neither reported nor kept: Celsius, as upstream with an unset unit. Not
+    // cached, so a value the host restores after this frame still counts.
+    const int unit = st && st->scratch[kTempUnitSlot] ? st->scratch[kTempUnitSlot] - 1
+                                                      : ctx.state_index("temperature_unit", kUnitLabels, 2);
+    if (st && unit >= 0) st->scratch[kTempUnitSlot] = static_cast<std::uint8_t>(unit + 1);
+    if (unit == kUnitFahrenheit) t = (t - 32.0f) * 5.0f / 9.0f;
     Value v{};
     v.type = ValueType::Float;
     v.f    = t;
