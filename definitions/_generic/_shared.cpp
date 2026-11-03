@@ -1911,6 +1911,26 @@ extern const TzConverter kTzOnWithTimedOff{
     .user_config = nullptr,
 };
 
+namespace {
+constexpr ZclAttrRow kOnOffCountdownRows[] = { {0x4001, "countdown"}, {0x4002, "countdown"} };
+constexpr ZclAttrMap kOnOffCountdownMap{ kOnOffCountdownRows, 2 };
+}  // namespace
+
+extern const FzConverter kFzOnOffCountdown = zcl_attr_fz("genOnOff", &kOnOffCountdownMap);
+
+namespace {
+// The first matching label wins on write, the first matching value on read.
+constexpr ZclWriteLookup kAcLouver[] = {
+    {"fully_closed", 1}, {"fully_open", 2}, {"quarter_open", 3}, {"half_open", 4},
+    {"three_quarters_open", 5}, {"fully_closed", 0} };
+constexpr ZclAttrRow kAcLouverRows[] = { {0x0045, "ac_louver_position", 1, kAcLouver, 6} };
+constexpr ZclAttrMap kAcLouverMap{ kAcLouverRows, 1 };
+constexpr ZclWriteSpec kAcLouverSpec{ "ac_louver_position", 0x0045, 0x30, 0, kAcLouver, 6 };
+}  // namespace
+
+extern const FzConverter kFzAcLouverPosition = zcl_attr_fz("hvacThermostat", &kAcLouverMap);
+extern const TzConverter kTzAcLouverPosition = zcl_write_tz("hvacThermostat", 0x0201, &kAcLouverSpec);
+
 // ── eWeLink action (SNZB-01 family) ──────────────────────────────────
 
 namespace {
@@ -2970,6 +2990,7 @@ std::size_t zcl_type_len(std::uint8_t t) {
         case 0x28: return 1;   // s8
         case 0x29: return 2;   // s16
         case 0x30: return 1;   // enum8
+        case 0x31: return 2;   // enum16
         default:   return 0;
     }
 }
@@ -3055,7 +3076,8 @@ bool tz_zcl_write_attr(std::string_view key,
 
     const bool manu = spec->manufacturer_code != 0;
     // fc: bit 2 = manu-specific, bit 4 = disable-default-response.
-    const std::uint8_t fc = manu ? 0x14 : 0x10;
+    const std::uint8_t fc = static_cast<std::uint8_t>((manu ? 0x04 : 0x00) |
+        ((spec->flags & kZclWriteFlagDefaultResponse) ? 0x00 : 0x10));
     const std::size_t total = 1 + (manu ? 2 : 0) + 1 + 1 + 2 + 1 + vlen;
     if (out_frame.size() < total) return false;
 

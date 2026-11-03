@@ -7,8 +7,8 @@
 // The auto-generated port had `system_mode` and `fan_mode` typed as
 // `Binary` — they are enum-of-strings (off/heat/cool/auto/dry/fan_only
 // and off/low/medium/high/auto). Cooling setpoint, min/max heat/cool
-// setpoint limits, control_sequence_of_operation and
-// ac_louver_position are not yet wired — see TODO.
+// setpoint limits and control_sequence_of_operation are not yet wired;
+// ac_louver_position uses the shared kFz/kTzAcLouverPosition (z2m v26.125.0).
 //
 // z2m-source: nodon.ts #IRB-4-1-00.
 #include "definitions/_generic/_shared.hpp"
@@ -19,16 +19,18 @@ const FzConverter* const kFz_IRB_4_1_00[] = {
     &::zhc::generic::kFzThermostat,
     &::zhc::generic::kFzFanMode,
     &::zhc::generic::kFzHumidity,
+    &::zhc::generic::kFzAcLouverPosition,
 };
 const TzConverter* const kTz_IRB_4_1_00[] = {
     &::zhc::generic::kTzThermostat,
+    &::zhc::generic::kTzAcLouverPosition,
 };
 constexpr const char* kModels_IRB_4_1_00[] = { "IRB-4-1-00" };
 
 }  // namespace
 
 
-// Hand-aligned to z2m exposes (cooling/min/max setpoints + louver TODO).
+// Hand-aligned to z2m exposes (cooling/min/max setpoints still TODO).
 constexpr Expose kAutoExposes[] = {
     {"local_temperature",        ExposeType::Numeric, Access::State,    "°C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
@@ -37,6 +39,8 @@ constexpr Expose kAutoExposes[] = {
     {"fan_mode",                 ExposeType::Enum,    Access::StateSet, nullptr,
         "off / low / medium / high / auto", nullptr, 0},
     {"humidity",                 ExposeType::Numeric, Access::State,    "%", nullptr, nullptr, 0},
+    {"ac_louver_position",       ExposeType::Enum,    Access::StateSet, nullptr, nullptr,
+        ::zhc::generic::kAcLouverPositions, 5},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

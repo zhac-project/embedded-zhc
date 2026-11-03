@@ -22,15 +22,22 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_fzo2pocs_motor_working_mode_d
     { 1, "intermittently" },
 };
 
+// z2m lookup {SET: true, RESET: false} on BOOL DPs 103-105 (exposed, but the
+// generator dropped the rows).
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_fzo2pocs_stroke_limit[] = { {0, "RESET"}, {1, "SET"} };
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_fzo2pocs[] = {
     { 1, "state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_fzo2pocs_state_dp1, sizeof(kEnum__TZE284_fzo2pocs_state_dp1)/sizeof(kEnum__TZE284_fzo2pocs_state_dp1[0]) },
     { 2, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
     { 3, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
     { 5, "reverse_direction", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_fzo2pocs_reverse_direction_dp5, sizeof(kEnum__TZE284_fzo2pocs_reverse_direction_dp5)/sizeof(kEnum__TZE284_fzo2pocs_reverse_direction_dp5[0]) },
     { 12, "motor_fault", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 103, "upper_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum__TZE284_fzo2pocs_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    { 104, "middle_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum__TZE284_fzo2pocs_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
+    { 105, "lower_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum__TZE284_fzo2pocs_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
     { 106, "motor_working_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_fzo2pocs_motor_working_mode_dp106, sizeof(kEnum__TZE284_fzo2pocs_motor_working_mode_dp106)/sizeof(kEnum__TZE284_fzo2pocs_motor_working_mode_dp106[0]) },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_fzo2pocs{ kEntries__TZE284_fzo2pocs, 6 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_fzo2pocs{ kEntries__TZE284_fzo2pocs, sizeof(kEntries__TZE284_fzo2pocs)/sizeof(kEntries__TZE284_fzo2pocs[0]) };
 constexpr FzConverter kFzDp__TZE284_fzo2pocs{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

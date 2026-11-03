@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 1: Onokom ME-1-ZB-S — auto-generated.
 // ONOKOM-AIR-ME-1-ZB-S (Adapter for household and semi-industrial Mitsubishi Electric systems)
+// External temperature sensor controls: onokom/_shared.hpp (z2m v26.125.0).
 // z2m-source: onokom.ts #ME-1-ZB-S.
-#include "definitions/_generic/_shared.hpp"
+#include "definitions/onokom/_shared.hpp"
 
 namespace zhc::devices::onokom {
 namespace {
@@ -11,9 +12,13 @@ const FzConverter* const kFz_ME_1_ZB_S[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzThermostat,
     &::zhc::generic::kFzFanMode,
+    &kFzOnokomExternalSensor,
 };
 const TzConverter* const kTz_ME_1_ZB_S[] = {
     &::zhc::generic::kTzOnOff,
+    &kTzOnokomExternalSensorAllow,
+    &kTzOnokomExternalAirTemperature,
+    &kTzOnokomExternalSensorValidity,
     &::zhc::generic::kTzThermostat,
 };
 constexpr const char* kModels_ME_1_ZB_S[] = { "ME-1-ZB-S", "OK-AC-H-ME-1-ZB-S-A" };
@@ -27,6 +32,7 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    ZHC_ONOKOM_EXTERNAL_SENSOR_EXPOSES,
 };
 
 constexpr BindingSpec kAutoBindings[] = {

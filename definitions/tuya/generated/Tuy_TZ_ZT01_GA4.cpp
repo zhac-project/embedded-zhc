@@ -1,42 +1,51 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Tuya TZ-ZT01_GA4 — auto-generated.
-// Temperature & humidity Sensor with external probe
+// Tier 3: Tuya TZ-ZT01_GA4 temperature & humidity sensor with external probe.
+// Was a generated min stub (genPowerCfg / genOnOff, no datapoints) that decoded
+// nothing; z2m v26.125.0 window ports the tuyaBase({dp: true}) map:
+// DP1 temperature /10, DP2 humidity, DP3 battery_state, DP38 temperature_probe /10.
+// `_TZE2841000000_8se38w3c` reaches this def through the twin-prefix retry.
 // z2m-source: tuya.ts #TZ-ZT01_GA4.
-#include "definitions/_generic/_shared.hpp"
 #include "definitions/tuya/_shared.hpp"
+#include "definitions/tuya/dp.hpp"
+#include "definitions/tuya/extend.hpp"
+#include "definitions/tuya/factories.hpp"
 
 namespace zhc::devices::tuya {
 namespace {
-
-
+constexpr ::zhc::tuya::TuyaEnumEntry kBatteryState[] = { {0, "low"}, {1, "medium"}, {2, "high"} };
+struct cfg {
+    static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
+        ::zhc::tuya::dp::numeric(1, "temperature", 10),
+        ::zhc::tuya::dp::numeric(2, "humidity", 1),
+        ::zhc::tuya::dp::enum_lookup(3, "battery_state", kBatteryState, 3),
+        ::zhc::tuya::dp::numeric(38, "temperature_probe", 10),
+    };
+    static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{ e, sizeof(e)/sizeof(e[0]) };
+};
+using FX = ::zhc::tuya::factory::TuyaRw<cfg>;
+constexpr const char* kBatteryStateOpts[] = { "low", "medium", "high" };
+constexpr Expose kExp[] = {
+    {"temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
+    {"temperature_probe", ExposeType::Numeric, Access::State, "°C", "Probe temperature", nullptr, 0},
+    {"humidity", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
+    {"battery_state", ExposeType::Enum, Access::State, nullptr, "State of the battery", kBatteryStateOpts, 3,
+     ExposeCategory::Diagnostic},
+};
 constexpr const char* kModels_TZ_ZT01_GA4[] = { "TS0601" };
 constexpr const char* kManus_TZ_ZT01_GA4[] = { "_TZE284_8se38w3c" };
-
 }  // namespace
 
-namespace {
-const FzConverter* const kFz_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4[] = {
-    &::zhc::tuya::kFzTuyaMcuSyncTime,
-    &::zhc::generic::kFzBattery, &::zhc::generic::kFzOnOff,
-};
-constexpr Expose kExp_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4[] = {
-    { "state",   ExposeType::Binary,  ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0 },
-    { "battery", ExposeType::Numeric, ::zhc::Access::State, "%",  nullptr, nullptr, 0 },
-    { "voltage", ExposeType::Numeric, ::zhc::Access::State, "mV", nullptr, nullptr, 0 },
-};
-constexpr BindingSpec kBind_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4[] = { { 1, 0x0001 }, { 1, 0x0006 } };
-}  // namespace
 extern const PreparedDefinition kDef_TZ_ZT01_GA4{
     .zigbee_models=kModels_TZ_ZT01_GA4, .zigbee_models_count=sizeof(kModels_TZ_ZT01_GA4)/sizeof(kModels_TZ_ZT01_GA4[0]),
     .manufacturer_name_prefix=nullptr,
     .manufacturer_names=kManus_TZ_ZT01_GA4, .manufacturer_names_count=sizeof(kManus_TZ_ZT01_GA4)/sizeof(kManus_TZ_ZT01_GA4[0]),
     .model="TZ-ZT01_GA4", .vendor="Tuya",
-    .meta=nullptr, .exposes=kExp_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4, .exposes_count=sizeof(kExp_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4)/sizeof(kExp_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4[0]),
+    .meta=nullptr, .exposes=kExp, .exposes_count=sizeof(kExp)/sizeof(kExp[0]),
     .white_labels=nullptr, .white_labels_count=0,
-    .from_zigbee=kFz_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4, .from_zigbee_count=sizeof(kFz_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4)/sizeof(kFz_min_TZ_ZT01_GA4_Tuy_TZ_ZT01_GA4[0]),
-    .to_zigbee=nullptr, .to_zigbee_count=0,
-    .configure=nullptr, .on_event=nullptr,
+    .from_zigbee=FX::fz_list, .from_zigbee_count=FX::fz_count,
+    .to_zigbee=FX::tz_list, .to_zigbee_count=FX::tz_count,
+    .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,
 };
 
 }  // namespace zhc::devices::tuya

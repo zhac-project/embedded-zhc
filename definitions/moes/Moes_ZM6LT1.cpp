@@ -3,6 +3,9 @@
 // Tier 3: Moes ZM6LT1 1-phase energy meter with CT sensor clamp
 // (z2m v26.92.0 parity, added v26.78.0).
 // z2m-source: moes.ts #ZM6LT1  (fingerprint TS0601 / _TZE284_2fnssffc)
+// v26.125.0 adds _TZE284_y7hpvgyp, white-labelled Moes ZM7LT1 (DP51 active
+// energy is that model's only extra). The same window's rework onto the
+// segmented 0xED00 transport (moesMeterSegments) stays deferred.
 //
 // One of the three devices the family-modelID coverage bug hid.
 //
@@ -66,7 +69,8 @@ constexpr Expose kExposes[] = {
 };
 
 constexpr const char* kModels[] = { "TS0601" };
-constexpr const char* kManus[]  = { "_TZE284_2fnssffc" };
+constexpr const char* kManus[]  = { "_TZE284_2fnssffc", "_TZE284_y7hpvgyp" };
+constexpr WhiteLabel kWhiteLabels[] = { {"Moes", "ZM7LT1"} };
 }  // namespace
 
 extern const PreparedDefinition kDef_ZM6LT1{
@@ -75,7 +79,7 @@ extern const PreparedDefinition kDef_ZM6LT1{
     .manufacturer_names=kManus, .manufacturer_names_count=sizeof(kManus)/sizeof(kManus[0]),
     .model="ZM6LT1", .vendor="Moes",
     .meta=nullptr, .exposes=kExposes, .exposes_count=sizeof(kExposes)/sizeof(kExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWhiteLabels, .white_labels_count=sizeof(kWhiteLabels)/sizeof(kWhiteLabels[0]),
     .from_zigbee=FX::fz_list, .from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list, .to_zigbee_count=FX::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr,

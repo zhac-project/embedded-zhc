@@ -6,10 +6,12 @@ namespace zhc::devices::nova_digital {
 
 extern const PreparedDefinition kDef_NFZB_2;
 extern const PreparedDefinition kDef_ZCMR_1;
+extern const PreparedDefinition kDef_ZTS_8B;
 
 const PreparedDefinition* const kNovaDigitalRegistry[] = {
     &kDef_NFZB_2,
     &kDef_ZCMR_1,
+    &kDef_ZTS_8B,
 };
 
 const std::size_t kNovaDigitalRegistryCount = sizeof(kNovaDigitalRegistry) / sizeof(kNovaDigitalRegistry[0]);

@@ -12,7 +12,13 @@
 //
 // 2026-04-28p MERCATOR sweep — fixed up from on/off-only stub.
 //
+// z2m v26.125.0: configure = magic packet, bind EP1 genOnOff/haElectrical/
+// seMetering + EP2 genOnOff, reporting onOff on both, rmsVoltage Δ5,
+// rmsCurrent Δ50, activePower Δ1 on EP1 (power data was silent until a
+// manual read).
+//
 // z2m-source: mercator.ts #SPP04G.
+#include "definitions/tuya/_shared.hpp"
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::mercator {
@@ -42,6 +48,18 @@ constexpr BindingSpec kBindings_SPP04G[] = {
     { 1, 0x0702 }, { 1, 0x0B04 },
 };
 
+constexpr ConfigStep kSteps_SPP04G[] = {
+    { ConfigStepOp::Read, 1, 0x0000, 0x00, 0, ::zhc::tuya::kTuyaMagicPacketAttrs, sizeof(::zhc::tuya::kTuyaMagicPacketAttrs), 0 },
+};
+
+constexpr ReportingSpec kReports_SPP04G[] = {
+    { 1, 0x0006, 0x0000, 0x10, 0, 3600, 0,  0 },   // onOff
+    { 2, 0x0006, 0x0000, 0x10, 0, 3600, 0,  0 },
+    { 1, 0x0B04, 0x0505, 0x21, 5, 3600, 5,  0 },   // rmsVoltage
+    { 1, 0x0B04, 0x0508, 0x21, 5, 3600, 50, 0 },   // rmsCurrent
+    { 1, 0x0B04, 0x050B, 0x29, 5, 3600, 1,  0 },   // activePower
+};
+
 constexpr ::zhc::EndpointLabel kEndpoints_SPP04G[] = {
     { "left",  1 },
     { "right", 2 },
@@ -61,6 +79,8 @@ extern const PreparedDefinition kDef_SPP04G{
     .to_zigbee=kTz_SPP04G, .to_zigbee_count=sizeof(kTz_SPP04G)/sizeof(kTz_SPP04G[0]),
     .configure=nullptr, .on_event=nullptr,
     .bindings=kBindings_SPP04G, .bindings_count=sizeof(kBindings_SPP04G)/sizeof(kBindings_SPP04G[0]),
+    .reports=kReports_SPP04G, .reports_count=sizeof(kReports_SPP04G)/sizeof(kReports_SPP04G[0]),
+    .config_steps=kSteps_SPP04G, .config_steps_count=sizeof(kSteps_SPP04G)/sizeof(kSteps_SPP04G[0]),
     .endpoint_map       = kEndpoints_SPP04G,
     .endpoint_map_count = sizeof(kEndpoints_SPP04G)/sizeof(kEndpoints_SPP04G[0]),
 };

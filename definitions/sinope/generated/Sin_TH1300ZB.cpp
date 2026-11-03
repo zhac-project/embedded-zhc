@@ -19,6 +19,7 @@ const FzConverter* const kFz_TH1300ZB[] = {
     &::zhc::generic::kFzThermostat,
     &::zhc::sinope::kFzSinopeManu,
     &::zhc::sinope::kFzSinopeHvacManu,
+    &::zhc::sinope::kFzSinopeFloorRoomRefresh,
 };
 const TzConverter* const kTz_TH1300ZB[] = {
     &::zhc::generic::kTzThermostat,
@@ -37,6 +38,12 @@ const TzConverter* const kTz_TH1300ZB[] = {
     &::zhc::sinope::kTzSinopeEcoMode,
 };
 constexpr const char* kModels_TH1300ZB[] = { "TH1300ZB", "TH1320ZB-04" };
+// Initial floor/room temperature read (z2m v26.125.0 configure); later
+// refreshes ride kFzSinopeFloorRoomRefresh.
+constexpr ConfigStep kSteps_TH1300ZB[] = {
+    { ConfigStepOp::Read, 1, 0xFF01, 0x00, 0, ::zhc::sinope::kSinopeFloorRoomAttrs,
+      sizeof(::zhc::sinope::kSinopeFloorRoomAttrs), 0, 0x119C },
+};
 
 }  // namespace
 
@@ -79,6 +86,8 @@ extern const PreparedDefinition kDef_TH1300ZB{
     .to_zigbee=kTz_TH1300ZB, .to_zigbee_count=sizeof(kTz_TH1300ZB)/sizeof(kTz_TH1300ZB[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=nullptr, .reports_count=0,
+    .config_steps=kSteps_TH1300ZB, .config_steps_count=sizeof(kSteps_TH1300ZB)/sizeof(kSteps_TH1300ZB[0]),
 };
 
 }  // namespace zhc::devices::sinope

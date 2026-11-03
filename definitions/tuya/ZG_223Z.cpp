@@ -3,7 +3,8 @@
 // Tier 2: HOBEIAN ZG-223Z rainwater sensor, graduated from the generated copy
 // (which exposed only a stray `action`). z2m v26.115.1 moves it to hobeian.ts
 // and adds `_TZE200_gt1gge3x` and the HYSYIOT HS118Z (zigbeeModel HS118Z,
-// manufacturer HYSYIOT). Datapoints: 1 rainwater, 2 sensitivity,
+// manufacturer HYSYIOT); v26.125.0 adds the AOYAN AY-223Z white-label
+// (zigbeeModel AY-223Z). Datapoints: 1 rainwater, 2 sensitivity,
 // 101 illuminance_sampling, 102 illuminance, 104 battery. The zigbeeModel
 // fingerprints are the second definition, kDef_ZG_223Z_model.
 // z2m-source: hobeian.ts #ZG-223Z.
@@ -36,7 +37,7 @@ constexpr Expose kExp[] = {
 };
 constexpr const char* kM[] = { "TS0601" };
 constexpr const char* kN[] = { "_TZE200_jsaqgakf", "_TZE200_u6x1zyv2", "_TZE200_2pddnnrk", "_TZE200_gt1gge3x" };
-constexpr WhiteLabel kWL[] = { {"HYSYIOT", "HS118Z"} };
+constexpr WhiteLabel kWL[] = { {"HYSYIOT", "HS118Z"}, {"AOYAN", "AY-223Z"} };
 }  // namespace
 
 extern const PreparedDefinition kDef_ZG_223Z{
@@ -50,7 +51,7 @@ extern const PreparedDefinition kDef_ZG_223Z{
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };
 
 namespace {
-constexpr const char* kM_model[] = { "ZG-223Z", "HS118Z" };
+constexpr const char* kM_model[] = { "ZG-223Z", "HS118Z", "AY-223Z" };
 }  // namespace
 
 // Upstream's zigbeeModel fingerprints match whatever the manufacturer name.

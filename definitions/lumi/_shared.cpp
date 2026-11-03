@@ -331,6 +331,38 @@ bool fz_lumi_switch_action(const DecodedMessage& msg, const FzConverter& self,
     return true;
 }
 
+// z2m lumiKnobRotation (see the header).
+bool fz_lumi_knob_rotation(const DecodedMessage& msg, const FzConverter& self,
+                           const PreparedDefinition&, RuntimeContext&,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* ev = msg.payload.find("570");
+    if (!ev || ev->type != ValueType::Uint) return false;
+    static constexpr const char* kActions[] = {"start_rotating", "rotation", "stop_rotating"};
+    const std::uint64_t code = ev->u & 0x7F;
+    if (code < 1 || code > 3) return false;
+    Value a{};
+    a.type = ValueType::StringRef;
+    a.str  = kActions[code - 1];
+    out.put("action", a);
+    const auto* opts = static_cast<const LumiKnobOpts*>(self.user_config);
+    const bool pressed = (ev->u & 0x80) != 0 ||
+                         (opts && opts->pressed_endpoint && msg.src_endpoint == opts->pressed_endpoint);
+    Value b{};
+    b.type = ValueType::StringRef;
+    b.str  = kLumiKnobButtonStates[pressed ? 1 : 0];
+    out.put("action_rotation_button_state", b);
+    static constexpr struct { const char* attr; const char* key; } kFigures[] = {
+        {"558", "action_rotation_angle"},   {"560", "action_rotation_angle_speed"},
+        {"563", "action_rotation_percent"}, {"562", "action_rotation_percent_speed"},
+        {"561", "action_rotation_time"},
+    };
+    for (const auto& f : kFigures)
+        if (const Value* v = msg.payload.find(f.attr)) out.put(f.key, *v);
+    return true;
+}
+
+extern const FzConverter kFzLumiKnobRotation = lumi_knob_rotation_converter(nullptr);
+
 // ── Xiaomi Mi Cube (MFKZQ01LM) action decoders ─────────────────────
 //
 // z2m-source: lumi.ts `lumi_action_multistate` + `lumi_action_analog`.
@@ -1065,8 +1097,8 @@ bool fz_lumi_heartbeat(const DecodedMessage& msg, const FzConverter& self,
                     break;
                 case 3:
                     // A constant 25 °C on these (z2m issues 11126, 13253).
-                    if (!model_is(model, {"WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "MCCGQ14LM",
-                                          "GZCGQ01LM", "JY-GZ-01AQ", "JYGZ01AQ", "CTP-R01"}))
+                    if (!model_is(model, {"WXCJKG11LM", "WXCJKG12LM", "WXCJKG13LM", "MCCGQ13LM",
+                                          "MCCGQ14LM", "GZCGQ01LM", "JY-GZ-01AQ", "JYGZ01AQ", "CTP-R01"}))
                         temperature = *v;
                     break;
                 case 5:
@@ -1201,6 +1233,7 @@ ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBasic,      "operation_mode",        "gen
 ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBasicLeft,  "operation_mode_left",   "genBasic", 0x0000, kSpecOpModeLeft, 1)
 ZHC_LUMI_OPMODE_TZ(kTzLumiOperationModeBasicRight, "operation_mode_right",  "genBasic", 0x0000, kSpecOpModeRight, 1)
 ZHC_LUMI_OPMODE_TZ(kTzLumiCommandMode,             "operation_mode",        "manuSpecificLumi", 0xFCC0, kSpecCommandMode, 1)
+ZHC_LUMI_OPMODE_TZ(kTzLumiEventMode,               "event_mode",            "manuSpecificLumi", 0xFCC0, kSpecCommandMode, 1)
 #undef ZHC_LUMI_OPMODE_TZ
 
 // A report is published under the key of the definition's own writer for its

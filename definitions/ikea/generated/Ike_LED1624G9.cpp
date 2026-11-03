@@ -10,7 +10,7 @@ namespace zhc::devices::ikea {
 namespace {
 
 
-constexpr const char* kModels_LED1624G9[] = { "TRADFRI bulb E27 CWS opal 600lm", "TRADFRI bulb E26 CWS opal 600lm", "TRADFRI bulb E14 CWS opal 600lm", "TRADFRI bulb E12 CWS opal 600lm", "TRADFRI bulb E27 C/WS opal 600" };
+constexpr const char* kModels_LED1624G9[] = { "TRADFRI bulb E27 CWS opal 600lm", "TRADFRI bulb E26 CWS opal 600lm", "TRADFRI bulb E14 CWS opal 600lm", "TRADFRI bulb E12 CWS opal 600lm", "TRADFRI bulb E27 C/WS opal 600", "TRADFRI bulb E17 CWS opal 600lm" };
 
 }  // namespace
 

@@ -106,6 +106,7 @@ extern const PreparedDefinition kDef_T2035;
 extern const PreparedDefinition kDef_T2037;
 extern const PreparedDefinition kDef_T2105;
 extern const PreparedDefinition kDef_T2106;
+extern const PreparedDefinition kDef_E2435_NA;
 
 const PreparedDefinition* const kIkeaRegistry[] = {
     &kDef_E160x_E170x_E190x,
@@ -208,6 +209,7 @@ const PreparedDefinition* const kIkeaRegistry[] = {
     &kDef_T2037,
     &kDef_T2105,
     &kDef_T2106,
+    &kDef_E2435_NA,
 };
 const std::size_t kIkeaRegistryCount = sizeof(kIkeaRegistry) / sizeof(kIkeaRegistry[0]);
 

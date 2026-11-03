@@ -37,11 +37,14 @@ bool decode_frame(const InboundApsFrame& frame,
     // Tuya family covers only the DP-stream command ids. Other
     // cluster-specific commands on cluster 0xEF00 (mcuSyncTime, etc.)
     // are classified as normal Zcl so cluster-specific FzConverters
-    // match them without going through the DP parser.
+    // match them without going through the DP parser. 0x0A is
+    // herdsman's `dataReportAlt`: newer _TZE284_ devices send their
+    // datapoints with it, same payload as dataReport (0x02).
     const bool is_tuya_dp_cmd =
         hdr.command_id == 0x01 ||
         hdr.command_id == 0x02 ||
-        hdr.command_id == 0x06;
+        hdr.command_id == 0x06 ||
+        hdr.command_id == 0x0A;
     out.family = (frame.cluster_id == CLUSTER_TUYA &&
                    hdr.cluster_specific && is_tuya_dp_cmd)
                  ? FrameFamily::TuyaDp

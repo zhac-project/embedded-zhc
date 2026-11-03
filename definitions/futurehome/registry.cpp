@@ -11,6 +11,7 @@ extern const PreparedDefinition kDefFut__TZE200_e5hpkc6d;
 extern const PreparedDefinition kDefFut__TZE204_e5hpkc6d;
 extern const PreparedDefinition kDef_D4509243;
 extern const PreparedDefinition kDef_TS0601_futurehome_thermostat;
+extern const PreparedDefinition kDef_FH9127;
 
 const PreparedDefinition* const kFuturehomeRegistry[] = {
     &kDefFut__TZE200_4hbx5cvx,
@@ -18,6 +19,7 @@ const PreparedDefinition* const kFuturehomeRegistry[] = {
     &kDefFut__TZE204_e5hpkc6d,
     &kDef_D4509243,
     &kDef_TS0601_futurehome_thermostat,
+    &kDef_FH9127,
 };
 const std::size_t kFuturehomeRegistryCount = sizeof(kFuturehomeRegistry) / sizeof(kFuturehomeRegistry[0]);
 

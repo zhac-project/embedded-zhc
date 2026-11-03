@@ -765,7 +765,7 @@ extern const PreparedDefinition kDefGen__TZE204_432zhuwe;
 extern const PreparedDefinition kDefGen__TZE204_4bjixefp;
 extern const PreparedDefinition kDefGen__TZE204_57hjqelq;
 extern const PreparedDefinition kDefGen__TZE204_68utemio;
-extern const PreparedDefinition kDefGen__TZE204_6a4vxfnv;
+extern const PreparedDefinition kDef_TS0601_floor_thermostat_006;
 extern const PreparedDefinition kDefGen__TZE204_6vwfjkcj;
 extern const PreparedDefinition kDefGen__TZE204_6wi2mope;
 extern const PreparedDefinition kDefGen__TZE204_72bewjky;
@@ -786,7 +786,6 @@ extern const PreparedDefinition kDefGen__TZE204_ad2jkxwh;
 extern const PreparedDefinition kDefGen__TZE204_adlblwab;
 extern const PreparedDefinition kDefGen__TZE204_ai4rqhky;
 extern const PreparedDefinition kDefGen__TZE204_atdqo4nj;
-extern const PreparedDefinition kDefGen__TZE204_bjzrowv2;
 extern const PreparedDefinition kDefGen__TZE204_bkkmqmyo;
 extern const PreparedDefinition kDefGen__TZE204_bmdsp6bs;
 extern const PreparedDefinition kDefGen__TZE204_bql5khqx;
@@ -989,7 +988,6 @@ extern const PreparedDefinition kDefGen__TZE284_ajuasrmx;
 extern const PreparedDefinition kDefGen__TZE284_ap9owrsa;
 extern const PreparedDefinition kDefGen__TZE284_atuj3i0w;
 extern const PreparedDefinition kDefGen__TZE284_awepdiwi;
-extern const PreparedDefinition kDefGen__TZE284_bjzrowv2;
 extern const PreparedDefinition kDefGen__TZE284_bw4ayyeh;
 extern const PreparedDefinition kDefGen__TZE284_c6wv4xyo;
 extern const PreparedDefinition kDefGen__TZE284_cgr0rhza;
@@ -1435,7 +1433,6 @@ extern const PreparedDefinition kDefTZE200_vzekyi4c;
 extern const PreparedDefinition kDefTZE200_wall_airq;
 extern const PreparedDefinition kDefTZE200_wall_heater;
 extern const PreparedDefinition kDefTZE200_washer;
-extern const PreparedDefinition kDefTZE200_water_boiler;
 extern const PreparedDefinition kDefTZE200_water_heater;
 extern const PreparedDefinition kDefTZE200_water_timer;
 extern const PreparedDefinition kDefTZE200_wind;
@@ -1513,6 +1510,15 @@ extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq;
 extern const PreparedDefinition kDef_TOQCB2_80_lyqazpe6;
 extern const PreparedDefinition kDef_ZG_102ZA;
 extern const PreparedDefinition kDef_TS0001_p26flek3;
+extern const PreparedDefinition kDef_HYT001ZB;
+extern const PreparedDefinition kDef_APRM_04_005;
+extern const PreparedDefinition kDef_T119710;
+extern const PreparedDefinition kDef_ZRF01;
+extern const PreparedDefinition kDef_OXT_4CH_RELAY_AC;
+extern const PreparedDefinition kDef_TS0601_cover_15;
+extern const PreparedDefinition kDef_TS130F_xbexmf8h;
+extern const PreparedDefinition kDefTS0505B_hs;
+extern const PreparedDefinition kDefTS0503B_hs;
 
 extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_CK_BL702_AL_01_Z102,
@@ -2259,7 +2265,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_4bjixefp,
     &kDefGen__TZE204_57hjqelq,
     &kDefGen__TZE204_68utemio,
-    &kDefGen__TZE204_6a4vxfnv,
+    &kDef_TS0601_floor_thermostat_006,
     &kDefGen__TZE204_6vwfjkcj,
     &kDefGen__TZE204_6wi2mope,
     &kDefGen__TZE204_72bewjky,
@@ -2280,7 +2286,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_adlblwab,
     &kDefGen__TZE204_ai4rqhky,
     &kDefGen__TZE204_atdqo4nj,
-    &kDefGen__TZE204_bjzrowv2,
     &kDefGen__TZE204_bkkmqmyo,
     &kDefGen__TZE204_bmdsp6bs,
     &kDefGen__TZE204_bql5khqx,
@@ -2483,7 +2488,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE284_ap9owrsa,
     &kDefGen__TZE284_atuj3i0w,
     &kDefGen__TZE284_awepdiwi,
-    &kDefGen__TZE284_bjzrowv2,
     &kDefGen__TZE284_bw4ayyeh,
     &kDefGen__TZE284_c6wv4xyo,
     &kDefGen__TZE284_cgr0rhza,
@@ -2928,7 +2932,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_wall_airq,
     &kDefTZE200_wall_heater,
     &kDefTZE200_washer,
-    &kDefTZE200_water_boiler,
     &kDefTZE200_water_heater,
     &kDefTZE200_water_timer,
     &kDefTZE200_wind,
@@ -3011,6 +3014,15 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_TOQCB2_80_lyqazpe6,
     &kDef_ZG_102ZA,
     &kDef_TS0001_p26flek3,
+    &kDefTS0505B_hs,
+    &kDefTS0503B_hs,
+    &kDef_HYT001ZB,
+    &kDef_APRM_04_005,
+    &kDef_T119710,
+    &kDef_ZRF01,
+    &kDef_OXT_4CH_RELAY_AC,
+    &kDef_TS0601_cover_15,
+    &kDef_TS130F_xbexmf8h,
 };
 
 extern const std::size_t kTuyaRegistryCount =

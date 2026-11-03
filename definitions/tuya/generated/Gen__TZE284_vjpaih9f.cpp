@@ -16,8 +16,17 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_vjpaih9f_preset_dp2[] = {
     { 6, "off" },
 };
 
+// DP2 also carries system_mode (z2m thermostatSystemModeAndPresetMap, v26.125.0):
+// decode fans out with `preset`; a system_mode write hits the first match
+// (heat=0, auto=1, off=6), same as upstream's toMap.
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_vjpaih9f_system_mode_dp2[] = {
+    { 0, "heat" }, { 1, "auto" }, { 2, "heat" }, { 3, "heat" },
+    { 4, "heat" }, { 5, "heat" }, { 6, "off" },
+};
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_vjpaih9f[] = {
     { 2, "preset", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_vjpaih9f_preset_dp2, sizeof(kEnum__TZE284_vjpaih9f_preset_dp2)/sizeof(kEnum__TZE284_vjpaih9f_preset_dp2[0]) },
+    { 2, "system_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE284_vjpaih9f_system_mode_dp2, sizeof(kEnum__TZE284_vjpaih9f_system_mode_dp2)/sizeof(kEnum__TZE284_vjpaih9f_system_mode_dp2[0]) },
     { 4, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 5, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 6, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
@@ -33,12 +42,12 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_vjpaih9f[] = {
     { 34, "schedule_sunday", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagScheduleDay },
     { 35, "battery_low", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 36, "frost_protection", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
-    { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 47, "local_temperature_calibration", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 103, "eco_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 104, "comfort_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 105, "frost_protection_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_vjpaih9f{ kEntries__TZE284_vjpaih9f, 20 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_vjpaih9f{ kEntries__TZE284_vjpaih9f, sizeof(kEntries__TZE284_vjpaih9f)/sizeof(kEntries__TZE284_vjpaih9f[0]) };
 constexpr FzConverter kFzDp__TZE284_vjpaih9f{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",
@@ -70,10 +79,12 @@ constexpr const char* kN__TZE284_vjpaih9f[] = { "_TZE284_vjpaih9f" };
 // --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
 constexpr const char* kAutoOpts__TZE284_vjpaih9f_2[] = {"manual", "schedule", "eco", "comfort", "frost_protection", "holiday", "off"};
 constexpr const char* kAutoOpts__TZE284_vjpaih9f_3[] = {"idle", "heat"};
+constexpr const char* kAutoOpts__TZE284_vjpaih9f_sm[] = {"off", "heat", "auto"};
 constexpr Expose kAutoExposes__TZE284_vjpaih9f[] = {
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, 5, 35, 0},
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"preset", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_vjpaih9f_2, 7},
+    {"system_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE284_vjpaih9f_sm, 3},
     {"running_state", ExposeType::Enum, Access::State, nullptr, nullptr, kAutoOpts__TZE284_vjpaih9f_3, 2},
     {"local_temperature_calibration", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0, ExposeCategory::State, -9, 9, 0},
     {"child_lock", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},

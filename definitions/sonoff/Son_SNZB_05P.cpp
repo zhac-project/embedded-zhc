@@ -4,7 +4,9 @@
 // GRADUATED from definitions/sonoff/generated/Son_SNZB_05P.cpp: z2m v26.92.0
 // added m.forcePowerSource({powerSource: "Battery"}) because this sensor
 // misreports Basic 0x0007. Otherwise a verbatim copy.
-// Zigbee water sensor
+// Zigbee water sensor. m.iasZoneAlarm({zoneType:"water_leak", zoneAttributes:
+// ["alarm_1","battery_low"]}) -> `water_leak`, not the generic `alarm` (v26.125.0
+// window; Besisglas WL01 rides on this def).
 // z2m-source: sonoff.ts #SNZB-05P.
 #include "definitions/_generic/_shared.hpp"
 
@@ -12,7 +14,7 @@ namespace zhc::devices::sonoff {
 namespace {
 const FzConverter* const kFz_SNZB_05P[] = {
     &::zhc::generic::kFzBattery,
-    &::zhc::generic::kFzIasZone,
+    &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
 constexpr const char* kModels_SNZB_05P[] = { "SNZB-05P" };
@@ -24,8 +26,7 @@ constexpr const char* kModels_SNZB_05P[] = { "SNZB-05P" };
 constexpr Expose kAutoExposes[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0},
-    {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"water_leak", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
 };
 

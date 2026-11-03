@@ -222,6 +222,7 @@ constexpr SchneiderAttrEntry kThermostatEntries[] = {
         kEnumWiserZoneMode,
         sizeof(kEnumWiserZoneMode) / sizeof(kEnumWiserZoneMode[0])},
     {0xE011, "wiser_hact_config",          SchneiderAttrType::UintU, nullptr, 0},
+    {0xE012, "window_open",                SchneiderAttrType::Bool,  nullptr, 0},
     {0xE110, "wiser_specific",             SchneiderAttrType::UintU, nullptr, 0},
     {0xE211, "control_status",             SchneiderAttrType::UintU, nullptr, 0},
     {0xE212, "local_temperature_source",   SchneiderAttrType::UintU, nullptr, 0},

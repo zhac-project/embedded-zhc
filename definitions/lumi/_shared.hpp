@@ -298,6 +298,7 @@ extern const TzConverter kTzLumiOperationModeBasic;       // genBasic 0xFF22, on
 extern const TzConverter kTzLumiOperationModeBasicLeft;   // genBasic 0xFF22
 extern const TzConverter kTzLumiOperationModeBasicRight;  // genBasic 0xFF23
 extern const TzConverter kTzLumiCommandMode;              // 0x0009
+extern const TzConverter kTzLumiEventMode;                // 0x0009 as `event_mode` (KD-R01D)
 
 // Reads those attributes back under the key of the definition's own writer
 // for them: 0x0200 per endpoint (a button's key only from its endpoint, the
@@ -358,6 +359,50 @@ constexpr FzConverter lumi_switch_action_converter(const LumiButtons* buttons) {
         .user_config       = buttons,
     };
 }
+
+// z2m lumiKnobRotation: manuSpecificLumi 570 (0x023A) → action start_rotating /
+// rotation / stop_rotating (low 7 bits 1 / 2 / 3), the figures 558 angle,
+// 560 angle speed, 561 time, 562 percent speed and 563 percent as reported,
+// and action_rotation_button_state: pressed when bit 7 is set or the report
+// comes from `pressed_endpoint` (KD-R01D: 72; 0 = none).
+struct LumiKnobOpts {
+    std::uint8_t pressed_endpoint;
+};
+bool fz_lumi_knob_rotation(const DecodedMessage& msg, const FzConverter& self,
+                           const PreparedDefinition& def, RuntimeContext& ctx,
+                           FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out);
+constexpr FzConverter lumi_knob_rotation_converter(const LumiKnobOpts* opts) {
+    return FzConverter{
+        .family            = FrameFamily::Zcl,
+        .cluster           = "manuSpecificLumi",
+        .type_mask         = type_bit(MessageType::AttributeReport) |
+                             type_bit(MessageType::ReadResponse),
+        .command_id        = WILDCARD_CMD_ID,
+        .attr_id           = WILDCARD_ATTR_ID,
+        .endpoint          = WILDCARD_ENDPOINT,
+        .frame_flags_mask  = 0,
+        .frame_flags_value = 0,
+        .direction         = Direction::ServerToClient,
+        .fn                = { .zcl_fn = &fz_lumi_knob_rotation },
+        .user_config       = opts,
+    };
+}
+extern const FzConverter kFzLumiKnobRotation;   // no pressed endpoint
+inline constexpr const char* kLumiKnobButtonStates[] = {"released", "pressed"};
+// The knob's exposes besides `action` (start_rotating / rotation / stop_rotating).
+#define ZHC_LUMI_KNOB_ROTATION_EXPOSES \
+    {"action_rotation_angle", ExposeType::Numeric, Access::State, "*", "Rotation angle", nullptr, 0, \
+     ExposeCategory::Diagnostic}, \
+    {"action_rotation_angle_speed", ExposeType::Numeric, Access::State, "*", "Rotation angle speed", nullptr, 0, \
+     ExposeCategory::Diagnostic}, \
+    {"action_rotation_percent", ExposeType::Numeric, Access::State, "%", "Rotation percent", nullptr, 0, \
+     ExposeCategory::Diagnostic}, \
+    {"action_rotation_percent_speed", ExposeType::Numeric, Access::State, "%", "Rotation percent speed", nullptr, 0, \
+     ExposeCategory::Diagnostic}, \
+    {"action_rotation_time", ExposeType::Numeric, Access::State, "ms", "Rotation time", nullptr, 0, \
+     ExposeCategory::Diagnostic}, \
+    {"action_rotation_button_state", ExposeType::Enum, Access::State, nullptr, "Button state during rotation", \
+     ::zhc::lumi::kLumiKnobButtonStates, 2, ExposeCategory::Diagnostic}
 
 // (kFzLumiCurtainPosition already declared earlier in this header.)
 

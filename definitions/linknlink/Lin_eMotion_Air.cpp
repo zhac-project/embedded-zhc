@@ -52,6 +52,8 @@ extern const PreparedDefinition kDef_eMotion_Air{
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
     .bindings=kBindings, .bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
+    // z2m v26.125.0: m.forcePowerSource({powerSource: "Battery"}).
+    .power_source_override=0x03,  // ZCL Basic 0x0007 = Battery
 };
 
 }  // namespace zhc::devices::linknlink

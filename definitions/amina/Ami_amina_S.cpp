@@ -197,15 +197,21 @@ bool fz_amina_offline_cfg(const DecodedMessage& msg, const FzConverter&,
     return any;
 }
 
-// ── fz_amina_level — genLevelCtrl::currentLevel → "charge_limit" ────
+// ── fz_amina_level — genLevelCtrl::currentLevel → "charge_limit",
+//    maxLevel (0x0011) → "hardware_current_limit" (z2m v26.125.0) ──────
 bool fz_amina_level(const DecodedMessage& msg, const FzConverter&,
                     const PreparedDefinition&, RuntimeContext&,
                     FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    const Value* v = msg.payload.find("0");   // attr 0x0000 currentLevel
-    if (!v || v->type != ValueType::Uint) return false;
-    Value e{};  e.type = ValueType::Uint;  e.u = v->u;
-    out.put("charge_limit", e);
-    return true;
+    bool any = false;
+    auto pull = [&](const char* attr, const char* key) {
+        const Value* v = msg.payload.find(attr);
+        if (!v || v->type != ValueType::Uint) return;
+        Value e{};  e.type = ValueType::Uint;  e.u = v->u;
+        any |= out.put(key, e);
+    };
+    pull("0",  "charge_limit");             // 0x0000 currentLevel
+    pull("17", "hardware_current_limit");   // 0x0011 maxLevel, read at configure
+    return any;
 }
 
 // FzConverter records ────────────────────────────────────────────────
@@ -401,6 +407,12 @@ const TzConverter* const kTz_amina_S[] = {
 
 constexpr const char* kModels_amina_S[] = { "amina S" };
 
+// hardware_current_limit is STATE_GET with no reporting: read it once.
+constexpr std::uint8_t kReadMaxLevel[] = { 0x11, 0x00 };
+constexpr ConfigStep kSteps_amina_S[] = {
+    { ConfigStepOp::Read, 10, 0x0008, 0x00, 0, kReadMaxLevel, sizeof(kReadMaxLevel), 0, 0 },
+};
+
 constexpr Expose kAutoExposes[] = {
     {"state",                    ExposeType::Binary,  Access::StateSet, nullptr, "Charger relay",                        nullptr, 0},
     {"power",                    ExposeType::Numeric, Access::State,    "W",     "Instantaneous measured power",         nullptr, 0},
@@ -418,6 +430,8 @@ constexpr Expose kAutoExposes[] = {
     {"last_session_energy",      ExposeType::Numeric, Access::State,    "kWh",   "Energy delivered last charge session", nullptr, 0},
     {"charge_limit",             ExposeType::Numeric, Access::StateSet, "A",     "Maximum allowed amperage draw",        nullptr, 0},
     {"charge_limit_with_on_off", ExposeType::Numeric, Access::StateSet, "A",     "Charge amperage + on/off",             nullptr, 0},
+    {"hardware_current_limit",   ExposeType::Numeric, Access::State,    "A",     "Maximum charging current allowed by the hardware setting",
+     nullptr, 0, ExposeCategory::Diagnostic, 6, 32, 0},
     {"ev_status",                ExposeType::String,  Access::State,    nullptr, "Current charging status",              nullptr, 0},
     {"ev_connected",             ExposeType::Binary,  Access::State,    nullptr, "EV is connected to the charger",       nullptr, 0},
     {"charging",                 ExposeType::Binary,  Access::State,    nullptr, "Power is being delivered",             nullptr, 0},
@@ -461,6 +475,10 @@ extern const PreparedDefinition kDef_amina_S{
     .on_event                 = nullptr,
     .bindings                 = kAutoBindings,
     .bindings_count           = sizeof(kAutoBindings) / sizeof(kAutoBindings[0]),
+    .reports                  = nullptr,
+    .reports_count            = 0,
+    .config_steps             = kSteps_amina_S,
+    .config_steps_count       = sizeof(kSteps_amina_S) / sizeof(kSteps_amina_S[0]),
 };
 
 }  // namespace zhc::devices::amina

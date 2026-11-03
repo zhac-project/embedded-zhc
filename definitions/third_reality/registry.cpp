@@ -41,6 +41,7 @@ extern const PreparedDefinition kDef_D3RTHS24BZ;
 extern const PreparedDefinition kDef_D3RVS01031Z;
 extern const PreparedDefinition kDef_D3RWS0218Z;
 extern const PreparedDefinition kDef_3RKS030Z;
+extern const PreparedDefinition kDef_D3ROR0194Z;
 
 const PreparedDefinition* const kThirdRealityRegistry[] = {
     &kDef_D3RCB01057Z,
@@ -78,6 +79,7 @@ const PreparedDefinition* const kThirdRealityRegistry[] = {
     &kDef_D3RVS01031Z,
     &kDef_D3RWS0218Z,
     &kDef_3RKS030Z,
+    &kDef_D3ROR0194Z,
 };
 const std::size_t kThirdRealityRegistryCount = sizeof(kThirdRealityRegistry) / sizeof(kThirdRealityRegistry[0]);
 

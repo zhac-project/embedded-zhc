@@ -153,6 +153,9 @@ inline const char* cluster_name(std::uint16_t cluster_id,
                 if (manufacturer_code == 0x1015) return "manuSpecificDevelcoAirQuality";
                 if (manufacturer_code == 0x132F) return "manuSpecificYandex";
                 break;
+            case 0xFF16:  // Schneider cycle time (CCTFR6000, EKO07259)
+                if (manufacturer_code == 0x105E) return "schneiderCycleTime";
+                break;
             // Unique-id custom clusters (no cross-vendor collision):
             case 0xFC0A: return "manuSpecificYokisPilotWire";
             case 0xFC40: return "manuSpecificLegrandDevices2";

@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: Tuya ZG-103Z vibration sensor, graduated from the generated copy.
 // z2m v26.115.1 moves `_TZE200_yjryxpot` from here to ZG-102ZM. Datapoints:
-// 1 vibration / 7 tilt (trueFalseEnum1), 101-103 x / y / z, 104 sensitivity,
+// 1 vibration / 7 tilt (trueFalseEnum1), 101-103 x / y / z (signed 8-bit since
+// v26.125.0, twosComplement8Bit), 104 sensitivity,
 // 105 battery. zigbeeModel ZG-103Z is kDef_ZG_103Z_model.
 // z2m-source: hobeian.ts #ZG-103Z.
 #include "definitions/tuya/_shared.hpp"
@@ -18,9 +19,9 @@ struct cfg {
     static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
         { 1, "vibration", ::zhc::TuyaDpType::Enum, 1, kEnum1, 1, ::zhc::tuya::kTuyaDpFlagEnumBool },
         { 7, "tilt", ::zhc::TuyaDpType::Enum, 1, kEnum1, 1, ::zhc::tuya::kTuyaDpFlagEnumBool },
-        ::zhc::tuya::dp::numeric(101, "x", 1),
-        ::zhc::tuya::dp::numeric(102, "y", 1),
-        ::zhc::tuya::dp::numeric(103, "z", 1),
+        { 101, "x", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagSigned8 },
+        { 102, "y", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagSigned8 },
+        { 103, "z", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagSigned8 },
         ::zhc::tuya::dp::enum_lookup(104, "sensitivity", kSensitivity104, 3),
         ::zhc::tuya::dp::numeric(105, "battery", 1),
     };
@@ -31,9 +32,9 @@ constexpr const char* kOpts6[] = { "low", "middle", "high" };
 constexpr Expose kExp[] = {
     {"vibration", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tilt", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
-    {"x", ExposeType::Numeric, Access::State, nullptr, "X coordinate", nullptr, 0, ExposeCategory::State, 0, 256, 1},
-    {"y", ExposeType::Numeric, Access::State, nullptr, "Y coordinate", nullptr, 0, ExposeCategory::State, 0, 256, 1},
-    {"z", ExposeType::Numeric, Access::State, nullptr, "Z coordinate", nullptr, 0, ExposeCategory::State, 0, 256, 1},
+    {"x", ExposeType::Numeric, Access::State, nullptr, "X coordinate", nullptr, 0, ExposeCategory::State, -128, 127, 1},
+    {"y", ExposeType::Numeric, Access::State, nullptr, "Y coordinate", nullptr, 0, ExposeCategory::State, -128, 127, 1},
+    {"z", ExposeType::Numeric, Access::State, nullptr, "Z coordinate", nullptr, 0, ExposeCategory::State, -128, 127, 1},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
     {"sensitivity", ExposeType::Enum, Access::StateSet, nullptr, "Vibration detection sensitivity", kOpts6, 3},
 };

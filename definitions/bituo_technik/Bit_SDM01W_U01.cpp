@@ -19,7 +19,7 @@ const FzConverter* const kFz_SDM01W_U01[] = {
 const TzConverter* const kTz_SDM01W_U01[] = {
     &::zhc::generic::kTzOnOff,
 };
-constexpr const char* kModels_SDM01W_U01[] = { "SDM01W", "SDM01-3Z1" };
+constexpr const char* kModels_SDM01W_U01[] = { "SDM01W", "SDM01-3Z1", "SDM01G2W" };
 
 }  // namespace
 
@@ -77,6 +77,7 @@ constexpr BindingSpec kAutoBindings[] = {
 
 constexpr WhiteLabel kWhiteLabels_SDM01W_U01[] = {
     {"Zemismart","SDM01-3Z1"},
+    {"BITUO TECHNIK","SDM01G2W-U01"},
 };
 extern const PreparedDefinition kDef_SDM01W_U01{
     .zigbee_models=kModels_SDM01W_U01, .zigbee_models_count=sizeof(kModels_SDM01W_U01)/sizeof(kModels_SDM01W_U01[0]),
