@@ -56,7 +56,7 @@ bool has_expose(const PreparedDefinition& def, const char* name) {
 }
 
 // hvacThermostat (0x0201) OccupiedCoolingSetpoint attr 0x0011, int16.
-//   0x0898 = 2200 raw -> z2m 22.00 °C (ZHC emits the raw int).
+//   0x0898 = 2200 raw -> z2m 22.00 °C (ZHC emits °C, as z2m).
 constexpr std::uint8_t kCoolingSetpoint_2200[] = {
     0x08,              // FC: SRV->CLI, disable default rsp
     0x10,              // tsn
@@ -109,8 +109,8 @@ static void test_decodes_cooling_setpoint() {
 
     assert(result.any_matched);
     const Value* c = result.merged.find("occupied_cooling_setpoint");
-    assert(c && c->type == ValueType::Int);
-    assert(c->i == 2200);  // raw s16; z2m scales /100 downstream
+    assert(c && c->type == ValueType::Float);
+    assert(c->f == 22.0f);  // °C, z2m precisionRound(raw, 2) / 100
 }
 
 static void test_decodes_programming_operation_mode() {
@@ -143,8 +143,8 @@ static void test_local_temperature_still_decodes() {
 
     assert(result.any_matched);
     const Value* t = result.merged.find("local_temperature");
-    assert(t && t->type == ValueType::Int);
-    assert(t->i == 2362);
+    assert(t && t->type == ValueType::Float);
+    assert(t->f == 23.62f);
 }
 
 int main() {

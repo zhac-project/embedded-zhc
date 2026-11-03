@@ -64,25 +64,14 @@ bool fz_leviton_thermostat(const DecodedMessage& msg,
         }
     }
 
-    // attr 0x0010 — LocalTemperatureCalibration (s8, raw 1/10 °C step in
-    // z2m precisionRound(v,2)/10; we forward the raw integer to match the
-    // generic kFzThermostat numeric convention — no host-side scaling).
-    if (const Value* v = msg.payload.find("16")) {
-        std::int64_t cal = 0;
-        if (as_int(*v, cal)) {
-            Value o{}; o.type = ValueType::Int; o.i = cal;
-            if (out.put("local_temperature_calibration", o)) emitted = true;
-        }
-    }
-
-    // attr 0x0011 — OccupiedCoolingSetpoint (s16, raw 1/100 °C).
-    if (const Value* v = msg.payload.find("17")) {
-        std::int64_t sp = 0;
-        if (as_int(*v, sp)) {
-            Value o{}; o.type = ValueType::Int; o.i = sp;
-            if (out.put("occupied_cooling_setpoint", o)) emitted = true;
-        }
-    }
+    // attr 0x0010 — LocalTemperatureCalibration (s8, z2m precisionRound(v,2)/10)
+    // and 0x0011 — OccupiedCoolingSetpoint (s16 / 100), both in °C.
+    if (::zhc::generic::put_thermostat_celsius(out, "local_temperature_calibration",
+                                               msg.payload.find("16"), 10, false))
+        emitted = true;
+    if (::zhc::generic::put_thermostat_celsius(out, "occupied_cooling_setpoint",
+                                               msg.payload.find("17"), 100, false))
+        emitted = true;
 
     return emitted;
 }

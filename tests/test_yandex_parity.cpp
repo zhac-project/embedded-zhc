@@ -206,9 +206,9 @@ static void test_trv_thermostat() {
     assert(r.any_matched);
 
     const Value* lt = r.merged.find("local_temperature");
-    assert(lt && lt->type == ValueType::Int && lt->i == 2150);
+    assert(lt && lt->type == ValueType::Float && lt->f == 21.5f);
     const Value* sp = r.merged.find("current_heating_setpoint");
-    assert(sp && sp->type == ValueType::Int && sp->i == 2200);
+    assert(sp && sp->type == ValueType::Float && sp->f == 22.0f);
     const Value* sm = r.merged.find("system_mode");
     assert(sm && sm->type == ValueType::Uint && sm->u == 4);
 }

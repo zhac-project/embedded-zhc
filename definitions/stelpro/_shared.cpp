@@ -131,7 +131,7 @@ bool tz_stelpro_outdoor_temp(std::string_view key,
     if (input.type == ::zhc::ValueType::Int)        celsius = static_cast<double>(input.i);
     else if (input.type == ::zhc::ValueType::Uint)  celsius = static_cast<double>(input.u);
     else                                            celsius = input.f;
-    if (celsius < -32.0 || celsius > 119.0) return false;
+    if (!(celsius >= -32.0 && celsius <= 119.0)) return false;   // NaN too
 
     ::zhc::Value scaled{};
     scaled.type = ::zhc::ValueType::Int;

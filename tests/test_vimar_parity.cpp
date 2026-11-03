@@ -88,12 +88,9 @@ DispatchResult dispatch_zcl(const PreparedDefinition& def, std::uint16_t cluster
     return dispatch_from_zigbee(msg, {}, def, raw, ctx);
 }
 
-bool int_is(const DispatchResult& r, const char* key, std::int64_t expect) {
+bool celsius_is(const DispatchResult& r, const char* key, float expect) {
     const Value* v = r.merged.find(key);
-    if (!v) return false;
-    if (v->type == ValueType::Int)  return v->i == expect;
-    if (v->type == ValueType::Uint) return static_cast<std::int64_t>(v->u) == expect;
-    return false;
+    return v && v->type == ValueType::Float && v->f == expect;
 }
 bool has_key(const DispatchResult& r, const char* key) {
     return r.merged.find(key) != nullptr;
@@ -124,11 +121,11 @@ void test_thermostat() {
     check(sm && sm->type == ExposeType::Enum, "02973.B system_mode is Enum (not phantom Binary)");
 
     // attr 0x0012 OccupiedHeatingSetpoint (int16, 2150 = 21.50 °C) → the
-    // generic kFzThermostat still emits current_heating_setpoint.
+    // generic kFzThermostat still emits current_heating_setpoint, in °C.
     const std::array<std::uint8_t, 2> hsp{0x66, 0x08};  // 2150 LE
     auto h = attr_report(0x0012, 0x29, std::span<const std::uint8_t>(hsp.data(), hsp.size()));
     auto rh = dispatch_zcl(def, 0x0201, 1, std::span<const std::uint8_t>(h.data(), h.size()));
-    check(int_is(rh, "current_heating_setpoint", 2150), "02973.B decodes heating setpoint (0x0012)");
+    check(celsius_is(rh, "current_heating_setpoint", 21.5f), "02973.B decodes heating setpoint (0x0012) as 21.5 °C");
 
     // attr 0x0011 OccupiedCoolingSetpoint (int16, 2400 = 24.00 °C) → the
     // previously-DEAD channel the vendor extras converter now wires.
@@ -136,7 +133,7 @@ void test_thermostat() {
     auto c = attr_report(0x0011, 0x29, std::span<const std::uint8_t>(csp.data(), csp.size()));
     auto rc = dispatch_zcl(def, 0x0201, 1, std::span<const std::uint8_t>(c.data(), c.size()));
     check(rc.any_matched, "02973.B cooling-setpoint report matches a converter");
-    check(int_is(rc, "occupied_cooling_setpoint", 2400), "02973.B decodes cooling setpoint (0x0011)");
+    check(celsius_is(rc, "occupied_cooling_setpoint", 24.0f), "02973.B decodes cooling setpoint (0x0011) as 24.0 °C");
 
     // The thermostat is still settable (generic tz wired).
     check(def.to_zigbee_count >= 1, "02973.B retains thermostat setter");

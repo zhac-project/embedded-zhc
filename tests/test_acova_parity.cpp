@@ -84,8 +84,8 @@ bool str_is(const Value* v, const char* s) {
     return v && v->type == ValueType::StringRef && v->str && std::strcmp(v->str, s) == 0;
 }
 
-bool int_is(const Value* v, std::int64_t i) {
-    return v && v->type == ValueType::Int && v->i == i;
+bool celsius_is(const Value* v, float c) {
+    return v && v->type == ValueType::Float && v->f == c;
 }
 
 }  // namespace
@@ -102,31 +102,31 @@ int main() {
         assert(def_exposes(def, "system_mode"));
         assert(def_exposes(def, "running_state"));
 
-        // local_temperature (0x0000 s16) = 2100 (21.00 °C raw).
+        // local_temperature (0x0000 s16) = 2100 → 21.0 °C.
         {
             const std::uint8_t b[] = {0x34, 0x08};
             auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                                   attr_report(0x0000, 0x29, b));
             assert(r.any_matched);
-            assert(int_is(r.merged.find("local_temperature"), 2100));
+            assert(celsius_is(r.merged.find("local_temperature"), 21.0f));
         }
-        // occupied_heating_setpoint (0x0012 s16) = 2000 — NOT
+        // occupied_heating_setpoint (0x0012 s16) = 2000 → 20.0 °C — NOT
         // current_heating_setpoint (the generic-decoder dead key).
         {
             const std::uint8_t b[] = {0xD0, 0x07};
             auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                                   attr_report(0x0012, 0x29, b));
             assert(r.any_matched);
-            assert(int_is(r.merged.find("occupied_heating_setpoint"), 2000));
+            assert(celsius_is(r.merged.find("occupied_heating_setpoint"), 20.0f));
             assert(r.merged.find("current_heating_setpoint") == nullptr);
         }
-        // unoccupied_heating_setpoint (0x0014 s16) = 1600.
+        // unoccupied_heating_setpoint (0x0014 s16) = 1600 → 16.0 °C.
         {
             const std::uint8_t b[] = {0x40, 0x06};
             auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                                   attr_report(0x0014, 0x29, b));
             assert(r.any_matched);
-            assert(int_is(r.merged.find("unoccupied_heating_setpoint"), 1600));
+            assert(celsius_is(r.merged.find("unoccupied_heating_setpoint"), 16.0f));
         }
         // running_state (0x0029) 1 → heat, 0 → idle.
         {
@@ -160,13 +160,13 @@ int main() {
         assert(def_exposes(def, "running_state"));
         assert(def_exposes(def, "occupancy"));
 
-        // local_temperature_calibration (0x0010 s8/s16) = -20 (−2.0 °C raw).
+        // local_temperature_calibration (0x0010 s8/s16) = -20 → −2.0 °C.
         {
             const std::uint8_t b[] = {0xEC, 0xFF};  // -20 LE int16
             auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                                   attr_report(0x0010, 0x29, b));
             assert(r.any_matched);
-            assert(int_is(r.merged.find("local_temperature_calibration"), -20));
+            assert(celsius_is(r.merged.find("local_temperature_calibration"), -2.0f));
         }
         // occupied_heating_setpoint (0x0012) decodes to the right key.
         {
@@ -174,7 +174,7 @@ int main() {
             auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                                   attr_report(0x0012, 0x29, b));
             assert(r.any_matched);
-            assert(int_is(r.merged.find("occupied_heating_setpoint"), 2000));
+            assert(celsius_is(r.merged.find("occupied_heating_setpoint"), 20.0f));
             assert(r.merged.find("current_heating_setpoint") == nullptr);
         }
         // running_state (0x0029).
@@ -210,16 +210,16 @@ int main() {
             auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                                   attr_report(0x0012, 0x29, b));
             assert(r.any_matched);
-            assert(int_is(r.merged.find("occupied_heating_setpoint"), 2000));
+            assert(celsius_is(r.merged.find("occupied_heating_setpoint"), 20.0f));
             assert(r.merged.find("current_heating_setpoint") == nullptr);
         }
         // local_temperature_calibration (0x0010) decodes.
         {
-            const std::uint8_t b[] = {0x14, 0x00};  // +20 (2.0 °C raw)
+            const std::uint8_t b[] = {0x14, 0x00};  // +20 → 2.0 °C
             auto r = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                                   attr_report(0x0010, 0x29, b));
             assert(r.any_matched);
-            assert(int_is(r.merged.find("local_temperature_calibration"), 20));
+            assert(celsius_is(r.merged.find("local_temperature_calibration"), 2.0f));
         }
     }
 

@@ -126,7 +126,7 @@ int main() {
                               attr_report(0x0000, 0x29, lt));
         assert(r.any_matched);
         const Value* v = r.merged.find("local_temperature");
-        assert(v && v->type == ValueType::Int && v->i == 2100);
+        assert(v && v->type == ValueType::Float && v->f == 21.0f);
     }
     // OccupiedHeatingSetpoint (0x0012 s16) → current_heating_setpoint.
     {
@@ -135,7 +135,7 @@ int main() {
                               attr_report(0x0012, 0x29, sp));
         assert(r.any_matched);
         const Value* v = r.merged.find("current_heating_setpoint");
-        assert(v && v->type == ValueType::Int && v->i == 2500);
+        assert(v && v->type == ValueType::Float && v->f == 25.0f);
     }
     // SystemMode (0x001C u8 enum) raw passthrough (generic).
     {
@@ -153,7 +153,7 @@ int main() {
                               attr_report(0x0014, 0x29, sp));
         assert(r.any_matched);
         const Value* v = r.merged.find("unoccupied_heating_setpoint");
-        assert(v && v->type == ValueType::Int && v->i == 900);
+        assert(v && v->type == ValueType::Float && v->f == 9.0f);
     }
 
     // ── local_temperature_calibration (0x0010 s8, ×10) — was dead ────
@@ -163,7 +163,7 @@ int main() {
                               attr_report(0x0010, 0x28, cal));
         assert(r.any_matched);
         const Value* v = r.merged.find("local_temperature_calibration");
-        assert(v && v->type == ValueType::Int && v->i == -5);
+        assert(v && v->type == ValueType::Float && v->f == -0.5f);
     }
 
     // ── max_heat_setpoint_limit (0x0016 s16) — was dead ──────────────
@@ -173,7 +173,7 @@ int main() {
                               attr_report(0x0016, 0x29, lim));
         assert(r.any_matched);
         const Value* v = r.merged.find("max_heat_setpoint_limit");
-        assert(v && v->type == ValueType::Int && v->i == 3000);
+        assert(v && v->type == ValueType::Float && v->f == 30.0f);
     }
 
     // ── running_mode (0x001E u8 enum) — was dead ─────────────────────
@@ -224,21 +224,27 @@ int main() {
     {
         RuntimeContext ctx{};
         std::array<std::uint8_t, 24> frame{};
-        Value v{}; v.type = ValueType::Int; v.i = 1000;
+        Value v{}; v.type = ValueType::Int; v.i = 10;    // °C → INT16 1000
         auto w = dispatch_to_zigbee(def, "unoccupied_heating_setpoint", v, ctx, frame);
         assert(w.ok);
         assert(w.cluster_id == 0x0201);
         assert(w.command_id == 0x02);  // writeAttributes
+        assert(frame[w.frame_size - 2] == 0xE8 && frame[w.frame_size - 1] == 0x03);
+        v.i = 1000;                    // a raw value is no longer accepted
+        assert(!dispatch_to_zigbee(def, "unoccupied_heating_setpoint", v, ctx, frame).ok);
     }
     // ── Write path: local_temperature_calibration → writeAttributes ──
     {
         RuntimeContext ctx{};
         std::array<std::uint8_t, 24> frame{};
-        Value v{}; v.type = ValueType::Int; v.i = -5;
+        Value v{}; v.type = ValueType::Float; v.f = -0.5f;   // °C → INT8 -5
         auto w = dispatch_to_zigbee(def, "local_temperature_calibration", v, ctx, frame);
         assert(w.ok);
         assert(w.cluster_id == 0x0201);
         assert(w.command_id == 0x02);
+        assert(frame[w.frame_size - 1] == 0xFB);
+        v.f = -5.0f;                   // outside the ZCL -2.5..2.5 °C
+        assert(!dispatch_to_zigbee(def, "local_temperature_calibration", v, ctx, frame).ok);
     }
 
     return 0;

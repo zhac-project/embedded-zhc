@@ -3355,6 +3355,9 @@ add_executable(zhc_parity_26105_tests tests/test_parity_26105.cpp)
 target_link_libraries(zhc_parity_26105_tests PRIVATE zhc_definitions)
 add_executable(zhc_parity_26115_tests tests/test_parity_26115.cpp)
 target_link_libraries(zhc_parity_26115_tests PRIVATE zhc_definitions)
+# hvacThermostat temperatures in °C on read and write (review 2026-10-24 F-01).
+add_executable(zhc_thermostat_units_tests tests/test_thermostat_units.cpp)
+target_link_libraries(zhc_thermostat_units_tests PRIVATE zhc_definitions)
 add_executable(zhc_parity_26125_tests tests/test_parity_26125.cpp)
 target_link_libraries(zhc_parity_26125_tests PRIVATE zhc_definitions)
 
@@ -3837,6 +3840,7 @@ add_test(NAME zhc_tuya_packed_dp_tests      COMMAND zhc_tuya_packed_dp_tests)
 add_test(NAME zhc_parity_26103_tests        COMMAND zhc_parity_26103_tests)
 add_test(NAME zhc_parity_26105_tests        COMMAND zhc_parity_26105_tests)
 add_test(NAME zhc_parity_26115_tests        COMMAND zhc_parity_26115_tests)
+add_test(NAME zhc_thermostat_units_tests    COMMAND zhc_thermostat_units_tests)
 add_test(NAME zhc_parity_26125_tests        COMMAND zhc_parity_26125_tests)
 
 # Literal `_count` guard. Three consecutive z2m parity windows shipped a

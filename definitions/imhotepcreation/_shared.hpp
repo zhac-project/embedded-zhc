@@ -16,10 +16,10 @@
 //   attr 0x0015 MinHeatSetpointLimit     (s16) → "min_heat_setpoint_limit"
 //   attr 0x0016 MaxHeatSetpointLimit     (s16) → "max_heat_setpoint_limit"
 //
-// All three are raw s16 pass-throughs (0.01 °C wire units), mirroring how
-// the generic decoder treats the heating setpoint (the runtime scales
-// /100 downstream), and matching z2m's `precisionRound(x,2)/100` branches
-// in `fz.thermostat`. The cooling-setpoint expose surfaces as
+// All three are published in °C (s16 / 100), like the generic decoder's
+// heating setpoint, matching z2m's `precisionRound(x,2)/100` branches in
+// `fz.thermostat` (the two limits drop values below -273.15 °C as z2m
+// does). The cooling-setpoint expose surfaces as
 // "current_cooling_setpoint" (z2m `.withSetpoint("occupied_cooling_setpoint")`),
 // exactly like the Owon extras pattern.
 //

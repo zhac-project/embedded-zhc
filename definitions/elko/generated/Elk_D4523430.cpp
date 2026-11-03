@@ -29,8 +29,8 @@
 //     here via kTzElkoSystemMode (overrides the generic kTzThermostat
 //     system_mode path which writes the standard 0x001C).
 //   * z2m's "local_temperature_calibration" tz writes elkoCalibration
-//     (0x0417) scaled by 10 — handled here by writing the i8 raw; the
-//     adapter must scale on the input side. UNPORTED: the *10 scaling.
+//     (0x0417) as round(°C * 10) — kTzElkoCalibration does the same
+//     (spec multiplier 10); the read is z2m's round(raw / 10).
 //   * supervisor_floor temperature display fallback (z2m fz_thermostat
 //     overrides local_temperature when sensor==supervisor_floor) is NOT
 //     replicated — host emits raw local_temperature + floor_temp
@@ -41,6 +41,7 @@
 //     supports up to u32 scalar values. BLOCKED — see TODO below.
 
 #include "definitions/_generic/_shared.hpp"
+#include <cmath>
 #include <cstdio>
 
 namespace zhc::devices::elko {
@@ -57,6 +58,8 @@ namespace {
 
 enum class ElkoFzKind : std::uint8_t {
     Raw,    // pass through Value as-is
+    Celsius,      // s16 / 100 → °C Float (z2m precisionRound(v, 2) / 100)
+    Calibration,  // s8 → whole °C, z2m Math.round(v / 10)
     Bool,   // numeric → bool
     Enum,   // numeric → label
     Mode,   // numeric → "heat"/"off" (PowerStatus) or "idle"/"heat" (Relay)
@@ -98,14 +101,14 @@ constexpr ElkoFzEntry kElkoFzMap[] = {
     { 0x0405, "regulator_mode",      ElkoFzKind::Enum, kEnumRegulatorMode,  2 },
     { 0x0406, "system_mode",         ElkoFzKind::Enum, kEnumPowerStatus,    2 },
     { 0x0408, "mean_power",          ElkoFzKind::Raw,  nullptr,             0 },
-    { 0x0409, "floor_temp",          ElkoFzKind::Raw,  nullptr,             0 },
+    { 0x0409, "floor_temp",          ElkoFzKind::Celsius, nullptr,          0 },
     { 0x0411, "night_switching",     ElkoFzKind::Enum, kEnumOnOff,          2 },
     { 0x0412, "frost_guard",         ElkoFzKind::Enum, kEnumOnOff,          2 },
     { 0x0413, "child_lock",          ElkoFzKind::Bool, nullptr,             0 },
     { 0x0414, "max_floor_temp",      ElkoFzKind::Raw,  nullptr,             0 },
     { 0x0415, "running_state",       ElkoFzKind::Enum, kEnumRelayState,     2 },
     { 0x0417, "local_temperature_calibration",
-                                     ElkoFzKind::Raw,  nullptr,             0 },
+                                     ElkoFzKind::Calibration, nullptr,      0 },
 };
 
 bool elko_decode_value(const ElkoFzEntry& e,
@@ -116,6 +119,17 @@ bool elko_decode_value(const ElkoFzEntry& e,
         case ElkoFzKind::Raw:
             o = v;
             break;
+        case ElkoFzKind::Celsius:
+            return ::zhc::generic::put_thermostat_celsius(out, e.out_key, &v, 100, false);
+        case ElkoFzKind::Calibration: {
+            std::int64_t raw = 0;
+            if      (v.type == ValueType::Int)  raw = v.i;
+            else if (v.type == ValueType::Uint) raw = static_cast<std::int64_t>(v.u);
+            else return false;
+            o.type = ValueType::Int;
+            o.i = static_cast<std::int64_t>(std::floor(static_cast<double>(raw) / 10.0 + 0.5));
+            break;
+        }
         case ElkoFzKind::Bool: {
             bool b;
             if      (v.type == ValueType::Bool) b = v.b;
@@ -236,10 +250,9 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecChildLock{
 constexpr ::zhc::generic::ZclWriteSpec kSpecMaxFloorTemp{
     "max_floor_temp", 0x0414, 0x20, 0, nullptr, 0,
 };
-// NOTE: z2m scales calibration by 10 before write. Adapter must
-// pre-scale; tz_zcl_write_attr writes raw i8.
+// z2m writes round(°C * 10) into the i8 (cluster def range -128..127).
 constexpr ::zhc::generic::ZclWriteSpec kSpecCalibration{
-    "local_temperature_calibration", 0x0417, 0x28, 0, nullptr, 0,
+    "local_temperature_calibration", 0x0417, 0x28, 0, nullptr, 0, 0, 10, -128, 127,
 };
 
 }  // namespace

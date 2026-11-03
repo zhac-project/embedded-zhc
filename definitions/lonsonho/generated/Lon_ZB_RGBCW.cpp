@@ -26,7 +26,9 @@ const TzConverter* const kTz_ZB_RGBCW[] = {
 // Kurvia in Pass 2.
 constexpr const char* kModels_ZB_RGBCW[] = { "ZB-RGBCW", "ZB-CL01", "ZB-CL02", "Z102LG03-1" };
 constexpr const char* kManus_ZB_RGBCW[]  = {
-    "eWeLight", "eWeLink", "eWeLi\x01\x00\x10",
+    // The last is "eWeLi" + 0x01 0x00 0x10 as the hub stores it: 0x01 as '?', and the NUL
+    // ends the text (zhac-components zigbee_copy_text, review 2026-10-24 ZR-03; its G14 test).
+    "eWeLight", "eWeLink", "eWeLi?",
 };
 
 }  // namespace

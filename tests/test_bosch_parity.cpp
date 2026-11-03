@@ -253,8 +253,7 @@ static void check_thermostat(const PreparedDefinition& def) {
     assert(r.any_matched);
     const Value* lt = r.merged.find("local_temperature");
     assert(lt != nullptr);
-    assert((lt->type == ValueType::Int  && lt->i == 2150) ||
-           (lt->type == ValueType::Uint && lt->u == 2150));
+    assert(lt->type == ValueType::Float && lt->f == 21.5f);   // 2150 → 21.5 °C
     const Value* sm = r.merged.find("system_mode");
     assert(sm != nullptr);
 }

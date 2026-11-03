@@ -156,7 +156,7 @@ void check_h1() {
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     // attr 0x001C SystemMode, u8 enum = 4 (heat).
     const std::uint8_t sm[] = {0x04};

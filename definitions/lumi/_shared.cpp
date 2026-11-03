@@ -34,6 +34,14 @@ std::uint8_t voltage_to_pct(std::uint64_t mv) {
         ((mv - BATT_MV_LO) * 100) / (BATT_MV_HI - BATT_MV_LO));
 }
 
+// The MI-struct converters parse into `msg.mi_struct_arena` with keys in a
+// scratch on their own stack: empty the arena on every return, so nothing
+// after them can read a key from a dead frame (review ZR-07).
+struct ArenaKeysScope {
+    FixedPayload<ZHC_MI_STRUCT_CAP>& arena;
+    ~ArenaKeysScope() { arena.count = 0; }
+};
+
 }  // namespace
 
 bool fz_lumi_basic(const DecodedMessage& msg,
@@ -47,10 +55,11 @@ bool fz_lumi_basic(const DecodedMessage& msg,
     if (!v || v->type != ValueType::BytesRef) return false;
 
     // Parse into `msg.mi_struct_arena` (mutable) to keep this function
-    // off the hot task-stack path. The key scratch still lives locally
-    // (~192 B) since MI-struct keys must outlive this call.
+    // off the hot task-stack path. The keys go into a local scratch
+    // (~192 B), so the arena is emptied again on every return.
     auto& tlv = msg.mi_struct_arena;
     tlv = FixedPayload<ZHC_MI_STRUCT_CAP>{};
+    const ArenaKeysScope keys_scope{tlv};
     char key_scratch[8 * ZHC_MI_STRUCT_CAP];
     if (!parse_mi_struct(v->bytes, key_scratch, sizeof(key_scratch), tlv)) {
         return false;
@@ -1511,6 +1520,7 @@ bool fz_lumi_specific(const DecodedMessage& msg,
 
     auto& tlv = msg.mi_struct_arena;
     tlv = FixedPayload<ZHC_MI_STRUCT_CAP>{};
+    const ArenaKeysScope keys_scope{tlv};
     char key_scratch[8 * ZHC_MI_STRUCT_CAP];
     if (!parse_mi_struct(v->bytes, key_scratch, sizeof(key_scratch), tlv)) {
         return false;

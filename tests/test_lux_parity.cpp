@@ -94,13 +94,13 @@ void check_thermostat_extras() {
     assert(def_exposes(def, "running_mode"));
 
     // ── attr 0x0011 OccupiedCoolingSetpoint, s16 (type 0x29).
-    //    2500 = 0x09C4 → raw 2500 (downstream /100 = 25.00 °C). ──
+    //    2500 = 0x09C4 → 25.00 °C. ──
     const std::uint8_t csp[] = {0xC4, 0x09};
     auto rc = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0011, 0x29, csp));
     assert(rc.any_matched);
     const Value* cv = rc.merged.find("occupied_cooling_setpoint");
-    assert(cv && cv->type == ValueType::Int && cv->i == 2500);
+    assert(cv && cv->type == ValueType::Float && cv->f == 25.0f);
 
     // ── attr 0x0029 ThermostatRunningState, bitmap16 (type 0x19). ──
     //   0x0001 → "heat".
@@ -159,14 +159,14 @@ void check_thermostat_extras() {
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat",
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     // attr 0x0012 OccupiedHeatingSetpoint, s16 = 2000 → current_heating_setpoint.
     const std::uint8_t hsp[] = {0xD0, 0x07};
     auto rhs = dispatch_zcl(def, 0x0201, "hvacThermostat",
                             attr_report(0x0012, 0x29, hsp));
     const Value* hsv = rhs.merged.find("current_heating_setpoint");
-    assert(hsv && hsv->type == ValueType::Int && hsv->i == 2000);
+    assert(hsv && hsv->type == ValueType::Float && hsv->f == 20.0f);
 
     // attr 0x001C SystemMode, u8 enum = 4 (heat) → raw u8.
     const std::uint8_t sm[] = {0x04};

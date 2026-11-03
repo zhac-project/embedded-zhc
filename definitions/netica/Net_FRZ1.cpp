@@ -43,13 +43,12 @@ constexpr std::uint16_t kNeticaMfgCode = 0xFFFF;  // ManufacturerCode.RESERVED_1
 // generic decoder does not cover but z2m's fz.thermostat / m.numeric do:
 //   0x0029 runningState   (key "41")    → running_state  (0→idle, 1→heat)
 //   0x001B ctrlSeqeOfOper (key "27")    → control_sequence_of_operation
-//   0x4000 remoteTemperature   (key "16384") → remote_temperature   (raw ×100)
-//   0x4002 targetWaterTemperature (key "16386") → target_water_temperature (raw ×100)
+//   0x4000 remoteTemperature   (key "16384") → remote_temperature   (°C, / 100)
+//   0x4002 targetWaterTemperature (key "16386") → target_water_temperature (°C, / 100)
 //
 // running_state / control_sequence_of_operation emit z2m's string form
 // (matching fz.thermostat's getFromLookup); the numeric manuSpec attrs
-// emit the raw int (downstream applies the ×100 scale, same contract as
-// local_temperature).
+// are °C like local_temperature (z2m m.numeric scale 100).
 bool fz_netica_thermostat_extras(const ::zhc::DecodedMessage& msg,
                                   const ::zhc::FzConverter& self,
                                   const ::zhc::PreparedDefinition& def,
@@ -93,31 +92,14 @@ bool fz_netica_thermostat_extras(const ::zhc::DecodedMessage& msg,
         }
     }
 
-    // 0x4000 remoteTemperature (INT16, ×100 °C) — raw int read-back.
-    if (const ::zhc::Value* v = msg.payload.find("16384")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int
-                      ? v->i
-                      : static_cast<std::int64_t>(v->u);
-            out.put("remote_temperature", o);
-            emitted = true;
-        }
-    }
-
-    // 0x4002 targetWaterTemperature (INT16, ×100 °C) — raw int read-back.
-    if (const ::zhc::Value* v = msg.payload.find("16386")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int
-                      ? v->i
-                      : static_cast<std::int64_t>(v->u);
-            out.put("target_water_temperature", o);
-            emitted = true;
-        }
-    }
+    // 0x4000 remoteTemperature / 0x4002 targetWaterTemperature (INT16,
+    // °C × 100) — z2m m.numeric scale 100.
+    if (::zhc::generic::put_thermostat_celsius(out, "remote_temperature",
+                                               msg.payload.find("16384"), 100, false))
+        emitted = true;
+    if (::zhc::generic::put_thermostat_celsius(out, "target_water_temperature",
+                                               msg.payload.find("16386"), 100, false))
+        emitted = true;
 
     return emitted;
 }
@@ -138,9 +120,9 @@ constexpr ::zhc::FzConverter kFzNeticaThermostatExtras{
 };
 
 // ── Manu-specific write specs (mfg 0xFFFF) ───────────────────────────
-constexpr ::zhc::generic::ZclWriteSpec kSpecRemoteTemperature{
-    "remote_temperature",      0x4000, 0x29 /* INT16 */, kNeticaMfgCode, nullptr, 0,
-};
+// remote_temperature is written in °C (z2m scale 100), like it reads.
+constexpr ::zhc::generic::ZclWriteSpec kSpecRemoteTemperature =
+    ::zhc::generic::thermostat_celsius_spec("remote_temperature", 0x4000, kNeticaMfgCode);
 constexpr ::zhc::generic::ZclWriteSpec kSpecUseRemoteTemperature{
     "use_remote_temperature",  0x4001, 0x10 /* BOOL */,  kNeticaMfgCode, nullptr, 0,
 };

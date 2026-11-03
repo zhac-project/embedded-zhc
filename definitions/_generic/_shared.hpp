@@ -717,14 +717,33 @@ extern const TzConverter kTzWarning;
 // closuresDoorLock (0x0101) lock/unlock command encoder.
 extern const TzConverter kTzLock;
 
-// hvacThermostat (0x0201) writeAttributes — supports
-// occupied/current_heating_setpoint (attr 0x0012) + system_mode
-// (0x001C). Additional attrs via per-device `tz_zcl_write_attr`.
-// UNIT CONTRACT for the setpoint keys: input is degrees Celsius
-// (Float/Int/Uint). x100 scaling to deci-°C wire format happens inside
-// the encoder. Contrast with `kTzMinHeatSetpointLimit` & co. below,
-// which take pre-scaled deci-°C — picking the wrong family from a
-// Lua rule yields a setpoint 100x off.
+// ── hvacThermostat temperatures ─────────────────────────────────────
+//
+// Every thermostat temperature is published and written in °C, as z2m
+// does (fz.thermostat, tz.thermostat_*). The wire carries int16 in
+// 0.01 °C (local / outdoor temperature, setpoints, setpoint limits) or
+// int8 in 0.1 °C (local_temperature_calibration). The ZCL range of a
+// 0.01 °C temperature is 0x954D..0x7FFF (-273.15..327.67 °C); 0x8000
+// means "invalid".
+inline constexpr std::int32_t kThermostatTempMin = -27315;
+inline constexpr std::int32_t kThermostatTempMax = 32767;
+
+// Puts `key` = raw / divisor °C as Float for a decoded thermostat
+// attribute: z2m `precisionRound(raw, 2) / divisor` (divisor 100, or 10
+// for the calibration). With `drop_invalid` a value below -273.15 °C is
+// not published, which is how z2m skips the 0x8000 marker on localTemp,
+// outdoorTemp, occupiedHeatingSetpoint and the heat setpoint limits.
+// True when it put the key; false for a missing or non-integer value.
+bool put_thermostat_celsius(FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out,
+                            const char* key, const Value* v,
+                            int divisor, bool drop_invalid);
+
+// hvacThermostat (0x0201) writeAttributes for occupied/current_heating_
+// setpoint (attr 0x0012) and system_mode (0x001C). The setpoint takes °C
+// (Float/Int/Uint), rounded to 0.01 °C; a value outside the ZCL range
+// above (a reading already in 0.01 °C, NaN, inf) is refused instead of
+// wrapping into 16 bits. Other attributes go through per-device
+// `tz_zcl_write_attr` specs, which take °C too (thermostat_celsius_spec).
 extern const TzConverter kTzThermostat;
 
 // Data-driven ZCL writeAttributes encoder. Handles both standard
@@ -759,7 +778,20 @@ struct ZclWriteSpec {
     // Numeric inputs are multiplied by this before rounding to the wire
     // integer: z2m `m.numeric({scale: N})` writes `value * N`. 1 = as-is.
     std::int32_t          multiplier = 1;
+    // With max_value > min_value, a scaled write (multiplier != 1) whose
+    // wire integer falls outside [min_value, max_value] is refused instead
+    // of being cut to the attribute's width. 0/0 = unchecked.
+    std::int32_t          min_value = 0;
+    std::int32_t          max_value = 0;
 };
+
+// An int16 0.01 °C hvacThermostat attribute written in °C (z2m
+// tz.thermostat_* / `scale: 100`), refused outside the ZCL range.
+constexpr ZclWriteSpec thermostat_celsius_spec(const char* key, std::uint16_t attr_id,
+                                               std::uint16_t manufacturer_code = 0) {
+    return ZclWriteSpec{key, attr_id, 0x29, manufacturer_code, nullptr, 0, 0, 100,
+                        kThermostatTempMin, kThermostatTempMax};
+}
 
 // ── Data-driven attribute DECODER (the read side of ZclWriteSpec) ──
 //
@@ -946,11 +978,9 @@ extern const FzConverter kFzPm25;
 // NOT `carbon_monoxide`, which is z2m's IAS boolean detection binary.
 extern const FzConverter kFzCO;
 
-// hvacThermostat setpoint-limit attribute writes (INT16, 0.01 °C).
-// UNIT CONTRACT: caller supplies the already-scaled int (e.g.
-// 1500 = 15.00 °C). DIFFERENT from `kTzThermostat` setpoints above —
-// see that block for the rationale (limits go through the generic
-// write-attr path with no per-attr scaling).
+// hvacThermostat setpoint-limit attribute writes (INT16, 0.01 °C on the
+// wire). Input is °C, as for the kTzThermostat setpoint (z2m
+// tz.thermostat_{min,max}_{heat,cool}_setpoint_limit).
 extern const TzConverter kTzMinHeatSetpointLimit;   // attr 0x0015
 extern const TzConverter kTzMaxHeatSetpointLimit;   // attr 0x0016
 extern const TzConverter kTzMinCoolSetpointLimit;   // attr 0x0017

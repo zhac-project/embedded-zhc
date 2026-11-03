@@ -12,8 +12,8 @@
 // occupiedCoolingSetpoint (attr 0x0011) -> occupied_cooling_setpoint and
 // programingOperMode (attr 0x0025) -> programming_operation_mode, both of
 // which this def EXPOSES. Without the extras converter those two reports were
-// dead on read. kFzAtlanticThermostatExtras closes that gap (raw values, same
-// convention as kFzThermostat — downstream scales /100 and maps the enum).
+// dead on read. kFzAtlanticThermostatExtras closes that gap (the setpoint in
+// °C and the enum raw, same convention as kFzThermostat).
 //
 // Wire format notes:
 //   * Default device endpoint is 1 for all hvacFanCtrl/hvacThermostat
@@ -160,11 +160,10 @@ extern const TzConverter kTzAtlanticPresetEcoOper{
 // kFzThermostat omits. Standard hvacThermostat attrs (NOT manuSpec):
 //   * 0x0011 OccupiedCoolingSetpoint (s16) → occupied_cooling_setpoint
 //   * 0x0025 ProgrammingOperationMode (u8 map) → programming_operation_mode
-// Emits RAW values to match kFzThermostat's convention (local_temperature /
-// setpoints are raw s16 scaled /100 downstream; system_mode is raw u8 with
-// the SPA mapping the enum). programming_operation_mode raw map (z2m
-// thermostatProgrammingOperationModes): 0 setpoint / 1 schedule /
-// 3 schedule_with_preheat / 4 eco.
+// The cooling setpoint is °C (s16 / 100) like kFzThermostat's setpoint;
+// programming_operation_mode stays the raw u8 like its system_mode (z2m
+// thermostatProgrammingOperationModes: 0 setpoint / 1 schedule /
+// 3 schedule_with_preheat / 4 eco).
 bool fz_atlantic_thermostat_extras(
         const ::zhc::DecodedMessage& msg,
         const FzConverter&,
@@ -172,15 +171,10 @@ bool fz_atlantic_thermostat_extras(
         ::zhc::RuntimeContext&,
         ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     bool emitted = false;
-    // attr 0x0011 (decimal 17) — OccupiedCoolingSetpoint (s16).
-    if (const ::zhc::Value* v = msg.payload.find("17")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{}; o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int
-                    ? v->i : static_cast<std::int64_t>(v->u);
-            out.put("occupied_cooling_setpoint", o); emitted = true;
-        }
-    }
+    // attr 0x0011 (decimal 17) — OccupiedCoolingSetpoint (s16 / 100, °C).
+    if (::zhc::generic::put_thermostat_celsius(out, "occupied_cooling_setpoint",
+                                               msg.payload.find("17"), 100, false))
+        emitted = true;
     // attr 0x0025 (decimal 37) — ProgrammingOperationMode (u8 enum).
     if (const ::zhc::Value* v = msg.payload.find("37")) {
         if (v->type == ::zhc::ValueType::Uint || v->type == ::zhc::ValueType::Int) {

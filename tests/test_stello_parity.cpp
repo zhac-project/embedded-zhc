@@ -131,13 +131,13 @@ void check_stlo34_thermostat() {
     assert(def_exposes(def, "power"));
     assert(def_exposes(def, "energy"));
 
-    // LocalTemperature (0x0000 s16) = 0x0834 = 2100 (21.00 °C raw int).
+    // LocalTemperature (0x0000 s16) = 0x0834 = 2100 → 21.0 °C.
     const std::uint8_t lt[] = {0x34, 0x08};
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat", 25,
                            attr_report(0x0000, 0x29, lt));
     assert(rt.any_matched);
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     // pIHeatingDemand (0x0008 u8): 25 → running_state "heat"; 0 → "idle".
     const std::uint8_t d_hi[] = {25};

@@ -11,8 +11,8 @@
 // Pattern cloned from `definitions/leviton/_shared.cpp`. The standard
 // local_temperature / current_heating_setpoint / system_mode attrs are
 // still handled by the generic `kFzThermostat`, which is wired alongside
-// this converter on the device. The raw int16 (1/100 °C) is forwarded
-// unscaled, matching the generic kFzThermostat numeric convention.
+// this converter on the device. The int16 (1/100 °C) is published in °C,
+// like the generic kFzThermostat setpoint.
 //
 // z2m-source: zigbee-herdsman-converters/src/devices/vimar.ts #02973.B
 // (fz.thermostat → occupied_cooling_setpoint).
@@ -39,16 +39,9 @@ bool fz_vimar_thermostat_extras(const DecodedMessage& msg,
                                 const PreparedDefinition&,
                                 RuntimeContext&,
                                 FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    // attr 0x0011 — OccupiedCoolingSetpoint (s16, raw 1/100 °C).
-    if (const Value* v = msg.payload.find("17")) {
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{}; o.type = ValueType::Int;
-            o.i = v->type == ValueType::Int ? v->i
-                                            : static_cast<std::int64_t>(v->u);
-            if (out.put("occupied_cooling_setpoint", o)) return true;
-        }
-    }
-    return false;
+    // attr 0x0011 — OccupiedCoolingSetpoint (s16 / 100, °C).
+    return ::zhc::generic::put_thermostat_celsius(out, "occupied_cooling_setpoint",
+                                                  msg.payload.find("17"), 100, false);
 }
 
 }  // namespace

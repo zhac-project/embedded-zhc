@@ -25,6 +25,40 @@ across the ZHAC platform.
 
 ### Changed
 
+- **Two identity strings are written as the hub now stores them.** zhac-components
+  stores a device's model and manufacturer text JSON-safe, each control byte or
+  invalid UTF-8 byte as `?` (`zigbee_copy_text`, firmware review 2026-10-24 ZR-03),
+  and the matcher compares exactly. The Aqara SJCGQ12LM-ES engineering build
+  (modelID `lumi.flood.agl02` + TAB + `F` + 0x01) is now `"lumi.flood.agl02?F?"`,
+  so it is matched as itself again instead of as the production SJCGQ12LM; the
+  Lonsonho ZB-RGBCW manufacturer `eWeLi` + 0x01 0x00 0x10 is now `"eWeLi?"`: the
+  0x01 becomes `?` and the NUL ends the stored text (zhac-components' zigbee_mgr host
+  test G14 checks both stored forms). zhac-tools' generator must emit the same
+  form for these (private ticket).
+
+- **Thermostat temperatures are published and written in °C, as z2m does.**
+  The generic hvacThermostat decoder (`kFzThermostat`, 173 definitions)
+  published `local_temperature` and `current_heating_setpoint` as the raw
+  0.01 °C register, so 21.5 °C showed as 2150 in the web UI, Home Assistant
+  and the cloud, and a rule comparing with `22.0` got the wrong answer
+  (review 2026-10-24, F-01). Seventeen vendor decoders copied that contract
+  ("the runtime scales /100 downstream"), which nothing implemented. Every
+  hvacThermostat temperature is now a °C float with z2m's scale
+  (`generic::put_thermostat_celsius`): local and outdoor temperature,
+  occupied and unoccupied heating and cooling setpoints, setpoint limits,
+  `local_temperature_calibration` (÷10), and the vendor attributes z2m scales
+  (Eurotronic and Plugwise `current_heating_setpoint`, Netica remote and
+  target water temperature, the Plugwise OpenTherm temperatures, Elko
+  `floor_temp`; Elko calibration is z2m's whole-degree `round(raw / 10)`).
+  Below -273.15 °C (the 0x8000 "invalid" marker) is not published where z2m
+  drops it. The writes for those keys take °C too: the setpoint limits
+  (`kTzMin/MaxHeat/CoolSetpointLimit`), Purmo's unoccupied setpoint and
+  calibration, Netica `remote_temperature`, the Plugwise OpenTherm setpoints
+  and Elko calibration took the raw register. Rules with whole-number
+  literals keep matching (a float is held ×100); stored history and
+  dashboards of these keys change scale. Tests: `test_thermostat_units.cpp`
+  and 28 device tests that pinned the raw values.
+
 - **Aqara/Xiaomi devices are bound only where z2m binds them.** The
   generator (`tools/emit_expose_bindings.py`) gave every Aqara/Xiaomi
   definition a bind per decoder — Basic for the heartbeat, OnOff, IAS Zone,
@@ -84,6 +118,19 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **The Lumi MI-struct converters leave no dangling keys behind** (`fz_lumi_basic`, `fz_lumi_specific`; review 2026-10-24 ZR-07). They parse attribute 0xFF01 into `DecodedMessage::mi_struct_arena` with the keys in a scratch on their own stack, and the arena kept pointing at it after they returned. Nothing read it afterwards, so this was latent; the arena is now emptied on every return.
+- **Generic thermostat writes reach the device and refuse what does not fit.**
+  `kTzThermostat` (145 definitions) framed its setpoint and `system_mode`
+  writes as a cluster-specific command (fc 0x11), which on hvacThermostat is
+  command 0x02 GetWeeklySchedule, so no setpoint or mode write took effect.
+  It now sends a profile-wide writeAttributes (fc 0x10) through
+  `tz_zcl_write_attr`. The setpoint is rounded to 0.01 °C and refused outside
+  -273.15..327.67 °C: writing back a raw reading (2150) used to wrap to
+  183.92 °C. `ZclWriteSpec` gains `min_value` / `max_value` for scaled
+  writes (`thermostat_celsius_spec()` sets the ZCL range), a scaled write that
+  is NaN, infinite or out of range is refused instead of cut to the
+  attribute's width, and a float write no longer casts infinity to an integer.
+  Eurotronic's 0x4003 setpoint write has the same range check.
 - **The host suite passes under ASan + UBSan again (CI `host-tests`).** 299 test helpers
   dispatched with a `RuntimeContext` of their own and returned the `DispatchResult`, whose
   suffixed keys and `alloc_str()` texts live in that context: the caller read a dead stack

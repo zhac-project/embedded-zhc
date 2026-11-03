@@ -110,13 +110,13 @@ void check_pct504() {
     assert(def_exposes(def, "occupancy"));
 
     // ── Parity fix 1: attr 0x0011 OccupiedCoolingSetpoint, s16 =
-    //    0x0898 = 2200 → current_cooling_setpoint (raw, runtime /100). ──
+    //    0x0898 = 2200 → current_cooling_setpoint (→ 22.0 °C). ──
     const std::uint8_t cool[] = {0x98, 0x08};
     auto rc = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0011, 0x29, cool));
     assert(rc.any_matched);
     const Value* cv = rc.merged.find("current_cooling_setpoint");
-    assert(cv && cv->type == ValueType::Int && cv->i == 2200);
+    assert(cv && cv->type == ValueType::Float && cv->f == 22.0f);
 
     // ── Parity fix 2: attr 0x0029 ThermostatRunningState, map16. ──
     //   2 → "cool"
@@ -151,7 +151,7 @@ void check_pct504() {
     auto rt = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0000, 0x29, lt));
     const Value* tv = rt.merged.find("local_temperature");
-    assert(tv && tv->type == ValueType::Int && tv->i == 2100);
+    assert(tv && tv->type == ValueType::Float && tv->f == 21.0f);
 
     const std::uint8_t sm[] = {0x04};         // system_mode = 4 (heat)
     auto rm = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
@@ -190,7 +190,7 @@ void check_pct512() {
     auto rs = dispatch_zcl(def, 0x0201, "hvacThermostat", 1,
                            attr_report(0x0012, 0x29, sp));
     const Value* sv = rs.merged.find("current_heating_setpoint");
-    assert(sv && sv->type == ValueType::Int && sv->i == 2000);
+    assert(sv && sv->type == ValueType::Float && sv->f == 20.0f);
 }
 
 // ── AC201 / AC221 HVAC controllers: cooling setpoint decode ───────────
@@ -208,7 +208,7 @@ void check_ac_controllers() {
                                attr_report(0x0011, 0x29, cool));
         assert(rc.any_matched);
         const Value* cv = rc.merged.find("current_cooling_setpoint");
-        assert(cv && cv->type == ValueType::Int && cv->i == 1800);
+        assert(cv && cv->type == ValueType::Float && cv->f == 18.0f);
 
         // Regression: system_mode via generic kFzThermostat.
         const std::uint8_t sm[] = {0x03};   // cool

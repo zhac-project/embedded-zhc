@@ -4,10 +4,11 @@
 // New upstream in z2m v26.103.0 (#13071).
 //
 // The build reports the modelID "lumi.flood.agl02\tF\x01" — the production
-// string followed by a TAB, an 'F' and a 0x01 byte. The firmware copies the
-// Basic modelID byte-for-byte (no sanitising) and the matcher compares with
-// strcmp, so the literal below carries exactly those three bytes; the
-// production SJCGQ12LM keeps matching its own clean string.
+// string followed by a TAB, an 'F' and a 0x01 byte. The hub stores device text
+// JSON-safe, each control byte as '?' (zhac-components zigbee_copy_text, review
+// 2026-10-24 ZR-03), and the matcher compares with strcmp, so the literal below
+// is the modelID as stored; the production SJCGQ12LM keeps matching its own
+// clean string.
 //
 // Upstream gives this build the IAS zone alarm only (alarm_1 + battery_low),
 // no lumi 0xFCC0 battery / telemetry, and notes it is not Aqara-Home
@@ -22,7 +23,7 @@ namespace {
 const FzConverter* const kFz[] = {
     &::zhc::generic::kFzIasWaterLeakAlarm,
 };
-constexpr const char* kModels[] = { "lumi.flood.agl02\tF\x01" };
+constexpr const char* kModels[] = { "lumi.flood.agl02?F?" };   // sent as "lumi.flood.agl02\tF\x01"
 constexpr Expose kExposes[] = {
     {"water_leak",  ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0, ExposeCategory::Diagnostic},

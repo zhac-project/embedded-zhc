@@ -213,6 +213,25 @@ static void test_missing_meta_returns_false() {
     assert(result.any_matched == false);
 }
 
+// ZR-07: the MI-struct arena's keys point into the converter's own stack frame, so both MI-struct
+// converters empty the arena before they return; nothing after them can read a key from a dead frame.
+static void test_arena_empty_after_return() {
+    static constexpr lumi::LumiTagEntry entries[] = { { lumi::kLumiTagPower, "power", 10 } };
+    static constexpr lumi::LumiTagMap map{ entries, 1 };
+    for (const FzConverter* fz : { &lumi::kFzLumiSpecific, &lumi::kFzLumiBasic }) {
+        auto raw = build_frame(0x0000, kPlugFrame);
+        DecodedMessage msg{};
+        assert(decode_frame(raw, {}, msg));
+        msg.cluster = "genBasic";
+        auto def = make_def(&map);
+        const FzConverter* const list[] = { fz };
+        def.from_zigbee = list;
+        RuntimeContext ctx{};
+        (void)dispatch_from_zigbee(msg, {}, def, raw, ctx);
+        assert(msg.mi_struct_arena.count == 0);
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -221,5 +240,6 @@ int main() {
     test_sensor_temp_map();
     test_unknown_tag_ignored();
     test_missing_meta_returns_false();
+    test_arena_empty_after_return();
     return 0;
 }

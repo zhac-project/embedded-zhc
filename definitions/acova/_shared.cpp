@@ -18,54 +18,20 @@ bool fz_acova_thermostat(const ::zhc::DecodedMessage& msg,
                          ::zhc::RuntimeContext&,
                          ::zhc::FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
     bool emitted = false;
+    using ::zhc::generic::put_thermostat_celsius;
 
-    // 0x0000 localTemp (s16, ×100) — raw int passthrough.
-    if (const ::zhc::Value* v = msg.payload.find("0")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int ? v->i
-                                                   : static_cast<std::int64_t>(v->u);
-            out.put("local_temperature", o);
-            emitted = true;
-        }
-    }
-
-    // 0x0010 localTemperatureCalibration (s16, ×10) — raw int passthrough.
-    if (const ::zhc::Value* v = msg.payload.find("16")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int ? v->i
-                                                   : static_cast<std::int64_t>(v->u);
-            out.put("local_temperature_calibration", o);
-            emitted = true;
-        }
-    }
-
-    // 0x0012 occupiedHeatingSetpoint (s16, ×100) — raw int passthrough.
-    if (const ::zhc::Value* v = msg.payload.find("18")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int ? v->i
-                                                   : static_cast<std::int64_t>(v->u);
-            out.put("occupied_heating_setpoint", o);
-            emitted = true;
-        }
-    }
-
-    // 0x0014 unoccupiedHeatingSetpoint (s16, ×100) — raw int passthrough.
-    if (const ::zhc::Value* v = msg.payload.find("20")) {
-        if (v->type == ::zhc::ValueType::Int || v->type == ::zhc::ValueType::Uint) {
-            ::zhc::Value o{};
-            o.type = ::zhc::ValueType::Int;
-            o.i = v->type == ::zhc::ValueType::Int ? v->i
-                                                   : static_cast<std::int64_t>(v->u);
-            out.put("unoccupied_heating_setpoint", o);
-            emitted = true;
-        }
-    }
+    // °C as z2m fz.thermostat: 0x0000 localTemp and 0x0012
+    // occupiedHeatingSetpoint (s16 / 100, below -273.15 dropped), 0x0010
+    // localTemperatureCalibration (s8 / 10), 0x0014 unoccupiedHeatingSetpoint
+    // (s16 / 100).
+    if (put_thermostat_celsius(out, "local_temperature", msg.payload.find("0"), 100, true))
+        emitted = true;
+    if (put_thermostat_celsius(out, "local_temperature_calibration", msg.payload.find("16"), 10, false))
+        emitted = true;
+    if (put_thermostat_celsius(out, "occupied_heating_setpoint", msg.payload.find("18"), 100, true))
+        emitted = true;
+    if (put_thermostat_celsius(out, "unoccupied_heating_setpoint", msg.payload.find("20"), 100, false))
+        emitted = true;
 
     // 0x001C systemMode (u8 enum) — raw passthrough (generic contract).
     if (const ::zhc::Value* v = msg.payload.find("28")) {

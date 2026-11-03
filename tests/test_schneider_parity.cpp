@@ -83,7 +83,7 @@ bool has_fz_cluster(const PreparedDefinition& def, const char* cluster) {
 }
 
 // hvacThermostat (0x0201) LocalTemperature attr 0x0000, int16.
-//   0x093A = 2362 raw -> z2m 23.62 °C (ZHC emits the raw int).
+//   0x093A = 2362 raw -> z2m 23.62 °C (ZHC emits °C, as z2m).
 constexpr std::uint8_t kThermLocalTemp_2362[] = {
     0x08,              // FC: SRV->CLI, disable default rsp
     0x42,              // tsn
@@ -142,8 +142,8 @@ static void test_eer53000_decodes_local_temperature() {
 
     assert(result.any_matched);
     const Value* t = result.merged.find("local_temperature");
-    assert(t && t->type == ValueType::Int);
-    assert(t->i == 2362);  // raw s16; z2m scales /100 downstream
+    assert(t && t->type == ValueType::Float);
+    assert(t->f == 23.62f);  // °C, z2m precisionRound(raw, 2) / 100
 }
 
 // ─────────────────────────────────────────────────────────────────────

@@ -12,6 +12,7 @@
 #include "definitions/eurotronic/_shared.hpp"
 #include "definitions/_generic/_shared.hpp"
 
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 
@@ -152,7 +153,9 @@ bool tz_valve_pos(std::string_view key, const Value& input,
 // ── tz_eurotronic_current_heating_setpoint (attr 0x4003, s16) ──────
 //
 // z2m: rounds value to nearest 0.5°C and multiplies by 100. We accept
-// Int / Uint / Float and emit `round(input * 2) / 2 * 100` little-endian.
+// Int / Uint / Float °C and emit `round(input * 2) / 2 * 100` little-endian;
+// a value outside the ZCL temperature range (NaN, inf, a reading already in
+// 0.01 °C) is refused instead of wrapping into 16 bits.
 bool tz_current_setpoint(std::string_view key, const Value& input,
                           const TzConverter&, const PreparedDefinition&,
                           RuntimeContext&,
@@ -165,10 +168,11 @@ bool tz_current_setpoint(std::string_view key, const Value& input,
     else if (input.type == ValueType::Uint)  f = static_cast<double>(input.u);
     else return false;
     // Round to 0.5 °C — match z2m's `Math.round(value * 2) / 2`.
-    const std::int32_t halves = static_cast<std::int32_t>(f * 2.0 + (f >= 0 ? 0.5 : -0.5));
-    const std::int32_t raw    = halves * 50;  // (halves / 2) * 100
+    const double raw = std::round(f * 2.0) * 50.0;  // (halves / 2) * 100
+    if (!(raw >= ::zhc::generic::kThermostatTempMin &&
+          raw <= ::zhc::generic::kThermostatTempMax)) return false;
     return emit_write(0x4003, 0x29,
-                       static_cast<std::uint32_t>(raw) & 0xFFFFu,
+                       static_cast<std::uint32_t>(static_cast<std::int32_t>(raw)) & 0xFFFFu,
                        2, out_frame, out_size);
 }
 
@@ -218,21 +222,12 @@ bool fz_eurotronic_thermostat(const DecodedMessage& msg,
     bool emitted = false;
 
     // Standard thermostat attrs (mirror the kFzThermostat decoder so
-    // a device can wire just kFzEurotronicThermostat).
-    if (const Value* v = msg.payload.find("0")) {        // LocalTemperature
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{}; o.type = ValueType::Int;
-            o.i = (v->type == ValueType::Int) ? v->i : static_cast<std::int64_t>(v->u);
-            out.put("local_temperature", o); emitted = true;
-        }
-    }
-    if (const Value* v = msg.payload.find("18")) {       // OccupiedHeatingSetpoint
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{}; o.type = ValueType::Int;
-            o.i = (v->type == ValueType::Int) ? v->i : static_cast<std::int64_t>(v->u);
-            out.put("occupied_heating_setpoint", o); emitted = true;
-        }
-    }
+    // a device can wire just kFzEurotronicThermostat), °C as z2m.
+    using ::zhc::generic::put_thermostat_celsius;
+    if (put_thermostat_celsius(out, "local_temperature",          // LocalTemperature
+                               msg.payload.find("0"), 100, true)) emitted = true;
+    if (put_thermostat_celsius(out, "occupied_heating_setpoint",  // OccupiedHeatingSetpoint
+                               msg.payload.find("18"), 100, true)) emitted = true;
     if (const Value* v = msg.payload.find("28")) {       // SystemMode (enum8)
         if (v->type == ValueType::Uint) {
             Value o{}; o.type = ValueType::Uint; o.u = v->u;
@@ -269,13 +264,10 @@ bool fz_eurotronic_thermostat(const DecodedMessage& msg,
             out.put("error_status", o); emitted = true;
         }
     }
-    if (const Value* v = msg.payload.find(kKey_CurrentSP)) {
-        if (v->type == ValueType::Int || v->type == ValueType::Uint) {
-            Value o{}; o.type = ValueType::Int;
-            o.i = (v->type == ValueType::Int) ? v->i : static_cast<std::int64_t>(v->u);
-            out.put("current_heating_setpoint", o); emitted = true;
-        }
-    }
+    // 0x4003 currentHeatingSetpoint — z2m precisionRound(v, 2) / 100 °C,
+    // the unit tz_current_setpoint writes.
+    if (put_thermostat_celsius(out, "current_heating_setpoint",
+                               msg.payload.find(kKey_CurrentSP), 100, false)) emitted = true;
     if (const Value* v = msg.payload.find(kKey_HostFlags)) {
         if (v->type == ValueType::Uint) {
             const std::uint32_t hf = static_cast<std::uint32_t>(v->u);

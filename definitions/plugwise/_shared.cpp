@@ -53,17 +53,20 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecRadioStrength{
     "radio_strength", 0x4014, 0x10, kPlugwiseMfg,
     kRadioStrengthLookup, sizeof(kRadioStrengthLookup) / sizeof(kRadioStrengthLookup[0]),
 };
+// The OpenTherm temperatures are written in °C (z2m `scale: 100`), refused
+// outside z2m's ranges: external_heat_demand 0..90 °C, the max setpoints
+// 0..100 °C.
 constexpr ::zhc::generic::ZclWriteSpec kSpecExternalHeatDemand{
-    "external_heat_demand", 0xF000, 0x21, kPlugwiseMfg, nullptr, 0,
+    "external_heat_demand", 0xF000, 0x21, kPlugwiseMfg, nullptr, 0, 0, 100, 0, 9000,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecExternalHeatDemandTo{
     "external_heat_demand_timeout", 0xF001, 0x21, kPlugwiseMfg, nullptr, 0,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecMaxDhwSetpoint{
-    "max_dhw_setpoint", 0xF007, 0x29, kPlugwiseMfg, nullptr, 0,
+    "max_dhw_setpoint", 0xF007, 0x29, kPlugwiseMfg, nullptr, 0, 0, 100, 0, 10000,
 };
 constexpr ::zhc::generic::ZclWriteSpec kSpecMaxBoilerSetpoint{
-    "max_boiler_setpoint", 0xF008, 0x29, kPlugwiseMfg, nullptr, 0,
+    "max_boiler_setpoint", 0xF008, 0x29, kPlugwiseMfg, nullptr, 0, 0, 100, 0, 10000,
 };
 
 // ── fz_plugwise_thermostat — manuSpec attribute decoder ──────────
@@ -78,7 +81,9 @@ constexpr ::zhc::generic::ZclWriteSpec kSpecMaxBoilerSetpoint{
 enum class PType : std::uint8_t {
     Uint,            // Pass-through unsigned
     Int,             // Pass-through signed
-    IntScaled100,    // INT16 raw / 100 -> Int (still int — caller scales display)
+    Celsius,         // raw / 100 -> °C Float (z2m precisionRound/100, scale 100)
+    CelsiusValid,    // Celsius, below -273.15 dropped (fz.thermostat outdoorTemp)
+    DeciCelsius,     // raw / 10 -> °C Float (localTemperatureCalibration)
     ForceLookup,     // u32 -> string label via kForceLookup
     RadioLookup,     // u8/bool -> string label via kRadioStrengthLookup
     RunningState,    // map16 -> string label via constants.thermostatRunningStates
@@ -96,29 +101,28 @@ constexpr PEntry kAttrs[] = {
     // these via base fz.thermostat — without them the Tom/Emma exposes
     // (pi_heating_demand, occupied_cooling_setpoint, running_state,
     // local_temperature_calibration, outdoor_temperature) are dead.
-    // Raw INT pass-through mirrors the generic setpoint branch; the
-    // runtime/SPA applies the per-expose display divisor (owon precedent).
-    { 0x0001, "outdoor_temperature",           PType::Int          },  // OutdoorTemperature (s16)
+    // Temperatures are °C, scaled as z2m's fz.thermostat / m.numeric do.
+    { 0x0001, "outdoor_temperature",           PType::CelsiusValid },  // OutdoorTemperature (s16)
     { 0x0008, "pi_heating_demand",             PType::Uint         },  // PIHeatingDemand (u8, 0..100 on Plugwise)
-    { 0x0010, "local_temperature_calibration", PType::Int          },  // LocalTemperatureCalibration (s8)
-    { 0x0011, "occupied_cooling_setpoint",     PType::Int          },  // OccupiedCoolingSetpoint (s16)
+    { 0x0010, "local_temperature_calibration", PType::DeciCelsius  },  // LocalTemperatureCalibration (s8)
+    { 0x0011, "occupied_cooling_setpoint",     PType::Celsius      },  // OccupiedCoolingSetpoint (s16)
     { 0x0029, "running_state",                 PType::RunningState },  // ThermostatRunningState (map16)
     // Plugwise manufacturer-specific attrs (0x1172 mfg code):
     { 0x4001, "valve_position",                PType::Uint         },
     { 0x4002, "error_status",                  PType::Uint         },
-    { 0x4003, "current_heating_setpoint",      PType::IntScaled100 },
+    { 0x4003, "current_heating_setpoint",      PType::Celsius      },
     { 0x4008, "plugwise_t_diff",               PType::Int          },
     { 0x4012, "force",                         PType::ForceLookup  },
     { 0x4014, "radio_strength",                PType::RadioLookup  },
-    { 0xF000, "external_heat_demand",          PType::Uint         },
+    { 0xF000, "external_heat_demand",          PType::Celsius      },  // u16, z2m scale 100
     { 0xF001, "external_heat_demand_timeout",  PType::Uint         },
-    { 0xF002, "boiler_water_temperature",      PType::IntScaled100 },
-    { 0xF003, "dhw_temperature",               PType::IntScaled100 },
-    { 0xF004, "return_water_temperature",      PType::IntScaled100 },
+    { 0xF002, "boiler_water_temperature",      PType::Celsius      },
+    { 0xF003, "dhw_temperature",               PType::Celsius      },
+    { 0xF004, "return_water_temperature",      PType::Celsius      },
     { 0xF005, "application_fault_code",        PType::Uint         },
     { 0xF006, "oem_fault_code",                PType::Uint         },
-    { 0xF007, "max_dhw_setpoint",              PType::IntScaled100 },
-    { 0xF008, "max_boiler_setpoint",           PType::IntScaled100 },
+    { 0xF007, "max_dhw_setpoint",              PType::Celsius      },
+    { 0xF008, "max_boiler_setpoint",           PType::Celsius      },
 };
 
 const char* lookup_label(const ::zhc::generic::ZclWriteLookup* table,
@@ -164,17 +168,14 @@ bool fz_plugwise_thermostat(const DecodedMessage& msg,
                 } else { continue; }
                 break;
             }
-            case PType::IntScaled100: {
-                std::int64_t raw = 0;
-                if      (v->type == ValueType::Int)  raw = v->i;
-                else if (v->type == ValueType::Uint) raw = static_cast<std::int64_t>(v->u);
-                else continue;
-                // Emit raw integer; the SPA / shadow shows scaled
-                // values via the expose unit. Keep INT semantics so
-                // negative tDiff-ish writes survive.
-                o.type = ValueType::Int; o.i = raw;
-                break;
-            }
+            case PType::Celsius:
+            case PType::CelsiusValid:
+            case PType::DeciCelsius:
+                if (::zhc::generic::put_thermostat_celsius(
+                        out, e.key, v, e.type == PType::DeciCelsius ? 10 : 100,
+                        e.type == PType::CelsiusValid))
+                    emitted = true;
+                continue;
             case PType::ForceLookup: {
                 std::uint64_t raw = 0;
                 if      (v->type == ValueType::Uint) raw = v->u;
