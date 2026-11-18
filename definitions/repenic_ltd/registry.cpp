@@ -7,9 +7,11 @@
 namespace zhc::devices::repenic_ltd {
 
 extern const PreparedDefinition kDef_RD_250ZG;
+extern const PreparedDefinition kDef_RS_T03AZG;
 
 const PreparedDefinition* const kRepenicLtdRegistry[] = {
     &kDef_RD_250ZG,
+    &kDef_RS_T03AZG,
 };
 const std::size_t kRepenicLtdRegistryCount = sizeof(kRepenicLtdRegistry) / sizeof(kRepenicLtdRegistry[0]);
 

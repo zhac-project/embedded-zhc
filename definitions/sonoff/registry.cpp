@@ -63,6 +63,7 @@ extern const PreparedDefinition kDef_ZBMicro;
 extern const PreparedDefinition kDef_Dongle_PP10;
 extern const PreparedDefinition kDef_SNZT_03P;
 extern const PreparedDefinition kDef_SNZT_04P;
+extern const PreparedDefinition kDef_SS_Z2N;
 
 const PreparedDefinition* const kSonoffRegistry[] = {
     &kDef_BASICZBR3,
@@ -122,6 +123,7 @@ const PreparedDefinition* const kSonoffRegistry[] = {
     &kDef_Dongle_PP10,
     &kDef_SNZT_03P,
     &kDef_SNZT_04P,
+    &kDef_SS_Z2N,
 };
 const std::size_t kSonoffRegistryCount = sizeof(kSonoffRegistry) / sizeof(kSonoffRegistry[0]);
 

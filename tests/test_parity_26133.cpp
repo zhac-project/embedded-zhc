@@ -1437,6 +1437,1055 @@ void w2_c_mw1pqqqt() {
 
 // Call order: w2_c_ls12136, w2_c_sa_t2, w2_c_zp01, w2_c_a8mhmsol, w2_c_ts011f_5, w2_c_udl7uyd2, w2_c_mw1pqqqt
 
+
+// ── Wave 3 (ZCL) snippet w3_h1_tests.cpp ──
+// ── W3 h1: new upstream devices (acuity, control4, coselig, ctm, innr,
+// legrand, orvibo, robb, smlight, librasoft) ─────────────────────────────
+
+// Cluster-specific command frame [fc tsn cmd payload...] through dispatch.
+DispatchResult w3_h1_cmd(const PreparedDefinition& d, std::uint16_t cluster, std::uint8_t ep,
+                         std::initializer_list<std::uint8_t> bytes) {
+    const std::vector<std::uint8_t> v(bytes);
+    return dispatch(d, cluster, ep, std::span<const std::uint8_t>(v.data(), v.size()));
+}
+// A cluster-specific outbound frame: cluster, command id, first payload byte.
+bool w3_h1_frame(const Encoded& e, std::uint16_t cluster, std::uint8_t cmd, std::uint8_t b0) {
+    return e.ok && e.cluster == cluster && e.frame.size() >= 4 && e.frame[2] == cmd && e.frame[3] == b0;
+}
+
+void w3_h1_cpxc_2x4_tuwh() {
+    std::printf("W3h1 CPXC 2X4 TUWH\n");
+    resolves({"ABL-LIGHTSENSOR-Z-001", "Acuity Brands Lighting (ABL)", "CPXC 2X4 TUWH"});
+    const PreparedDefinition& d = def_for("ABL-LIGHTSENSOR-Z-001", "Acuity Brands Lighting (ABL)");
+    check(r_bool(dispatch(d, 0x0406, 1, Report().u8(0x0000, 0x18, 1).span()), "occupancy", true),
+          "CPXC occupancy bitmap 1 -> occupancy true (m.occupancy, acuity_brands_lighting.ts)");
+    const auto r = dispatch(d, 0x0406, 1,
+                            Report().u16(0x0010, 0x21, 300).u16(0x0011, 0x21, 5).u8(0x0012, 0x20, 3).span());
+    check(approx(r_float(r, "occupancy_timeout"), 300.0f), "CPXC pirOToUDelay 300 -> occupancy_timeout 300 s (pirConfig otu_delay)");
+    check(approx(r_float(r, "pir_uto_delay"), 5.0f), "CPXC pirUToODelay 5 -> pir_uto_delay 5 (pirConfig uto_delay; triage said unoccupied_to_occupied_delay)");
+    check(approx(r_float(r, "pir_uto_threshold"), 3.0f), "CPXC pirUToOThreshold 3 -> pir_uto_threshold 3 (pirConfig uto_threshold)");
+    check(is_write(encode(d, "occupancy_timeout", num(120)), 0x0406, 0x0010, 0x21, 120), "CPXC occupancy_timeout 120 -> write pirOToUDelay u16 120");
+    check(is_write(encode(d, "pir_uto_delay", num(10)), 0x0406, 0x0011, 0x21, 10), "CPXC pir_uto_delay 10 -> write pirUToODelay u16 10");
+    check(is_write(encode(d, "pir_uto_threshold", num(2)), 0x0406, 0x0012, 0x20, 2), "CPXC pir_uto_threshold 2 -> write pirUToOThreshold u8 2");
+    const Expose* ct = find_expose(d, "color_temp");
+    check(ct && ct->value_min == 200 && ct->value_max == 370, "CPXC color_temp 200-370 mired (m.light colorTemp range)");
+    check(has_expose(d, "power_on_behavior") && !has_expose(d, "effect") && !has_expose(d, "color_x"),
+          "CPXC power_on_behavior (m.light default), no effect (effect: false), no colour (tunable white)");
+    check(!has_binding(d, 0x0406), "CPXC occupancy not bound (reporting: false, cluster rejects configureReporting)");
+}
+
+void w3_h1_vb_ftw_a19() {
+    std::printf("W3h1 VB-FTW-A19\n");
+    resolves({"C4-VB-FTW-A19", "Control4", "VB-FTW-A19"});
+    const PreparedDefinition& d = def_for("C4-VB-FTW-A19", "Control4");
+    check(approx(r_float(dispatch(d, 0x0008, 1, Report().u8(0x0000, 0x20, 50).span()), "brightness"), 127.0f),
+          "VB-FTW-A19 currentLevel 50 -> brightness 127 (level 0-100 scaled to 254, control4.ts)");
+    check(approx(r_float(dispatch(d, 0x0008, 1, Report().u8(0x0000, 0x20, 25).span()), "brightness"), 64.0f),
+          "VB-FTW-A19 currentLevel 25 -> brightness 64 (Math.round(63.5), control4.ts)");
+    check(approx(r_float(dispatch(d, 0x0008, 1, Report().u8(0x0000, 0x20, 100).span()), "brightness"), 254.0f),
+          "VB-FTW-A19 currentLevel 100 -> brightness 254 (control4.ts)");
+    check(w3_h1_frame(encode(d, "brightness", num(254)), 0x0008, 0x04, 100),
+          "VB-FTW-A19 brightness 254 -> moveToLevelWithOnOff level 100 (scaled 254 -> 100, control4.ts)");
+    check(w3_h1_frame(encode(d, "brightness", num(127)), 0x0008, 0x04, 50),
+          "VB-FTW-A19 brightness 127 -> level 50 (control4.ts)");
+    const Expose* ct = find_expose(d, "color_temp");
+    check(ct && ct->value_min == 153 && ct->value_max == 555, "VB-FTW-A19 color_temp 153-555 mired (control4.ts)");
+    check(has_expose(d, "effect") && has_expose(d, "power_on_behavior") && !has_expose(d, "color_x"),
+          "VB-FTW-A19 effect + power_on_behavior (m.light defaults), no colour");
+}
+
+void w3_h1_vb_rgbtw_a19() {
+    std::printf("W3h1 VB-RGBTW-A19\n");
+    resolves({"C4-VB-RGBTW-A19", "Control4", "VB-RGBTW-A19"});
+    const PreparedDefinition& d = def_for("C4-VB-RGBTW-A19", "Control4");
+    check(approx(r_float(dispatch(d, 0x0008, 1, Report().u8(0x0000, 0x20, 75).span()), "brightness"), 191.0f),
+          "VB-RGBTW-A19 currentLevel 75 -> brightness 191 (Math.round(190.5), control4.ts)");
+    check(w3_h1_frame(encode(d, "brightness", num(64)), 0x0008, 0x04, 25),
+          "VB-RGBTW-A19 brightness 64 -> level 25 (Math.round(25.2), control4.ts)");
+    const Encoded xy = encode(d, "color_xy", str("0.3,0.3"));
+    check(xy.ok && xy.cluster == 0x0300 && xy.frame.size() >= 3 && xy.frame[2] == 0x07,
+          "VB-RGBTW-A19 color_xy -> moveToColor (color modes xy, control4.ts)");
+    check(has_expose(d, "color_x") && has_expose(d, "color_mode") && has_expose(d, "color_temp"),
+          "VB-RGBTW-A19 exposes colour xy + color_temp");
+}
+
+void w3_h1_h2_zb_sw_v1() {
+    std::printf("W3h1 H2-ZB-SW-V1\n");
+    resolves({"H2-ZB-SW-V1", "Coselig", "H2-ZB-SW-V1"});
+    const PreparedDefinition& d = def_for("H2-ZB-SW-V1", "Coselig");
+    check(r_str(w3_h1_cmd(d, 0xFC10, 1, {0x11, 0x05, 0x00, 0x01, 0x34, 0x12}), "action_ch1", "toggle"),
+          "H2-ZB-SW-V1 0xFC10 actionEvent action 1 on ch1 -> toggle (coselig.ts actionLookup)");
+    check(r_str(w3_h1_cmd(d, 0xFC10, 3, {0x11, 0x06, 0x00, 0x0C, 0x00, 0x00}), "action_ch3", "scene"),
+          "H2-ZB-SW-V1 actionEvent action 12 on ch3 -> scene (coselig.ts)");
+    check(w3_h1_cmd(d, 0xFC10, 1, {0x11, 0x07, 0x00, 0x0D, 0x00, 0x00}).merged.find("action_ch1") == nullptr,
+          "H2-ZB-SW-V1 action 13 -> nothing (not in the lookup)");
+    check(w3_h1_cmd(d, 0x0006, 1, {0x11, 0x08, 0x00}).merged.find("action_ch1") == nullptr,
+          "H2-ZB-SW-V1 genOnOff off command is not an actionEvent (0xFC10 fails open; named clusters must not match)");
+    check(r_str(dispatch(d, 0x0014, 2, Report().u16(0x0055, 0x21, 4).span()), "mode_ch2", "rocker_follow"),
+          "H2-ZB-SW-V1 genMultistateValue presentValue 4 on ch2 -> mode_ch2 rocker_follow (coselig.ts)");
+    check(is_write(encode(d, "mode", str("rocker_reverse")), 0x0014, 0x0055, 0x21, 5),
+          "H2-ZB-SW-V1 mode rocker_reverse -> write presentValue u16 5 (coselig.ts)");
+    check(has_expose(d, "mode_ch4") && has_expose(d, "action") && !has_expose(d, "state"),
+          "H2-ZB-SW-V1 exposes mode_ch1-4 + action; no relay state upstream (triage said onOff)");
+    check(has_binding(d, 0x0014) && d.reports_count == 4, "H2-ZB-SW-V1 presentValue bound + reported per channel");
+}
+
+void w3_h1_mtouch_onoff() {
+    std::printf("W3h1 mTouch_OnOff\n");
+    resolves({"mTouch OnOff", "CTM Lyng", "mTouch_OnOff"});
+    const PreparedDefinition& d = def_for("mTouch OnOff", "CTM Lyng");
+    check(r_bool(dispatch(d, 0x0006, 1, Report().u8(0x0000, 0x10, 1).span()), "state", true),
+          "mTouch_OnOff onOff 1 -> state ON, unsuffixed (multiEndpointSkip state, ctm.ts)");
+    check(r_bool(dispatch(d, 0x0406, 1, Report().u8(0x0000, 0x18, 1).span()), "timer_active", true),
+          "mTouch_OnOff occupancy 1 -> timer_active true (m.binary, ctm.ts)");
+    check(approx(r_float(dispatch(d, 0x0006, 1, Report().u16(0x4001, 0x21, 125).span()), "timer_remaining"), 13.0f),
+          "mTouch_OnOff onTime 125 -> timer_remaining 13 s (scale 10, precision 0, ctm.ts)");
+    check(r_str(w3_h1_cmd(d, 0x0006, 2, {0x01, 0x09, 0x01}), "action", "on_2"),
+          "mTouch_OnOff ep2 genOnOff on -> action on_2 (commandsOnOff endpointNames [2], ctm.ts)");
+    check(r_str(w3_h1_cmd(d, 0x0006, 2, {0x01, 0x0A, 0x40, 0x00, 0x00}), "action", "off_2"),
+          "mTouch_OnOff ep2 offWithEffect -> action off_2 (commandsOnOff)");
+    check(r_str(w3_h1_cmd(d, 0x0006, 2, {0x01, 0x0B, 0x02}), "action", "toggle_2"),
+          "mTouch_OnOff ep2 toggle -> action toggle_2 (commandsOnOff)");
+    check(has_expose(d, "device_temperature") && has_expose(d, "power_on_behavior") && has_expose(d, "timer_remaining"),
+          "mTouch_OnOff exposes device_temperature, power_on_behavior, timer_remaining");
+    check(has_binding(d, 0x0406), "mTouch_OnOff timer_active reported (reporting 0 / 1 h / 1)");
+}
+
+void w3_h1_fl_290_c() {
+    std::printf("W3h1 FL 290 C\n");
+    resolves({"FL 290 C", "Innr", "FL 290 C"});
+    const PreparedDefinition& d = def_for("FL 290 C", "Innr");
+    const Expose* ct = find_expose(d, "color_temp");
+    check(ct && ct->value_min == 50 && ct->value_max == 1000, "FL 290 C color_temp 50-1000 mired (innr.ts)");
+    const Encoded e = encode(d, "color_temp", num(1200));
+    check(e.ok && e.cluster == 0x0300 && e.frame.size() >= 5 && e.frame[2] == 0x0A && e.frame[3] == 0xE8 && e.frame[4] == 0x03,
+          "FL 290 C color_temp 1200 -> moveToColorTemp clamped to 1000 (range [50, 1000], innr.ts)");
+    check(approx(r_float(dispatch(d, 0x0300, 1, Report().u16(0x0003, 0x21, 32768).span()), "color_x"), 0.5f),
+          "FL 290 C currentX 32768 -> color_x 0.5 (colour xy, innr.ts)");
+    check(has_expose(d, "hue") && has_expose(d, "color_x") && has_expose(d, "effect"),
+          "FL 290 C exposes hs + xy colour and effect (modes [xy, hs])");
+}
+
+void w3_h1_wnrl24() {
+    std::printf("W3h1 WNRL24\n");
+    resolves({" Wired remote on / off switch", "Legrand", "WNRL24"});
+    resolves({"Wired remote on / off switch", "Legrand", "WNRL24"});
+    const PreparedDefinition& d = def_for(" Wired remote on / off switch", "Legrand");
+    check(r_str(w3_h1_cmd(d, 0x0006, 1, {0x11, 0x01, 0x01}), "action", "on"), "WNRL24 genOnOff on -> action on (fz.command_on, legrand.ts)");
+    check(r_str(w3_h1_cmd(d, 0x0006, 1, {0x11, 0x02, 0x02}), "action", "toggle"), "WNRL24 toggle -> action toggle (fz.command_toggle)");
+    check(r_str(w3_h1_cmd(d, 0x0008, 1, {0x11, 0x03, 0x01, 0x01, 0x32}), "action", "brightness_move_down"),
+          "WNRL24 genLevelCtrl move down -> brightness_move_down (fz.command_move)");
+    check(r_str(w3_h1_cmd(d, 0x0008, 1, {0x11, 0x04, 0x07}), "action", "brightness_stop"),
+          "WNRL24 stopWithOnOff -> brightness_stop (fz.command_stop)");
+    check(has_binding(d, 0x0006) && has_binding(d, 0x0008) && has_binding(d, 0x0003),
+          "WNRL24 binds genIdentify, genOnOff, genLevelCtrl (legrand.ts configure)");
+}
+
+void w3_h1_wnrl34() {
+    std::printf("W3h1 WNRL34\n");
+    resolves({" Wired master SW Home / Away", "Legrand", "WNRL34"});
+    resolves({"Wired master SW Home / Away", "Legrand", "WNRL34"});
+    const PreparedDefinition& d = def_for(" Wired master SW Home / Away", "Legrand");
+    check(r_str(w3_h1_cmd(d, 0x0005, 1, {0x11, 0x01, 0x05, 0xF7, 0xFF, 0x00}), "action", "enter"),
+          "WNRL34 recall body groupid 65527 -> enter (legrand.fz.scenes)");
+    check(r_str(w3_h1_cmd(d, 0x0005, 1, {0x11, 0x02, 0x05, 0xF6, 0xFF, 0x00}), "action", "leave"),
+          "WNRL34 recall groupid 65526 -> leave");
+    check(r_str(w3_h1_cmd(d, 0x0005, 1, {0x11, 0x03, 0x05, 0xEE, 0xFF, 0x00}), "action", "ambiance_I"),
+          "WNRL34 recall groupid 65518 -> ambiance_I");
+    check(r_str(w3_h1_cmd(d, 0x0005, 1, {0x11, 0x04, 0x05, 0x01, 0x00, 0x00}), "action", "default"),
+          "WNRL34 recall unknown groupid -> default (legrand.fz.scenes fallback)");
+    check(has_binding(d, 0x0003), "WNRL34 binds genIdentify (legrand.ts configure)");
+}
+
+void w3_h1_t30s3z() {
+    std::printf("W3h1 T30S3Z\n");
+    resolves({"d0d2422bbf3a4982b31ea843bfedb559", "ORVIBO", "T30S3Z"});
+    const PreparedDefinition& d = def_for("d0d2422bbf3a4982b31ea843bfedb559", "ORVIBO");
+    check(r_str(w3_h1_cmd(d, 0x0017, 1, {0x19, 0x07, 0x08, 0x02, 0x00, 0x00}), "action", "middle_click"),
+          "T30S3Z cluster 23 [0x19,tsn,0x08,2,0,0] -> middle_click (orvibo.ts t30s3zButton)");
+    check(r_str(w3_h1_cmd(d, 0x0017, 1, {0x19, 0x08, 0x08, 0x03, 0x00, 0x00}), "action", "bottom_click"),
+          "T30S3Z button 3 -> bottom_click");
+    check(w3_h1_cmd(d, 0x0017, 1, {0x19, 0x09, 0x08, 0x01, 0x00, 0x02}).merged.find("action") == nullptr,
+          "T30S3Z data[5] != 0 -> no action (t30s3zButton)");
+    check(w3_h1_cmd(d, 0x0017, 1, {0x19, 0x0A, 0x08, 0x04, 0x00, 0x00}).merged.find("action") == nullptr,
+          "T30S3Z button 4 -> no action (3 buttons)");
+}
+
+void w3_h1_rob_200_082_0() {
+    std::printf("W3h1 ROB_200-082-0\n");
+    resolves({"ROB_200-082-0", "ROBB smarrt", "ROB_200-082-0"});
+    const PreparedDefinition& d = def_for("ROB_200-082-0", "ROBB smarrt");
+    check(r_str(w3_h1_cmd(d, 0x0006, 3, {0x01, 0x01, 0x01}), "action_3", "on"),
+          "ROB_200-082-0 ep3 genOnOff on -> action_3 on (commandsOnOff endpoints 1-4, robb.ts)");
+    check(r_str(w3_h1_cmd(d, 0x0008, 2, {0x01, 0x02, 0x02, 0x00, 0x10, 0x05, 0x00}), "action_2", "brightness_step_up"),
+          "ROB_200-082-0 ep2 step up -> action_2 brightness_step_up (commandsLevelCtrl)");
+    check(r_str(w3_h1_cmd(d, 0x0008, 4, {0x01, 0x03, 0x00, 0x80, 0x00, 0x00}), "action_4", "brightness_move_to_level"),
+          "ROB_200-082-0 ep4 moveToLevel -> action_4 brightness_move_to_level (commandsLevelCtrl)");
+    check(approx(r_float(dispatch(d, 0x0001, 1, Report().u8(0x0021, 0x20, 200).span()), "battery"), 100.0f),
+          "ROB_200-082-0 batteryPercentageRemaining 200 -> battery 100 (m.battery)");
+    check(has_binding(d, 0x0001) && has_binding(d, 0x0008), "ROB_200-082-0 binds genPowerCfg + genLevelCtrl output");
+}
+
+void w3_h1_zrel() {
+    std::printf("W3h1 ZREL\n");
+    resolves({"ZREL", "SMLIGHT", "ZREL"});
+    const PreparedDefinition& d = def_for("ZREL", "SMLIGHT");
+    check(d.exposes_count == 0 && d.from_zigbee_count == 0, "ZREL router: no exposes, no converters (smlight.ts)");
+    check(has_binding(d, 0x0000) && d.reports_count == 1 && d.reports[0].cluster_id == 0x0000 &&
+              d.reports[0].min_interval == 3600 && d.reports[0].max_interval == 14400,
+          "ZREL m.linkQuality reporting: genBasic zclVersion 1 h / 4 h");
+}
+
+void w3_h1_visspoint_io4() {
+    std::printf("W3h1 visspoint-io4\n");
+    resolves({"visspoint-io4", "LibraSoft", "visspoint-io4"});
+    const PreparedDefinition& d = def_for("visspoint-io4", "LibraSoft");
+    check(r_bool(dispatch(d, 0x0006, 3, Report().u8(0x0000, 0x10, 1).span()), "state_3", true),
+          "visspoint-io4 ep3 onOff 1 -> state_3 ON (m.onOff endpointNames, librasoft.ts)");
+    check(r_bool(dispatch(d, 0x000F, 2, Report().u8(0x0055, 0x10, 1).span()), "input_2", true),
+          "visspoint-io4 ep2 genBinaryInput presentValue 1 -> input_2 true (m.binary, librasoft.ts)");
+    const Encoded off = encode(d, "state", str("OFF"));
+    check(off.ok && off.cluster == 0x0006 && off.frame.size() == 3 && off.frame[2] == 0x00,
+          "visspoint-io4 state OFF -> plain genOnOff off (trigger pulse deferred)");
+    check(has_expose(d, "input_4") && has_expose(d, "state_1") && !has_expose(d, "trigger_1"),
+          "visspoint-io4 exposes state_1-4 + input_1-4; trigger deferred (device meta)");
+}
+
+// Call order: w3_h1_cpxc_2x4_tuwh, w3_h1_vb_ftw_a19, w3_h1_vb_rgbtw_a19, w3_h1_h2_zb_sw_v1,
+// w3_h1_mtouch_onoff, w3_h1_fl_290_c, w3_h1_wnrl24, w3_h1_wnrl34, w3_h1_t30s3z,
+// w3_h1_rob_200_082_0, w3_h1_zrel, w3_h1_visspoint_io4
+
+// ── Wave 3 (ZCL) snippet w3_h2_tests.cpp ──
+// ── W3 helper h2: heiman D1-E / HS-720ES-ZB / SC6, Sensy-One AirBee,
+//    ShinaSystem HPM-300-WZ, SONOFF SS-Z2N, Zbeacon TH03 ─────────────
+
+// Attribute report entry with a single-precision float (ZCL type 0x39).
+void w3_h2_f32(Report& r, std::uint16_t attr, float f) {
+    std::uint32_t u = 0;
+    std::memcpy(&u, &f, sizeof(u));
+    r.v.insert(r.v.end(), {std::uint8_t(attr & 0xFF), std::uint8_t(attr >> 8), 0x39,
+                           std::uint8_t(u), std::uint8_t(u >> 8), std::uint8_t(u >> 16), std::uint8_t(u >> 24)});
+}
+// ssIasZone statusChangeNotification (cmd 0x00, server -> client) with `status`.
+DispatchResult w3_h2_ias(const PreparedDefinition& d, std::uint16_t status) {
+    const std::uint8_t f[] = {0x19, 0x01, 0x00, std::uint8_t(status & 0xFF), std::uint8_t(status >> 8),
+                              0x00, 0x00, 0x00, 0x00};
+    return dispatch(d, 0x0500, 1, std::span<const std::uint8_t>(f, sizeof(f)));
+}
+constexpr std::uint16_t w3_h2_heiman = 0x120B;
+
+void w3_h2_d1_e() {
+    std::printf("W3h2 Heiman D1-E\n");
+    resolves({"D1-E", "HEIMAN", "D1-E"});
+    const PreparedDefinition& d = def_for("D1-E", "HEIMAN");
+    const DispatchResult z = w3_h2_ias(d, 0x0004);
+    check(r_bool(z, "contact", true) && r_bool(z, "tamper", true) && r_bool(z, "battery_low", false),
+          "D1-E zoneStatus 0x0004 -> contact true (alarm_1 clear, contact zone inverts), tamper true (iasZoneAlarm contact)");
+    Report b; b.u8(0x0021, 0x20, 200);
+    check(r_float(dispatch(d, 0x0001, 1, b.span()), "battery") == 100.0f, "D1-E batteryPercentageRemaining 200 -> battery 100 (m.battery /2)");
+    Report s(w3_h2_heiman); s.u8(0x1004, 0x20, 1).u16(0x001A, 0x21, 7).u16(0x0019, 0x21, 3);
+    const DispatchResult r = dispatch(d, 0xFC90, 1, s.span());
+    check(r_bool(r, "alarm_indicator", true), "D1-E 0xFC90 indicatorLightLevelControlOf1 1 -> alarm_indicator true (heimanClusterIndicatorLight)");
+    check(r_float(r, "rejoin_count") == 7.0f && r_float(r, "reboot_count") == 3.0f,
+          "D1-E 0xFC90 rejoinedCount 7 / rebootedCount 3 -> rejoin_count / reboot_count (heimanExtend counters)");
+    Report p; p.u8(0x1004, 0x20, 1);
+    check(dispatch(d, 0xFC90, 1, p.span()).merged.find("alarm_indicator") == nullptr,
+          "D1-E 0xFC90 report without the Heiman manufacturer code is ignored (unnamed cluster fails open)");
+    const Encoded e = encode(d, "alarm_indicator", boolean(true));
+    check(is_write(e, 0xFC90, 0x1004, 0x20, 1, w3_h2_heiman) && !e.frame.empty() && e.frame[0] == 0x04,
+          "D1-E alarm_indicator true -> 0xFC90 0x1004 u8 1, mfg 0x120B, default response on (defaultResponseOptions)");
+    check(has_expose(d, "contact") && has_expose(d, "tamper") && has_expose(d, "battery_low") &&
+          has_expose(d, "alarm_indicator") && has_expose(d, "reported_packages") && has_expose(d, "rejoin_count") &&
+          has_expose(d, "reboot_count") && !has_expose(d, "heartbeat_indicator"),
+          "D1-E exposes battery, contact, tamper, battery_low, alarm_indicator, reported/rejoin/reboot counters");
+}
+
+void w3_h2_hs_720es_zb() {
+    std::printf("W3h2 Heiman HS-720ES-ZB (JM720ES-EF-3.0)\n");
+    resolves({"JM720ES-EF-3.0", "HEIMAN", "HS-720ES-ZB"});
+    resolves({"TS0601", "JM720ES-EF-3.0", "ZC-HM"});
+    check(claims("JM720ES-EF-3.0") == 1, "JM720ES-EF-3.0 claimed as a manufacturerName by Moes ZC-HM only");
+    const PreparedDefinition& d = def_for("JM720ES-EF-3.0", "HEIMAN");
+    const DispatchResult z = w3_h2_ias(d, 0x0009);
+    check(r_bool(z, "carbon_monoxide", true) && r_bool(z, "battery_low", true) && r_bool(z, "tamper", false),
+          "HS-720ES-ZB zoneStatus 0x0009 -> carbon_monoxide + battery_low (iasZoneAlarm carbon_monoxide)");
+    const Encoded w = encode(d, "warning", boolean(true));
+    check(w.ok && w.cluster == 0x0502 && w.frame.size() > 2 && w.frame[2] == 0x00,
+          "HS-720ES-ZB warning -> ssIasWd startWarning (m.iasWarning / tz.warning)");
+    check(has_expose(d, "battery") && has_expose(d, "carbon_monoxide") && has_expose(d, "tamper") &&
+          has_expose(d, "battery_low"), "HS-720ES-ZB exposes battery, carbon_monoxide, tamper, battery_low");
+}
+
+void w3_h2_sc6() {
+    std::printf("W3h2 Heiman SC6\n");
+    resolves({"SC6", "HEIMAN", "SC6"});
+    const PreparedDefinition& d = def_for("SC6", "HEIMAN");
+    check(r_bool(w3_h2_ias(d, 0x0001), "smoke", true), "SC6 zoneStatus bit 0 -> smoke (iasZoneAlarm smoke)");
+    Report co; w3_h2_f32(co, 0x0000, 0.0001f);
+    const float ppm = r_float(dispatch(d, 0x040C, 1, co.span()), "co");
+    check(ppm >= 99.0f && ppm <= 100.0f, "SC6 msCarbonMonoxide 0.0001 -> co 100 ppm (m.numeric scale 0.000001 = value * 1e6)");
+    Report s(w3_h2_heiman);
+    s.u8(0x0016, 0x20, 150).u8(0x0017, 0x30, 2).u8(0x1007, 0x20, 3).u16(0x100D, 0x29, 0xFF6A)
+     .u16(0x0019, 0x21, 5).u8(0x0012, 0x30, 2).u8(0x0018, 0x20, 1);
+    const DispatchResult r = dispatch(d, 0xFC90, 1, s.span());
+    check(approx(r_float(r, "smoke_level"), 1.5f), "SC6 smokeConcentrationLevel 150 -> smoke_level 1.5 (extend scale 100 wins over fzLocal string)");
+    check(r_str(r, "chamber_contamination", "medium_contamination"), "SC6 smokeChamberContaminationLevel 2 -> medium_contamination");
+    check(r_bool(r, "interconnectable", true) && r_str(r, "link_available", "gas_active"),
+          "SC6 interconnectable 3 -> interconnectable true + link_available gas_active (linkAvailable extend lookup)");
+    check(approx(r_float(r, "temperature_offset"), -1.5f), "SC6 temperatureOffset -150 -> temperature_offset -1.5 (scale 100)");
+    check(r_float(r, "reboot_count") == 5.0f, "SC6 rebootedCount 5 -> reboot_count 5");
+    check(r_str(r, "siren_for_automation_only", "co_siren"), "SC6 deviceCascadeState 2 -> siren_for_automation_only co_siren");
+    check(r_str(r, "smoke_unit", "%ft OBS"), "SC6 smokeConcentationUnit 1 -> smoke_unit %ft OBS");
+    Report f(w3_h2_heiman); f.u16(0x0002, 0x19, 0x0001).u16(0x0009, 0x19, 0x0000);
+    const DispatchResult fr = dispatch(d, 0xFC90, 1, f.span());
+    check(r_str(fr, "fault_state", "fault") && r_str(fr, "muted", "normal"),
+          "SC6 sensorFaultState bit 0 -> fault_state fault, deviceMuteState 0 -> muted normal (heimanClusterSensorFaultState / DeviceMuteState)");
+    Report nf; nf.u16(0x0002, 0x19, 0x0001);
+    check(dispatch(d, 0xFC90, 1, nf.span()).merged.find("fault_state") == nullptr,
+          "SC6 0xFC90 frame without the Heiman manufacturer code is ignored");
+    Report o; o.u16(0x0010, 0x21, 30);
+    check(r_float(dispatch(d, 0x0406, 1, o.span()), "unoccupied_delay") == 30.0f, "SC6 pirOToUDelay 30 -> unoccupied_delay 30 s");
+    check(is_write(encode(d, "siren_for_automation_only", str("co_siren")), 0xFC90, 0x0012, 0x30, 2, w3_h2_heiman),
+          "SC6 siren_for_automation_only co_siren -> 0xFC90 deviceCascadeState enum8 2, mfg 0x120B");
+    check(is_write(encode(d, "temperature_offset", num(-1.5)), 0xFC90, 0x100D, 0x29, 0xFF6A, w3_h2_heiman),
+          "SC6 temperature_offset -1.5 -> 0xFC90 0x100D int16 -150 (scale 100)");
+    check(is_write(encode(d, "sensitivity_level", str("high")), 0xFC90, 0x0004, 0x20, 2, w3_h2_heiman),
+          "SC6 sensitivity_level high -> 0xFC90 sensorSensitivityLevel u8 2");
+    check(is_write(encode(d, "illuminance_threshold", num(300)), 0xFC90, 0x002A, 0x21, 300, w3_h2_heiman),
+          "SC6 illuminance_threshold 300 -> 0xFC90 0x002A u16 300");
+    check(is_write(encode(d, "unoccupied_delay", num(60)), 0x0406, 0x0010, 0x21, 60),
+          "SC6 unoccupied_delay 60 -> msOccupancySensing pirOToUDelay u16 60");
+    check(is_write(encode(d, "heartbeat_indicator", boolean(true)), 0xFC90, 0x1004, 0x20, 1, w3_h2_heiman) &&
+          is_write(encode(d, "temporary_mute", boolean(true)), 0xFC90, 0x0008, 0x20, 1, w3_h2_heiman),
+          "SC6 heartbeat_indicator / temporary_mute -> 0xFC90 0x1004 / 0x0008 u8 1, mfg 0x120B");
+    const Encoded t = encode(d, "trigger_selftest", str("test"));
+    check(t.ok && t.cluster == 0x0500 && t.frame.size() > 2 && t.frame[2] == 0x02,
+          "SC6 trigger_selftest -> ssIasZone initTestMode (iasZoneInitiateTestMode)");
+    check(encode(d, "warning", boolean(true)).cluster == 0x0502, "SC6 warning -> ssIasWd (tz.warning)");
+    check(has_expose(d, "smoke") && has_expose(d, "co") && has_expose(d, "illuminance") && has_expose(d, "humidity") &&
+          has_expose(d, "fault_state") && has_expose(d, "link_available") && has_expose(d, "unoccupied_delay") &&
+          !has_expose(d, "target_distance") && !has_expose(d, "radar_learning") && !has_expose(d, "endoflife"),
+          "SC6 exposes the core + heiman specials; radar / learning / sensor-life rows deferred");
+}
+
+void w3_h2_airbee() {
+    std::printf("W3h2 Sensy-One AirBee\n");
+    resolves({"AirBee", "Sensy-One", "AirBee"});
+    const PreparedDefinition& d = def_for("AirBee", "Sensy-One");
+    Report c; w3_h2_f32(c, 0x0000, 0.0004f);
+    const float ppm = r_float(dispatch(d, 0x040D, 1, c.span()), "co2");
+    check(ppm >= 399.0f && ppm <= 400.0f, "AirBee msCO2 0.0004 -> co2 400 ppm (m.co2 scale 0.000001)");
+    Report p; p.u16(0x0000, 0x29, 1013);
+    check(r_float(dispatch(d, 0x0403, 1, p.span()), "pressure") == 1013.0f, "AirBee msPressureMeasurement 1013 -> pressure 1013 hPa (m.pressure)");
+    Report t; t.u16(0x0000, 0x29, 2150);
+    check(approx(r_float(dispatch(d, 0x0402, 1, t.span()), "temperature"), 21.5f), "AirBee measuredValue 2150 -> temperature 21.5 (m.temperature)");
+    Report h; h.u16(0x0000, 0x21, 4500);
+    check(approx(r_float(dispatch(d, 0x0405, 1, h.span()), "humidity"), 45.0f), "AirBee measuredValue 4500 -> humidity 45 (m.humidity)");
+    check(has_expose(d, "temperature") && has_expose(d, "humidity") && has_expose(d, "pressure") && has_expose(d, "co2"),
+          "AirBee exposes temperature, humidity, pressure, co2");
+}
+
+void w3_h2_hpm_300_wz() {
+    std::printf("W3h2 ShinaSystem HPM-300-WZ\n");
+    resolves({"HPM-300-WZ", "ShinaSystem", "HPM-300-WZ"});
+    const PreparedDefinition& d = def_for("HPM-300-WZ", "ShinaSystem");
+    Report o; o.u8(0x0000, 0x18, 1).u16(0x9000, 0x21, 3).u16(0x9008, 0x21, 1234);
+    const DispatchResult r = dispatch(d, 0x0406, 1, o.span());
+    check(r_bool(r, "occupancy", true), "HPM-300-WZ occupancy bit 0 -> occupancy true (m.occupancy)");
+    check(r_str(r, "presence_status", "moving"), "HPM-300-WZ presenceStatus 3 -> presence_status moving");
+    check(r_float(r, "peak_movement_value") == 1234.0f, "HPM-300-WZ peakMovementValue 1234 -> peak_movement_value");
+    Report off; off.u16(0x9000, 0x21, 9);
+    check(r_str(dispatch(d, 0x0406, 1, off.span()), "presence_status", "offline"), "HPM-300-WZ presenceStatus 9 -> offline");
+    check(is_write(encode(d, "movement_hold_time", num(30)), 0x0406, 0x900B, 0x21, 30),
+          "HPM-300-WZ movement_hold_time 30 -> msOccupancySensing 0x900B u16 30");
+    check(is_write(encode(d, "led_brightness", num(50)), 0x0406, 0x9004, 0x20, 50),
+          "HPM-300-WZ led_brightness 50 -> 0x9004 u8 50");
+    check(is_write(encode(d, "entry_sensitivity", num(200)), 0x0406, 0x9005, 0x21, 200),
+          "HPM-300-WZ entry_sensitivity 200 -> 0x9005 u16 200");
+    check(is_write(encode(d, "peak_clear", str("clear")), 0x0406, 0x900A, 0x21, 0),
+          "HPM-300-WZ peak_clear clear -> 0x900A u16 0");
+    check(has_expose(d, "occupancy") && has_expose(d, "presence_status") && has_expose(d, "occupancy_hold_time") &&
+          has_expose(d, "leaving_hold_time") && has_expose(d, "movement_sensitivity") &&
+          has_expose(d, "occupancy_sensitivity") && has_expose(d, "last_occupancy_value") && has_expose(d, "peak_clear"),
+          "HPM-300-WZ exposes occupancy, presence_status, hold times, sensitivities, LED, last/peak values, peak_clear");
+}
+
+void w3_h2_ss_z2n() {
+    std::printf("W3h2 SONOFF SS-Z2N\n");
+    resolves({"SS-Z2N", "SONOFF", "SS-Z2N"});
+    const PreparedDefinition& d = def_for("SS-Z2N", "SONOFF");
+    Report m; m.u16(0x0000, 0x21, 2550);
+    check(approx(r_float(dispatch(d, 0x0408, 1, m.span()), "soil_moisture"), 25.5f), "SS-Z2N msSoilMoisture 2550 -> soil_moisture 25.5 (m.soilMoisture)");
+    Report e; e.u16(0x2003, 0x29, 0xFFCE).u16(0x202D, 0x21, 4).u8(0x202A, 0x20, 1).u16(0x2008, 0x29, 2345)
+              .u16(0x0005, 0x21, 1500);
+    const DispatchResult r = dispatch(d, 0xFC11, 1, e.span());
+    check(approx(r_float(r, "temperature_calibration"), -0.5f), "SS-Z2N 0xFC11 temperatureCalibration -50 -> -0.5 (scale 100)");
+    check(r_str(r, "measure_interval", "1_hour"), "SS-Z2N measureInterval 4 -> 1_hour");
+    check(r_bool(r, "temperature_threshold_enable", true), "SS-Z2N temperatureThresholdEnable 1 -> true (m.binary ON)");
+    check(approx(r_float(r, "temperature_max_in_hour"), 23.45f), "SS-Z2N temperatureMaxInHour 2345 -> 23.45");
+    check(approx(r_float(r, "comfort_humidity_min"), 15.0f), "SS-Z2N comfortHumidityMin 1500 -> 15 (scale 100)");
+    check(is_write(encode(d, "temperature_calibration", num(-0.5)), 0xFC11, 0x2003, 0x29, 0xFFCE),
+          "SS-Z2N temperature_calibration -0.5 -> 0xFC11 0x2003 int16 -50");
+    check(is_write(encode(d, "comfort_humidity_min", num(15)), 0xFC11, 0x0005, 0x21, 1500),
+          "SS-Z2N comfort_humidity_min 15 -> 0xFC11 0x0005 u16 1500 (Math.round(value * 100))");
+    check(is_write(encode(d, "frost_protection_temperature", num(5)), 0xFC11, 0x6002, 0x29, 500),
+          "SS-Z2N frost_protection_temperature 5 -> 0xFC11 0x6002 int16 500");
+    check(is_write(encode(d, "measure_interval", str("15_min")), 0xFC11, 0x202D, 0x21, 2),
+          "SS-Z2N measure_interval 15_min -> 0xFC11 0x202D u16 2");
+    check(is_write(encode(d, "frost_threshold_enable", boolean(true)), 0xFC11, 0x202C, 0x20, 1) &&
+          is_write(encode(d, "humidity_threshold_enable", str("OFF")), 0xFC11, 0x202B, 0x20, 0),
+          "SS-Z2N threshold enables ON/OFF -> 0xFC11 u8 1/0");
+    const Encoded rf = encode(d, "refresh_measurements", str("refresh"));
+    check(rf.ok && rf.cluster == 0xFC11 && rf.frame.size() == 3 && rf.frame[0] == 0x11 && rf.frame[2] == 0x00,
+          "SS-Z2N refresh_measurements -> customClusterEwelink command refreshMeasurements 0x00");
+    check(has_binding(d, 0x0020), "SS-Z2N binds genPollCtrl (m.bindCluster)");
+    check(has_expose(d, "soil_moisture") && has_expose(d, "temperature") && has_expose(d, "comfort_temperature_max") &&
+          has_expose(d, "humidity_aver_in_hour") && has_expose(d, "refresh_measurements") &&
+          !has_expose(d, "temperature_status") && !has_expose(d, "frost_risk_status"),
+          "SS-Z2N exposes the 0xFC11 settings + hour stats; derived status keys deferred");
+}
+
+void w3_h2_th03() {
+    std::printf("W3h2 Zbeacon TH03\n");
+    resolves({"TH03", "Zbeacon", "TH03"});
+    resolves({"TH03Z-z", "Tuya", "TS0201-z"});
+    const PreparedDefinition& d = def_for("TH03", "Zbeacon");
+    Report t; t.u16(0x0000, 0x29, 2310);
+    check(approx(r_float(dispatch(d, 0x0402, 1, t.span()), "temperature"), 23.1f), "TH03 measuredValue 2310 -> temperature 23.1 (m.temperature)");
+    Report h; h.u16(0x0000, 0x21, 5120);
+    check(approx(r_float(dispatch(d, 0x0405, 1, h.span()), "humidity"), 51.2f), "TH03 measuredValue 5120 -> humidity 51.2 (m.humidity)");
+    Report b; b.u8(0x0021, 0x20, 150);
+    check(r_float(dispatch(d, 0x0001, 1, b.span()), "battery") == 75.0f, "TH03 batteryPercentageRemaining 150 -> battery 75 (m.battery)");
+    check(has_expose(d, "battery") && has_expose(d, "temperature") && has_expose(d, "humidity"),
+          "TH03 exposes battery, temperature, humidity");
+}
+
+// Call order: w3_h2_d1_e, w3_h2_hs_720es_zb, w3_h2_sc6, w3_h2_airbee, w3_h2_hpm_300_wz, w3_h2_ss_z2n, w3_h2_th03
+
+// ── Wave 3 (ZCL) snippet w3_h3_tests.cpp ──
+// ── W3 h3: atlantic 100040070400 / 100050072300, hzc T000R_ZG, heatzy micro-duo,
+//    edflab ZIGBEE_ERL, repenic RS-T03AZG (new devices, z2m v26.133.0) ──────────
+
+// Appends one attribute record with raw little-endian value bytes (u24/u32/u48).
+void w3_h3_attr(Report& r, std::uint16_t attr, std::uint8_t type, std::initializer_list<std::uint8_t> le) {
+    r.v.insert(r.v.end(), {std::uint8_t(attr & 0xFF), std::uint8_t(attr >> 8), type});
+    r.v.insert(r.v.end(), le);
+}
+bool w3_h3_absent(const DispatchResult& r, const char* key) { return r.merged.find(key) == nullptr; }
+
+void w3_h3_100040070400() {
+    std::printf("W3h3 100040070400\n");
+    resolves({"100040070400", "Atlantic Group", "100040070400"});
+    const PreparedDefinition& d = def_for("100040070400", "Atlantic Group");
+    DispatchResult r = dispatch(d, 0x0201, 1, Report(0x125B).u8(0x42AC, 0x20, 37).span());
+    check(approx(r_float(r, "pi_heating_demand"), 37) && r_str(r, "running_state", "heat"),
+          "100040070400 heatingDemand 0x42AC 37 -> pi_heating_demand 37 + running_state heat (atlantic.ts local fz, R135)");
+    r = dispatch(d, 0x0201, 1, Report(0x125B).u8(0x42AC, 0x20, 0).span());
+    check(r_str(r, "running_state", "idle"), "100040070400 heatingDemand 0 -> running_state idle (R135)");
+    r = dispatch(d, 0x0201, 1, Report(0x1234).u8(0x42AC, 0x20, 37).span());
+    check(w3_h3_absent(r, "running_state") && w3_h3_absent(r, "pi_heating_demand"),
+          "100040070400 0x42AC under another manufacturer code is ignored (ATLANTIC_GROUP 0x125B attrs)");
+    r = dispatch(d, 0x0201, 1, Report(0x125B).u8(0x428A, 0x10, 1).u16(0x4286, 0x21, 1500).u16(0x42B3, 0x29, 2345).span());
+    check(r_bool(r, "window_detection", true), "100040070400 windowDetection 0x428A 1 -> window_detection true (m.binary valueOn 1)");
+    check(approx(r_float(r, "connected_load"), 1500), "100040070400 connectedLoad 0x4286 1500 -> connected_load 1500 W");
+    check(approx(r_float(r, "device_temperature"), 23.45f), "100040070400 powerBoardTemperature 0x42B3 2345 -> device_temperature 23.45 (scale 100)");
+    r = dispatch(d, 0x0201, 1, Report().u16(0x0000, 0x29, 2150).span());
+    check(approx(r_float(r, "local_temperature"), 21.5f), "100040070400 localTemp 2150 -> local_temperature 21.5 (m.thermostat)");
+    Report m; w3_h3_attr(m, 0x0000, 0x25, {0x39, 0x30, 0, 0, 0, 0});
+    r = dispatch(d, 0x0702, 1, m.span());
+    check(approx(r_float(r, "energy"), 12.345f), "100040070400 currentSummDelivered 12345 Wh -> energy 12.345 kWh (divisor 1000)");
+    check(is_write(encode(d, "window_detection", boolean(true)), 0x0201, 0x428A, 0x10, 1, 0x125B),
+          "100040070400 window_detection true -> write hvacThermostat 0x428A bool 1, ATLANTIC_GROUP code");
+    check(has_expose(d, "running_state") && has_expose(d, "pi_heating_demand") && has_expose(d, "connected_load") &&
+          has_expose(d, "device_temperature") && has_expose(d, "window_detection") && has_expose(d, "energy") &&
+          !has_expose(d, "occupancy") && !has_expose(d, "power"),
+          "100040070400 exposes: climate + running_state, energy, window_detection, pi_heating_demand, connected_load, device_temperature");
+    check(has_binding(d, 0x0201) && has_binding(d, 0x0702), "100040070400 binds hvacThermostat + seMetering");
+}
+
+void w3_h3_100050072300() {
+    std::printf("W3h3 100050072300\n");
+    resolves({"100050072300", "Atlantic Group", "100050072300"});
+    const PreparedDefinition& d = def_for("100050072300", "Atlantic Group");
+    DispatchResult r = dispatch(d, 0x0201, 1, Report(0x125B).u8(0x4298, 0x10, 1).u16(0x42AB, 0x29, 700)
+                                                   .u16(0x42B4, 0x29, 2612).u8(0x42AC, 0x20, 0).span());
+    check(r_bool(r, "window_open", true), "100050072300 windowOpen 0x4298 1 -> window_open true");
+    check(approx(r_float(r, "effective_heating_setpoint"), 7.0f), "100050072300 effectiveHeatingSetpoint 0x42AB 700 -> 7 °C (scale 100)");
+    check(approx(r_float(r, "internal_temperature"), 26.12f), "100050072300 internalTemperature 0x42B4 2612 -> 26.12 °C (scale 100)");
+    check(approx(r_float(r, "pi_heating_demand"), 0) && r_str(r, "running_state", "idle"),
+          "100050072300 heatingDemand 0x42AC 0 -> pi_heating_demand 0 + running_state idle (atlantic.ts local fz)");
+    r = dispatch(d, 0x0204, 1, Report().u8(0x0001, 0x30, 2).span());
+    check(r_str(r, "keypad_lockout", "settings_locked"), "100050072300 keypadLockout 2 -> settings_locked (lookup unlocked 0, partial 1, settings_locked 2, full 5)");
+    r = dispatch(d, 0x0204, 1, Report().u8(0x0001, 0x30, 5).span());
+    check(r_str(r, "keypad_lockout", "full"), "100050072300 keypadLockout 5 -> full");
+    r = dispatch(d, 0x0B04, 1, Report().u16(0x050B, 0x29, 750).span());
+    check(approx(r_float(r, "power"), 750), "100050072300 activePower 750 -> power 750 W (multiplier/divisor 1)");
+    r = dispatch(d, 0x0406, 1, Report().u8(0x0000, 0x18, 1).span());
+    check(r_bool(r, "occupancy", true), "100050072300 occupancy bit 0 -> occupancy true (m.occupancy)");
+    check(is_write(encode(d, "keypad_lockout", str("full")), 0x0204, 0x0001, 0x30, 5),
+          "100050072300 keypad_lockout full -> write hvacUserInterfaceCfg keypadLockout enum8 5");
+    check(is_write(encode(d, "window_detection", boolean(false)), 0x0201, 0x428A, 0x10, 0, 0x125B),
+          "100050072300 window_detection false -> write 0x428A bool 0, ATLANTIC_GROUP code");
+    const Expose* k = find_expose(d, "keypad_lockout");
+    check(k && k->enum_count == 4 && has_expose(d, "window_open") && has_expose(d, "effective_heating_setpoint") &&
+          has_expose(d, "internal_temperature") && has_expose(d, "running_state") && has_expose(d, "occupancy") &&
+          has_expose(d, "power") && has_expose(d, "energy"),
+          "100050072300 exposes: climate + running_state, occupancy, power, energy, window_*, setpoints, keypad_lockout (4 labels)");
+}
+
+void w3_h3_T000R_ZG() {
+    std::printf("W3h3 T000R_ZG\n");
+    resolves({"T000R_ZG", "HZC Electric", "T000R_ZG"});
+    const PreparedDefinition& d = def_for("T000R_ZG", "HZC Electric");
+    // hzcWindow 0xE000 is unnamed: its attr 1 must not leak into keypad_lockout / value_switch.
+    DispatchResult r = dispatch(d, 0xE000, 1, Report().u8(0x0001, 0x10, 1).u8(0x0000, 0x10, 0).span());
+    check(r_bool(r, "window_status", true) && r_bool(r, "window_check", false),
+          "T000R_ZG hzcWindow windowStatus 1 / windowCheck 0 -> window_status true, window_check false");
+    check(w3_h3_absent(r, "keypad_lockout") && w3_h3_absent(r, "value_switch") && w3_h3_absent(r, "local_temperature"),
+          "T000R_ZG unnamed 0xE000 frame stays off hvacUserInterfaceCfg / hzcValue / thermostat keys");
+    r = dispatch(d, 0xE001, 1, Report().u8(0x0007, 0x30, 3).u8(0x0003, 0x20, 55).u8(0x0002, 0x30, 1).u8(0x0001, 0x10, 1)
+                                       .u8(0x0005, 0x10, 1).u8(0x0006, 0x20, 30).span());
+    check(r_str(r, "work_mode", "comfortable"), "T000R_ZG workMode 3 -> work_mode comfortable (lookup manual 0 .. off 5)");
+    check(approx(r_float(r, "value_opening"), 5.5f), "T000R_ZG valueOpening 55 -> value_opening 5.5 (scale 10)");
+    check(r_str(r, "control_type", "NF"), "T000R_ZG controlType 1 -> control_type NF");
+    check(r_bool(r, "value_switch", true) && r_bool(r, "boost_switch", true) && approx(r_float(r, "boost_countdown"), 30),
+          "T000R_ZG valueSwitch / boostSwitch 1 -> true, boostCountdown 30");
+    check(w3_h3_absent(r, "window_status"), "T000R_ZG hzcValue attr 1 does not decode as window_status");
+    Report t; t.u8(0x9000, 0x20, 75).u8(0x8001, 0x10, 1).u8(0x0010, 0x28, 0xE7);
+    r = dispatch(d, 0x0201, 1, t.span());
+    check(approx(r_float(r, "frost_temp"), 7.5f) && r_bool(r, "frost", true),
+          "T000R_ZG hvacThermostat 0x9000 75 -> frost_temp 7.5 (scale 10), 0x8001 1 -> frost true");
+    check(approx(r_float(r, "local_temperature_calibration"), -2.5f), "T000R_ZG localTemperatureCalibration -25 -> -2.5 °C (fz.thermostat /10)");
+    r = dispatch(d, 0x0204, 1, Report().u8(0x0001, 0x30, 1).u8(0x8000, 0x30, 1).u8(0x8002, 0x20, 14).u8(0x8004, 0x10, 0).span());
+    check(r_bool(r, "keypad_lockout", true) && r_str(r, "display_mode", "reverse") &&
+          approx(r_float(r, "holiday_time"), 14) && r_bool(r, "auto_time", false),
+          "T000R_ZG UI keypadLockout 1 -> true (LOCK), 0x8000 1 -> reverse, 0x8002 14 d, 0x8004 0 -> false");
+    check(is_write(encode(d, "work_mode", str("eco")), 0xE001, 0x0007, 0x30, 4), "T000R_ZG work_mode eco -> write hzcValue 0x0007 enum8 4");
+    check(is_write(encode(d, "value_opening", num(5.5)), 0xE001, 0x0003, 0x20, 55), "T000R_ZG value_opening 5.5 -> write 0x0003 u8 55 (scale 10)");
+    check(is_write(encode(d, "control_type", str("PDPID")), 0xE001, 0x0002, 0x30, 0), "T000R_ZG control_type PDPID -> write 0x0002 enum8 0");
+    check(is_write(encode(d, "boost_switch", boolean(true)), 0xE001, 0x0005, 0x10, 1), "T000R_ZG boost_switch ON -> write 0x0005 bool 1");
+    check(is_write(encode(d, "window_check", boolean(true)), 0xE000, 0x0000, 0x10, 1), "T000R_ZG window_check ON -> write hzcWindow 0x0000 bool 1");
+    check(is_write(encode(d, "frost_temp", num(7.5)), 0x0201, 0x9000, 0x20, 75), "T000R_ZG frost_temp 7.5 -> write hvacThermostat 0x9000 u8 75");
+    check(is_write(encode(d, "frost", boolean(true)), 0x0201, 0x8001, 0x10, 1), "T000R_ZG frost ON -> write 0x8001 bool 1");
+    check(is_write(encode(d, "local_temperature_calibration", num(-2.5)), 0x0201, 0x0010, 0x28, 0xE7),
+          "T000R_ZG local_temperature_calibration -2.5 -> write int8 -25");
+    check(!encode(d, "local_temperature_calibration", num(10)).ok, "T000R_ZG local_temperature_calibration 10 refused (range -9..9)");
+    check(is_write(encode(d, "keypad_lockout", boolean(true)), 0x0204, 0x0001, 0x30, 1), "T000R_ZG keypad_lockout LOCK -> write keypadLockout enum8 1");
+    check(is_write(encode(d, "display_mode", str("reverse")), 0x0204, 0x8000, 0x30, 1), "T000R_ZG display_mode reverse -> write 0x8000 enum8 1");
+    check(is_write(encode(d, "holiday_time", num(14)), 0x0204, 0x8002, 0x20, 14), "T000R_ZG holiday_time 14 -> write 0x8002 u8 14");
+    check(is_write(encode(d, "auto_time", boolean(true)), 0x0204, 0x8004, 0x10, 1), "T000R_ZG auto_time ON -> write 0x8004 bool 1");
+    check(is_write(encode(d, "value_switch", boolean(true)), 0xE001, 0x0001, 0x10, 1) &&
+          is_write(encode(d, "scale_switch", boolean(false)), 0xE001, 0x0004, 0x10, 0) &&
+          is_write(encode(d, "boost_countdown", num(30)), 0xE001, 0x0006, 0x20, 30),
+          "T000R_ZG value_switch / scale_switch / boost_countdown writes on hzcValue");
+    check(!encode(d, "window_status", boolean(true)).ok, "T000R_ZG window_status is read-only (STATE_GET)");
+    check(has_expose(d, "battery") && has_expose(d, "work_mode") && has_expose(d, "window_status") && has_expose(d, "window_check") &&
+          has_expose(d, "boost_switch") && has_expose(d, "boost_countdown") && has_expose(d, "value_switch") &&
+          has_expose(d, "control_type") && has_expose(d, "value_opening") && has_expose(d, "scale_switch") &&
+          has_expose(d, "frost") && has_expose(d, "frost_temp") && has_expose(d, "keypad_lockout") &&
+          has_expose(d, "display_mode") && has_expose(d, "holiday_time") && has_expose(d, "auto_time") &&
+          has_expose(d, "local_temperature_calibration") && !has_expose(d, "identify"),
+          "T000R_ZG exposes the climate, battery and every custom key of hzc_electric.ts");
+    check(has_binding(d, 0xE000) && has_binding(d, 0xE001) && has_binding(d, 0x0204) && has_binding(d, 0x0001),
+          "T000R_ZG binds hzcWindow, hzcValue, hvacUserInterfaceCfg, genPowerCfg");
+}
+
+void w3_h3_micro_duo() {
+    std::printf("W3h3 micro-duo\n");
+    resolves({"micro-duo", "Heatzy", "micro-duo"});
+    check(claims("Heatzy") == 1, "micro-duo: manufacturerName Heatzy claimed by exactly one def");
+    const PreparedDefinition& d = def_for("micro-duo", "Heatzy");
+    DispatchResult r = dispatch(d, 0x0006, 10, Report().u8(0x0000, 0x10, 1).span());
+    check(r_bool(r, "state_relay", true), "micro-duo onOff on ep 10 -> state_relay ON (m.onOff endpointNames relay)");
+    r = dispatch(d, 0x0B04, 10, Report().u16(0x050B, 0x29, 120).span());
+    check(approx(r_float(r, "power_relay"), 120), "micro-duo activePower on ep 10 -> power_relay");
+    r = dispatch(d, 0xFC00, 1, Report().u8(0x0000, 0x20, 3).span());
+    check(r_str(r, "pilot_wire_mode_pilot_wire", "frost_protection"),
+          "micro-duo heatzyPilotWire 0xFC00 mode 3 on ep 1 -> pilot_wire_mode_pilot_wire frost_protection");
+    r = dispatch(d, 0xFC01, 11, Report().u8(0x0000, 0x20, 2).span());
+    check(r_str(r, "ble_ota_status_ble_ota", "connected"), "micro-duo heatzyBleOta 0xFC01 state 2 on ep 11 -> ble_ota_status_ble_ota connected");
+    check(w3_h3_absent(r, "state_ble_ota") && w3_h3_absent(r, "energy_ble_ota") && w3_h3_absent(r, "pilot_wire_mode_ble_ota"),
+          "micro-duo unnamed 0xFC01 frame stays off genOnOff / seMetering / pilot-wire keys");
+    check(is_write(encode(d, "pilot_wire_mode", str("comfort_-1")), 0xFC00, 0x0000, 0x20, 4),
+          "micro-duo pilot_wire_mode comfort_-1 -> write 0xFC00 attr 0 uint8 4 (no manufacturer code)");
+    check(encode(d, "state", str("ON")).ok, "micro-duo state ON encodes (genOnOff)");
+    check(!encode(d, "ble_ota", str("ON")).ok && !has_expose(d, "ble_ota"), "micro-duo ble_ota switch deferred (BLE OTA commands)");
+    check(has_expose(d, "state_relay") && has_expose(d, "power_relay") && has_expose(d, "energy_relay") &&
+          has_expose(d, "pilot_wire_mode_pilot_wire") && has_expose(d, "ble_ota_status_ble_ota"),
+          "micro-duo exposes carry the z2m endpoint suffixes");
+}
+
+void w3_h3_ZIGBEE_ERL() {
+    std::printf("W3h3 ZIGBEE_ERL\n");
+    resolves({"ZIGBEE_ERL", "EDFLab", "ZIGBEE_ERL"});
+    const PreparedDefinition& d = def_for("ZIGBEE_ERL", "EDFLab");
+    Report m;
+    w3_h3_attr(m, 0x0000, 0x25, {0x40, 0xE2, 0x01, 0, 0, 0});      // currentSummDelivered 123456
+    w3_h3_attr(m, 0x0400, 0x2A, {0xDC, 0x05, 0x00});               // instantaneousDemand 1500
+    w3_h3_attr(m, 0x0104, 0x25, {0x10, 0x27, 0, 0, 0, 0});         // currentTier3SummDelivered 10000
+    m.u8(0x0209, 0x30, 1);                                         // linkyModeOfOperation standard
+    DispatchResult r = dispatch(d, 0x0702, 1, m.span());
+    check(approx(r_float(r, "current_summ_delivered"), 123456) && approx(r_float(r, "instantaneous_demand"), 1500) &&
+          approx(r_float(r, "current_tier3_summ_delivered"), 10000) && approx(r_float(r, "linky_mode_of_operation"), 1),
+          "ZIGBEE_ERL seMetering raw numerics (m.numeric, no scale): summ 123456 Wh, demand 1500 W, tier3, linky mode 1");
+    r = dispatch(d, 0x0B04, 1, Report().u16(0x0505, 0x21, 231).u16(0x0905, 0x21, 229).u16(0x0A08, 0x21, 3).span());
+    check(approx(r_float(r, "rms_voltage"), 231) && approx(r_float(r, "rms_voltage_ph_b"), 229) && approx(r_float(r, "rms_current_ph_c"), 3),
+          "ZIGBEE_ERL haElectricalMeasurement rmsVoltage / PhB / rmsCurrentPhC -> rms_voltage, rms_voltage_ph_b, rms_current_ph_c");
+    Report id; w3_h3_attr(id, 0x000D, 0x2A, {0x09, 0x00, 0x00});
+    r = dispatch(d, 0x0B01, 1, id.span());
+    check(approx(r_float(r, "available_power"), 9), "ZIGBEE_ERL seMeterIdentification availablePower 9 -> available_power 9 VA");
+    Report tm; w3_h3_attr(tm, 0x0002, 0x2B, {0x10, 0x0E, 0, 0});
+    r = dispatch(d, 0x000A, 1, tm.span());
+    check(approx(r_float(r, "time_zone"), 3600), "ZIGBEE_ERL genTime timeZone 3600 -> time_zone 3600 s");
+    r = dispatch(d, 0x070D, 1, Report().u8(0x0100, 0x18, 1).u8(0x0102, 0x20, 2).span());
+    check(w3_h3_absent(r, "current_tier1_summ_delivered") && w3_h3_absent(r, "current_tier2_summ_delivered"),
+          "ZIGBEE_ERL unnamed dailySchedule 0x070D frame stays off the seMetering tier keys");
+    r = dispatch(d, 0x0006, 1, Report().u8(0x0000, 0x10, 1).span());
+    check(r_bool(r, "state", true), "ZIGBEE_ERL onOff -> state ON (m.onOff)");
+    check(encode(d, "state", str("OFF")).ok, "ZIGBEE_ERL state OFF encodes");
+    check(has_expose(d, "current_summ_delivered") && has_expose(d, "current_reactive_summation_q4") &&
+          has_expose(d, "previous_day_max_demand_received") && has_expose(d, "apparent_power_ph_c") &&
+          has_expose(d, "dst_shift") && has_expose(d, "power_threshold") && !has_expose(d, "pod") &&
+          !has_expose(d, "time_text"),
+          "ZIGBEE_ERL exposes the plain numerics; text / timestamp attrs deferred");
+}
+
+void w3_h3_RS_T03AZG() {
+    std::printf("W3h3 RS-T03AZG\n");
+    resolves({"RS-T03AZG", "Repenic", "RS-T03AZG"});
+    resolves({"RS-R03AZG", "Repenic", "RS-T03AZG"});
+    const PreparedDefinition& d = def_for("RS-T03AZG", "Repenic");
+    DispatchResult r = dispatch(d, 0xE00B, 1, Report().u8(0x0000, 0x30, 1).span());
+    check(r_str(r, "remote_mode", "remote"), "RS-T03AZG repenicPrivateE00B remoteMode 1 -> remote_mode remote (lookup load 0, remote 1)");
+    check(w3_h3_absent(r, "state") && w3_h3_absent(r, "energy"), "RS-T03AZG unnamed 0xE00B frame stays off state / energy");
+    r = dispatch(d, 0x0006, 1, Report().u8(0x0000, 0x10, 1).span());
+    check(r_bool(r, "state", true) && w3_h3_absent(r, "remote_mode"), "RS-T03AZG onOff -> state ON, no remote_mode");
+    r = dispatch(d, 0x0B04, 1, Report().u16(0x050B, 0x29, 60).u16(0x0505, 0x21, 230).span());
+    check(approx(r_float(r, "power"), 60) && approx(r_float(r, "voltage"), 230), "RS-T03AZG activePower / rmsVoltage -> power, voltage (m.electricityMeter)");
+    check(is_write(encode(d, "remote_mode", str("remote")), 0xE00B, 0x0000, 0x30, 1),
+          "RS-T03AZG remote_mode remote -> write 0xE00B attr 0 enum8 1 (no manufacturer code)");
+    check(has_expose(d, "remote_mode") && !has_expose(d, "mode") && has_expose(d, "power") && has_expose(d, "voltage") &&
+          has_expose(d, "current") && has_expose(d, "energy") && !has_expose(d, "power_on_behavior"),
+          "RS-T03AZG exposes state, power, voltage, current, energy, remote_mode");
+}
+
+// Call order: w3_h3_100040070400, w3_h3_100050072300, w3_h3_T000R_ZG, w3_h3_micro_duo, w3_h3_ZIGBEE_ERL, w3_h3_RS_T03AZG
+
+// ── Wave 3 (ZCL) snippet w3_h4_tests.cpp ──
+// ── W3 h4: in-place ZCL edits (Legrand, Sinope, NodOn, Schneider) ──────
+
+bool w3_h4_bind(const PreparedDefinition& d, std::uint8_t ep, std::uint16_t cluster) {
+    for (std::size_t i = 0; i < d.bindings_count; ++i)
+        if (d.bindings[i].endpoint == ep && d.bindings[i].cluster_id == cluster) return true;
+    return false;
+}
+const ReportingSpec* w3_h4_report(const PreparedDefinition& d, std::uint8_t ep, std::uint16_t cluster,
+                                  std::uint16_t attr, std::uint16_t manu = 0) {
+    for (std::size_t i = 0; i < d.reports_count; ++i) {
+        const ReportingSpec& r = d.reports[i];
+        if (r.endpoint == ep && r.cluster_id == cluster && r.attr_id == attr && r.manufacturer_code == manu) return &r;
+    }
+    return nullptr;
+}
+bool w3_h4_read(const PreparedDefinition& d, std::uint8_t ep, std::uint16_t cluster, std::uint16_t attr,
+                std::uint16_t manu) {
+    for (std::size_t i = 0; i < d.config_steps_count; ++i) {
+        const ConfigStep& s = d.config_steps[i];
+        if (s.op != ConfigStepOp::Read || s.endpoint != ep || s.cluster_id != cluster || s.manu_code != manu) continue;
+        for (std::size_t k = 0; k + 1 < s.payload_len; k += 2)
+            if ((s.payload[k] | (s.payload[k + 1] << 8)) == attr) return true;
+    }
+    return false;
+}
+int w3_h4_tz_ep(const PreparedDefinition& d, const char* key) {
+    for (std::size_t i = 0; i < d.to_zigbee_count; ++i)
+        if (d.to_zigbee[i]->key && std::strcmp(d.to_zigbee[i]->key, key) == 0) return d.to_zigbee[i]->endpoint;
+    return -1;
+}
+int w3_h4_ep(const PreparedDefinition& d, const char* label) {
+    for (std::size_t i = 0; i < d.endpoint_map_count; ++i)
+        if (std::strcmp(d.endpoint_map[i].label, label) == 0) return d.endpoint_map[i].endpoint;
+    return -1;
+}
+DispatchResult w3_h4_cmd(const PreparedDefinition& d, std::uint16_t cluster, std::uint8_t ep,
+                         std::initializer_list<std::uint8_t> bytes) {
+    const std::vector<std::uint8_t> v(bytes);
+    return dispatch(d, cluster, ep, std::span<const std::uint8_t>(v.data(), v.size()));
+}
+
+// R151: WNRR15/WNRR20 white label, power_on_behavior, LED modes, power_apparent, reporting.
+void w3_h4_wnrr15() {
+    std::printf("W3h4 WNRR15/WNRR20\n");
+    resolves({" Mobile outlet", "Legrand", "WNRR15/WNRR20"});
+    const auto& d = def_for(" Mobile outlet", "Legrand");
+    check(has_wl(d, "Legrand", "064887"), "WNRR15/WNRR20 white label Legrand 064887 (legrand.ts v26.133.0)");
+    {   auto r = dispatch(d, 0x0B04, 1, Report().u16(0x050B, 0x29, 100).u16(0x050F, 0x21, 120).span());
+        check(r_float(r, "power_apparent") == 120.0f, "WNRR15 apparentPower 0x050F 120 -> power_apparent 120 VA (fz.electrical_measurement)");
+        check(r_float(r, "power") == 100.0f, "WNRR15 activePower still -> power 100 next to power_apparent"); }
+    check(r_str(dispatch(d, 0x0006, 1, Report().u8(0x4003, 0x30, 0xFF).span()), "power_on_behavior", "previous"),
+          "WNRR15 startUpOnOff 0xFF -> power_on_behavior previous (fz.power_on_behavior)");
+    check(r_str(dispatch(d, 0xFC01, 1, Report(0x1021).u8(0x0001, 0x10, 1).span()), "led_in_dark", "ON"),
+          "WNRR15 0xFC01 ledInDark 1 -> led_in_dark ON (fzLegrand.cluster_fc01)");
+    check(is_write(encode(d, "power_on_behavior", str("toggle")), 0x0006, 0x4003, 0x30, 2),
+          "WNRR15 power_on_behavior toggle -> genOnOff 0x4003 enum8 2 (tz.power_on_behavior)");
+    check(is_write(encode(d, "led_if_on", str("ON")), 0xFC01, 0x0002, 0x10, 1, 0x1021),
+          "WNRR15 led_if_on ON -> 0xFC01 0x0002 bool 1 mfg 0x1021 (tzLegrand.led_mode)");
+    check(w3_h4_report(d, 1, 0x0006, 0x0000) != nullptr, "WNRR15 reports onOff (reporting.onOff)");
+    check(w3_h4_report(d, 1, 0x0B04, 0x050B) != nullptr, "WNRR15 reports activePower (reporting.activePower)");
+    const ReportingSpec* ap = w3_h4_report(d, 1, 0x0B04, 0x050F);
+    check(ap && (ap->flags & kReportFlagOptional), "WNRR15 apparentPower report is optional (z2m try/catch, issue 16732)");
+    for (const char* k : {"power_apparent", "power_on_behavior", "led_in_dark", "led_if_on"})
+        check(has_expose(d, k), "WNRR15 exposes power_apparent / power_on_behavior / led_in_dark / led_if_on");
+}
+
+// R153: RM3500ZB keypad_lockout (+ report, configure read).
+void w3_h4_rm3500zb() {
+    std::printf("W3h4 RM3500ZB\n");
+    resolves({"RM3500ZB", "Sinope Technologies", "RM3500ZB"});
+    const auto& d = def_for("RM3500ZB", "Sinope Technologies");
+    check(r_str(dispatch(d, 0xFF01, 1, Report(0x119C).u8(0x0002, 0x30, 1).span()), "keypad_lockout", "lock"),
+          "RM3500ZB 0xFF01 keypadLockout 1 -> keypad_lockout lock (fzLocal.sinope)");
+    check(is_write(encode(d, "keypad_lockout", str("unlock")), 0xFF01, 0x0002, 0x30, 0, 0x119C),
+          "RM3500ZB keypad_lockout unlock -> 0xFF01 0x0002 enum8 0 mfg 0x119C (tzLocal.keypad_lockout)");
+    check(is_write(encode(d, "keypad_lockout", str("lock")), 0xFF01, 0x0002, 0x30, 1, 0x119C),
+          "RM3500ZB keypad_lockout lock -> enum8 1");
+    check(w3_h4_report(d, 1, 0xFF01, 0x0002, 0x119C) != nullptr, "RM3500ZB reports keypadLockout 1 s..1 h (configure)");
+    check(w3_h4_read(d, 1, 0xFF01, 0x0002, 0x119C), "RM3500ZB configure reads keypadLockout (mfg 0x119C)");
+    check(w3_h4_bind(d, 1, 0xFF01), "RM3500ZB binds manuSpecificSinope (configure binds)");
+    check(has_expose(d, "keypad_lockout"), "RM3500ZB exposes keypad_lockout [unlock, lock]");
+}
+
+// R080: SIN-4-RS-20 calibration_auto_adjust.
+void w3_h4_sin_4_rs_20() {
+    std::printf("W3h4 SIN-4-RS-20\n");
+    resolves({"SIN-4-RS-20", "NodOn", "SIN-4-RS-20"});
+    const auto& d = def_for("SIN-4-RS-20", "NodOn");
+    check(r_bool(dispatch(d, 0x0102, 1, Report(0x128B).u8(0x1002, 0x10, 0).span()), "calibration_auto_adjust", false),
+          "SIN-4-RS-20 0x0102 0x1002 0 -> calibration_auto_adjust OFF (nodon calibrationAutoAdjust)");
+    check(r_bool(dispatch(d, 0x0102, 1, Report().u8(0x1002, 0x10, 1).span()), "calibration_auto_adjust", true),
+          "SIN-4-RS-20 0x1002 1 without mfg code -> calibration_auto_adjust ON (m.binary reads by id)");
+    check(is_write(encode(d, "calibration_auto_adjust", boolean(false)), 0x0102, 0x1002, 0x10, 0, 0x128B),
+          "SIN-4-RS-20 calibration_auto_adjust false -> 0x0102 0x1002 bool 0 mfg 0x128B");
+    check(is_write(encode(d, "calibration_auto_adjust", str("ON")), 0x0102, 0x1002, 0x10, 1, 0x128B),
+          "SIN-4-RS-20 calibration_auto_adjust ON -> bool 1");
+    check(has_expose(d, "calibration_auto_adjust"), "SIN-4-RS-20 exposes calibration_auto_adjust");
+}
+
+// R126: CCT5010-0003 action_l1 / action_l2 from genScenes recall / store.
+void w3_h4_cct5010_0003() {
+    std::printf("W3h4 CCT5010-0003\n");
+    resolves({"PUCK/UNIDIM/1", "Schneider Electric", "CCT5010-0003"});
+    const auto& d = def_for("PUCK/UNIDIM/1", "Schneider Electric");
+    check(r_str(w3_h4_cmd(d, 0x0005, 21, {0x01, 0x10, 0x05, 0x00, 0x00, 0x01}), "action_l1", "single"),
+          "CCT5010-0003 EP21 commandRecall -> action_l1 single (fzLocal.schneider_scene_actions)");
+    check(r_str(w3_h4_cmd(d, 0x0005, 22, {0x01, 0x11, 0x04, 0x00, 0x00, 0x01}), "action_l2", "hold"),
+          "CCT5010-0003 EP22 commandStore -> action_l2 hold");
+    {   auto r = w3_h4_cmd(d, 0x0005, 3, {0x01, 0x12, 0x05, 0x00, 0x00, 0x01});
+        check(!r.merged.find("action_l1") && !r.merged.find("action_l2") && !r.merged.find("action"),
+              "CCT5010-0003 recall from another endpoint -> nothing (schneider_scene_actions default case)"); }
+    check(has_expose(d, "action_l1") && has_expose(d, "action_l2"), "CCT5010-0003 exposes action_l1 / action_l2 [single, hold]");
+}
+
+// R142: NH3516A indicator_mode on EP21 + the 0xFF17 label.
+void w3_h4_nh3516a() {
+    std::printf("W3h4 NH3516A\n");
+    resolves({"NHROTARY/UNIDIM/1", "Schneider Electric", "NH3516A"});
+    const auto& d = def_for("NHROTARY/UNIDIM/1", "Schneider Electric");
+    {   auto r = dispatch(d, 0xFF17, 21, Report(0x105E).u8(0x0000, 0x30, 1).span());
+        check(r_str(r, "indicator_mode_indicator", "always_on"),
+              "NH3516A EP21 0xFF17 ledIndication 1 -> indicator_mode_indicator always_on (indicatorMode(indicator, false))");
+        check(!r.merged.find("state") && !r.merged.find("state_indicator") && !r.merged.find("brightness_indicator"),
+              "NH3516A 0xFF17 attr 0 is not genOnOff / genLevelCtrl (cluster label, no fail-open)"); }
+    {   auto r = dispatch(d, 0xFF17, 21, Report().u8(0x0000, 0x30, 2).span());
+        check(r_str(r, "indicator_mode_indicator", "reverse_with_load") && !r.merged.find("state_indicator"),
+              "NH3516A 0xFF17 without mfg code -> reverse_with_load (herdsman resolves the custom cluster by id)"); }
+    check(!dispatch(d, 0xFF17, 3, Report(0x105E).u8(0x0000, 0x30, 1).span()).merged.find("indicator_mode"),
+          "NH3516A 0xFF17 from EP3 -> no indicator_mode (enumLookup endpointName indicator)");
+    check(r_bool(dispatch(d, 0x0006, 3, Report().u8(0x0000, 0x10, 1).span()), "state", true),
+          "NH3516A EP3 genOnOff -> bare state (multiEndpointSkip state)");
+    check(is_write(encode(d, "indicator_mode", str("always_off")), 0xFF17, 0x0000, 0x30, 3, 0x105E),
+          "NH3516A indicator_mode always_off -> 0xFF17 0x0000 enum8 3 mfg 0x105E (cluster manufacturerCode)");
+    check(!encode(d, "indicator_mode", str("flash_on_click")).ok, "NH3516A has no flash_on_click (flashOnClick false)");
+    check(w3_h4_tz_ep(d, "indicator_mode") == 21 && w3_h4_ep(d, "indicator") == 21,
+          "NH3516A indicator_mode goes to EP21 (deviceEndpoints indicator: 21)");
+    check(d.default_endpoint == 3 && w3_h4_bind(d, 3, 0x0006) && w3_h4_bind(d, 3, 0x0008) && !w3_h4_bind(d, 1, 0x0006),
+          "NH3516A light on EP3 (deviceEndpoints default: 3): binds + default endpoint");
+    check(w3_h4_read(d, 21, 0xFF17, 0x0000, 0x105E), "NH3516A configure reads ledIndication on EP21 (enumLookup access ALL)");
+    check(has_expose(d, "indicator_mode_indicator"), "NH3516A exposes indicator_mode_indicator");
+}
+
+// R152 (read side) + the Wiser EP 11 binds.
+void w3_h4_eer53000() {
+    std::printf("W3h4 EER53000\n");
+    resolves({"EH-ZB-VACT", "Schneider Electric", "EER53000"});
+    const auto& d = def_for("EH-ZB-VACT", "Schneider Electric");
+    check(r_bool(dispatch(d, 0x0201, 11, Report().u8(0xE012, 0x20, 1).span()), "window_open", true),
+          "EER53000 0xE012 1 without mfg code -> window_open true (fzLocal.wiser_smart_thermostat)");
+    check(r_float(dispatch(d, 0x0201, 11, Report().u8(0xE030, 0x20, 55).span()), "pi_heating_demand") == 55.0f,
+          "EER53000 valve position 55 -> pi_heating_demand 55");
+    check(!dispatch(d, 0x0201, 11, Report().u8(0xE030, 0x20, 150).span()).merged.find("pi_heating_demand"),
+          "EER53000 valve position 150 (calibration code) -> no pi_heating_demand (<= 100)");
+    check(w3_h4_bind(d, 11, 0x0201) && w3_h4_bind(d, 11, 0x0001) && !w3_h4_bind(d, 1, 0x0201) && !w3_h4_bind(d, 11, 0x0006),
+          "EER53000 binds device EP11 genPowerCfg / hvacThermostat, no genOnOff (device.getEndpoint(11))");
+    check(d.default_endpoint == 11, "EER53000 default endpoint 11");
+    check(has_expose(d, "window_open") && has_expose(d, "pi_heating_demand"), "EER53000 exposes window_open / pi_heating_demand");
+}
+
+void w3_h4_wiser_ep11() {
+    std::printf("W3h4 EER50000 / EER51000\n");
+    resolves({"EH-ZB-HACT", "Schneider Electric", "EER50000"});
+    resolves({"EH-ZB-RTS", "Schneider Electric", "EER51000"});
+    const auto& hact = def_for("EH-ZB-HACT", "Schneider Electric");
+    check(w3_h4_bind(hact, 11, 0x0201) && w3_h4_bind(hact, 11, 0x0702) && !w3_h4_bind(hact, 1, 0x0201),
+          "EER50000 binds EP11 hvacThermostat / seMetering (device.getEndpoint(11))");
+    check(hact.default_endpoint == 11, "EER50000 default endpoint 11");
+    const auto& rts = def_for("EH-ZB-RTS", "Schneider Electric");
+    check(w3_h4_bind(rts, 11, 0x0201) && w3_h4_bind(rts, 11, 0x0001) && !w3_h4_bind(rts, 1, 0x0201) && !w3_h4_bind(rts, 11, 0x0006),
+          "EER51000 binds device EP11, no genOnOff (device.getEndpoint(11))");
+    check(rts.default_endpoint == 11, "EER51000 default endpoint 11");
+}
+
+// R082: EKO07259 temperature_ambient / temperature_floor.
+void w3_h4_eko07259() {
+    std::printf("W3h4 EKO07259\n");
+    resolves({"EKO07259", "Schneider Electric", "EKO07259"});
+    const auto& d = def_for("EKO07259", "Schneider Electric");
+    check(approx(r_float(dispatch(d, 0x0402, 2, Report().u16(0x0000, 0x29, 2150).span()), "temperature_ambient"), 21.5f),
+          "EKO07259 EP2 measuredValue 2150 -> temperature_ambient 21.5 (m.temperature endpointNames ambient)");
+    check(approx(r_float(dispatch(d, 0x0402, 3, Report().u16(0x0000, 0x29, 1900).span()), "temperature_floor"), 19.0f),
+          "EKO07259 EP3 measuredValue 1900 -> temperature_floor 19");
+    check(has_expose(d, "temperature_ambient") && has_expose(d, "temperature_floor"),
+          "EKO07259 exposes temperature_ambient / temperature_floor");
+}
+
+// R027: S520619 display controls + heating output mode + the 0xFF23 label.
+void w3_h4_s520619() {
+    std::printf("W3h4 S520619\n");
+    resolves({"S520619", "Schneider Electric", "S520619"});
+    const auto& d = def_for("S520619", "Schneider Electric");
+    check(r_float(dispatch(d, 0x0204, 1, Report(0x105E).u8(0xE000, 0x20, 80).span()), "display_brightness_active") == 80.0f,
+          "S520619 0x0204 0xE000 80 -> display_brightness_active 80 % (displayBrightnessActive)");
+    check(r_float(dispatch(d, 0x0204, 1, Report(0x105E).u16(0xE002, 0x21, 30).span()), "display_active_timeout") == 30.0f,
+          "S520619 0x0204 0xE002 30 -> display_active_timeout 30 s");
+    check(r_str(dispatch(d, 0xFF23, 1, Report(0x105E).u8(0x0031, 0x30, 0).span()), "schneider_pilot_mode", "disabled"),
+          "S520619 0xFF23 heatingOutputMode 0 -> schneider_pilot_mode disabled (pilotMode lookup v26.133.0)");
+    check(r_str(dispatch(d, 0xFF23, 1, Report().u8(0x0031, 0x30, 3).span()), "schneider_pilot_mode", "pilot"),
+          "S520619 0xFF23 without mfg code -> pilot (herdsman resolves the custom cluster by id)");
+    check(!dispatch(d, 0xFF23, 1, Report(0x105E).u16(0x0000, 0x29, 2000).span()).merged.find("local_temperature"),
+          "S520619 0xFF23 measuredTemperature is not hvacThermostat local_temperature (cluster label, no fail-open)");
+    check(is_write(encode(d, "display_brightness_inactive", num(20)), 0x0204, 0xE001, 0x20, 20, 0x105E),
+          "S520619 display_brightness_inactive 20 -> 0x0204 0xE001 u8 mfg 0x105E");
+    check(is_write(encode(d, "display_active_timeout", num(60)), 0x0204, 0xE002, 0x21, 60, 0x105E),
+          "S520619 display_active_timeout 60 -> 0x0204 0xE002 u16 mfg 0x105E");
+    check(is_write(encode(d, "schneider_pilot_mode", str("contactor")), 0xFF23, 0x0031, 0x30, 1, 0x105E),
+          "S520619 schneider_pilot_mode contactor -> 0xFF23 0x0031 enum8 1 mfg 0x105E");
+    check(w3_h4_read(d, 1, 0x0204, 0xE002, 0x105E) && w3_h4_read(d, 1, 0xFF23, 0x0031, 0x105E),
+          "S520619 configure reads the display attrs and heatingOutputMode (access ALL)");
+    for (const char* k : {"display_brightness_active", "display_brightness_inactive", "display_active_timeout", "schneider_pilot_mode"})
+        check(has_expose(d, k), "S520619 exposes display_* / schneider_pilot_mode");
+}
+
+// Guard: the 0xFF23 number is a Lumi genBasic ATTRIBUTE elsewhere; its decode is unchanged by the cluster label.
+void w3_h4_unrelated() {
+    std::printf("W3h4 unrelated defs\n");
+    resolves({"lumi.ctrl_ln2.aq1", "LUMI", "QBKG12LM"});
+    const auto& d = def_for("lumi.ctrl_ln2.aq1", "LUMI");
+    check(r_str(dispatch(d, 0x0000, 1, Report(0x115F).u8(0xFF23, 0x20, 0x22).span()), "operation_mode_right", "control_right_relay"),
+          "QBKG12LM genBasic attr 0xFF23 still -> operation_mode_right (lumi_switch_operation_mode_basic)");
+}
+
+// Call order: w3_h4_wnrr15, w3_h4_rm3500zb, w3_h4_sin_4_rs_20, w3_h4_cct5010_0003, w3_h4_nh3516a,
+//             w3_h4_eer53000, w3_h4_wiser_ep11, w3_h4_eko07259, w3_h4_s520619, w3_h4_unrelated
+
+// ── Wave 3 (ZCL) snippet w3_h5_tests.cpp ──
+// ── W3 h5: in-place edits of existing defs (R028, W:MINI-ZBD, R101, W:RD-250ZG,
+//    R083, R030, R024, P:HS9MS-E) ─────────────────────────────────────────
+
+bool w3_h5_absent(const DispatchResult& r, const char* key) { return r.merged.find(key) == nullptr; }
+bool w3_h5_has_bind(const PreparedDefinition& d, std::uint8_t ep, std::uint16_t cluster) {
+    for (std::size_t i = 0; i < d.bindings_count; ++i)
+        if (d.bindings[i].endpoint == ep && d.bindings[i].cluster_id == cluster) return true;
+    return false;
+}
+bool w3_h5_has_report(const PreparedDefinition& d, std::uint8_t ep, std::uint16_t cluster, std::uint16_t attr) {
+    for (std::size_t i = 0; i < d.reports_count; ++i)
+        if (d.reports[i].endpoint == ep && d.reports[i].cluster_id == cluster && d.reports[i].attr_id == attr) return true;
+    return false;
+}
+bool w3_h5_enum(const PreparedDefinition& d, const char* name, std::uint8_t count) {
+    const Expose* e = find_expose(d, name);
+    return e && e->type == ExposeType::Enum && e->enum_count == count;
+}
+DispatchResult w3_h5_frame(const PreparedDefinition& d, std::uint16_t cluster, std::uint8_t ep,
+                           std::initializer_list<std::uint8_t> bytes) {
+    const std::vector<std::uint8_t> v(bytes);
+    return dispatch(d, cluster, ep, std::span<const std::uint8_t>(v.data(), v.size()));
+}
+
+void w3_h5_mini_zbd() {
+    std::printf("W3h5 SONOFF MINI-ZBD\n");
+    resolves({"MINI-ZBD", "SONOFF", "MINI-ZBD"});
+    const PreparedDefinition& d = def_for("MINI-ZBD", "SONOFF");
+    Report on; on.u8(0x0028, 0x20, 4);
+    check(r_str(dispatch(d, 0xFC11, 1, on.span()), "action", "switch_on"),
+          "MINI-ZBD 0xFC11 detachRelayActionEvent 4 -> action switch_on (sonoff.ts externalSwitchActions)");
+    Report off; off.u8(0x0028, 0x20, 5);
+    check(r_str(dispatch(d, 0xFC11, 1, off.span()), "action", "switch_off"),
+          "MINI-ZBD detachRelayActionEvent 5 -> action switch_off");
+    Report dc; dc.u8(0x0028, 0x20, 2);
+    check(r_str(dispatch(d, 0xFC11, 1, dc.span()), "action", "double_click"), "MINI-ZBD detachRelayActionEvent 2 -> double_click (kept)");
+    check(w3_h5_enum(d, "action", 5), "MINI-ZBD action enum: toggle, double_click, long_press, switch_on, switch_off");
+}
+
+void w3_h5_mini_zb2gs() {
+    std::printf("W3h5 SONOFF MINI-ZB2GS\n");
+    resolves({"MINI-ZB2GS", "SONOFF", "MINI-ZB2GS"});
+    const PreparedDefinition& d = def_for("MINI-ZB2GS", "SONOFF");
+    check(r_str(w3_h5_frame(d, 0x0006, 2, {0x01, 0x11, 0x02}), "action_l2", "toggle"),
+          "MINI-ZB2GS EP2 genOnOff toggle -> action_l2 toggle (fz.command_toggle, z2m toggle_l2)");
+    Report dc; dc.u8(0x0028, 0x20, 2);
+    check(r_str(dispatch(d, 0xFC11, 1, dc.span()), "action_l1", "double_click"),
+          "MINI-ZB2GS EP1 0xFC11 0x0028 2 -> action_l1 double_click (z2m double_click_l1)");
+    Report so; so.u8(0x0028, 0x20, 5);
+    check(r_str(dispatch(d, 0xFC11, 2, so.span()), "action_l2", "switch_off"),
+          "MINI-ZB2GS EP2 0xFC11 0x0028 5 -> action_l2 switch_off");
+    Report s; s.u8(0x0000, 0x10, 1);
+    check(r_bool(dispatch(d, 0x0006, 2, s.span()), "state_l2", true), "MINI-ZB2GS EP2 onOff 1 -> state_l2 ON");
+    check(w3_h5_enum(d, "action", 5), "MINI-ZB2GS action enum: toggle, double_click, long_press, switch_on, switch_off");
+    check(w3_h5_has_bind(d, 1, 0x0006) && w3_h5_has_bind(d, 1, 0xFC11) && w3_h5_has_bind(d, 2, 0x0006) &&
+          w3_h5_has_bind(d, 2, 0xFC11), "MINI-ZB2GS binds genOnOff + customClusterEwelink on EP1 and EP2 (configure)");
+    check(w3_h5_has_report(d, 1, 0x0006, 0x0000) && w3_h5_has_report(d, 2, 0x0006, 0x0000),
+          "MINI-ZB2GS reports onOff 1 s..30 min on EP1 and EP2 (reporting.onOff)");
+}
+
+void w3_h5_s4dm() {
+    std::printf("W3h5 Shelly S4DM-0A101WWL\n");
+    resolves({"Dimmer", "Shelly", "S4DM-0A101WWL"});
+    const PreparedDefinition& d = def_for("Dimmer", "Shelly");
+    check(r_str(w3_h5_frame(d, 0x0005, 2, {0x01, 0x21, 0x05, 0x00, 0x00, 0x01}), "action", "input_1_single"),
+          "S4DM EP2 genScenes recall scene 1 -> input_1_single (switch_inputs_scene_events, sw1: 2)");
+    check(r_str(w3_h5_frame(d, 0x0005, 3, {0x01, 0x22, 0x05, 0x00, 0x00, 0x04}), "action", "input_2_hold"),
+          "S4DM EP3 recall scene 4 -> input_2_hold (sw2: 3)");
+    check(r_str(w3_h5_frame(d, 0x0005, 3, {0x01, 0x23, 0x05, 0x00, 0x00, 0x0B}), "action", "input_2_hold"),
+          "S4DM EP3 recall scene 11 -> input_2_hold");
+    check(r_str(w3_h5_frame(d, 0x0005, 2, {0x01, 0x24, 0x05, 0x00, 0x00, 0x03}), "action", "input_1_triple"),
+          "S4DM EP2 recall scene 3 -> input_1_triple");
+    check(w3_h5_absent(w3_h5_frame(d, 0x0005, 1, {0x01, 0x25, 0x05, 0x00, 0x00, 0x01}), "action"),
+          "S4DM recall from EP1 -> no action (not an input endpoint)");
+    check(w3_h5_enum(d, "action", 8), "S4DM action enum: input_1/2 single/double/triple/hold");
+    check(w3_h5_has_bind(d, 2, 0x0005) && w3_h5_has_bind(d, 3, 0x0005), "S4DM binds genScenes on EP2 and EP3 (configure)");
+}
+
+void w3_h5_rd250zg() {
+    std::printf("W3h5 Repenic RD-250ZG\n");
+    resolves({"RD-250ZG", "Repenic", "RD-250ZG"});
+    const PreparedDefinition& d = def_for("RD-250ZG", "Repenic");
+    Report on; on.u8(0x0003, 0x30, 1);
+    check(r_bool(dispatch(d, 0xE003, 1, on.span()), "scene_mode", true),
+          "RD-250ZG 0xE003 sceneMode 1 -> scene_mode ON (m.binary repenicPrivateE003)");
+    Report off; off.u8(0x0003, 0x30, 0);
+    check(r_bool(dispatch(d, 0xE003, 1, off.span()), "scene_mode", false), "RD-250ZG sceneMode 0 -> scene_mode OFF");
+    check(is_write(encode(d, "scene_mode", boolean(true)), 0xE003, 0x0003, 0x30, 1),
+          "RD-250ZG scene_mode ON -> write 0xE003 0x0003 enum8 1 (no manufacturer code)");
+    check(is_write(encode(d, "scene_mode", str("OFF")), 0xE003, 0x0003, 0x30, 0), "RD-250ZG scene_mode \"OFF\" -> enum8 0");
+    check(r_str(w3_h5_frame(d, 0xE004, 1, {0x19, 0x20, 0x00, 0x08, 0x00}), "action", "double"),
+          "RD-250ZG 0xE004 raw frame, last of {2,4,8,16} is 8 -> action double (findLast over msg.data)");
+    check(r_str(w3_h5_frame(d, 0xE004, 1, {0x11, 0x21, 0x01, 0x10, 0x02}), "action", "hold"),
+          "RD-250ZG 0xE004 frame ending 0x10 0x02 -> last match 2 -> hold");
+    check(w3_h5_absent(w3_h5_frame(d, 0xE003, 1, {0x18, 0x07, 0x04, 0x00}), "action"),
+          "RD-250ZG 0xE003 write response (foundation, null cluster name) -> no spurious release");
+    check(w3_h5_enum(d, "action", 4) && has_expose(d, "scene_mode"), "RD-250ZG exposes scene_mode + action hold/release/double/triple");
+}
+
+void w3_h5_zg2835() {
+    std::printf("W3h5 Sunricher ZG2835\n");
+    resolves({"ZG2835", "Sunricher", "ZG2835"});
+    const PreparedDefinition& d = def_for("ZG2835", "Sunricher");
+    Report b; b.u8(0x0021, 0x20, 200).u8(0x0020, 0x20, 30);
+    const DispatchResult r = dispatch(d, 0x0001, 1, b.span());
+    check(r_float(r, "battery") == 100.0f, "ZG2835 batteryPercentageRemaining 200 -> battery 100 (m.battery, /2)");
+    check(r_float(r, "voltage") == 3000.0f, "ZG2835 batteryVoltage 30 -> voltage 3000 mV (m.battery voltage)");
+    check(has_expose(d, "battery") && has_expose(d, "voltage") && w3_h5_enum(d, "action", 3),
+          "ZG2835 exposes battery, voltage, action on/off/brightness_move_to_level");
+    check(w3_h5_has_bind(d, 1, 0x0001) && w3_h5_has_report(d, 1, 0x0001, 0x0020) && !w3_h5_has_report(d, 1, 0x0001, 0x0021),
+          "ZG2835 binds genPowerCfg, reports batteryVoltage (voltageReporting), no percentage row (house rule)");
+}
+
+void w3_h5_pp01() {
+    std::printf("W3h5 TERNCY-PP01\n");
+    resolves({"TERNCY-PP01", "Terncy", "TERNCY-PP01"});
+    const PreparedDefinition& d = def_for("TERNCY-PP01", "Terncy");
+    // z2m sample "13,40,18,105, 4,167,0,7" - motion on right side.
+    const DispatchResult right = w3_h5_frame(d, 0xFCCC, 1, {0x0D, 0x28, 0x12, 0x69, 0x04, 0xA7, 0x00, 0x07});
+    check(r_bool(right, "occupancy_right", true), "PP01 cmd 4 PIR 0x07 -> occupancy_right true (terncy_pp01_motion 0x04/0x01)");
+    check(w3_h5_absent(right, "occupancy_left"), "PP01 PIR 0x07 has no left interrupt (0x20) -> occupancy_left untouched");
+    check(r_float(right, "illuminance") == 167.0f, "PP01 cmd 4 bytes 5..6 LE 167 -> illuminance 167 lx");
+    check(r_bool(right, "occupancy", true) && r_str(right, "action_side", "right"), "PP01 terncy_raw still gives occupancy + action_side");
+    // "13,40,18,24, 4,25,0,40" - motion on left side.
+    const DispatchResult left = w3_h5_frame(d, 0xFCCC, 1, {0x0D, 0x28, 0x12, 0x18, 0x04, 0x19, 0x00, 0x28});
+    check(r_bool(left, "occupancy_left", true) && r_float(left, "illuminance") == 25.0f,
+          "PP01 PIR 0x28 -> occupancy_left true (0x20/0x08), illuminance 25");
+    const DispatchResult clr = w3_h5_frame(d, 0xFCCC, 1, {0x0D, 0x28, 0x12, 0x19, 0x04, 0x19, 0x00, 0x20});
+    check(r_bool(clr, "occupancy_left", false), "PP01 PIR 0x20 (interrupt, no detection) -> occupancy_left false");
+    Report lux; lux.u16(0x0000, 0x21, 100);
+    check(r_float(dispatch(d, 0x0400, 1, lux.span()), "illuminance") == 100.0f,
+          "PP01 msIlluminanceMeasurement 100 -> illuminance 100 (m.illuminance({scale: 1}), unscaled)");
+    check(w3_h5_enum(d, "action", 4) && w3_h5_enum(d, "action_side", 2),
+          "PP01 action enum single..quadruple, action_side enum left/right (were Numeric)");
+    check(has_expose(d, "occupancy_left") && has_expose(d, "occupancy_right"), "PP01 exposes occupancy_left / occupancy_right");
+}
+
+void w3_h5_zg204zl() {
+    std::printf("W3h5 HOBEIAN ZG-204ZL-z\n");
+    resolves({"ZG-204ZL-z", "HOBEIAN", "ZG-204ZL-z"});
+    const PreparedDefinition& d = def_for("ZG-204ZL-z", "HOBEIAN");
+    check(d.vendor && std::strcmp(d.vendor, "HOBEIAN") == 0, "ZG-204ZL-z vendor HOBEIAN (zigbeetlc.ts)");
+    Report lvl; lvl.u8(0x0000, 0x30, 1);
+    const DispatchResult r = dispatch(d, 0x0401, 1, lvl.span());
+    check(r_str(r, "light_level", "below_target"), "ZG-204ZL-z 0x0401 levelStatus 1 -> light_level below_target");
+    check(w3_h5_absent(r, "occupancy") && w3_h5_absent(r, "illuminance") && w3_h5_absent(r, "state"),
+          "ZG-204ZL-z levelStatus (msIlluminanceLevelSensing 0x0401) does not leak into occupancy / illuminance / state");
+    Report occ; occ.u8(0x0000, 0x18, 1);
+    check(r_bool(dispatch(d, 0x0406, 1, occ.span()), "occupancy", true), "ZG-204ZL-z msOccupancySensing 1 -> occupancy (kept)");
+    Report st; st.u8(0x0000, 0x10, 1);
+    check(r_bool(dispatch(d, 0x0006, 1, st.span()), "state", true), "ZG-204ZL-z genOnOff onOff 1 -> state ON (m.onOff remote enable)");
+    check(r_str(w3_h5_frame(d, 0x0006, 1, {0x01, 0x30, 0x01}), "action", "on"), "ZG-204ZL-z genOnOff commandOn -> action on (m.commandsOnOff)");
+    check(r_str(w3_h5_frame(d, 0x0006, 1, {0x01, 0x31, 0x00}), "action", "off"), "ZG-204ZL-z commandOff -> action off");
+    Report pir; pir.u16(0x0010, 0x21, 30);
+    check(r_float(dispatch(d, 0x0406, 1, pir.span()), "pir_timeout") == 30.0f, "ZG-204ZL-z pirOToUDelay 30 -> pir_timeout 30 s");
+    check(is_write(encode(d, "pir_timeout", num(60)), 0x0406, 0x0010, 0x21, 60), "ZG-204ZL-z pir_timeout 60 -> write 0x0406 0x0010 u16");
+    Report cfg; cfg.u8(0x5000, 0x20, 10).u16(0x5001, 0x21, 7).u16(0x5002, 0x21, 2000);
+    cfg.v.insert(cfg.v.end(), {0x03, 0x50, 0x22, 0xE8, 0x03, 0x00});   // 0x5003 u24 1000
+    const DispatchResult c = dispatch(d, 0x0401, 1, cfg.span());
+    check(r_float(c, "illuminance_measurement_interval") == 10.0f && r_float(c, "illuminance_offset") == 7.0f &&
+          r_float(c, "illuminance_maximum") == 2000.0f && r_float(c, "illuminance_threshold") == 1000.0f,
+          "ZG-204ZL-z 0x0401 0x5000..0x5003 -> interval 10 s, offset 7, maximum 2000 lx, threshold 1000 lx");
+    check(is_write(encode(d, "illuminance_measurement_interval", num(5)), 0x0401, 0x5000, 0x20, 5),
+          "ZG-204ZL-z illuminance_measurement_interval 5 -> write 0x0401 0x5000 u8");
+    check(is_write(encode(d, "illuminance_offset", num(300)), 0x0401, 0x5001, 0x21, 300), "ZG-204ZL-z illuminance_offset -> 0x5001 u16");
+    check(is_write(encode(d, "illuminance_maximum", num(4000)), 0x0401, 0x5002, 0x21, 4000), "ZG-204ZL-z illuminance_maximum -> 0x5002 u16");
+    check(!encode(d, "illuminance_threshold", num(500)).ok, "ZG-204ZL-z illuminance_threshold u24 write deferred (read-only)");
+    check(w3_h5_enum(d, "light_level", 4) && w3_h5_enum(d, "action", 3) && has_expose(d, "state") && has_expose(d, "pir_timeout"),
+          "ZG-204ZL-z exposes light_level, action on/off/toggle, state, pir_timeout");
+    check(w3_h5_has_bind(d, 1, 0x0401) && w3_h5_has_report(d, 1, 0x0401, 0x0000) && w3_h5_has_report(d, 1, 0x0006, 0x0000),
+          "ZG-204ZL-z binds 0x0401, reports levelStatus MIN..1 h and onOff");
+}
+
+void w3_h5_hs9ms_e() {
+    std::printf("W3h5 HEIMAN HS9MS-E\n");
+    resolves({"HS9MS-E", "HEIMAN", "HS9MS-E"});
+    const PreparedDefinition& d = def_for("HS9MS-E", "HEIMAN");
+    Report l; l.u16(0x0000, 0x21, 1234);
+    const DispatchResult r = dispatch(d, 0x0400, 1, l.span());
+    check(r_float(r, "ambient_light") == 1234.0f && w3_h5_absent(r, "illuminance"),
+          "HS9MS-E msIlluminanceMeasurement 1234 -> ambient_light 1234, unscaled (heimanClusterLegacyIlluminanceExtend)");
+    const Expose* e = find_expose(d, "ambient_light");
+    check(e && e->type == ExposeType::Numeric && e->unit && std::strcmp(e->unit, "Lx") == 0, "HS9MS-E exposes ambient_light Lx");
+}
+
+// Call order: w3_h5_mini_zbd, w3_h5_mini_zb2gs, w3_h5_s4dm, w3_h5_rd250zg, w3_h5_zg2835, w3_h5_pp01,
+// w3_h5_zg204zl, w3_h5_hs9ms_e
+
 }  // namespace
 
 int main() {
@@ -1487,6 +2536,50 @@ int main() {
     w2_c_ts011f_5();
     w2_c_udl7uyd2();
     w2_c_mw1pqqqt();
+    // Wave 3 (ZCL)
+    w3_h1_cpxc_2x4_tuwh();
+    w3_h1_vb_ftw_a19();
+    w3_h1_vb_rgbtw_a19();
+    w3_h1_h2_zb_sw_v1();
+    w3_h1_mtouch_onoff();
+    w3_h1_fl_290_c();
+    w3_h1_wnrl24();
+    w3_h1_wnrl34();
+    w3_h1_t30s3z();
+    w3_h1_rob_200_082_0();
+    w3_h1_zrel();
+    w3_h1_visspoint_io4();
+    w3_h2_d1_e();
+    w3_h2_hs_720es_zb();
+    w3_h2_sc6();
+    w3_h2_airbee();
+    w3_h2_hpm_300_wz();
+    w3_h2_ss_z2n();
+    w3_h2_th03();
+    w3_h3_100040070400();
+    w3_h3_100050072300();
+    w3_h3_T000R_ZG();
+    w3_h3_micro_duo();
+    w3_h3_ZIGBEE_ERL();
+    w3_h3_RS_T03AZG();
+    w3_h4_wnrr15();
+    w3_h4_rm3500zb();
+    w3_h4_sin_4_rs_20();
+    w3_h4_cct5010_0003();
+    w3_h4_nh3516a();
+    w3_h4_eer53000();
+    w3_h4_wiser_ep11();
+    w3_h4_eko07259();
+    w3_h4_s520619();
+    w3_h4_unrelated();
+    w3_h5_mini_zbd();
+    w3_h5_mini_zb2gs();
+    w3_h5_s4dm();
+    w3_h5_rd250zg();
+    w3_h5_zg2835();
+    w3_h5_pp01();
+    w3_h5_zg204zl();
+    w3_h5_hs9ms_e();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26133 checks passed\n");
     return 0;

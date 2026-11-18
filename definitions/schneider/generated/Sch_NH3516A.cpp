@@ -1,21 +1,55 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Schneider NH3516A — auto-generated.
+// Tier 2: Schneider NH3516A — generated, hand-edited for z2m v26.133.0 (R142);
+// do not let the generator clobber it.
 // Rotary dimmer
+//
+// v26.133.0: deviceEndpoints {default: 3, indicator: 21} and
+// indicatorMode("indicator", false) — 0xFF17 attr 0x0000 enum8 on EP 21 (cluster
+// manufacturer code 0x105E), no flash_on_click; key `indicator_mode_indicator`.
+// The light lives on EP 3, so binds and the default endpoint move there; EP 3 is
+// left out of the map so state / brightness stay bare (multiEndpointSkip).
+// The configure read of the mode follows z2m's enumLookup (access ALL).
+// NOT ported (pre-existing): level_config, ballast, dimming mode.
 // z2m-source: schneider.ts #NH3516A.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::schneider {
 namespace {
+constexpr std::uint16_t kSchneiderManu = 0x105E;
+constexpr ::zhc::generic::ZclWriteLookup kIndicatorModes[] = {
+    {"reverse_with_load", 2}, {"consistent_with_load", 0}, {"always_off", 3}, {"always_on", 1} };
+constexpr ::zhc::generic::ZclAttrRow kIndicatorRows[] = {
+    { 0x0000, "indicator_mode", 1, kIndicatorModes, sizeof(kIndicatorModes)/sizeof(kIndicatorModes[0]) } };
+constexpr ::zhc::generic::ZclAttrMap kIndicatorMap{ kIndicatorRows, 1 };
+// z2m publishes it only from the "indicator" endpoint.
+constexpr FzConverter kFzIndicatorMode = [] {
+    FzConverter c = ::zhc::generic::zcl_attr_fz("manuSpecificSchneiderLightSwitchConfiguration", &kIndicatorMap);
+    c.endpoint = 21;
+    return c;
+}();
+constexpr ::zhc::generic::ZclWriteSpec kIndicatorSpec{
+    "indicator_mode", 0x0000, 0x30, kSchneiderManu, kIndicatorModes, sizeof(kIndicatorModes)/sizeof(kIndicatorModes[0]) };
+constexpr TzConverter kTzIndicatorMode =
+    ::zhc::generic::zcl_write_tz("manuSpecificSchneiderLightSwitchConfiguration", 0xFF17, &kIndicatorSpec, 21);
+
 const FzConverter* const kFz_NH3516A[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &kFzIndicatorMode,
 };
 const TzConverter* const kTz_NH3516A[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &kTzIndicatorMode,
 };
 constexpr const char* kModels_NH3516A[] = { "NHROTARY/UNIDIM/1" };
+constexpr const char* kIndicatorModeValues[] = { "reverse_with_load", "consistent_with_load", "always_off", "always_on" };
+constexpr EndpointLabel kEndpoints_NH3516A[] = { {"indicator", 21} };
+constexpr std::uint8_t kReadIndicator[] = { 0x00, 0x00 };  // ledIndication
+constexpr ConfigStep kSteps_NH3516A[] = {
+    { ConfigStepOp::Read, 21, 0xFF17, 0x00, 0, kReadIndicator, sizeof(kReadIndicator), 0, kSchneiderManu },
+};
 
 }  // namespace
 
@@ -24,11 +58,13 @@ constexpr const char* kModels_NH3516A[] = { "NHROTARY/UNIDIM/1" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"indicator_mode_indicator", ExposeType::Enum, Access::StateSet, nullptr, "Set Indicator Mode for indicator switch.",
+     kIndicatorModeValues, sizeof(kIndicatorModeValues)/sizeof(kIndicatorModeValues[0])},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0008},
+    {3, 0x0006},
+    {3, 0x0008},
 };
 // --- end auto-generated block ---
 
@@ -54,6 +90,9 @@ extern const PreparedDefinition kDef_NH3516A{
     .to_zigbee=kTz_NH3516A, .to_zigbee_count=sizeof(kTz_NH3516A)/sizeof(kTz_NH3516A[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .config_steps=kSteps_NH3516A, .config_steps_count=sizeof(kSteps_NH3516A)/sizeof(kSteps_NH3516A[0]),
+    .endpoint_map=kEndpoints_NH3516A, .endpoint_map_count=sizeof(kEndpoints_NH3516A)/sizeof(kEndpoints_NH3516A[0]),
+    .default_endpoint=3,
 };
 
 }  // namespace zhc::devices::schneider

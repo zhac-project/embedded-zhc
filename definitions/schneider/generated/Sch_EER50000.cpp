@@ -1,7 +1,12 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Schneider EER50000 — auto-generated.
+// Tier 1: Schneider EER50000 — generated, hand-edited (binds); do not let the
+// generator clobber it.
 // Wiser H-Relay (HACT)
+// The HACT lives on EP 11 (z2m device.getEndpoint(11), bound to the normal
+// coordinator endpoint): the EP 1 binds failed and aborted configure, so binds
+// and the default endpoint use EP 11. NOT ported (pre-existing): zone_mode,
+// hact_config, fip_setting, the setpoint / instantaneousDemand reporting.
 // z2m-source: schneider.ts #EER50000.
 #include "definitions/_generic/_shared.hpp"
 
@@ -29,8 +34,8 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0702},
-    {1, 0x0201},
+    {11, 0x0702},
+    {11, 0x0201},
 };
 // --- end auto-generated block ---
 
@@ -45,6 +50,7 @@ extern const PreparedDefinition kDef_EER50000{
     .to_zigbee=kTz_EER50000, .to_zigbee_count=sizeof(kTz_EER50000)/sizeof(kTz_EER50000[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .default_endpoint=11,
 };
 
 }  // namespace zhc::devices::schneider

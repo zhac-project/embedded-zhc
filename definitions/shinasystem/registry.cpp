@@ -46,6 +46,7 @@ extern const PreparedDefinition kDef_PMM_300Z3;
 extern const PreparedDefinition kDef_TQM_300ZB;
 extern const PreparedDefinition kDef_TSM_300ZB;
 extern const PreparedDefinition kDef_USM_300ZB;
+extern const PreparedDefinition kDef_HPM_300_WZ;
 
 const PreparedDefinition* const kShinasystemRegistry[] = {
     &kDef_BSM_300ZB,
@@ -88,6 +89,7 @@ const PreparedDefinition* const kShinasystemRegistry[] = {
     &kDef_TQM_300ZB,
     &kDef_TSM_300ZB,
     &kDef_USM_300ZB,
+    &kDef_HPM_300_WZ,
 };
 const std::size_t kShinasystemRegistryCount = sizeof(kShinasystemRegistry) / sizeof(kShinasystemRegistry[0]);
 

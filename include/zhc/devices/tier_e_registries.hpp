@@ -352,6 +352,12 @@
 #include "zhc/devices/nova_digital_registry.hpp"
 #include "zhc/devices/teelicht_registry.hpp"
 #include "zhc/devices/fontastic_registry.hpp"
+#include "zhc/devices/control4_registry.hpp"
+#include "zhc/devices/coselig_registry.hpp"
+#include "zhc/devices/edflab_registry.hpp"
+#include "zhc/devices/heatzy_registry.hpp"
+#include "zhc/devices/librasoft_registry.hpp"
+#include "zhc/devices/sensy_one_registry.hpp"
 #include "zhc/devices/ariston_registry.hpp"
 
 namespace zhc::devices::tier_e {

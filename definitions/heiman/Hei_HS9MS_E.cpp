@@ -8,14 +8,25 @@
 // sensor_armed, pir_sensitivity_level, wifi_status/candidate, server_status/
 // candidate, camera_ready, wifi_rssi, plus the legacy-illuminance, test-trigger,
 // active-trigger and wifi-exposure extends. None have a generic decoder.
+// heimanClusterLegacyIlluminanceExtend IS ported (pre-existing gap, R10):
+// msIlluminanceMeasurement measuredValue published unscaled as `ambient_light`
+// (z2m unit "Lx", no lux conversion). Upstream neither binds nor reports it;
+// its configure-time read and the `get` are not ported.
 // z2m-source: heiman.ts #HS9MS-E.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::heiman {
 namespace {
+constexpr ::zhc::generic::ZclAttrRow kAmbientLightRows_HS9MS_E[] = { { 0x0000, "ambient_light" } };
+constexpr ::zhc::generic::ZclAttrMap kAmbientLightMap_HS9MS_E{
+    kAmbientLightRows_HS9MS_E, sizeof(kAmbientLightRows_HS9MS_E)/sizeof(kAmbientLightRows_HS9MS_E[0]) };
+constexpr FzConverter kFzAmbientLight_HS9MS_E =
+    ::zhc::generic::zcl_attr_fz("msIlluminanceMeasurement", &kAmbientLightMap_HS9MS_E);
+
 const FzConverter* const kFz_HS9MS_E[] = {
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzIasMotionAlarm,
+    &kFzAmbientLight_HS9MS_E,
 };
 
 constexpr const char* kModels_HS9MS_E[] = { "HS9MS-E" };
@@ -29,6 +40,7 @@ constexpr Expose kExposes_HS9MS_E[] = {
     {"occupancy", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"ambient_light", ExposeType::Numeric, Access::State, "Lx", "ambient illuminance in lux", nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

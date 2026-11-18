@@ -21,6 +21,7 @@ extern const PreparedDefinition kDef_AX_Water_Sensor;
 extern const PreparedDefinition kDef_D6254380;
 extern const PreparedDefinition kDef_mKomfy_Sensor;
 extern const PreparedDefinition kDef_mTouch_Air_Sensor;
+extern const PreparedDefinition kDef_mTouch_OnOff;
 
 const PreparedDefinition* const kCtmRegistry[] = {
     &kDef_AX_Valve_Controller,
@@ -38,6 +39,7 @@ const PreparedDefinition* const kCtmRegistry[] = {
     &kDef_D6254380,
     &kDef_mKomfy_Sensor,
     &kDef_mTouch_Air_Sensor,
+    &kDef_mTouch_OnOff,
 };
 const std::size_t kCtmRegistryCount = sizeof(kCtmRegistry) / sizeof(kCtmRegistry[0]);
 

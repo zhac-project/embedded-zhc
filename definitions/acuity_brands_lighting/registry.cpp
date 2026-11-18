@@ -9,11 +9,13 @@ namespace zhc::devices::acuity_brands_lighting {
 extern const PreparedDefinition kDef_RB56AC;
 extern const PreparedDefinition kDef_RB56SC;
 extern const PreparedDefinition kDef_WF4C_WF6C;
+extern const PreparedDefinition kDef_CPXC_2X4_TUWH;
 
 const PreparedDefinition* const kAcuityBrandsLightingRegistry[] = {
     &kDef_RB56AC,
     &kDef_RB56SC,
     &kDef_WF4C_WF6C,
+    &kDef_CPXC_2X4_TUWH,
 };
 const std::size_t kAcuityBrandsLightingRegistryCount = sizeof(kAcuityBrandsLightingRegistry) / sizeof(kAcuityBrandsLightingRegistry[0]);
 

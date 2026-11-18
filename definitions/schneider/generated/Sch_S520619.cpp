@@ -1,21 +1,71 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Schneider S520619 — auto-generated.
+// Tier 2: Schneider S520619 — generated, hand-edited for z2m v26.133.0 (R027);
+// do not let the generator clobber it.
 // Wiser Odace Smart thermostat
+//
+// v26.133.0: display_brightness_active / _inactive (hvacUserInterfaceCfg 0xE000 /
+// 0xE001 u8 %) and display_active_timeout (0xE002 u16 s, 5-600 step 5), all
+// mfg 0x105E; schneider_pilot_mode relabelled "Heating output mode" with
+// {disabled 0, contactor 1, pilot 3} (0xFF23 attr 0x0031 enum8, cluster mfg
+// 0x105E). Configure reads them, as z2m's numeric / enumLookup (access ALL).
+// The 0xFF23 read goes to EP 1 (z2m reads every endpoint that has the cluster;
+// a ZHAC read is fire-and-forget). NOT ported (pre-existing): keypad_lockout,
+// temperature_display_mode, cooling setpoint, occupancy, temperature, running
+// state, the setpoint poll.
 // z2m-source: schneider.ts #S520619.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::schneider {
 namespace {
+constexpr std::uint16_t kSchneiderManu = 0x105E;
+constexpr ::zhc::generic::ZclAttrRow kDisplayRows[] = {
+    { 0xE000, "display_brightness_active" },
+    { 0xE001, "display_brightness_inactive" },
+    { 0xE002, "display_active_timeout" },
+};
+constexpr ::zhc::generic::ZclAttrMap kDisplayMap{ kDisplayRows, 3, kSchneiderManu };
+constexpr FzConverter kFzDisplay = ::zhc::generic::zcl_attr_fz("hvacUserInterfaceCfg", &kDisplayMap);
+constexpr ::zhc::generic::ZclWriteSpec kBrightnessActiveSpec{ "display_brightness_active", 0xE000, 0x20, kSchneiderManu, nullptr, 0 };
+constexpr ::zhc::generic::ZclWriteSpec kBrightnessInactiveSpec{ "display_brightness_inactive", 0xE001, 0x20, kSchneiderManu, nullptr, 0 };
+constexpr ::zhc::generic::ZclWriteSpec kActiveTimeoutSpec{ "display_active_timeout", 0xE002, 0x21, kSchneiderManu, nullptr, 0 };
+constexpr TzConverter kTzBrightnessActive = ::zhc::generic::zcl_write_tz("hvacUserInterfaceCfg", 0x0204, &kBrightnessActiveSpec);
+constexpr TzConverter kTzBrightnessInactive = ::zhc::generic::zcl_write_tz("hvacUserInterfaceCfg", 0x0204, &kBrightnessInactiveSpec);
+constexpr TzConverter kTzActiveTimeout = ::zhc::generic::zcl_write_tz("hvacUserInterfaceCfg", 0x0204, &kActiveTimeoutSpec);
+
+// The cluster carries the manufacturer code; frames are matched by the 0xFF23
+// label (cluster_names.hpp), with or without it.
+constexpr ::zhc::generic::ZclWriteLookup kPilotModes[] = { {"disabled", 0}, {"contactor", 1}, {"pilot", 3} };
+constexpr ::zhc::generic::ZclAttrRow kPilotRows[] = {
+    { 0x0031, "schneider_pilot_mode", 1, kPilotModes, sizeof(kPilotModes)/sizeof(kPilotModes[0]) } };
+constexpr ::zhc::generic::ZclAttrMap kPilotMap{ kPilotRows, 1 };
+constexpr FzConverter kFzPilotMode = ::zhc::generic::zcl_attr_fz("heatingCoolingOutputClusterServer", &kPilotMap);
+constexpr ::zhc::generic::ZclWriteSpec kPilotSpec{
+    "schneider_pilot_mode", 0x0031, 0x30, kSchneiderManu, kPilotModes, sizeof(kPilotModes)/sizeof(kPilotModes[0]) };
+constexpr TzConverter kTzPilotMode = ::zhc::generic::zcl_write_tz("heatingCoolingOutputClusterServer", 0xFF23, &kPilotSpec);
+
 const FzConverter* const kFz_S520619[] = {
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzThermostat,
     &::zhc::generic::kFzIasZone,
+    &kFzDisplay,
+    &kFzPilotMode,
 };
 const TzConverter* const kTz_S520619[] = {
     &::zhc::generic::kTzThermostat,
+    &kTzBrightnessActive,
+    &kTzBrightnessInactive,
+    &kTzActiveTimeout,
+    &kTzPilotMode,
 };
 constexpr const char* kModels_S520619[] = { "S520619" };
+constexpr const char* kPilotModeValues[] = { "disabled", "contactor", "pilot" };
+constexpr std::uint8_t kReadDisplay[] = { 0x00, 0xE0, 0x01, 0xE0, 0x02, 0xE0 };
+constexpr std::uint8_t kReadPilot[] = { 0x31, 0x00 };
+constexpr ConfigStep kSteps_S520619[] = {
+    { ConfigStepOp::Read, 1, 0x0204, 0x00, 0, kReadDisplay, sizeof(kReadDisplay), 0, kSchneiderManu },
+    { ConfigStepOp::Read, 1, 0xFF23, 0x00, 0, kReadPilot, sizeof(kReadPilot), 0, kSchneiderManu },
+};
 
 }  // namespace
 
@@ -30,6 +80,14 @@ constexpr Expose kAutoExposes[] = {
     {"alarm", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"tamper", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
     {"battery_low", ExposeType::Binary, Access::State, nullptr, nullptr, nullptr, 0},
+    {"display_brightness_active", ExposeType::Numeric, Access::StateSet, "%",
+     "Sets brightness of the temperature display during active state", nullptr, 0, ExposeCategory::Config, 0, 100, 1},
+    {"display_brightness_inactive", ExposeType::Numeric, Access::StateSet, "%",
+     "Sets brightness of the temperature display during inactive state", nullptr, 0, ExposeCategory::Config, 0, 100, 1},
+    {"display_active_timeout", ExposeType::Numeric, Access::StateSet, "seconds",
+     "Sets timeout of the temperature display active state", nullptr, 0, ExposeCategory::Config, 5, 600, 5},
+    {"schneider_pilot_mode", ExposeType::Enum, Access::StateSet, nullptr, "Heating output mode",
+     kPilotModeValues, sizeof(kPilotModeValues)/sizeof(kPilotModeValues[0]), ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
@@ -50,6 +108,7 @@ extern const PreparedDefinition kDef_S520619{
     .to_zigbee=kTz_S520619, .to_zigbee_count=sizeof(kTz_S520619)/sizeof(kTz_S520619[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .config_steps=kSteps_S520619, .config_steps_count=sizeof(kSteps_S520619)/sizeof(kSteps_S520619[0]),
 };
 
 }  // namespace zhc::devices::schneider

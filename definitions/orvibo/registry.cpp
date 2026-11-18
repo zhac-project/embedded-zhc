@@ -45,6 +45,7 @@ extern const PreparedDefinition kDef_ST21;
 extern const PreparedDefinition kDef_ST30;
 extern const PreparedDefinition kDef_SW21;
 extern const PreparedDefinition kDef_SW30;
+extern const PreparedDefinition kDef_T30S3Z;
 
 const PreparedDefinition* const kOrviboRegistry[] = {
     &kDef_AM25,
@@ -86,6 +87,7 @@ const PreparedDefinition* const kOrviboRegistry[] = {
     &kDef_ST30,
     &kDef_SW21,
     &kDef_SW30,
+    &kDef_T30S3Z,
 };
 const std::size_t kOrviboRegistryCount = sizeof(kOrviboRegistry) / sizeof(kOrviboRegistry[0]);
 

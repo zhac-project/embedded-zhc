@@ -17,6 +17,10 @@
 // manuSpecific / custom clusters with no generic converter in tree.
 // regulator_level (z2m v26.125.0): heating output % in regulator mode (P9),
 // cycle-time cluster 0xFF16 attr 0x0000 (mfg 0x105E), as on CCTFR6000.
+// temperature_ambient (EP 2) / temperature_floor (EP 3) (z2m v26.133.0,
+// m.temperature({endpointNames: ["ambient", "floor"], reporting: false})):
+// generic msTemperatureMeasurement decode, suffixed by the endpoint map. No
+// bind / report, as upstream: values arrive when the device sends them.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::schneider {
@@ -32,6 +36,7 @@ const FzConverter* const kFz_EKO07259[] = {
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzThermostat,
     &kFzRegulator,
+    &::zhc::generic::kFzTemperature,
 };
 const TzConverter* const kTz_EKO07259[] = {
     &::zhc::generic::kTzThermostat,
@@ -39,7 +44,7 @@ const TzConverter* const kTz_EKO07259[] = {
 };
 constexpr const char* kModels_EKO07259[] = { "EKO07259" };
 
-constexpr ::zhc::EndpointLabel kEndpoints_EKO07259[] = { {"floor", 3} };
+constexpr ::zhc::EndpointLabel kEndpoints_EKO07259[] = { {"ambient", 2}, {"floor", 3} };
 
 }  // namespace
 
@@ -55,6 +60,8 @@ constexpr Expose kAutoExposes[] = {
     {"regulator_level", ExposeType::Numeric, Access::StateSet, "%",
      "Heating output percentage when the thermostat is configured in regulator mode (P9 / NoControl)",
      nullptr, 0, ExposeCategory::State, 0, 100, 10},
+    {"temperature_ambient", ExposeType::Numeric, Access::State, "°C", "Measured temperature value", nullptr, 0},
+    {"temperature_floor", ExposeType::Numeric, Access::State, "°C", "Measured temperature value", nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

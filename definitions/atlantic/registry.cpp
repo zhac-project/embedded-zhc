@@ -10,12 +10,16 @@ extern const PreparedDefinition kDef_GW003_AS_IN_TE_FC;
 extern const PreparedDefinition kDef_D100042838900;
 extern const PreparedDefinition kDef_D100052992400;
 extern const PreparedDefinition kDef_D100052994200;
+extern const PreparedDefinition kDef_D100040070400;
+extern const PreparedDefinition kDef_D100050072300;
 
 const PreparedDefinition* const kAtlanticRegistry[] = {
     &kDef_GW003_AS_IN_TE_FC,
     &kDef_D100042838900,
     &kDef_D100052992400,
     &kDef_D100052994200,
+    &kDef_D100040070400,
+    &kDef_D100050072300,
 };
 const std::size_t kAtlanticRegistryCount = sizeof(kAtlanticRegistry) / sizeof(kAtlanticRegistry[0]);
 

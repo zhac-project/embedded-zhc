@@ -51,6 +51,20 @@ across the ZHAC platform.
   USB switch `mw1pqqqt` 3 gangs, TRV601 heating state and window, SFD02-Z value
   DPs, NAS-AB06B2 battery, TS0201 any manufacturer, Tongou now Chayo, and
   fingerprints (JWCOM SA-ZB417F-BR, MiBoxer E3-ZR, ZTH13, UZ-05T …). Same ledger.
+- **z2m v26.133.0 parity, wave 3 (ZCL).** New definitions: Acuity CPXC 2X4 TUWH,
+  Atlantic 100040070400 / 100050072300 (running state), CTM mTouch On/Off, Heiman
+  D1-E / HS-720ES-ZB / SC6, HZC T000R-ZG thermostat, Innr FL 290 C, Legrand WNRL24
+  / WNRL34, Orvibo T30S3Z, Repenic RS-T03AZG, Robb ROB_200-082-0, ShinaSystem
+  HPM-300-WZ, SMLIGHT ZREL, SONOFF SS-Z2N, Zbeacon TH03, and the new vendors
+  Control4 (VB-FTW-A19, VB-RGBTW-A19), Coselig H2-ZB-SW-V1, EDF Lab ZIGBEE_ERL
+  (Linky numerics), Heatzy micro-duo, LibraSoft visspoint-io4 and Sensy-One
+  AirBee. Existing devices: Legrand WNRR15/20 apparent power, Sinopé RM3500ZB,
+  NodOn SIN-4-RS-20, Schneider CCT5010 / NH3516A / EER5x000 (Wiser EP11 binds) /
+  EKO07259 / S520619, SONOFF MINI-ZBD / MINI-ZB2GS, Shelly S4DM, Repenic
+  RD-250ZG, Sunricher ZG2835, Terncy PP01 illuminance, HOBEIAN ZG-204ZL-z light
+  level and settings, Heiman HS9MS-E. `cluster_names.hpp` now names 0x0401
+  `msIlluminanceLevelSensing` and Schneider 0xFF17 / 0xFF23, so their reports no
+  longer leak into on/off, occupancy or illuminance decoders. Same ledger.
 
 ### Changed
 

@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Sunricher ZG2835 — auto-generated.
-// ZG2835 (remote / scene emitter — no toZigbee).
+// Tier 2: Sunricher ZG2835 knob — generated copy, hand-edited for z2m v26.133.0.
+// ZG2835 (remote / scene emitter — no toZigbee): on / off / move_to_level
+// actions, plus (new since v26.125.0) m.battery({voltage, voltageReporting}):
+// batteryPercentageRemaining / 2 -> battery %, batteryVoltage x 100 -> mV.
+// genPowerCfg is bound; only the voltage is reported (1 h .. max, change 10 x 100 mV),
+// as upstream asks; the percentage reporting row is not ported (house rule).
 // z2m-source: sunricher.ts #ZG2835.
 #include "definitions/_generic/_shared.hpp"
 
@@ -11,6 +15,7 @@ const FzConverter* const kFz_ZG2835[] = {
     &::zhc::generic::kFzCommandOn,
     &::zhc::generic::kFzCommandOff,
     &::zhc::generic::kFzCommandMoveToLevel,
+    &::zhc::generic::kFzBattery,
 };
 
 constexpr const char* kModels_ZG2835[] = { "ZG2835" };
@@ -23,10 +28,16 @@ constexpr const char* kActions_ZG2835[] = {
 
 constexpr Expose kAutoExposes[] = {
     {"action", ExposeType::Enum, Access::State, nullptr, nullptr, kActions_ZG2835, sizeof(kActions_ZG2835)/sizeof(kActions_ZG2835[0])},
+    {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0, ExposeCategory::Diagnostic},
+    {"voltage", ExposeType::Numeric, Access::State, "mV", nullptr, nullptr, 0, ExposeCategory::Diagnostic},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
     {1, 0x0006},
+    {1, 0x0001},
+};
+constexpr ReportingSpec kReports_ZG2835[] = {
+    {1, 0x0001, 0x0020, 0x20, 3600, 65000, 10, 0},   // batteryVoltage (voltageReporting)
 };
 
 }  // namespace
@@ -42,6 +53,7 @@ extern const PreparedDefinition kDef_ZG2835{
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,
     .bindings=kAutoBindings, .bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .reports=kReports_ZG2835, .reports_count=sizeof(kReports_ZG2835)/sizeof(kReports_ZG2835[0]),
 };
 
 }  // namespace zhc::devices::sunricher
