@@ -7,9 +7,11 @@
 namespace zhc::devices::zbeacon {
 
 extern const PreparedDefinition kDef_TS0721;
+extern const PreparedDefinition kDef_TH03;
 
 const PreparedDefinition* const kZbeaconRegistry[] = {
     &kDef_TS0721,
+    &kDef_TH03,
 };
 const std::size_t kZbeaconRegistryCount = sizeof(kZbeaconRegistry) / sizeof(kZbeaconRegistry[0]);
 

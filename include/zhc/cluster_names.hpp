@@ -52,9 +52,11 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
 
         // Lighting
         case 0x0300: return "lightingColorCtrl";
+        case 0x0301: return "lightingBallastCfg";
 
         // Measurement & sensing
         case 0x0400: return "msIlluminanceMeasurement";
+        case 0x0401: return "msIlluminanceLevelSensing";
         case 0x0402: return "msTemperatureMeasurement";
         case 0x0403: return "msPressureMeasurement";
         case 0x0405: return "msRelativeHumidity";
@@ -119,6 +121,15 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
         // selector matches by cluster string; an unnamed id decodes to
         // nullptr and no converter would ever match it.
         case 0xFF0C: return "3rScaleSensorcluster";
+        // 0xFF17 / 0xFF23 — Schneider custom clusters (z2m
+        // addSchneiderLightSwitchConfigurationCluster /
+        // addHeatingCoolingOutputClusterServer; no other vendor uses the ids).
+        // herdsman resolves a custom cluster by id even when the frame has no
+        // manufacturer code, and Schneider devices do drop it (EER53000), so the
+        // profile-wide form is labelled too. Unnamed, their attr 0x0000 failed
+        // open into genOnOff / metering converters (bogus `state`).
+        case 0xFF17: return "manuSpecificSchneiderLightSwitchConfiguration";
+        case 0xFF23: return "heatingCoolingOutputClusterServer";
 
         default:     return nullptr;
     }
@@ -155,6 +166,10 @@ inline const char* cluster_name(std::uint16_t cluster_id,
                 break;
             case 0xFF16:  // Schneider cycle time (CCTFR6000, EKO07259)
                 if (manufacturer_code == 0x105E) return "schneiderCycleTime";
+                break;
+            case 0xFF17:  // Schneider light-switch configuration (NH3516A, CCT5010)
+            case 0xFF23:  // Schneider heating/cooling output (S520619)
+                if (manufacturer_code == 0x105E) return cluster_id_to_name(cluster_id);
                 break;
             // Unique-id custom clusters (no cross-vendor collision):
             case 0xFC0A: return "manuSpecificYokisPilotWire";

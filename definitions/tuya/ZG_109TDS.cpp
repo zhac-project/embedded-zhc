@@ -23,7 +23,7 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum_DTS1XM9_133[] = { {0,"freshwater"},{1
 
 struct cfg_ZG_109TDS {
     static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
-    ::zhc::tuya::dp::numeric(1,"probe_temperature",10),
+    ::zhc::tuya::dp::numeric(1,"temperature_probe",10),
     ::zhc::tuya::dp::numeric(4,"battery",1),
     ::zhc::tuya::dp::temperature(5,100),
     ::zhc::tuya::dp::numeric(101,"sampling_interval",1),
@@ -63,7 +63,7 @@ constexpr const char* kOpts_ZG_109TDS_ec_warning[] = { "none", "low", "high" };
 constexpr const char* kOpts_ZG_109TDS_mode[] = { "freshwater", "seawater" };
 
 constexpr Expose kExp_ZG_109TDS[] = {
-    {"probe_temperature", ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"temperature_probe", ExposeType::Numeric, ::zhc::Access::State, "°C", "Probe temperature", nullptr, 0},
     {"battery", ExposeType::Numeric, ::zhc::Access::StateSet, "%", nullptr, nullptr, 0},
     {"sampling_interval", ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"probe_temperature_calibration", ExposeType::Numeric, ::zhc::Access::StateSet, nullptr, nullptr, nullptr, 0},

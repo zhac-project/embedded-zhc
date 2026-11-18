@@ -25,7 +25,8 @@ constexpr const char* kModels_IM_CDZDGAAG005KA_MZN[] = { "ZBEK-11" };
 constexpr Expose kAutoExposes[] = {
     {"state",      ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0},
+    {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", nullptr, nullptr, 0,
+     ExposeCategory::State, 153, 370, 0},   // 153-454 -> 153-370 upstream (R10 R035)
 };
 
 constexpr BindingSpec kAutoBindings[] = {

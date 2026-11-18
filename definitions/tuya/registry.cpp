@@ -66,10 +66,13 @@ extern const PreparedDefinition kDef_BAC_001;
 extern const PreparedDefinition kDef_EZ_104UPT;
 extern const PreparedDefinition kDef_EZ_500FL;
 extern const PreparedDefinition kDefGen_ZG_204ZL;
+extern const PreparedDefinition kDefGen_ZG_204ZL_model;
 extern const PreparedDefinition kDef_ZG_204ZM;
 extern const PreparedDefinition kDefGen_ZG_204ZQ;
 extern const PreparedDefinition kDef_ZG_204ZV;
+extern const PreparedDefinition kDef_ZG_204ZV_model;
 extern const PreparedDefinition kDefGen_ZG_204ZX;
+extern const PreparedDefinition kDefGen_ZG_204ZX_model;
 extern const PreparedDefinition kDefGen_ZG_205ZL;
 extern const PreparedDefinition kDefGen_ZG_222Z;
 extern const PreparedDefinition kDef_ZG_223Z;
@@ -609,7 +612,6 @@ extern const PreparedDefinition kDefGen__TZE200_ioxkjvuz;
 extern const PreparedDefinition kDefGen__TZE200_ip2akl4w;
 extern const PreparedDefinition kDefGen__TZE200_iq4ygaai;
 extern const PreparedDefinition kDefGen__TZE200_iuk8kupi;
-extern const PreparedDefinition kDefGen__TZE200_iwn0gpzz;
 extern const PreparedDefinition kDefGen__TZE200_j7sgd8po;
 extern const PreparedDefinition kDefGen__TZE200_jkbljri7;
 extern const PreparedDefinition kDefGen__TZE200_jkfbph7l;
@@ -705,7 +707,6 @@ extern const PreparedDefinition kDefGen__TZE200_utkemkbs;
 extern const PreparedDefinition kDefGen__TZE200_v1jqz5cy;
 extern const PreparedDefinition kDefGen__TZE200_v9hkz2yn;
 extern const PreparedDefinition kDef_TZE200_vdiuwbkq;
-extern const PreparedDefinition kDefGen__TZE200_ves1ycwx;
 extern const PreparedDefinition kDefGen__TZE200_vexa5o82;
 extern const PreparedDefinition kDefGen__TZE200_vhy3iakz;
 extern const PreparedDefinition kDef__TZE200_viy9ihs7;
@@ -725,6 +726,7 @@ extern const PreparedDefinition kDefGen__TZE200_wktrysab;
 extern const PreparedDefinition kDefGen__TZE200_wmcdj3aq;
 extern const PreparedDefinition kDefGen__TZE200_wnp4d4va;
 extern const PreparedDefinition kDefGen__TZE200_wqashyqo;
+extern const PreparedDefinition kDefGen__TZE200_wqashyqo_model;
 extern const PreparedDefinition kDefGen__TZE200_wrmhp6b3;
 extern const PreparedDefinition kDefGen__TZE200_wsbfwodu;
 extern const PreparedDefinition kDefGen__TZE200_wunufsil;
@@ -840,7 +842,6 @@ extern const PreparedDefinition kDefGen__TZE204_iik0pquw;
 extern const PreparedDefinition kDefGen__TZE204_ijxvkhd0;
 extern const PreparedDefinition kDefGen__TZE204_ilzkxrav;
 extern const PreparedDefinition kDefGen__TZE204_iuk8kupi;
-extern const PreparedDefinition kDefGen__TZE204_iwn0gpzz;
 extern const PreparedDefinition kDefGen__TZE204_jcwbwckh;
 extern const PreparedDefinition kDefGen__TZE204_jygvp6fk;
 extern const PreparedDefinition kDefGen__TZE204_k7mfgaen;
@@ -888,6 +889,7 @@ extern const PreparedDefinition kDefGen__TZE204_ouy7vpm1;
 extern const PreparedDefinition kDefGen__TZE204_pcdmj88b;
 extern const PreparedDefinition kDefGen__TZE204_pfayrzcw;
 extern const PreparedDefinition kDefGen__TZE204_q12rv9gj;
+extern const PreparedDefinition kDefGen__TZE284_6l44ypoc;   // R10 review: HHST001 deadzone x10
 extern const PreparedDefinition kDefGen__TZE204_q22avxbv;
 extern const PreparedDefinition kDef_TZE204_q9xty0ad;
 extern const PreparedDefinition kDefGen__TZE204_qasjif9e;
@@ -916,7 +918,6 @@ extern const PreparedDefinition kDefGen__TZE204_utkemkbs;
 extern const PreparedDefinition kDefGen__TZE204_uxllnywp;
 extern const PreparedDefinition kDefGen__TZE204_v6iczj35;
 extern const PreparedDefinition kDefGen__TZE204_v9hkz2yn;
-extern const PreparedDefinition kDefGen__TZE204_ves1ycwx;
 extern const PreparedDefinition kDefGen__TZE204_vevc4c6g;
 extern const PreparedDefinition kDef__TZE204_vjpaih9f;
 extern const PreparedDefinition kDefGen__TZE204_vmcgja59;
@@ -1010,7 +1011,6 @@ extern const PreparedDefinition kDefGen__TZE284_eekpf0ft;
 extern const PreparedDefinition kDefGen__TZE284_f5efvtbv;
 extern const PreparedDefinition kDefGen__TZE284_fhvpaltk;
 extern const PreparedDefinition kDefGen__TZE284_fncxk3ob;
-extern const PreparedDefinition kDefGen__TZE284_fzo2pocs;
 extern const PreparedDefinition kDefGen__TZE284_g1enhdsi;
 extern const PreparedDefinition kDefGen__TZE284_g2e6cpnw;
 extern const PreparedDefinition kDefGen__TZE284_gaj531w3;
@@ -1026,7 +1026,6 @@ extern const PreparedDefinition kDefGen__TZE284_iadro9bf;
 extern const PreparedDefinition kDefGen__TZE284_idn2htgu;
 extern const PreparedDefinition kDefGen__TZE284_ikul00sx;
 extern const PreparedDefinition kDefGen__TZE284_it9utkro;
-extern const PreparedDefinition kDefGen__TZE284_iwn0gpzz;
 extern const PreparedDefinition kDefGen__TZE284_iwyqtclw;
 extern const PreparedDefinition kDefGen__TZE284_k7p2q5d9;
 extern const PreparedDefinition kDefGen__TZE284_kdqrazmy;
@@ -1084,7 +1083,6 @@ extern const PreparedDefinition kDef_TS0601_cover_5_uqfph8ah;
 extern const PreparedDefinition kDefGen__TZE284_utkemkbs;
 extern const PreparedDefinition kDefGen__TZE284_v9hkz2yn;
 extern const PreparedDefinition kDef_ZIS_01P;
-extern const PreparedDefinition kDefGen__TZE284_ves1ycwx;
 extern const PreparedDefinition kDefGen__TZE284_vjpaih9f;
 extern const PreparedDefinition kDefGen__TZE284_vmcgja59;
 extern const PreparedDefinition kDefGen__TZE284_vuwtqx0t;
@@ -1295,7 +1293,6 @@ extern const PreparedDefinition kDefTZE200_fall;
 extern const PreparedDefinition kDefTZE200_fan_dim;
 extern const PreparedDefinition kDefTZE200_fan_speed;
 extern const PreparedDefinition kDefTZE200_fan_thermo;
-extern const PreparedDefinition kDefTZE200_flood;
 extern const PreparedDefinition kDefTZE200_floor_ctrl;
 extern const PreparedDefinition kDefTZE200_floor_thermo;
 extern const PreparedDefinition kDefTZE200_flow;
@@ -1332,7 +1329,6 @@ extern const PreparedDefinition kDefTZE200_mailbox;
 extern const PreparedDefinition kDefTZE200_mood_light;
 extern const PreparedDefinition kDefTZE200_motion;
 extern const PreparedDefinition kDefTZE200_motion_lux;
-extern const PreparedDefinition kDefTZE200_motor_curtain;
 extern const PreparedDefinition kDefTZE200_motor_vib;
 extern const PreparedDefinition kDefTZE200_mraovvmm;
 extern const PreparedDefinition kDefTZE200_multi_gas;
@@ -1378,10 +1374,22 @@ extern const PreparedDefinition kDefTZE200_scada;
 extern const PreparedDefinition kDefTZE200_scale;
 extern const PreparedDefinition kDefTZE200_scenario;
 extern const PreparedDefinition kDefTZE200_scene_2g;
-extern const PreparedDefinition kDefTZE200_scene_4btn;
 extern const PreparedDefinition kDefTZE200_shutter_ctrl;
 extern const PreparedDefinition kDefTZE200_siren;
-extern const PreparedDefinition kDefTZE200_sleep;
+extern const PreparedDefinition kDef_SPM01;
+// R10 W2 (Tuya)
+extern const PreparedDefinition kDef_SPM01V25;
+extern const PreparedDefinition kDef_SPM02;
+extern const PreparedDefinition kDef_ME173;
+extern const PreparedDefinition kDef_SP107E_Zigbee;
+extern const PreparedDefinition kDef_EAYCBM_Z_1P;
+extern const PreparedDefinition kDef_07P4;
+extern const PreparedDefinition kDef_TS0601_lqhqj73n;
+extern const PreparedDefinition kDef_T3E_mua6ucdj;
+extern const PreparedDefinition kDef_SA_T2;
+extern const PreparedDefinition kDef_ZP01;
+extern const PreparedDefinition kDef_TS0002_a8mhmsol;
+extern const PreparedDefinition kDef_TS011F_5;
 extern const PreparedDefinition kDefTZE200_sleep_v2;
 extern const PreparedDefinition kDefTZE200_smart_breaker;
 extern const PreparedDefinition kDefTZE200_smoke;
@@ -1477,6 +1485,8 @@ extern const PreparedDefinition kDef_HD_T1000;  // Phase TC port
 
 // Phase TD enroll — TS0201 variants previously dead.
 extern const PreparedDefinition kDef_WSD500A;
+extern const PreparedDefinition kDef_TS0201;   // R10 W2: model-only TS0201 (UZ-05T "Wing")
+extern const PreparedDefinition kDef_TS0201_humidity10;   // R10 review: TS0201_humidity x10 manus
 extern const PreparedDefinition kDef_IH_K009;
 extern const PreparedDefinition kDef_LCZ030;
 extern const PreparedDefinition kDef_KCTW1Z;
@@ -1499,17 +1509,29 @@ extern const PreparedDefinition kDef_TS0601_3ch_bidirectional_meter;
 extern const PreparedDefinition kDef_MG_BJQ002;
 extern const PreparedDefinition kDef_HS208Z;
 extern const PreparedDefinition kDef_HS208Z_model;
+extern const PreparedDefinition kDef_HS206Z;
+extern const PreparedDefinition kDef_HS206Z_model;
+extern const PreparedDefinition kDef_HS207Z;
+extern const PreparedDefinition kDef_HS207Z_model;
+extern const PreparedDefinition kDef_HS209Z;
+extern const PreparedDefinition kDef_HS209Z_model;
+extern const PreparedDefinition kDef_HS300TF;
+extern const PreparedDefinition kDef_HS300TF_model;
+extern const PreparedDefinition kDef_JKD_839Z;
+extern const PreparedDefinition kDef_X7633;
 extern const PreparedDefinition kDef_TZE284_grxx6qek;
 extern const PreparedDefinition kDef_ZAS_01P;
 extern const PreparedDefinition kDef_TS0601_wsek35um;
 extern const PreparedDefinition kDef_ZY_N1;
 extern const PreparedDefinition kDef_ZG_308Z;
+extern const PreparedDefinition kDef_ZG_308Z_tuya;
 extern const PreparedDefinition kDef_CK_TLSR8258_L5PI_01_7009;
 extern const PreparedDefinition kDef_TS0601_switch_4_gang_1_58of2pfn;
 extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq;
 extern const PreparedDefinition kDef_TOQCB2_80_lyqazpe6;
 extern const PreparedDefinition kDef_ZG_102ZA;
 extern const PreparedDefinition kDef_TS0001_p26flek3;
+extern const PreparedDefinition kDef_TS0001_udl7uyd2;
 extern const PreparedDefinition kDef_HYT001ZB;
 extern const PreparedDefinition kDef_APRM_04_005;
 extern const PreparedDefinition kDef_T119710;
@@ -1568,10 +1590,13 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_EZ_104UPT,
     &kDef_EZ_500FL,
     &kDefGen_ZG_204ZL,
+    &kDefGen_ZG_204ZL_model,
     &kDef_ZG_204ZM,
     &kDefGen_ZG_204ZQ,
     &kDef_ZG_204ZV,
+    &kDef_ZG_204ZV_model,
     &kDefGen_ZG_204ZX,
+    &kDefGen_ZG_204ZX_model,
     &kDefGen_ZG_205ZL,
     &kDefGen_ZG_222Z,
     &kDef_ZG_223Z,
@@ -2109,7 +2134,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_ip2akl4w,
     &kDefGen__TZE200_iq4ygaai,
     &kDefGen__TZE200_iuk8kupi,
-    &kDefGen__TZE200_iwn0gpzz,
     &kDefGen__TZE200_j7sgd8po,
     &kDefGen__TZE200_jkbljri7,
     &kDefGen__TZE200_jkfbph7l,
@@ -2205,7 +2229,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_v1jqz5cy,
     &kDefGen__TZE200_v9hkz2yn,
     &kDef_TZE200_vdiuwbkq,
-    &kDefGen__TZE200_ves1ycwx,
     &kDefGen__TZE200_vexa5o82,
     &kDefGen__TZE200_vhy3iakz,
     &kDef__TZE200_viy9ihs7,
@@ -2225,6 +2248,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_wmcdj3aq,
     &kDefGen__TZE200_wnp4d4va,
     &kDefGen__TZE200_wqashyqo,
+    &kDefGen__TZE200_wqashyqo_model,
     &kDefGen__TZE200_wrmhp6b3,
     &kDefGen__TZE200_wsbfwodu,
     &kDefGen__TZE200_wunufsil,
@@ -2340,7 +2364,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_ijxvkhd0,
     &kDefGen__TZE204_ilzkxrav,
     &kDefGen__TZE204_iuk8kupi,
-    &kDefGen__TZE204_iwn0gpzz,
     &kDefGen__TZE204_jcwbwckh,
     &kDefGen__TZE204_jygvp6fk,
     &kDefGen__TZE204_k7mfgaen,
@@ -2388,6 +2411,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_pcdmj88b,
     &kDefGen__TZE204_pfayrzcw,
     &kDefGen__TZE204_q12rv9gj,
+    &kDefGen__TZE284_6l44ypoc,
     &kDefGen__TZE204_q22avxbv,
     &kDef_TZE204_q9xty0ad,
     &kDefGen__TZE204_qasjif9e,
@@ -2416,7 +2440,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_uxllnywp,
     &kDefGen__TZE204_v6iczj35,
     &kDefGen__TZE204_v9hkz2yn,
-    &kDefGen__TZE204_ves1ycwx,
     &kDefGen__TZE204_vevc4c6g,
     &kDef__TZE204_vjpaih9f,
     &kDefGen__TZE204_vmcgja59,
@@ -2510,7 +2533,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE284_f5efvtbv,
     &kDefGen__TZE284_fhvpaltk,
     &kDefGen__TZE284_fncxk3ob,
-    &kDefGen__TZE284_fzo2pocs,
     &kDefGen__TZE284_g1enhdsi,
     &kDefGen__TZE284_g2e6cpnw,
     &kDefGen__TZE284_gaj531w3,
@@ -2526,7 +2548,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE284_idn2htgu,
     &kDefGen__TZE284_ikul00sx,
     &kDefGen__TZE284_it9utkro,
-    &kDefGen__TZE284_iwn0gpzz,
     &kDefGen__TZE284_iwyqtclw,
     &kDefGen__TZE284_k7p2q5d9,
     &kDefGen__TZE284_kdqrazmy,
@@ -2584,7 +2605,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE284_utkemkbs,
     &kDefGen__TZE284_v9hkz2yn,
     &kDef_ZIS_01P,
-    &kDefGen__TZE284_ves1ycwx,
     &kDefGen__TZE284_vjpaih9f,
     &kDefGen__TZE284_vmcgja59,
     &kDefGen__TZE284_vuwtqx0t,
@@ -2794,7 +2814,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_fan_dim,
     &kDefTZE200_fan_speed,
     &kDefTZE200_fan_thermo,
-    &kDefTZE200_flood,
     &kDefTZE200_floor_ctrl,
     &kDefTZE200_floor_thermo,
     &kDefTZE200_flow,
@@ -2831,7 +2850,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_mood_light,
     &kDefTZE200_motion,
     &kDefTZE200_motion_lux,
-    &kDefTZE200_motor_curtain,
     &kDefTZE200_motor_vib,
     &kDefTZE200_mraovvmm,
     &kDefTZE200_multi_gas,
@@ -2877,10 +2895,21 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_scale,
     &kDefTZE200_scenario,
     &kDefTZE200_scene_2g,
-    &kDefTZE200_scene_4btn,
     &kDefTZE200_shutter_ctrl,
     &kDefTZE200_siren,
-    &kDefTZE200_sleep,
+    &kDef_SPM01,
+    &kDef_SPM01V25,
+    &kDef_SPM02,
+    &kDef_ME173,
+    &kDef_SP107E_Zigbee,
+    &kDef_EAYCBM_Z_1P,
+    &kDef_07P4,
+    &kDef_TS0601_lqhqj73n,
+    &kDef_T3E_mua6ucdj,
+    &kDef_SA_T2,
+    &kDef_ZP01,
+    &kDef_TS0002_a8mhmsol,
+    &kDef_TS011F_5,
     &kDefTZE200_sleep_v2,
     &kDefTZE200_smart_breaker,
     &kDefTZE200_smoke,
@@ -2981,6 +3010,8 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_ZS_SF00,
     &kDef__TZ3000_mw1pqqqt,
     &kDef_WSD500A,
+    &kDef_TS0201_humidity10,
+    &kDef_TS0201,
     &kDef_IH_K009,
     &kDef_LCZ030,
     &kDef_KCTW1Z,
@@ -3003,17 +3034,29 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_MG_BJQ002,
     &kDef_HS208Z,
     &kDef_HS208Z_model,
+    &kDef_HS206Z,
+    &kDef_HS206Z_model,
+    &kDef_HS207Z,
+    &kDef_HS207Z_model,
+    &kDef_HS209Z,
+    &kDef_HS209Z_model,
+    &kDef_HS300TF,
+    &kDef_HS300TF_model,
+    &kDef_JKD_839Z,
+    &kDef_X7633,
     &kDef_TZE284_grxx6qek,
     &kDef_ZAS_01P,
     &kDef_TS0601_wsek35um,
     &kDef_ZY_N1,
     &kDef_ZG_308Z,
+    &kDef_ZG_308Z_tuya,
     &kDef_CK_TLSR8258_L5PI_01_7009,
     &kDef_TS0601_switch_4_gang_1_58of2pfn,
     &kDef_TS0601_switch_6_gang_znkkcauq,
     &kDef_TOQCB2_80_lyqazpe6,
     &kDef_ZG_102ZA,
     &kDef_TS0001_p26flek3,
+    &kDef_TS0001_udl7uyd2,
     &kDefTS0505B_hs,
     &kDefTS0503B_hs,
     &kDef_HYT001ZB,

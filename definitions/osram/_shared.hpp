@@ -91,4 +91,10 @@ inline constexpr std::uint8_t          kExposesOsramColorCTLightCount = 7;
 extern const ::zhc::BindingSpec        kBindingsOsramColorCTLight[];
 inline constexpr std::uint8_t          kBindingsOsramColorCTLightCount = 3;
 
+// ── ledvancePowerOnBehavior() — LIGHTIFY bulbs without genOnOff startUpOnOff ──
+// manuSpecificOsram (0xFC0F) setPowerOnState (0x0C), u8 mode off 0x01 / on 0x03,
+// mfg OSRAM_SYLVANIA 0x110C. Write-only upstream; the state is optimistic.
+extern const ::zhc::TzConverter kTzOsramPowerOnBehavior;
+inline constexpr const char* kOsramPowerOnBehaviorValues[] = {"off", "on"};
+
 }  // namespace zhc::devices::osram

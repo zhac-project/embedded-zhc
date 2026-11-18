@@ -100,7 +100,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_switch_2gang.cpp
     definitions/tuya/TZE200_switch_4gang.cpp
     definitions/tuya/TZE204_plug.cpp
-    definitions/tuya/TZE200_scene_4btn.cpp
     definitions/tuya/TZE200_thermostat.cpp
     definitions/tuya/TZE200_trv_v2.cpp
     definitions/tuya/TZE200_radar_v2.cpp
@@ -121,7 +120,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_volume_alarm.cpp
     definitions/tuya/TZE200_nw1r9hp6.cpp
     definitions/tuya/TZE200_window.cpp
-    definitions/tuya/TZE200_flood.cpp
     definitions/tuya/TZE200_switch_2g_cd.cpp
     definitions/tuya/TZE200_dimmer.cpp
     definitions/tuya/TZE200_relay_power.cpp
@@ -161,7 +159,17 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0041.cpp
     definitions/tuya/TZE200_pet_feeder.cpp
     definitions/tuya/TZE200_fall.cpp
-    definitions/tuya/TZE200_sleep.cpp
+    definitions/tuya/SPM01.cpp
+    definitions/tuya/ME173.cpp
+    definitions/tuya/SP107E_Zigbee.cpp
+    definitions/tuya/EAYCBM_Z_1P.cpp
+    definitions/tuya/07P4.cpp
+    definitions/tuya/TS0601_lqhqj73n.cpp
+    definitions/tuya/T3E_mua6ucdj.cpp
+    definitions/tuya/SA_T2.cpp
+    definitions/tuya/ZP01.cpp
+    definitions/tuya/TS0002_a8mhmsol.cpp
+    definitions/tuya/TS011F_5.cpp
     definitions/tuya/TZE200_motion_lux.cpp
     definitions/tuya/TS0601_cover_with_switch.cpp
     definitions/tuya/TZE200_light_sensor.cpp
@@ -179,7 +187,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_fan_speed.cpp
     definitions/tuya/TZE200_roller_shade.cpp
     definitions/tuya/TZE200_tilt_blinds.cpp
-    definitions/tuya/TZE200_motor_curtain.cpp
     definitions/tuya/TZE200_dual_curtain.cpp
     definitions/tuya/TZE200_siren.cpp
     definitions/tuya/TZE200_lock.cpp
@@ -601,6 +608,7 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNCLDJ14LM.cpp
     definitions/lumi/ZNJLBL01LM.cpp
     definitions/lumi/SP_P06E.cpp
+    definitions/lumi/SP_P05D.cpp
     definitions/lumi/ZNCLBL01LM.cpp
     definitions/lumi/ZNMS11LM.cpp
     definitions/lumi/ZNMS12LM.cpp
@@ -693,6 +701,12 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0601_3ch_bidirectional_meter.cpp
     definitions/tuya/MG_BJQ002.cpp
     definitions/tuya/HS208Z.cpp
+    definitions/tuya/HS206Z.cpp
+    definitions/tuya/HS207Z.cpp
+    definitions/tuya/HS209Z.cpp
+    definitions/tuya/HS300TF.cpp
+    definitions/tuya/JKD_839Z.cpp
+    definitions/tuya/X7633.cpp
     definitions/tuya/TZE284_grxx6qek.cpp
     definitions/tuya/ZAS_01P.cpp
     definitions/tuya/TS0601_wsek35um.cpp
@@ -3360,6 +3374,8 @@ add_executable(zhc_thermostat_units_tests tests/test_thermostat_units.cpp)
 target_link_libraries(zhc_thermostat_units_tests PRIVATE zhc_definitions)
 add_executable(zhc_parity_26125_tests tests/test_parity_26125.cpp)
 target_link_libraries(zhc_parity_26125_tests PRIVATE zhc_definitions)
+add_executable(zhc_parity_26133_tests tests/test_parity_26133.cpp)
+target_link_libraries(zhc_parity_26133_tests PRIVATE zhc_definitions)
 
 # BTicino (Legrand-family): F20T60A DIN power module was ported with the
 # wrong cluster (seMetering 0x0702 + phantom energy) when z2m's
@@ -3842,6 +3858,7 @@ add_test(NAME zhc_parity_26105_tests        COMMAND zhc_parity_26105_tests)
 add_test(NAME zhc_parity_26115_tests        COMMAND zhc_parity_26115_tests)
 add_test(NAME zhc_thermostat_units_tests    COMMAND zhc_thermostat_units_tests)
 add_test(NAME zhc_parity_26125_tests        COMMAND zhc_parity_26125_tests)
+add_test(NAME zhc_parity_26133_tests        COMMAND zhc_parity_26133_tests)
 
 # Literal `_count` guard. Three consecutive z2m parity windows shipped a
 # definition whose hardcoded count disagreed with its array — once reading past

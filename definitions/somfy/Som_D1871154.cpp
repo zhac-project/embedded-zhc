@@ -29,7 +29,8 @@ const FzConverter* const kFz_D1871154[] = {
     &::zhc::generic::kFzCommandCoverStop,
     &::zhc::generic::kFzBattery,
 };
-constexpr const char* kModels_D1871154[] = { "Ysia 5 HP Zigbee" };
+constexpr const char* kModels_D1871154[] = { "Ysia 5 HP Zigbee", "Ysia 5 Zigbee Europe" };
+constexpr WhiteLabel kWL_D1871154[] = { {"Somfy", "1871158"} };   // Ysia 5 Zigbee Europe (R10 R086)
 
 constexpr ::zhc::EndpointLabel kEndpoints_D1871154[] = { {"1", 1}, {"2", 2}, {"3", 3}, {"4", 4}, {"5", 5} };
 
@@ -59,7 +60,7 @@ extern const PreparedDefinition kDef_D1871154{
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="1871154", .vendor="Somfy",
     .meta=nullptr, .exposes=kAutoExposes, .exposes_count=sizeof(kAutoExposes)/sizeof(kAutoExposes[0]),
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWL_D1871154, .white_labels_count=1,
     .from_zigbee=kFz_D1871154, .from_zigbee_count=sizeof(kFz_D1871154)/sizeof(kFz_D1871154[0]),
     .to_zigbee=nullptr, .to_zigbee_count=0,
     .configure=nullptr, .on_event=nullptr,

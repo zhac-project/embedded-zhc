@@ -121,7 +121,7 @@ struct TuyaPhaseKeys {
 
 // One record in a packed threshold blob (z2m `parseThresholds`). The blob is
 // a flat sequence of 4-byte records: [id, enabled, value_hi, value_lo].
-// `value_key` may be null for a flag-only record.
+// `value_key` may be null for a flag-only record, `enabled_key` for a value-only one.
 struct TuyaThresholdDef {
     std::uint8_t id;
     const char*  enabled_key;

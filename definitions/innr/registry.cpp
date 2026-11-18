@@ -125,6 +125,7 @@ extern const PreparedDefinition kDef_ST_110;
 extern const PreparedDefinition kDef_UC_110;
 extern const PreparedDefinition kDef_RCL_241_T;
 extern const PreparedDefinition kDef_RCL_242_C;
+extern const PreparedDefinition kDef_FL_290_C;
 
 const PreparedDefinition* const kInnrRegistry[] = {
     &kDef_AE_260,
@@ -246,6 +247,7 @@ const PreparedDefinition* const kInnrRegistry[] = {
     &kDef_UC_110,
     &kDef_RCL_241_T,
     &kDef_RCL_242_C,
+    &kDef_FL_290_C,
 };
 const std::size_t kInnrRegistryCount = sizeof(kInnrRegistry) / sizeof(kInnrRegistry[0]);
 

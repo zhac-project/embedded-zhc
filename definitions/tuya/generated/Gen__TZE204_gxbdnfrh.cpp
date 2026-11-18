@@ -9,7 +9,7 @@ namespace {
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_gxbdnfrh_power_on_behavior_dp14[] = {
     { 0, "off" },
     { 1, "on" },
-    { 2, "memory" },
+    { 2, "previous" },
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_gxbdnfrh_indicator_mode_dp15[] = {
@@ -25,10 +25,17 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_gxbdnfrh[] = {
     { 4, "state_l4", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 5, "state_l5", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 6, "state_l6", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    // countdown_l1..l6, raw seconds (z2m v26.133.0 switch_6_gang)
+    { 7, "countdown_l1", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 8, "countdown_l2", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 9, "countdown_l3", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 10, "countdown_l4", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 11, "countdown_l5", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 12, "countdown_l6", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 14, "power_on_behavior", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_gxbdnfrh_power_on_behavior_dp14, sizeof(kEnum__TZE204_gxbdnfrh_power_on_behavior_dp14)/sizeof(kEnum__TZE204_gxbdnfrh_power_on_behavior_dp14[0]) },
     { 15, "indicator_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_gxbdnfrh_indicator_mode_dp15, sizeof(kEnum__TZE204_gxbdnfrh_indicator_mode_dp15)/sizeof(kEnum__TZE204_gxbdnfrh_indicator_mode_dp15[0]) },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_gxbdnfrh{ kEntries__TZE204_gxbdnfrh, 8 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_gxbdnfrh{ kEntries__TZE204_gxbdnfrh, sizeof(kEntries__TZE204_gxbdnfrh)/sizeof(kEntries__TZE204_gxbdnfrh[0]) };
 constexpr FzConverter kFzDp__TZE204_gxbdnfrh{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",
@@ -69,6 +76,12 @@ constexpr Expose kAutoExposes__TZE204_gxbdnfrh[] = {
     {"state_l6", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_gxbdnfrh_6, 3, ExposeCategory::Config},
     {"indicator_mode", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kAutoOpts__TZE204_gxbdnfrh_7, 3, ExposeCategory::Config},
+    {"countdown_l1", ExposeType::Numeric, Access::StateSet, "s", "Toggle l1 after a set duration (one time action)", nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l2", ExposeType::Numeric, Access::StateSet, "s", "Toggle l2 after a set duration (one time action)", nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l3", ExposeType::Numeric, Access::StateSet, "s", "Toggle l3 after a set duration (one time action)", nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l4", ExposeType::Numeric, Access::StateSet, "s", "Toggle l4 after a set duration (one time action)", nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l5", ExposeType::Numeric, Access::StateSet, "s", "Toggle l5 after a set duration (one time action)", nullptr, 0, ExposeCategory::State, 0, 43200, 1},
+    {"countdown_l6", ExposeType::Numeric, Access::StateSet, "s", "Toggle l6 after a set duration (one time action)", nullptr, 0, ExposeCategory::State, 0, 43200, 1},
 };
 // --- end auto-generated exposes ---
 }  // namespace

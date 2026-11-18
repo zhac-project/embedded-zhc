@@ -7,9 +7,11 @@
 namespace zhc::devices::girier {
 
 extern const PreparedDefinition kDef_JR_ZDS01;
+extern const PreparedDefinition kDef_TS0601_GIRIER;
 
 const PreparedDefinition* const kGirierRegistry[] = {
     &kDef_JR_ZDS01,
+    &kDef_TS0601_GIRIER,
 };
 const std::size_t kGirierRegistryCount = sizeof(kGirierRegistry) / sizeof(kGirierRegistry[0]);
 

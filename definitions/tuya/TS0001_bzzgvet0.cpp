@@ -18,7 +18,8 @@
 //
 // z2m v26.115.1 switches the same features on for `_TZ3000_p26flek3`, plus
 // indicatorMode (the four-way reading of the same 0x8001 attribute):
-// kDef_TS0001_p26flek3 below.
+// kDef_TS0001_p26flek3 below. z2m v26.133.0 adds `_TZ3000_udl7uyd2` (Nova
+// Digital SA-1) with its own feature set: kDef_TS0001_udl7uyd2 at the end.
 //
 // z2m-source: tuya.ts #TS0001 (whiteLabel Moes ZS-US1-LN).
 #include "definitions/_generic/_shared.hpp"
@@ -147,6 +148,68 @@ extern const PreparedDefinition kDef_TS0001_p26flek3{
     .configure=nullptr, .on_event=nullptr,
     .bindings=kBindings, .bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
     .reports=::zhc::tuya::kReportsOnOff_1ep, .reports_count=::zhc::tuya::kReportsOnOff_1ep_count,
+};
+
+// z2m v26.133.0 switches switchType, backlightModeOffOn, indicatorMode,
+// onOffCountdown and inchingSwitch on for `_TZ3000_udl7uyd2` (Nova Digital
+// SA-1) — not powerOnBehavior2. The powerOnBehavior2 predicate still makes
+// tuyaOnOff skip power_on_behavior_1, so this batch exposes no power-on
+// behaviour at all. backlight_mode is upstream's tuyaBacklightSwitch, genOnOff
+// 0x5000 (tuyaTz.backlight_indicator_mode_2); indicator_mode stays on 0x8001.
+// countdown = onTime 0x4001 / onWithTimedOff. inching_control_set
+// (manuSpecificTuya4 base64 composite) is not ported. Configure = magic packet
+// + bind genOnOff, as upstream (no reporting).
+namespace {
+constexpr ::zhc::generic::ZclAttrRow kBacklightSwitchRows[] = {
+    { 0x5000, "backlight_mode", 1, nullptr, 0, ::zhc::generic::kZclAttrFlagBool },
+};
+constexpr ::zhc::generic::ZclAttrMap kBacklightSwitchMap{ kBacklightSwitchRows, 1 };
+constexpr FzConverter kFzBacklightSwitch = ::zhc::generic::zcl_attr_fz("genOnOff", &kBacklightSwitchMap);
+constexpr ::zhc::generic::ZclWriteSpec kSpecBacklightSwitch{
+    "backlight_mode", 0x5000, 0x30, 0, kBacklightLut, 2 };
+constexpr TzConverter kTzBacklightSwitch =
+    ::zhc::generic::zcl_write_tz("genOnOff", 0x0006, &kSpecBacklightSwitch);
+
+const FzConverter* const kFzUdl[] = {
+    &::zhc::generic::kFzOnOff,
+    &::zhc::generic::kFzOnOffCountdown,
+    &::zhc::tuya::kFzTuyaSwitchType,
+    &kFzBacklightSwitch,
+    &::zhc::tuya::kFzTuyaIndicatorMode,
+};
+const TzConverter* const kTzUdl[] = {
+    &::zhc::generic::kTzOnOff,
+    &::zhc::generic::kTzOnWithTimedOff,
+    &::zhc::tuya::kTzTuyaSwitchType,
+    &kTzBacklightSwitch,
+    &::zhc::tuya::kTzTuyaIndicatorMode,
+};
+constexpr Expose kExposesUdl[] = {
+    { "state",          ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0 },
+    { "countdown",      ExposeType::Numeric, Access::StateSet, "s",
+      "Toggle the device after a set duration (one time action)", nullptr, 0,
+      ExposeCategory::State, 0, 43200, 1 },
+    { "switch_type",    ExposeType::Enum,    Access::StateSet, nullptr, nullptr, kSwitchTypeOpts, 3, ExposeCategory::Config },
+    { "backlight_mode", ExposeType::Binary,  Access::StateSet, nullptr, "Mode of the backlight", nullptr, 0, ExposeCategory::Config },
+    { "indicator_mode", ExposeType::Enum,    Access::StateSet, nullptr, "LED indicator mode", kIndicatorOpts, 4, ExposeCategory::Config },
+};
+constexpr WhiteLabel kWhiteLabelsUdl[] = { {"Nova Digital", "SA-1"} };
+constexpr const char* kManusUdl[] = { "_TZ3000_udl7uyd2" };
+}  // namespace
+
+extern const PreparedDefinition kDef_TS0001_udl7uyd2{
+    .zigbee_models=kModels, .zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kManusUdl, .manufacturer_names_count=sizeof(kManusUdl)/sizeof(kManusUdl[0]),
+    .model="TS0001", .vendor="Tuya",
+    .meta=nullptr, .exposes=kExposesUdl, .exposes_count=sizeof(kExposesUdl)/sizeof(kExposesUdl[0]),
+    .white_labels=kWhiteLabelsUdl, .white_labels_count=sizeof(kWhiteLabelsUdl)/sizeof(kWhiteLabelsUdl[0]),
+    .from_zigbee=kFzUdl, .from_zigbee_count=sizeof(kFzUdl)/sizeof(kFzUdl[0]),
+    .to_zigbee=kTzUdl, .to_zigbee_count=sizeof(kTzUdl)/sizeof(kTzUdl[0]),
+    .configure=nullptr, .on_event=nullptr,
+    .bindings=kBindings, .bindings_count=sizeof(kBindings)/sizeof(kBindings[0]),
+    .config_steps=::zhc::tuya::kConfigStepsTuyaMagicPacket,
+    .config_steps_count=::zhc::tuya::kConfigStepsTuyaMagicPacketCount,
 };
 
 }  // namespace zhc::devices::tuya

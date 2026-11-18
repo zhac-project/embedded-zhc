@@ -51,7 +51,7 @@ constexpr TzConverter kTzDp__TZE204_cirvgep4{
 };
 const TzConverter* const kTz__TZE204_cirvgep4[] = { &kTzDp__TZE204_cirvgep4 };
 constexpr const char* kM__TZE204_cirvgep4[] = { "TS0601" };
-constexpr const char* kN__TZE204_cirvgep4[] = { "_TZE204_cirvgep4" };
+constexpr const char* kN__TZE204_cirvgep4[] = { "_TZE204_cirvgep4", "_TZE200_cirvgep4", "_TZE204_kwi6bbk4" };
 // --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
 constexpr const char* kAutoOpts__TZE204_cirvgep4_2[] = {"low", "medium", "high"};
 constexpr const char* kAutoOpts__TZE204_cirvgep4_3[] = {"celsius", "fahrenheit"};
@@ -75,7 +75,7 @@ constexpr WhiteLabel kWhiteLabels_Gen_TZE204_cirvgep4[] = {
 extern const PreparedDefinition kDefGen__TZE204_cirvgep4{
     .zigbee_models=kM__TZE204_cirvgep4,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN__TZE204_cirvgep4,.manufacturer_names_count=1,
+    .manufacturer_names=kN__TZE204_cirvgep4,.manufacturer_names_count=sizeof(kN__TZE204_cirvgep4)/sizeof(kN__TZE204_cirvgep4[0]),
     .model="TS0601__TZE204_cirvgep4",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes__TZE204_cirvgep4,.exposes_count=sizeof(kAutoExposes__TZE204_cirvgep4)/sizeof(kAutoExposes__TZE204_cirvgep4[0]),
     .white_labels=kWhiteLabels_Gen_TZE204_cirvgep4, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE204_cirvgep4)/sizeof(kWhiteLabels_Gen_TZE204_cirvgep4[0]),

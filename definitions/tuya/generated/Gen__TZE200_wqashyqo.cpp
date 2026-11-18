@@ -58,7 +58,8 @@ constexpr TzConverter kTzDp__TZE200_wqashyqo{
 };
 const TzConverter* const kTz__TZE200_wqashyqo[] = { &kTzDp__TZE200_wqashyqo };
 constexpr const char* kM__TZE200_wqashyqo[] = { "TS0601" };
-constexpr const char* kN__TZE200_wqashyqo[] = { "_TZE200_wqashyqo" };
+constexpr const char* kN__TZE200_wqashyqo[] = { "_TZE200_wqashyqo", "_TZD200_7khnomgh" };
+constexpr WhiteLabel kWL__TZE200_wqashyqo[] = { {"HYSYIOT", "HS303Z"} };   // _TZD200_7khnomgh (R10 R013)
 // --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
 constexpr const char* kAutoOpts__TZE200_wqashyqo_0[] = {"none", "alarm"};
 constexpr const char* kAutoOpts__TZE200_wqashyqo_4[] = {"celsius", "fahrenheit"};
@@ -81,10 +82,26 @@ constexpr Expose kAutoExposes__TZE200_wqashyqo[] = {
 extern const PreparedDefinition kDefGen__TZE200_wqashyqo{
     .zigbee_models=kM__TZE200_wqashyqo,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN__TZE200_wqashyqo,.manufacturer_names_count=1,
+    .manufacturer_names=kN__TZE200_wqashyqo,.manufacturer_names_count=sizeof(kN__TZE200_wqashyqo)/sizeof(kN__TZE200_wqashyqo[0]),
     .model="ZG-303Z",.vendor="HOBEIAN",
     .meta=nullptr,.exposes=kAutoExposes__TZE200_wqashyqo,.exposes_count=sizeof(kAutoExposes__TZE200_wqashyqo)/sizeof(kAutoExposes__TZE200_wqashyqo[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWL__TZE200_wqashyqo,.white_labels_count=1,
+    .from_zigbee=kFz__TZE200_wqashyqo,
+    .from_zigbee_count=sizeof(kFz__TZE200_wqashyqo)/sizeof(kFz__TZE200_wqashyqo[0]),
+    .to_zigbee=kTz__TZE200_wqashyqo,
+    .to_zigbee_count=sizeof(kTz__TZE200_wqashyqo)/sizeof(kTz__TZE200_wqashyqo[0]),
+    .configure=::zhc::tuya::extend::tuya_base_configure(),
+    .on_event=nullptr };
+
+// Upstream zigbeeModel fingerprints match whatever the manufacturer name (R10 R013).
+constexpr const char* kM__TZE200_wqashyqo_model[] = { "HS303Z" };
+extern const PreparedDefinition kDefGen__TZE200_wqashyqo_model{
+    .zigbee_models=kM__TZE200_wqashyqo_model,.zigbee_models_count=sizeof(kM__TZE200_wqashyqo_model)/sizeof(kM__TZE200_wqashyqo_model[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=nullptr,.manufacturer_names_count=0,
+    .model="ZG-303Z",.vendor="HOBEIAN",
+    .meta=nullptr,.exposes=kAutoExposes__TZE200_wqashyqo,.exposes_count=sizeof(kAutoExposes__TZE200_wqashyqo)/sizeof(kAutoExposes__TZE200_wqashyqo[0]),
+    .white_labels=kWL__TZE200_wqashyqo,.white_labels_count=1,
     .from_zigbee=kFz__TZE200_wqashyqo,
     .from_zigbee_count=sizeof(kFz__TZE200_wqashyqo)/sizeof(kFz__TZE200_wqashyqo[0]),
     .to_zigbee=kTz__TZE200_wqashyqo,

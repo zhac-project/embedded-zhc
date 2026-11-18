@@ -48,7 +48,12 @@ constexpr Expose kExp[] = {
     {"weather_status", ExposeType::Enum, Access::State, nullptr, "Weather information feedback received", kOpts9, 5},
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
-constexpr const char* kM[] = { "ZG-308Z" };
+constexpr const char* kM[] = { "ZG-308Z", "HS308Z" };
+constexpr WhiteLabel kWL[] = { {"HYSYIOT", "HS308Z"} };
+// TS0601 + _TZD200_y0rvjm11 (HYSYIOT HS308Z, R10 R013) needs its own manu-gated
+// def: TS0601 in the manu-less kM would catch every TS0601.
+constexpr const char* kM_tuya[] = { "TS0601" };
+constexpr const char* kN_tuya[] = { "_TZD200_y0rvjm11" };
 }  // namespace
 
 extern const PreparedDefinition kDef_ZG_308Z{
@@ -56,7 +61,17 @@ extern const PreparedDefinition kDef_ZG_308Z{
     .manufacturer_names=nullptr,.manufacturer_names_count=0,
     .model="ZG-308Z",.vendor="HOBEIAN",.meta=nullptr,
     .exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
-    .white_labels=nullptr,.white_labels_count=0,
+    .white_labels=kWL,.white_labels_count=sizeof(kWL)/sizeof(kWL[0]),
+    .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
+    .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
+    .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };
+
+extern const PreparedDefinition kDef_ZG_308Z_tuya{
+    .zigbee_models=kM_tuya,.zigbee_models_count=sizeof(kM_tuya)/sizeof(kM_tuya[0]),.manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kN_tuya,.manufacturer_names_count=sizeof(kN_tuya)/sizeof(kN_tuya[0]),
+    .model="ZG-308Z",.vendor="HOBEIAN",.meta=nullptr,
+    .exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
+    .white_labels=kWL,.white_labels_count=sizeof(kWL)/sizeof(kWL[0]),
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list,.to_zigbee_count=FX::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(),.on_event=nullptr };

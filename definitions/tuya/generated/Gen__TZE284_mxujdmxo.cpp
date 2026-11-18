@@ -19,10 +19,16 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_mxujdmxo[] = {
     { 7, "max_set", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 8, "mini_set", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 21, "liquid_depth_max", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 19, "installation_height", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },   // same ME201WZ def upstream
+    // Firmware ME201Z.x: depth on DP114, settings on DP115 / DP116 (z2m v26.133.0).
+    // Writes still go to DP19 / DP21 (first row); the upstream dual write is not ported.
+    { 114, "liquid_depth", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 115, "installation_height", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 116, "liquid_depth_max", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
     { 22, "liquid_level_percent", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 103, "version", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_mxujdmxo{ kEntries__TZE284_mxujdmxo, 8 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_mxujdmxo{ kEntries__TZE284_mxujdmxo, sizeof(kEntries__TZE284_mxujdmxo)/sizeof(kEntries__TZE284_mxujdmxo[0]) };
 constexpr FzConverter kFzDp__TZE284_mxujdmxo{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

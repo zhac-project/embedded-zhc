@@ -20,6 +20,10 @@
 // This model reports no voltage (z2m passes `voltage: false`) and has no
 // device-temperature sensor, so neither is exposed.
 //
+// power_on_behavior (lumiOnOff powerOutageMemory: "enum", 0x0517) is written
+// device-wide, but a read-back from endpoint 1 publishes `power_on_behavior_1`:
+// the endpoint map suffixes it and there is no per-def global-key list yet.
+//
 // DEFERRED: `lumiMultiClick` (per-socket button click-mode config) and
 // `lumiAction` — both ride the 0xFCC0 manufacturer cluster with a per-model
 // attribute layout, and the switching function is complete without them.
@@ -37,9 +41,11 @@ const FzConverter* const kFz_WP_P09D[] = {
     &::zhc::lumi::kFzLumiElectricityMeter,
     &::zhc::lumi::kFzLumiManuSpecific,
     &::zhc::lumi::kFzLumiHeartbeat,
+    &::zhc::lumi::kFzLumiSettings,   // power_on_behavior read-back
 };
 const TzConverter* const kTz_WP_P09D[] = {
     &::zhc::generic::kTzOnOff,
+    &::zhc::lumi::kTzLumiPowerOnBehavior,
 };
 
 constexpr const char* kModels_WP_P09D[] = { "lumi.plug.aeu002" };
@@ -47,8 +53,6 @@ constexpr const char* kModels_WP_P09D[] = { "lumi.plug.aeu002" };
 constexpr ::zhc::EndpointLabel kEndpoints_WP_P09D[] = {
     {"1", 1}, {"2", 2}, {"usb", 3},
 };
-
-constexpr const char* kPowerOutageOpts[] = { "on", "previous", "off" };
 
 constexpr Expose kExposes_WP_P09D[] = {
     {"state_1",   ExposeType::Binary,  Access::StateSet, nullptr, "Socket 1", nullptr, 0},
@@ -61,9 +65,10 @@ constexpr Expose kExposes_WP_P09D[] = {
     {"power_usb", ExposeType::Numeric, Access::State, "W",
      "Power consumption of socket 2", nullptr, 0},
     {"energy",    ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
-    {"power_outage_memory", ExposeType::Enum, Access::StateSet, nullptr,
-     "State after a power outage", kPowerOutageOpts,
-     sizeof(kPowerOutageOpts)/sizeof(kPowerOutageOpts[0]), ExposeCategory::Config},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr,
+     "Controls the behavior when the device is powered on after power loss",
+     ::zhc::lumi::kLumiPowerOnBehaviorValues, std::size(::zhc::lumi::kLumiPowerOnBehaviorValues),
+     ExposeCategory::Config},
     {"power_outage_count",  ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0,
      ExposeCategory::Diagnostic},
 };

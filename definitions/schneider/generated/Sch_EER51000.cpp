@@ -1,7 +1,14 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Schneider EER51000 — auto-generated.
+// Tier 1: Schneider EER51000 — generated, hand-edited (binds); do not let the
+// generator clobber it.
 // Wiser thermostat (RTS)
+// The device lives on EP 11 (z2m device.getEndpoint(11)): the EP 1 binds failed
+// and aborted configure, so binds and the default endpoint use EP 11 and the
+// genOnOff bind is dropped (z2m binds no genOnOff). DEFERRED: z2m binds to
+// coordinator EP 11 and answers the RTS's setpoint reads from there
+// (wiserRtsInstallCustomReadResponse, R134) — coordinator firmware work. The
+// leftover kFzOnOff / kTzOnOff / `state` are pre-existing (z2m has no on/off).
 // z2m-source: schneider.ts #EER51000.
 #include "definitions/_generic/_shared.hpp"
 
@@ -32,9 +39,8 @@ constexpr Expose kAutoExposes[] = {
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0001},
-    {1, 0x0201},
+    {11, 0x0001},
+    {11, 0x0201},
 };
 // --- end auto-generated block ---
 
@@ -49,6 +55,7 @@ extern const PreparedDefinition kDef_EER51000{
     .to_zigbee=kTz_EER51000, .to_zigbee_count=sizeof(kTz_EER51000)/sizeof(kTz_EER51000[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .default_endpoint=11,
 };
 
 }  // namespace zhc::devices::schneider

@@ -38,10 +38,10 @@ struct cfg_sfd02 {
         ::zhc::tuya::dp::binary(1, "state"),
         { 2, "brightness",     ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, kBrightnessScale },
         { 3, "min_brightness", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, kBrightnessScale },
-        ::zhc::tuya::dp::enum_lookup(4, "light_type", kLightType, 3),
+        { 4, "light_type", ::zhc::TuyaDpType::Numeric, 1, kLightType, 3, ::zhc::tuya::kTuyaDpFlagNumericLookup },
         { 5, "max_brightness", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, kBrightnessScale },
         ::zhc::tuya::dp::numeric(6, "countdown", 1),
-        ::zhc::tuya::dp::enum_lookup(14, "power_on_behavior", kPowerOn, 3),
+        { 14, "power_on_behavior", ::zhc::TuyaDpType::Numeric, 1, kPowerOn, 3, ::zhc::tuya::kTuyaDpFlagNumericLookup },
         ::zhc::tuya::dp::enum_lookup(21, "backlight_mode", kBacklight, 3),
         ::zhc::tuya::dp::binary(26, "induction_mode"),
         ::zhc::tuya::dp::enum_lookup(101, "indicator_status", kIndicator, 3),
@@ -66,7 +66,48 @@ constexpr Expose kExposes[] = {
 };
 
 constexpr const char* kModels[] = { "TS0601" };
-constexpr const char* kManus[]  = { "_TZE284_t88bjhfu", "_TZE284_z98viqa6" };  // z98viqa6: z2m v26.113.0 (#13280)
+constexpr const char* kManus[]  = { "_TZE284_t88bjhfu" };
+
+// SFD02-Z_2 (`_TZE284_z98viqa6`): by z2m v26.133.0 it is split off SFD02-Z with its own
+// datapoint layout (verified against hardware upstream). DP4 / DP14 are plain-
+// number lookups (value DPs), DP21 / DP101 / DP102 Tuya enums.
+constexpr ::zhc::tuya::TuyaEnumEntry kIndicator2[]  = { {0, "none"}, {1, "relay"}, {2, "pos"} };
+constexpr ::zhc::tuya::TuyaEnumEntry kLedLevel2[]   = { {0, "0"}, {1, "1"}, {2, "2"} };
+constexpr ::zhc::tuya::TuyaEnumEntry kVibration2[]  = { {0, "0"}, {1, "1"}, {2, "2"}, {3, "3"} };
+constexpr const char* kIndicator2Opts[] = { "none", "relay", "pos" };
+constexpr const char* kLedLevel2Opts[]  = { "0", "1", "2" };
+constexpr const char* kVibration2Opts[] = { "0", "1", "2", "3" };
+constexpr std::uint8_t kNumLookup = ::zhc::tuya::kTuyaDpFlagNumericLookup;
+
+struct cfg_sfd02_2 {
+    static constexpr ::zhc::tuya::TuyaDpMapEntry e[] = {
+        ::zhc::tuya::dp::binary(1, "state"),
+        { 2, "brightness",     ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, kBrightnessScale },
+        { 3, "min_brightness", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, kBrightnessScale },
+        { 4, "light_type", ::zhc::TuyaDpType::Numeric, 1, kLightType, 3, kNumLookup },
+        { 5, "max_brightness", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, kBrightnessScale },
+        ::zhc::tuya::dp::numeric(6, "countdown", 1),
+        { 14, "power_on_behavior", ::zhc::TuyaDpType::Numeric, 1, kPowerOn, 3, kNumLookup },
+        ::zhc::tuya::dp::enum_lookup(21, "indicator_status", kIndicator2, 3),
+        ::zhc::tuya::dp::binary(26, "backlight_switch"),
+        ::zhc::tuya::dp::enum_lookup(101, "indicator_light_brightness", kLedLevel2, 3),
+        ::zhc::tuya::dp::enum_lookup(102, "vibration_gear", kVibration2, 4),
+    };
+    static constexpr ::zhc::tuya::TuyaDatapointMap dp_map{ e, sizeof(e) / sizeof(e[0]) };
+};
+using FX2 = ::zhc::tuya::factory::TuyaRw<cfg_sfd02_2>;
+
+constexpr Expose kExposes2[] = {
+    kExposes[0], kExposes[1], kExposes[2], kExposes[3], kExposes[4], kExposes[5], kExposes[6],
+    { "indicator_status", ExposeType::Enum, ::zhc::Access::StateSet, nullptr,
+      "Indicator status (none = off, relay = follows switch, pos = night location)", kIndicator2Opts, 3 },
+    { "backlight_switch", ExposeType::Binary, ::zhc::Access::StateSet, nullptr, "Enable or disable switch backlight", nullptr, 0 },
+    { "indicator_light_brightness", ExposeType::Enum, ::zhc::Access::StateSet, nullptr, "Indicator light brightness level",
+      kLedLevel2Opts, 3 },
+    { "vibration_gear", ExposeType::Enum, ::zhc::Access::StateSet, nullptr, "Haptic feedback / vibration level",
+      kVibration2Opts, 4 },
+};
+constexpr const char* kManus2[] = { "_TZE284_z98viqa6" };
 
 }  // namespace
 
@@ -80,6 +121,18 @@ extern const PreparedDefinition kDef_SFD02_Z{
     .white_labels=nullptr, .white_labels_count=0,
     .from_zigbee=FX::fz_list, .from_zigbee_count=FX::fz_count,
     .to_zigbee=FX::tz_list, .to_zigbee_count=FX::tz_count,
+    .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr };
+
+extern const PreparedDefinition kDef_SFD02_Z_2{
+    .zigbee_models=kModels, .zigbee_models_count=sizeof(kModels)/sizeof(kModels[0]),
+    .manufacturer_name_prefix=nullptr,
+    .manufacturer_names=kManus2, .manufacturer_names_count=sizeof(kManus2)/sizeof(kManus2[0]),
+    .model="SFD02-Z_2", .vendor="Moes",
+    .meta=nullptr,
+    .exposes=kExposes2, .exposes_count=sizeof(kExposes2)/sizeof(kExposes2[0]),
+    .white_labels=nullptr, .white_labels_count=0,
+    .from_zigbee=FX2::fz_list, .from_zigbee_count=FX2::fz_count,
+    .to_zigbee=FX2::tz_list, .to_zigbee_count=FX2::tz_count,
     .configure=::zhc::tuya::extend::tuya_base_configure(), .on_event=nullptr };
 
 }  // namespace zhc::devices::moes

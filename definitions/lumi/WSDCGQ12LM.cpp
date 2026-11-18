@@ -90,6 +90,7 @@ const FzConverter* const kFz[] = {
     &Humidity::converter,
     &kFzPressure,
     &::zhc::lumi::kFzLumiHeartbeatBattery,
+    &::zhc::lumi::kFzLumiBatteryVoltage,   // configured batteryVoltage reports (z2m voltageToPercentage 2850-3000)
 };
 constexpr const char* kModels[] = { "lumi.sensor_ht.agl02", "lumi.weather.v2" };
 }
@@ -115,8 +116,7 @@ constexpr ReportingSpec kReports[] = {
     {1, 0x0402, 0x0000, 0x29, 10, 3600, 100, 0},     // temperature
     {1, 0x0405, 0x0000, 0x21, 10, 3600, 100, 0},     // humidity
     {1, 0x0403, 0x0000, 0x29, 10, 3600, 5, 0},       // pressure
-    {1, 0x0001, 0x0021, 0x20, 3600, 65000, 10, 0},   // batteryPercentageRemaining
-    {1, 0x0001, 0x0020, 0x20, 3600, 65000, 10, 0},   // batteryVoltage
+    {1, 0x0001, 0x0020, 0x20, 3600, 65000, 10, 0},   // batteryVoltage (no percentage row: z2m percentageReporting false, v26.129.0)
 };
 // --- end auto-generated block ---
 

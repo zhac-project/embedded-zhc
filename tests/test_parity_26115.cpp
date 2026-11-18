@@ -62,7 +62,8 @@ namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_TS060
                                       extern const PreparedDefinition kDef_ZHT_002;
                                       extern const PreparedDefinition kDef_Tervix_6kijc7nd; }
 namespace zhc::devices::moes        { extern const PreparedDefinition kDef_ZS_SR_EUC_cover;
-                                      extern const PreparedDefinition kDef_SFD02_Z; }
+                                      extern const PreparedDefinition kDef_SFD02_Z;
+                                      extern const PreparedDefinition kDef_SFD02_Z_2; }
 namespace zhc::devices::zemismart   { extern const PreparedDefinition kDef_ZN_USC1U_HT;
                                       extern const PreparedDefinition kDef_ZM25RX_08_30;
                                       extern const PreparedDefinition kDef_ZMS_206US_4; }
@@ -473,7 +474,9 @@ void test_misc_fixes() {
       check(e.ok, "ZM25RX state writable"); }
     // Detects.
     check(has_manu(devices::zemismart::kDef_ZMS_206US_4, "_TZE28C1000000_pmbxyf97"), "ZMS-206US-4 + pmbxyf97 (#13241)");
-    check(has_manu(devices::moes::kDef_SFD02_Z, "_TZE284_z98viqa6"), "SFD02-Z + z98viqa6 (#13280)");
+    // By z2m v26.133.0 z98viqa6 has its own SFD02-Z_2 datapoint layout (R10).
+    check(has_manu(devices::moes::kDef_SFD02_Z_2, "_TZE284_z98viqa6") &&
+          !has_manu(devices::moes::kDef_SFD02_Z, "_TZE284_z98viqa6"), "SFD02-Z_2 + z98viqa6 (#13280)");
     check(has_model(devices::philips::kDef_D929004610402, "929004610603"), "929004610402 + 929004610603 (#13313)");
 }
 
@@ -799,9 +802,10 @@ void test_vendor_fixes() {
     { auto e = encode(devices::lumi::kDefZNMHLDJ01LM, "identify_beep", str("long"));
       check(e.ok && e.cluster == 0xFCC0 && e.frame.size() >= 3 && e.frame[1] == 0x5F && e.frame[2] == 0x11 &&
             e.frame.back() == 2, "ZNMHLDJ01LM identify_beep long, manufacturer-specific"); }
-    // WSDCGQ12LM reports temperature / humidity / pressure / battery.
+    // WSDCGQ12LM reports temperature / humidity / pressure / battery voltage (z2m v26.129.0 dropped the
+    // batteryPercentageRemaining report: the device has no such attribute, the percentage comes from voltage).
     check(binds(devices::lumi::kDefWSDCGQ12LM, 1, 0x0402) && binds(devices::lumi::kDefWSDCGQ12LM, 1, 0x0403) &&
-          devices::lumi::kDefWSDCGQ12LM.reports_count == 5 && expose_of(devices::lumi::kDefWSDCGQ12LM, "pressure"),
+          devices::lumi::kDefWSDCGQ12LM.reports_count == 4 && expose_of(devices::lumi::kDefWSDCGQ12LM, "pressure"),
           "WSDCGQ12LM binds and reports its sensors");
     // Graduated definitions: what the registry hands out for these models.
     const auto& reg = registries();

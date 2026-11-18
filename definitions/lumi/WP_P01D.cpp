@@ -14,8 +14,9 @@ struct X : ::zhc::lumi::factory::NoExtras {
         &::zhc::lumi::kFzLumiHeartbeat,
         &::zhc::lumi::kFzLumiSettings,   // its settings read back, button_lock among them
     }};
-    static constexpr std::array<const TzConverter*, 1> tz{{
+    static constexpr std::array<const TzConverter*, 2> tz{{
         &::zhc::lumi::kTzLumiButtonLock,
+        &::zhc::lumi::kTzLumiPowerOnBehavior,   // lumiOnOff powerOutageMemory: "enum"
     }};
 };
 using FX = ::zhc::lumi::factory::LumiPower<C, X>;
@@ -33,6 +34,9 @@ constexpr Expose kAutoExposes[] = {
     {"energy", ExposeType::Numeric, Access::State, "kWh", nullptr, nullptr, 0},
     {"button_lock", ExposeType::Binary, Access::StateSet, nullptr,
      "Disables the physical switch button", nullptr, 0, ExposeCategory::Config},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr,
+     "Controls the behavior when the device is powered on after power loss",
+     ::zhc::lumi::kLumiPowerOnBehaviorValues, std::size(::zhc::lumi::kLumiPowerOnBehaviorValues), ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

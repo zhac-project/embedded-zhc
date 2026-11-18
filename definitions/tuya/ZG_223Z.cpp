@@ -36,7 +36,7 @@ constexpr Expose kExp[] = {
     {"battery", ExposeType::Numeric, Access::State, "%", nullptr, nullptr, 0},
 };
 constexpr const char* kM[] = { "TS0601" };
-constexpr const char* kN[] = { "_TZE200_jsaqgakf", "_TZE200_u6x1zyv2", "_TZE200_2pddnnrk", "_TZE200_gt1gge3x" };
+constexpr const char* kN[] = { "_TZE200_jsaqgakf", "_TZE200_u6x1zyv2", "_TZE200_2pddnnrk", "_TZE200_gt1gge3x", "_TZD200_gt1gge3x" };   // _TZD200: R10 R013
 constexpr WhiteLabel kWL[] = { {"HYSYIOT", "HS118Z"}, {"AOYAN", "AY-223Z"} };
 }  // namespace
 

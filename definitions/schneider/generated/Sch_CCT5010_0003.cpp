@@ -1,21 +1,53 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 1: Schneider CCT5010-0003 — auto-generated.
+// Tier 2: Schneider CCT5010-0003 — generated, hand-edited for z2m v26.133.0
+// (R126); do not let the generator clobber it.
 // Micro module dimmer with neutral lead
+//
+// action_l1 / action_l2 (fzLocal.schneider_scene_actions): genScenes recall
+// (0x05) -> single, store (0x04) -> hold, keyed by the source endpoint (21 = L1,
+// 22 = L2). The keys are emitted suffixed, so no endpoint_map is needed. They
+// only fire when the input's switch action is "scene" (0xFF17 attr 0x0001),
+// which is not ported (with ballast config and dimmer mode). z2m adds no bind
+// for EP 21 / 22 either.
 // z2m-source: schneider.ts #CCT5010-0003.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::schneider {
 namespace {
+bool fz_scene_actions(const DecodedMessage& msg, const FzConverter&, const PreparedDefinition&,
+                      RuntimeContext&, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const char* key = msg.src_endpoint == 21 ? "action_l1" : msg.src_endpoint == 22 ? "action_l2" : nullptr;
+    const char* action = msg.command_id == 0x05 ? "single" : msg.command_id == 0x04 ? "hold" : nullptr;
+    if (!key || !action) return false;
+    Value v{}; v.type = ValueType::StringRef; v.str = action;
+    return out.put(key, v);
+}
+constexpr FzConverter kFzSceneActions{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genScenes",
+    .type_mask         = type_bit(MessageType::Command),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ClientToServer,
+    .fn                = { .zcl_fn = fz_scene_actions },
+    .user_config       = nullptr,
+};
+
 const FzConverter* const kFz_CCT5010_0003[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
+    &kFzSceneActions,
 };
 const TzConverter* const kTz_CCT5010_0003[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
 constexpr const char* kModels_CCT5010_0003[] = { "PUCK/UNIDIM/1" };
+constexpr const char* kSceneActions[] = { "single", "hold" };
 
 }  // namespace
 
@@ -24,6 +56,12 @@ constexpr const char* kModels_CCT5010_0003[] = { "PUCK/UNIDIM/1" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"action_l1", ExposeType::Enum, Access::State, nullptr,
+     "Only relevant when Switch action L1 is set to scene. Triggered action on input L1 (single or hold).",
+     kSceneActions, sizeof(kSceneActions)/sizeof(kSceneActions[0])},
+    {"action_l2", ExposeType::Enum, Access::State, nullptr,
+     "Only relevant when Switch action L2 is set to scene. Triggered action on input L2 (single or hold).",
+     kSceneActions, sizeof(kSceneActions)/sizeof(kSceneActions[0])},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

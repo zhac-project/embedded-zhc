@@ -20,8 +20,13 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE284_kyyu8rbj[] = {
     { 8, "mini_set", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 19, "installation_height", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
     { 21, "liquid_depth_max", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    // Firmware ME201Z.x: depth on DP114, settings on DP115 / DP116 (z2m v26.133.0).
+    // Writes still go to DP19 / DP21 (first row); the upstream dual write is not ported.
+    { 114, "liquid_depth", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 115, "installation_height", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 116, "liquid_depth_max", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_kyyu8rbj{ kEntries__TZE284_kyyu8rbj, 7 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE284_kyyu8rbj{ kEntries__TZE284_kyyu8rbj, sizeof(kEntries__TZE284_kyyu8rbj)/sizeof(kEntries__TZE284_kyyu8rbj[0]) };
 constexpr FzConverter kFzDp__TZE284_kyyu8rbj{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",
@@ -49,7 +54,7 @@ constexpr TzConverter kTzDp__TZE284_kyyu8rbj{
 };
 const TzConverter* const kTz__TZE284_kyyu8rbj[] = { &kTzDp__TZE284_kyyu8rbj };
 constexpr const char* kM__TZE284_kyyu8rbj[] = { "TS0601" };
-constexpr const char* kN__TZE284_kyyu8rbj[] = { "_TZE284_kyyu8rbj" };
+constexpr const char* kN__TZE284_kyyu8rbj[] = { "_TZE284_kyyu8rbj", "_TZE2841000000_7uqwvoua" };
 // --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
 constexpr const char* kAutoOpts__TZE284_kyyu8rbj_0[] = {"low", "normal", "high"};
 constexpr const char* kAutoOpts__TZE284_kyyu8rbj_8[] = {"supply", "drainage"};
@@ -76,7 +81,7 @@ constexpr WhiteLabel kWhiteLabels_Gen_TZE284_kyyu8rbj[] = {
 extern const PreparedDefinition kDefGen__TZE284_kyyu8rbj{
     .zigbee_models=kM__TZE284_kyyu8rbj,.zigbee_models_count=1,
     .manufacturer_name_prefix=nullptr,
-    .manufacturer_names=kN__TZE284_kyyu8rbj,.manufacturer_names_count=1,
+    .manufacturer_names=kN__TZE284_kyyu8rbj,.manufacturer_names_count=sizeof(kN__TZE284_kyyu8rbj)/sizeof(kN__TZE284_kyyu8rbj[0]),
     .model="TS0601__TZE284_kyyu8rbj",.vendor="Tuya",
     .meta=nullptr,.exposes=kAutoExposes__TZE284_kyyu8rbj,.exposes_count=sizeof(kAutoExposes__TZE284_kyyu8rbj)/sizeof(kAutoExposes__TZE284_kyyu8rbj[0]),
     .white_labels=kWhiteLabels_Gen_TZE284_kyyu8rbj, .white_labels_count=sizeof(kWhiteLabels_Gen_TZE284_kyyu8rbj)/sizeof(kWhiteLabels_Gen_TZE284_kyyu8rbj[0]),

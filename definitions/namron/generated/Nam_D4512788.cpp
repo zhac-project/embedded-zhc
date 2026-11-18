@@ -16,7 +16,8 @@ const TzConverter* const kTz_D4512788[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-constexpr const char* kModels_D4512788[] = { "4512788" };
+// D726-ZG: upstream fingerprint {D726-ZG, HZC} (R10 R045); no other def claims it.
+constexpr const char* kModels_D4512788[] = { "4512788", "D726-ZG" };
 
 }  // namespace
 

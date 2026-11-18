@@ -22,6 +22,64 @@ across the ZHAC platform.
   Lumi extras (P1 contact action / battery / detection distance, knob
   rotation, H2 EU wireless buttons, FP310 presence). Ledger with every
   ruling: `zhac-tools/parity/catchup_26115_26125/PROGRESS.md`.
+- **z2m v26.133.0 parity, wave 1 (wrong today).** zigbee-herdsman-converters
+  v26.125.0 → v26.133.0, branch `feat/z2m-parity-v26.133`. Devices that landed on
+  the wrong definition now get their own: Aqara SP-P05D / SP-P06D (were ZNCZ02LM),
+  Gewiss GWA1221 dimmer (was a CTM "DIMMER"), Moes SFD02-Z_2 (`_TZE284_z98viqa6`),
+  Third Reality 3RRE0194Z (now an on/off repeater). Three fake Tuya hand
+  definitions are gone: `_TZE200_bcusnqt8` is the SPM01 energy meter,
+  `_TZE200_aqnazj70` a 4-gang switch, `_TZE200_cirvgep4` a T&H sensor. The
+  model matcher has a case-insensitive exact pass after the exact-case ones
+  (SNZB-03 reporting `ms01`). Dead controls fixed: Danfoss Ally
+  `heating_system_mode` (uint8 write), TRV601 / Sber twin `system_mode` and
+  `preset` (DP1 enum). SNZB-02D / 02DR2 decode temperature and humidity; Terncy
+  PP01 battery is no longer halved; BHT-002 `min_temperature_limit` goes to 10.
+  New fingerprints and white labels (HYSYIOT ×7, Hue Flux 5 m, M1P-E, BSEED,
+  Namron D726-ZG, Somfy Ysia 5, teelicht-nrf, 3RCB1095Z/1097Z, Sygonix W08-Z10T,
+  TS0207 water-leak models). Ledger: `zhac-tools/parity/catchup_26125_26133/PROGRESS.md`.
+- **z2m v26.133.0 parity, wave 2 (Tuya).** New definitions: Tuya SPM01V2.5 and
+  three-phase SPM02 meters (faults, energy reset, threshold read-out, X/Y/Z
+  phases; were generated stubs), HS206Z / HS207Z / HS209Z / HS300TF, JKD-839Z,
+  X7633, TS011F_5 power strip, SA-T2, ZP01, TS0002 `_TZ3000_a8mhmsol`, Nova
+  Digital SA-1 / SA-WK 4X4 / ND 4-gang, roller motor `_TZE284_lqhqj73n`, T3E panel,
+  ME173 TRV, SP107E music controller, EARU EAYCBM-Z-1P, 07P4, Lincukoo G08A-Z20T /
+  N02-Z10T, Zemismart ZMD-208-2, Girier presence sensor, Nous D1Z, Lupus LS12136
+  and the new vendor Fontastic. Existing devices: HeatHUB HHST001 (4 manus,
+  clock, settings DPs), 6-gang switch power-on "previous" and countdowns,
+  ZM25TQ work state / remote pairing, ME201WZ ME201Z.x DPs, SDM01 V2 DPs,
+  AM43 cover_4 state from position, HY607W-3A as a DP thermostat with clock,
+  USB switch `mw1pqqqt` 3 gangs, TRV601 heating state and window, SFD02-Z value
+  DPs, NAS-AB06B2 battery, TS0201 any manufacturer, Tongou now Chayo, and
+  fingerprints (JWCOM SA-ZB417F-BR, MiBoxer E3-ZR, ZTH13, UZ-05T …). Same ledger.
+- **z2m v26.133.0 parity, wave 3 (ZCL).** New definitions: Acuity CPXC 2X4 TUWH,
+  Atlantic 100040070400 / 100050072300 (running state), CTM mTouch On/Off, Heiman
+  D1-E / HS-720ES-ZB / SC6, HZC T000R-ZG thermostat, Innr FL 290 C, Legrand WNRL24
+  / WNRL34, Orvibo T30S3Z, Repenic RS-T03AZG, Robb ROB_200-082-0, ShinaSystem
+  HPM-300-WZ, SMLIGHT ZREL, SONOFF SS-Z2N, Zbeacon TH03, and the new vendors
+  Control4 (VB-FTW-A19, VB-RGBTW-A19), Coselig H2-ZB-SW-V1, EDF Lab ZIGBEE_ERL
+  (Linky numerics), Heatzy micro-duo, LibraSoft visspoint-io4 and Sensy-One
+  AirBee. Existing devices: Legrand WNRR15/20 apparent power, Sinopé RM3500ZB,
+  NodOn SIN-4-RS-20, Schneider CCT5010 / NH3516A / EER5x000 (Wiser EP11 binds) /
+  EKO07259 / S520619, SONOFF MINI-ZBD / MINI-ZB2GS, Shelly S4DM, Repenic
+  RD-250ZG, Sunricher ZG2835, Terncy PP01 illuminance, HOBEIAN ZG-204ZL-z light
+  level and settings, Heiman HS9MS-E. `cluster_names.hpp` now names 0x0401
+  `msIlluminanceLevelSensing` and Schneider 0xFF17 / 0xFF23, so their reports no
+  longer leak into on/off, occupancy or illuminance decoders. Same ledger.
+- **z2m v26.133.0 parity, wave 4 (Lumi / Philips / OSRAM).** Aqara
+  `power_on_behavior` (manuSpecificLumi 0x0517: on / previous / off / inverted,
+  lights without inverted) is writable and read back on ZNQBKG38LM–45LM,
+  WS-K02E/03E/04E/07E/08D, WP-P01D, WP-P09D (replaces its dead
+  `power_outage_memory`), SSWQDYH02 and HCXDD13LM (exposed but dead before).
+  WSDCGQ12LM drops the batteryPercentageRemaining report row and decodes battery
+  from its voltage reports (2850–3000 mV, shared with MCCGQ13LM). OSRAM AB32840 /
+  AC03641 get `power_on_behavior` off / on (manuSpecificOsram setPowerOnState).
+  New Philips Hue definitions: Festavia globe 929003858301 (LCX026), Nanoleaf
+  wall module 929004440102 (NGC001), Festavia curtain 929004456604 (LCX049).
+  Same ledger.
+- **z2m v26.133.0 parity, review fixes.** GWA1221 ballast minimum / maximum
+  level write minLevel 0x0010 / maxLevel 0x0011 (were off by one). HHST001
+  `_TZE284_6l44ypoc` / `_TZE284_qvmmpbye` scale the deadzone x10, and five TS0201
+  manufacturers (TH09Z and others) get humidity x10, as z2m does.
 
 ### Changed
 

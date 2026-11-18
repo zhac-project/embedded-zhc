@@ -13,10 +13,11 @@ struct X : ::zhc::lumi::factory::NoExtras {
     static constexpr std::array<const FzConverter*, 3> fz{{
         &::zhc::lumi::kFzLumiHeartbeat,
         &::zhc::lumi::kFzLumiPreventLeave,
-        &::zhc::lumi::kFzLumiOperationMode,
+        &::zhc::lumi::kFzLumiSettings,   // + power_on_behavior read-back
     }};
-    static constexpr std::array<const TzConverter*, 1> tz{{
+    static constexpr std::array<const TzConverter*, 2> tz{{
         &::zhc::lumi::kTzLumiOperationModeUp,
+        &::zhc::lumi::kTzLumiPowerOnBehavior,
     }};
 };
 using FX = ::zhc::lumi::factory::LumiOnOff<E, X>;
@@ -31,6 +32,9 @@ constexpr Expose kAutoExposes[] = {
     {"operation_mode_up", ExposeType::Enum, Access::StateSet, nullptr,
      "Decoupled mode for switch",
      ::zhc::lumi::kLumiOperationModeValues, std::size(::zhc::lumi::kLumiOperationModeValues), ExposeCategory::Config},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr,
+     "Controls the behavior when the device is powered on after power loss",
+     ::zhc::lumi::kLumiPowerOnBehaviorValues, std::size(::zhc::lumi::kLumiPowerOnBehaviorValues), ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

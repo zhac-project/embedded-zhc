@@ -22,11 +22,32 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_rtrmfadk_mode_dp114[] = {
     { 1, "eco" },
 };
 
+// TRV601 DP1 (z2m v26.126.0..v26.133.0 thermostatSystemModeAndPresetMap):
+// one Tuya enum feeds both keys. fromMap 0 auto/auto, 1 heat/manual,
+// 2 off/off, 3 heat/on; toMap system_mode auto 0 / heat 1 / off 2 (first
+// label match), preset auto 0 / manual 1 / off 2 / on 3. Upstream's hidden
+// running_mode (deviceMode) is not exposed there, so it is not published here.
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_rtrmfadk_system_mode_dp1[] = {
+    { 0, "auto" }, { 1, "heat" }, { 2, "off" }, { 3, "heat" },
+};
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_rtrmfadk_preset_dp1[] = {
+    { 0, "auto" }, { 1, "manual" }, { 2, "off" }, { 3, "on" },
+};
+// DP6 / DP7: upstream `lookup({heat: 1, idle: 0})` / `lookup({OPEN: 1, CLOSE: 0})` with plain
+// numbers, which decode a value DP and an enum DP alike, so each gets a NumericLookup row (first,
+// so a write would go out as a value DP, as upstream) plus an Enum row (R10 W2).
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_rtrmfadk_running_state_dp6[] = { { 0, "idle" }, { 1, "heat" } };
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_rtrmfadk_window_dp7[] = { { 0, "CLOSE" }, { 1, "OPEN" } };
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_rtrmfadk[] = {
-    { 1, "system_mode", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, 0 },
-    { 1, "preset", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, 0 },
+    { 1, "system_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_rtrmfadk_system_mode_dp1, 4 },
+    { 1, "preset", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_rtrmfadk_preset_dp1, 4 },
     { 2, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 3, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 6, "running_state", ::zhc::TuyaDpType::Numeric, 1, kEnum__TZE204_rtrmfadk_running_state_dp6, 2, ::zhc::tuya::kTuyaDpFlagNumericLookup },
+    { 6, "running_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_rtrmfadk_running_state_dp6, 2 },
+    { 7, "window", ::zhc::TuyaDpType::Numeric, 1, kEnum__TZE204_rtrmfadk_window_dp7, 2, ::zhc::tuya::kTuyaDpFlagNumericLookup },
+    { 7, "window", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_rtrmfadk_window_dp7, 2 },
     { 8, "window_detection", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 12, "child_lock", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 13, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
@@ -47,7 +68,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_rtrmfadk[] = {
     { 114, "mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_rtrmfadk_mode_dp114, sizeof(kEnum__TZE204_rtrmfadk_mode_dp114)/sizeof(kEnum__TZE204_rtrmfadk_mode_dp114[0]) },
     { 115, "switch_deviation_eco", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_rtrmfadk{ kEntries__TZE204_rtrmfadk, 23 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_rtrmfadk{ kEntries__TZE204_rtrmfadk, sizeof(kEntries__TZE204_rtrmfadk)/sizeof(kEntries__TZE204_rtrmfadk[0]) };
 constexpr FzConverter kFzDp__TZE204_rtrmfadk{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

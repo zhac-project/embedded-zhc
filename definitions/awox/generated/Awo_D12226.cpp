@@ -10,6 +10,7 @@ namespace zhc::devices::awox {
 namespace {
 
 constexpr const char* kModels_D12226[] = { "ESMLFzm_w6_Dimm" };
+constexpr WhiteLabel kWL_D12226[] = { {"EGLO", "12226"}, {"EGLO", "12224"} };   // R10 R099a
 
 }  // namespace
 
@@ -20,7 +21,7 @@ extern const PreparedDefinition kDef_D12226{
     .model="12226", .vendor="Awox",
     .meta=nullptr,
     .exposes=kExposesAwoxLight, .exposes_count=kExposesAwoxLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWL_D12226, .white_labels_count=2,
     .from_zigbee=kFzAwoxLight, .from_zigbee_count=kFzAwoxLightCount,
     .to_zigbee=kTzAwoxLight, .to_zigbee_count=kTzAwoxLightCount,
     .configure=nullptr, .on_event=nullptr,

@@ -1,9 +1,10 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
 // Tier 2: SONOFF MINI-ZBD (ZBMINIR2) relay, graduated from the generated on/off
-// copy. z2m v26.115.1 (zbminiR2ExternalSwitchActions): the external switch's
-// `toggle` command plus, from firmware 1.1.0, double_click / long_press
-// through eWeLink 0xFC11 attribute 0x0028 (detachRelayActionEvent). The
+// copy. z2m v26.133.0 (externalSwitchActions, gate zbminir2 fw >= 1.1.0): the
+// external switch's `toggle` command plus double_click / long_press /
+// switch_on / switch_off through eWeLink 0xFC11 attribute 0x0028
+// (detachRelayActionEvent 2/3/4/5; 4 and 5 are new since v26.125.0). The
 // firmware gate needs no port: older firmware never sends the attribute.
 // Binds genOnOff and 0xFC11, onOff reported 1 s .. 30 min.
 // z2m-source: sonoff.ts #MINI-ZBD.
@@ -11,8 +12,11 @@
 
 namespace zhc::devices::sonoff {
 namespace {
-constexpr ::zhc::generic::ZclWriteLookup kRelayActions[] = { {"double_click", 2}, {"long_press", 3} };
-constexpr ::zhc::generic::ZclAttrRow kActionRows[] = { { 0x0028, "action", 1, kRelayActions, 2 } };
+constexpr ::zhc::generic::ZclWriteLookup kRelayActions[] = {
+    {"double_click", 2}, {"long_press", 3}, {"switch_on", 4}, {"switch_off", 5},
+};
+constexpr ::zhc::generic::ZclAttrRow kActionRows[] = { { 0x0028, "action", 1, kRelayActions,
+    sizeof(kRelayActions)/sizeof(kRelayActions[0]) } };
 constexpr ::zhc::generic::ZclAttrMap kActionMap{ kActionRows, 1 };
 constexpr FzConverter kFzRelayAction = ::zhc::generic::zcl_attr_fz("manuSpecificWoolley", &kActionMap);   // 0xFC11
 const FzConverter* const kFz[] = {
@@ -23,10 +27,11 @@ const FzConverter* const kFz[] = {
 const TzConverter* const kTz[] = {
     &::zhc::generic::kTzOnOff,
 };
-constexpr const char* kOpts1[] = { "toggle", "double_click", "long_press" };
+constexpr const char* kOpts1[] = { "toggle", "double_click", "long_press", "switch_on", "switch_off" };
 constexpr Expose kExp[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
-    {"action", ExposeType::Enum, Access::State, nullptr, "Triggered action (e.g. a button click)", kOpts1, 3},
+    {"action", ExposeType::Enum, Access::State, nullptr, "Triggered action (e.g. a button click)", kOpts1,
+     sizeof(kOpts1)/sizeof(kOpts1[0])},
 };
 constexpr const char* kM[] = { "ZBMINIR2", "MINI-ZBD" };
 constexpr BindingSpec kBind[] = {

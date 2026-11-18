@@ -539,7 +539,7 @@ void new_devices() {
         {"TOFSMYGGA plug outdoor", "IKEA of Sweden", "E2435-NA"},
         {"ROB_200-012-0", "ROBB smarrt", "ROB_200-012-0"},
         {"FH9127", "Futurehome AS", "FH9127"},
-        {"3ROR0194Z", "Third Reality, Inc", "3ROR0194Z"},
+        {"3ROR0194Z", "Third Reality, Inc", "3RRE0194Z"},   // renamed in R10
         {"ZGRC-KEY-008", "Sunricher", "SR-ZG9001K8-CCT"},
         {"S2100-1001", "SIMON", "S2100-1001"},
         {"70E839TY", "SIMON", "70E839TY"},
@@ -907,8 +907,8 @@ void wave4_zcl_s() {
         const PreparedDefinition& d = def_for("eTRV0103", "Danfoss");
         Report r(0x1246); r.u8(0x4059, 0x30, 1);
         check(r_str(dispatch(d, 0x0201, 1, r.span()), "heating_system_mode", "boiler_heating"), "Ally 0x4059 -> boiler_heating");
-        check(is_write(encode(d, "heating_system_mode", str("default_heating")), 0x0201, 0x4059, 0x30, 2, 0x1246),
-              "Ally heating_system_mode write");
+        check(is_write(encode(d, "heating_system_mode", str("default_heating")), 0x0201, 0x4059, 0x20, 2, 0x1246),
+              "Ally heating_system_mode write (uint8 since R10)");
         check(has_expose(d, "heating_system_mode"), "Ally heating_system_mode exposed");
     }
     {   // F063 Philips LST001 colour temperature

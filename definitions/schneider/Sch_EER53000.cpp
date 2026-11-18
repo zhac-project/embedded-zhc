@@ -13,14 +13,53 @@
 // rule — no ExposeType::Climate). zone_mode / keypad_lockout / valve-calibration
 // ride Schneider manuSpecific attrs (0x105E) — deferred (needs a Schneider
 // manuSpecific converter not yet in tree).
+//
+// z2m v26.133.0 (R152), read side: window_open (hvacThermostat 0xE012, via the
+// shared Schneider thermostat map; the valve reports it without the
+// manufacturer code) and pi_heating_demand from the valve position 0xE030, only
+// when <= 100 (larger values are raw calibration codes).
+// Endpoint: the Wiser devices live on EP 11 (z2m device.getEndpoint(11)); the
+// EP 1 binds failed and aborted configure. Binds and the default endpoint now
+// use EP 11; the genOnOff bind is dropped (z2m binds genBasic / genPowerCfg /
+// hvacThermostat only).
+// DEFERRED (needs coordinator EP 11 emulation in firmware + a per-device queue
+// flushed on the valve's next report): the bind destination EP 11, the
+// setpoint push (cmd 0xE0 wiserSmartSetSetpoint), open_window_detection,
+// calibrate_valve and keypad writes, and the custom read responses. The
+// leftover kFzOnOff / kTzOnOff / `state` are pre-existing (z2m has no on/off).
 #include "definitions/_generic/_shared.hpp"
+#include "definitions/schneider/_shared.hpp"
 
 namespace zhc::devices::schneider {
 namespace {
+// fzLocal.wiser_smart_thermostat: wiserSmartValvePosition (0xE030, u8) ->
+// pi_heating_demand, dropped above 100.
+bool fz_valve_position(const DecodedMessage& msg, const FzConverter&, const PreparedDefinition&,
+                       RuntimeContext&, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("57392");  // 0xE030
+    if (!v || v->type != ValueType::Uint || v->u > 100) return false;
+    return out.put("pi_heating_demand", *v);
+}
+constexpr FzConverter kFzValvePosition{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "hvacThermostat",
+    .type_mask         = type_bit(MessageType::AttributeReport) | type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = fz_valve_position },
+    .user_config       = nullptr,
+};
+
 const FzConverter* const kFz_EER53000[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBattery,
     &::zhc::generic::kFzThermostat,
+    &::zhc::schneider::kFzSchneiderThermostat,
+    &kFzValvePosition,
 };
 const TzConverter* const kTz_EER53000[] = {
     &::zhc::generic::kTzOnOff,
@@ -40,12 +79,13 @@ constexpr Expose kAutoExposes[] = {
     {"local_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"current_heating_setpoint", ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0},
     {"system_mode", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
+    {"window_open", ExposeType::Binary, Access::State, nullptr, "Open window detected by the valve", nullptr, 0},
+    {"pi_heating_demand", ExposeType::Numeric, Access::State, "%", "Position of the valve (= demanded heat) where 0% is fully closed and 100% is fully open", nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {
-    {1, 0x0006},
-    {1, 0x0001},
-    {1, 0x0201},
+    {11, 0x0001},
+    {11, 0x0201},
 };
 
 extern const PreparedDefinition kDef_EER53000{
@@ -59,6 +99,7 @@ extern const PreparedDefinition kDef_EER53000{
     .to_zigbee=kTz_EER53000, .to_zigbee_count=sizeof(kTz_EER53000)/sizeof(kTz_EER53000[0]),
     .configure=nullptr, .on_event=nullptr,
 .bindings=kAutoBindings,.bindings_count=sizeof(kAutoBindings)/sizeof(kAutoBindings[0]),
+    .default_endpoint=11,
 };
 
 }  // namespace zhc::devices::schneider

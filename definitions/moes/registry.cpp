@@ -63,6 +63,7 @@ extern const PreparedDefinition kDef_ZTS_EU_2gang;
 extern const PreparedDefinition kDef_ZHT_SR;
 extern const PreparedDefinition kDef_SFL02_Z_1;
 extern const PreparedDefinition kDef_SFD02_Z;
+extern const PreparedDefinition kDef_SFD02_Z_2;
 extern const PreparedDefinition kDef_ZS_SF_EUC_WH_MS;
 extern const PreparedDefinition kDef_ZT_B_EU3;
 extern const PreparedDefinition kDef_MS_104Z;
@@ -163,6 +164,7 @@ extern const PreparedDefinition* const kMoesRegistry[] = {
     &kDef_ZHT_SR,
     &kDef_SFL02_Z_1,
     &kDef_SFD02_Z,
+    &kDef_SFD02_Z_2,
     &kDef_ZS_SF_EUC_WH_MS,
     &kDef_ZT_B_EU3,
     &kDef_MS_104Z,

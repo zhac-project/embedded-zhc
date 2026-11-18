@@ -17,6 +17,23 @@ bool has_exact_model(const PreparedDefinition& def, const char* wanted) {
     return false;
 }
 
+// ASCII case-insensitive variant: z2m matches zigbeeModel case-insensitively
+// (SNZB-03 units report "ms01" for "MS01"). Only consulted after every
+// exact-case pass, so a differently-cased sibling ("DIMMER" / "Dimmer")
+// keeps its own definition.
+bool has_model_ci(const PreparedDefinition& def, const char* wanted) {
+    if (!def.zigbee_models) return false;
+    for (std::uint8_t i = 0; i < def.zigbee_models_count; ++i) {
+        const char* zm = def.zigbee_models[i];
+        if (!zm) continue;
+        std::size_t k = 0;
+        auto lo = [](char c) { return (c >= 'A' && c <= 'Z') ? char(c + 32) : c; };
+        while (zm[k] && lo(zm[k]) == lo(wanted[k])) ++k;
+        if (!zm[k] && !wanted[k]) return true;
+    }
+    return false;
+}
+
 // Substring candidates must be long enough to mean something. The registry
 // carries ~110 zigbeeModels of four characters or fewer ("CCT", "RGB",
 // "RGBW", "2PM", "H1", ...). As substrings they match a large share of
@@ -61,6 +78,9 @@ const PreparedDefinition* find_definition_by_model(
     for (const auto* def : registry) {
         if (!def) continue;
         if (has_exact_model(*def, model_id)) return def;
+    }
+    for (const auto* def : registry) {   // Pass 1c: case-insensitive exact
+        if (def && has_model_ci(*def, model_id)) return def;
     }
 
     // Pass 2: longest substring. `wanted` contains `zm` — covers z2m's
@@ -202,6 +222,16 @@ const PreparedDefinition* find_definition(
         if (std::strcmp(model_id, "TS0601") == 0) continue;
         if (!has_manufacturer_match(*def, manufacturer_name)) continue;
         return def;
+    }
+
+    // Pass 2c: case-insensitive exact model, after every exact-case pass
+    // (z2m lowercases both sides). Non-Tuya first, then manu-gated.
+    for (const auto* def : registry) {
+        if (def && !is_tuya_styled(*def) && has_model_ci(*def, model_id)) return def;
+    }
+    for (const auto* def : registry) {
+        if (!def || !is_tuya_styled(*def) || !has_model_ci(*def, model_id)) continue;
+        if (has_manufacturer_match(*def, manufacturer_name)) return def;
     }
 
     // Pass 3: substring fallback (lumi-style).

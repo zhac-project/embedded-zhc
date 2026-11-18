@@ -688,6 +688,20 @@ const VendorEntry kTierERegistries[] = {
       ::zhc::devices::ariston::kAristonRegistryCount },
     { ::zhc::devices::teelicht::kTeelichtRegistry,
       ::zhc::devices::teelicht::kTeelichtRegistryCount },
+    { ::zhc::devices::fontastic::kFontasticRegistry,
+      ::zhc::devices::fontastic::kFontasticRegistryCount },
+    { ::zhc::devices::control4::kControl4Registry,
+      ::zhc::devices::control4::kControl4RegistryCount },
+    { ::zhc::devices::coselig::kCoseligRegistry,
+      ::zhc::devices::coselig::kCoseligRegistryCount },
+    { ::zhc::devices::edflab::kEdflabRegistry,
+      ::zhc::devices::edflab::kEdflabRegistryCount },
+    { ::zhc::devices::heatzy::kHeatzyRegistry,
+      ::zhc::devices::heatzy::kHeatzyRegistryCount },
+    { ::zhc::devices::librasoft::kLibrasoftRegistry,
+      ::zhc::devices::librasoft::kLibrasoftRegistryCount },
+    { ::zhc::devices::sensy_one::kSensyOneRegistry,
+      ::zhc::devices::sensy_one::kSensyOneRegistryCount },
 };
 const std::size_t kTierERegistriesCount = sizeof(kTierERegistries) / sizeof(kTierERegistries[0]);
 

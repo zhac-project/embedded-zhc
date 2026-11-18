@@ -14,7 +14,7 @@ namespace {
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_znkkcauq_power_on_behavior_dp14[] = {
     { 0, "off" },
     { 1, "on" },
-    { 2, "memory" },
+    { 2, "previous" },
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE284_znkkcauq_indicator_mode_dp15[] = {
@@ -61,7 +61,9 @@ constexpr TzConverter kTzDp__TZE284_znkkcauq{
 };
 const TzConverter* const kTz__TZE284_znkkcauq[] = { &kTzDp__TZE284_znkkcauq };
 constexpr const char* kM__TZE284_znkkcauq[] = { "TS0601" };
-constexpr const char* kN__TZE284_znkkcauq[] = { "_TZE284_znkkcauq" };
+// `_TZE284_1iii6x0y` JWCOM SA-ZB417F-BR (z2m v26.133.0, #13630); `_TZE284_r731zlxk`
+// is in the same upstream fingerprint and had no def here.
+constexpr const char* kN__TZE284_znkkcauq[] = { "_TZE284_znkkcauq", "_TZE284_1iii6x0y", "_TZE284_r731zlxk" };
 // --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
 constexpr const char* kAutoOpts__TZE284_znkkcauq_6[] = {"off", "on", "previous"};
 constexpr const char* kAutoOpts__TZE284_znkkcauq_7[] = {"none", "relay", "pos"};
@@ -86,6 +88,7 @@ constexpr WhiteLabel kWhiteLabels_Gen_TZE284_znkkcauq[] = {
     {"Nova Digital","SA-6"},
     {"Ekaza","EKAT-T3074-6WZ"},
     {"Ekaza","EKGD-T4085P-4Z"},
+    {"JWCOM","SA-ZB417F-BR"},
 };
 extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq{
     .zigbee_models=kM__TZE284_znkkcauq,.zigbee_models_count=sizeof(kM__TZE284_znkkcauq)/sizeof(kM__TZE284_znkkcauq[0]),

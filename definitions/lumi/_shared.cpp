@@ -846,6 +846,16 @@ constexpr ::zhc::generic::ZclWriteLookup kModeSwitchLut[] = {{"anti_flicker_mode
 constexpr ::zhc::generic::ZclWriteSpec kSpecModeSwitch{
     "mode_switch", 0x0004, 0x21, 0x115F, kModeSwitchLut, 2,
 };
+// z2m lumiPowerOnBehavior(): 0x0517 u8 {on 0, previous 1, off 2, inverted 3};
+// lumiLight passes the 3-value lookup.
+constexpr ::zhc::generic::ZclWriteLookup kPowerOnBehaviorLut[] = {
+    {"on", 0}, {"previous", 1}, {"off", 2}, {"inverted", 3}};
+constexpr ::zhc::generic::ZclWriteSpec kSpecPowerOnBehavior{
+    "power_on_behavior", 0x0517, 0x20, 0x115F, kPowerOnBehaviorLut, 4,
+};
+constexpr ::zhc::generic::ZclWriteSpec kSpecPowerOnBehaviorLight{
+    "power_on_behavior", 0x0517, 0x20, 0x115F, kPowerOnBehaviorLut, 3,
+};
 }  // namespace
 
 #define ZHC_LUMI_TZ(var, spec_ref, key_str)                           \
@@ -862,6 +872,8 @@ ZHC_LUMI_TZ(kTzLumiLedDisabledNight,   kSpecLedDisabledNight,   "led_disabled_ni
 ZHC_LUMI_TZ(kTzLumiButtonLock,         kSpecButtonLock,         "button_lock")
 ZHC_LUMI_TZ(kTzLumiFlipIndicatorLight, kSpecFlipIndicator,      "flip_indicator_light")
 ZHC_LUMI_TZ(kTzLumiModeSwitch,         kSpecModeSwitch,         "mode_switch")
+ZHC_LUMI_TZ(kTzLumiPowerOnBehavior,    kSpecPowerOnBehavior,    "power_on_behavior")
+ZHC_LUMI_TZ(kTzLumiPowerOnBehaviorLight, kSpecPowerOnBehaviorLight, "power_on_behavior")
 #undef ZHC_LUMI_TZ
 
 // tz.on_off for one rocker: its own key, its own endpoint, the plain on/off frame.
@@ -1245,13 +1257,14 @@ namespace {
 // z2m lumi_specific's direct cases for a setting: 240 flip_indicator_light =
 // value === 1 ? "ON" : "OFF", 513 power_outage_memory and 515 led_disabled_night
 // = value === 1, "4" mode_switch by lookup, 512 on a plug button_lock =
-// value === 1 ? "OFF" : "ON". The binary ones are Bool here, as ZHAC's exposes
-// take them (ON = true).
+// value === 1 ? "OFF" : "ON", 1303 power_on_behavior by lookup (enumLookup).
+// The binary ones are Bool here, as ZHAC's exposes take them (ON = true).
 bool fz_lumi_setting(const DecodedMessage& msg, const TzConverter& t,
                      const ::zhc::generic::ZclWriteSpec* s,
                      FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const bool by_lookup = s == &kSpecModeSwitch || s == &kSpecPowerOnBehavior || s == &kSpecPowerOnBehaviorLight;
     if (s != &kSpecPowerOutageMemory && s != &kSpecLedDisabledNight && s != &kSpecFlipIndicator &&
-        s != &kSpecButtonLock && s != &kSpecModeSwitch) {
+        s != &kSpecButtonLock && !by_lookup) {
         return false;
     }
     if (msg.cluster && std::strcmp(msg.cluster, t.cluster) != 0) return false;
@@ -1264,7 +1277,7 @@ bool fz_lumi_setting(const DecodedMessage& msg, const TzConverter& t,
     else if (v->type == ValueType::Uint) n = v->u;
     else return false;
     Value o{};
-    if (s == &kSpecModeSwitch) {
+    if (by_lookup) {
         const char* label = nullptr;
         for (std::uint8_t k = 0; k < s->lookup_count && !label; ++k)
             if (s->lookup[k].value == n) label = s->lookup[k].label;
@@ -1912,5 +1925,36 @@ const ReportingSpec kReportsLumiOnOffEnergy[] = {
     {1, 0x0702, 0x0000, 0x25, 5, 3600, 257, 0},
 };
 static_assert(kReportsLumiOnOffEnergyCount == std::size(kReportsLumiOnOffEnergy));
+
+
+// genPowerCfg batteryVoltage (100 mV units) -> voltage (mV) + battery %, z2m
+// toPercentage on 2850-3000 mV (rounded). P1 contact (MCCGQ13LM), WSDCGQ12LM.
+namespace {
+bool fz_lumi_battery_voltage(const DecodedMessage& msg, const FzConverter&, const PreparedDefinition&,
+                             RuntimeContext&, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    const Value* v = msg.payload.find("32");   // batteryVoltage
+    if (!v || v->type != ValueType::Uint || v->u >= 255) return false;
+    const std::uint32_t mv = static_cast<std::uint32_t>(v->u) * 100;
+    const std::uint32_t clamped = mv < 2850 ? 2850 : mv > 3000 ? 3000 : mv;
+    Value volt{}; volt.type = ValueType::Uint; volt.u = mv;
+    Value pct{};  pct.type  = ValueType::Uint; pct.u  = ((clamped - 2850) * 100 + 75) / 150;
+    out.put("voltage", volt);
+    out.put("battery", pct);
+    return true;
+}
+}  // namespace
+extern const FzConverter kFzLumiBatteryVoltage{
+    .family            = FrameFamily::Zcl,
+    .cluster           = "genPowerCfg",
+    .type_mask         = type_bit(MessageType::AttributeReport) | type_bit(MessageType::ReadResponse),
+    .command_id        = WILDCARD_CMD_ID,
+    .attr_id           = WILDCARD_ATTR_ID,
+    .endpoint          = WILDCARD_ENDPOINT,
+    .frame_flags_mask  = 0,
+    .frame_flags_value = 0,
+    .direction         = Direction::ServerToClient,
+    .fn                = { .zcl_fn = &fz_lumi_battery_voltage },
+    .user_config       = nullptr,
+};
 
 }  // namespace zhc::lumi

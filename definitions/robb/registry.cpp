@@ -40,6 +40,7 @@ extern const PreparedDefinition kDef_ROB_200_001_0;
 extern const PreparedDefinition kDef_ROB_200_070_0;
 extern const PreparedDefinition kDef_ROB_200_065_0;
 extern const PreparedDefinition kDef_ROB_200_012_0;
+extern const PreparedDefinition kDef_ROB_200_082_0;
 
 const PreparedDefinition* const kRobbRegistry[] = {
     &kDef_ROB_200_003_0,
@@ -76,6 +77,7 @@ const PreparedDefinition* const kRobbRegistry[] = {
     &kDef_ROB_200_070_0,
     &kDef_ROB_200_065_0,
     &kDef_ROB_200_012_0,
+    &kDef_ROB_200_082_0,
 };
 const std::size_t kRobbRegistryCount = sizeof(kRobbRegistry) / sizeof(kRobbRegistry[0]);
 

@@ -7,9 +7,11 @@
 namespace zhc::devices::smlight {
 
 extern const PreparedDefinition kDef_SLZB_06M;
+extern const PreparedDefinition kDef_ZREL;
 
 const PreparedDefinition* const kSmlightRegistry[] = {
     &kDef_SLZB_06M,
+    &kDef_ZREL,
 };
 const std::size_t kSmlightRegistryCount = sizeof(kSmlightRegistry) / sizeof(kSmlightRegistry[0]);
 

@@ -17,20 +17,95 @@
 // (The genLevelCtrl manuSpecific config attrs — min/max/start brightness,
 // boost, dimming_mode, default_move_rate — need a write/read of arbitrary
 // attribute IDs with no generic converter; INFRA, deferred.)
+//
+// z2m v26.125.0->v26.133.0: `scene_mode` (private cluster 0xE003
+// repenicPrivateE003, attr 0x0003 enum8, m.binary ON=1 / OFF=0, no
+// manufacturer code, no reporting) and the button `action` from raw frames on
+// cluster 0xE004: the LAST byte of the whole frame (header included, as z2m's
+// msg.data) that is 2 / 4 / 8 / 16 gives hold / release / double / triple.
+// 0xE003 has no entry in cluster_names.hpp, so its frames carry a null cluster
+// name and reach every converter of this def; the scene_mode decoder in turn
+// matches only unnamed-cluster frames (no named cluster is "repenicPrivateE003")
+// and no other converter here reads attribute 0x0003. Upstream adds no bind for
+// either cluster. Not ported: the genTime write at configure (needs the hub's
+// local clock at configure time), the sleep / wakeup / night pattern composites
+// (0xE003 commands 0x00..0x02 with a raw buffer payload).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::repenic_ltd {
 namespace {
+constexpr ::zhc::generic::ZclWriteLookup kOnOff_RD_250ZG[] = { {"ON", 1}, {"OFF", 0} };
+constexpr ::zhc::generic::ZclAttrRow kSceneRows_RD_250ZG[] = {
+    { 0x0003, "scene_mode", 1, nullptr, 0, ::zhc::generic::kZclAttrFlagBool },
+};
+constexpr ::zhc::generic::ZclAttrMap kSceneMap_RD_250ZG{
+    kSceneRows_RD_250ZG, sizeof(kSceneRows_RD_250ZG)/sizeof(kSceneRows_RD_250ZG[0]) };
+constexpr FzConverter kFzSceneMode_RD_250ZG =
+    ::zhc::generic::zcl_attr_fz("repenicPrivateE003", &kSceneMap_RD_250ZG);   // 0xE003, unnamed
+constexpr ::zhc::generic::ZclWriteSpec kSceneModeSpec_RD_250ZG{
+    "scene_mode", 0x0003, 0x30, 0, kOnOff_RD_250ZG, sizeof(kOnOff_RD_250ZG)/sizeof(kOnOff_RD_250ZG[0]) };
+constexpr TzConverter kTzSceneMode_RD_250ZG =
+    ::zhc::generic::zcl_write_tz("repenicPrivateE003", 0xE003, &kSceneModeSpec_RD_250ZG);
+
+// z2m: msg.data.findLast((byte) => byte in actionLookup) over the raw frame.
+bool fz_rd250zg_button(const DecodedMessage& msg, const FzConverter&,
+                       const PreparedDefinition&, RuntimeContext&,
+                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    for (std::size_t i = msg.raw_data.size(); i-- > 0;) {
+        const char* label = nullptr;
+        switch (msg.raw_data[i]) {
+            case 2:  label = "hold";    break;
+            case 4:  label = "release"; break;
+            case 8:  label = "double";  break;
+            case 16: label = "triple";  break;
+            default: continue;
+        }
+        Value a{}; a.type = ValueType::StringRef; a.str = label;
+        return out.put("action", a);
+    }
+    return false;
+}
+
+// Cluster 0xE004 is named "zosungIRControl" in cluster_names.hpp (the id the
+// UFO-R11 IR blaster uses); the name only selects the cluster id here. z2m's
+// "raw" type is a frame herdsman could not parse, i.e. a cluster-specific
+// command it has no schema for, so only Command frames are taken, in either
+// direction. Foundation frames (our MessageType::Raw) stay out: the 0xE003
+// write response (18 tsn 04 00, null cluster name, so it passes the selector)
+// would otherwise read as "release".
+constexpr FzConverter rd250zg_button_fz(Direction dir) {
+    return FzConverter{
+        .family            = FrameFamily::Zcl,
+        .cluster           = "zosungIRControl",   // 0xE004
+        .type_mask         = type_bit(MessageType::Command),
+        .command_id        = WILDCARD_CMD_ID,
+        .attr_id           = WILDCARD_ATTR_ID,
+        .endpoint          = WILDCARD_ENDPOINT,
+        .frame_flags_mask  = 0,
+        .frame_flags_value = 0,
+        .direction         = dir,
+        .fn                = { .zcl_fn = fz_rd250zg_button },
+        .user_config       = nullptr,
+    };
+}
+constexpr FzConverter kFzButtonS2C_RD_250ZG = rd250zg_button_fz(Direction::ServerToClient);
+constexpr FzConverter kFzButtonC2S_RD_250ZG = rd250zg_button_fz(Direction::ClientToServer);
+
 const FzConverter* const kFz_RD_250ZG[] = {
     &::zhc::generic::kFzOnOff,
     &::zhc::generic::kFzBrightness,
     &::zhc::generic::kFzMetering,
     &::zhc::generic::kFzElectricalMeasurement,
+    &kFzSceneMode_RD_250ZG,
+    &kFzButtonS2C_RD_250ZG,
+    &kFzButtonC2S_RD_250ZG,
 };
 const TzConverter* const kTz_RD_250ZG[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
+    &kTzSceneMode_RD_250ZG,
 };
+constexpr const char* kActions_RD_250ZG[] = { "hold", "release", "double", "triple" };
 constexpr const char* kModels_RD_250ZG[] = { "RD-250ZG" };
 
 }  // namespace
@@ -44,6 +119,9 @@ constexpr Expose kAutoExposes[] = {
     {"power", ExposeType::Numeric, Access::State, "W", nullptr, nullptr, 0},
     {"voltage", ExposeType::Numeric, Access::State, "V", nullptr, nullptr, 0},
     {"current", ExposeType::Numeric, Access::State, "A", nullptr, nullptr, 0},
+    {"scene_mode", ExposeType::Binary, Access::StateSet, nullptr, "Scene mode", nullptr, 0},
+    {"action", ExposeType::Enum, Access::State, nullptr, "Triggered action (e.g. a button click)",
+     kActions_RD_250ZG, sizeof(kActions_RD_250ZG)/sizeof(kActions_RD_250ZG[0])},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

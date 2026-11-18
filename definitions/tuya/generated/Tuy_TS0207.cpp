@@ -18,7 +18,10 @@ const FzConverter* const kFz_TS0207[] = {
     &::zhc::generic::kFzIasWaterLeakAlarm,
 };
 
-constexpr const char* kModels_TS0207[] = { "TS0207", "RB-SM0D1" };
+// FNB54-WTS08ML1.0 / AY222Z / HS222Z: upstream TS0207_water_leak_detector zigbeeModels
+// (HS222Z new in v26.126.0..v26.133.0). The separate water-leak def stays
+// unregistered: it would race this one for "TS0207" (R10 R09 / D17).
+constexpr const char* kModels_TS0207[] = { "TS0207", "RB-SM0D1", "FNB54-WTS08ML1.0", "AY222Z", "HS222Z" };
 
 constexpr Expose kExposes_TS0207[] = {
     { "water_leak",   ExposeType::Binary,  ::zhc::Access::State,

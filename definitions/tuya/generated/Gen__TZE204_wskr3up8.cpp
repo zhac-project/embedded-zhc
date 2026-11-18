@@ -9,7 +9,7 @@ namespace {
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_wskr3up8_power_on_behavior_dp14[] = {
     { 0, "off" },
     { 1, "on" },
-    { 2, "memory" },
+    { 2, "previous" },
 };
 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_wskr3up8_indicator_mode_dp15[] = {
