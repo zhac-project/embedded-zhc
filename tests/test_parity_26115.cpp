@@ -802,9 +802,10 @@ void test_vendor_fixes() {
     { auto e = encode(devices::lumi::kDefZNMHLDJ01LM, "identify_beep", str("long"));
       check(e.ok && e.cluster == 0xFCC0 && e.frame.size() >= 3 && e.frame[1] == 0x5F && e.frame[2] == 0x11 &&
             e.frame.back() == 2, "ZNMHLDJ01LM identify_beep long, manufacturer-specific"); }
-    // WSDCGQ12LM reports temperature / humidity / pressure / battery.
+    // WSDCGQ12LM reports temperature / humidity / pressure / battery voltage (z2m v26.129.0 dropped the
+    // batteryPercentageRemaining report: the device has no such attribute, the percentage comes from voltage).
     check(binds(devices::lumi::kDefWSDCGQ12LM, 1, 0x0402) && binds(devices::lumi::kDefWSDCGQ12LM, 1, 0x0403) &&
-          devices::lumi::kDefWSDCGQ12LM.reports_count == 5 && expose_of(devices::lumi::kDefWSDCGQ12LM, "pressure"),
+          devices::lumi::kDefWSDCGQ12LM.reports_count == 4 && expose_of(devices::lumi::kDefWSDCGQ12LM, "pressure"),
           "WSDCGQ12LM binds and reports its sensors");
     // Graduated definitions: what the registry hands out for these models.
     const auto& reg = registries();
