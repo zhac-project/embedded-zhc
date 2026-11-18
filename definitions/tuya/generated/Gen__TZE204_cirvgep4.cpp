@@ -51,7 +51,7 @@ constexpr TzConverter kTzDp__TZE204_cirvgep4{
 };
 const TzConverter* const kTz__TZE204_cirvgep4[] = { &kTzDp__TZE204_cirvgep4 };
 constexpr const char* kM__TZE204_cirvgep4[] = { "TS0601" };
-constexpr const char* kN__TZE204_cirvgep4[] = { "_TZE204_cirvgep4", "_TZE200_cirvgep4" };
+constexpr const char* kN__TZE204_cirvgep4[] = { "_TZE204_cirvgep4", "_TZE200_cirvgep4", "_TZE204_kwi6bbk4" };
 // --- auto-generated exposes by zhac-tools/emit/emit_exposes.py (26.105.0) ---
 constexpr const char* kAutoOpts__TZE204_cirvgep4_2[] = {"low", "medium", "high"};
 constexpr const char* kAutoOpts__TZE204_cirvgep4_3[] = {"celsius", "fahrenheit"};

@@ -30,8 +30,19 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE200_ugekduaj[] = {
     { 118, "power_factor_a", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 119, "power_factor_b", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 120, "power_factor_c", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    // SDM01 V2-only datapoints (z2m v26.133.0, #13729); a v1 unit never sends them.
+    { 23, "produced_energy", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 29, "power", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 32, "ac_frequency", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 50, "power_factor", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 121, "voltage_c", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 122, "current_c", ::zhc::TuyaDpType::Numeric, 1000, nullptr, 0, 0 },
+    { 123, "power_c", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 126, "power_factor_c", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 127, "energy_c", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
+    { 128, "energy_produced_c", ::zhc::TuyaDpType::Numeric, 100, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE200_ugekduaj{ kEntries__TZE200_ugekduaj, 23 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE200_ugekduaj{ kEntries__TZE200_ugekduaj, sizeof(kEntries__TZE200_ugekduaj)/sizeof(kEntries__TZE200_ugekduaj[0]) };
 constexpr FzConverter kFzDp__TZE200_ugekduaj{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

@@ -27,6 +27,11 @@ constexpr BindingSpec kBindings_TS0201[] = {
     { 1, 0x0402 },   // msTemperatureMeasurement
     { 1, 0x0405 },   // msRelativeHumidity
 };
+// UZ-05T reports manufacturerName "Wing" (z2m v26.133.0, #13838); the bare zigbeeModel
+// match covers it, the white label only names it.
+constexpr WhiteLabel kWhiteLabels_TS0201[] = {
+    {"Shenzhen Forever Young Technology", "UZ-05T"},
+};
 
 }  // namespace
 
@@ -41,8 +46,8 @@ extern const PreparedDefinition kDef_TS0201{
     .meta                     = nullptr,
     .exposes                  = kExposes_TS0201,
     .exposes_count            = sizeof(kExposes_TS0201)/sizeof(kExposes_TS0201[0]),
-    .white_labels             = nullptr,
-    .white_labels_count       = 0,
+    .white_labels             = kWhiteLabels_TS0201,
+    .white_labels_count       = sizeof(kWhiteLabels_TS0201)/sizeof(kWhiteLabels_TS0201[0]),
     .from_zigbee              = kFz_TS0201,
     .from_zigbee_count        = sizeof(kFz_TS0201)/sizeof(kFz_TS0201[0]),
     .to_zigbee                = nullptr,

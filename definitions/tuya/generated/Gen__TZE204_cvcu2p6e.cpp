@@ -33,11 +33,21 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_cvcu2p6e_system_mode_dp1[] = 
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_cvcu2p6e_preset_dp1[] = {
     { 0, "auto" }, { 1, "manual" }, { 2, "off" }, { 3, "on" },
 };
+// DP6 / DP7: upstream `lookup({heat: 1, idle: 0})` / `lookup({OPEN: 1, CLOSE: 0})` with plain
+// numbers, which decode a value DP and an enum DP alike, so each gets a NumericLookup row (first,
+// so a write would go out as a value DP, as upstream) plus an Enum row (R10 W2).
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_cvcu2p6e_running_state_dp6[] = { { 0, "idle" }, { 1, "heat" } };
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_cvcu2p6e_window_dp7[] = { { 0, "CLOSE" }, { 1, "OPEN" } };
+
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_cvcu2p6e[] = {
     { 1, "system_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_cvcu2p6e_system_mode_dp1, 4 },
     { 1, "preset", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_cvcu2p6e_preset_dp1, 4 },
     { 2, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 3, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
+    { 6, "running_state", ::zhc::TuyaDpType::Numeric, 1, kEnum__TZE204_cvcu2p6e_running_state_dp6, 2, ::zhc::tuya::kTuyaDpFlagNumericLookup },
+    { 6, "running_state", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_cvcu2p6e_running_state_dp6, 2 },
+    { 7, "window", ::zhc::TuyaDpType::Numeric, 1, kEnum__TZE204_cvcu2p6e_window_dp7, 2, ::zhc::tuya::kTuyaDpFlagNumericLookup },
+    { 7, "window", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_cvcu2p6e_window_dp7, 2 },
     { 8, "window_detection", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 12, "child_lock", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
     { 13, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
@@ -58,7 +68,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_cvcu2p6e[] = {
     { 114, "mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_cvcu2p6e_mode_dp114, sizeof(kEnum__TZE204_cvcu2p6e_mode_dp114)/sizeof(kEnum__TZE204_cvcu2p6e_mode_dp114[0]) },
     { 115, "switch_deviation_eco", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
 };
-constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_cvcu2p6e{ kEntries__TZE204_cvcu2p6e, 23 };
+constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE204_cvcu2p6e{ kEntries__TZE204_cvcu2p6e, sizeof(kEntries__TZE204_cvcu2p6e)/sizeof(kEntries__TZE204_cvcu2p6e[0]) };
 constexpr FzConverter kFzDp__TZE204_cvcu2p6e{
     .family            = FrameFamily::TuyaDp,
     .cluster           = "manuSpecificTuya",

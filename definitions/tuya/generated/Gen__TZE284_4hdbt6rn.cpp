@@ -109,7 +109,7 @@ constexpr Expose kAutoExposes__TZE284_4hdbt6rn[] = {
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE284_4hdbt6rn[] = {
-    {"Tongou","TOSA1-01WXJAT2A"},
+    {"Chayo","TOSA1-01WXJAT2A"},
 };
 extern const PreparedDefinition kDefGen__TZE284_4hdbt6rn{
     .zigbee_models=kM__TZE284_4hdbt6rn,.zigbee_models_count=1,

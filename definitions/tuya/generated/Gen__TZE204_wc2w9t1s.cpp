@@ -103,5 +103,6 @@ extern const PreparedDefinition kDefGen__TZE204_wc2w9t1s{
     .to_zigbee=kTz__TZE204_wc2w9t1s,
     .to_zigbee_count=sizeof(kTz__TZE204_wc2w9t1s)/sizeof(kTz__TZE204_wc2w9t1s[0]),
     .configure=::zhc::tuya::extend::tuya_base_configure(),
-    .on_event=nullptr };
+    .on_event=nullptr,
+    .tuya_time_start=1 };   // timeStart "1970" (z2m v26.133.0, #13713)
 }  // namespace zhc::devices::tuya

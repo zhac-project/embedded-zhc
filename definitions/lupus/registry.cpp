@@ -11,6 +11,7 @@ extern const PreparedDefinition kDef_D12050;
 extern const PreparedDefinition kDef_D12126;
 extern const PreparedDefinition kDef_D12127;
 extern const PreparedDefinition kDef_LS12128;
+extern const PreparedDefinition kDef_LS12136;
 
 const PreparedDefinition* const kLupusRegistry[] = {
     &kDef_D12031,
@@ -18,6 +19,7 @@ const PreparedDefinition* const kLupusRegistry[] = {
     &kDef_D12126,
     &kDef_D12127,
     &kDef_LS12128,
+    &kDef_LS12136,
 };
 const std::size_t kLupusRegistryCount = sizeof(kLupusRegistry) / sizeof(kLupusRegistry[0]);
 

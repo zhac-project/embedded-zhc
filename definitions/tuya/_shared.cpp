@@ -1971,8 +1971,10 @@ bool tuya_dp_expand_thresholds(const TuyaDpMapEntry& e, const Value& raw,
         }
         if (!def) continue;              // unknown record id — skip, as upstream does
 
-        Value flag{}; flag.type = ValueType::Bool; flag.b = (b[i + 1] != 0);
-        out.put(def->enabled_key, flag);
+        if (def->enabled_key) {          // null for a value-only record (SPM01V2.5 id 8)
+            Value flag{}; flag.type = ValueType::Bool; flag.b = (b[i + 1] != 0);
+            out.put(def->enabled_key, flag);
+        }
         emitted = true;
 
         if (def->value_key) {

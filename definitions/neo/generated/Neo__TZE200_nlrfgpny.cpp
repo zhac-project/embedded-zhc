@@ -6,6 +6,16 @@
 namespace zhc::devices::neo {
 namespace {
 
+// z2m v26.133.0 (#13678): DP15 battery `v === 0 ? 100 : v`.
+bool battery_zero_full(const ::zhc::tuya::TuyaDpMapEntry& e, const Value& raw, RuntimeContext&,
+                       FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
+    if (raw.type != ValueType::Int) return false;
+    Value v = raw;
+    if (v.i == 0) v.i = 100;
+    out.put(e.out_key, v);
+    return true;
+}
+
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE200_nlrfgpny_alarm_state_dp1[] = {
     { 0, "alarm_sound" },
     { 1, "alarm_light" },
@@ -34,7 +44,7 @@ constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE200_nlrfgpny[] = {
     { 102, "alarm_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE200_nlrfgpny_alarm_mode_dp102, sizeof(kEnum__TZE200_nlrfgpny_alarm_mode_dp102)/sizeof(kEnum__TZE200_nlrfgpny_alarm_mode_dp102[0]) },
     { 7, "alarm_time", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
     { 6, "charging", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
-    { 15, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0 },
+    { 15, "battery", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, 0, 0.0f, &battery_zero_full, nullptr },
 };
 constexpr ::zhc::tuya::TuyaDatapointMap kMap__TZE200_nlrfgpny{ kEntries__TZE200_nlrfgpny, 9 };
 constexpr FzConverter kFzDp__TZE200_nlrfgpny{

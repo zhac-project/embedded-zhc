@@ -106,7 +106,7 @@ constexpr const char* kN[] = { "_TZE284_6ocnqlhn" };
 extern const PreparedDefinition kDef_TO_Q_SYS_JZT_dp{
     .zigbee_models=kM,.zigbee_models_count=sizeof(kM)/sizeof(kM[0]),.manufacturer_name_prefix=nullptr,
     .manufacturer_names=kN,.manufacturer_names_count=sizeof(kN)/sizeof(kN[0]),
-    .model="TO-Q-SYS-JZT",.vendor="Tongou",.meta=nullptr,
+    .model="TO-Q-SYS-JZT",.vendor="Chayo",.meta=nullptr,
     .exposes=kExp,.exposes_count=sizeof(kExp)/sizeof(kExp[0]),
     .white_labels=nullptr,.white_labels_count=0,
     .from_zigbee=FX::fz_list,.from_zigbee_count=FX::fz_count,

@@ -35,7 +35,8 @@ const TzConverter* const kTzMoveToLevel[] = {
 constexpr const char* kModels[] = { "TS0505B" };
 constexpr const char* kManusMoveToLevel[] = {
     "_TZB210_uoiqhjqe", "_TZB210_417ikxay", "_TZB210_qzsxaqqe",
-    "_TZB210_u3ri0968", "_TZB210_rs0ufzwg", "_TZ3210_mja6r5ix" };
+    "_TZB210_u3ri0968", "_TZB210_rs0ufzwg", "_TZ3210_mja6r5ix",
+    "_TZB210_yatkpuha" };   // MiBoxer E3-ZR (z2m v26.133.0, #13627)
 
 constexpr const char* kEffects[] = {
     "blink", "breathe", "okay", "channel_change", "finish_effect", "stop_effect",

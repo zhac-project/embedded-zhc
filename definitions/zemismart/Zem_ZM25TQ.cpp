@@ -1,6 +1,6 @@
 // SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 // SPDX-License-Identifier: Apache-2.0
-// Tier 2: Zemismart ZM25TQ tubular motor (TS0601 / _TZE200_fzo2pocs).
+// Tier 2: Zemismart ZM25TQ tubular motor (TS0601 / _TZE200_fzo2pocs, _TZE284_fzo2pocs).
 //
 // Graduated from the generated generic-cover stub. ZM25TQ is a pure Tuya
 // datapoint device (z2m `tuya.modernExtend.tuyaBase({dp:true})`) — it speaks
@@ -34,13 +34,18 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZM25TQ_stroke_limit[] = {
 };
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZM25TQ_reverse_direction[] = { {0, "forward"}, {1, "back"} };
 constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZM25TQ_motor_working_mode[] = { {0, "continuous"}, {1, "intermittently"} };
+// z2m v26.133.0 (#13679): DP7 work_state, DP101 remote_pairing lookup({PAIR: true}).
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZM25TQ_work_state[] = { {0, "opening"}, {1, "closing"} };
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum_ZM25TQ_remote_pairing[] = { {1, "PAIR"} };
 
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries_ZM25TQ[] = {
     { 1, "state", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_state_dp1, sizeof(kEnum_ZM25TQ_state_dp1)/sizeof(kEnum_ZM25TQ_state_dp1[0]) },
     { 2, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
     { 3, "position", ::zhc::TuyaDpType::Numeric, 1, nullptr, 0, ::zhc::tuya::kTuyaDpFlagInvertPosition },
     { 5, "reverse_direction", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_reverse_direction, 2 },
+    { 7, "work_state", ::zhc::TuyaDpType::Enum, 1, kEnum_ZM25TQ_work_state, 2 },
     { 12, "motor_fault", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },
+    { 101, "remote_pairing", ::zhc::TuyaDpType::Bool, 1, kEnum_ZM25TQ_remote_pairing, 1, ::zhc::tuya::kTuyaDpFlagBoolEnum },
     { 103, "upper_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum_ZM25TQ_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
     { 104, "middle_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum_ZM25TQ_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
     { 105, "lower_stroke_limit", ::zhc::TuyaDpType::Bool, 1, kEnum_ZM25TQ_stroke_limit, 2, ::zhc::tuya::kTuyaDpFlagBoolEnum },
@@ -75,12 +80,14 @@ constexpr TzConverter kTzDp_ZM25TQ{
 };
 const TzConverter* const kTz_ZM25TQ[] = { &kTzDp_ZM25TQ };
 constexpr const char* kModels_ZM25TQ[] = { "TS0601" };
-constexpr const char* kManus_ZM25TQ[] = { "_TZE200_fzo2pocs" };
+constexpr const char* kManus_ZM25TQ[] = { "_TZE200_fzo2pocs", "_TZE284_fzo2pocs" };
 
 constexpr const char* kOptsState[]     = { "OPEN", "CLOSE", "STOP" };
 constexpr const char* kOptsReverse[]   = { "forward", "back" };
 constexpr const char* kOptsStroke[]    = { "SET", "RESET" };
 constexpr const char* kOptsWorkMode[]  = { "continuous", "intermittently" };
+constexpr const char* kOptsWorkState[] = { "opening", "closing" };
+constexpr const char* kOptsPairing[]   = { "PAIR" };
 constexpr Expose kAutoExposes[] = {
     {"state", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOptsState, 3},
     {"position", ExposeType::Numeric, Access::StateSet, "%", nullptr, nullptr, 0, ExposeCategory::State, 0, 100, 0},
@@ -90,6 +97,8 @@ constexpr Expose kAutoExposes[] = {
     {"middle_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOptsStroke, 2, ExposeCategory::Config},
     {"lower_stroke_limit", ExposeType::Enum, Access::StateSet, nullptr, nullptr, kOptsStroke, 2, ExposeCategory::Config},
     {"motor_working_mode", ExposeType::Enum, Access::StateSet, nullptr, "Motor operating mode", kOptsWorkMode, 2, ExposeCategory::Config},
+    {"work_state", ExposeType::Enum, Access::State, nullptr, "Direction of the last movement", kOptsWorkState, 2},
+    {"remote_pairing", ExposeType::Enum, Access::Set, nullptr, "Put the motor in remote pairing mode, then press up on the remote", kOptsPairing, 1, ExposeCategory::Config},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

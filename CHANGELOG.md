@@ -37,6 +37,20 @@ across the ZHAC platform.
   New fingerprints and white labels (HYSYIOT ×7, Hue Flux 5 m, M1P-E, BSEED,
   Namron D726-ZG, Somfy Ysia 5, teelicht-nrf, 3RCB1095Z/1097Z, Sygonix W08-Z10T,
   TS0207 water-leak models). Ledger: `zhac-tools/parity/catchup_26125_26133/PROGRESS.md`.
+- **z2m v26.133.0 parity, wave 2 (Tuya).** New definitions: Tuya SPM01V2.5 and
+  three-phase SPM02 meters (faults, energy reset, threshold read-out, X/Y/Z
+  phases; were generated stubs), HS206Z / HS207Z / HS209Z / HS300TF, JKD-839Z,
+  X7633, TS011F_5 power strip, SA-T2, ZP01, TS0002 `_TZ3000_a8mhmsol`, Nova
+  Digital SA-1 / SA-WK 4X4 / ND 4-gang, roller motor `_TZE284_lqhqj73n`, T3E panel,
+  ME173 TRV, SP107E music controller, EARU EAYCBM-Z-1P, 07P4, Lincukoo G08A-Z20T /
+  N02-Z10T, Zemismart ZMD-208-2, Girier presence sensor, Nous D1Z, Lupus LS12136
+  and the new vendor Fontastic. Existing devices: HeatHUB HHST001 (4 manus,
+  clock, settings DPs), 6-gang switch power-on "previous" and countdowns,
+  ZM25TQ work state / remote pairing, ME201WZ ME201Z.x DPs, SDM01 V2 DPs,
+  AM43 cover_4 state from position, HY607W-3A as a DP thermostat with clock,
+  USB switch `mw1pqqqt` 3 gangs, TRV601 heating state and window, SFD02-Z value
+  DPs, NAS-AB06B2 battery, TS0201 any manufacturer, Tongou now Chayo, and
+  fingerprints (JWCOM SA-ZB417F-BR, MiBoxer E3-ZR, ZTH13, UZ-05T …). Same ledger.
 
 ### Changed
 

@@ -160,6 +160,16 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_pet_feeder.cpp
     definitions/tuya/TZE200_fall.cpp
     definitions/tuya/SPM01.cpp
+    definitions/tuya/ME173.cpp
+    definitions/tuya/SP107E_Zigbee.cpp
+    definitions/tuya/EAYCBM_Z_1P.cpp
+    definitions/tuya/07P4.cpp
+    definitions/tuya/TS0601_lqhqj73n.cpp
+    definitions/tuya/T3E_mua6ucdj.cpp
+    definitions/tuya/SA_T2.cpp
+    definitions/tuya/ZP01.cpp
+    definitions/tuya/TS0002_a8mhmsol.cpp
+    definitions/tuya/TS011F_5.cpp
     definitions/tuya/TZE200_motion_lux.cpp
     definitions/tuya/TS0601_cover_with_switch.cpp
     definitions/tuya/TZE200_light_sensor.cpp
@@ -177,7 +187,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_fan_speed.cpp
     definitions/tuya/TZE200_roller_shade.cpp
     definitions/tuya/TZE200_tilt_blinds.cpp
-    definitions/tuya/TZE200_motor_curtain.cpp
     definitions/tuya/TZE200_dual_curtain.cpp
     definitions/tuya/TZE200_siren.cpp
     definitions/tuya/TZE200_lock.cpp
@@ -692,6 +701,12 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0601_3ch_bidirectional_meter.cpp
     definitions/tuya/MG_BJQ002.cpp
     definitions/tuya/HS208Z.cpp
+    definitions/tuya/HS206Z.cpp
+    definitions/tuya/HS207Z.cpp
+    definitions/tuya/HS209Z.cpp
+    definitions/tuya/HS300TF.cpp
+    definitions/tuya/JKD_839Z.cpp
+    definitions/tuya/X7633.cpp
     definitions/tuya/TZE284_grxx6qek.cpp
     definitions/tuya/ZAS_01P.cpp
     definitions/tuya/TS0601_wsek35um.cpp

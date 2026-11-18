@@ -126,9 +126,9 @@ constexpr Expose kAutoExposes__TZE204_tuhfx7tf[] = {
 }  // namespace
 
 constexpr WhiteLabel kWhiteLabels_Gen_TZE204_tuhfx7tf[] = {
-    {"Tongou","TOWSMR1-40A-AC"},
-    {"Tongou","TOWSMR1-40A-A"},
-    {"Tongou","TOWSMR1-20A-AC"},
+    {"Chayo","TOWSMR1-40A-AC"},
+    {"Chayo","TOWSMR1-40A-A"},
+    {"Chayo","TOWSMR1-20A-AC"},
 };
 extern const PreparedDefinition kDefGen__TZE204_tuhfx7tf{
     .zigbee_models=kM__TZE204_tuhfx7tf,.zigbee_models_count=1,
