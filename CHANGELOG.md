@@ -76,6 +76,10 @@ across the ZHAC platform.
   New Philips Hue definitions: Festavia globe 929003858301 (LCX026), Nanoleaf
   wall module 929004440102 (NGC001), Festavia curtain 929004456604 (LCX049).
   Same ledger.
+- **z2m v26.133.0 parity, review fixes.** GWA1221 ballast minimum / maximum
+  level write minLevel 0x0010 / maxLevel 0x0011 (were off by one). HHST001
+  `_TZE284_6l44ypoc` / `_TZE284_qvmmpbye` scale the deadzone x10, and five TS0201
+  manufacturers (TH09Z and others) get humidity x10, as z2m does.
 
 ### Changed
 
