@@ -358,9 +358,13 @@ void gwa1221() {
     check(r_float(dispatch(d, 0x0008, 1, b.span()), "brightness") == 128.0f, "brightness");
     Report c; c.u16(0x0508, 0x21, 1500);
     check(approx(r_float(dispatch(d, 0x0B04, 1, c.span()), "current"), 1.5f), "current /1000");
-    Report m; m.u8(0x0011, 0x20, 20);
-    check(r_float(dispatch(d, 0x0301, 1, m.span()), "ballast_minimum_level") == 20.0f, "ballast min read");
-    check(is_write(encode(d, "ballast_maximum_level", num(200)), 0x0301, 0x0012, 0x20, 200), "ballast max write");
+    // ZCL lightingBallastCfg minLevel 0x0010 / maxLevel 0x0011 (herdsman cluster.ts; z2m m.lightingBallast)
+    Report m; m.u8(0x0010, 0x20, 20);
+    check(r_float(dispatch(d, 0x0301, 1, m.span()), "ballast_minimum_level") == 20.0f, "ballast min read (minLevel 0x0010)");
+    Report x; x.u8(0x0011, 0x20, 200);
+    check(r_float(dispatch(d, 0x0301, 1, x.span()), "ballast_maximum_level") == 200.0f, "ballast max read (maxLevel 0x0011)");
+    check(is_write(encode(d, "ballast_minimum_level", num(30)), 0x0301, 0x0010, 0x20, 30), "ballast min write -> minLevel");
+    check(is_write(encode(d, "ballast_maximum_level", num(200)), 0x0301, 0x0011, 0x20, 200), "ballast max write -> maxLevel");
     check(encode(d, "brightness", num(100)).ok && encode(d, "state", str("ON")).ok, "light control");
     check(has_expose(d, "device_temperature"), "device temperature");
 }
@@ -625,6 +629,15 @@ void w2_small_rows() {
     resolves({"TS0201", "Wing", "TS0201"});
     check(has_wl(def_for("TS0201", "Wing"), "Shenzhen Forever Young Technology", "UZ-05T"), "TS0201 white label UZ-05T");
     resolves({"TS0201", "_TZ3000_bguser20", "WSD500A"});   // fingerprinted TS0201s keep their def
+    // fzLocal.TS0201_humidity (tuya.ts): measuredValue x10 for five manus, so 550 -> 55 %.
+    for (const char* manu : {"_TZ3210_ncw88jfq", "_TZ3000_ywagc4rj", "_TZ3000_isw9u95y", "_TZ3000_yupc0pb7", "_TZ3000_wol32olt"}) {
+        Report h; h.u16(0x0000, 0x21, 550);
+        if (!approx(r_float(dispatch(def_for("TS0201", manu), 0x0405, 1, h.span()), "humidity"), 55.0f)) {
+            std::printf("  %s\n", manu); check(false, "TS0201 x10 humidity manu: 550 -> 55");
+        }
+    }
+    {   Report h; h.u16(0x0000, 0x21, 5500);   // every other TS0201 keeps /100
+        check(approx(r_float(dispatch(def_for("TS0201", "Wing"), 0x0405, 1, h.span()), "humidity"), 55.0f), "TS0201 humidity /100"); }
     {   // D18: ME201WZ `_TZE2841000000_7uqwvoua` has no legacy twin.
         const PreparedDefinition& d = def_for("TS0601", "_TZE2841000000_7uqwvoua");
         check(&d == &def_for("TS0601", "_TZE284_kyyu8rbj"), "7uqwvoua on the ME201WZ def");
@@ -649,10 +662,19 @@ void w2_hhst001() {
     std::printf("W2 HHST001\n");
     for (const char* manu : {"_TZE204_q12rv9gj", "_TZE284_zgisddrg", "_TZE284_6l44ypoc", "_TZE284_ksqviprv", "_TZE284_qvmmpbye"}) {
         const PreparedDefinition& d = def_for("TS0601", manu);
-        if (&d != &def_for("TS0601", "_TZE204_q12rv9gj") || ::zhc::tuya::time_start(d, manu, "TS0601") != 1) {
+        if (!has_manu(d, manu) || std::strcmp(d.model, "TS0601__TZE204_q12rv9gj") != 0 ||
+            ::zhc::tuya::time_start(d, manu, "TS0601") != 1) {
             std::printf("  %s\n", manu); check(false, "HHST001 fingerprint + timeStart 1970");
         }
     }
+    // hhst001DeadzoneScale (tuya.ts): x10 for _TZE284_6l44ypoc / _TZE284_qvmmpbye, x1 for the rest.
+    for (const char* manu : {"_TZE284_6l44ypoc", "_TZE284_qvmmpbye"}) {
+        const PreparedDefinition& z = def_for("TS0601", manu);
+        check(approx(float_of(dp_num(z, 104, 20), "deadzone_temperature"), 2.0f) &&
+              is_dp(encode(z, "deadzone_temperature", num(2)), 104, 0x02, 20), "HHST001 x10 deadzone: DP104 20 <-> 2");
+    }
+    check(is_dp(encode(def_for("TS0601", "_TZE204_q12rv9gj"), "deadzone_temperature", num(2)), 104, 0x02, 2),
+          "HHST001 x1 deadzone: 2 -> DP104 2");
     const PreparedDefinition& d = def_for("TS0601", "_TZE204_q12rv9gj");
     check(str_is(dp_enum(d, 46, 1), "temperature_scale", "fahrenheit") &&
           is_dp(encode(d, "temperature_scale", str("celsius")), 46, 0x04, 0), "DP46 temperatureUnitEnum");

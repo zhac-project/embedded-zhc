@@ -4,7 +4,7 @@
 // GWA1221_DIMMER), new in z2m v26.126.0..v26.133.0. Without it the substring
 // pass handed the module to whichever "DIMMER" def came first (CTM 4503145).
 // m.deviceTemperature + m.light (power_on_behavior, no effect) +
-// m.lightingBallast (closuresLightingBallastCfg 0x0011 / 0x0012, uint8) +
+// m.lightingBallast (lightingBallastCfg minLevel 0x0010 / maxLevel 0x0011, uint8) +
 // m.electricityMeter current only (rmsCurrent / 1000).
 // Not ported: the gewissLed cluster 0xFD79 led_standby_brightness /
 // led_moving_brightness (percent written as value * 255 / 100), identify.
@@ -19,13 +19,13 @@ constexpr ::zhc::generic::ZclAttrMap kCurrentMap{ kCurrentRows, 1, 0 };
 constexpr FzConverter kFzCurrent = ::zhc::generic::zcl_attr_fz("haElectricalMeasurement", &kCurrentMap);
 
 constexpr ::zhc::generic::ZclAttrRow kBallastRows[] = {
-    { 0x0011, "ballast_minimum_level" },
-    { 0x0012, "ballast_maximum_level" },
+    { 0x0010, "ballast_minimum_level" },
+    { 0x0011, "ballast_maximum_level" },
 };
 constexpr ::zhc::generic::ZclAttrMap kBallastMap{ kBallastRows, 2, 0 };
 constexpr FzConverter kFzBallast = ::zhc::generic::zcl_attr_fz("lightingBallastCfg", &kBallastMap);
-constexpr ::zhc::generic::ZclWriteSpec kBallastMinSpec{ "ballast_minimum_level", 0x0011, 0x20, 0, nullptr, 0 };
-constexpr ::zhc::generic::ZclWriteSpec kBallastMaxSpec{ "ballast_maximum_level", 0x0012, 0x20, 0, nullptr, 0 };
+constexpr ::zhc::generic::ZclWriteSpec kBallastMinSpec{ "ballast_minimum_level", 0x0010, 0x20, 0, nullptr, 0 };
+constexpr ::zhc::generic::ZclWriteSpec kBallastMaxSpec{ "ballast_maximum_level", 0x0011, 0x20, 0, nullptr, 0 };
 constexpr TzConverter kTzBallastMin = ::zhc::generic::zcl_write_tz("lightingBallastCfg", 0x0301, &kBallastMinSpec);
 constexpr TzConverter kTzBallastMax = ::zhc::generic::zcl_write_tz("lightingBallastCfg", 0x0301, &kBallastMaxSpec);
 

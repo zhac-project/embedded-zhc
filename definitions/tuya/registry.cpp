@@ -889,6 +889,7 @@ extern const PreparedDefinition kDefGen__TZE204_ouy7vpm1;
 extern const PreparedDefinition kDefGen__TZE204_pcdmj88b;
 extern const PreparedDefinition kDefGen__TZE204_pfayrzcw;
 extern const PreparedDefinition kDefGen__TZE204_q12rv9gj;
+extern const PreparedDefinition kDefGen__TZE284_6l44ypoc;   // R10 review: HHST001 deadzone x10
 extern const PreparedDefinition kDefGen__TZE204_q22avxbv;
 extern const PreparedDefinition kDef_TZE204_q9xty0ad;
 extern const PreparedDefinition kDefGen__TZE204_qasjif9e;
@@ -1485,6 +1486,7 @@ extern const PreparedDefinition kDef_HD_T1000;  // Phase TC port
 // Phase TD enroll — TS0201 variants previously dead.
 extern const PreparedDefinition kDef_WSD500A;
 extern const PreparedDefinition kDef_TS0201;   // R10 W2: model-only TS0201 (UZ-05T "Wing")
+extern const PreparedDefinition kDef_TS0201_humidity10;   // R10 review: TS0201_humidity x10 manus
 extern const PreparedDefinition kDef_IH_K009;
 extern const PreparedDefinition kDef_LCZ030;
 extern const PreparedDefinition kDef_KCTW1Z;
@@ -2409,6 +2411,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE204_pcdmj88b,
     &kDefGen__TZE204_pfayrzcw,
     &kDefGen__TZE204_q12rv9gj,
+    &kDefGen__TZE284_6l44ypoc,
     &kDefGen__TZE204_q22avxbv,
     &kDef_TZE204_q9xty0ad,
     &kDefGen__TZE204_qasjif9e,
@@ -3007,6 +3010,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_ZS_SF00,
     &kDef__TZ3000_mw1pqqqt,
     &kDef_WSD500A,
+    &kDef_TS0201_humidity10,
     &kDef_TS0201,
     &kDef_IH_K009,
     &kDef_LCZ030,
