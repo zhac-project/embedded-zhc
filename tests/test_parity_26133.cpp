@@ -2486,6 +2486,192 @@ void w3_h5_hs9ms_e() {
 // Call order: w3_h5_mini_zbd, w3_h5_mini_zb2gs, w3_h5_s4dm, w3_h5_rd250zg, w3_h5_zg2835, w3_h5_pp01,
 // w3_h5_zg204zl, w3_h5_hs9ms_e
 
+
+// ── Wave 4 (Lumi/Philips/OSRAM) snippet w4_tests.cpp ──
+// ── Wave 4: Lumi / Philips / OSRAM ─────────────────────────────────
+// Call order: w4_l1_switches, w4_l1b_wp_p09d, w4_l1d_wp_p01d, w4_l1e_sswqdyh02, w4_e2_hcxdd13lm,
+//             w4_qbkg11lm_guard, w4_d1_wsdcgq12lm, w4_o1_osram, w4_philips_new
+
+bool w4_values(const Expose* e, std::initializer_list<const char*> want) {
+    if (!e || e->type != ExposeType::Enum || e->enum_count != want.size()) return false;
+    std::size_t i = 0;
+    for (const char* w : want) {
+        if (!e->enum_values[i] || std::strcmp(e->enum_values[i], w) != 0) return false;
+        ++i;
+    }
+    return true;
+}
+
+// lumiOnOff({powerOutageMemory: "enum"}) (lib/lumi.ts:3054-3056) pushes lumiPowerOnBehavior():
+// manuSpecificLumi 0x0517 u8 {on 0, previous 1, off 2, inverted 3}, mfg 0x115F, entityCategory config,
+// read back through lumi_specific.
+void w4_l1_switches() {
+    std::printf("W4 L1c ZNQBKG38-45LM / WS-K0x power_on_behavior\n");
+    for (const char* zm : {"lumi.switch.acn048", "lumi.switch.acn049", "lumi.switch.acn054", "lumi.switch.acn055",
+                           "lumi.switch.acn056", "lumi.switch.acn057", "lumi.switch.acn058", "lumi.switch.acn059",
+                           "lumi.switch.agl004", "lumi.switch.agl005", "lumi.switch.agl006", "lumi.switch.agl009",
+                           "lumi.switch.agl010"}) {
+        const PreparedDefinition& d = def_for(zm, "LUMI");
+        const Expose* e = find_expose(d, "power_on_behavior");
+        if (!(w4_values(e, {"on", "previous", "off", "inverted"}) && e->access == Access::StateSet &&
+              e->category == ExposeCategory::Config)) {
+            std::printf("  %s\n", zm);
+            check(false, "lumiPowerOnBehavior expose: enum on/previous/off/inverted, config");
+        }
+        if (!is_write(encode(d, "power_on_behavior", str("previous")), 0xFCC0, 0x0517, 0x20, 1, 0x115F) ||
+            !is_write(encode(d, "power_on_behavior", str("inverted")), 0xFCC0, 0x0517, 0x20, 3, 0x115F)) {
+            std::printf("  %s\n", zm);
+            check(false, "lumiPowerOnBehavior write: previous -> 0x0517 = 1, inverted -> 3 (mfg 0x115F)");
+        }
+        Report p(0x115F); p.u8(0x0517, 0x20, 2);
+        if (!r_str(dispatch(d, 0xFCC0, 1, p.span()), "power_on_behavior", "off")) {
+            std::printf("  %s\n", zm);
+            check(false, "lumi_specific reads 0x0517 = 2 back as power_on_behavior off");
+        }
+    }
+    // operation_mode still reads back after the converter swap (lumi_specific 0x0200 on EP1).
+    const PreparedDefinition& d = def_for("lumi.switch.acn048", "LUMI");
+    Report o(0x115F); o.u8(0x0200, 0x20, 0);
+    check(r_str(dispatch(d, 0xFCC0, 1, o.span()), "operation_mode", "decoupled"),
+          "ZNQBKG38LM operation_mode 0x0200 = 0 -> decoupled (unchanged)");
+}
+
+// WP-P09D: lumiOnOff({endpointNames: ["1","2","usb"], powerOutageMemory: "enum"}) — the old
+// power_outage_memory enum was never upstream's key and had no tz/fz.
+void w4_l1b_wp_p09d() {
+    std::printf("W4 L1b WP-P09D power_on_behavior\n");
+    const PreparedDefinition& d = def_for("lumi.plug.aeu002", "LUMI");
+    check(w4_values(find_expose(d, "power_on_behavior"), {"on", "previous", "off", "inverted"}),
+          "WP-P09D exposes power_on_behavior on/previous/off/inverted");
+    check(!has_expose(d, "power_outage_memory"), "WP-P09D power_outage_memory expose gone (upstream key is power_on_behavior)");
+    check(is_write(encode(d, "power_on_behavior", str("on")), 0xFCC0, 0x0517, 0x20, 0, 0x115F),
+          "WP-P09D power_on_behavior on -> 0x0517 = 0");
+    // The endpoint map suffixes EP1 keys (W1 note); pinned until a per-def global-key list exists.
+    Report p(0x115F); p.u8(0x0517, 0x20, 1);
+    check(r_str(dispatch(d, 0xFCC0, 1, p.span()), "power_on_behavior_1", "previous"),
+          "WP-P09D 0x0517 = 1 from EP1 -> power_on_behavior_1 previous (dispatcher suffix)");
+}
+
+void w4_l1d_wp_p01d() {
+    std::printf("W4 L1d WP-P01D power_on_behavior\n");
+    const PreparedDefinition& d = def_for("lumi.plug.aeu001", "LUMI");
+    check(w4_values(find_expose(d, "power_on_behavior"), {"on", "previous", "off", "inverted"}),
+          "WP-P01D exposes power_on_behavior on/previous/off/inverted");
+    check(is_write(encode(d, "power_on_behavior", str("off")), 0xFCC0, 0x0517, 0x20, 2, 0x115F),
+          "WP-P01D power_on_behavior off -> 0x0517 = 2");
+    Report p(0x115F); p.u8(0x0517, 0x20, 3);
+    check(r_str(dispatch(d, 0xFCC0, 1, p.span()), "power_on_behavior", "inverted"), "WP-P01D 0x0517 = 3 -> inverted");
+    // button_lock keeps reading back through the same converter.
+    Report b(0x115F); b.u8(0x0200, 0x20, 1);
+    check(r_bool(dispatch(d, 0xFCC0, 1, b.span()), "button_lock", false), "WP-P01D button_lock 0x0200 = 1 -> OFF (unchanged)");
+}
+
+// lumiLight({powerOutageMemory: "enum"}) (lib/lumi.ts:2686-2688): lookup {on 0, previous 1, off 2}.
+void w4_l1e_sswqdyh02() {
+    std::printf("W4 L1e SSWQDYH02 power_on_behavior\n");
+    const PreparedDefinition& d = def_for("lumi.light.acn036", "LUMI");
+    check(w4_values(find_expose(d, "power_on_behavior"), {"on", "previous", "off"}),
+          "SSWQDYH02 exposes power_on_behavior on/previous/off (lumiLight lookup)");
+    check(is_write(encode(d, "power_on_behavior", str("off")), 0xFCC0, 0x0517, 0x20, 2, 0x115F),
+          "SSWQDYH02 power_on_behavior off -> 0x0517 = 2");
+    check(!encode(d, "power_on_behavior", str("inverted")).ok, "SSWQDYH02 rejects inverted (not in the lumiLight lookup)");
+    Report p(0x115F); p.u8(0x0517, 0x20, 1);
+    check(r_str(dispatch(d, 0xFCC0, 1, p.span()), "power_on_behavior", "previous"), "SSWQDYH02 0x0517 = 1 -> previous");
+}
+
+// HCXDD13LM: direct lumiPowerOnBehavior() (default 4-value lookup); exposed but dead before.
+void w4_e2_hcxdd13lm() {
+    std::printf("W4 E2 HCXDD13LM power_on_behavior\n");
+    const PreparedDefinition& d = def_for("lumi.light.acn033", "LUMI");
+    check(w4_values(find_expose(d, "power_on_behavior"), {"on", "previous", "off", "inverted"}),
+          "HCXDD13LM exposes power_on_behavior on/previous/off/inverted");
+    check(is_write(encode(d, "power_on_behavior", str("inverted")), 0xFCC0, 0x0517, 0x20, 3, 0x115F),
+          "HCXDD13LM power_on_behavior inverted -> 0x0517 = 3");
+    Report p(0x115F); p.u8(0x0517, 0x20, 0);
+    check(r_str(dispatch(d, 0xFCC0, 1, p.span()), "power_on_behavior", "on"), "HCXDD13LM 0x0517 = 0 -> on");
+}
+
+// Owner device QBKG11LM: classic list (genBasic 0xFF22 operation mode), no 0x0517 path; must not change.
+void w4_qbkg11lm_guard() {
+    std::printf("W4 owner QBKG11LM unchanged\n");
+    for (const char* zm : {"lumi.ctrl_ln1", "lumi.ctrl_ln1.aq1"}) {
+        const PreparedDefinition& d = def_for(zm, "LUMI");
+        Report p(0x115F); p.u8(0x0517, 0x20, 1);
+        check(dispatch(d, 0xFCC0, 1, p.span()).merged.find("power_on_behavior") == nullptr,
+              "QBKG11LM publishes no power_on_behavior from 0x0517");
+        check(!encode(d, "power_on_behavior", str("on")).ok, "QBKG11LM has no power_on_behavior writer");
+        Report o(0x115F); o.u8(0xFF22, 0x20, 0x12);
+        check(r_str(dispatch(d, 0x0000, 1, o.span()), "operation_mode", "control_relay"),
+              "QBKG11LM genBasic 0xFF22 = 0x12 -> operation_mode control_relay");
+    }
+}
+
+// WSDCGQ12LM: m.battery({voltage: true, voltageReporting: true, percentageReporting: false,
+// voltageToPercentage: {min: 2850, max: 3000}}) (devices/lumi.ts:1784-1786).
+void w4_d1_wsdcgq12lm() {
+    std::printf("W4 D1 WSDCGQ12LM battery from voltage\n");
+    const PreparedDefinition& d = def_for("lumi.sensor_ht.agl02", "LUMI");
+    bool pct_row = false, volt_row = false;
+    for (std::size_t i = 0; i < d.reports_count; ++i) {
+        if (d.reports[i].cluster_id == 0x0001 && d.reports[i].attr_id == 0x0021) pct_row = true;
+        if (d.reports[i].cluster_id == 0x0001 && d.reports[i].attr_id == 0x0020) volt_row = true;
+    }
+    check(!pct_row, "WSDCGQ12LM no batteryPercentageRemaining report row (percentageReporting: false)");
+    check(volt_row, "WSDCGQ12LM keeps the batteryVoltage report row (voltageReporting: true)");
+    Report v; v.u8(0x0020, 0x20, 29);
+    const DispatchResult r = dispatch(d, 0x0001, 1, v.span());
+    check(approx(r_float(r, "voltage"), 2900), "WSDCGQ12LM batteryVoltage 29 -> voltage 2900 mV");
+    check(approx(r_float(r, "battery"), 33), "WSDCGQ12LM 2900 mV -> battery 33 % (2850-3000 linear, rounded)");
+    Report f; f.u8(0x0020, 0x20, 31);
+    check(approx(r_float(dispatch(d, 0x0001, 1, f.span()), "battery"), 100), "WSDCGQ12LM 3100 mV -> battery 100 % (clamped)");
+    // MCCGQ13LM shares the hoisted decoder; its numbers must not move.
+    const PreparedDefinition& p1 = def_for("lumi.magnet.ac01", "LUMI");
+    const DispatchResult q = dispatch(p1, 0x0001, 1, v.span());
+    check(approx(r_float(q, "voltage"), 2900) && approx(r_float(q, "battery"), 33), "MCCGQ13LM battery decode unchanged");
+}
+
+// ledvancePowerOnBehavior() (lib/ledvance.ts:110-135): manuSpecificOsram 0xFC0F setPowerOnState 0x0C,
+// payload u8 mode (off 0x01, on 0x03), mfg OSRAM_SYLVANIA 0x110C; only off/on, case-insensitive.
+bool w4_osram_frame(const Encoded& e, std::uint8_t mode) {
+    return e.ok && e.cluster == 0xFC0F && e.frame.size() == 6 && e.frame[0] == 0x05 && e.frame[1] == 0x0C &&
+           e.frame[2] == 0x11 && e.frame[4] == 0x0C && e.frame[5] == mode;
+}
+void w4_o1_osram() {
+    std::printf("W4 O1/O2 OSRAM power_on_behavior\n");
+    for (const char* zm : {"Classic B40 TW - LIGHTIFY", "Classic A60 W clear - LIGHTIFY"}) {
+        const PreparedDefinition& d = def_for(zm, "OSRAM");
+        const Expose* e = find_expose(d, "power_on_behavior");
+        check(w4_values(e, {"off", "on"}) && e->access == Access::StateSet, "OSRAM exposes power_on_behavior off/on STATE_SET");
+        check(w4_osram_frame(encode(d, "power_on_behavior", str("on")), 0x03), "OSRAM on -> FC0F cmd 0x0C mode 0x03 (mfg 0x110C)");
+        check(w4_osram_frame(encode(d, "power_on_behavior", str("OFF")), 0x01), "OSRAM OFF -> mode 0x01 (lowercased)");
+        check(!encode(d, "power_on_behavior", str("previous")).ok, "OSRAM rejects previous");
+        check(encode(d, "brightness", num(100)).ok && encode(d, "state", str("ON")).ok, "OSRAM bundle tz still present");
+    }
+    check(has_expose(def_for("Classic B40 TW - LIGHTIFY", "OSRAM"), "color_temp"), "AB32840 keeps color_temp");
+    // Other bundle users do not gain it.
+    check(!has_expose(def_for("PAR16 DIM 50 GU10 TW", "OSRAM"), "power_on_behavior"), "PAR16 TW (CT bundle) unchanged");
+}
+
+// New Philips: LCX026 929003858301 (CT 50-1000, color, gradient), NGC001 929004440102 (CT 50-1000, xy+hs),
+// LCX049 929004456604 (CT 153-500, color, gradient).
+void w4_philips_new() {
+    std::printf("W4 Philips LCX026 / NGC001 / LCX049\n");
+    resolves({"LCX026", "Signify Netherlands B.V.", "929003858301"});
+    resolves({"NGC001", "Signify Netherlands B.V.", "929004440102"});
+    resolves({"LCX049", "Signify Netherlands B.V.", "929004456604"});
+    struct { const char* zm; std::int32_t lo, hi; } rows[] = {
+        {"LCX026", 50, 1000}, {"NGC001", 50, 1000}, {"LCX049", 153, 500}};
+    for (const auto& r : rows) {
+        const PreparedDefinition& d = def_for(r.zm, "Signify Netherlands B.V.");
+        const Expose* ct = find_expose(d, "color_temp");
+        check(ct && ct->value_min == r.lo && ct->value_max == r.hi, "Philips color_temp range per upstream colorTemp.range");
+        check(has_expose(d, "color_x") && has_expose(d, "hue") && has_expose(d, "brightness"), "Philips color + brightness exposes");
+        check(encode(d, "color_temp", num(r.lo)).ok && encode(d, "color_x", num(0.3)).ok,
+              "Philips color_temp / color_x writes");
+        check(has_binding(d, 0x0300) && has_binding(d, 0x0008), "Philips binds level + color");
+    }
+}
+
 }  // namespace
 
 int main() {
@@ -2580,6 +2766,16 @@ int main() {
     w3_h5_pp01();
     w3_h5_zg204zl();
     w3_h5_hs9ms_e();
+    // Wave 4 (Lumi/Philips/OSRAM)
+    w4_l1_switches();
+    w4_l1b_wp_p09d();
+    w4_l1d_wp_p01d();
+    w4_l1e_sswqdyh02();
+    w4_e2_hcxdd13lm();
+    w4_qbkg11lm_guard();
+    w4_d1_wsdcgq12lm();
+    w4_o1_osram();
+    w4_philips_new();
     if (g_failures) { std::printf("FAILED: %d check(s)\n", g_failures); return 1; }
     std::printf("all parity-26133 checks passed\n");
     return 0;

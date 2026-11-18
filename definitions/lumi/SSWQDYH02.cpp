@@ -24,8 +24,13 @@ namespace {
 
 // What z2m adds on top of the factory bundle (factories.hpp NoExtras).
 struct X : ::zhc::lumi::factory::NoExtras {
-    static constexpr std::array<const FzConverter*, 1> fz{{
+    static constexpr std::array<const FzConverter*, 2> fz{{
         &::zhc::lumi::kFzLumiHeartbeat,
+        &::zhc::lumi::kFzLumiSettings,   // power_on_behavior read-back
+    }};
+    // lumiLight({powerOutageMemory: "enum"}): lookup {on 0, previous 1, off 2}.
+    static constexpr std::array<const TzConverter*, 1> tz{{
+        &::zhc::lumi::kTzLumiPowerOnBehaviorLight,
     }};
 };
 using FX = ::zhc::lumi::factory::LumiLight<::zhc::lumi::factory::LumiLightOpts{
@@ -39,6 +44,10 @@ constexpr Expose kExposes[] = {
     {"state",      ExposeType::Binary,  Access::StateSet, nullptr, "Light state",         nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, "Brightness",          nullptr, 0},
     {"color_temp", ExposeType::Numeric, Access::StateSet, "mired", "Colour temperature",  nullptr, 0},
+    {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr,
+     "Controls the behavior when the device is powered on after power loss",
+     ::zhc::lumi::kLumiPowerOnBehaviorLightValues, std::size(::zhc::lumi::kLumiPowerOnBehaviorLightValues),
+     ExposeCategory::Config},
 };
 
 constexpr WhiteLabel kWhiteLabels[] = {

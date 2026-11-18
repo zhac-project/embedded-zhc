@@ -161,4 +161,40 @@ const ::zhc::BindingSpec kBindingsOsramColorCTLight[] = {
 };
 static_assert(kBindingsOsramColorCTLightCount == std::size(kBindingsOsramColorCTLight));
 
+// ── ledvancePowerOnBehavior() (lib/ledvance.ts) ─────────────────────
+// Only "off" / "on", case-insensitive (upstream lowercases, rejects the rest).
+// Frame: fc 0x05 (cluster-specific + manufacturer-specific, default response
+// on), mfg 0x110C LE, tsn placeholder, cmd 0x0C, mode.
+namespace {
+bool tz_osram_power_on_behavior(std::string_view, const ::zhc::Value& input, const ::zhc::TzConverter&,
+                                const ::zhc::PreparedDefinition&, ::zhc::RuntimeContext&,
+                                std::span<std::uint8_t> out, std::size_t& out_size) {
+    out_size = 0;
+    if (input.type != ::zhc::ValueType::StringRef || !input.str || out.size() < 6) return false;
+    auto is = [&](const char* w) {
+        const char* p = input.str;
+        for (; *p && *w; ++p, ++w)
+            if ((*p >= 'A' && *p <= 'Z' ? *p + 32 : *p) != *w) return false;
+        return *p == *w;
+    };
+    std::uint8_t mode;
+    if (is("off"))     mode = 0x01;
+    else if (is("on")) mode = 0x03;
+    else return false;
+    const std::uint8_t frame[] = {0x05, 0x0C, 0x11, 0x00, 0x0C, mode};
+    for (std::size_t i = 0; i < sizeof(frame); ++i) out[i] = frame[i];
+    out_size = sizeof(frame);
+    return true;
+}
+}  // namespace
+
+extern const ::zhc::TzConverter kTzOsramPowerOnBehavior{
+    .key         = "power_on_behavior",
+    .cluster     = "manuSpecificOsram",
+    .cluster_id  = 0xFC0F,
+    .command_id  = 0x0C,
+    .fn          = &tz_osram_power_on_behavior,
+    .user_config = nullptr,
+};
+
 }  // namespace zhc::devices::osram

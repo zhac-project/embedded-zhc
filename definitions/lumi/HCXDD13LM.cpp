@@ -20,14 +20,15 @@
 namespace zhc::devices::lumi {
 namespace {
 
+// lumiPowerOnBehavior() (default lookup, with inverted): 0x0517 write + read-back.
+struct X : ::zhc::lumi::factory::NoExtras {
+    static constexpr std::array<const FzConverter*, 1> fz{{ &::zhc::lumi::kFzLumiSettings }};
+    static constexpr std::array<const TzConverter*, 1> tz{{ &::zhc::lumi::kTzLumiPowerOnBehavior }};
+};
 using FX = ::zhc::lumi::factory::LumiLight<
-    ::zhc::lumi::factory::LumiLightOpts{.level = true, .color_temp = true}>;
+    ::zhc::lumi::factory::LumiLightOpts{.level = true, .color_temp = true}, X>;
 
 constexpr const char* kModels_HCXDD13LM[] = { "lumi.light.acn033" };
-
-constexpr const char* kPowerOnBehaviourValues[] = {
-    "on", "previous", "off",
-};
 
 constexpr Expose kExposes_HCXDD13LM[] = {
     {"state",      ExposeType::Binary,  Access::StateSet, nullptr,  nullptr, nullptr, 0},
@@ -36,8 +37,7 @@ constexpr Expose kExposes_HCXDD13LM[] = {
      ExposeCategory::State, 153, 370, 1},
     {"power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr,
      "Controls the behavior when the device is powered on after power loss",
-     kPowerOnBehaviourValues,
-     sizeof(kPowerOnBehaviourValues)/sizeof(kPowerOnBehaviourValues[0]),
+     ::zhc::lumi::kLumiPowerOnBehaviorValues, std::size(::zhc::lumi::kLumiPowerOnBehaviorValues),
      ExposeCategory::Config},
     {"device_temperature", ExposeType::Numeric, Access::State, "°C", nullptr, nullptr, 0},
     {"power_outage_count", ExposeType::Numeric, Access::State, nullptr, nullptr, nullptr, 0},

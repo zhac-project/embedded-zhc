@@ -65,6 +65,17 @@ across the ZHAC platform.
   level and settings, Heiman HS9MS-E. `cluster_names.hpp` now names 0x0401
   `msIlluminanceLevelSensing` and Schneider 0xFF17 / 0xFF23, so their reports no
   longer leak into on/off, occupancy or illuminance decoders. Same ledger.
+- **z2m v26.133.0 parity, wave 4 (Lumi / Philips / OSRAM).** Aqara
+  `power_on_behavior` (manuSpecificLumi 0x0517: on / previous / off / inverted,
+  lights without inverted) is writable and read back on ZNQBKG38LM–45LM,
+  WS-K02E/03E/04E/07E/08D, WP-P01D, WP-P09D (replaces its dead
+  `power_outage_memory`), SSWQDYH02 and HCXDD13LM (exposed but dead before).
+  WSDCGQ12LM drops the batteryPercentageRemaining report row and decodes battery
+  from its voltage reports (2850–3000 mV, shared with MCCGQ13LM). OSRAM AB32840 /
+  AC03641 get `power_on_behavior` off / on (manuSpecificOsram setPowerOnState).
+  New Philips Hue definitions: Festavia globe 929003858301 (LCX026), Nanoleaf
+  wall module 929004440102 (NGC001), Festavia curtain 929004456604 (LCX049).
+  Same ledger.
 
 ### Changed
 

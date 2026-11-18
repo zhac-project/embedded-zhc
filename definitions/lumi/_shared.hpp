@@ -191,6 +191,13 @@ extern const TzConverter kTzLumiPowerOutageMemory;
 extern const TzConverter kTzLumiLedDisabledNight;
 extern const TzConverter kTzLumiButtonLock;
 extern const TzConverter kTzLumiFlipIndicatorLight;
+// z2m lumiPowerOnBehavior() (lumiOnOff / lumiLight powerOutageMemory: "enum"):
+// 0x0517 u8 {on 0, previous 1, off 2, inverted 3}; the Light variant takes the
+// lumiLight lookup without inverted. Read back through kFzLumiSettings.
+extern const TzConverter kTzLumiPowerOnBehavior;
+extern const TzConverter kTzLumiPowerOnBehaviorLight;
+inline constexpr const char* kLumiPowerOnBehaviorValues[] = {"on", "previous", "off", "inverted"};
+inline constexpr const char* kLumiPowerOnBehaviorLightValues[] = {"on", "previous", "off"};
 
 // ── Aqara's own requests ───────────────────────────────────────────
 //
@@ -256,6 +263,9 @@ constexpr FzConverter lumi_heartbeat_converter(const LumiHeartbeatOpts* opts) {
 }
 extern const FzConverter kFzLumiHeartbeat;         // mains: voltage but no battery %
 extern const FzConverter kFzLumiHeartbeatBattery;  // + battery % on 2850-3000 mV
+// genPowerCfg batteryVoltage (x100 mV) -> voltage + battery %, linear on
+// 2850-3000 mV (z2m m.battery voltageToPercentage {min: 2850, max: 3000}).
+extern const FzConverter kFzLumiBatteryVoltage;
 extern const FzConverter kFzLumiBattery;           // lumiBattery() alone: tag 1, 2850-3000 mV
 
 // ── Wall-switch event mode and operation_mode ──────────────────────
@@ -307,7 +317,8 @@ extern const FzConverter kFzLumiOperationMode;
 // The same, plus z2m lumi_specific's other direct settings, again for the ones
 // the definition writes: flip_indicator_light (0x00F0, 1 = ON),
 // power_outage_memory (0x0201) and led_disabled_night (0x0203) (1 = true),
-// mode_switch (0x0004) and a plug's button_lock (0x0200, 1 = OFF).
+// mode_switch (0x0004), a plug's button_lock (0x0200, 1 = OFF) and
+// power_on_behavior (0x0517, by lookup).
 extern const FzConverter kFzLumiSettings;
 
 inline constexpr const char* kLumiOperationModeValues[] = {"control_relay", "decoupled"};

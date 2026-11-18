@@ -35,19 +35,6 @@ bool fz_p1_action(const DecodedMessage& msg, const FzConverter&, const PreparedD
     return out.put("action", a);
 }
 
-bool fz_p1_battery(const DecodedMessage& msg, const FzConverter&, const PreparedDefinition&,
-                   RuntimeContext&, FixedPayload<ZHC_FIXED_PAYLOAD_CAP>& out) {
-    const Value* v = msg.payload.find("32");   // batteryVoltage, 100 mV
-    if (!v || v->type != ValueType::Uint || v->u >= 255) return false;
-    const std::uint32_t mv = static_cast<std::uint32_t>(v->u) * 100;
-    const std::uint32_t clamped = mv < 2850 ? 2850 : mv > 3000 ? 3000 : mv;
-    Value volt{}; volt.type = ValueType::Uint; volt.u = mv;
-    Value pct{};  pct.type  = ValueType::Uint; pct.u  = ((clamped - 2850) * 100 + 75) / 150;   // z2m rounds
-    out.put("voltage", volt);
-    out.put("battery", pct);
-    return true;
-}
-
 constexpr FzConverter zcl_fz(const char* cluster, std::uint32_t types, FromZigbeeFn fn) {
     return FzConverter{
         .family            = FrameFamily::Zcl,
@@ -64,8 +51,6 @@ constexpr FzConverter zcl_fz(const char* cluster, std::uint32_t types, FromZigbe
     };
 }
 constexpr FzConverter kFzP1Action = zcl_fz("genBasic", type_bit(MessageType::AttributeReport), fz_p1_action);
-constexpr FzConverter kFzP1Battery = zcl_fz(
-    "genPowerCfg", type_bit(MessageType::AttributeReport) | type_bit(MessageType::ReadResponse), fz_p1_battery);
 
 constexpr ::zhc::generic::ZclWriteLookup kDistances[] = { {"10mm", 1}, {"20mm", 2}, {"30mm", 3} };
 constexpr ::zhc::generic::ZclAttrRow kDistanceRows[] = { { 0x010C, "detection_distance", 1, kDistances, 3 } };
@@ -80,7 +65,7 @@ const FzConverter* const kFz[] = {
     &::zhc::lumi::kFzLumiContact,
     &::zhc::lumi::kFzLumiHeartbeatBattery,
     &kFzP1Action,
-    &kFzP1Battery,
+    &::zhc::lumi::kFzLumiBatteryVoltage,   // 2850-3000 mV
     &kFzDetectionDistance,
 };
 const TzConverter* const kTz[] = { &kTzDetectionDistance };
