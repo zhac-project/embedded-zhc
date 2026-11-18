@@ -51,7 +51,7 @@ const TzConverter* const kTz_teelicht[] = {
     &kTzSpeed,
     &kTzEffect,
 };
-constexpr const char* kModels_teelicht[] = { "teelicht-c6" };
+constexpr const char* kModels_teelicht[] = { "teelicht-c6", "teelicht-nrf" };   // nrf: R10 R109
 
 constexpr const char* kFlickerEffectOpts[] = { "candle", "steady" };
 constexpr const char* kPowerStateOpts[] = { "battery", "charging", "charged", "no_cell" };

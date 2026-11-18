@@ -183,7 +183,8 @@ constexpr const char* kPresetValues[]  = { "hold", "program" };
 constexpr const char* kRunningValues[] = { "idle", "heat" };
 constexpr const char* kSensorValues[]  = { "IN", "AL", "OU" };
 
-// z2m ranges: setpoint 5-90, deadzone 0-5 step 1, max limit 0-80, min limit 1-5,
+// z2m ranges: setpoint 5-90, deadzone 0-5 step 1, max limit 0-80, min limit 1-10
+// (max 5 until z2m v26.126.0..v26.133.0 widened it, #33715),
 // calibration -30..30.
 constexpr std::array<Expose, 12> exposes(std::int32_t setpoint_step) {
     using ::zhc::Access;
@@ -197,7 +198,7 @@ constexpr std::array<Expose, 12> exposes(std::int32_t setpoint_step) {
         { "max_temperature_limit",         ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0,
           ExposeCategory::State, 0, 80, 0 },
         { "min_temperature_limit",         ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0,
-          ExposeCategory::State, 1, 5, 0 },
+          ExposeCategory::State, 1, 10, 0 },
         { "deadzone_temperature",          ExposeType::Numeric, Access::StateSet, "°C", nullptr, nullptr, 0,
           ExposeCategory::State, 0, 5, 1 },
         { "child_lock",                    ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr, 0 },

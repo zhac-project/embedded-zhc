@@ -22,6 +22,21 @@ across the ZHAC platform.
   Lumi extras (P1 contact action / battery / detection distance, knob
   rotation, H2 EU wireless buttons, FP310 presence). Ledger with every
   ruling: `zhac-tools/parity/catchup_26115_26125/PROGRESS.md`.
+- **z2m v26.133.0 parity, wave 1 (wrong today).** zigbee-herdsman-converters
+  v26.125.0 → v26.133.0, branch `feat/z2m-parity-v26.133`. Devices that landed on
+  the wrong definition now get their own: Aqara SP-P05D / SP-P06D (were ZNCZ02LM),
+  Gewiss GWA1221 dimmer (was a CTM "DIMMER"), Moes SFD02-Z_2 (`_TZE284_z98viqa6`),
+  Third Reality 3RRE0194Z (now an on/off repeater). Three fake Tuya hand
+  definitions are gone: `_TZE200_bcusnqt8` is the SPM01 energy meter,
+  `_TZE200_aqnazj70` a 4-gang switch, `_TZE200_cirvgep4` a T&H sensor. The
+  model matcher has a case-insensitive exact pass after the exact-case ones
+  (SNZB-03 reporting `ms01`). Dead controls fixed: Danfoss Ally
+  `heating_system_mode` (uint8 write), TRV601 / Sber twin `system_mode` and
+  `preset` (DP1 enum). SNZB-02D / 02DR2 decode temperature and humidity; Terncy
+  PP01 battery is no longer halved; BHT-002 `min_temperature_limit` goes to 10.
+  New fingerprints and white labels (HYSYIOT ×7, Hue Flux 5 m, M1P-E, BSEED,
+  Namron D726-ZG, Somfy Ysia 5, teelicht-nrf, 3RCB1095Z/1097Z, Sygonix W08-Z10T,
+  TS0207 water-leak models). Ledger: `zhac-tools/parity/catchup_26125_26133/PROGRESS.md`.
 
 ### Changed
 

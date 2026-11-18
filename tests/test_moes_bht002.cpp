@@ -433,7 +433,7 @@ static void test_exposes() {
         const Expose* mx = find_expose(*def, "max_temperature_limit");
         assert(mx && mx->value_min == 0 && mx->value_max == 80);
         const Expose* mn = find_expose(*def, "min_temperature_limit");
-        assert(mn && mn->value_min == 1 && mn->value_max == 5);
+        assert(mn && mn->value_min == 1 && mn->value_max == 10);   // 5 -> 10 in R10 (R165)
         const Expose* dz = find_expose(*def, "deadzone_temperature");
         assert(dz && dz->value_min == 0 && dz->value_max == 5 && dz->value_step == 1);
         assert(find_expose(*def, "program") && find_expose(*def, "local_temperature"));

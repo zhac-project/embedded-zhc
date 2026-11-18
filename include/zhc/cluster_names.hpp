@@ -52,6 +52,7 @@ inline const char* cluster_id_to_name(std::uint16_t cluster_id) {
 
         // Lighting
         case 0x0300: return "lightingColorCtrl";
+        case 0x0301: return "lightingBallastCfg";
 
         // Measurement & sensing
         case 0x0400: return "msIlluminanceMeasurement";

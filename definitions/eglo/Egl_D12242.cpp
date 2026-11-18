@@ -13,6 +13,7 @@
 namespace zhc::devices::eglo {
 namespace {
 constexpr const char* kModels_D12242[] = { "ESMLFzm_w6_TW" };
+constexpr WhiteLabel kWL_D12242[] = { {"EGLO", "12245"} };   // R10 R099d
 }  // namespace
 
 extern const PreparedDefinition kDef_D12242{
@@ -21,7 +22,7 @@ extern const PreparedDefinition kDef_D12242{
     .manufacturer_names=nullptr, .manufacturer_names_count=0,
     .model="12242", .vendor="Eglo",
     .meta=nullptr, .exposes=kExposesEgloCTLight, .exposes_count=kExposesEgloCTLightCount,
-    .white_labels=nullptr, .white_labels_count=0,
+    .white_labels=kWL_D12242, .white_labels_count=1,
     .from_zigbee=kFzEgloCTLight, .from_zigbee_count=kFzEgloCTLightCount,
     .to_zigbee=kTzEgloCTLight, .to_zigbee_count=kTzEgloCTLightCount,
     .configure=nullptr, .on_event=nullptr,

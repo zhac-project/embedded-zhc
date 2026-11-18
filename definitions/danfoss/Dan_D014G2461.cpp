@@ -20,8 +20,10 @@
 // was a dead expose. `kFzDanfossThermostat` now also decodes 0x0008
 // (raw 0-100, `dontMapPIHeatingDemand: true`). No def-table change
 // needed here — the converter was already wired below.
-// z2m v26.125.0: heating_system_mode (0x4059 enum8, mfg 0x1246), decoded and
+// z2m v26.125.0: heating_system_mode (0x4059, mfg 0x1246), decoded and
 // written locally rather than through the shared raw-number table.
+// z2m v26.126.0..v26.133.0 retyped 0x4059 as UINT8 (0x20): the TRV rejects an
+// enum8 write (R10 R037). Reads decode either type.
 // z2m-source: danfoss.ts #014G2461.
 #include "definitions/_generic/_shared.hpp"
 #include "definitions/danfoss/_shared.hpp"
@@ -33,7 +35,7 @@ constexpr ::zhc::generic::ZclWriteLookup kHeatingSystemModes[] = {
 constexpr ::zhc::generic::ZclAttrRow kHeatingSystemRows[] = { { 0x4059, "heating_system_mode", 1, kHeatingSystemModes, 3 } };
 constexpr ::zhc::generic::ZclAttrMap kHeatingSystemMap{ kHeatingSystemRows, 1, 0x1246 };
 constexpr FzConverter kFzHeatingSystemMode = ::zhc::generic::zcl_attr_fz("hvacThermostat", &kHeatingSystemMap);
-constexpr ::zhc::generic::ZclWriteSpec kHeatingSystemSpec{ "heating_system_mode", 0x4059, 0x30, 0x1246, kHeatingSystemModes, 3 };
+constexpr ::zhc::generic::ZclWriteSpec kHeatingSystemSpec{ "heating_system_mode", 0x4059, 0x20, 0x1246, kHeatingSystemModes, 3 };
 constexpr TzConverter kTzHeatingSystemMode = ::zhc::generic::zcl_write_tz("hvacThermostat", 0x0201, &kHeatingSystemSpec);
 
 const FzConverter* const kFz_D014G2461[] = {

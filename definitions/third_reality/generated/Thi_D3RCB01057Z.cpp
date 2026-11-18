@@ -15,7 +15,8 @@ const TzConverter* const kTz_D3RCB01057Z[] = {
     &::zhc::generic::kTzOnOff,
     &::zhc::generic::kTzBrightness,
 };
-constexpr const char* kModels_D3RCB01057Z[] = { "3RCB01057Z", "3RCB02070Z" };
+// 3RCB1097Z new upstream (R10 R044); 3RCB1095Z was only a white label here.
+constexpr const char* kModels_D3RCB01057Z[] = { "3RCB01057Z", "3RCB02070Z", "3RCB1095Z", "3RCB1097Z" };
 
 }  // namespace
 
@@ -36,6 +37,7 @@ constexpr BindingSpec kAutoBindings[] = {
 constexpr WhiteLabel kWhiteLabels_D3RCB01057Z[] = {
     {"Third Reality","3RCB02070Z"},
     {"Third Reality","3RCB1095Z"},
+    {"Third Reality","3RCB1097Z"},
 };
 extern const PreparedDefinition kDef_D3RCB01057Z{
     .zigbee_models=kModels_D3RCB01057Z, .zigbee_models_count=sizeof(kModels_D3RCB01057Z)/sizeof(kModels_D3RCB01057Z[0]),

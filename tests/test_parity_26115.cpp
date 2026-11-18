@@ -62,7 +62,8 @@ namespace zhc::devices::tuya        { extern const PreparedDefinition kDef_TS060
                                       extern const PreparedDefinition kDef_ZHT_002;
                                       extern const PreparedDefinition kDef_Tervix_6kijc7nd; }
 namespace zhc::devices::moes        { extern const PreparedDefinition kDef_ZS_SR_EUC_cover;
-                                      extern const PreparedDefinition kDef_SFD02_Z; }
+                                      extern const PreparedDefinition kDef_SFD02_Z;
+                                      extern const PreparedDefinition kDef_SFD02_Z_2; }
 namespace zhc::devices::zemismart   { extern const PreparedDefinition kDef_ZN_USC1U_HT;
                                       extern const PreparedDefinition kDef_ZM25RX_08_30;
                                       extern const PreparedDefinition kDef_ZMS_206US_4; }
@@ -473,7 +474,9 @@ void test_misc_fixes() {
       check(e.ok, "ZM25RX state writable"); }
     // Detects.
     check(has_manu(devices::zemismart::kDef_ZMS_206US_4, "_TZE28C1000000_pmbxyf97"), "ZMS-206US-4 + pmbxyf97 (#13241)");
-    check(has_manu(devices::moes::kDef_SFD02_Z, "_TZE284_z98viqa6"), "SFD02-Z + z98viqa6 (#13280)");
+    // By z2m v26.133.0 z98viqa6 has its own SFD02-Z_2 datapoint layout (R10).
+    check(has_manu(devices::moes::kDef_SFD02_Z_2, "_TZE284_z98viqa6") &&
+          !has_manu(devices::moes::kDef_SFD02_Z, "_TZE284_z98viqa6"), "SFD02-Z_2 + z98viqa6 (#13280)");
     check(has_model(devices::philips::kDef_D929004610402, "929004610603"), "929004610402 + 929004610603 (#13313)");
 }
 

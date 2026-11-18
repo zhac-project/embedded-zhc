@@ -22,7 +22,7 @@ const FzConverter* const kFz_M1_PE[] = {
     &::zhc::generic::kFzHumidity,
 };
 
-constexpr const char* kModels_M1_PE[] = { "M1-PE" };
+constexpr const char* kModels_M1_PE[] = { "M1-PE", "M1P-E" };   // M1P-E: upstream zigbeeModel, missing here (R10, PRE-EXISTING)
 
 }  // namespace
 

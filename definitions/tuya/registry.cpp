@@ -66,10 +66,13 @@ extern const PreparedDefinition kDef_BAC_001;
 extern const PreparedDefinition kDef_EZ_104UPT;
 extern const PreparedDefinition kDef_EZ_500FL;
 extern const PreparedDefinition kDefGen_ZG_204ZL;
+extern const PreparedDefinition kDefGen_ZG_204ZL_model;
 extern const PreparedDefinition kDef_ZG_204ZM;
 extern const PreparedDefinition kDefGen_ZG_204ZQ;
 extern const PreparedDefinition kDef_ZG_204ZV;
+extern const PreparedDefinition kDef_ZG_204ZV_model;
 extern const PreparedDefinition kDefGen_ZG_204ZX;
+extern const PreparedDefinition kDefGen_ZG_204ZX_model;
 extern const PreparedDefinition kDefGen_ZG_205ZL;
 extern const PreparedDefinition kDefGen_ZG_222Z;
 extern const PreparedDefinition kDef_ZG_223Z;
@@ -725,6 +728,7 @@ extern const PreparedDefinition kDefGen__TZE200_wktrysab;
 extern const PreparedDefinition kDefGen__TZE200_wmcdj3aq;
 extern const PreparedDefinition kDefGen__TZE200_wnp4d4va;
 extern const PreparedDefinition kDefGen__TZE200_wqashyqo;
+extern const PreparedDefinition kDefGen__TZE200_wqashyqo_model;
 extern const PreparedDefinition kDefGen__TZE200_wrmhp6b3;
 extern const PreparedDefinition kDefGen__TZE200_wsbfwodu;
 extern const PreparedDefinition kDefGen__TZE200_wunufsil;
@@ -1295,7 +1299,6 @@ extern const PreparedDefinition kDefTZE200_fall;
 extern const PreparedDefinition kDefTZE200_fan_dim;
 extern const PreparedDefinition kDefTZE200_fan_speed;
 extern const PreparedDefinition kDefTZE200_fan_thermo;
-extern const PreparedDefinition kDefTZE200_flood;
 extern const PreparedDefinition kDefTZE200_floor_ctrl;
 extern const PreparedDefinition kDefTZE200_floor_thermo;
 extern const PreparedDefinition kDefTZE200_flow;
@@ -1378,10 +1381,9 @@ extern const PreparedDefinition kDefTZE200_scada;
 extern const PreparedDefinition kDefTZE200_scale;
 extern const PreparedDefinition kDefTZE200_scenario;
 extern const PreparedDefinition kDefTZE200_scene_2g;
-extern const PreparedDefinition kDefTZE200_scene_4btn;
 extern const PreparedDefinition kDefTZE200_shutter_ctrl;
 extern const PreparedDefinition kDefTZE200_siren;
-extern const PreparedDefinition kDefTZE200_sleep;
+extern const PreparedDefinition kDef_SPM01;
 extern const PreparedDefinition kDefTZE200_sleep_v2;
 extern const PreparedDefinition kDefTZE200_smart_breaker;
 extern const PreparedDefinition kDefTZE200_smoke;
@@ -1504,6 +1506,7 @@ extern const PreparedDefinition kDef_ZAS_01P;
 extern const PreparedDefinition kDef_TS0601_wsek35um;
 extern const PreparedDefinition kDef_ZY_N1;
 extern const PreparedDefinition kDef_ZG_308Z;
+extern const PreparedDefinition kDef_ZG_308Z_tuya;
 extern const PreparedDefinition kDef_CK_TLSR8258_L5PI_01_7009;
 extern const PreparedDefinition kDef_TS0601_switch_4_gang_1_58of2pfn;
 extern const PreparedDefinition kDef_TS0601_switch_6_gang_znkkcauq;
@@ -1568,10 +1571,13 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_EZ_104UPT,
     &kDef_EZ_500FL,
     &kDefGen_ZG_204ZL,
+    &kDefGen_ZG_204ZL_model,
     &kDef_ZG_204ZM,
     &kDefGen_ZG_204ZQ,
     &kDef_ZG_204ZV,
+    &kDef_ZG_204ZV_model,
     &kDefGen_ZG_204ZX,
+    &kDefGen_ZG_204ZX_model,
     &kDefGen_ZG_205ZL,
     &kDefGen_ZG_222Z,
     &kDef_ZG_223Z,
@@ -2225,6 +2231,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefGen__TZE200_wmcdj3aq,
     &kDefGen__TZE200_wnp4d4va,
     &kDefGen__TZE200_wqashyqo,
+    &kDefGen__TZE200_wqashyqo_model,
     &kDefGen__TZE200_wrmhp6b3,
     &kDefGen__TZE200_wsbfwodu,
     &kDefGen__TZE200_wunufsil,
@@ -2794,7 +2801,6 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_fan_dim,
     &kDefTZE200_fan_speed,
     &kDefTZE200_fan_thermo,
-    &kDefTZE200_flood,
     &kDefTZE200_floor_ctrl,
     &kDefTZE200_floor_thermo,
     &kDefTZE200_flow,
@@ -2877,10 +2883,9 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDefTZE200_scale,
     &kDefTZE200_scenario,
     &kDefTZE200_scene_2g,
-    &kDefTZE200_scene_4btn,
     &kDefTZE200_shutter_ctrl,
     &kDefTZE200_siren,
-    &kDefTZE200_sleep,
+    &kDef_SPM01,
     &kDefTZE200_sleep_v2,
     &kDefTZE200_smart_breaker,
     &kDefTZE200_smoke,
@@ -3008,6 +3013,7 @@ extern const PreparedDefinition* const kTuyaRegistry[] = {
     &kDef_TS0601_wsek35um,
     &kDef_ZY_N1,
     &kDef_ZG_308Z,
+    &kDef_ZG_308Z_tuya,
     &kDef_CK_TLSR8258_L5PI_01_7009,
     &kDef_TS0601_switch_4_gang_1_58of2pfn,
     &kDef_TS0601_switch_6_gang_znkkcauq,

@@ -9,7 +9,9 @@
 namespace zhc::devices::philips {
 namespace {
 
-constexpr const char* kModels_D929004611002[] = { "929004611002", "929004611102" };
+constexpr const char* kModels_D929004611002[] = { "929004610902", "929004611002", "929004611102" };
+// 929004610902 (Hue Flux 5 m) joined in z2m v26.132.0 (R10 P2).
+constexpr WhiteLabel kWL_D929004611002[] = { {"Philips", "929004610902"}, {"Philips", "929004611102"} };
 
 }  // namespace
 
@@ -24,8 +26,8 @@ extern const PreparedDefinition kDef_D929004611002{
     .meta                    = nullptr,
     .exposes                 = kExposesPhilipsColorCTLight,
     .exposes_count           = kExposesPhilipsColorCTLightCount,
-    .white_labels            = nullptr,
-    .white_labels_count      = 0,
+    .white_labels            = kWL_D929004611002,
+    .white_labels_count      = 2,
     .from_zigbee             = kFzPhilipsColorCTLight,
     .from_zigbee_count       = kFzPhilipsColorCTLightCount,
     .to_zigbee               = kTzPhilipsColorCTLight,

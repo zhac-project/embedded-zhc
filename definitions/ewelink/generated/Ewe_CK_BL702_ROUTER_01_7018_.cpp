@@ -11,15 +11,17 @@
 
 namespace zhc::devices::ewelink {
 namespace {
-constexpr const char* kModels_CK_BL702_ROUTER_01_7018_[] = { "CK-BL702-ROUTER-01(7018)", "TS0207" };
+constexpr const char* kModels_CK_BL702_ROUTER_01_7018_[] = { "CK-BL702-ROUTER-01(7018)", "TS0207", "HS807Z" };
 constexpr const char* kManus_CK_BL702_ROUTER_01_7018_[] = {
     "_TZ3000_hgm6k8ku", "_TZ3000_piuensvr",
+    "HS807Z",   // HYSYIOT HS807Z: upstream white-labels manufacturerName "HS807Z" (R10 R013)
 };
 }  // namespace
 
 
 constexpr WhiteLabel kWhiteLabels_CK_BL702_ROUTER_01_7018[] = {
     {"HOBEIAN","ZG-807Z"},
+    {"HYSYIOT","HS807Z"},
 };
 extern const PreparedDefinition kDef_CK_BL702_ROUTER_01_7018_{
     .zigbee_models=kModels_CK_BL702_ROUTER_01_7018_, .zigbee_models_count=sizeof(kModels_CK_BL702_ROUTER_01_7018_)/sizeof(kModels_CK_BL702_ROUTER_01_7018_[0]),

@@ -68,7 +68,9 @@ const TzConverter* const kTz_BSEED_TS0601_cover[] = {
 };
 
 constexpr const char* kModels_BSEED_TS0601_cover[] = { "TS0601" };
-constexpr const char* kManus_BSEED_TS0601_cover[] = { "_TZE200_yenbr4om", "_TZE204_bdblidq3", "_TZE200_bdblidq3" };
+// _TZE28C1000000_uqfph8ah: z2m v26.126.0..v26.133.0 (R10 R156). Listed explicitly so
+// the twin-prefix alias pass does not send it to TS0601_cover_5 (_TZE284_uqfph8ah).
+constexpr const char* kManus_BSEED_TS0601_cover[] = { "_TZE200_yenbr4om", "_TZE204_bdblidq3", "_TZE200_bdblidq3", "_TZE28C1000000_uqfph8ah" };
 }  // namespace
 
 

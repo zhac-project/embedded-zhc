@@ -16,7 +16,6 @@ extern const PreparedDefinition kDef_E6;
 extern const PreparedDefinition kDef_SZ_T04;
 
 extern const PreparedDefinition kDef_E12;
-extern const PreparedDefinition kDef_E13;
 extern const PreparedDefinition kDef_D5Z;
 extern const PreparedDefinition kDef_E9;
 extern const PreparedDefinition kDef_D4Z_M;
@@ -32,7 +31,6 @@ const PreparedDefinition* const kNousRegistry[] = {
     &kDef_E6,
     &kDef_SZ_T04,
     &kDef_E12,
-    &kDef_E13,
     &kDef_D5Z,
     &kDef_E9,
     &kDef_D4Z_M,

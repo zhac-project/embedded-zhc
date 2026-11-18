@@ -22,9 +22,20 @@ constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_cvcu2p6e_mode_dp114[] = {
     { 1, "eco" },
 };
 
+// TRV601 DP1 (z2m v26.126.0..v26.133.0 thermostatSystemModeAndPresetMap):
+// one Tuya enum feeds both keys. fromMap 0 auto/auto, 1 heat/manual,
+// 2 off/off, 3 heat/on; toMap system_mode auto 0 / heat 1 / off 2 (first
+// label match), preset auto 0 / manual 1 / off 2 / on 3. Upstream's hidden
+// running_mode (deviceMode) is not exposed there, so it is not published here.
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_cvcu2p6e_system_mode_dp1[] = {
+    { 0, "auto" }, { 1, "heat" }, { 2, "off" }, { 3, "heat" },
+};
+constexpr ::zhc::tuya::TuyaEnumEntry kEnum__TZE204_cvcu2p6e_preset_dp1[] = {
+    { 0, "auto" }, { 1, "manual" }, { 2, "off" }, { 3, "on" },
+};
 constexpr ::zhc::tuya::TuyaDpMapEntry kEntries__TZE204_cvcu2p6e[] = {
-    { 1, "system_mode", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, 0 },
-    { 1, "preset", ::zhc::TuyaDpType::Raw, 1, nullptr, 0, 0 },
+    { 1, "system_mode", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_cvcu2p6e_system_mode_dp1, 4 },
+    { 1, "preset", ::zhc::TuyaDpType::Enum, 1, kEnum__TZE204_cvcu2p6e_preset_dp1, 4 },
     { 2, "current_heating_setpoint", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 3, "local_temperature", ::zhc::TuyaDpType::Numeric, 10, nullptr, 0, 0 },
     { 8, "window_detection", ::zhc::TuyaDpType::Bool, 1, nullptr, 0, 0 },

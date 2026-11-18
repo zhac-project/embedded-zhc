@@ -13,6 +13,7 @@ extern const PreparedDefinition kDef_GWA1531;
 extern const PreparedDefinition kDef_GWA1501;
 extern const PreparedDefinition kDef_GWA1502;
 extern const PreparedDefinition kDef_GWA1241;
+extern const PreparedDefinition kDef_GWA1221;
 
 const PreparedDefinition* const kGewissRegistry[] = {
     &kDef_GWA1201_TWO_WAY_SWITCH,
@@ -22,6 +23,7 @@ const PreparedDefinition* const kGewissRegistry[] = {
     &kDef_GWA1501,
     &kDef_GWA1502,
     &kDef_GWA1241,
+    &kDef_GWA1221,
 };
 const std::size_t kGewissRegistryCount = sizeof(kGewissRegistry) / sizeof(kGewissRegistry[0]);
 

@@ -100,7 +100,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_switch_2gang.cpp
     definitions/tuya/TZE200_switch_4gang.cpp
     definitions/tuya/TZE204_plug.cpp
-    definitions/tuya/TZE200_scene_4btn.cpp
     definitions/tuya/TZE200_thermostat.cpp
     definitions/tuya/TZE200_trv_v2.cpp
     definitions/tuya/TZE200_radar_v2.cpp
@@ -121,7 +120,6 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TZE200_volume_alarm.cpp
     definitions/tuya/TZE200_nw1r9hp6.cpp
     definitions/tuya/TZE200_window.cpp
-    definitions/tuya/TZE200_flood.cpp
     definitions/tuya/TZE200_switch_2g_cd.cpp
     definitions/tuya/TZE200_dimmer.cpp
     definitions/tuya/TZE200_relay_power.cpp
@@ -161,7 +159,7 @@ add_library(zhc_definitions OBJECT
     definitions/tuya/TS0041.cpp
     definitions/tuya/TZE200_pet_feeder.cpp
     definitions/tuya/TZE200_fall.cpp
-    definitions/tuya/TZE200_sleep.cpp
+    definitions/tuya/SPM01.cpp
     definitions/tuya/TZE200_motion_lux.cpp
     definitions/tuya/TS0601_cover_with_switch.cpp
     definitions/tuya/TZE200_light_sensor.cpp
@@ -601,6 +599,7 @@ add_library(zhc_definitions OBJECT
     definitions/lumi/ZNCLDJ14LM.cpp
     definitions/lumi/ZNJLBL01LM.cpp
     definitions/lumi/SP_P06E.cpp
+    definitions/lumi/SP_P05D.cpp
     definitions/lumi/ZNCLBL01LM.cpp
     definitions/lumi/ZNMS11LM.cpp
     definitions/lumi/ZNMS12LM.cpp
@@ -3360,6 +3359,8 @@ add_executable(zhc_thermostat_units_tests tests/test_thermostat_units.cpp)
 target_link_libraries(zhc_thermostat_units_tests PRIVATE zhc_definitions)
 add_executable(zhc_parity_26125_tests tests/test_parity_26125.cpp)
 target_link_libraries(zhc_parity_26125_tests PRIVATE zhc_definitions)
+add_executable(zhc_parity_26133_tests tests/test_parity_26133.cpp)
+target_link_libraries(zhc_parity_26133_tests PRIVATE zhc_definitions)
 
 # BTicino (Legrand-family): F20T60A DIN power module was ported with the
 # wrong cluster (seMetering 0x0702 + phantom energy) when z2m's
@@ -3842,6 +3843,7 @@ add_test(NAME zhc_parity_26105_tests        COMMAND zhc_parity_26105_tests)
 add_test(NAME zhc_parity_26115_tests        COMMAND zhc_parity_26115_tests)
 add_test(NAME zhc_thermostat_units_tests    COMMAND zhc_thermostat_units_tests)
 add_test(NAME zhc_parity_26125_tests        COMMAND zhc_parity_26125_tests)
+add_test(NAME zhc_parity_26133_tests        COMMAND zhc_parity_26133_tests)
 
 # Literal `_count` guard. Three consecutive z2m parity windows shipped a
 # definition whose hardcoded count disagreed with its array — once reading past

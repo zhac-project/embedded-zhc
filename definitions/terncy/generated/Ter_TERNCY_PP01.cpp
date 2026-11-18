@@ -17,7 +17,7 @@ const FzConverter* const kFz_TERNCY_PP01[] = {
     &::zhc::terncy::kFzTerncyRawActionMotion,      // raw button + motion side
     &::zhc::terncy::kFzTerncyTempScale10,          // 0.1 °C scale
     &::zhc::generic::kFzIlluminance,               // 0x0400 raw lux
-    &::zhc::generic::kFzBattery,                   // 0x0001 voltage + battery%
+    &::zhc::generic::kFzBatteryNoDivide,           // 0x0001 voltage + battery% (dontDividePercentage, R10 R030)
 };
 
 constexpr const char* kModels_TERNCY_PP01[] = { "TERNCY-PP01" };
