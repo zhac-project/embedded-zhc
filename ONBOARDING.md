@@ -125,8 +125,9 @@ moves out of headers.
 
 ### As an ESP-IDF component (from firmware)
 
-Firmware repos pull `embedded-zhc` via CMake `FetchContent` at a
-pinned tag, overridable with `EMBEDDED_ZHC_PATH`:
+zhac-wired-core takes `embedded-zhc` from `$EMBEDDED_ZHC_PATH`, or else
+from the sibling checkout `../embedded-zhc`; its `release-manifest.json`
+pins the commit that CI and releases build:
 
 ```bash
 export ZHAC_PATH=${ZHAC_PATH:-$HOME/zhac}   # dir holding the cloned ZHAC repos
