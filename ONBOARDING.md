@@ -8,29 +8,28 @@ this top-to-bottom before making changes.
 
 ## 1. Platform context (ZHAC in one page)
 
-**ZHAC** = dual-chip ESP32 Zigbee Home Automation Controller.
+**ZHAC** = a Zigbee hub on one ESP32 board: `zhac-wired-core` on an
+ESP32-S31, or on an ESP32-P4 with an ESP32-C6 as the radio. That one chip
+runs the Zigbee stack, this library, rules and Lua, the REST / WebSocket /
+MQTT gateway and a Preact web UI (`www-spa`).
 
-- **ESP32-P4** runs Zigbee coordination (firmware: `zhac-main-core`).
-- **ESP32-S3** runs WiFi / REST / WS / MQTT (firmware: `zhac-net-core`).
-- They talk over SPI via a custom binary framing called **HAP**
-  (not HomeKit — our own protocol).
-- A Preact SPA (`www-spa`) is bundled into S3 SPIFFS and speaks WS.
-
-`embedded-zhc` is the **device knowledge base**: it tells the P4 how
+`embedded-zhc` is the **device knowledge base**: it tells the firmware how
 to recognise a newly-joined Zigbee device, what attributes it
 exposes, and how to encode/decode its ZCL traffic.
 
-The 7-repo split (as of 2026-04-23, tag `v2026042301`):
+The repos:
 
 | Repo | Role |
 |------|------|
-| `zhac-platform` | Meta (4 submodules + umbrella LICENSE/CLA) |
 | **`embedded-zhc`** *(this)* | Apache-2.0 ZCL device library |
 | `zhac-components` | Shared ESP-IDF components (incl. `zhc_adapter`) |
-| `zhac-main-core` | P4 firmware (AGPL) |
-| `zhac-net-core` | S3 firmware (AGPL) |
+| `zhac-wired-core` | The hub firmware (AGPL) |
 | `www-spa` | Preact Web UI (AGPL) |
-| `zhac-docs` | Public docs |
+| `zhac-docs` | Public docs, issues and Discussions |
+
+The first, two-chip build (ESP32-P4 `zhac-main-core` + ESP32-S3
+`zhac-net-core`, meta-repo `zhac-platform`) and the single-chip
+`zhac-mono-core` are archived.
 
 ---
 
@@ -131,13 +130,13 @@ pinned tag, overridable with `EMBEDDED_ZHC_PATH`:
 
 ```bash
 export ZHAC_PATH=${ZHAC_PATH:-$HOME/zhac}   # dir holding the cloned ZHAC repos
-cd "$ZHAC_PATH/zhac-main-core"
+cd "$ZHAC_PATH/zhac-wired-core"
 EMBEDDED_ZHC_PATH=$ZHAC_PATH/embedded-zhc idf.py build
 ```
 
 `embedded-zhc` is **not** an ESP Component Manager component — it
 ships its own CMake tree and is pulled in at the root-CMake level by
-both firmware repos.
+zhac-wired-core.
 
 ---
 

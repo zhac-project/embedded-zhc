@@ -8,6 +8,10 @@ across the ZHAC platform.
 
 ## [Unreleased]
 
+### Changed
+
+- **README and ONBOARDING point at the live repos** (docs only): the ZHAC link goes to zhac-docs, the platform overview describes the one-board hub (zhac-wired-core) and lists the archived two-chip and single-chip repos as such.
+
 ### Added
 
 - **z2m v26.125.0 parity (zigbee2mqtt 2.14.3).** The user-visible device

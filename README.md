@@ -6,7 +6,7 @@ Zigbee device-definition layer used by [ZHAC]. Hubs built on it recognise
 [zigbee-herdsman-converters] into C++ records with no heap allocation
 ([searchable list](https://zhac.org/devices/)).
 
-[ZHAC]: https://github.com/zhac-project/zhac-platform
+[ZHAC]: https://github.com/zhac-project/zhac-docs
 [zigbee-herdsman-converters]: https://github.com/Koenkk/zigbee-herdsman-converters
 
 ## What this library gives you
@@ -85,5 +85,4 @@ See `CONTRIBUTING.md`. All contributions require signing `CLA.md`.
 
 ## Versioning
 
-Releases tagged `vYYYYMMDDVV` — see `zhac-platform` README for the
-full scheme.
+Releases tagged `vYYYYMMDDVV` (date + 2-digit revision).
