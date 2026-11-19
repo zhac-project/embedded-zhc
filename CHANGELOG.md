@@ -184,6 +184,11 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **The host suite passes under ASan + UBSan again (CI `host-tests`, red since the v26.133.0 parity
+  merge).** `tests/test_parity_26133.cpp`'s `run_dp()` decoded a datapoint with a `RuntimeContext` of its
+  own and returned the payload, whose `alloc_str()` texts live in that context: `str_is()` read a dead stack
+  frame (stack-use-after-return). It now takes its context from `test_ctx()`, as `tests/README.md` asks.
+  Test-only.
 - **A °F display unit, the floor sensor in control and a meter's interface
   mode survive a hub restart** (security review 2026-11-03 F-04). The
   decoders kept these settings only in `DeviceRuntimeState`, which a restart

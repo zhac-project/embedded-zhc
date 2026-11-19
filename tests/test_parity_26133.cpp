@@ -205,7 +205,8 @@ Out run_dp(const PreparedDefinition& def, const TuyaDpRecord& rec) {
     FzConverter cvt = tuya::kFzTuyaDatapoints;
     cvt.user_config = map;
     DecodedMessage msg{};
-    RuntimeContext ctx{};
+    // The payload's texts live in ctx, and the caller reads them after we return (tests/README.md).
+    RuntimeContext& ctx = test_ctx();
     tuya::fz_tuya_datapoints(std::span<const TuyaDpRecord>(&rec, 1), msg, cvt, def, ctx, out);
     return out;
 }
