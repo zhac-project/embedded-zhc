@@ -11,8 +11,10 @@
 // do_not_disturb, power_on_behavior + switch_type (manuSpecificTuya3 0xE001),
 // Tuya's 0xF000 brightness reports; genOnOff + genLevelCtrl bound and reported.
 // TS0052_2 has one do_not_disturb and one switch_type, sent to endpoint 1;
-// switch_type is write-only there: z2m publishes its report without an
-// endpoint, which the dispatcher would file under switch_type_l1.
+// switch_type has no decoder there: z2m publishes its report without an
+// endpoint, which the dispatcher would file under switch_type_l1. It is
+// StateSet as z2m (convertSet hands the value back), so the hub keeps the
+// value it set.
 // Not ported: brightness_move / brightness_step and level_config (no z2m
 // expose), power source "when unknown".
 // z2m-source: tuya.ts #TS0052 / #TS0052_2 (v26.115.1).
@@ -86,7 +88,7 @@ constexpr Expose kExposesGen_TS0052_2[] = {
      ExposeCategory::Config},
     {"do_not_disturb", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0,
      ExposeCategory::Config},
-    {"switch_type", ExposeType::Enum, Access::Set, nullptr, "Type of the switch",
+    {"switch_type", ExposeType::Enum, Access::StateSet, nullptr, "Type of the switch",
      kSwitchType, 3, ExposeCategory::Config},
 };
 

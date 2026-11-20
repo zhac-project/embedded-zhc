@@ -227,6 +227,9 @@ int main() {
     check_light_exposes(*two, "_l1");
     check_light_exposes(*two, "_l2");
     assert(find_expose(*two, "do_not_disturb") && find_expose(*two, "switch_type"));
+    // No switch_type decoder on the two-channel model (z2m's report carries no
+    // endpoint), but the setting keeps the value set, as z2m's convertSet does.
+    assert(find_expose(*two, "switch_type")->access == Access::StateSet);
     assert(!find_expose(*two, "state") && !find_expose(*two, "battery"));
 
     // Reports land on the channel they come from.

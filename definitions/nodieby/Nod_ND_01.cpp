@@ -7,9 +7,11 @@
 //   wired to kFzOnOff / kTzOnOff.
 //   The five settings live on the vendor custom cluster 0xFC00 (z2m
 //   "nodiebyConfig", attrs 0x0001-0x0005, no manufacturer code, plain
-//   writeAttributes). z2m marks them access ALL; ZHAC wires the WRITE path via
-//   the generic tz_zcl_write_attr encoder (SET-only config — read-back deferred
-//   per convention, so no fz). Defaults to EP1 (alarm) where the attrs live.
+//   writeAttributes). z2m marks them access ALL and its convertSet hands the
+//   value back as state, so they are StateSet: the hub shows the value it set
+//   last. ZHAC wires the WRITE path via the generic tz_zcl_write_attr encoder;
+//   no read-back fz (z2m reads them only on a get). Defaults to EP1 (alarm)
+//   where the attrs live.
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::nodieby {
@@ -72,11 +74,11 @@ constexpr Expose kExposes_ND_01[] = {
     {"occupancy",      ExposeType::Binary,  Access::State,    nullptr, nullptr, nullptr,                  0},
     {"state",          ExposeType::Binary,  Access::StateSet, nullptr, nullptr, nullptr,                  0},
     // Config settings on vendor cluster 0xFC00 — write-only (SET), see header.
-    {"led_brightness", ExposeType::Numeric, Access::Set, "%",     "Brightness of the status LED",                    nullptr,                  0, ExposeCategory::Config},
-    {"volume",         ExposeType::Numeric, Access::Set, "%",     "Siren volume",                                    nullptr,                  0, ExposeCategory::Config},
-    {"sensitivity",    ExposeType::Enum,    Access::Set, nullptr, "Intrusion detection sensitivity",                 kSensitivityValues_ND_01, 3, ExposeCategory::Config},
-    {"alarm_duration", ExposeType::Numeric, Access::Set, "s",     "Siren duration once triggered",                   nullptr,                  0, ExposeCategory::Config},
-    {"alarm_delay",    ExposeType::Numeric, Access::Set, "s",     "Delay before the alarm triggers after detection", nullptr,                  0, ExposeCategory::Config},
+    {"led_brightness", ExposeType::Numeric, Access::StateSet, "%",     "Brightness of the status LED",                    nullptr,                  0, ExposeCategory::Config},
+    {"volume",         ExposeType::Numeric, Access::StateSet, "%",     "Siren volume",                                    nullptr,                  0, ExposeCategory::Config},
+    {"sensitivity",    ExposeType::Enum,    Access::StateSet, nullptr, "Intrusion detection sensitivity",                 kSensitivityValues_ND_01, 3, ExposeCategory::Config},
+    {"alarm_duration", ExposeType::Numeric, Access::StateSet, "s",     "Siren duration once triggered",                   nullptr,                  0, ExposeCategory::Config},
+    {"alarm_delay",    ExposeType::Numeric, Access::StateSet, "s",     "Delay before the alarm triggers after detection", nullptr,                  0, ExposeCategory::Config},
 };
 
 constexpr BindingSpec kBindings_ND_01[] = {
