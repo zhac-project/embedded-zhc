@@ -184,6 +184,7 @@ across the ZHAC platform.
 
 ### Fixed
 
+- **Tuya lights' `do_not_disturb` and `color_power_on_behavior` are settings with a state again, as in z2m** (`ea.STATE_SET`; its convertSet hands the value back as state): `Access::StateSet` in TS0505B (both definitions), TS0505B_hs, TS0503B_hs, TS0052 / TS0052_2 and the Ysrsai YSR-MINI-01_rgbcct. As `Set` the hub's web UI listed them among the write-only commands, where the picker always showed the first value ("initial"), and the hub never kept the value it sent. `test_tuya_ts0505b` checks every Tuya, Ysrsai and Gledopto definition that exposes either key. The frames are unchanged.
 - **The host suite passes under ASan + UBSan again (CI `host-tests`, red since the v26.133.0 parity
   merge).** `tests/test_parity_26133.cpp`'s `run_dp()` decoded a datapoint with a `RuntimeContext` of its
   own and returned the payload, whose `alloc_str()` texts live in that context: `str_is()` read a dead stack

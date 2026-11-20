@@ -240,11 +240,12 @@ constexpr Expose kExp_min_YSR_MINI_01_rgbcct[] = {
     { "effect", ExposeType::Enum, ::zhc::Access::Set, nullptr, nullptr,
       kEffectLabels, sizeof(kEffectLabels)/sizeof(kEffectLabels[0]) },
     // `do_not_disturb` + `color_power_on_behavior` are settable config.
-    // The device echoes no readable state (write-only on this firmware),
-    // so they are Access::Set + Config category (optimistic SPA state).
-    { "do_not_disturb", ExposeType::Binary, ::zhc::Access::Set, nullptr, nullptr,
+    // The device echoes no readable state (write-only on this firmware);
+    // StateSet as z2m (its convertSet hands the value back as state), so
+    // the hub shows what was set last. Config category.
+    { "do_not_disturb", ExposeType::Binary, ::zhc::Access::StateSet, nullptr, nullptr,
       nullptr, 0, ::zhc::ExposeCategory::Config },
-    { "color_power_on_behavior", ExposeType::Enum, ::zhc::Access::Set, nullptr, nullptr,
+    { "color_power_on_behavior", ExposeType::Enum, ::zhc::Access::StateSet, nullptr, nullptr,
       kColorPowerOnLabels, sizeof(kColorPowerOnLabels)/sizeof(kColorPowerOnLabels[0]),
       ::zhc::ExposeCategory::Config },
 };

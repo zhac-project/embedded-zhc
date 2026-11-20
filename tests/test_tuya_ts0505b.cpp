@@ -26,7 +26,9 @@
 
 #include "zhc/cluster_names.hpp"
 #include "zhc/color_hex.hpp"
+#include "zhc/devices/gledopto_registry.hpp"
 #include "zhc/devices/tuya_registry.hpp"
+#include "zhc/devices/ysrsai_registry.hpp"
 #include "zhc/runtime/definition.hpp"
 #include "zhc/runtime/definition_runtime.hpp"
 #include "zhc/runtime/dispatch.hpp"
@@ -179,10 +181,11 @@ void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {
     assert(fx && fx->type == ExposeType::Enum && fx->access == Access::Set && fx->enum_count == 8);
     assert(std::strcmp(fx->enum_values[6], "colorloop") == 0 && std::strcmp(fx->enum_values[7], "stop_colorloop") == 0);
     const Expose* dnd = find_expose(def, "do_not_disturb");
-    assert(dnd && dnd->type == ExposeType::Binary && dnd->category == ExposeCategory::Config);
+    assert(dnd && dnd->type == ExposeType::Binary && dnd->category == ExposeCategory::Config &&
+           dnd->access == Access::StateSet);
     const Expose* cpob = find_expose(def, "color_power_on_behavior");
     assert(cpob && cpob->type == ExposeType::Enum && cpob->enum_count == 3 &&
-           cpob->category == ExposeCategory::Config);
+           cpob->category == ExposeCategory::Config && cpob->access == Access::StateSet);
     assert(!find_expose(def, "power_on_behavior"));
 
     // Colour decodes (currentX 0x0003 / currentY 0x0004, u16) …
@@ -223,6 +226,30 @@ void check_def(const PreparedDefinition& def, std::uint8_t brightness_cmd) {
     assert(p.cluster == 0x0300 && p.frame.size() == 15 && p.frame[2] == 0xF9 && p.frame[3] == 0x00 && p.frame[4] == 0x01);
 }
 
+// do_not_disturb and color_power_on_behavior are settings with a state in z2m
+// (lib/tuya.ts exposes.doNotDisturb / colorPowerOnBehavior, ea.STATE_SET): the
+// light never reports them, and z2m's convertSet hands the value back as
+// state, so the UI shows what was set last. Every definition that exposes one
+// says so (StateSet); as Set the hub lists it among the write-only commands
+// and forgets the value.
+void check_light_settings_have_state() {
+    int seen = 0;
+    auto sweep = [&](const PreparedDefinition* const* reg, std::size_t n) {
+        for (std::size_t i = 0; i < n; ++i)
+            for (std::uint8_t j = 0; j < reg[i]->exposes_count; ++j) {
+                const Expose& e = reg[i]->exposes[j];
+                if (std::strcmp(e.name, "do_not_disturb") != 0 &&
+                    std::strcmp(e.name, "color_power_on_behavior") != 0) continue;
+                assert(e.access == Access::StateSet);
+                ++seen;
+            }
+    };
+    sweep(devices::tuya::kTuyaRegistry, devices::tuya::kTuyaRegistryCount);
+    sweep(devices::ysrsai::kYsrsaiRegistry, devices::ysrsai::kYsrsaiRegistryCount);
+    sweep(devices::gledopto::kGledoptoRegistry, devices::gledopto::kGledoptoRegistryCount);
+    assert(seen > 0);
+}
+
 }  // namespace
 
 int main() {
@@ -252,5 +279,9 @@ int main() {
     };
     assert(has_wl("Lidl", "HG08008") && has_wl("Hatsy", "SDL-312Z") && has_wl("Nous", "P8Z") &&
            has_wl("Emos", "GoSmart ZQZ516R") && has_wl("MiBoxer", "FUT037Z+"));
+
+    // A TS0505B no definition names (an owner's _TZ3210_klv2wul0) gets this one.
+    assert(find_definition("TS0505B", "_TZ3210_klv2wul0", reg) == &kDefTS0505B);
+    check_light_settings_have_state();
     return 0;
 }

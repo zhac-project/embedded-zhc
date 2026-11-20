@@ -166,10 +166,12 @@ void check_rgbcct() {
     // Mains LED controller — never a battery device.
     assert(!def_exposes(def, "battery"));
 
-    // Write-only command exposes (z2m parity, commit 0524a1f1). These are
-    // access=Set, so the SPA renders them on the Commands tab (not States) —
-    // assert they're present in the def so a future re-port can't silently drop
-    // them again (this guard was missing when they first went unnoticed).
+    // tuyaLight's controls (z2m parity, commit 0524a1f1): effect is a
+    // write-only command (Set, the SPA's Commands tab); do_not_disturb and
+    // color_power_on_behavior are settings with a state (StateSet, checked in
+    // test_tuya_ts0505b) — assert they're present in the def so a future
+    // re-port can't silently drop them again (this guard was missing when they
+    // first went unnoticed).
     assert(def_exposes(def, "effect"));
     assert(def_exposes(def, "do_not_disturb"));
     assert(def_exposes(def, "color_power_on_behavior"));

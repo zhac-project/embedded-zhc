@@ -42,8 +42,9 @@ constexpr const char* kEffects[] = {
     "blink", "breathe", "okay", "channel_change", "finish_effect", "stop_effect",
     "colorloop", "stop_colorloop" };
 constexpr const char* kColorPowerOn[] = { "initial", "previous", "customized" };
-// do_not_disturb / color_power_on_behavior: commands the light never
-// echoes, so Set (Commands tab), as the Ysrsai RGB+CCT controller.
+// do_not_disturb / color_power_on_behavior: settings the light never reports.
+// StateSet as z2m (its convertSet hands the value back as state), so the hub
+// shows what was set last.
 constexpr Expose kExposes[] = {
     {"state", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0},
     {"brightness", ExposeType::Numeric, Access::StateSet, nullptr, nullptr, nullptr, 0},
@@ -55,9 +56,9 @@ constexpr Expose kExposes[] = {
     {"color_mode", ExposeType::Enum, Access::State, nullptr, nullptr, ::zhc::generic::kColorModes, 3},
     {"effect", ExposeType::Enum, Access::Set, nullptr, "Triggers an effect on the light",
      kEffects, 8},
-    {"do_not_disturb", ExposeType::Binary, Access::Set, nullptr, nullptr, nullptr, 0,
+    {"do_not_disturb", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0,
      ExposeCategory::Config},
-    {"color_power_on_behavior", ExposeType::Enum, Access::Set, nullptr, "Power on behavior state",
+    {"color_power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, "Power on behavior state",
      kColorPowerOn, 3, ExposeCategory::Config},
 };
 

@@ -48,9 +48,9 @@ constexpr Expose kExposesRgbcw[] = {
     {"color_mode", ExposeType::Enum, Access::State, nullptr, nullptr, ::zhc::generic::kColorModes, 3},
     {"effect", ExposeType::Enum, Access::Set, nullptr, "Triggers an effect on the light",
      kEffects, 8},
-    {"do_not_disturb", ExposeType::Binary, Access::Set, nullptr, nullptr, nullptr, 0,
+    {"do_not_disturb", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0,
      ExposeCategory::Config},
-    {"color_power_on_behavior", ExposeType::Enum, Access::Set, nullptr, "Power on behavior state",
+    {"color_power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, "Power on behavior state",
      kColorPowerOn, 3, ExposeCategory::Config},
 };
 constexpr Expose kExposesRgb[] = {
@@ -61,9 +61,9 @@ constexpr Expose kExposesRgb[] = {
     {"color_mode", ExposeType::Enum, Access::State, nullptr, nullptr, ::zhc::generic::kColorModes, 3},
     {"effect", ExposeType::Enum, Access::Set, nullptr, "Triggers an effect on the light",
      kEffects, 8},
-    {"do_not_disturb", ExposeType::Binary, Access::Set, nullptr, nullptr, nullptr, 0,
+    {"do_not_disturb", ExposeType::Binary, Access::StateSet, nullptr, nullptr, nullptr, 0,
      ExposeCategory::Config},
-    {"color_power_on_behavior", ExposeType::Enum, Access::Set, nullptr, "Power on behavior state",
+    {"color_power_on_behavior", ExposeType::Enum, Access::StateSet, nullptr, "Power on behavior state",
      kColorPowerOn, 3, ExposeCategory::Config},
 };
 
