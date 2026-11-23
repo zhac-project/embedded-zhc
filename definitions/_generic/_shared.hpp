@@ -385,6 +385,9 @@ extern const FzConverter kFzIasSosAlarm;
 extern const FzConverter kFzIasContactAlarmOnly;
 // Occupancy (bit 0) alone, for zoneAttributes ["alarm_1"] (HOBEIAN ZG-204Z).
 extern const FzConverter kFzIasMotionAlarmOnly;
+// `alarm` (bit 0) alone, for zoneType "alarm" with zoneAttributes ["alarm_1"]
+// (AduroSmart 81868 siren). Pair with kFzIasZoneAlarmOnly for zoneStatus reports.
+extern const FzConverter kFzIasGenericAlarmOnly;
 
 // ── genOnOff power-on behaviour (standard ZCL attribute 0x4003) ─────
 //
