@@ -8,7 +8,7 @@
 // Develco routes this heat alarm through the smoke decoder. Swap in the
 // typed kFzIasSmokeAlarm (smoke + tamper + battery_low) and add the
 // msTemperatureMeasurement channel z2m wires via
-// develcoModernExtend.temperature(). kTzWarning (IAS WD) kept.
+// develcoModernExtend.temperature(). kTzWarningReversed (IAS WD, m.iasWarning({reversePayload: true})).
 //
 // z2m v26.114.0 / v26.115.0 ("fix temperature"): the device accepts only
 // four bindings, so z2m binds just genBinaryInput on the IAS endpoint 35 and
@@ -33,7 +33,7 @@ const FzConverter* const kFz_HESZB_120[] = {
     &::zhc::generic::kFzIasWdMaxDuration,
 };
 const TzConverter* const kTz_HESZB_120[] = {
-    &::zhc::generic::kTzWarning,
+    &::zhc::generic::kTzWarningReversed,
     &::zhc::generic::kTzIasWdMaxDuration,
 };
 constexpr const char* kReliability[] = { "no_fault_detected", "unreliable_other", "process_error" };

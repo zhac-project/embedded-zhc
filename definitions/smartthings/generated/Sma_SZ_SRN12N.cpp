@@ -24,9 +24,9 @@ const TzConverter* const kTz_SZ_SRN12N[] = {
 constexpr const char* kModels_SZ_SRN12N[] = { "Z-SRN12N", "SZ-SRN12N" };
 
 constexpr Expose kAutoExposes[] = {
-    {"warning", ExposeType::String, Access::Set, nullptr,
-        "Trigger an IAS-WD warning (mode/level/duration JSON via tz_warning)",
-        nullptr, 0},
+    // z2m's composite e.warning() as a settable binary: kTzWarning takes a
+    // bool (start / stop) or a duration, not JSON text.
+    {"warning", ExposeType::Binary, Access::Set, nullptr, nullptr, nullptr, 0},
 };
 
 constexpr BindingSpec kAutoBindings[] = {

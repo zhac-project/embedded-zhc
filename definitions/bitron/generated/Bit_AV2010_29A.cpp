@@ -13,7 +13,7 @@
 //                that doesn't fit a single semantic-label kFzIas*Alarm.
 //                Generic decoder keeps both alarm bits, which is the closest
 //                approximation we can offer.
-//   kTzWarning — ssIasWd warning command.
+//   kTzWarningReversed — ssIasWd warning, reversed info byte (tz.warning model list).
 //   NOTE: tz.squawk has no generic ZHC analogue yet; the squawk write path
 //         is unwired (see docs/BITRON_PARITY.md).
 #include "definitions/_generic/_shared.hpp"
@@ -24,7 +24,7 @@ const FzConverter* const kFz_AV2010_29A[] = {
     &::zhc::generic::kFzIasZone,
 };
 const TzConverter* const kTz_AV2010_29A[] = {
-    &::zhc::generic::kTzWarning,
+    &::zhc::generic::kTzWarningReversed,
 };
 constexpr const char* kModels_AV2010_29A[] = { "AV2010/29A", "902010/29A" };
 

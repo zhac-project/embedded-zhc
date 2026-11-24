@@ -9,7 +9,7 @@
 //
 // Mapped:
 //   kFzIasSmokeAlarm — ssIasZone status → "smoke" + "tamper" + "battery_low".
-//   kTzWarning       — ssIasWd warning command.
+//   kTzWarningReversed — ssIasWd warning, reversed info byte (tz.warning model list).
 #include "definitions/_generic/_shared.hpp"
 
 namespace zhc::devices::bitron {
@@ -18,7 +18,7 @@ const FzConverter* const kFz_AV2010_24A[] = {
     &::zhc::generic::kFzIasSmokeAlarm,
 };
 const TzConverter* const kTz_AV2010_24A[] = {
-    &::zhc::generic::kTzWarning,
+    &::zhc::generic::kTzWarningReversed,
 };
 constexpr const char* kModels_AV2010_24A[] = { "AV2010/24A", "902010/24A" };
 

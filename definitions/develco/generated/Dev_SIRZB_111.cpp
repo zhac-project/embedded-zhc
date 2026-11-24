@@ -12,7 +12,7 @@ const FzConverter* const kFz_SIRZB_111[] = {
     &::zhc::generic::kFzIasZone,
 };
 const TzConverter* const kTz_SIRZB_111[] = {
-    &::zhc::generic::kTzWarning,
+    &::zhc::generic::kTzWarningReversed,
 };
 constexpr const char* kModels_SIRZB_111[] = { "SIRZB-111" };
 

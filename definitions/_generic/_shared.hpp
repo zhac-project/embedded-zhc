@@ -714,8 +714,13 @@ extern const TzConverter kTzCoverPosition;
 // (Climax SCM-5ZBS). Pair with kFzCoverPositionViaBrightness on decode.
 extern const TzConverter kTzCoverViaBrightness;
 
-// ssIasWd (0x0502) warning/siren startWarning (cmd 0x00) encoder.
+// ssIasWd (0x0502) warning/siren startWarning (cmd 0x00) encoder: `warning`
+// true = z2m's default warning, a number = that many seconds, false = stop.
 extern const TzConverter kTzWarning;
+// The same with z2m's reversed info byte, for the sirens z2m reverses:
+// tz.warning's model list (AV2010/24A, AV2010/29A) and
+// m.iasWarning({reversePayload: true}) (SMSZB-120, HESZB-120, SIRZB-110/111).
+extern const TzConverter kTzWarningReversed;
 
 // closuresDoorLock (0x0101) lock/unlock command encoder.
 extern const TzConverter kTzLock;

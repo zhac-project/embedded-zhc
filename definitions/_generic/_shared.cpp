@@ -2883,38 +2883,40 @@ extern const TzConverter kTzThermostat{
 
 // ── tz_warning (ssIasWd 0x0502) ─────────────────────────────────────
 //
-// Minimal startWarning (cmd 0x00) encoder. Payload is 1-byte warning-
-// mode/strobe/siren-level bitmap + 2-byte duration (big-endian). We
-// accept:
-//   input Uint        — packed duration (seconds); mode defaults to
-//                       "burglar" (0x13), strobe on, siren max.
-//   input Bool true   — same as above, duration 10s.
-//   input Bool false  — stop: mode 0x00, duration 0.
+// startWarning (cmd 0x00) with z2m's defaults (tz.warning, m.iasWarning).
+// z2m's `warning` is a composite (mode, level, strobe…); ez has no composite
+// expose, so `warning` is a settable binary:
+//   Bool true  — mode emergency, level medium, strobe on, 10 s.
+//   Uint n     — the same warning for n seconds; 0 stops.
+//   Bool false — m.iasWarning's stop: mode stop, level low, strobe off, 0 s.
+// Payload: info u8, duration u16 LE, strobe duty cycle 0, strobe level 1
+// (medium). info = (mode << 4) | (strobe << 2) | level, or with a non-null
+// user_config z2m's reversed byte mode | (strobe << 4) | (level << 6).
 bool tz_warning(std::string_view key, const Value& input,
-                 const TzConverter&,
+                 const TzConverter& self,
                  const PreparedDefinition&, RuntimeContext&,
                  std::span<std::uint8_t> out_frame,
                  std::size_t& out_size) {
     out_size = 0;
     if (key != "warning") return false;
-    std::uint8_t  mode = 0x13;   // burglar + strobe + level-3
-    std::uint16_t dur  = 10;
-    std::uint8_t  strobe_dc = 0;
-    std::uint8_t  strobe_lv = 0;
+    std::uint16_t dur = 10;
     if (input.type == ValueType::Bool) {
-        if (!input.b) { mode = 0x00; dur = 0; }
+        if (!input.b) dur = 0;
     } else if (input.type == ValueType::Uint) {
         dur = static_cast<std::uint16_t>(input.u > 0xFFFF ? 0xFFFF : input.u);
-        if (dur == 0) mode = 0x00;
     } else return false;
+    // emergency (3) + strobe + medium (1), or stop (0) + no strobe + low (0).
+    const unsigned mode = dur ? 3 : 0, strobe = dur ? 1 : 0, level = dur ? 1 : 0;
+    const unsigned info = self.user_config ? mode | (strobe << 4) | (level << 6)
+                                           : (mode << 4) | (strobe << 2) | level;
     if (!write_header(out_frame, 0x00, /*payload_len=*/5, out_size)) {
         return false;
     }
-    out_frame[3] = mode;
+    out_frame[3] = static_cast<std::uint8_t>(info);
     out_frame[4] = static_cast<std::uint8_t>(dur & 0xFF);
-    out_frame[5] = static_cast<std::uint8_t>((dur >> 8) & 0xFF);
-    out_frame[6] = strobe_dc;
-    out_frame[7] = strobe_lv;
+    out_frame[5] = static_cast<std::uint8_t>(dur >> 8);
+    out_frame[6] = 0;   // strobe duty cycle
+    out_frame[7] = 1;   // strobe level medium
     return true;
 }
 
@@ -2925,6 +2927,16 @@ extern const TzConverter kTzWarning{
     .command_id   = 0x00,
     .fn           = tz_warning,
     .user_config  = nullptr,
+};
+
+constexpr bool kWarningReversed = true;
+extern const TzConverter kTzWarningReversed{
+    .key          = "warning",
+    .cluster      = "ssIasWd",
+    .cluster_id   = 0x0502,
+    .command_id   = 0x00,
+    .fn           = tz_warning,
+    .user_config  = &kWarningReversed,
 };
 
 // ── tz_cover_position (closuresWindowCovering 0x0102) ───────────────
