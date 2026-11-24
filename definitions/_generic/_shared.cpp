@@ -6,6 +6,7 @@
 
 #include "definitions/_generic/_shared.hpp"
 
+#include <charconv>
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -2889,9 +2890,40 @@ extern const TzConverter kTzThermostat{
 //   Bool true  — mode emergency, level medium, strobe on, 10 s.
 //   Uint n     — the same warning for n seconds; 0 stops.
 //   Bool false — m.iasWarning's stop: mode stop, level low, strobe off, 0 s.
+//   Text       — z2m's warning object as "mode[,level[,strobe[,duration]]]",
+//                e.g. "burglar,high,1,180", each left-out field at the default
+//                above (rules and the alarm panel send it). Mode stop or 0 s stops.
 // Payload: info u8, duration u16 LE, strobe duty cycle 0, strobe level 1
 // (medium). info = (mode << 4) | (strobe << 2) | level, or with a non-null
 // user_config z2m's reversed byte mode | (strobe << 4) | (level << 6).
+bool warning_text(std::string_view s, unsigned& mode, unsigned& level, unsigned& strobe,
+                  std::uint16_t& dur) {
+    static constexpr std::string_view kLevels[] = {"low", "medium", "high", "very_high"};
+    for (unsigned field = 0;; ++field) {
+        const std::size_t comma = s.find(',');
+        const std::string_view w = s.substr(0, comma);
+        bool ok = false;
+        if (field == 0) {
+            for (const auto& e : kWarnModeLut)   // warning_simple's words (z2m's modes, plus ON/OFF/alarm)
+                if (w == e.label) { mode = e.mode; ok = true; }
+        } else if (field == 1) {
+            for (unsigned i = 0; i < 4; ++i)
+                if (w == kLevels[i]) { level = i; ok = true; }
+        } else if (field == 2) {
+            ok = w == "1" || w == "true" || w == "0" || w == "false";
+            strobe = w == "1" || w == "true";
+        } else if (field == 3) {
+            unsigned long n = 0;
+            const auto r = std::from_chars(w.data(), w.data() + w.size(), n);
+            ok = !w.empty() && r.ec == std::errc() && r.ptr == w.data() + w.size();
+            dur = static_cast<std::uint16_t>(n > 0xFFFF ? 0xFFFF : n);
+        }
+        if (!ok) return false;
+        if (comma == std::string_view::npos) return true;
+        s.remove_prefix(comma + 1);
+    }
+}
+
 bool tz_warning(std::string_view key, const Value& input,
                  const TzConverter& self,
                  const PreparedDefinition&, RuntimeContext&,
@@ -2899,14 +2931,20 @@ bool tz_warning(std::string_view key, const Value& input,
                  std::size_t& out_size) {
     out_size = 0;
     if (key != "warning") return false;
+    unsigned mode = 3, level = 1, strobe = 1;   // emergency, medium, strobe on
     std::uint16_t dur = 10;
     if (input.type == ValueType::Bool) {
         if (!input.b) dur = 0;
     } else if (input.type == ValueType::Uint) {
         dur = static_cast<std::uint16_t>(input.u > 0xFFFF ? 0xFFFF : input.u);
-    } else return false;
-    // emergency (3) + strobe + medium (1), or stop (0) + no strobe + low (0).
-    const unsigned mode = dur ? 3 : 0, strobe = dur ? 1 : 0, level = dur ? 1 : 0;
+    } else if (input.type != ValueType::StringRef || !input.str ||
+               !warning_text(input.str, mode, level, strobe, dur)) {
+        return false;
+    }
+    if (mode == 0 || dur == 0) {   // the stop: mode stop, level low, strobe off, 0 s
+        mode = level = strobe = 0;
+        dur = 0;
+    }
     const unsigned info = self.user_config ? mode | (strobe << 4) | (level << 6)
                                            : (mode << 4) | (strobe << 2) | level;
     if (!write_header(out_frame, 0x00, /*payload_len=*/5, out_size)) {

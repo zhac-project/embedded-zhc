@@ -4,7 +4,9 @@
 // IAS WD `warning` (ssIasWd 0x0502, startWarning cmd 0x00) sends what z2m sends.
 // ez has no composite expose, so `warning` is a settable binary: true is z2m's
 // default warning, a number is that warning with this duration, and false is
-// m.iasWarning's stop.
+// m.iasWarning's stop. Rules and the alarm panel send z2m's warning object as
+// text, "mode[,level[,strobe[,duration]]]", each left-out field at its default;
+// "stop" or 0 s is the stop.
 //   start: mode emergency, level medium, strobe on, 10 s, strobe duty cycle 0,
 //          strobe level 1 -> info 0x35 = (mode << 4) | (strobe << 2) | level
 //   stop:  mode stop, level low, strobe off, 0 s, strobe level 1 -> info 0x00
@@ -65,6 +67,7 @@ std::vector<std::uint8_t> start_warning(const PreparedDefinition& def, const Val
 
 Value boolean(bool b) { Value v{}; v.type = ValueType::Bool; v.b = b; return v; }
 Value seconds(std::uint64_t s) { Value v{}; v.type = ValueType::Uint; v.u = s; return v; }
+Value text(const char* s) { Value v{}; v.type = ValueType::StringRef; v.str = s; return v; }
 
 const Expose* expose(const PreparedDefinition& d, const char* name) {
     for (std::size_t i = 0; i < d.exposes_count; ++i)
@@ -107,8 +110,29 @@ int main() {
                 std::fprintf(stderr, "%s: info 0x%02X\n", d->model, start[0]);
                 ++bad;
             }
+            // Text: mode burglar 1, fire 2, emergency 3, police_panic 4, emergency_panic 6;
+            // level low 0, medium 1, high 2, very_high 3.
+            const auto info = [&](unsigned mode, unsigned level, unsigned strobe) {
+                return static_cast<std::uint8_t>(is_rev ? mode | (strobe << 4) | (level << 6)
+                                                        : (mode << 4) | (strobe << 2) | level);
+            };
+            const Bytes none{};
+            if (start_warning(*d, text("burglar,high,1,180")) != Bytes{info(1, 2, 1), 0xB4, 0x00, 0x00, 0x01} ||
+                start_warning(*d, text("fire")) != Bytes{info(2, 1, 1), 0x0A, 0x00, 0x00, 0x01} ||
+                start_warning(*d, text("emergency")) != want ||
+                start_warning(*d, text("police_panic,very_high,0,30")) != Bytes{info(4, 3, 0), 0x1E, 0x00, 0x00, 0x01} ||
+                start_warning(*d, text("emergency_panic,low,false")) != Bytes{info(6, 0, 0), 0x0A, 0x00, 0x00, 0x01} ||
+                start_warning(*d, text("burglar,high,true,70000")) != Bytes{info(1, 2, 1), 0xFF, 0xFF, 0x00, 0x01} ||
+                start_warning(*d, text("stop")) != stop || start_warning(*d, text("burglar,high,1,0")) != stop ||
+                start_warning(*d, text("loud")) != none || start_warning(*d, text("burglar,deafening")) != none ||
+                start_warning(*d, text("burglar,high,maybe")) != none || start_warning(*d, text("burglar,high,1,ten")) != none ||
+                start_warning(*d, text("burglar,high,1,10,more")) != none || start_warning(*d, text("burglar,")) != none ||
+                start_warning(*d, text("")) != none) {
+                std::fprintf(stderr, "%s: text warning\n", d->model);
+                ++bad;
+            }
             // Where `warning` is exposed, the UI and the HA bridge drive it as a
-            // settable binary: the encoder takes a bool or a duration, not text.
+            // settable binary; text is for rules and the alarm panel.
             const Expose* w = expose(*d, "warning");
             if (w && (w->type != ExposeType::Binary || w->access != Access::Set)) {
                 std::fprintf(stderr, "%s: warning expose is not a settable binary\n", d->model);

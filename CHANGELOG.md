@@ -10,6 +10,8 @@ across the ZHAC platform.
 
 ### Changed
 
+- **IAS WD `warning` also takes text** (security mode, 2026-11-24): z2m's warning object as `mode[,level[,strobe[,duration]]]`, e.g. `burglar,high,1,180`, each left-out field at z2m's default (emergency, medium, strobe on, 10 s); `stop` or 0 s sends the stop. Hub rules (`zigbee.set Siren warning burglar,high,1,180`) and the alarm panel use it; the UI keeps the on/off switch.
+
 - **README and ONBOARDING point at the live repos** (docs only): the ZHAC link goes to zhac-docs, the platform overview describes the one-board hub (zhac-wired-core) and lists the archived two-chip and single-chip repos as such.
 
 ### Added
