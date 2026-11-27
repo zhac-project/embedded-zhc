@@ -43,7 +43,7 @@ Requires C++20, CMake ≥3.20, a host compiler (gcc ≥12 or clang ≥15).
 // SPDX-License-Identifier: Apache-2.0
 ```
 
-Python (generator scripts):
+Python (scripts under `tools/`):
 ```python
 # SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
 # SPDX-License-Identifier: Apache-2.0
@@ -62,9 +62,11 @@ Device definitions live under `definitions/<vendor>/` as C++20
 
 1. Check whether the device exists in an upstream z2m file — most
    work is mechanical adaptation from the TypeScript definition.
-2. Fast path: use the port generators under `tools/`. They produce a
-   skeleton from the z2m source. (These scripts may be private —
-   upstream contributors coordinate with the maintainer.)
+2. Fast path: copy the definition of a similar device (most vendors
+   have several) and adapt it. Changing an existing definition is
+   welcome too, one under `generated/` included: say so in the PR, and
+   the maintainer moves it to a hand-kept `// Tier 2` file so the next
+   import from z2m keeps your change.
 3. Always preserve the `// z2m-source:` comment pointing at the
    upstream origin — keeps attribution intact.
 4. Add a host test under `tests/` covering at least the

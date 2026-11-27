@@ -25,10 +25,10 @@ that the copyright and permission notice accompany all copies or
 substantial portions of the Software.
 
 Upstream license verified MIT at extraction time (last checked
-2026-07-13 against zigbee-herdsman-converters v26.81.0). The private
-generation pipeline (`zhac-tools`) asserts the upstream LICENSE is
-byte-identical to the pinned MIT text on every sync and fails closed
-if upstream ever relicenses.
+2026-07-13 against zigbee-herdsman-converters v26.81.0). On every
+import, the maintainer's import scripts check that the upstream LICENSE
+is byte-identical to the pinned MIT text, and stop if upstream ever
+relicenses.
 
 Each ported definition file retains its relationship to an upstream
 z2m entry via a `// z2m-source:` comment pointing at the vendor.ts

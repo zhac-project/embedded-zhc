@@ -62,12 +62,17 @@ embedded-zhc/
 │   ├── philips/
 │   └── ... ~70 more vendors
 ├── tests/                  (host-side Catch2 tests)
-├── tools/                  (port generators — optional)
+├── tools/                  (lint, audit and test helpers the build runs)
 └── CMakeLists.txt
 ```
 
-The generator scripts under `tools/` may move to a separate private
-repo later; the `definitions/` tree itself is fully self-contained.
+Device definitions are ordinary C++: read them, change them and send a
+pull request, files under `generated/` included. Those are imported from
+zigbee-herdsman-converters by the maintainer's import scripts, which are
+not part of this repo and not needed to build or change anything here.
+When a pull request changes one, the maintainer moves that definition to
+a hand-kept file next to it (marked `// Tier 2`), so the next import
+keeps the change.
 
 ## License
 

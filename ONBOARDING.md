@@ -96,15 +96,14 @@ embedded-zhc/
 └── CMakeLists.txt
 ```
 
-### Important: `generated/` is committed
+### `generated/` is ordinary C++ too
 
-Files under `definitions/**/generated/` are **regenerated from the
-zigbee-herdsman-converters source tree** by tools in the private
-`zhac-tools` repo. Run `just refresh-parity` to refresh the whole
-library (requires access to `zhac-tools`). Manual edits to
-`generated/` are routinely overwritten — if a device needs hand-tuning,
-either extend the hand-written sibling file or move the device to a
-non-generated location.
+Files under `definitions/**/generated/` are **imported from
+zigbee-herdsman-converters** by the maintainer's import scripts and
+committed like any other source. Edit one directly when a device needs
+it, and say so in the pull request: the maintainer moves that
+definition to a hand-kept sibling file (marked `// Tier 2`), so the
+next import keeps the change.
 
 ---
 
@@ -219,10 +218,9 @@ behaviour isn't copyleft.
 ## 8. Gotchas
 
 - **Device coverage expectation**: 98.9 % full parity with
-  zigbee-herdsman-converters (4 167 / 4 213 devices). If you add a
-  new vendor, run `just refresh-parity` in the monorepo clone (or
-  private `zhac-tools`) to regenerate the bindings-JSON and parity
-  stats.
+  zigbee-herdsman-converters (4 167 / 4 213 devices). The bindings
+  JSON and the parity stats are refreshed with each import from z2m;
+  a pull request does not need to touch them.
 - **Fingerprint collisions**: `ZB-CL01` is shared by Kurvia, Lonsonho,
   and Ysrsai. The manufacturer-filtered variants sit in Pass 1; the
   naked `Kurvia` falls through in Pass 2. Order matters.

@@ -10,6 +10,7 @@ across the ZHAC platform.
 
 ### Changed
 
+- **Device definitions are ordinary C++ you can change** (docs only, owner 2026-11-27): `README.md`, `CONTRIBUTING.md` and `ONBOARDING.md` say a pull request may change any definition, `generated/` ones included, and that the maintainer moves a changed one to a hand-kept `// Tier 2` file so the next import from z2m keeps it; the import scripts are not needed to build or change anything here. `NOTICE` describes the upstream-license check without naming the scripts. `README.md` no longer calls `tools/` port generators: it holds the lint, audit and test helpers.
 - **`LICENSE` is the plain Apache-2.0 text**, so GitHub shows the license; what it said besides was already in `NOTICE`. `tools/lint_celsius_unit.py` and `tools/lint_literal_counts.py` carry SPDX headers.
 - **IAS WD `warning` also takes text** (security mode, 2026-11-24): z2m's warning object as `mode[,level[,strobe[,duration]]]`, e.g. `burglar,high,1,180`, each left-out field at z2m's default (emergency, medium, strobe on, 10 s); `stop` or 0 s sends the stop. Hub rules (`zigbee.set Siren warning burglar,high,1,180`) and the alarm panel use it; the UI keeps the on/off switch.
 
