@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-FileCopyrightText: 2025-2026 Evgenij Cjura and project contributors
+# SPDX-License-Identifier: Apache-2.0
 """Guard: a definition's `_count` field must match its array's real length.
 
 Why this exists
